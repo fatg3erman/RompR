@@ -180,7 +180,6 @@ const COLLECTION_SORT_MODES = array(
 	'tag' 			=> 'label_tag'
 );
 
-
 const BG_IMAGE_TIMEOUTS = [
 	'10 Seconds' => 10000,
 	'30 Seconds' => 30000,
@@ -191,6 +190,32 @@ const BG_IMAGE_TIMEOUTS = [
 	'30 Minutes' => 1800000,
 	'Hour' => 3600000,
 	'Day' => 86400000
+];
+
+const FONT_SIZES = [
+	'Miniscule' => 6,
+	'Tiny' => 7,
+	'Small' => 8,
+	'Normal' => 9,
+	'Large' => 10,
+	'Grande' => 11,
+	'Huge' => 12,
+	'Enormous' => 14,
+	'Massive' => 16,
+	'Gargantuan' => 18,
+	'Ridiculous' => 20,
+	'Monumental' => 22
+];
+
+const COVER_SIZES = [
+	'Tiny' => 24,
+	'Small' => 32,
+	'Smallish' => 40,
+	'Medium' => 48,
+	'Large' => 64,
+	'VeryLarge' => 72,
+	'ExtraLarge' => 82,
+	'Super' => 100
 ];
 
 //

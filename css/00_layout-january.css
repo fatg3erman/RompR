@@ -427,10 +427,24 @@ i.icon-menu {
 
 .smallcover
 {
-	width:32px;
 	height:auto;
 	vertical-align:middle;
 	margin-right:8px;
+}
+
+div.smallcover
+{
+	width: var(--cover-size);
+}
+
+img.smallcover {
+	width: 100%;
+	object-fit: scale-down;
+}
+
+img.notexist,img.notfound {
+	width: var(--cover-size);
+	height: var(--cover-size);
 }
 
 .smallicon
@@ -2093,6 +2107,7 @@ div.top_drop_menu
 	position: absolute;
 	opacity:1 !important;
 	padding:4px;
+	font-size: var(--font-size);
 }
 
 div.top_drop_menu div:not(.canbefaded) {

@@ -19,12 +19,9 @@ set_version_string();
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <?php
-$css = glob('css/*.css');
-foreach ($css as $file) {
-	logger::log("INIT", "Including Stylesheet",$file);
-	print '<link rel="stylesheet" type="text/css" href="'.$file.'?version='.$version_string.'" />'."\n";
-}
-print '<link rel="stylesheet" type="text/css" href="skins/desktop/skin.css?version=='.$version_string.'" />'."\n";
+print '<script type="application/json" name="font_sizes">'."\n".json_encode(FONT_SIZES)."\n</script>\n";
+print '<script type="application/json" name="cover_sizes">'."\n".json_encode(COVER_SIZES)."\n</script>\n";
+print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string.'&skin=desktop" />'."\n";
 print '<link rel="stylesheet" type="text/css" href="css/albumartmanager/albumart.css?version=?'.$version_string.'" />'."\n";
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />

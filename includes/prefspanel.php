@@ -55,10 +55,8 @@ print '</select></div></div>';
 print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext('config_fontsize').
 	'</div><div class="selectholder"><select id="fontsizeselector" class="saveomatic">';
-$themes = glob("sizes/*.css");
-foreach($themes as $theme) {
-	print '<option value="'.preg_replace("#sizes/#", "", $theme).'">'.
-		preg_replace('/sizes\/\d+-(.*?)\.css$/', "$1", $theme).'</option>';
+foreach(FONT_SIZES as $name => $size) {
+	print '<option value="'.$size.'">'.$name.'</option>';
 }
 print '</select></div></div>';
 
@@ -66,10 +64,8 @@ print '</select></div></div>';
 print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext('config_coversize').
 	'</div><div class="selectholder"><select id="coversizeselector" class="saveomatic">';
-$themes = glob("coversizes/*.css");
-foreach($themes as $theme) {
-	print '<option value="'.preg_replace("#coversizes/#", "", $theme).'">'.
-		preg_replace('/coversizes\/\d+-(.*?)\.css$/', "$1", $theme).'</option>';
+foreach(COVER_SIZES as $name => $size) {
+	print '<option value="'.$size.'">'.$name.'</option>';
 }
 print '</select></div></div>';
 

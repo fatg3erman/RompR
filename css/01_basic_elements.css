@@ -11,7 +11,7 @@ html
 
 body
 {
-	font-size:8pt;
+	font-size: var(--font-size);
 	margin:0px;
 	overflow:hidden;
 	-webkit-font-smoothing: subpixel-antialiased;

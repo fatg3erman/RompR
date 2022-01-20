@@ -6,6 +6,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Improve Metadata backup so it now restores all data including Podcasts and Radio Stations.
 * Improve Themes to make them easier to edit. Add two new ones. in the process I decided to delete
 some of the old ones as they were ugly and I couldn't be bothered to update them.
+* Quite a few small UI tweaks to make things a bit more consistent. It's tru to say that the Phone and Skypotato skins are
+my favourites and the others don't get a lot of attention any more.
 
 
 ## Version 1.60

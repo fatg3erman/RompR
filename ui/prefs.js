@@ -489,6 +489,14 @@ var prefs = function() {
 		updateCustomBackground();
 	}
 
+	function set_font_size(points) {
+		set_css_variable('--font-size', points.toString()+'pt');
+	}
+
+	function set_cover_size(pixels) {
+		set_css_variable('--cover-size', pixels.toString()+'px');
+	}
+
 	return {
 		loadPrefs: async function(callback) {
 
@@ -535,13 +543,57 @@ var prefs = function() {
 				setCookie('clickmode', '', 1);
 			}
 
+			// Handle old-style fontsize paramter that was the name of a css script
+			try {
+				var test = prefs.fontsize.match(/\d\d-(.+)\.css/);
+				if (test !== null) {
+					var jsonNode = document.querySelector("script[name='font_sizes']");
+		    		var jsonText = jsonNode.textContent;
+		    		var font_sizes = JSON.parse(jsonText);
+		    		if (font_sizes.hasOwnProperty(test[1])) {
+			    		debug.log('PREFS', 'Updating old font size from',prefs.fontsize,'to',font_sizes[test[1]]);
+		    			prefs.fontsize = font_sizes[test[1]];
+		    		} else {
+		    			debug.warn('PREFS', 'Could not locate value',prefs.fontsize,'in',font_sizes);
+		    			prefs.fontsize = 11;
+		    		}
+		    	}
+		    } catch (err) {
+		    	prefs.fontsize = 11;
+		    }
+
+			try {
+				var test = prefs.coversize.match(/\d\d-(.+)\.css/);
+				if (test !== null) {
+					var jsonNode = document.querySelector("script[name='cover_sizes']");
+		    		var jsonText = jsonNode.textContent;
+		    		var cover_sizes = JSON.parse(jsonText);
+		    		if (cover_sizes.hasOwnProperty(test[1])) {
+			    		debug.log('PREFS', 'Updating old cover size from',prefs.coversize,'to',cover_sizes[test[1]]);
+		    			prefs.coversize = cover_sizes[test[1]];
+		    		} else {
+		    			debug.warn('PREFS', 'Could not locate value',prefs.coversize,'in',cover_sizes);
+		    			prefs.coversize = 48;
+		    		}
+		    	}
+		    } catch (err) {
+		    	prefs.coversize = 48;
+		    }
+
 			prefs.fontfamily = prefs.fontfamily.replace('_', ' ');
 
-			doClickCss();
+			prefs.doClickCss();
 
 			if (callback)
 				callback();
 
+		},
+
+		doClickCss: function() {
+			$('style[id="click_double"]').remove();
+			if (prefs.clickmode == 'double') {
+				$('<style id="click_double">body.phone .timerspacer { display: none }</style>').appendTo('head');
+			}
 		},
 
 		checkSet: function(key) {
@@ -771,10 +823,18 @@ var prefs = function() {
 
 				case "theme":
 				case "icontheme":
-				case "fontsize":
 				case "fontfamily":
-				case "coversize":
 					callback = prefs.setTheme;
+					break;
+
+				case 'fontsize':
+					set_font_size(prefobj.fontsize);
+					callback = prefs.postUIChange;
+					break;
+
+				case 'coversize':
+					set_cover_size(prefobj.coversize);
+					callback = prefs.postUIChange;
 					break;
 
 				case "lastfm_country_code":
@@ -838,11 +898,17 @@ var prefs = function() {
 			var t = Date.now();
 			// Some browsers (Chrome, Safari) don't fire a load event on the theme element unless we delete and re-create it
 			// Even then we have a fudge timer, just in case
+			set_font_size(prefs.fontsize);
+			set_cover_size(prefs.coversize);
 			uichangetimer = setTimeout(prefs.postUIChange, 3000);
 			$('#theme').remove();
-			$('<link>', {id: 'theme', rel: 'stylesheet', type: 'text/css', href: "gettheme.php?version="+t
-				+'&theme='+theme+'&fontsize='+prefs.fontsize+'&fontfamily='+prefs.fontfamily
-				+'&coversize='+prefs.coversize+'&icontheme='+prefs.icontheme}).on('load', prefs.postUIChange).appendTo('head');
+			$(
+				'<link>',
+				{id: 'theme', rel: 'stylesheet', type: 'text/css', href: "gettheme.php?version="+t
+				+'&theme='+theme+
+				'&fontfamily='+prefs.fontfamily+
+				'&icontheme='+prefs.icontheme}
+			).on('load', prefs.postUIChange).appendTo('head');
 			try {
 				$.getScript('themes/'+theme+'.js')
 					.done(function() {
