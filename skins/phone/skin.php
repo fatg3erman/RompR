@@ -77,6 +77,36 @@
 
 <div id="loadsawrappers">
 
+<div id="infopane" class="infowiki scroller mainpane invisible">
+	<div class="fullwidth buttonbar noborder containerbox">
+		<div id="chooserbuttons" class="noborder expand center topbox containerbox fullwidth headercontainer">
+			<i id="choose_history" class="icon-versions topimg expand"></i>
+			<i id="backbutton" class="icon-left-circled topimg button-disabled expand onlywide"></i>
+			<i id="forwardbutton" class="icon-right-circled topimg button-disabled expand onlywide"></i>
+		</div>
+	</div>
+	<div id="artistchooser" class="infotext invisible"></div>
+	<div id="historyholder" class="fullwidth invisible">
+		<div class="configtitle">
+			<div class="textcentre expand">
+				<b>
+	<?php
+		print language::gettext('button_history');
+	?>
+				</b>
+			</div>
+		</div>
+		<div id="historypanel"></div>
+	</div>
+<?php
+	print '<div id="artistinformation" class="infotext"><h2 class="infobanner soangly" align="center">'.
+		language::gettext('label_emptyinfo').'</h2></div>';
+?>
+	<div id="albuminformation" class="infotext"></div>
+	<div id="trackinformation" class="infotext"></div>
+</div>
+
+
 <div id="infobar" class="mainpane invisible">
 	<div id="toomanywrappers">
 		<div id="albumcover">
@@ -164,35 +194,6 @@ include("player/".prefs::$prefs['player_backend']."/search.php");
 ?>
 	</div>
 	<div id="filecollection" class="noborder selecotron"></div>
-</div>
-
-<div id="infopane" class="infowiki scroller mainpane invisible">
-	<div class="fullwidth buttonbar noborder containerbox">
-		<div id="chooserbuttons" class="noborder expand center topbox containerbox fullwidth headercontainer">
-			<i id="choose_history" class="icon-versions topimg expand"></i>
-			<i id="backbutton" class="icon-left-circled topimg button-disabled expand onlywide"></i>
-			<i id="forwardbutton" class="icon-right-circled topimg button-disabled expand onlywide"></i>
-		</div>
-	</div>
-	<div id="artistchooser" class="infotext invisible"></div>
-	<div id="historyholder" class="fullwidth invisible">
-		<div class="configtitle">
-			<div class="textcentre expand">
-				<b>
-	<?php
-		print language::gettext('button_history');
-	?>
-				</b>
-			</div>
-		</div>
-		<div id="historypanel"></div>
-	</div>
-<?php
-	print '<div id="artistinformation" class="infotext"><h2 class="infobanner soangly" align="center">'.
-		language::gettext('label_emptyinfo').'</h2></div>';
-?>
-	<div id="albuminformation" class="infotext"></div>
-	<div id="trackinformation" class="infotext"></div>
 </div>
 
 <div id="radiolist" class="scroller mainpane invisible pright">

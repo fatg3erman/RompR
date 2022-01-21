@@ -511,28 +511,29 @@ var layoutProcessor = function() {
 		sourceControl: function(source) {
 			debug.mark('LAYOUT','Switching source to',source);
 			// hacky - set an irrelevant css parameter as a flag so we change behaviour
-			var layoutflag = parseInt($('i.choosepanel[name="playlistm"]').css('font-weight'));
-			if ((source == 'playlistm' || source == 'infobar') && prefs.chooser != 'infopane' && layoutflag == 1000) {
+			var display_mode = get_css_variable('--display-mode');
+			// var layoutflag = parseInt($('i.choosepanel[name="playlistm"]').css('font-weight'));
+			if ((source == 'playlistm' || source == 'infobar') && prefs.chooser != 'infopane' && display_mode == 2) {
 				return;
 			}
-			if (source == 'infopane') {
-				$('#infobar').css('display', 'none');
-				if (layoutflag >= 900) {
-					$('#playlistm').css('display', 'none');
-				}
-			} else {
-				$('#infobar').css('display', '');
-				if (layoutflag >= 900) {
-					$('#playlistm').css('display', '');
-				}
-			}
-			if (source == "playlistm" && layoutflag >= 900) {
+			// if (source == 'infopane') {
+			// 	$('#infobar').css('display', 'none');
+			// 	if (display_mode > 0) {
+			// 		$('#playlistm').css('display', 'none');
+			// 	}
+			// } else {
+			// 	$('#infobar').css('display', '');
+			// 	if (display_mode > 0) {
+			// 		$('#playlistm').css('display', '');
+			// 	}
+			// }
+			if (source == "playlistm" && display_mode > 0) {
 				source = "infobar";
 			}
 			$('.mainpane:not(.invisible):not(#'+source+')').addClass('invisible');
-			if (layoutflag >= 900) {
-				$('#playlistm').removeClass('invisible');
-			}
+			// if (display_mode > 0) {
+			// 	$('#playlistm').removeClass('invisible');
+			// }
 			$('#'+source).removeClass('invisible');
 			prefs.save({chooser: source});
 			uiHelper.adjustLayout();
@@ -557,14 +558,13 @@ var layoutProcessor = function() {
 			oldchooser = prefs.chooser;
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
-			if ($('i.choosepanel[name="playlistm"]').css('font-weight') == '1000'
+
+			// don't do this if we're on a mobile device and the window is being hidden or device is going to sleep
+			if (get_css_variable('--display-mode') == 2
 				&& $('.mainpane:visible').not('#infobar').length == 0
 				&& (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')
-				// don't do this if we're on a mobile device and the window is being hidden or device is going to sleep
 				&& sleepHelper.isVisible()) {
-				debug.trace('SKIN', 'Active source switch',$('i.choosepanel[name="playlistm"]').css('font-weight'),
-							$('.mainpane:visible').not('#infobar').length, prefs.chooser)
-				uiHelper.sourceControl('albumlist');
+					uiHelper.sourceControl('albumlist');
 			}
 			var np = $('#nowplaying');
 			var nptop = np.offset().top;

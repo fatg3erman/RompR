@@ -6,6 +6,10 @@
 =====================================================================
 */
 
+:root {
+	--display-mode: 0;
+}
+
 h1 {
 	font-size:130%;
 }
@@ -956,10 +960,11 @@ div.playable.clicktrack {
 	}
 
 	i.choosepanel[name="playlistm"] {
-/*      This is here so the layoutProcessor knows we're in tall portrait mode
-		and it should choose infobar instead */
-		font-weight:900;
 		display: none !important;
+	}
+
+	:root {
+		--display-mode: 1;
 	}
 
 }
@@ -1006,10 +1011,6 @@ div.playable.clicktrack {
 		padding-right: 8px;
 	}
 
-/*	#nptext {
-		text-align:right;
-	}
-*/
 	#nowplaying_icons {
 		text-align: right;
 	}
@@ -1127,13 +1128,6 @@ div.playable.clicktrack {
 	}
 }
 
-/*@media screen and (max-height: 480px) and (orientation: landscape) {
-
-	#albumpicture {
-		max-height: 40vh;
-	}
-}
-*/
 
 @media screen and (min-width:640px) and (min-height: 541px) and (orientation: landscape) {
 	 /*at 540 px high it reverts to being like small portrait mode */
@@ -1146,6 +1140,10 @@ div.playable.clicktrack {
 	/* Big screens - combination of everything - nowplaying and playlist together, chooser on right hand side */
 	#infobar {
 		height: 50%;
+	}
+
+	#infopane:visible ~ div {
+		display: none !important;
 	}
 
 	#albumcover {
@@ -1164,10 +1162,6 @@ div.playable.clicktrack {
 		padding-right: 8px;
 	}
 
-/*	#nptext {
-		text-align:right;
-	}
-*/
 	#nowplaying_icons {
 		text-align: right;
 	}
@@ -1181,10 +1175,11 @@ div.playable.clicktrack {
 	}
 
 	i.choosepanel[name="playlistm"] {
-/*      This is here so the layoutProcessor knows we're in tall portrait mode
-		and it should choose infobar instead */
-		font-weight:1000;
 		display:none !important;
+	}
+
+	:root {
+		--display-mode: 2;
 	}
 
 	#playlistm {

@@ -12,8 +12,12 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 'minimum-scale=1.0, user-scalable=0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />';
 print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string."&skin=".$skin.'" />'."\n";
-print '<link rel="shortcut icon" href="newimages/favicon.ico" />
-<link rel="stylesheet" type="text/css" href="gettheme.php" />
+print '<link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png" />
+<link rel="shortcut icon" sizes="128x128" href="newimages/favicon-128.png" />
+<link rel="shortcut icon" sizes="64x64" href="newimages/favicon-64.png" />
+<link rel="shortcut icon" sizes="48x48" href="newimages/favicon-48.png" />
+<link rel="shortcut icon" sizes="32x32" href="newimages/favicon-32.png" />
+<link rel="shortcut icon" sizes="16x16" href="newimages/favicon-16.png" />
 <script type="text/javascript" src="jquery/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="jquery/jquery-migrate-3.3.2.min.js"></script>
 <script type="text/javascript" src="ui/setupbits.js"></script>

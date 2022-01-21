@@ -305,6 +305,10 @@ function get_file_extension(filename) {
 	return filename.substring(filename.lastIndexOf('.')+1, filename.length) || 'Unknown';
 }
 
+function get_css_variable(name) {
+	return getComputedStyle(document.documentElement).getPropertyValue(name);
+}
+
 function set_css_variable(name, value) {
 	document.documentElement.style.setProperty(name, value);
 }

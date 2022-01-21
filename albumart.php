@@ -14,7 +14,8 @@ set_version_string();
 <link rel="shortcut icon" sizes="128x128" href="newimages/favicon-128.png" />
 <link rel="shortcut icon" sizes="64x64" href="newimages/favicon-64.png" />
 <link rel="shortcut icon" sizes="48x48" href="newimages/favicon-48.png" />
-<link rel="shortcut icon" sizes="16x16" href="newimages/favicon.ico" />
+<link rel="shortcut icon" sizes="32x32" href="newimages/favicon-32.png" />
+<link rel="shortcut icon" sizes="16x16" href="newimages/favicon-16.png" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />

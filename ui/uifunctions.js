@@ -363,7 +363,7 @@ function setChooserButtons() {
 function parsePsetCss(item, dflt) {
 	// Save looking these up every time, it's quite slow
 	// Note that if aplha is set to 1, it doesn't come back. So use 0.99
-	var c = getComputedStyle(document.documentElement).getPropertyValue(item);
+	var c = get_css_variable(item);
 	var regexp = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*(.*)\s*\)/;
 	var match = regexp.exec(c);
 	// If no style is set it comes back as 0,0,0 so we must catch that
