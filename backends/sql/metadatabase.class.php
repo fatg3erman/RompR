@@ -677,7 +677,12 @@ class metaDatabase extends collection_base {
 				return false;
 			}
 
-			if ($result = $this->generic_sql_query("INSERT INTO TagListtable (TTindex, Tagindex) VALUES ('".$ttid."', '".$tagindex."')", true)) {
+			if ($result = $this->sql_prepare_query(true, null, null, null,
+					"INSERT INTO TagListtable (TTindex, Tagindex) VALUES (?, ?)",
+						$ttid,
+						$tagindex
+					)
+				) {
 				logger::debug("ADD TAGS", "Success");
 				if (in_array($t, prefs::$prefs['auto_audiobook'])) {
 					logger::log('ADD TAGS', 'Setting TTindex',$ttid,'as audiobook due to tag',$t);

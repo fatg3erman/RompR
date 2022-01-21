@@ -899,13 +899,33 @@ div.playable.clicktrack {
 	}
 
 	#dbtags {
-		float: left;
-		margin-left:6px;
-		margin-right:6px;
+		float: none;
+		width: 100%;
+		text-align: center;
+		margin-left:0;
+		margin-right:0;
 	}
 
 	#stars {
 		float:left;
+		margin-right: 0;
+		margin-left: 0;
+	}
+
+	#nowplaying_icons {
+		text-align: center;
+	}
+
+	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
+		margin-bottom: 4px;
+		float: right;
+		display: inline-block;
+	}
+
+	#dbtags .playspan {
+		margin-right: auto;
+		margin-left: auto;
+		display: table;
 	}
 
 }
@@ -933,98 +953,91 @@ div.playable.clicktrack {
 
 /*
 =====================================================================
-= Responsive Layout - Portrait, playlist on now playing screen
+= Responsive Layout - Portrait, nowplaying at top
 = Changes at 700px high
 =====================================================================
 */
 
 @media screen and (min-height: 700px) and (orientation: portrait) {
 
-	.mainpane {
-		width: 100%;
-		height: 100%;
-	}
-
-	#infobar {
-		height: 50%;
-		width: 100%;
-	}
-
-	#toomanywrappers {
-		overflow: hidden;
-	}
-
-	#playlistm {
-		height:50%;
-		width:100%;
-	}
-
-	i.choosepanel[name="playlistm"] {
-		display: none !important;
-	}
-
 	:root {
 		--display-mode: 1;
 	}
 
-}
+	.mainpane {
+		width: 100%;
+		height: 80%;
+		position: relative;
+		top: 0;
+	}
 
-@media screen and (min-height: 700px) and (max-width: 600px) and (orientation: portrait) {
-	/* Narrow screens - nowplaying under album picture */
+	#infobar {
+		height: 20%;
+		width: 100%;
+		position: relative;
+		top: 0;
+		display: block !important;
+	}
+
+	#toomanywrappers {
+		overflow: visible;
+	}
+
+	#playlistm {
+		height: 80%;
+		width:100%;
+		position: relative;
+		top: 0;
+	}
+
+	i.choosepanel[name="infobar"] {
+		display: none !important;
+	}
+
 	#albumcover {
-		text-align: center;
-		overflow:hidden;
-	}
-
-	#albumpicture {
-		width: 85%;
-		max-width: 22vh;
-		height: auto;
-	}
-
-	#dbtags {
 		float: left;
-		margin-left:6px;
-		margin-right:6px;
-	}
-
-	#stars {
-		float:left;
-	}
-}
-
-@media screen and (min-height: 700px) and (min-width: 601px) and (orientation: portrait) {
-	/* Wider screens - nowplaying next to album picture */
-	#albumcover {
-		float: left;
-		height:100%;
+		height: calc(20vh);
+		max-width: calc(20vh);
 	}
 
 	#albumpicture {
 		height: 100%;
 		width: auto;
-		max-width:60vw;
-		margin-right:8px;
-	}
-
-	#nowplaying {
-		padding-right: 8px;
+		margin: 0;
 	}
 
 	#nowplaying_icons {
-		text-align: right;
+		float: right;
+		max-width: calc(20vh);
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
-		margin-bottom: 4px;
+	#nowplaying {
+		position: absolute;
+		top:  0px;
+		left: calc(20vh);
+		width: calc(100vw - 40vh);
+	}
+
+	#progress {
+		height:  6px;
+	}
+
+	#playbackTime {
+		font-size: 9px !important;
+		line-height: 9px !important;
+		height: 10px !important;
+	}
+
+	#stars {
+		float: left;
+		margin-left: 0;
 	}
 
 }
 
 /*
 =====================================================================
-= Responsive Layout - Landscape, playlist on separate panel
-= Essentially the same as portrait with min-height 700 and min-width 421
+= Responsive Layout - Landscape, small scree,  playlist on separate panel
 =====================================================================
 */
 
@@ -1071,8 +1084,7 @@ div.playable.clicktrack {
 
 /*
 =====================================================================
-= Responsive Layout - Landscape, chooser next to nowplaying
-= Switches at 640px wide
+= Responsive Layout - Landscape, 2 columns
 =====================================================================
 */
 
@@ -1102,8 +1114,6 @@ div.playable.clicktrack {
 	}
 }
 
-/* 3 Modes for info pane to make best use of available space */
-
 @media screen and (min-width:640px) and (orientation: landscape) {
 	/* Standard - info pane looks like small portrait mode */
 	#albumcover {
@@ -1118,28 +1128,58 @@ div.playable.clicktrack {
 	}
 
 	#dbtags {
-		float: left;
-		margin-left:6px;
-		margin-right:6px;
+		width: 100%;
+		text-align: center;
+		margin-left:0;
+		margin-right:0;
 	}
 
 	#stars {
 		float:left;
+		margin-right: 0;
+		margin-left: 0;
 	}
+
+	#nowplaying_icons {
+		text-align: center;
+	}
+
+	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
+		margin-bottom: 4px;
+		float: right;
+		display: inline-block;
+	}
+
 }
 
+@media screen and (min-width:800px) and (orientation: landscape) {
+	.mainpane {
+		width: 60%;
+	}
 
-@media screen and (min-width:640px) and (min-height: 541px) and (orientation: landscape) {
-	 /*at 540 px high it reverts to being like small portrait mode */
-	#albumpicture {
-		/*max-width:30vh*/
+	#infobar {
+		width: 40%;
+	}
+
+	#playlistm {
+		width: 60%;
 	}
 }
 
 @media screen and (min-width:1024px) and (min-height: 740px) and (orientation: landscape) {
-	/* Big screens - combination of everything - nowplaying and playlist together, chooser on right hand side */
+	/* Big screens - 3 columns */
 	#infobar {
-		height: 50%;
+		width: 26%;
+		display: block !important;
+	}
+
+	#playlistm {
+		width: 32%;
+		display: block !important;
+	}
+
+	.mainpane {
+		width: 42%;
 	}
 
 	#infopane:visible ~ div {
@@ -1147,45 +1187,62 @@ div.playable.clicktrack {
 	}
 
 	#albumcover {
-		float: left;
-		height:100%;
-		max-height:35vw;
+		text-align: center;
+		overflow:hidden;
 	}
 
 	#albumpicture {
-		height: 100%;
-		width: auto;
-		margin-right:8px;
+		width: unset;
+		max-width: 99%;
+		height: auto;
 	}
 
-	#nowplaying {
-		padding-right: 8px;
+	#dbtags {
+		float: none;
+		width: 100%;
+		text-align: center;
+		margin-left:0;
+		margin-right:0;
+	}
+
+	#stars {
+		float:none;
+		width: 100%;
+		text-align: center;
+		margin-right: 0;
+		margin-left: 0;
 	}
 
 	#nowplaying_icons {
-		text-align: right;
+		text-align: center;
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
 		margin-bottom: 4px;
-	}
-
-	#stars, #dbtags {
 		float: none;
+		display: inline-block;
 	}
 
-	i.choosepanel[name="playlistm"] {
-		display:none !important;
+	#dbtags .playspan {
+		margin-right: auto;
+		margin-left: auto;
+		display: table;
 	}
 
 	:root {
 		--display-mode: 2;
 	}
 
-	#playlistm {
-		position: absolute;
-		height: calc(50% - 20px);
-		top: calc(50% + 20px);
+	#playbackTime {
+		font-size: 10px;
+		height: 14px;
+		line-height: 14px;
+		margin-top: 4px;
+		margin-bottom: 4px;
+	}
+
+	#progress {
+		margin-top: 8px;
 	}
 
 }

@@ -143,21 +143,26 @@ class data_base {
 		}
 
 		if (($stmt = $this->sql_prepare_query_later($query)) !== false) {
-			if ($stmt->execute($args)) {
-				if ($return_type == PDO::FETCH_COLUMN) {
-					$retval = $stmt->fetchAll(PDO::FETCH_COLUMN, $return_value);
-				} else if ($return_value !== null) {
-					$arr = $stmt->fetch(PDO::FETCH_ASSOC);
-					$retval = ($arr) ? $arr[$return_value] : $value_default;
-				} else if ($return_boolean) {
-					$retval = true;
+			try {
+				if ($stmt->execute($args)) {
+					if ($return_type == PDO::FETCH_COLUMN) {
+						$retval = $stmt->fetchAll(PDO::FETCH_COLUMN, $return_value);
+					} else if ($return_value !== null) {
+						$arr = $stmt->fetch(PDO::FETCH_ASSOC);
+						$retval = ($arr) ? $arr[$return_value] : $value_default;
+					} else if ($return_boolean) {
+						$retval = true;
+					} else {
+						$retval = $stmt->fetchAll($return_type);
+					}
+					$stmt = null;
+					return $retval;
 				} else {
-					$retval = $stmt->fetchAll($return_type);
+					$this->show_sql_error("SQL Statement Error", $stmt);
 				}
-				$stmt = null;
-				return $retval;
-			} else {
-				$this->show_sql_error("SQL Statement Error for",$stmt);
+			} catch (Exception $e) {
+				$this->show_sql_error("SQL Statement Error", $stmt);
+				logger::log('SQL','PDO rasied exception', $e);
 			}
 		}
 		if ($return_value !== null) {

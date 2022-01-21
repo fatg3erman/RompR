@@ -510,12 +510,16 @@ var layoutProcessor = function() {
 
 		sourceControl: function(source) {
 			debug.mark('LAYOUT','Switching source to',source);
-			// hacky - set an irrelevant css parameter as a flag so we change behaviour
 			var display_mode = get_css_variable('--display-mode');
 			// var layoutflag = parseInt($('i.choosepanel[name="playlistm"]').css('font-weight'));
-			if ((source == 'playlistm' || source == 'infobar') && prefs.chooser != 'infopane' && display_mode == 2) {
-				return;
+			if (display_mode == 2) {
+				if (source == "playlistm")
+					source = "infobar";
+
+				if (source == 'infobar' && prefs.chooser != 'infopane')
+					return;
 			}
+
 			// if (source == 'infopane') {
 			// 	$('#infobar').css('display', 'none');
 			// 	if (display_mode > 0) {
@@ -527,9 +531,6 @@ var layoutProcessor = function() {
 			// 		$('#playlistm').css('display', '');
 			// 	}
 			// }
-			if (source == "playlistm" && display_mode > 0) {
-				source = "infobar";
-			}
 			$('.mainpane:not(.invisible):not(#'+source+')').addClass('invisible');
 			// if (display_mode > 0) {
 			// 	$('#playlistm').removeClass('invisible');
@@ -547,14 +548,6 @@ var layoutProcessor = function() {
 			$("#loadsawrappers").css({height: mainheight+"px"});
 			var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
 			$('#toomanywrappers').css({height: infoheight+"px"});
-			// if (oldwindowsize.y != ws.y || oldwindowsize.x != ws.x || prefs.chooser != oldchooser) {
-			// 	// Work around iOS Safari bug where it updates width css before height
-			// 	// and therefore doesn't get the album picture size right
-			// 	$('#albumpicture').css('width', '0px');
-			// 	await new Promise(r => setTimeout(r, 1));
-			// 	$('#albumpicture').css('width', '');
-			// }
-			// oldwindowsize = ws;
 			oldchooser = prefs.chooser;
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
@@ -566,6 +559,7 @@ var layoutProcessor = function() {
 				&& sleepHelper.isVisible()) {
 					uiHelper.sourceControl('albumlist');
 			}
+
 			var np = $('#nowplaying');
 			var nptop = np.offset().top;
 			debug.debug('LAYOUT', 'nptop is',nptop);
