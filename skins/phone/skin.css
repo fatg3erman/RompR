@@ -1374,6 +1374,12 @@ div.playable.clicktrack {
 		width: 42%;
 	}
 
+	.mainpane:not(#infopane) {
+		border-left: 1px solid var(--border-colour);
+		border-right: 1px solid var(--border-colour);
+		box-sizing: border-box;
+	}
+
 	#albumcover {
 		height: 26vw;
 		text-align: center;
