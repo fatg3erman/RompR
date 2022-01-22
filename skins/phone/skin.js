@@ -37,6 +37,10 @@ jQuery.fn.menuHide = async function() {
 			$('#podholder').removeClass('menu-covered');
 		await self.hide(0).promise();
 		self.findParentScroller().restoreScrollPos();
+
+		if (self.hasClass('removeable'))
+			self.remove();
+
 	}
 	return this;
 }
@@ -233,18 +237,24 @@ jQuery.fn.insertAlbumAfter = function(albumindex, html, tracklist) {
 	// album before or after the dropdown as it gets removed when we close it
 	return this.each(function() {
 		var me = $(this);
+		var is_covered = $('.openmenu[name="'+albumindex+'"]').hasClass('menu-covered');
 		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
 		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
 		$(html).insertAfter(me).scootTheAlbums();
+		if (is_covered)
+			$('.openmenu[name="'+albumindex+'"]').addClass('menu-covered');
 	});
 };
 
 jQuery.fn.insertAlbumAtStart = function(albumindex, html, tracklist) {
 	return this.each(function() {
 		var me = $(this);
+		var is_covered = $('.openmenu[name="'+albumindex+'"]').hasClass('menu-covered');
 		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
 		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
 		$(html).insertAfter(me.children('.vertical-centre.configtitle').next()).scootTheAlbums();
+		if (is_covered)
+			$('.openmenu[name="'+albumindex+'"]').addClass('menu-covered');
 	});
 }
 
@@ -511,7 +521,7 @@ var layoutProcessor = function() {
 		sourceControl: function(source) {
 			debug.mark('LAYOUT','Switching source to',source);
 			var display_mode = get_css_variable('--display-mode');
-			// var layoutflag = parseInt($('i.choosepanel[name="playlistm"]').css('font-weight'));
+
 			if (display_mode == 2) {
 				if (source == "playlistm")
 					source = "infobar";
@@ -520,21 +530,13 @@ var layoutProcessor = function() {
 					return;
 			}
 
-			// if (source == 'infopane') {
-			// 	$('#infobar').css('display', 'none');
-			// 	if (display_mode > 0) {
-			// 		$('#playlistm').css('display', 'none');
-			// 	}
-			// } else {
-			// 	$('#infobar').css('display', '');
-			// 	if (display_mode > 0) {
-			// 		$('#playlistm').css('display', '');
-			// 	}
-			// }
+			if (display_mode == 1) {
+				if (source == 'infobar' && prefs.chooser != 'infopane')
+					return;
+			}
+
 			$('.mainpane:not(.invisible):not(#'+source+')').addClass('invisible');
-			// if (display_mode > 0) {
-			// 	$('#playlistm').removeClass('invisible');
-			// }
+
 			$('#'+source).removeClass('invisible');
 			prefs.save({chooser: source});
 			uiHelper.adjustLayout();
@@ -546,8 +548,7 @@ var layoutProcessor = function() {
 			var hh = $("#headerbar").outerHeight(true);
 			var mainheight = ws.y - hh;
 			$("#loadsawrappers").css({height: mainheight+"px"});
-			var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
-			$('#toomanywrappers').css({height: infoheight+"px"});
+
 			oldchooser = prefs.chooser;
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
@@ -559,15 +560,7 @@ var layoutProcessor = function() {
 				&& sleepHelper.isVisible()) {
 					uiHelper.sourceControl('albumlist');
 			}
-
-			var np = $('#nowplaying');
-			var nptop = np.offset().top;
-			debug.debug('LAYOUT', 'nptop is',nptop);
-			if (nptop > 0) {
-				var t = Math.min(250, (infoheight - nptop + hh));
-				np.css({height: t+"px"});
-				infobar.rejigTheText();
-			}
+			infobar.rejigTheText();
 		},
 
 		showTagButton: function() {

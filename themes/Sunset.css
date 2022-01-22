@@ -16,7 +16,7 @@
 
 
     --highlight-bg-colour: rgba(0,0,0,0.3);
-
+    --highlight-bg-image: none;
 
     --text-colour: #eeeeee;
     --border-colour: #aaaaaa;
@@ -107,10 +107,6 @@
     --waiting-swinger-bg-image: radial-gradient(circle at center, rgba(255, 183, 0, 1), rgba(255, 183, 0, 0));
 
     --icon-snapcast: url('newimages/snapcast_800_white.png');
-}
-
-#playlistm #playlist_top, #playlistm #playlistbuttons {
-    background-color: var(--document-bg-colour);
 }
 
 /* This is required when you have a left border on playlist-current-track */

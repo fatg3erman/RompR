@@ -40,9 +40,9 @@ var infobar = function() {
 
 	function showLove(flag) {
 		if (lastfm.isLoggedIn() && flag) {
-			$("#lastfm").show();
+			$("#lastfm").removeClass('invisible');
 		} else {
-			$("#lastfm").hide();
+			$("#lastfm").addClass('invisible');
 		}
 	}
 
@@ -212,13 +212,16 @@ var infobar = function() {
 
 		var nptext = $('#nptext');
 		var parent = nptext.parent();
+		/* Empty it - but we need to have at least an nbsp in there for phone skin where
+			we use flexbox vertical, otherwise the height will be zero */
+		nptext.removeClass('ready calculating').addClass('calculating').html('&nbsp').css('padding-top', '0px');
 		var maxheight = parent.height();
 
 		// Start with a font size that will fill the height if no text wraps
 		var fontsize = Math.floor((maxheight/1.75)/1.25);
 		var two_lines = getLines(2);
 
-		nptext.empty().css('font-size', fontsize+'px').css('padding-top', '0px').removeClass('ready calculating').addClass('calculating');
+		nptext.css('font-size', fontsize+'px');
 
 		if (two_lines[0] != ' ') {
 			put_text_in_area(two_lines, nptext);
@@ -459,7 +462,7 @@ var infobar = function() {
 
 		setNowPlayingInfo: function(info) {
 			//Now playing info
-			debug.core("INFOBAR","NPinfo",info);
+			debug.log("INFOBAR","NPinfo",info);
 			if (playlistinfo.file) {
 				$('[name="'+rawurlencode(playlistinfo.file)+'"]').removeClass('playlistcurrentitem');
 			}
@@ -472,39 +475,39 @@ var infobar = function() {
 			$("#progress").rangechooser("setOptions", {range: info.Time})
 			setTheText(info);
 			if (info.Title != "" && info.trackartist != "") {
-				$("#stars").fadeIn('fast');
-				$("#dbtags").fadeIn('fast');
-				$("#ptagadd").fadeIn('fast');
-				$("#playcount").fadeIn('fast');
+				$("#stars").removeClass('invisible');
+				$("#dbtags").removeClass('invisible');
+				$("#ptagadd").removeClass('invisible');
+				$("#playcount").removeClass('invisible');
 				showLove(true);
 			} else {
-				$("#stars").fadeOut('fast');
-				$("#dbtags").fadeOut('fast');
-				$("#ptagadd").fadeOut('fast');
-				$("#playcount").fadeOut('fast');
+				$("#stars").addClass('invisible');
+				$("#dbtags").addClass('invisible');
+				$("#ptagadd").addClass('invisible');
+				$("#playcount").addClass('invisible');
 				showLove(false);
 			}
 			if (info.file != "") {
 				var f = info.file.match(/^podcast[\:|\+](http.*?)\#/);
 				if (f && f[1]) {
 					$("#nppodiput").val(f[1]);
-					$("#subscribe").fadeIn('fast');
+					$("#subscribe").removeClass('invisible');
 				} else {
-					$("#subscribe").fadeOut('fast');
+					$("#subscribe").addClass('invisible');
 				}
 			}
 			if (info.type != 'stream') {
-				$("#addtoplaylist").fadeIn('fast');
+				$("#addtoplaylist").removeClass('invisible');
 			} else {
-				$("#addtoplaylist").fadeOut('fast');
+				$("#addtoplaylist").addClass('invisible');
 			}
 			if (info.Id === -1) {
-				$("#stars").fadeOut('fast');
-				$("#dbtags").fadeOut('fast');
-				$("#playcount").fadeOut('fast');
-				$("#subscribe").fadeOut('fast');
-				$("#addtoplaylist").fadeOut('fast');
-				$("#ptagadd").fadeOut('fast');
+				$("#stars").addClass('invisible');
+				$("#dbtags").addClass('invisible');
+				$("#playcount").addClass('invisible');
+				$("#subscribe").addClass('invisible');
+				$("#addtoplaylist").addClass('invisible');
+				$("#ptagadd").addClass('invisible');
 				showLove(false);
 			} else {
 				infobar.albumImage.setKey(info.ImgKey);

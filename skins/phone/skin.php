@@ -107,12 +107,15 @@
 </div>
 
 
-<div id="infobar" class="mainpane invisible">
-	<div id="toomanywrappers">
-		<div id="albumcover">
-			<img id="albumpicture" />
-		</div>
-		<div id="nowplaying_icons" class="clearfix">
+<div id="infobar" class="mainpane invisible containerbox vertical">
+
+	<div id="albumcover" class="fixed">
+		<img id="albumpicture" />
+	</div>
+
+	<div id="cssisshit" class="containerbox vertical expand">
+
+		<div id="nowplaying_icons" class="clearfix fixed">
 			<div id="stars" class="invisible">
 				<i id="ratingimage" class="icon-0-stars rating-icon-big"></i>
 				<input type="hidden" value="-1" />
@@ -133,28 +136,31 @@
 			<div id="dbtags" class="invisible">
 			</div>
 		</div>
-		<div id="nowplaying">
-			<div id="nptext" class="calculating"></div>
-		</div>
-	</div>
-	<div id="cssisshit">
-		<div id="buttonholder" class="containerbox vertical">
-			<div id="buttons" class="fixed">
-<?php
-				print '<i title="'.language::gettext('button_previous').
-					'" class="prev-button icon-fast-backward clickicon controlbutton-small"></i>';
-				print '<i title="'.language::gettext('button_play').
-					'" class="play-button icon-play-circled shiftleft clickicon controlbutton"></i>';
-				print '<i title="'.language::gettext('button_stop').
-					'" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
-				print '<i title="'.language::gettext('button_stopafter').
-					'" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
-				print '<i title="'.language::gettext('button_next').
-					'" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
-?>
+
+		<div id="nowplaying-text-buttons" class="expand containerbox vertical">
+
+			<div id="nowplaying" class="expand">
+				<div id="nptext" class="calculating">&nbsp;</div>
 			</div>
-			<div id="progress" class="fixed"></div>
-			<div id="playbackTime" class="fixed">
+
+			<div id="buttonholder" class="containerbox vertical fixed">
+				<div id="buttons" class="fixed">
+	<?php
+					print '<i title="'.language::gettext('button_previous').
+						'" class="prev-button icon-fast-backward clickicon controlbutton-small"></i>';
+					print '<i title="'.language::gettext('button_play').
+						'" class="play-button icon-play-circled shiftleft clickicon controlbutton"></i>';
+					print '<i title="'.language::gettext('button_stop').
+						'" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
+					print '<i title="'.language::gettext('button_stopafter').
+						'" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
+					print '<i title="'.language::gettext('button_next').
+						'" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
+	?>
+				</div>
+				<div id="progress" class="fixed"></div>
+				<div id="playbackTime" class="fixed">
+				</div>
 			</div>
 		</div>
 	</div>

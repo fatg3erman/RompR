@@ -15,8 +15,8 @@
 
 
 
-    --highlight-bg-colour:  rgba(0,0,0,0.35);
-
+    --highlight-bg-colour: rgba(0,0,0,0.35);
+    --highlight-bg-image: none;
 
     --text-colour: #eeeeee;
     --border-colour: #7c811b;
@@ -123,6 +123,3 @@ a:hover,a:active
     text-shadow:0 0 15px var(--highlight-colour);
 }
 
-body.phone #playlist_top, body.phone #playlistbuttons {
-    background-color: var(--document-bg-colour);
-}

@@ -646,6 +646,10 @@ img.notexist,img.notfound {
 	width:100%;
 }
 
+#nowplaying_icons>div.invisible {
+	display: none !important;
+}
+
 /*
 =====================================================================
 =

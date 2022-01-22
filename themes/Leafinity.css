@@ -116,7 +116,3 @@
     padding-left:8px;
 }
 
-/* For when the playlist cntrols are open in the phone skin */
-#playlistm #playlist_top, #playlistm #playlistbuttons {
-    background-color: var(--document-bg-colour);
-}

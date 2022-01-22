@@ -102,9 +102,25 @@ button.spinable.icon-spin6 {
 	/* Tried to use this, but safari on my iPhone S sets 100vh as 320px when the browser reports
 	it as 300px, even in full-screen mode. This is definitely a bug, but what can ya do? */
 	/* Note this includes 40px for headerbar. Keep them synced */
-	/* height: calc(100vh - 40px); */
+	/*height: calc(100vh - 40px); */
 	width: 100%;
 	overflow:hidden;
+}
+
+#albumcover {
+	order:  1;
+}
+
+#cssisshit {
+	order: 2;
+}
+
+#nowplaying_icons {
+	order:  1;
+}
+
+#nowplaying-text-buttons {
+	order: 2;
 }
 
 #albumpicture {
@@ -261,12 +277,6 @@ button.spinable.icon-spin6 {
 	/*max-height: 24px;*/
 	margin-top:4px;
 }
-
-#toomanywrappers {
-	height: 100%;
-	width: 100%;
-}
-
 
 /*
 =====================================================================
@@ -890,12 +900,13 @@ div.playable.clicktrack {
 	#albumcover {
 		text-align: center;
 		overflow:hidden;
+		height: 48%;
+		object-fit: scale-down;
 	}
 
 	#albumpicture {
-		width: 85%;
-		max-width: 60vh;
-		max-height:50vh;
+		width: auto;
+		height: 100%;
 	}
 
 	#dbtags {
@@ -960,10 +971,6 @@ div.playable.clicktrack {
 
 @media screen and (min-height: 700px) and (orientation: portrait) {
 
-	:root {
-		--display-mode: 1;
-	}
-
 	.mainpane {
 		width: 100%;
 		height: 80%;
@@ -974,13 +981,9 @@ div.playable.clicktrack {
 	#infobar {
 		height: 20%;
 		width: 100%;
-		position: relative;
 		top: 0;
-		display: block !important;
-	}
-
-	#toomanywrappers {
-		overflow: visible;
+		display: flex;
+		flex-direction: row;
 	}
 
 	#playlistm {
@@ -990,32 +993,42 @@ div.playable.clicktrack {
 		top: 0;
 	}
 
-	i.choosepanel[name="infobar"] {
+/*	i.choosepanel[name="infobar"] {
+		display: none !important;
+	}
+*/
+	#infopane:visible ~ div {
 		display: none !important;
 	}
 
+	#infopane {
+		height: 100%;
+	}
+
 	#albumcover {
-		float: left;
-		height: calc(20vh);
-		max-width: calc(20vh);
+		height: 100%;
+		width: 20vh;
+		text-align: center;
 	}
 
 	#albumpicture {
 		height: 100%;
 		width: auto;
+		max-width: 100%;
 		margin: 0;
 	}
 
-	#nowplaying_icons {
-		float: right;
-		max-width: calc(20vh);
+	#cssisshit {
+		flex-direction: row;
 	}
 
-	#nowplaying {
-		position: absolute;
-		top:  0px;
-		left: calc(20vh);
-		width: calc(100vw - 40vh);
+	#nowplaying-text-buttons {
+		order: 1;
+	}
+
+	#nowplaying_icons {
+		width: 20vh;
+		order: 2;
 	}
 
 	#progress {
@@ -1029,8 +1042,17 @@ div.playable.clicktrack {
 	}
 
 	#stars {
-		float: left;
+		float: right;
 		margin-left: 0;
+		width: 100%;
+	}
+
+	#ratingimage {
+		float: right;
+	}
+
+	#dbtags {
+		text-align: right;
 	}
 
 }
@@ -1043,6 +1065,14 @@ div.playable.clicktrack {
 
 @media screen and (max-width:639px) and (orientation: landscape) {
 
+	#infobar {
+		display: block;
+	}
+
+	#infobar.invisible {
+		display: none;
+	}
+
 	.mainpane {
 		width: 100%;
 		height: 100%;
@@ -1050,9 +1080,11 @@ div.playable.clicktrack {
 
 	#albumpicture {
 		height: 100%;
+		max-width: 50vw;
 		width: auto;
-		max-width:60vw;
-		margin-right:8px;
+		box-sizing: border-box;
+		border: 4px solid transparent;
+		object-fit: scale-down;
 	}
 
 	#playlistm {
@@ -1061,16 +1093,12 @@ div.playable.clicktrack {
 	}
 
 	#albumcover {
-		float: left;
 		height:100%;
+		float: left;
 	}
 
-	#nowplaying {
-		padding-right: 8px;
-	}
-
-	#nowplaying_icons {
-		text-align: right;
+	#cssisshit {
+		height: 100%;
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #subscribe, #stars {
@@ -1079,6 +1107,10 @@ div.playable.clicktrack {
 
 	#stars {
 		float: right;
+	}
+
+	#dbtags {
+		text-align: center;
 	}
 }
 
@@ -1090,44 +1122,44 @@ div.playable.clicktrack {
 
 @media screen and (min-width:640px) and (orientation: landscape) {
 	.mainpane {
-		width: 50%;
+		width: 55%;
 		float:left;
 		height: 100%;
 	}
 
 	#playlistm {
-		width: 50%;
+		width: 55%;
 		float:left;
 		height: 100%;
 	}
 
 	#infobar {
-		display:block;
+		display: flex;
+		width: 45%;
+	}
+
+	#infopane:visible ~ div {
+		display: none !important;
 	}
 
 	#infopane {
 		width:100%;
 	}
 
-	.choose_nowplaying {
-		display:none !important;
-	}
-}
-
-@media screen and (min-width:640px) and (orientation: landscape) {
-	/* Standard - info pane looks like small portrait mode */
 	#albumcover {
 		text-align: center;
 		overflow:hidden;
+		height: 45%;
+		object-fit: scale-down;
 	}
 
 	#albumpicture {
-		width: 85%;
-		max-width: 40vh;
-		max-height: 50vh;
+		width: auto;
+		height: 100%;
 	}
 
 	#dbtags {
+		float: none;
 		width: 100%;
 		text-align: center;
 		margin-left:0;
@@ -1150,7 +1182,18 @@ div.playable.clicktrack {
 		display: inline-block;
 	}
 
+	#dbtags .playspan {
+		margin-right: auto;
+		margin-left: auto;
+		display: table;
+	}
+
+	:root {
+		--display-mode: 1;
+	}
+
 }
+
 
 @media screen and (min-width:800px) and (orientation: landscape) {
 	.mainpane {
@@ -1166,11 +1209,11 @@ div.playable.clicktrack {
 	}
 }
 
-@media screen and (min-width:1024px) and (min-height: 740px) and (orientation: landscape) {
+@media screen and (min-width:1024px) and (orientation: landscape) {
 	/* Big screens - 3 columns */
 	#infobar {
 		width: 26%;
-		display: block !important;
+		display: flex !important;
 	}
 
 	#playlistm {
@@ -1187,14 +1230,17 @@ div.playable.clicktrack {
 	}
 
 	#albumcover {
+		height: 26vw;
 		text-align: center;
 		overflow:hidden;
 	}
 
 	#albumpicture {
 		width: unset;
-		max-width: 99%;
+		max-width: 100%;
 		height: auto;
+		box-sizing: border-box;
+		border: 4px solid transparent;
 	}
 
 	#dbtags {
