@@ -552,16 +552,15 @@ var layoutProcessor = function() {
 
 		adjustLayout: async function() {
 			infobar.updateWindowValues();
-			var ws = getWindowSize();
-			var hh = $("#headerbar").outerHeight(true);
-			var mainheight = ws.y - hh;
+			// var ws = getWindowSize();
+			// var hh = $("#headerbar").outerHeight(true);
+			// var mainheight = ws.y - hh;
+			// $("#loadsawrappers").css({height: mainheight+"px"});
 
 			// This doesn't work because sometimes when rotating the screen
 			// Safari fires this event before it recalculates the value of innerHeight
 			// var winy = window.innerHeight;
 			// var mainheight = winy - hh;
-
-			$("#loadsawrappers").css({height: mainheight+"px"});
 
 			// When rotating from portrait to landscape in 3 column mode, if we're viewing
 			// the tracklist in porttrait mode we need to re-display a chooser panel  or
@@ -570,7 +569,7 @@ var layoutProcessor = function() {
 			if (display_mode == 2 && $('.mainpane:visible').not('#infobar').length == 0)
 				layoutProcessor.sourceControl('albumlist');
 
-			layoutProcessor.setPlaylistHeight();
+			// layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
 			infobar.rejigTheText();
 			setTimeout(layoutProcessor.mobile_browser_shitness, 500);

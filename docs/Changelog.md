@@ -12,8 +12,9 @@ I don't have the time to develop 5 skins, and mobile browsers are finicky and bu
 testing all the desktop skins put together.
 * The button bar on the phone skin has been moved to the bottom of the screen because having it at the top
 conflicted with a built-in touch event on Safari for iPhone. Definitely a Safari bug but I can't fix those...
-* On iOS Safari, the Phone skin will try to ensure that the browser's addres bar is always visible because Safari always behaves as though
-it is even when it isn't. This does not apply when you have added RompR as an icon on your home screen.
+* On iOS Safari, the Phone skin will try to ensure that the browser hides the address bar because Safari always behaves as though
+it is hidden even when it isn't. Except when it doesn't. It'll try to make Chrome work sensibly too, but that's even harder.
+Adding RompR as an icon to your home screen is the best way to run it.
 * Moved Players and Snapcast to the top of the Prefs panel, since the Background Images panel now means you
 had to scroll a long way down to reach them.
 * 'Play From Here' option on the track popup menu, to mimic what CD Player Mode does when not in CD Player Mode
