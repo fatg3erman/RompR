@@ -89,8 +89,8 @@ include ("includes/prefspanel.php");
 			</div>
 
 			<div class="fixed topdrop"><i class="icon-menu smallpluginicon clickicon"></i>
-				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen" id="phacker">
-				<div class="configtitle"><div class="textcentre expand"><b>Play Queue</b></div></div>
+				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen containerbox vertical" id="phacker">
+				<div class="configtitle fixed"><div class="textcentre expand"><b>Play Queue</b></div></div>
 					<?php
 					include("skins/playlist.php");
 					?>

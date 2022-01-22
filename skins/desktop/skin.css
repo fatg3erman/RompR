@@ -132,6 +132,10 @@ input[type=text],input[type="number"] {
 	overflow:auto;
 }
 
+#pscroller {
+	/*max-height: inherit;*/
+}
+
 #volumecontrol {
 	width:14px;
 	margin-left:0px;

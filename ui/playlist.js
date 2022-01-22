@@ -641,6 +641,14 @@ var playlist = function() {
 			playlist.add_by_rompr_commands(tracks,moveto);
 		},
 
+		mimicCDPlayerMode: function() {
+			var tracks = playlist.ui_elements_to_rompr_commands($('.selected').filter(removeOpenItems));
+			old_cdplayermode = prefs.cdplayermode;
+			prefs.cdplayermode = true;
+			player.controller.addTracks(tracks, null, null, false);
+			prefs.cdplayermode = old_cdplayermode;
+		},
+
 		add_by_rompr_commands: function(tracks, moveto) {
 			if (tracks.length > 0) {
 				layoutProcessor.notifyAddTracks();

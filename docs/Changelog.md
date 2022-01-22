@@ -16,6 +16,7 @@ conflicted with a built-in touch event on Safari for iPhone. Definitely a Safari
 it is even when it isn't. This does not apply when you have added RompR as an icon on your home screen.
 * Moved Players and Snapcast to the top of the Prefs panel, since the Background Images panel now means you
 had to scroll a long way down to reach them.
+* 'Play From Here' option on the track popup menu, to mimic what CD Player Mode does when not in CD Player Mode
 
 
 ## Version 1.60

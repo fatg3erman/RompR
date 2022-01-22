@@ -224,14 +224,13 @@ include("includes/prefspanel.php")
 ?>
 </div>
 
-<div id="playlistm">
+<div id="playlistm" class="containerbox vertical">
 <?php
 include('skins/playlist.php');
 ?>
 </div>
 
 </div>
-
 
 
 <div id="headerbar" class="noborder fullwidth containerbox">
@@ -308,8 +307,6 @@ include('skins/playlist.php');
 		<i class="icon-menu topimg expand onlynarrow topbarmenu" name="narrowscreenicons"></i>
 	</div>
 </div>
-
-
 
 
 <div id="tagadder" class="top_drop_menu dropmenu">

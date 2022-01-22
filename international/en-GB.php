@@ -726,7 +726,8 @@ language::add_translations([
 	"label_remove_all" => 					'Remove All',
 	"manage_bgs" =>							'Manage Background Images',
 	"label_bg_global" =>					'Use In All Browsers',
-	"label_bg_only" =>						'For This Browser Only'
+	"label_bg_only" =>						'For This Browser Only',
+	"label_playfromhere" =>					'Play From Here'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

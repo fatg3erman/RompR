@@ -316,7 +316,7 @@ print '<div id="artistinformation" class="infotext noselection"><h2 class="infob
 <div id="trackinformation" class="infotext"></div>
 </div>
 
-<div id="playlist" class="column noborder tright">
+<div id="playlist" class="column noborder tright containerbox vertical">
 <?php
 include("skins/playlist.php");
 ?>

@@ -163,12 +163,12 @@ var layoutProcessor = function() {
 		},
 
 		setPlaylistHeight: function() {
-			var newheight = $("#bottompage").height() - $("#playlist_top").outerHeight();
-			if ($("#playlistbuttons").is(":visible")) {
-				newheight -= $("#playlistbuttons").outerHeight();
-			}
-			$("#pscroller").css("height", newheight.toString()+"px");
-			$('#pscroller').mCustomScrollbar("update");
+			// var newheight = $("#bottompage").height() - $("#playlist_top").outerHeight();
+			// if ($("#playlistbuttons").is(":visible")) {
+			// 	newheight -= $("#playlistbuttons").outerHeight();
+			// }
+			// $("#pscroller").css("height", newheight.toString()+"px");
+			// $('#pscroller').mCustomScrollbar("update");
 		},
 
 		scrollPlaylistToCurrentTrack: function() {

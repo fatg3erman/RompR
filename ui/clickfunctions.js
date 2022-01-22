@@ -276,6 +276,7 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('fakedouble', playPlayable);
 	clickRegistry.addClickHandlers('closepopup', closePopupMenu);
 	clickRegistry.addClickHandlers('clickqueuetracks', playlist.draggedToEmpty);
+	clickRegistry.addClickHandlers('clickplayfromhere', playlist.mimicCDPlayerMode);
 	clickRegistry.addClickHandlers('clickremdb', metaHandlers.fromUiElement.removeTrackFromDb);
 	clickRegistry.addClickHandlers('clickpltrack', metaHandlers.fromUiElement.tracksToPlaylist);
 	clickRegistry.addClickHandlers('removealbum', metaHandlers.fromUiElement.removeAlbumFromDb);
@@ -896,6 +897,10 @@ function makeTrackMenu(e, element) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem clickqueuetracks closepopup',
 		}).html(language.gettext('label_addtoqueue')));
+	} else if ($('.selected').length == 1) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem clickplayfromhere closepopup',
+		}).html(language.gettext('label_playfromhere')));
 	}
 
 	if ($(element).hasClass('clickresetresume')) {

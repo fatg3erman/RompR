@@ -49,6 +49,7 @@ div {
 #pscroller {
 	overflow-y:scroll;
 	-webkit-overflow-scrolling: touch;
+	max-height: inherit ;
 }
 
 #headerbar {

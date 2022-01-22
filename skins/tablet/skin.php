@@ -290,7 +290,7 @@ include("includes/prefspanel.php")
 ?>
 </div>
 
-<div id="playlistm">
+<div id="playlistm" class="containerbox vertical">
 <?php
 include('skins/playlist.php');
 ?>

@@ -1,4 +1,6 @@
-<div id="playlist_top" class="fullwidth">
+
+
+<div id="playlist_top" class="fixed fullwidth">
 <table width="100%"><tr><td align="left" class="smallicon">
 <?php
 print '<i style="margin-left:4px" title="'.language::gettext('button_playlistcontrols').
@@ -16,7 +18,7 @@ print '<i title="'.language::gettext('button_clearplaylist').'" class="icon-tras
 <tr><td colspan="4" align="center"><div id="plmode"></div></td></tr>
 </table>
 </div>
-<div id="playlistbuttons" class="toggledown invisible">
+<div id="playlistbuttons" class="fixed toggledown invisible">
 <?php
 
 print '<div id="flowcontrols" class="noborder containerbox">';
@@ -87,7 +89,11 @@ if (prefs::$prefs['player_backend'] == "mpd") {
 }
 ?>
 </div>
-<div id="pscroller">
+
+<div id="pscroller" class="expand">
 	<div id="sortable" class="noselection is-albumlist">
 	</div>
 </div>
+
+
+

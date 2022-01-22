@@ -502,11 +502,11 @@ var layoutProcessor = function() {
 		},
 
 		setPlaylistHeight: function() {
-			var newheight = $("#playlistm").height() - $("#playlist_top").outerHeight(true);
-			if ($("#playlistbuttons").is(":visible")) {
-				newheight = newheight - $("#playlistbuttons").outerHeight(true) - 2;
-			}
-			$("#pscroller").css("height", newheight.toString()+"px");
+			// var newheight = $("#playlistm").height() - $("#playlist_top").outerHeight(true);
+			// if ($("#playlistbuttons").is(":visible")) {
+			// 	newheight = newheight - $("#playlistbuttons").outerHeight(true) - 2;
+			// }
+			// $("#pscroller").css("height", newheight.toString()+"px");
 		},
 
 		scrollPlaylistToCurrentTrack: function() {
