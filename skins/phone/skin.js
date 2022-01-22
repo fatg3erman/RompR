@@ -529,8 +529,6 @@ var layoutProcessor = function() {
 
 			if (source == 'infopane') {
 				$('#infopane').removeClass('invisible');
-			} else if (prefs.chooser == 'infopane' && source != 'infopane') {
-				$('#infopane').addClass('invisible');
 			} else {
 				var display_mode = get_css_variable('--display-mode');
 				if (display_mode == 2 && (source == 'infobar' || source == 'playlistm')) {
@@ -541,28 +539,6 @@ var layoutProcessor = function() {
 				$('#'+source).removeClass('invisible');
 				oldchooser = source;
 			}
-
-			// var display_mode = get_css_variable('--display-mode');
-			// switch (display_mode) {
-			// 	case 2:
-			// 		// Wide layout, 3 columns
-			// }
-
-			// if (display_mode == 2) {
-			// 	if (source == "playlistm")
-			// 		source = "infobar";
-
-			// 	if (source == 'infobar' && !$('#infobar').hasClass('invisible'))
-			// 		return;
-			// }
-
-			// if (display_mode == 1) {
-			// 	if (source == 'infobar' && !$('#infobar').hasClass('invisible'))
-			// 		return;
-			// }
-			// if (prefs.chooser == source);
-			// 	return;
-
 			prefs.save({chooser: source});
 			uiHelper.adjustLayout();
 		},
@@ -573,6 +549,14 @@ var layoutProcessor = function() {
 			var hh = $("#headerbar").outerHeight(true);
 			var mainheight = ws.y - hh;
 			$("#loadsawrappers").css({height: mainheight+"px"});
+
+			// When rotating from portrait to landscape in 3 column mode, if we're viewing
+			// the tracklist in porttrait mode we need to re-display a chooser panel  or
+			// we end up with only 2 columns
+			var display_mode = get_css_variable('--display-mode');
+			if (display_mode == 2 && $('.mainpane:visible').not('#infobar').length == 0)
+				layoutProcessor.sourceControl('albumlist');
+
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
 			infobar.rejigTheText();

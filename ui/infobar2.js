@@ -212,15 +212,19 @@ var infobar = function() {
 		var nptext = $('#nptext');
 		var parent = nptext.parent();
 		/* Empty it - but we need to have at least an nbsp in there for phone skin where
-			we use flexbox vertical, otherwise the height will be zero */
-		nptext.removeClass('ready calculating').addClass('calculating').html('&nbsp').css('padding-top', '0px');
+			we use flexbox vertical, otherwise the height will be zero, and we need to set font size
+			to zero otherwise the flexbox will just keep expanding when we change the contents */
+		nptext.removeClass('ready calculating').addClass('calculating').html('&nbsp').css('padding-top', '0px').css('font-size', '0px');
 		var maxheight = parent.height();
+		var maxwidth = parent.width();
 
 		// Start with a font size that will fill the height if no text wraps
 		var fontsize = Math.floor((maxheight/1.75)/1.25);
 		var two_lines = getLines(2);
 
 		nptext.css('font-size', fontsize+'px');
+
+		// debug.log('BIGGEROZE', 'Start font size is',fontsize);
 
 		if (two_lines[0] != ' ') {
 			put_text_in_area(two_lines, nptext);
@@ -229,19 +233,26 @@ var infobar = function() {
 			// because we've got text wrapping onto multiple lines and we don't know how that will
 			// change when we adjust the font size.
 			var final_fontsize = fontsize;
-			while (fontsize > 8 && (nptext.outerHeight(true) > maxheight)) {
+			while (fontsize > 8 && (nptext.outerHeight(true) > maxheight || nptext.outerWidth(true) > maxwidth)) {
 				fontsize = fontsize / 2;
 				final_fontsize = fontsize;
+				// debug.log('BIGGEROZE', 'Reduce font size to',fontsize);
 				nptext.css('font-size', fontsize+'px');
 			}
 			var increment = final_fontsize / 2;
-			while (increment > 1 && nptext.outerHeight(true) < maxheight) {
+			while (
+					increment > 1 &&
+					(nptext.outerHeight(true) < maxheight || nptext.outerWidth(true) < maxwidth) &&
+					!(nptext.outerHeight(true) > maxheight || nptext.outerWidth(true) > maxwidth)
+			) {
 				final_fontsize = fontsize;
 				fontsize += increment;
 				increment = increment / 2;
+				// debug.log('BIGGEROZE', 'Increase font size to',fontsize);
 				nptext.css('font-size', fontsize+'px');
 			}
 
+			// debug.log('BIGGEROZE', 'Final font size is',final_fontsize);
 			nptext.css('font-size', final_fontsize+'px');
 
 			if (npinfo.Title && npinfo.Album && npinfo.Artist) {

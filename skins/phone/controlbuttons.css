@@ -224,58 +224,116 @@
 }
 
 @media screen and (min-height: 740px) and (min-width: 1024px) and (orientation: landscape) {
-#buttons
-{
-    padding-left:12px;
-    padding-right:12px;
-    padding-top:4px;
-    padding-bottom:6px;
+    #buttons
+    {
+        padding-left:12px;
+        padding-right:12px;
+        padding-top:4px;
+        padding-bottom:6px;
+    }
+
+    .controlbutton
+    {
+        margin:0px;
+        padding:0px;
+        vertical-align:middle;
+        display:inline-block;
+        width:56px;
+        height:56px;
+    }
+
+    .controlbutton-small
+    {
+        margin:0px;
+        vertical-align:middle;
+        display:inline-block;
+        width:48px;
+        height:48px;
+    }
+
+    .shiftleft
+    {
+        left:-8px;
+        position:relative;
+        z-index:250;
+    }
+
+    .shiftleft2
+    {
+        left:-16px;
+        position:relative;
+    }
+
+    .shiftleft3
+    {
+        position:relative;
+        left:-24px;
+        z-index:5;
+    }
+
+    .shiftleft4
+    {
+        position:relative;
+        left:-32px;
+        z-index:1;
+        margin-right:-30px;
+    }
 }
 
-.controlbutton
-{
-    margin:0px;
-    padding:0px;
-    vertical-align:middle;
-    display:inline-block;
-    width:56px;
-    height:56px;
-}
+@media screen and (min-height: 700px) and (max-width: 699px) and (orientation: portrait) {
 
-.controlbutton-small
-{
-    margin:0px;
-    vertical-align:middle;
-    display:inline-block;
-    width:48px;
-    height:48px;
-}
+    #buttons
+    {
+        padding-left:12px;
+        padding-right:12px;
+        padding-top:4px;
+        padding-bottom:6px;
+    }
 
-.shiftleft
-{
-    left:-8px;
-    position:relative;
-    z-index:250;
-}
+    .controlbutton
+    {
+        margin:0px;
+        padding:0px;
+        vertical-align:middle;
+        display:inline-block;
+        width:36px;
+        height:36px;
+    }
 
-.shiftleft2
-{
-    left:-16px;
-    position:relative;
-}
+    .controlbutton-small
+    {
+        margin:0px;
+        vertical-align:middle;
+        display:inline-block;
+        width:30px;
+        height:30px;
+    }
 
-.shiftleft3
-{
-    position:relative;
-    left:-24px;
-    z-index:5;
-}
+    .shiftleft
+    {
+        left: 0px;
+        position:relative;
+        z-index:250;
+    }
 
-.shiftleft4
-{
-    position:relative;
-    left:-32px;
-    z-index:1;
-    margin-right:-30px;
-}
+    .shiftleft2
+    {
+        left: 0px;
+        position:relative;
+    }
+
+    .shiftleft3
+    {
+        position:relative;
+        left: 0px;
+        z-index:5;
+    }
+
+    .shiftleft4
+    {
+        position:relative;
+        left: 0px;
+        z-index:1;
+    }
+
 }
