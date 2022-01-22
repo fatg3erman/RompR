@@ -2,14 +2,20 @@
 
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
-## Version 1.60.2
+## Version 1.61
 * Improve Metadata backup so it now restores all data including Podcasts and Radio Stations.
 * Improve Themes to make them easier to edit. Add two new ones. in the process I decided to delete
 some of the old ones as they were ugly and I couldn't be bothered to update them.
-* Quite a few small UI tweaks to make things a bit more consistent. It's tru to say that the Phone and Skypotato skins are
-my favourites and the others don't get a lot of attention any more.
+* Quite a few small UI tweaks to make things a bit more consistent. It's true to say that the Phone and Skypotato skins are
+my favourites and the others don't get a lot of attention any more. The Tablet skin is deprecated and will receive no further development.
+I don't have the time to develop 5 skins, and mobile browsers are finicky and bug ridden. Testing the phone skin takes as much time as
+testing all the desktop skins put together.
 * The button bar on the phone skin has been moved to the bottom of the screen because having it at the top
 conflicted with a built-in touch event on Safari for iPhone. Definitely a Safari bug but I can't fix those...
+* On iOS Safari, the Phone skin will try to ensure that the browser's addres bar is always visible because Safari always behaves as though
+it is even when it isn't. This does not apply when you have added RompR as an icon on your home screen.
+* Moved Players and Snapcast to the top of the Prefs panel, since the Background Images panel now means you
+had to scroll a long way down to reach them.
 
 
 ## Version 1.60
