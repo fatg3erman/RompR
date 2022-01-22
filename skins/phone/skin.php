@@ -57,7 +57,7 @@
 				<i class="icon-heart npicon clickicon spinable" id="love"></i>
 			</div>
 			<div id="ptagadd" class="invisible">
-				<i class="icon-plus npicon clickicon" onclick="tagAdder.show(event)"></i>
+				<i class="icon-tags npicon clickicon" onclick="tagAdder.show(event)"></i>
 			</div>
 			<div id="dbtags" class="invisible">
 			</div>
