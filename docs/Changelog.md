@@ -8,6 +8,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 some of the old ones as they were ugly and I couldn't be bothered to update them.
 * Quite a few small UI tweaks to make things a bit more consistent. It's tru to say that the Phone and Skypotato skins are
 my favourites and the others don't get a lot of attention any more.
+* The button bar on the phone skin has been moved to the bottom of the screen because having it at the top
+conflicted with a built-in touch event on Safari for iPhone. Definitely a Safari bug but I can't fix those...
 
 
 ## Version 1.60

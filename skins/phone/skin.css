@@ -73,10 +73,6 @@ button.spinable.icon-spin6 {
 	border:none;
 }
 
-.top_drop_menu {
-	max-height: calc(100vh - 40px);
-}
-
 #historypanel, #tagadder {
 	overflow-y: auto !important;
 }
@@ -239,7 +235,7 @@ button.spinable.icon-spin6 {
 	position:absolute;
 	width:100%;
 	padding:4px;
-	bottom:0px;
+	top:0px;
 	left:0px;
 	display:none;
 	font-size:8pt;
@@ -298,6 +294,7 @@ div.top_drop_menu {
 	width:100%;
 	position:fixed;
 	right: 0;
+	max-height: calc(100vh - 40px);
 }
 
 div.albumbitsmenu {
@@ -458,7 +455,7 @@ div.normalmenu {
 }
 
 div.rightmenu {
-	top:38px;
+	bottom:38px;
 	right:0px;
 }
 
@@ -976,13 +973,6 @@ div.playable.clicktrack {
 = Changes at 700px high
 =====================================================================
 */
-
-@media screen and (min-height: 700px) and (orientation: portrait) {
-	#notifications {
-		bottom: unset;
-		top: 40px;
-	}
-}
 
 @media screen and (min-height: 700px) and (max-width: 699px) and (orientation: portrait) {
 

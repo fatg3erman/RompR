@@ -1,79 +1,5 @@
 <body class="mobile phone">
 <div id="notifications"></div>
-<div id="headerbar" class="noborder fullwidth containerbox">
-	<div id="sourcescontrols" class="expand center containerbox noborder">
-		<div id="volumedropper" class="top_drop_menu rightmenu widemenu">
-<?php
-	include('player/utils/outputs.php');
-	if (prefs::$prefs['hide_master_volume']) {
-			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>'.language::gettext('label_volume').'</b></div></div>';
-			print '<div class="pref" id="snapcastgroups"></div>';
-			if (count($outputdata) > 1) {
-				print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('config_audiooutputs').'</b></div></div>';
-				print '<div class="pref">';
-				printOutputCheckboxes();
-				print '</div>';
-			}
-	} else {
-			print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_volume').'</b></div></div>';
-			print '<div id="volumecontrol" class="containerbox fullwidth menuitem">';
-			print '<div id="volume" class="expand"></div>';
-			if (count($outputdata) == 1) {
-				$f = ($outputdata[0]['outputname'] == "Mute") ? 0 : 1;
-				$c = ($outputdata[0]['outputenabled'] == $f) ? 'icon-output' : 'icon-output-mute';
-				print '<i id="mutebutton" onclick="player.controller.doMute()" class="'.$c.' fixed podicon clickicon"></i>';
-			}
-			print '</div>';
-			if (count($outputdata) > 1) {
-				print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('config_audiooutputs').'</b></div></div>';
-				print '<div class="pref">';
-				printOutputCheckboxes();
-				print '</div>';
-			}
-	}
-			print '<div class="configtitle nohelp player-title"><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';
-			print '<div class="pref styledinputs" name="playerdefs"></div>';
-	if (!prefs::$prefs['hide_master_volume']) {
-			print '<div class="configtitle nohelp invisible" id="snapheader"><i class="fullwidth alignmid icon-snapcast"></i></div>';
-			print '<div class="pref" id="snapcastgroups"></div>';
-	}
-?>
-
-		</div>
-		<div id="specialplugins" class="top_drop_menu rightmenu autohide">
-			<div class="sptext"></div>
-		</div>
-		<div id="narrowscreenicons" class="top_drop_menu rightmenu autohide clearfix">
-			<i class="noshrink icon-folder-open-empty topimg choosepanel tright" name="filelist"></i>
-			<i class="noshrink choosepanel icon-audiobook topimg tright" name="audiobooklist"></i>
-			<i class="noshrink choosepanel icon-doc-text topimg tright" name="playlistman"></i>
-			<i class="noshrink icon-info-circled topimg choosepanel tright" name="infopane"></i>
-			<i class="noshrink choosepanel icon-cog-alt topimg tright" name="prefsm"></i>
-		</div>
-		<i class="icon-no-response-playbutton topimg choosepanel expand" name="infobar"></i>
-		<i class="icon-music topimg choosepanel expand" name="albumlist"></i>
-		<i class="icon-search topimg choosepanel expand" name="searchpane"></i>
-		<i class="icon-folder-open-empty onlywide topimg choosepanel expand" name="filelist"></i>
-		<i class="icon-radio-tower topimg choosepanel expand" name="radiolist"></i>
-		<i class="icon-podcast-circled topimg choosepanel expand" name="podcastslist"></i>
-		<i class="choosepanel onlywide icon-audiobook topimg expand" name="audiobooklist"></i>
-		<i class="choosepanel onlywide icon-doc-text topimg expand" name="playlistman"></i>
-		<i class="choosepanel icon-wifi topimg expand" name="pluginplaylistholder"></i>
-		<div class="onlyverywide containerbox expandabit topbarplaycontrols">
-			<i class="prev-button icon-fast-backward topimg expand"></i>
-			<i class="play-button icon-play-circled topimg expand"></i>
-			<i class="stop-button icon-stop-1 topimg expand"></i>
-			<i class="stopafter-button icon-to-end-1 topimg expand"></i>
-			<i class="next-button icon-fast-forward topimg expand"></i>
-		</div>
-		<i class="icon-volume-up topimg expand topbarmenu" name="volumedropper"></i>
-		<i class="icon-doc-text topimg choosepanel expand" name="playlistm"></i>
-		<i class="onlywide icon-info-circled topimg choosepanel expand" name="infopane"></i>
-		<i class="onlywide choosepanel icon-cog-alt topimg expand" name="prefsm"></i>
-		<i class="icon-menu topimg ninety expand topbarmenu" name="specialplugins"></i>
-		<i class="icon-menu topimg expand onlynarrow topbarmenu" name="narrowscreenicons"></i>
-	</div>
-</div>
 
 <div id="loadsawrappers">
 
@@ -305,6 +231,86 @@ include('skins/playlist.php');
 </div>
 
 </div>
+
+
+
+<div id="headerbar" class="noborder fullwidth containerbox">
+	<div id="sourcescontrols" class="expand center containerbox noborder">
+		<div id="volumedropper" class="top_drop_menu rightmenu widemenu">
+<?php
+	include('player/utils/outputs.php');
+	if (prefs::$prefs['hide_master_volume']) {
+			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>'.language::gettext('label_volume').'</b></div></div>';
+			print '<div class="pref" id="snapcastgroups"></div>';
+			if (count($outputdata) > 1) {
+				print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('config_audiooutputs').'</b></div></div>';
+				print '<div class="pref">';
+				printOutputCheckboxes();
+				print '</div>';
+			}
+	} else {
+			print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_volume').'</b></div></div>';
+			print '<div id="volumecontrol" class="containerbox fullwidth menuitem">';
+			print '<div id="volume" class="expand"></div>';
+			if (count($outputdata) == 1) {
+				$f = ($outputdata[0]['outputname'] == "Mute") ? 0 : 1;
+				$c = ($outputdata[0]['outputenabled'] == $f) ? 'icon-output' : 'icon-output-mute';
+				print '<i id="mutebutton" onclick="player.controller.doMute()" class="'.$c.' fixed podicon clickicon"></i>';
+			}
+			print '</div>';
+			if (count($outputdata) > 1) {
+				print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('config_audiooutputs').'</b></div></div>';
+				print '<div class="pref">';
+				printOutputCheckboxes();
+				print '</div>';
+			}
+	}
+			print '<div class="configtitle nohelp player-title"><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';
+			print '<div class="pref styledinputs" name="playerdefs"></div>';
+	if (!prefs::$prefs['hide_master_volume']) {
+			print '<div class="configtitle nohelp invisible" id="snapheader"><i class="fullwidth alignmid icon-snapcast"></i></div>';
+			print '<div class="pref" id="snapcastgroups"></div>';
+	}
+?>
+
+		</div>
+		<div id="specialplugins" class="top_drop_menu rightmenu autohide">
+			<div class="sptext"></div>
+		</div>
+		<div id="narrowscreenicons" class="top_drop_menu rightmenu autohide clearfix">
+			<i class="noshrink icon-folder-open-empty topimg choosepanel tright" name="filelist"></i>
+			<i class="noshrink choosepanel icon-audiobook topimg tright" name="audiobooklist"></i>
+			<i class="noshrink choosepanel icon-doc-text topimg tright" name="playlistman"></i>
+			<i class="noshrink icon-info-circled topimg choosepanel tright" name="infopane"></i>
+			<i class="noshrink choosepanel icon-cog-alt topimg tright" name="prefsm"></i>
+		</div>
+		<i class="icon-no-response-playbutton topimg choosepanel expand" name="infobar"></i>
+		<i class="icon-music topimg choosepanel expand" name="albumlist"></i>
+		<i class="icon-search topimg choosepanel expand" name="searchpane"></i>
+		<i class="icon-folder-open-empty onlywide topimg choosepanel expand" name="filelist"></i>
+		<i class="icon-radio-tower topimg choosepanel expand" name="radiolist"></i>
+		<i class="icon-podcast-circled topimg choosepanel expand" name="podcastslist"></i>
+		<i class="choosepanel onlywide icon-audiobook topimg expand" name="audiobooklist"></i>
+		<i class="choosepanel onlywide icon-doc-text topimg expand" name="playlistman"></i>
+		<i class="choosepanel icon-wifi topimg expand" name="pluginplaylistholder"></i>
+		<div class="onlyverywide containerbox expandabit topbarplaycontrols">
+			<i class="prev-button icon-fast-backward topimg expand"></i>
+			<i class="play-button icon-play-circled topimg expand"></i>
+			<i class="stop-button icon-stop-1 topimg expand"></i>
+			<i class="stopafter-button icon-to-end-1 topimg expand"></i>
+			<i class="next-button icon-fast-forward topimg expand"></i>
+		</div>
+		<i class="icon-volume-up topimg expand topbarmenu" name="volumedropper"></i>
+		<i class="icon-doc-text topimg choosepanel expand" name="playlistm"></i>
+		<i class="onlywide icon-info-circled topimg choosepanel expand" name="infopane"></i>
+		<i class="onlywide choosepanel icon-cog-alt topimg expand" name="prefsm"></i>
+		<i class="icon-menu topimg ninety expand topbarmenu" name="specialplugins"></i>
+		<i class="icon-menu topimg expand onlynarrow topbarmenu" name="narrowscreenicons"></i>
+	</div>
+</div>
+
+
+
 
 <div id="tagadder" class="top_drop_menu dropmenu">
 	<div class="configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>
