@@ -169,7 +169,7 @@ var infobar = function() {
 	}
 
 	function put_text_in_area(output_lines, nptext) {
-		nptext.empty();
+		nptext.html('');
 		for (var i in output_lines) {
 			// Just in case we have a long line with no spaces, insert some zero-width spaces
 			// after -, _, or & to permit text wrapping
@@ -204,9 +204,8 @@ var infobar = function() {
 	async function biggerize() {
 		// clearTimeout(ftimer);
 
-		if (Object.keys(npinfo).length == 0 || $("#nptext").is(':hidden') || $("#infobar").is(':hidden')) {
-			// debug.log("INFOBAR","Not biggerizing because", Object.keys(npinfo).length, $("#nptext").is(':hidden'), $("#infobar").is(':hidden'));
-			$("#nptext").html("");
+		if (Object.keys(npinfo).length == 0) {
+			$("#nptext").html("&nbsp");
 			return;
 		}
 

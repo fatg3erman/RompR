@@ -420,8 +420,7 @@ function showHistory() {
 
 var layoutProcessor = function() {
 
-	// var oldwindowsize = {x: 0, y: 0};
-	var oldchooser = '';
+	var oldchooser = 'albumlist';
 
 	function isLandscape() {
 		if (window.innerHeight > window.innerWidth) {
@@ -520,24 +519,50 @@ var layoutProcessor = function() {
 
 		sourceControl: function(source) {
 			debug.mark('LAYOUT','Switching source to',source);
-			var display_mode = get_css_variable('--display-mode');
 
-			if (display_mode == 2) {
-				if (source == "playlistm")
-					source = "infobar";
+			// NOTE. The css is rigged as follows:
+			// Infopane is first in the layout. If it's visible all its siblings are hidden in CSS
+			// infobar has a display of flex set to override the invisible class, except on small screens
+			// where we do want to hide it.
+			// playlistm is not a mainpane so in 3 column layout it never gets hidden, in other
+			// layouts it's last so it just gets pushed off the bottom.
 
-				if (source == 'infobar' && prefs.chooser != 'infopane')
-					return;
+			if (source == 'infopane') {
+				$('#infopane').removeClass('invisible');
+			} else if (prefs.chooser == 'infopane' && source != 'infopane') {
+				$('#infopane').addClass('invisible');
+			} else {
+				var display_mode = get_css_variable('--display-mode');
+				if (display_mode == 2 && (source == 'infobar' || source == 'playlistm')) {
+					source = oldchooser;
+					debug.mark('LAYOUT','Actually Switching source to',source);
+				}
+				$('.mainpane:not(.invisible):not(#'+source+')').removeClass('invisible').addClass('invisible');
+				$('#'+source).removeClass('invisible');
+				oldchooser = source;
 			}
 
-			if (display_mode == 1) {
-				if (source == 'infobar' && prefs.chooser != 'infopane')
-					return;
-			}
+			// var display_mode = get_css_variable('--display-mode');
+			// switch (display_mode) {
+			// 	case 2:
+			// 		// Wide layout, 3 columns
+			// }
 
-			$('.mainpane:not(.invisible):not(#'+source+')').addClass('invisible');
+			// if (display_mode == 2) {
+			// 	if (source == "playlistm")
+			// 		source = "infobar";
 
-			$('#'+source).removeClass('invisible');
+			// 	if (source == 'infobar' && !$('#infobar').hasClass('invisible'))
+			// 		return;
+			// }
+
+			// if (display_mode == 1) {
+			// 	if (source == 'infobar' && !$('#infobar').hasClass('invisible'))
+			// 		return;
+			// }
+			// if (prefs.chooser == source);
+			// 	return;
+
 			prefs.save({chooser: source});
 			uiHelper.adjustLayout();
 		},
@@ -548,18 +573,8 @@ var layoutProcessor = function() {
 			var hh = $("#headerbar").outerHeight(true);
 			var mainheight = ws.y - hh;
 			$("#loadsawrappers").css({height: mainheight+"px"});
-
-			oldchooser = prefs.chooser;
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
-
-			// don't do this if we're on a mobile device and the window is being hidden or device is going to sleep
-			if (get_css_variable('--display-mode') == 2
-				&& $('.mainpane:visible').not('#infobar').length == 0
-				&& (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')
-				&& sleepHelper.isVisible()) {
-					uiHelper.sourceControl('albumlist');
-			}
 			infobar.rejigTheText();
 		},
 

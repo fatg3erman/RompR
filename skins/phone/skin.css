@@ -993,14 +993,6 @@ div.playable.clicktrack {
 		top: 0;
 	}
 
-/*	i.choosepanel[name="infobar"] {
-		display: none !important;
-	}
-*/
-	#infopane:visible ~ div {
-		display: none !important;
-	}
-
 	#infopane {
 		height: 100%;
 	}
@@ -1066,7 +1058,8 @@ div.playable.clicktrack {
 @media screen and (max-width:639px) and (orientation: landscape) {
 
 	#infobar {
-		display: block;
+		display: flex;
+		flex-direction: row;
 	}
 
 	#infobar.invisible {
@@ -1084,7 +1077,6 @@ div.playable.clicktrack {
 		width: auto;
 		box-sizing: border-box;
 		border: 4px solid transparent;
-		object-fit: scale-down;
 	}
 
 	#playlistm {
@@ -1095,10 +1087,7 @@ div.playable.clicktrack {
 	#albumcover {
 		height:100%;
 		float: left;
-	}
-
-	#cssisshit {
-		height: 100%;
+		object-fit: scale-down;
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #subscribe, #stars {
@@ -1136,10 +1125,6 @@ div.playable.clicktrack {
 	#infobar {
 		display: flex;
 		width: 45%;
-	}
-
-	#infopane:visible ~ div {
-		display: none !important;
 	}
 
 	#infopane {
@@ -1225,10 +1210,6 @@ div.playable.clicktrack {
 		width: 42%;
 	}
 
-	#infopane:visible ~ div {
-		display: none !important;
-	}
-
 	#albumcover {
 		height: 26vw;
 		text-align: center;
@@ -1292,3 +1273,8 @@ div.playable.clicktrack {
 	}
 
 }
+
+#infopane:visible ~ div {
+	display: none !important;
+}
+
