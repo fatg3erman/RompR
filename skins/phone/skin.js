@@ -543,11 +543,24 @@ var layoutProcessor = function() {
 			uiHelper.adjustLayout();
 		},
 
+		mobile_browser_shitness: function() {
+			// This exists because Safari on iOS hides it address bar and button bar
+			// but still gives us a height that suggests they're visible, so this forces it to
+			// re-show them.
+			window.scrollTo(0,1);
+		},
+
 		adjustLayout: async function() {
 			infobar.updateWindowValues();
 			var ws = getWindowSize();
 			var hh = $("#headerbar").outerHeight(true);
 			var mainheight = ws.y - hh;
+
+			// This doesn't work because sometimes when rotating the screen
+			// Safari fires this event before it recalculates the value of innerHeight
+			// var winy = window.innerHeight;
+			// var mainheight = winy - hh;
+
 			$("#loadsawrappers").css({height: mainheight+"px"});
 
 			// When rotating from portrait to landscape in 3 column mode, if we're viewing
@@ -560,6 +573,7 @@ var layoutProcessor = function() {
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
 			infobar.rejigTheText();
+			setTimeout(layoutProcessor.mobile_browser_shitness, 500);
 		},
 
 		showTagButton: function() {

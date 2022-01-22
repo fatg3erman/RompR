@@ -6,6 +6,12 @@
 =====================================================================
 */
 
+body {
+	height: 100%;
+	min-height: 100%;
+	max-height: 100%;
+}
+
 :root {
 	--display-mode: 0;
 }
@@ -96,9 +102,10 @@ button.spinable.icon-spin6 {
 
 #loadsawrappers {
 	/* Tried to use this, but safari on my iPhone S sets 100vh as 320px when the browser reports
-	it as 300px, even in full-screen mode. This is definitely a bug, but what can ya do? */
+	it as 300px, even in full-screen mode. This is definitely a bug, but what can ya do?
+	In Chrome on iOS it makes the bottom button bar get covered by Chrome's button bar. You cannae win.*/
 	/* Note this includes 40px for headerbar. Keep them synced */
-	/*height: calc(100vh - 40px);*/
+	height: calc(100vh - 40px);
 	width: 100%;
 	overflow:hidden;
 }

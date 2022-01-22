@@ -3,6 +3,43 @@
 // There may appear to be a lot of unnecessary divs wrapping around things here
 // but it makes it work in Safari. DO NOT CHANGE IT!
 
+// Players
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div><i class="medicon"></i></div>';
+print '<div class="fullwidth">';
+print '<div class="clearfix">';
+print '<div class="pref styledinputs tleft" name="playerdefs">';
+print '</div>';
+print '<div class="pref tright"><button onclick="player.defs.edit()">'.language::gettext('button_edit_players').'</button></div>';
+print '</div>';
+print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="player_in_titlebar" />
+<label for="player_in_titlebar">'.language::gettext('config_playerintitlebar').'</label>';
+
+print '<input class="autoset toggle" type="checkbox" id="consume_workaround" />
+<label for="consume_workaround">'.language::gettext('config_consumeworkaround').'</label>
+</div>';
+
+print '</div>';
+
+// Snapcast
+print '<div class="configtitle"><i class="medicon"></i><i class="expand alignmid icon-snapcast"></i><i class="medicon"></i></div>';
+print '<div class="fullwidth">';
+if (!$snapcast_in_volume) {
+	print '<div class="pref" id="snapcastgroups">';
+	print '</div>';
+}
+print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="hide_master_volume" />
+<label for="hide_master_volume">'.language::gettext('config_hidemastervolume').'</label>
+</div>';
+
+print '<div class="pref styledinputs containerbox vertical-centre">';
+print '<input class="saveotron expand" id="snapcast_server" type="text" placeholder="'.language::gettext('config_snapcast_server').'" />';
+// print '<input class="saveotron fixed" id="snapcast_port" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.language::gettext('config_snapcast_port').'" />';
+print '<input class="saveotron fixed" id="snapcast_http" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.language::gettext('config_snapcast_http').'" />';
+print '</div>';
+print '</div>';
+
 print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_appearance').'</b></div></div>';
 
 // Skin
@@ -109,43 +146,6 @@ print '<div class="pref styledinputs invisible magic_div"><b>Browser ID</b>'.
 	'<input class="saveotron" id="browser_id" type="text" />
 	</div>';
 
-print '</div>';
-
-// Players
-print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div><i class="medicon"></i></div>';
-print '<div class="fullwidth">';
-print '<div class="clearfix">';
-print '<div class="pref styledinputs tleft" name="playerdefs">';
-print '</div>';
-print '<div class="pref tright"><button onclick="player.defs.edit()">'.language::gettext('button_edit_players').'</button></div>';
-print '</div>';
-print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="player_in_titlebar" />
-<label for="player_in_titlebar">'.language::gettext('config_playerintitlebar').'</label>';
-
-print '<input class="autoset toggle" type="checkbox" id="consume_workaround" />
-<label for="consume_workaround">'.language::gettext('config_consumeworkaround').'</label>
-</div>';
-
-print '</div>';
-
-// Snapcast
-print '<div class="configtitle"><i class="medicon"></i><i class="expand alignmid icon-snapcast"></i><i class="medicon"></i></div>';
-print '<div class="fullwidth">';
-if (!$snapcast_in_volume) {
-	print '<div class="pref" id="snapcastgroups">';
-	print '</div>';
-}
-print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="hide_master_volume" />
-<label for="hide_master_volume">'.language::gettext('config_hidemastervolume').'</label>
-</div>';
-
-print '<div class="pref styledinputs containerbox vertical-centre">';
-print '<input class="saveotron expand" id="snapcast_server" type="text" placeholder="'.language::gettext('config_snapcast_server').'" />';
-// print '<input class="saveotron fixed" id="snapcast_port" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.language::gettext('config_snapcast_port').'" />';
-print '<input class="saveotron fixed" id="snapcast_http" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.language::gettext('config_snapcast_http').'" />';
-print '</div>';
 print '</div>';
 
 // Sources Panel Hiding
