@@ -51,6 +51,10 @@ td.infobox-image {
     text-decoration:none;
 }
 
+.mw-parser-output .sidebar {
+    background-color: transparent !important;
+}
+
 table.tracklist {
     line-height:1.5em;
 }
