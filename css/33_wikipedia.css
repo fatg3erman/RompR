@@ -13,6 +13,10 @@ table.navbox-inner th, table.navbox-inner td {
 	background-color: transparent !important;
 }
 
+table.navbox-subgrouop {
+    background-color: transparent !important;
+}
+
 .navbox {
 	background-color: transparent !important;
 }
