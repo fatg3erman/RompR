@@ -730,7 +730,7 @@ function popupMenu(event, element) {
 	var maindiv;
 	var holderdiv;
 	var button = element;
-	var bw = $(element).outerWidth(true) / 2;
+	var bw = $(element).outerHeight(true) / 2;
 	var self = this;
 	var selection = [];
 	var actions = [];
@@ -787,6 +787,10 @@ function popupMenu(event, element) {
 		}
 		var my_width = maindiv.outerWidth(true);
 		var left = 0;
+		// Add or subtract half the parent height from the position, to prevent the menu
+		// from covering the icon and thereby preventing us from clicking the icon to
+		// close the menu. Why height? Because that's the width of the icon - the parent
+		// is a flex div and can have any width, the icon is its background image.
 		if (mouseX + my_width > max_size.x) {
 			left = mouseX - my_width - bw;
 		} else {
