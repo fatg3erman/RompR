@@ -169,7 +169,7 @@ jQuery.fn.makeTagMenu = function(options) {
 		}
 		var holder = $('<div>', { class: "expand"}).appendTo($(this));
 		var dropbutton = $('<i>', { class: 'fixed phone-dropdown-button'}).appendTo($(this));
-		var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname, placeholder: unescapeHtml(settings.placeholder) }).appendTo(holder);
+		var textbox = $('<input>', { type: "text", autocomplete: 'off', class: tbc, name: settings.textboxname, placeholder: unescapeHtml(settings.placeholder) }).appendTo(holder);
 		var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow fullwidth"}).insertAfter($(this));
 		var menucontents = $('<div>', {class: "tagmenu-contents"}).appendTo(dropbox);
 		if (settings.buttontext !== null) {

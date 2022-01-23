@@ -41,24 +41,18 @@ div.notification.new {
 
 /* Image popup - when clicking an image to zoom */
 
-#popup_image_holder
+#popup_image
 {
-    background-color: var(--top_drop_menu-bg-colour);
-    background-image: var(--top_drop_menu-bg-image);
 	position:absolute;
-	display:none;
 	z-index:10001;
-	opacity:1;
+	transition: opacity 0.5s ease, width 0.5s ease, height 0.5s ease, left 0.5s ease, top 0.5s ease;
+	/* Must have a border, which must have a width in pixels */
+	border: 18px solid var(--border-colour);
 }
 
-#popup_image_container
-{
-    background-color: var(--top_drop_menu-bg-colour);
-    background-image: var(--top_drop_menu-bg-image);
-	position:absolute;
-	opacity:1;
-	z-index:10002;
-	display:none;
+#popup_image.notthere {
+	opacity: 0;
+	transition: none;
 }
 
 /* div created by trackDragger when dragging items from a sources panel */

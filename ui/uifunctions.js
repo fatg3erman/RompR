@@ -133,10 +133,9 @@ var pluginManager = function() {
 }();
 
 var imagePopup = function() {
-	var popup_image_holder = null;
-	var popup_image_container = null;
+	var popup_image = null;
+	var waiting_spinner = null;
 	var mousepos = null;
-	var clickedelement = null;
 	var image = new Image();
 	image.onload = function() {
 		debug.debug("IMAGEPOPUP", "Image has loaded");
@@ -150,108 +149,94 @@ var imagePopup = function() {
 	return {
 		create:function(element, event, source){
 			debug.log("IMAGEPOPUP", "Creating new popup",source);
-			debug.log("IMAGEPOPUP", "Current popup source is",image.src);
-			if(popup_image_holder == null){
-				popup_image_holder = $('<div>', { id: 'popup_image_holder', onclick: 'imagePopup.close()',
-					class: 'dropshadow'}).appendTo($('body'));
-				popup_image_container = $('<img>', { id: 'popup_image_container', onclick: 'imagePopup.close()',
-					src: ''}).appendTo($('body'));
-			} else {
-				popup_image_holder.empty();
-				popup_image_container.fadeOut('fast');
-			}
+			imagePopup.close();
+			if (source === undefined)
+				return;
+
+			waiting_spinner = $('<i>', {class: 'icon-spin6 svg-square spinner notthere', style: 'position: absolute'}).appendTo($('body'));
+			waiting_spinner.on('click', imagePopup.close)
+			var spinw = waiting_spinner.outerWidth(true) / 2;
+			var spinh = waiting_spinner.outerHeight(true) / 2;
+
 			mousepos = getPosition(event);
-			clickedelement = element;
-			var top = (mousepos.y - 24);
-			var left = (mousepos.x - 24);
-			if (left < 0) {
-				left = 0;
-			}
-			popup_image_holder.css({       width: '48px',
-								  height: '48px',
-								  top: top+'px',
-								  left: left+'px'});
-			popup_image_holder.append($('<i>', {class: 'icon-spin6 svg-square spinner',
-				style: 'position:relative;top:8px;left:8px'}));
-			popup_image_holder.fadeIn('fast');
-			if (source !== undefined) {
-				if (source == image.src) {
-					imagePopup.show();
-				} else {
-					image.src = "";
-					image.src = source;
-				}
-			}
+			waiting_spinner.css({
+				left: Math.max(0, (mousepos.x - spinw)) + 'px',
+				top: Math.max(0, (mousepos.y - spinh)) + 'px'
+			}).removeClass('notthere');
+			image.src = "";
+			image.src = source;
 		},
 
 		show:function() {
-			// Calculate popup size and position
-			var imgwidth = image.width;
-			var imgheight = image.height;
-			debug.debug("POPUP","Image size is",imgwidth,imgheight);
-			// Make sure it's not bigger than the window
-			var winsize=getWindowSize();
-			// hack to allow for vertical scrollbar
-			winsize.x = winsize.x - 32;
-			// Allow for popup border
-			var w = winsize.x - 63;
-			var h = winsize.y - 36;
-			debug.debug("POPUP","Allowed size is",w,h);
-			var scale = w/image.width;
-			if (h/image.height < scale) {
-				scale = h/image.height;
-			}
-			if (scale < 1) {
-				imgheight = Math.round(imgheight * scale);
-				imgwidth = Math.round(imgwidth * scale);
-			}
-			debug.debug("POPUP","Calculated Image size is",imgwidth,imgheight,(imgwidth/image.width),
-				(imgheight/image.height));
-			var popupwidth = imgwidth+36;
-			var popupheight = imgheight+36;
 
-			var top = (mousepos.y - (popupheight/2));
-			var left = (mousepos.x - (popupwidth/2));
-			if ((left+popupwidth) > winsize.x) {
-				left = winsize.x - popupwidth;
-			}
-			if ((top+popupheight) > winsize.y) {
-				top = winsize.y - popupheight;
-			}
-			if (top < 0) {
-				top = 0;
-			}
-			if (left < 0) {
-				left = 0;
-			}
-			popup_image_holder.empty();
-			popup_image_holder.animate(
-				{
-					width: popupwidth+'px',
-					height: popupheight+'px',
-					top: top+'px',
-					left: left+'px'
-				},
-				'fast',
-				'swing',
-				function() {
-					popup_image_container.css({  top: (top+18)+'px',
-										  left: (left+18)+'px'});
+			var winsize = getWindowSize();
+			popup_image = $('<img>', {id: 'popup_image', class: 'dropshadow', src: image.src});
 
-					popup_image_container.attr({ width: imgwidth+'px',
-										  height: imgheight+'px',
-										  src: image.src });
+			popup_image.css({
+				left: mousepos.x + 'px',
+				top: mousepos.y + 'px',
+				width: '0px',
+				height: '0px',
+				opacity: 0
+			}).appendTo($('body'));
 
-					popup_image_container.fadeIn('slow');
-					popup_image_holder.append($('<i>', {class: 'icon-cancel-circled playlisticon tright clickicon',
-						style: 'margin-top:4px;margin-right:4px'}));
-				}
+			var border_size = parseInt(popup_image.css('border-width')) * 2;
+			popup_image.on('click', imagePopup.close)
+
+			// We could just set width and height to auto and max-width and max-height to 100vw and 100vh
+			// but I want to calculate the specific size because (a) this method would lose the borders
+			// if the image was as big as the screen and (b) transitions on width and height don't work
+			// with auto, and we need a way to ensure we keep the image within the viewport.
+			// Because, as I think I've said before, CSS is annoying.
+
+			var image_width = image.width;
+			var image_height = image.height;
+
+			var scale = Math.min(
+				1,
+				(winsize.x - border_size)/image.width,
+				(winsize.y - border_size)/image.height
 			);
+			var final_width = Math.round(image.width * scale);
+			var final_height = Math.round(image.height * scale);
+
+			var final_top = Math.max(
+				0,
+				Math.min(
+					mousepos.y - final_height/2,
+					winsize.y - final_height - border_size
+				)
+			);
+			var final_left = Math.max(
+				0,
+				Math.min(
+					mousepos.x - final_width/2,
+					winsize.x - final_width - border_size
+				)
+			);
+
+			waiting_spinner.remove();
+			waiting_spinner = null;
+			popup_image.css({
+				top: final_top + 'px',
+				left: final_left + 'px',
+				width: final_width + 'px',
+				height: final_height + 'px',
+				opacity: 1
+			});
+
 		},
 
 		close:function() {
-			popup_image_holder.fadeOut('slow');
-			popup_image_container.fadeOut('slow');
+			if(waiting_spinner != null)
+				waiting_spinner.remove();
+
+			if(popup_image != null)
+				popup_image.fadeOut('fast');
+
+			waiting_spinner = null;
+			popup_image = null;
+
 		}
 	}
 }();
