@@ -299,16 +299,16 @@ include('skins/playlist.php');
 </div>
 
 <div id="tagadder" class="dropmenu dropshadow mobmenu">
-	<div class="vertical-centre configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>
+	<div class="vertical-centre configtitle moveable"><div class="textcentre expand"><b>
 <?php
-print language::gettext("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div></div>';
+print language::gettext("lastfm_addtags").'</b></div><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div>';
 ?>
 	<div class="containerbox padright vertical-centre tagaddbox"></div>
 </div>
 
 <div id="pladddropdown" class="top_drop_menu dropmenu dropshadow mobmenu">
 	<?php
-	print '<div class="configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>'.language::gettext('button_addtoplaylist').'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="addToPlaylist.close()"></i></div></div>';
+	print '<div class="configtitle moveable"><div class="textcentre expand"><b>'.language::gettext('button_addtoplaylist').'</b></div><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="addToPlaylist.close()"></i></div>';
 		?>
 	<div id="addtoplaylistmenu" class="clearfix">
 	</div>

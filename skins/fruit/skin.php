@@ -327,9 +327,9 @@ print '<div id="artistinformation" class="infotext noselection"><h2 class="infob
 </div>
 
 <div id="tagadder" class="dropmenu dropshadow mobmenu">
-	<div class="vertical-centre configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>
+	<div class="vertical-centre configtitle moveable"><div class="textcentre expand"><b>
 <?php
-print language::gettext("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div></div>';
+print language::gettext("lastfm_addtags").'</b></div><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div>';
 ?>
 	<div class="containerbox padright vertical-centre tagaddbox"></div>
 </div>
