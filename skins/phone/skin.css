@@ -668,7 +668,7 @@ div.playable.clicktrack {
 	position: relative;
 	top: 0;
 	left: 0;
-	height: 3em;
+	min-height: 3em;
 }
 
 #sortable .playlisticonr.icon-cancel-circled {
