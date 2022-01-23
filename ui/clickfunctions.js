@@ -736,26 +736,16 @@ function popupMenu(event, element) {
 	var actions = [];
 	var justclosed = false;
 
-	function setHeight() {
-		var top = 0;
-		maindiv.css({height: ''});
-		var my_height = maindiv.outerHeight(true);
-		// 8 pixel fudge factor to prevent scrollbars appearing on menus that don\t need them.
-		var height = (my_height+8)+'px';
-		if (mouseY + my_height > max_size.y) {
-			top = max_size.y - my_height;
-			if (top < max_size.top) {
-				top = max_size.top;
-				height = max_size.y - max_size.top + 8;
-			}
-			top += 'px';
-			height += 'px';
-		} else {
-			top = mouseY+'px';
-		}
+	function setTop() {
+		var top = Math.min(
+			maindiv.offset().top,
+			Math.max(
+				0,
+				max_size.y - maindiv.outerHeight(true) + 8
+			)
+		);
 		maindiv.css({
-			top: top,
-			height: height
+			top: top
 		});
 	}
 
@@ -791,23 +781,24 @@ function popupMenu(event, element) {
 		// from covering the icon and thereby preventing us from clicking the icon to
 		// close the menu. Why height? Because that's the width of the icon - the parent
 		// is a flex div and can have any width, the icon is its background image.
-		if (mouseX + my_width > max_size.x) {
+		if (mouseX + bw + my_width > max_size.x) {
 			left = mouseX - my_width - bw;
 		} else {
 			left = mouseX + bw;
 		}
 		maindiv.css({
 			left: left,
-			opacity: 1
+			top: mouseY+'px',
+			opacity: 1,
+			'max-height': max_size.y
 		});
-		setHeight();
+		setTop();
 	}
 
 	this.openSubMenu = function(e, element) {
 		debug.log('POPUPMENU', 'Opening Submenu',element);
 		self.markTrackTags();
-		var menu = $(element).next();
-		menu.slideToggle('fast', setHeight);
+		$(element).next().slideToggle('fast', setTop);
 	}
 
 	// addAction permits you to set callbacks for clickable menu items

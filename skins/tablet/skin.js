@@ -75,14 +75,6 @@ function showHistory() {
 
 var layoutProcessor = function() {
 
-	function isLandscape() {
-		if (window.innerHeight > window.innerWidth) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
 	return {
 
 		supportsDragDrop: false,

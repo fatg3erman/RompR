@@ -426,18 +426,11 @@ var layoutProcessor = function() {
 
 	var oldchooser = 'albumlist';
 
-	function isLandscape() {
-		if (window.innerHeight > window.innerWidth) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
 	function doSwipeCss() {
-		$('style[id="playlist_swipe"]').remove();
 		if (prefs.playlistswipe) {
-			$('<style id="playlist_swipe">#sortable .playlisticonr.icon-cancel-circled { display: none }</style>').appendTo('head');
+			set_css_variable('--playlist-right-icon', 'none');
+		} else {
+			set_css_variable('--playlist-right-icon', 'inline-block');
 		}
 	}
 
@@ -652,7 +645,8 @@ var layoutProcessor = function() {
 		maxAlbumMenuSize: function(element) {
 			var ws = getWindowSize();
 			ws.left = 0;
-			ws.top = $('#headerbar').outerHeight(true);
+			ws.top = 0;
+			ws.y -= $('#headerbar').outerHeight(true);
 			return ws;
 		}
 

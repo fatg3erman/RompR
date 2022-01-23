@@ -121,7 +121,7 @@
     }
 }
 
-@media screen and (min-height: 1100px) and (min-width: 720px) {
+@media screen and (min-height: 1120px) and (min-width: 800px) {
     .controlbutton {
         width:90px;
         height:90px;

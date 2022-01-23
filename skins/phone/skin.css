@@ -27,6 +27,7 @@ body {
 
 :root {
 	--display-mode: 0;
+	--playlist-right-icon: inline-block;
 }
 
 h1 {
@@ -279,9 +280,11 @@ button.spinable.icon-spin6 {
 	width:100%;
 }
 
-#tagadder
+#tagadder, #pladddropdown
 {
 	z-index: 15000;
+	max-height: inherit;
+	height: unset;
 }
 
 #audiobooks .podcastresume>.fixed
@@ -677,7 +680,7 @@ div.playable.clicktrack {
 }
 
 #sortable .playlisticonr.icon-cancel-circled {
-	/* display: none; */
+	 display: var(--playlist-right-icon);
 }
 
 .prearranger {
