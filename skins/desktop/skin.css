@@ -4,6 +4,32 @@
 =====================================================================
 */
 
+body {
+	height: 100%;
+	min-height: 100%;
+	max-height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+#infobar {
+	flex-grow: 0;
+	flex-shrink:0;
+}
+
+#headerbar {
+	flex-grow: 0;
+	flex-shrink:0;
+}
+
+#bottompage {
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: auto;
+	max-height: inherit;
+	overflow: hidden;
+}
+
 input[type=text],input[type="number"] {
 	height: 2em;
 }

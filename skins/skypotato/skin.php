@@ -17,7 +17,7 @@
 		</div>
 	</div>
 	<!-- <div class="expand"> -->
-<div id="infobar" class="fixed containerbox vertical">
+<div id="infobar" class="expand containerbox vertical">
 	<div id="nowplaying-info-wrapper" class="infobarlayout noselection fixed containerbox">
 		<div id="nowplaying-text-wrapper" class="expand">
 			<div id="nowplaying">

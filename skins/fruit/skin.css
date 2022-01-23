@@ -4,12 +4,41 @@
 =====================================================================
 */
 
+body {
+	height: 100%;
+	min-height: 100%;
+	max-height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+#thetopbit {
+	flex-grow: 0;
+	flex-shrink:0;
+	max-width: 100%;
+	/*overflow-x: hidden;*/
+}
+
+#headerbar {
+	flex-grow: 0;
+	flex-shrink:0;
+}
+
+#bottompage {
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: auto;
+	max-height: inherit;
+	overflow: hidden;
+}
+
 input[type=text],input[type="number"] {
 	height: 2em;
 }
 
 #infobar {
-	width:100%;
+	/*width:100%;*/
+	max-width: inherit;
 	padding-top:4px;
 	margin:0px;
 }

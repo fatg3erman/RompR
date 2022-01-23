@@ -739,12 +739,12 @@ var layoutProcessor = function() {
 		},
 
 		adjustLayout: async function() {
-			var ws = getWindowSize();
-			// Height of the bottom pane (chooser, info, playlist container)
-			var newheight = ws.y - $("#bottompage").offset().top;
-			$("#bottompage").css("height", newheight+"px");
-			var newwidth = ws.x - $('#infobar').offset().left;
-			$('#infobar').css('width', newwidth+'px');
+			// var ws = getWindowSize();
+			// // Height of the bottom pane (chooser, info, playlist container)
+			// var newheight = ws.y - $("#bottompage").offset().top;
+			// $("#bottompage").css("height", newheight+"px");
+			// var newwidth = ws.x - $('#infobar').offset().left;
+			// $('#infobar').css('width', newwidth+'px');
 			infobar.rejigTheText();
 			browser.rePoint();
 			$('.top_drop_menu').fanoogleMenus();

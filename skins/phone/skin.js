@@ -546,7 +546,7 @@ var layoutProcessor = function() {
 		mobile_browser_shitness: function() {
 			// This exists because Safari on iOS hides it address bar and button bar
 			// but still gives us a height that suggests they're visible, so this forces it to
-			// re-show them.
+			// re-show them, or hide them, or something, it's not clear :)
 			window.scrollTo(0,1);
 		},
 

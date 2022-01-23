@@ -167,22 +167,12 @@ jQuery.fn.makeTagMenu = function(options) {
 
 jQuery.fn.fanoogleMenus = function() {
 	return this.each( function() {
-		if ($(this).is(':visible')) {
-			// Fucking css, what a pile of shit
-			debug.log('FANOOGLING', $(this).prop('id'));
-			var pt = parseInt($(this).css('padding-top')) + parseInt($(this).css('padding-bottom')) +
-				parseInt($(this).css('border-top-width')) + parseInt($(this).css('border-bottom-width'));
-			var top = $(this).children('.mCustomScrollBox').offset().top;
-			var conheight = $(this).children().first().children('.mCSB_container').height();
+		var self = $(this);
+		if (self.is(':visible')) {
+			var top = self.offset().top;
 			var ws = getWindowSize();
 			var avheight = ws.y - top;
-			var nh = conheight+pt;
-			if (nh > avheight) {
-				$(this).css({height: avheight+"px"});
-			} else {
-				$(this).css({height: ''});
-			}
-			$(this).mCustomScrollbar("update");
+			self.css('max-height', avheight+'px');
 		}
 	});
 }
