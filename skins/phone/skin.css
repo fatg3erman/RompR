@@ -669,6 +669,11 @@ div.playable.clicktrack {
 	top: 0;
 	left: 0;
 	min-height: 3em;
+	display: flex;
+}
+
+#sortable .trackgroup .track>div {
+	width: 100%;
 }
 
 #sortable .playlisticonr.icon-cancel-circled {

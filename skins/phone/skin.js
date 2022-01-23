@@ -352,6 +352,8 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 				$(self).animate({left: 0}, 'fast', 'swing');
 				if ($(self).hasClass('item')) {
 					$(self).next().animate({left: 0}, 'fast', 'swing');
+				} else {
+					$(self).removeClass('highlighted');
 				}
 			}
 		}
@@ -377,6 +379,8 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 						$(self).css('left', newpos.toString()+'px');
 						if ($(self).hasClass('item')) {
 							$(self).next().css('left', newpos.toString()+'px');
+						} else {
+							$(self).addClass('highlighted');
 						}
 						touchesX.push(dx);
 					}
