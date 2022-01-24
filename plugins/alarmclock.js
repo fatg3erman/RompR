@@ -46,10 +46,10 @@ var alarmclock = function() {
 		var hoursdown = $('<td>', {class: 'timespinholder'}).appendTo(row2);
 		var minsdown = $('<td>', {class: 'timespinholder'}).appendTo(row2);
 
-		$('<i>', {class: 'playlisticon clickicon icon-increase expand timespinner', id: 'alarmhoursup_'+index}).appendTo(hoursup);
-		$('<i>', {class: 'playlisticon clickicon icon-decrease expand timespinner', id: 'alarmhoursdown_'+index}).appendTo(hoursdown);
-		$('<i>', {class: 'playlisticonr clickicon icon-increase expand timespinner', id: 'alarmminsup_'+index}).appendTo(minsup);
-		$('<i>', {class: 'playlisticonr clickicon icon-decrease expand timespinner', id: 'alarmminsdown_'+index}).appendTo(minsdown);
+		$('<i>', {class: 'smallicon clickicon icon-increase expand timespinner', id: 'alarmhoursup_'+index}).appendTo(hoursup);
+		$('<i>', {class: 'smallicon clickicon icon-decrease expand timespinner', id: 'alarmhoursdown_'+index}).appendTo(hoursdown);
+		$('<i>', {class: 'smallicon clickicon icon-increase expand timespinner', id: 'alarmminsup_'+index}).appendTo(minsup);
+		$('<i>', {class: 'smallicon clickicon icon-decrease expand timespinner', id: 'alarmminsdown_'+index}).appendTo(minsdown);
 
 		$('<input>', {type: 'checkbox', id: 'alarmon_'+index}).appendTo(ondiv);
 		$('<label>', {for: 'alarmon_'+index, class: 'alarmclock', style: 'display:inline'}).appendTo(ondiv);
@@ -490,7 +490,7 @@ var alarmclock = function() {
 			fillWindow();
 			createNewAlarmBox(holder);
 
-			var html = '<table width="98%">';
+			var html = '<table width="100%">';
 			html += '<tr><td colspan="2"><div class="podcastitem"></div></td></tr>';
 			html += '<tr><td class="altablebit">'+language.gettext('config_ramptime')+'</td><td><input class="saveotron prefinput" id="alarm_ramptime" type="text" size="2" /></td></tr>';
 			html += '<tr><td class="altablebit">'+language.gettext('config_snoozetime')+'</td><td><input class="saveotron prefinput" id="alarm_snoozetime" type="text" size="2" /></td></tr>';

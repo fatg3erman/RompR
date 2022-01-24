@@ -803,7 +803,7 @@ class poDatabase extends database {
 
 		$pee = date(DATE_RFC2822, $item->PubDate);
 		$pee = preg_replace('/ \+\d\d\d\d$/','',$pee);
-		print '<div class="whatdoicallthis padright containerbox vertical-centre podtitle notbold">';
+		print '<div class="whatdoicallthis containerbox vertical-centre podtitle notbold">';
 		if ($y->HideDescriptions == 0) {
 			$class = 'icon-toggle-open';
 		} else {
@@ -880,7 +880,7 @@ class poDatabase extends database {
 			'class' => $cls
 		));
 
-		$extra = '<div class="fixed">';
+		$extra = '<div class="fixed podcounts">';
 		if ($y ->Subscribed == 1) {
 			$uc = $this->get_podcast_counts($y->PODindex);
 			$extra .= '<span id="podnumber_'.$y->PODindex.'"';
@@ -909,7 +909,7 @@ class poDatabase extends database {
 		$html = preg_replace('/&amp;rompr_/','&rompr_', $h);
 		print $html;
 
-		print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
+		print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
 	}
 
 	public function removePodcast($podid) {

@@ -4,6 +4,12 @@
 =====================================================================
 */
 
+:root {
+	--inline-track-icon-size: 16px;
+	--inline-clickable-icon-size: 16px;
+	--inline-clickable-icon-border-width: none;
+}
+
 body {
 	height: 100%;
 	min-height: 100%;
@@ -310,10 +316,6 @@ button.spinable.icon-spin6 {
 	padding-right:0px;
 }
 
-.nopadright {
-	margin-right:0px !important;
-}
-
 .tinycover
 {
 	margin-right:8px;
@@ -381,51 +383,8 @@ button.spinable.icon-spin6 {
 	vertical-align:middle;
 }
 
-.playlisticon {
-	padding:0px;
-	margin-right:4px;
-	margin-bottom:2px;
-	margin-top:2px;
-	vertical-align:middle;
-	height: 12px;
-	width: 12px;
-}
-
 .prearranger {
 	display:none;
-}
-
-.collectionicon {
-	padding:0px;
-	margin-right:8px;
-	margin-bottom:2px;
-	margin-top:2px;
-	vertical-align:middle;
-	width:16px;
-	height:16px;
-}
-
-.submenuspacer {
-	/*This needs to be the same width as collectionicon*/
-	margin-left:24px;
-}
-
-.playlisticonr {
-	padding:0px;
-	margin-left:4px;
-	margin-right:2px;
-	margin-bottom:2px;
-	margin-top:2px;
-	vertical-align:middle;
-	height: 12px;
-	width: 12px;
-}
-
-.clicktrackmenu {
-	height: 16px;
-	width: 16px;
-	margin-left: 8px;
-	transition: opacity 0.2s ease;
 }
 
 /* Must be same as above */
@@ -466,7 +425,7 @@ button.spinable.icon-spin6 {
 .menuitem {
 	font-weight:bold;
 	margin:0px;
-	padding-left:8px;
+	padding-left:0px;
 	padding-right:0px;
 	padding-top:2px;
 	padding-bottom:2px;
@@ -481,7 +440,7 @@ button.spinable.icon-spin6 {
 .playlistalbum {
 	font-weight:bold;
 	margin:0px;
-	padding-left:4px;
+	padding-left:0px;
 	padding-right:0px;
 	padding-top:4px;
 	padding-bottom:2px;
@@ -500,21 +459,23 @@ button.spinable.icon-spin6 {
 	cursor:pointer;
 }
 
+[class^="icon-"].menu, [class*=" icon-"].menu {
+	width: var(--inline-clickable-icon-size);
+	height: var(--inline-clickable-icon-size);
+	box-sizing: border-box;
+	border-width: var(--inline-clickable-icon-border-width);
+	border-style: solid;
+	border-color: transparent;
+	vertical-align:middle;
+}
+
 .ninesix {
 	font-size:96%;
 	padding-top:2px;
 }
 
 .indent {
-	margin-left:16px;
-}
-
-.padright {
-	padding-right:4px;
-}
-
-.padleft {
-	padding-left:4px;
+	margin-left:12px;
 }
 
 .buttonchange {
@@ -733,14 +694,6 @@ div.rightmenu
 	}
 }
 
-[class^="icon-"].menu, [class*=" icon-"].menu {
-	width: 24px;
-	height: 24px;
-	box-sizing: border-box;
-	border: 6px solid transparent;
-	vertical-align:middle;
-}
-
 .collectionitem {
 	box-sizing:border-box;
 	border: 4px solid transparent;
@@ -815,6 +768,7 @@ div.helpfulalbum>div.tagh.albumthing {
 }
 
 .collectionitem.masonry_opened.dropshadow .containerbox.vertical:not(.podoptions),
+.collectionitem.masonry_opened.dropshadow .containerbox.openmenu.podcast,
 .collectionitem.masonry_opened.dropshadow .containerbox.radiochannel  {
 	padding-bottom: 4px;
 	float: left;
@@ -829,9 +783,5 @@ div.helpfulalbum>div.tagh.albumthing {
 #pluginplaylistslist .collectionitem .menuitem {
 	padding-left:0px;
 	height:100%;
-}
-
-#pluginplaylistslist .collectionitem .menuitem.vertical .svg-square {
-	margin-right:0px;
 }
 

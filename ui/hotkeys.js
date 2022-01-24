@@ -135,7 +135,7 @@ var shortcuts = function() {
 		}
 
 		function format_clearbutton(inpname) {
-				return '<td><i class="icon-cancel-circled playlisticon clickicon buttonclear" name="'+inpname+'"></i></td>';
+				return '<td><i class="icon-cancel-circled inline-icon clickicon buttonclear" name="'+inpname+'"></i></td>';
 		}
 
 		function unbind() {

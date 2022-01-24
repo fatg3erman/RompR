@@ -37,7 +37,7 @@ var customRadioManager = function() {
 
 		var key_selector;
 		var option_selector;
-		var delete_icon = $('<i>', {class: 'playlisticon clickicon icon-cancel-circled'}).appendTo(delete_box);
+		var delete_icon = $('<i>', {class: 'smallicon clickicon icon-cancel-circled'}).appendTo(delete_box);
 
 		var enabled = false;
 		var my_id = rule_counter;
@@ -190,9 +190,9 @@ var customRadioManager = function() {
 		var editbutton = $('<button>', {class: 'fixed alignmid'}).html(language.gettext('label_edit')).appendTo(title);
 		var playbutton = $('<button>', {class: 'fixed alignmid'}).html(language.gettext('button_playradio')).appendTo(title);
 
-		var dropdown = $('<div>', {class: 'invisible'}).appendTo(holder);
+		var dropdown = $('<div>', {class: 'invisible indent'}).appendTo(holder);
 
-		var combine_div = $('<div>', {class: 'containerbox vertical-centre', style: 'margin-right: 8px'}).appendTo(dropdown);
+		var combine_div = $('<div>', {class: 'containerbox vertical-centre'}).appendTo(dropdown);
 		combine_div.append($('<div>', {class: 'fixed', style: 'margin-right: 1em'}).html(language.gettext('label_ruleoptions')));
 		var combine_holder = $('<div>', {class: 'selectholder expand'}).appendTo(combine_div);
 		var combine_selector = $('<select>').appendTo(combine_holder);
@@ -206,7 +206,7 @@ var customRadioManager = function() {
 
 		var table = $('<table>').appendTo(dropdown);
 
-		var arse_div = $('<div>', {class: 'containerbox vertical-centre', style: 'margin-right: 8px'}).appendTo(dropdown);
+		var arse_div = $('<div>', {class: 'containerbox vertical-centre'}).appendTo(dropdown);
 		var add_button = $('<i>', {class: 'smallicon clickicon fixed icon-plus'}).appendTo(arse_div);
 		arse_div.append($('<div>', {class: 'expand'}));
 		if (params.name != language.gettext('label_createcustom')) {

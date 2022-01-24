@@ -144,7 +144,7 @@ jQuery.fn.restoreScrollPos = function() {
 		this.removeClass('menu-opened');
 		a.remove();
 	}
-	// $('#popupmenu').remove();
+	$('#popupmenu').remove();
 }
 
 jQuery.fn.makeTagMenu = function(options) {
@@ -242,7 +242,7 @@ jQuery.fn.insertAlbumAfter = function(albumindex, html, tracklist) {
 		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
 		$(html).insertAfter(me).scootTheAlbums();
 		if (is_covered)
-			$('.openmenu[name="'+albumindex+'"]').addClass('menu-covered');
+			$('.openmenu[name="'+albumindex+'"]').not('.backmenu').addClass('menu-covered');
 	});
 };
 
@@ -254,7 +254,7 @@ jQuery.fn.insertAlbumAtStart = function(albumindex, html, tracklist) {
 		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
 		$(html).insertAfter(me.children('.vertical-centre.configtitle').next()).scootTheAlbums();
 		if (is_covered)
-			$('.openmenu[name="'+albumindex+'"]').addClass('menu-covered');
+			$('.openmenu[name="'+albumindex+'"]').not('.backmenu').addClass('menu-covered');
 	});
 }
 
@@ -549,16 +549,6 @@ var layoutProcessor = function() {
 
 		adjustLayout: async function() {
 			infobar.updateWindowValues();
-			// var ws = getWindowSize();
-			// var hh = $("#headerbar").outerHeight(true);
-			// var mainheight = ws.y - hh;
-			// $("#loadsawrappers").css({height: mainheight+"px"});
-
-			// This doesn't work because sometimes when rotating the screen
-			// Safari fires this event before it recalculates the value of innerHeight
-			// var winy = window.innerHeight;
-			// var mainheight = winy - hh;
-
 			// When rotating from portrait to landscape in 3 column mode, if we're viewing
 			// the tracklist in porttrait mode we need to re-display a chooser panel  or
 			// we end up with only 2 columns
@@ -566,7 +556,6 @@ var layoutProcessor = function() {
 			if (display_mode == 2 && $('.mainpane:visible').not('#infobar').length == 0)
 				layoutProcessor.sourceControl('albumlist');
 
-			// layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
 			infobar.rejigTheText();
 			setTimeout(layoutProcessor.mobile_browser_shitness, 500);
@@ -633,8 +622,11 @@ var layoutProcessor = function() {
 				$('#sortable .track').playlistTouchWipe({});
 				$('#sortable .item').playlistTouchWipe({});
 			} else {
-				$('#pscroller').find('.icon-cancel-circled').each(function() {
-					var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
+				$('.trackgroup .icon-cancel-circled').each(function() {
+					var d = $('<i>', {class: 'icon-updown inline-icon fixed clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
+				});
+				$('.playlistalbum .icon-cancel-circled').each(function() {
+					var d = $('<i>', {class: 'icon-updown inline-icon expand clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
 				});
 			}
 		},

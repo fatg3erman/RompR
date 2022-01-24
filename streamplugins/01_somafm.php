@@ -28,7 +28,7 @@ class somafmplugin {
 
 	public function doStationList() {
 		uibits::directoryControlHeader('somafmlist', language::gettext('label_somafm'));
-		print '<div class="containerbox padright indent ninesix bumpad brick_wide">';
+		print '<div class="containerbox indent ninesix bumpad brick_wide">';
 		print '<a href="http://somafm.com" target="_blank">'.language::gettext("label_soma_beg").'</a>';
 		print '</div>';
 		// NB Don't use the cache, it fucks up 'Last Played'
@@ -55,9 +55,9 @@ class somafmplugin {
 
 	private function format_listenlink($c, $p, $label) {
 		$img = $this->getimage($c);
-		print '<div class="clickstream playable draggable indent containerbox padright vertical-centre" name="'.rawurlencode((string) $p).'" streamimg="'.$img.'" streamname="'.$c->title.'">';
-		print '<i class="icon-no-response-playbutton collectionicon fixed"></i>';
-		print '<i class="'.audioClass($p[0]['format']).' collectionicon fixed"></i>';
+		print '<div class="clickstream playable draggable indent containerbox vertical-centre" name="'.rawurlencode((string) $p).'" streamimg="'.$img.'" streamname="'.$c->title.'">';
+		print '<i class="icon-no-response-playbutton inline-icon fixed"></i>';
+		print '<i class="'.audioClass($p[0]['format']).' inline-icon fixed"></i>';
 		print '<div class="expand">'.$label.'&nbsp';
 		switch ($p[0]['format']) {
 			case 'mp3':
@@ -119,24 +119,24 @@ class somafmplugin {
 		print '<div id="somafm_'.$count.'" class="dropmenu">';
 		uibits::trackControlHeader('','','somafm_'.$count, null, array(array('Image' => $this->getimage($channel))));
 		if ($channel->description) {
-			print '<div class="containerbox ninesix indent padright">'.utf8_encode($channel->description).'</div>';
+			print '<div class="containerbox ninesix indent">'.utf8_encode($channel->description).'</div>';
 		}
 		if ($channel->listeners) {
-			print '<div class="containerbox indent padright">';
+			print '<div class="containerbox indent">';
 			print '<div class="expand">'.$channel->listeners.' '.trim(language::gettext("lastfm_listeners"),':').'</div>';
 			print '</div>';
 		}
 		print '<div class="containerbox rowspacer"></div>';
 		if ($channel->lastPlaying) {
-			print '<div class="containerbox indent padright vertical-centre">';
+			print '<div class="containerbox indent vertical-centre">';
 			print '<b>'.language::gettext('label_last_played').'</b>&nbsp;';
 			print $channel->lastPlaying;
 			print '</div>';
 		}
 		if ($channel->twitter && $channel->dj) {
 			print '<a href="http://twitter.com/@'.$channel->twitter.'" target="_blank">';
-			print '<div class="containerbox indent padright vertical-centre">';
-			print '<i class="icon-twitter-logo collectionicon fixed"></i>';
+			print '<div class="containerbox indent vertical-centre">';
+			print '<i class="icon-twitter-logo inline-icon fixed"></i>';
 			print '<div class="expand"><b>DJ: </b>'.$channel->dj.'</div>';
 			print '</div></a>';
 		}

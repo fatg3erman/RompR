@@ -82,7 +82,7 @@ var info_lastfm = function() {
 	function appendTag(table, name, url) {
 		var row = $('<tr>', {class: 'newtag invisible'}).appendTo(table);
 		row.append($('<td>').append($('<a>', {href: url, target: '_blank'}).html(name)));
-		row.append($('<td>').append($('<i>', {class: 'icon-cancel-circled playlisticon infoclick clickremovetag tooltip', title: language.gettext("lastfm_removetag")})));
+		row.append($('<td>').append($('<i>', {class: 'icon-cancel-circled inline-icon infoclick clickremovetag tooltip', title: language.gettext("lastfm_removetag")})));
 		row.fadeIn('fast', function() {
 			$(this).removeClass('newtag');
 		});

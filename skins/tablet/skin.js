@@ -249,9 +249,12 @@ var layoutProcessor = function() {
 		},
 
 		postPlaylistLoad: function() {
-			$('#pscroller').find('.icon-cancel-circled').each(function() {
-				var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
-			});
+				$('.trackgroup .icon-cancel-circled').each(function() {
+					var d = $('<i>', {class: 'icon-updown inline-icon fixed clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
+				});
+				$('.playlistalbum .icon-cancel-circled').each(function() {
+					var d = $('<i>', {class: 'icon-updown inline-icon expand clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
+				});
 		},
 
 		getElementPlaylistOffset: function(element) {

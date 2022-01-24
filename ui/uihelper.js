@@ -455,7 +455,7 @@ var uiHelper = function() {
 							name: $(this).prev().attr('name')
 						}
 					).insertBefore($(this));
-					thething.append('<div class="fixed padright">'+language.gettext('label_resume')+'</div>');
+					thething.append('<div class="fixed">'+language.gettext('label_resume')+'</div>');
 					var bar = $('<div>', {class: 'expand', style: "height: 0.5em"}).appendTo(thething);
 					bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
 				});

@@ -22,14 +22,14 @@ class uibits {
 		// Outer container
 		if ($data['playable'] == 1 or $data['playable'] == 3) {
 			// Note - needs clicktrack and name in case it is a removeable track
-			print '<div class="unplayable clicktrack ninesix containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
+			print '<div class="unplayable clicktrack ninesix containerbox calign" name="'.rawurlencode($data['uri']).'">';
 		} else if ($data['uri'] == null) {
-			print '<div class="playable '.$class.' ninesix draggable containerbox padright calign" name="'.$data['ttid'].'">';
+			print '<div class="playable '.$class.' ninesix draggable containerbox calign" name="'.$data['ttid'].'">';
 		} else {
-			print '<div class="playable '.$class.' ninesix draggable containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
+			print '<div class="playable '.$class.' ninesix draggable containerbox calign" name="'.rawurlencode($data['uri']).'">';
 		}
 
-		print domainIcon($d, 'collectionicon');
+		print domainIcon($d, 'inline-icon');
 
 		// Track Number
 		if ($data['numtracks'] > 0) {
@@ -59,7 +59,7 @@ class uibits {
 		}
 		if ($data['tags']) {
 			print '<div class="fixed playlistrow2 tracktags">';
-			print '<i class="icon-tags collectionicon"></i>'.$data['tags'];
+			print '<i class="icon-tags inline-icon"></i>'.$data['tags'];
 			print '</div>';
 		}
 		print '</div>';
@@ -73,7 +73,7 @@ class uibits {
 
 		// Menu Button
 		if ($data['ttid']) {
-			$button_class = "icon-menu playlisticonr fixed clickable clickicon invisibleicon clicktrackmenu spinable";
+			$button_class = "icon-menu inline-icon fixed clickable clickicon invisibleicon clicktrackmenu spinable";
 			// lm will be null if ths is a manually added track, but don't give the option to remove from collection
 			// if isSearchResult == 3 becaause that's a hidden track that has come up in search results.
 			if ($data['lm'] === null && $data['isSearchResult'] != 3) {
@@ -235,7 +235,7 @@ class uibits {
 		$c = ($printcontainer) ? "searchdir" : "directory";
 		print '<input type="hidden" name="dirpath" value="'.rawurlencode($fullpath).'" />';
 		print '<div class="'.$c.' menu openmenu containerbox menuitem brick_wide" name="'.$prefix.$dircount.'">';
-		print '<i class="icon-folder-open-empty fixed collectionicon"></i>';
+		print '<i class="icon-folder-open-empty fixed inline-icon"></i>';
 		print '<div class="expand">'.htmlentities(urldecode($displayname)).'</div>';
 		print '</div>';
 		if ($printcontainer) {
@@ -255,7 +255,7 @@ class uibits {
 		print '<input type="hidden" value="'.rawurlencode($att['URL']).'" />';
 		print '<input type="hidden" value="'.rawurlencode($att['text']).'" />';
 		print '<div class="menu openmenu '.$prefix.' directory containerbox menuitem brick_wide" name="'.$prefix.'_'.$name.'">';
-		print '<i class="icon-folder-open-empty fixed collectionicon"></i>';
+		print '<i class="icon-folder-open-empty fixed inline-icon"></i>';
 		print '<div class="expand">'.$att['text'].'</div>';
 		print '</div>';
 		// print '<div id="'.$prefix.'_'.$name.'" class="invisible indent containerbox wrap fullwidth notfilled is-albumlist removeable">';
@@ -282,7 +282,7 @@ class uibits {
 		$out = phpQuery::newDocument($html);
 		$extra = '<div class="fixed containerbox">';
 		$extra .= '<div class="expand"></div>';
-		$extra .= '<i class="clickable clickradioremove clickicon icon-cancel-circled collectionicon yourradio" name="'.$index.'"></i>';
+		$extra .= '<i class="clickable clickradioremove clickicon icon-cancel-circled inline-icon yourradio" name="'.$index.'"></i>';
 		$extra .= "</div>";
 		$out->find('.helpfulalbum')->append($extra);
 		return $out;

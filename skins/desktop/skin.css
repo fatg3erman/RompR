@@ -280,46 +280,6 @@ button.spinable.icon-spin6 {
 	padding-left:16px;
 }
 
-.playlisticon {
-	padding:0px;
-	margin-right:4px;
-	margin-bottom:2px;
-	margin-top:2px;
-	vertical-align:middle;
-	height: 12px;
-	width: 12px;
-}
-
-.collectionicon {
-	padding:0px;
-	margin-right:8px;
-	margin-bottom:2px;
-	margin-top:2px;
-	vertical-align:middle;
-	width:16px;
-	height:16px;
-}
-
-.submenuspacer {
-	/*This needs to be the same width as collectionicon*/
-	margin-left:24px;
-}
-
-.playlisticonr {
-	padding:0px;
-	margin-left:4px;
-	margin-right:2px;
-	margin-bottom:2px;
-	margin-top:2px;
-	vertical-align:middle;
-	height: 12px;
-	width: 12px;
-}
-
-.clicktrackmenu {
-	margin-left: 8px;
-}
-
 .rating-icon-big {
 	height: 20px;
 	width: 100px;
@@ -367,7 +327,7 @@ i.topdrop
 .menuitem {
 	font-weight:bold;
 	margin:0px;
-	padding-left:8px;
+	padding-left:0px;
 	padding-right:0px;
 	padding-top:2px;
 	padding-bottom:2px;
@@ -382,7 +342,7 @@ i.topdrop
 .playlistalbum {
 	font-weight:bold;
 	margin:0px;
-	padding-left:4px;
+	padding-left:0px;
 	padding-right:0px;
 	padding-top:4px;
 	padding-bottom:2px;
@@ -398,8 +358,8 @@ i.topdrop
 }
 
 .menu {
-	width:14px;
-	height: 14px;
+	width: var(--menu-toggle-icon-size);
+	height: var(--menu-toggle-icon-size);
 	vertical-align:middle;
 	cursor:pointer;
 }
@@ -410,15 +370,7 @@ i.topdrop
 }
 
 .indent {
-	margin-left:16px;
-}
-
-.padright {
-	padding-right:4px;
-}
-
-.padleft {
-	padding-left:4px;
+	margin-left:12px;
 }
 
 .buttonchange {

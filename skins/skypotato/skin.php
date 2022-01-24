@@ -174,7 +174,7 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 	<div id="albumlist" class="invisible noborder">
 <?php
 	print '<div class="vertical-centre configtitle">';
-	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
+	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu smallicon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
 	print '<div class="textcentre expand"><b>'.language::gettext('button_local_music').'</b></div>';
 	print '</div>';
 	collectionButtons();
@@ -209,7 +209,7 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 	<div id="searcher" class="invisible noborder">
 	<div class="vertical-centre configtitle">
 	<?php
-		print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
+		print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu smallicon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
 		print '<div class="textcentre expand"><b>'.language::gettext('label_searchfor').'</b></div>';
 	?>
 	</div>
@@ -242,10 +242,10 @@ foreach($sp as $p) {
 ?>
 	</div>
 
-	<div id="podcastslist" class="helpfulholder noselection dropmenu invisible">
+	<div id="podcastslist" class="helpfulholder noselection invisible">
 <?php
 print '<div class="vertical-centre configtitle">';
-print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
+print '<i class="icon-menu smallicon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
 print '</div>';
 include("includes/podcast_base.php");
@@ -263,7 +263,7 @@ include("includes/podcast_base.php");
 		</div>
 		<div id="storedplaylists" class="helpfulholder noselection containerbox wrap is-albumlist"></div>
 	</div>
-	<div id="pluginplaylistslist" class="invisible padleft noselection">
+	<div id="pluginplaylistslist" class="invisible noselection">
 <?php
 print '<div class="containerbox configtitle">';
 print '<div class="expand textcentre"><b>'.language::gettext('label_pluginplaylists').'</b></div>';
@@ -320,7 +320,7 @@ print '<div id="artistinformation" class="infotext noselection"><h2 class="infob
 <div id="tagadder" class="dropmenu dropshadow mobmenu">
 	<div class="vertical-centre configtitle moveable"><div class="textcentre expand"><b>
 <?php
-print language::gettext("lastfm_addtags").'</b></div><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div>';
+print language::gettext("lastfm_addtags").'</b></div><i class="icon-cancel-circled clickicon smallicon tright" onclick="tagAdder.close()"></i></div>';
 ?>
-	<div class="containerbox padright vertical-centre tagaddbox"></div>
+	<div class="containerbox vertical-centre tagaddbox"></div>
 </div>

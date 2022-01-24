@@ -352,10 +352,10 @@ function domainIcon($d, $c) {
 }
 
 function domainHtml($uri) {
-	$h = domainIcon(getDomain($uri), 'collectionicon');
+	$h = domainIcon(getDomain($uri), 'inline-icon');
 	if ($h == '') {
 		if (strtolower(pathinfo($uri, PATHINFO_EXTENSION)) == "cue") {
-			$h = '<i class="icon-doc-text collectionicon fixed"></i>';
+			$h = '<i class="icon-doc-text inline-icon fixed"></i>';
 		}
 	}
 	return $h;
@@ -811,9 +811,9 @@ function printFileSearch(&$tree) {
 
 function printFileItem($displayname, $fullpath, $time) {
 	$ext = strtolower(pathinfo($fullpath, PATHINFO_EXTENSION));
-	print '<div class="clickable clicktrack playable ninesix draggable indent containerbox padright line brick_wide" name="'.
+	print '<div class="clickable clicktrack playable ninesix draggable indent containerbox line brick_wide" name="'.
 		rawurlencode($fullpath).'">';
-	print '<i class="'.audioClass($ext, getDomain($fullpath)).' fixed collectionicon"></i>';
+	print '<i class="'.audioClass($ext, getDomain($fullpath)).' fixed inline-icon"></i>';
 	print '<div class="expand">'.$displayname.'</div>';
 	if ($time > 0) {
 		print '<div class="fixed playlistrow2 tracktime">'.format_time($time).'</div>';
@@ -822,7 +822,7 @@ function printFileItem($displayname, $fullpath, $time) {
 }
 
 function printPlaylistItem($displayname, $fullpath) {
-	print '<div class="clickable clickcue playable ninesix draggable indent containerbox padright line" name="'.
+	print '<div class="clickable clickcue playable ninesix draggable indent containerbox line" name="'.
 		rawurlencode($fullpath).'">';
 	print '<i class="icon-doc-text fixed collectionitem"></i>';
 	print '<div class="expand">'.$displayname.'</div>';

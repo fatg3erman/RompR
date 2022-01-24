@@ -599,6 +599,13 @@ class metaDatabase extends collection_base {
 		logger::log("INCREMENT", "Setting",$attribute,"to",$value,"for TTID",$ttid);
 		if ($this->sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", LastPlayed) VALUES (?, ?, ?)", $ttid, $value, $lp)) {
 			logger::debug("INCREMENT", " .. success");
+			$is_audiobook = $this->simple_query('isAudiobook', 'Tracktable', 'TTindex', $ttid, 0);
+			if ($is_audiobook == 1) {
+				logger::log('INCREMENT', 'Resetting resume position for TTID',$ttid);
+				// Always do this even if there is no stored progress to reset - it triggers the Progress trigger which makes the UI update
+				// so that the Up Next marker moves
+				$this->sql_prepare_query(true, null, null, null, 'REPLACE INTO Progresstable (TTindex, Progress) VALUES (? ,?)', $ttid, 0);
+			}
 		} else {
 			logger::warn("INCREMENT", "FAILED Setting",$attribute,"to",$value,"for TTID",$ttid);
 			return false;

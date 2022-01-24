@@ -132,7 +132,7 @@ var info_file = function() {
 
 		var tl = layout.add_sidebar_list(language.gettext("musicbrainz_tags"), '<i class="icon-plus infoclick smallicon clickaddtags"></i>');
 		usermeta.Tags.forEach(function(tag) {
-			layout.append_to_list(tl, '&nbsp;', '<span class="tag">'+tag+'<i class="icon-cancel-circled clickicon tagremover playlisticon"></i></span>');
+			layout.append_to_list(tl, '&nbsp;', '<span class="tag">'+tag+'<i class="icon-cancel-circled clickicon tagremover inline-icon"></i></span>');
 		});
 
 		layout.add_flow_box_header({title: language.gettext('label_collinfo')});

@@ -11,7 +11,7 @@ var crazyRadioManager = function() {
 					var crazy = playlist.radioManager.standardBox('spotiCrazyRadio', JSON.stringify(crazySettings[i]), 'icon-spotify-circled', crazySettings[i].playlistname).appendTo("#pluginplaylists_spotify");
 					crazy.append(
 						'<div class="fixed">'+
-						'<i class="icon-cancel-circled collectionicon clickable crazyradio clickremcrazy" name="'+i+'"></i>'+
+						'<i class="icon-cancel-circled inline-icon clickable crazyradio clickremcrazy" name="'+i+'"></i>'+
 						'</div>'
 					);
 				}

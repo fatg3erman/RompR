@@ -130,7 +130,7 @@
 <div id="albumlist" class="scroller mainpane invisible pright">
 <?php
 	print '<div class="vertical-centre configtitle">';
-	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
+	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu smallicon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
 	print '<div class="textcentre expand"><b>'.language::gettext('button_local_music').'</b></div>';
 	print '</div>';
 	collectionButtons();
@@ -143,7 +143,7 @@
 <div id="search" class="noborder">
 <div class="vertical-centre configtitle">
 <?php
-	print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
+	print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu smallicon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
 	print '<div class="textcentre expand"><b>'.language::gettext('label_searchfor').'</b></div>';
 ?>
 </div>
@@ -209,7 +209,7 @@ include($p);
 <div id="podcastslist" class="scroller mainpane invisible pright">
 <?php
 print '<div class="vertical-centre configtitle">';
-print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
+print '<i class="icon-menu smallicon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
 print '</div>';
 include("includes/podcast_base.php");
@@ -267,7 +267,7 @@ if (prefs::$prefs['player_backend'] == "mopidy") {
 	<?php
 		print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('button_saveplaylist').'</b></div></div>';
 	?>
-		<div class="containerbox vertical-centre"><div class="fixed padright">
+		<div class="containerbox vertical-centre"><div class="fixed">
 		</div><div class="expand"><input class="enter clearbox" id="playlistname" type="text" size="200"/></div>
 	<?php
 			print '<button class="fixed iconbutton savebutton"></button>';
@@ -301,14 +301,15 @@ include('skins/playlist.php');
 <div id="tagadder" class="dropmenu dropshadow mobmenu">
 	<div class="vertical-centre configtitle moveable"><div class="textcentre expand"><b>
 <?php
-print language::gettext("lastfm_addtags").'</b></div><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div>';
+print language::gettext("lastfm_addtags").'</b></div><i class="icon-cancel-circled clickicon smallicon tright" onclick="tagAdder.close()"></i></div>';
 ?>
-	<div class="containerbox padright vertical-centre tagaddbox"></div>
+	<div class="containerbox vertical-centre tagaddbox"></div>
 </div>
 
 <div id="pladddropdown" class="top_drop_menu dropmenu dropshadow mobmenu">
 	<?php
-	print '<div class="configtitle moveable"><div class="textcentre expand"><b>'.language::gettext('button_addtoplaylist').'</b></div><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="addToPlaylist.close()"></i></div>';
+	print '<div class="configtitle moveable"><div class="textcentre expand"><b>'.language::gettext('button_addtoplaylist').
+	'</b></div><i class="icon-cancel-circled clickicon smallicon tright" onclick="addToPlaylist.close()"></i></div>';
 		?>
 	<div id="addtoplaylistmenu" class="clearfix">
 	</div>

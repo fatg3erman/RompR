@@ -764,11 +764,11 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 		this._mouseInit();
 		if (this.options.addClassTo) {
 			this.element.find('.'+this.options.addClassTo).first().addClass(this.options.handleClass)
-				.append('<i class="icon-cancel-circled playlisticonr tright clickicon closemenu"></i>');
+				.append('<i class="icon-cancel-circled smallicon tright clickicon closemenu"></i>');
 			var hl = this.element.find('input.helplink');
 			if (hl.length > 0) {
 				this.element.find('.'+this.options.addClassTo).first()
-					.append('<a href="'+hl.first().val()+'" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
+					.append('<a href="'+hl.first().val()+'" target="_blank"><i class="icon-info-circled smallicon tright"></i></a>');
 			}
 
 		}
@@ -983,7 +983,7 @@ $.widget('rompr.spotifyAlbumThing', {
 			}
 			html += a.name+'</span>';
 			if (!player.canPlay('spotify')) {
-				html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled playlisticonr"></i></a>';
+				html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled smallicon"></i></a>';
 			}
 			if (layoutProcessor.openOnImage && player.canPlay('spotify')) {
 				html += '<div class="playdiv'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'"></div>';
@@ -1253,7 +1253,7 @@ $.widget('rompr.spotifyArtistThing', {
 				appendto = y;
 			}
 			if (!player.canPlay('spotify')) {
-				html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled playlisticonr"></i></a>';
+				html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled smallicon"></i></a>';
 			}
 			if (layoutProcessor.openOnImage && player.canPlay('spotify')) {
 				html += '<div class="playdiv'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'"></div>';
@@ -1515,10 +1515,10 @@ function popup(opts) {
 		var tit = $('<div>', { class: "expand textcentre"}).appendTo(ct)
 		tit.html('<b>'+options.title+'</b>');
 		if (options.hasclosebutton) {
-			tit.append('<i class="icon-cancel-circled playlisticonr clickicon tright"></i>');
+			tit.append('<i class="icon-cancel-circled smallicon clickicon tright"></i>');
 		}
 		if (options.helplink) {
-			tit.append('<a href="'+options.helplink+'" target="_blank"><i class="icon-info-circled playlisticonr clickicon tright"></i></a>');
+			tit.append('<a href="'+options.helplink+'" target="_blank"><i class="icon-info-circled smallicon clickicon tright"></i></a>');
 		}
 		contentholder = $('<div>', {class: 'popupcontentholder expand'}).appendTo(container);
 		contents = $('<div>',{class: 'popupcontents clearfix'}).appendTo(contentholder);

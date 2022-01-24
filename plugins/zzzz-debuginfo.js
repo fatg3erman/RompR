@@ -49,7 +49,7 @@ var debugInfo = function() {
       	         dbg = browser.registerExtraPlugin("debug", language.gettext('button_debuginfo'), debugInfo);
                   // randomly change the url to avoid the cache
                   $('#debugfoldup').load('utils/debuginfo.php', function() {
-                      $('#debugfoldup').prepend('<div class="containerbox padright noselection"><button class="fixed infoclick plugclickable clickcopy">Copy To Clipboard</button></div>');
+                      $('#debugfoldup').prepend('<div class="containerbox noselection"><button class="fixed infoclick plugclickable clickcopy">Copy To Clipboard</button></div>');
                       $('#debugfoldup').prepend('<p>For information about how to report bugs, <a href="https://fatg3erman.github.io/RompR/Troubleshooting" target="_blank">'+language.gettext('config_read_the_docs')+'</a></p>');
                       $('#debugfoldup').prepend('<h3>If you are reporting a bug, appending this information to your report will be helpful</h3>');
                       getLocalInfo();

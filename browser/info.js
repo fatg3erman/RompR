@@ -272,7 +272,7 @@ var browser = function() {
 		},
 
 		info_banner: function(data, source, close) {
-			var holder = $('<div>', {class: 'infobanner containerbox infosection menuitem'});
+			var holder = $('<div>', {class: 'infobanner containerbox infosection'});
 			var h = $('<h2>', {class: 'expand'}).appendTo(holder);
 			h.html(data.name);
 			if (data.withfoldup) {
@@ -294,7 +294,7 @@ var browser = function() {
 				}
 			}
 			if (close) {
-				holder.append($('<div>', {class: 'fixed alignmid padright'})
+				holder.append($('<div>', {class: 'fixed alignmid'})
 					.append($('<i>', {class: 'icon-cancel-circled svg-square infoclick clickicon tadpole tooltip', title: language.gettext('label_closepanel')})));
 			}
 			return holder;

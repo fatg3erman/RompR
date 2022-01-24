@@ -8,7 +8,7 @@ print '<input class="autoset toggle" type="checkbox" id="searchcollectiononly">
 <label for="searchcollectiononly">'.language::gettext("label_searchcollectiononly").'</label>';
 print '</div>';
 
-print '<div id="searchdomaincontrol" class="podoptions containerbox padright vertical-centre styledinputs" style="padding-top:4px">';
+print '<div id="searchdomaincontrol" class="podoptions containerbox vertical-centre styledinputs" style="padding-top:4px">';
 print '<input class="autoset toggle" type="checkbox" id="search_limit_limitsearch" /><label for="search_limit_limitsearch">'.language::gettext("label_limitsearch").'</label>';
 print '</div>';
 

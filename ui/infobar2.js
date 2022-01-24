@@ -284,8 +284,6 @@ var infobar = function() {
 		rejigTheText: function() {
 			if (!biggerizing) {
 				biggerizing = true;
-				// clearTimeout(ftimer);
-				// ftimer = setTimeout(biggerize, 100);
 				biggerize();
 				biggerizing = false;
 			}

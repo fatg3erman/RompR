@@ -823,7 +823,7 @@ function popupMenu(event, element) {
 		});
 		for (var i in actions) {
 			if (clickedElement.hasClass(i)) {
-				clickedElement.find('.collectionicon').makeSpinner();
+				clickedElement.find('.inline-icon').makeSpinner();
 				debug.log('POPUPMENU', 'Calling',actions[i].name,'for action',i);
 				actions[i](clickedElement, self.restoreSelection);
 			}
@@ -861,9 +861,9 @@ function popupMenu(event, element) {
 			$(this).children('i').remove();
 			var mytag = $(this).find('span').html();
 			if (track_tags.indexOf(mytag) == -1) {
-				$(this).addClass('clicktagtrack').prepend('<i class="icon-blank collectionicon spinable"></i>')
+				$(this).addClass('clicktagtrack').prepend('<i class="icon-blank inline-icon spinable"></i>')
 			} else {
-				$(this).addClass('clickuntagtrack').prepend('<i class="icon-tick collectionicon spinable"></i>')
+				$(this).addClass('clickuntagtrack').prepend('<i class="icon-tick inline-icon spinable"></i>')
 			}
 		});
 	}
@@ -923,7 +923,7 @@ function makeTrackMenu(e, element) {
 	[0,1,2,3,4,5].forEach(function(r) {
 		ratsub.append($('<div>', {
 			class: 'backhi clickable menuitem clickratetrack rate_'+r,
-		}).html('<i class="icon-blank collectionicon spinable"></i><i class="icon-'+r+'-stars rating-icon-small"></i>'));
+		}).html('<i class="icon-blank inline-icon spinable"></i><i class="icon-'+r+'-stars rating-icon-small"></i>'));
 
 	});
 
@@ -1111,12 +1111,12 @@ function amendAlbumDetails(e, element) {
 	var width = (language.gettext('label_albumartist').length-4).toString() + 'em';
 
 	var d = $('<div>',{class: 'containerbox vertical-centre'}).appendTo(mywin);
-	d.append('<div class="fixed padright" style="width:'+width+'">'+language.gettext('label_albumartist')+'</div>');
+	d.append('<div class="fixed" style="width:'+width+'">'+language.gettext('label_albumartist')+'</div>');
 	var e = $('<div>',{class: 'expand'}).appendTo(d);
 	var i = $('<input>',{class: 'enter', id: 'amendname'+albumindex, type: 'text', size: '200'}).appendTo(e);
 
 	d = $('<div>',{class: 'containerbox vertical-centre'}).appendTo(mywin);
-	d.append('<div class="fixed padright" style="width:'+width+'">'+language.gettext('info_year')+'</div>');
+	d.append('<div class="fixed" style="width:'+width+'">'+language.gettext('info_year')+'</div>');
 	e = $('<div>',{class: 'expand'}).appendTo(d);
 	i = $('<input>',{class: 'enter', id: 'amenddate'+albumindex, type: 'text', size: '200'}).appendTo(e);
 

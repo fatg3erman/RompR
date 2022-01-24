@@ -6,6 +6,19 @@
 =====================================================================
 */
 
+:root {
+	--display-mode: 0;
+	--playlist-right-icon: inline-block;
+	--inline-track-icon-size: 20px;
+	--inline-clickable-icon-size: 28px;
+	--inline-clickable-icon-border-width: 6px;
+
+	--mainpane-left-padding: 4px;
+	--mainpane-right-padding: 4px;
+	--playlist-left-padding: var(--mainpane-left-padding);
+	--playlist-right-padding: var(--mainpane-right-padding);
+}
+
 body {
 	height: 100%;
 	min-height: 100%;
@@ -23,11 +36,6 @@ body {
 #headerbar {
 	flex-grow: 0;
 	flex-shrink:0;
-}
-
-:root {
-	--display-mode: 0;
-	--playlist-right-icon: inline-block;
 }
 
 h1 {
@@ -115,11 +123,6 @@ button.spinable.icon-spin6 {
 */
 
 #loadsawrappers {
-	/* Tried to use this, but safari on my iPhone S sets 100vh as 320px when the browser reports
-	it as 300px, even in full-screen mode. This is definitely a bug, but what can ya do?
-	In Chrome on iOS it makes the bottom button bar get covered by Chrome's button bar. You cannae win.*/
-	/* Note this includes 40px for headerbar. Keep them synced */
-	/*height: calc(100vh - 40px);*/
 	width: 100%;
 	overflow:hidden;
 }
@@ -212,6 +215,16 @@ button.spinable.icon-spin6 {
 
 #controls {
 	padding-top:1px;
+}
+
+[id^="pluginplaylists"] .drop-box {
+	margin-left: 40px;
+	/* 40px is the width of svg-square, 32px is the size of the dropdown menu icon */
+	width: calc(100% - 32px - 6em);
+}
+
+#pluginplaylists button {
+	height: 3em;
 }
 
 /*
@@ -340,13 +353,24 @@ div.albumbitsmenu {
 
 .dropmenu>.configtitle
 {
-	height: 2em;
+	min-height: 2em;
 }
 
 .mainpane {
 	position: relative;
 	top: 0;
 	left: 0;
+}
+
+.mainpane:not(#infobar):not(#infopane),
+.mainpane .dropmenu {
+	padding-left: var(--mainpane-left-padding);
+	padding-right: var(--mainpane-right-padding);
+}
+
+#playlistm {
+	padding-left: var(--playlist-left-padding);
+	padding-right: var(--playlist-right-padding);
 }
 
 .chooser {
@@ -365,7 +389,7 @@ div.albumbitsmenu {
 }
 
 .pref {
-	margin-left:8px;
+	/*margin-left:8px;*/
 	margin-bottom:12px;
 }
 
@@ -402,7 +426,7 @@ div.albumbitsmenu {
 .menuitem {
 	font-weight:bold;
 	margin:0px;
-	padding-left:4px;
+	padding-left:0px;
 	padding-right:0px;
 	padding-top:6px;
 	padding-bottom:6px;
@@ -413,7 +437,7 @@ div.albumbitsmenu {
 .playlistalbum {
 	font-weight:bold;
 	margin:0px;
-	padding-left:4px;
+	padding-left:0px;
 	padding-right:0px;
 	padding-top:6px;
 	padding-bottom:6px;
@@ -423,6 +447,16 @@ div.albumbitsmenu {
 
 .menu {
 	cursor:pointer;
+}
+
+[class^="icon-"].menu, [class*=" icon-"].menu {
+	width: var(--inline-clickable-icon-size);
+	height: var(--inline-clickable-icon-size);
+	box-sizing: border-box;
+	border-width: var(--inline-clickable-icon-border-width);
+	border-style: solid;
+	border-color: transparent;
+	vertical-align:middle;
 }
 
 .menu-covered {
@@ -581,66 +615,6 @@ i.phone-dropdown-button {
 	padding-bottom:6px;
 }
 
-/*#fruitbat .indent.dropmenu.padright {
-	padding-left: 0px;
-	padding-right: 0px;
-}
-*/
-/*#fruitbat .indent.dropmenu.padright>div {
-	padding-left: 8px;
-	width:100%;
-	padding-right:8px;
-}
-*/
-.playlisticon
-{
-	padding:0px;
-	margin-right:4px;
-	margin-bottom:2px;
-	margin-top:2px;
-	vertical-align:middle;
-	box-sizing:border-box;
-	border:6px solid transparent;
-	height: 26px;
-	width: 26px;
-}
-
-[class^="icon-"].menu, [class*=" icon-"].menu {
-	width: 24px;
-	height: 24px;
-	box-sizing: border-box;
-	border: 6px solid transparent;
-	vertical-align:middle;
-}
-
-.collectionicon {
-	padding:0px;
-	margin-right:8px;
-	margin-bottom:2px;
-	margin-top:2px;
-	vertical-align:middle;
-	width:20px;
-	height:20px
-}
-
-.submenuspacer {
-	/*This needs to be the same width as collectionicon*/
-	margin-left:28px;
-}
-
-.playlisticonr {
-	padding:0px;
-	margin-left:4px;
-	margin-bottom:2px;
-	margin-top:2px;
-	margin-right:2px;
-	vertical-align:middle;
-	box-sizing:border-box;
-	border:2px solid transparent;
-	width:32px;
-	height:32px;
-}
-
 div.playable.clicktrack {
 	align-items: center;
 }
@@ -679,30 +653,12 @@ div.playable.clicktrack {
 	width: 100%;
 }
 
-#sortable .playlisticonr.icon-cancel-circled {
+#sortable .inline-icon.icon-cancel-circled {
 	 display: var(--playlist-right-icon);
 }
 
 .prearranger {
 	display:none;
-}
-
-#sortable .playlisticonr {
-	margin-right:4px;
-	width: 40px;
-	border: 4px solid transparent;
-}
-
-#collection .playlisticonr {
-	margin-right:4px;
-	width: 48px;
-	border: 6px solid transparent;
-}
-
-#audiobooklist .playlisticonr {
-	margin-right:4px;
-	width: 48px;
-	border: 6px solid transparent;
 }
 
 #sortable .track>div>div.clickable {
@@ -757,14 +713,6 @@ div.playable.clicktrack {
 
 .dropdown-button {
 	margin-left:-20px !important;
-}
-
-.padright {
-	padding-right:4px;
-}
-
-.padleft {
-	padding-left:4px;
 }
 
 .whatdoicallthis {
@@ -834,7 +782,7 @@ div.playable.clicktrack {
 
 .indent {
 	padding-left: 4px;
-	box-szing:border-box;
+	box-sizing:border-box;
 }
 
 .headercontainer {
@@ -1453,9 +1401,9 @@ div.playable.clicktrack {
 	}
 
 	#playbackTime {
-		font-size: 10px;
-		height: 14px;
-		line-height: 14px;
+		font-size: 12px;
+		height: 16px;
+		line-height: 16px;
 		margin-top: 4px;
 		margin-bottom: 4px;
 	}

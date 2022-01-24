@@ -288,7 +288,7 @@ var info_discogs = function() {
 					d = [url, url];
 					url = 'http://'+url;
 				}
-				let icon = $('<i>', {class: 'smallicon padright'}).appendTo($('<li>').appendTo(u));
+				let icon = $('<i>', {class: 'smallicon'}).appendTo($('<li>').appendTo(u));
 				let link = $('<a>', {href: url, target: '_blank'}).insertAfter(icon);
 				if (url.match(/wikipedia/i)) {
 					icon.addClass('icon-wikipedia');

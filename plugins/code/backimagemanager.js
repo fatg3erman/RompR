@@ -195,7 +195,7 @@ var backimagemanager = function() {
 				// and then select 'this browser only' if it isn't already selected.
 
 				$('#backimunger').append(
-					'<div class="infobanner containerbox infosection menuitem">' +
+					'<div class="infobanner containerbox infosection">' +
 					'<h2 class="expand" id="bg-portrait-title"></h2>' +
 					'<div class="fixed alignmid"><i class="icon-menu svg-square infoclick plugclickable bg-hide-panel"></i></div>' +
 					'</div>'
@@ -203,7 +203,7 @@ var backimagemanager = function() {
 				pholder = $('<div>', {class: 'containerbox wrap'}).appendTo('#backimunger');
 
 				$('#backimunger').append(
-					'<div class="infobanner containerbox infosection menuitem">' +
+					'<div class="infobanner containerbox infosection">' +
 					'<h2 class="expand" id="bg-landscape-title"></h2>' +
 					'<div class="fixed alignmid"><i class="icon-menu svg-square infoclick plugclickable bg-hide-panel"></i></div>' +
 					'</div>'

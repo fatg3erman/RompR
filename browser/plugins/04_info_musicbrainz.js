@@ -139,7 +139,7 @@ var info_musicbrainz = function() {
 		relations.forEach(function(rel) {
 			if (rel.url) {
 				let item = $('<li>').appendTo(list);
-				let icon = $('<i>', {class: 'icon-noicon smallicon padright'}).appendTo(item);
+				let icon = $('<i>', {class: 'icon-noicon smallicon'}).appendTo(item);
 				let link = $('<a>', {target: '_blank', href: rel.url.resource}).appendTo(item);
 				let d = rel.url.resource.match(/https*:\/\/(.*?)(\/|$)/);
 				switch (rel.type) {

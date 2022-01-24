@@ -176,10 +176,10 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 			print '<div class="containerbox menuitem '.$extra_class.'playable clickable '.$class.' playlisttrack" name="'.$link.'">';
 			print '<input class="playlistname" type="hidden" value="'.rawurlencode($pl).'" />';
 			print '<input class="playlistpos" type="hidden" value="'.$count.'" />';
-			print '<i class="'.$icon.' fixed collectionicon"></i>';
+			print '<i class="'.$icon.' fixed inline-icon"></i>';
 			print '<div class="expand">'.$name.'</div>';
 			if ($delete) {
-				print '<i class="icon-cancel-circled fixed playlisticonr clickable clickicon clickdeleteplaylisttrack" name="'.$count.'"></i>';
+				print '<i class="icon-cancel-circled fixed inline-icon clickable clickicon clickdeleteplaylisttrack" name="'.$count.'"></i>';
 				print '<input type="hidden" value="'.rawurlencode($pl).'" />';
 			}
 			print '</div>';
@@ -187,7 +187,7 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 
 		case "clickcue":
 			print '<div class="containerbox meunitem '.$extra_class.'playable clickable '.$class.'" name="'.$link.'">';
-			print '<i class="'.$icon.' fixed collectionicon"></i>';
+			print '<i class="'.$icon.' fixed inline-icon"></i>';
 			print '<div class="expand">'.$name.'</div>';
 			print '</div>';
 			break;

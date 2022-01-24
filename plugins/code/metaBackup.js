@@ -88,12 +88,12 @@ var metaBackup = function() {
 		open: function() {
 			if (mbb === null) {
 				mbb = browser.registerExtraPlugin("mbb", language.gettext("label_metabackup"), metaBackup, 'https://fatg3erman.github.io/RompR/Backing-Up-Your-Metadata');
-				$("#mbbfoldup").append('<div class="padright noselection" style="text-align:center">'+
+				$("#mbbfoldup").append('<div class="noselection" style="text-align:center">'+
 					'<button id="createbackup" class="fixed">'+language.gettext("button_backup")+'</button>'+
 					'<div class="svg-square invisible fixed" id="backupspinner"></div>'+
 					'</div>');
 
-				progressDiv = $('<div>', {class: 'padright', style: 'text-align:center'}).appendTo('#mbbfoldup');
+				progressDiv = $('<div>', {class: 'textcentre'}).appendTo('#mbbfoldup');
 
 				$("#mbbfoldup").append('<div class="noselection fullwidth" id="mbbmunger"></div>');
 				$('#createbackup').on('click', metaBackup.create);
@@ -120,7 +120,7 @@ var metaBackup = function() {
 						html += '<td>'+data[i].stats[j]+'</td>';
 					}
 					html += '<td align="center"><button class="plugclickable infoclick restore" name="'+data[i].dir+'">'+language.gettext('button_restore')+'</button></td>';
-					html += '<td align="center"><i class="icon-cancel-circled playlisticon clickicon plugclickable infoclick remove" name="'+data[i].dir+'"></i></td>';
+					html += '<td align="center"><i class="icon-cancel-circled inline-icon clickicon plugclickable infoclick remove" name="'+data[i].dir+'"></i></td>';
 					html += '</tr>';
 				}
 				html += '</table>';

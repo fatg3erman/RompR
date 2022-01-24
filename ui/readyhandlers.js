@@ -240,9 +240,9 @@ function createHelpLinks() {
 		debug.debug("HELPLINKS","Appending Help Link For",i);
 		$('b:contains("'+i+'")').each(function() {
 			if ($(this).parent().hasClass('configtitle') && !$(this).parent().hasClass('nohelp')) {
-				$(this).parent().append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');
+				$(this).parent().append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled smallicon tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');
 			} else if ($(this).parent().parent().hasClass('configtitle') && $(this).parent().parent().hasClass('vertical-centre')) {
-				$(this).parent().parent().append('<div class="fixed"><a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticon tooltip" title="'+language.gettext('label_gethelp')+'"></i></a></div>');
+				$(this).parent().parent().append('<div class="fixed"><a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled smallicon tooltip" title="'+language.gettext('label_gethelp')+'"></i></a></div>');
 			}
 		});
 	}

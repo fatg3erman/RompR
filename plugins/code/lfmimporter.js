@@ -78,12 +78,12 @@ var lfmImporter = function() {
 				debug.debug("LFMIMPORTER","Using data",playlistinfo);
 				metaHandlers.fromPlaylistInfo.setMeta(playlistinfo, 'inc', [{attribute: 'Playcount', value: de.userplaycount()}], setSuccess, setFail);
 			} else {
-				row.children('td[name="tick"]').html('<i class="icon-block collectionicon"></i>');
+				row.children('td[name="tick"]').html('<i class="icon-block inline-icon"></i>');
 				doNext();
 			}
 		} else {
 			if (data.error) {
-				row.children('td[name="tick"]').html('<i class="icon-block collectionicon"></i>');
+				row.children('td[name="tick"]').html('<i class="icon-block inline-icon"></i>');
 				doNext();
 			} else {
 				debug.warn('LFMIMPORTER', 'Result has no data - was there an error? Pausing before continuing');
@@ -95,13 +95,13 @@ var lfmImporter = function() {
 
 	function setSuccess() {
 		debug.debug("LFMIMPORTER","Success");
-		row.children('td[name="tick"]').html('<i class="icon-tick collectionicon"></i>');
+		row.children('td[name="tick"]').html('<i class="icon-tick inline-icon"></i>');
 		doNext();
 	}
 
 	function setFail(data) {
 		debug.warn("LFMIMPORTER","Fail",data);
-		row.children('td[name="tick"]').html('<i class="dialog-error collectionicon"></i>');
+		row.children('td[name="tick"]').html('<i class="dialog-error inline-icon"></i>');
 		doNext();
 	}
 

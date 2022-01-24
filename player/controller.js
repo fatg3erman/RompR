@@ -184,7 +184,7 @@ function playerController() {
 				clickedElement: $('.choosepanel[name="playlistslist"]'),
 				uri: "player/utils/loadplaylists.php"
 			});
-			$('b:contains("'+language.gettext('button_loadplaylist')+'")').parent('.configtitle').append('<a href="https://fatg3erman.github.io/RompR/Using-Saved-Playlists" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
+			$('b:contains("'+language.gettext('button_loadplaylist')+'")').parent('.configtitle').append('<a href="https://fatg3erman.github.io/RompR/Using-Saved-Playlists" target="_blank"><i class="icon-info-circled smallicon tright"></i></a>');
 			for (var i in openplaylists) {
 				$('i.menu.openmenu.playlist.icon-toggle-closed[name="'+openplaylists[i]+'"]').click();
 			}
@@ -193,7 +193,7 @@ function playerController() {
 			$('#addtoplaylistmenu').empty();
 			data.forEach(function(p) {
 				var h = $('<div>', {class: "containerbox backhi clickicon menuitem clickaddtoplaylist", name: p.name }).appendTo($('#addtoplaylistmenu'));
-				h.append('<i class="fixed collectionicon icon-doc-text"></i>');
+				h.append('<i class="fixed inline-icon icon-doc-text"></i>');
 				h.append('<div class="expand">'+p.html+'</div>');
 			});
 		} catch (err) {

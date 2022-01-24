@@ -31,7 +31,7 @@ if (count($result) == 0) {
 			print '<div class="fixed playlistrow2 trackrating"><i class="icon-'.$track['rating'].'-stars rating-icon-small nopointer"></i></div>';
 		}
 		if ($track['tags']) {
-			print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags collectionicon"></i>'.$track['tags'].'</div>';
+			print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags inline-icon"></i>'.$track['tags'].'</div>';
 		}
 		print '</div>';
 

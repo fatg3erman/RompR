@@ -58,7 +58,7 @@ var info_ratings = function() {
 					displayRating("#ratingimage", trackmeta.usermeta.Rating);
 					if (uiHelper.showTagButton()) {
 						$("#dbtags").html('<span><b>'+language.gettext("musicbrainz_tags")+
-							'</b></span><i class="icon-plus clickicon playlisticon" '+
+							'</b></span><i class="icon-plus clickicon inline-icon" '+
 							'onclick="tagAdder.show(event)" style="margin-left:2px;margin-top:0px;margin-right:1em;"></i>');
 					} else {
 						$('#dbtags').html(playtext);
@@ -69,7 +69,7 @@ var info_ratings = function() {
 					}
 					for(var i = 0; i < trackmeta.usermeta.Tags.length; i++) {
 						$("#dbtags").append('<span class="tag">'+trackmeta.usermeta.Tags[i]+
-							'<i class="icon-cancel-circled clickicon tagremover playlisticon" style="display:none"></i></span> ');
+							'<i class="icon-cancel-circled clickicon tagremover inline-icon" style="display:none"></i></span> ');
 					}
 					uiHelper.adjustLayout();
 				}

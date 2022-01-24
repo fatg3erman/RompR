@@ -27,7 +27,7 @@ jQuery.fn.menuReveal = async function() {
 			// All this bit is just re-formating the domain icon/album name/artist name
 			var titlediv = holder.find('div.albumthing').detach().insertBefore(self).find('.title-menu');
 			titlediv.addClass('containerbox vertical-centre');
-			titlediv.find('.collectionicon').removeClass('collectionicon').addClass('svg-square');
+			titlediv.find('.inline-icon').removeClass('inline-icon').addClass('svg-square');
 			var newwrapper = $('<div>', {class: 'containerbox vertical expand'}).appendTo(titlediv);
 			titlediv.find('div').not('.vertical').addClass('expand').detach().appendTo(newwrapper);
 
@@ -154,7 +154,7 @@ jQuery.fn.menuHide = async function() {
 			var monkey = parent.find('.helpfulalbum.expand');
 			var titlediv = self.parent().find('div.albumthing').detach().appendTo(monkey).find('.title-menu');
 			titlediv.removeClass('containerbox vertical-centre');
-			titlediv.find('.svg-square').removeClass('svg-square').addClass('collectionicon');
+			titlediv.find('.svg-square').removeClass('svg-square').addClass('inline-icon');
 			titlediv.find('div').not('.vertical').removeClass('expand').detach().appendTo(titlediv);
 			titlediv.find('.vertical').remove();
 			self.parent().remove();

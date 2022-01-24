@@ -9,6 +9,15 @@
 
 /* Top bar on phone and Tablet skins, control bar below infopane on desktop and fruit */
 
+:root {
+	--config-panel-pad-left: 8px;
+	--config-panel-pad-right: 4px;
+	--inline-track-icon-size: 16px;
+	--inline-clickable-icon-size: 16px;
+	--inline-clickable-icon-border-width: 0 0 0 4px;
+	--menu-toggle-icon-size: 14px;
+}
+
 body.mobile #headerbar
 {
     background-color: var(--headerbar-bg-colour-mob);
@@ -300,7 +309,6 @@ i.icon-menu {
 
 .noselection {
 	-webkit-user-select: none;
-	-khtml-user-select: none;
 	-moz-user-select: none;
 	-o-user-select: none;
 	user-select: none;
@@ -463,7 +471,36 @@ img.notexist,img.notfound {
 	width:32px;
 	height:32px;
 	vertical-align:middle;
-	margin-right:8px;
+}
+
+.inline-icon {
+	padding: 0px;
+	margin-left: 0px;
+	margin-right: 4px;
+	vertical-align: middle;
+	height: var(--inline-track-icon-size);
+	width: var(--inline-track-icon-size);
+	box-sizing: border-box;
+	border: none;
+}
+
+.inline-icon.clickicon,
+.inline-icon.infoclick {
+	margin-left: 6px;
+	margin-right: 0px;
+	height: var(--inline-clickable-icon-size);
+	width: var(--inline-clickable-icon-size);
+	border-width: var(--inline-clickable-icon-border-width);
+	border-style: solid;
+	border-color: transparent;
+}
+
+.submenuspacer {
+	margin-left: var(--inline-track-icon-size);
+}
+
+.clicktrackmenu {
+	transition: opacity 0.2s ease;
 }
 
 .tracknumber
@@ -712,19 +749,25 @@ div.unplayable {
 {
 	font-weight:bold;
 	font-size:90%;
-	margin-left:1em;
 	padding-left:6px;
 	padding-right:6px;
 	background-color: rgba(255, 0, 0, 0.9);
 	border-radius: 1em;
 	color: black;
+	display: table;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.podcounts {
+	text-align: center;
+	margin-left: 1em;
 }
 
 .unlistenedpod
 {
 	font-weight:bold;
 	font-size:90%;
-	margin-left:1em;
 	padding-left:6px;
 	padding-right:6px;
 	background-color: rgba(255, 160, 0, 0.9);
@@ -806,7 +849,7 @@ div.unplayable {
 =====================================================================
 */
 
-#pluginplaylistslist .menuitem
+[id^="pluginplaylists"] .menuitem
 {
 	margin-bottom: 4px;
 }
@@ -816,6 +859,19 @@ div.unplayable {
 	font-size:120%;
 }
 
+[id^="pluginplaylists"] button {
+	margin-right: 0px;
+}
+
+[id^="pluginplaylists"] .svg-square {
+	margin-right: 8px;
+}
+
+[id^="pluginplaylists"] .drop-box {
+	margin-left: 40px;
+	/* 40px is the width of svg-square, 32px is the size of the dropdown menu icon */
+	width: calc(100% - 6em);
+}
 /*
 =====================================================================
 =
@@ -881,7 +937,6 @@ div.unplayable {
 div.item
 {
     margin-bottom: 2px;
-	margin-right:2px;
 	box-sizing: border-box;
     border-top: var(--playlist-item-top-border);
 }
@@ -896,11 +951,6 @@ div.item div.containerbox.vertical.expand
 	padding-top:0px;
 	font-size:90%;
     transition: var(--playlist-current-transition);
-}
-
-.trackgroup
-{
-	margin-right:2px;
 }
 
 .playlisttitle
@@ -1062,11 +1112,6 @@ div.item div.containerbox.vertical.expand
 	padding: 0px !important;
 }
 
-.infosection h2
-{
-    border-bottom:2px solid var(--border-colour);
-}
-
 /* To prevent paragraphs flowing upwards into very narrow gaps
 	around floated images */
 
@@ -1138,11 +1183,23 @@ td.fil {
 .infosection, .albumsection {
 	padding-left:12px;
 	padding-right:12px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 	margin-bottom:4px;
     background-color: var(--infopane-header-bg-colour);
     background-image: var(--infopane-header-bg-image);
     background-size:cover;
     background-repeat:no-repeat;
+    align-items: center;
+}
+
+.infosection h2
+{
+    border-bottom:2px solid var(--border-colour);
+}
+
+.infosection div.fixed:last-child {
+	margin-left: 8px;
 }
 
 .infowiki h2 {
@@ -1710,7 +1767,7 @@ div.lyrics p {
 
 .pref
 {
-	margin-left:8px;
+	/*margin-left:8px;*/
 	margin-bottom:8px;
 }
 
@@ -2106,6 +2163,8 @@ div.top_drop_menu
 	opacity:1 !important;
 	padding:4px;
 	font-size: var(--font-size);
+	padding-left: var(--config-panel-pad-left);
+	padding-right: var(--config-panel-pad-right);
 }
 
 div.top_drop_menu div:not(.canbefaded) {

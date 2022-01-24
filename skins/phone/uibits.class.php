@@ -22,14 +22,14 @@ class uibits {
 		// Outer container
 		if ($data['playable'] == 1 or $data['playable'] == 3) {
 			// Note - needs clicktrack and name in case it is a removeable track
-			print '<div class="unplayable clicktrack ninesix indent containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
+			print '<div class="unplayable clicktrack ninesix indent containerbox calign" name="'.rawurlencode($data['uri']).'">';
 		} else if ($data['uri'] == null) {
-			print '<div class="playable '.$class.' ninesix draggable indent containerbox padright calign" name="'.$data['ttid'].'">';
+			print '<div class="playable '.$class.' ninesix draggable indent containerbox calign" name="'.$data['ttid'].'">';
 		} else {
-			print '<div class="playable '.$class.' ninesix draggable indent containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
+			print '<div class="playable '.$class.' ninesix draggable indent containerbox calign" name="'.rawurlencode($data['uri']).'">';
 		}
 
-		print domainIcon($d, 'collectionicon');
+		print domainIcon($d, 'inline-icon');
 
 		// Track Number
 		if ($data['numtracks'] > 0) {
@@ -59,7 +59,7 @@ class uibits {
 		}
 		if ($data['tags']) {
 			print '<div class="fixed playlistrow2 tracktags">';
-			print '<i class="icon-tags collectionicon"></i>'.$data['tags'];
+			print '<i class="icon-tags inline-icon"></i>'.$data['tags'];
 			print '</div>';
 		}
 		print '</div>';
@@ -73,7 +73,7 @@ class uibits {
 
 		// Menu Button
 		if ($data['ttid']) {
-			$button_class = "icon-menu playlisticonr fixed clickable clickicon invisibleicon clicktrackmenu spinable";
+			$button_class = "icon-menu inline-icon fixed clickable clickicon invisibleicon clicktrackmenu spinable";
 			if ($data['lm'] === null) {
 				$button_class .= ' clickremovedb';
 			}
@@ -271,7 +271,7 @@ class uibits {
 
 	public static function addUserRadioButtons($html, $index, $uri, $name, $image) {
 		$out = phpQuery::newDocument($html);
-		$extra = '<div class="fixed clickable clickradioremove clickicon yourradio" name="'.$index.'"><i class="icon-cancel-circled playlisticonr"></i></div>';
+		$extra = '<i class="icon-cancel-circled inline-icon fixed clickable clickradioremove clickicon yourradio" name="'.$index.'"></i>';
 		$out->find('.menuitem')->append($extra);
 		return $out;
 	}

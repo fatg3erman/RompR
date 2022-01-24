@@ -115,7 +115,7 @@ class commradioplugin {
 
 		$this->doBrowseRoot();
 
-		print '<div id="communitystations" class="fullwidth padright holderthing is-albumlist">';
+		print '<div id="communitystations" class="fullwidth holderthing is-albumlist">';
 		print '</div>';
 
 	}
@@ -310,22 +310,22 @@ class commradioplugin {
 		));
 		print '<div id="communityradio_'.$index.'" class="dropmenu">';
 		uibits::trackControlHeader('','','communityradio_'.$index, null, array(array('Image' => $this->comm_radio_get_image($station))));
-		// print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
-		print '<div class="containerbox ninesix indent padright">'.htmlspecialchars($station['state'].$station['country']).'</div>';
+		// print '<div class="containerbox expand ninesix indent"><b>Listen:</b></div>';
+		print '<div class="containerbox ninesix indent">'.htmlspecialchars($station['state'].$station['country']).'</div>';
 
-		print '<div class="containerbox ninesix indent padright">'.$station['votes'].' Upvotes, '.$station['negativevotes'].' Downvotes</div>';
+		print '<div class="containerbox ninesix indent">'.$station['votes'].' Upvotes, '.$station['negativevotes'].' Downvotes</div>';
 		if ($station['homepage']) {
 			print '<a href="'.$station['homepage'].'" target="_blank">';
-			print '<div class="containerbox padright vertical-centre">';
-			print '<i class="icon-www collectionicon fixed"></i>';
+			print '<div class="containerbox vertical-centre">';
+			print '<i class="icon-www inline-icon fixed"></i>';
 			print '<div class="expand">'.language::gettext('label_station_website').'</div>';
 			print '</div>';
 			print '</a>';
 		}
 		print '<div class="containerbox rowspacer"></div>';
-		print '<div class="clickstream playable draggable containerbox padright vertical-centre" name="'.rawurlencode($station['playurl']).'" streamimg="'.$this->comm_radio_get_stream_image($station).'" streamname="'.$station['name'].'">';
-		print '<i class="icon-no-response-playbutton collectionicon"></i>';
-		print '<i class="'.audioClass($station['codec']).' collectionicon fixed"></i>';
+		print '<div class="clickstream playable draggable containerbox vertical-centre" name="'.rawurlencode($station['playurl']).'" streamimg="'.$this->comm_radio_get_stream_image($station).'" streamname="'.$station['name'].'">';
+		print '<i class="icon-no-response-playbutton inline-icon"></i>';
+		print '<i class="'.audioClass($station['codec']).' inline-icon fixed"></i>';
 		print '<div class="expand">'.$station['bitrate'].'kbps &nbsp'.$station['codec'].'</div>';
 		print '</div>';
 		print '</div>';
@@ -380,7 +380,8 @@ class commradioplugin {
 	private function comm_radio_do_page_buttons($page, $count, $per_page) {
 		// Always create the div even if we put nothing in it otherwise the nth-of-type css selector
 		// on the image themes doesn't work
-		print '<div class="fullwidth brick_wide"><div class="containerbox padright noselection menuitem">';
+		print '<div class="fullwidth brick_wide">';
+		print '<div class="containerbox noselection menuitem">';
 
 		if ($count >= $this->pagination) {
 			$class = ($page == 0) ? ' button-disabled' : ' clickable clickicon commradio clickcommradiopager';
@@ -400,9 +401,8 @@ class commradioplugin {
 				}
 				print '" name="'.$p.'">'.($p+1).'</div>';
 			}
-			print '</div>';
 		}
-
+		print '</div>';
 		print '</div>';
 	}
 

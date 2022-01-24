@@ -22,14 +22,14 @@ class uibits {
 		// Outer container
 		if ($data['playable'] == 1 or $data['playable'] == 3) {
 			// Note - needs clicktrack and name in case it is a removeable track
-			print '<div class="unplayable clicktrack ninesix indent containerbox padright" name="'.rawurlencode($data['uri']).'">';
+			print '<div class="unplayable clicktrack ninesix indent containerbox" name="'.rawurlencode($data['uri']).'">';
 		} else if ($data['uri'] == null) {
-			print '<div class="playable '.$class.' ninesix draggable indent containerbox padright" name="'.$data['ttid'].'">';
+			print '<div class="playable '.$class.' ninesix draggable indent containerbox" name="'.$data['ttid'].'">';
 		} else {
-			print '<div class="playable '.$class.' ninesix draggable indent containerbox padright" name="'.rawurlencode($data['uri']).'">';
+			print '<div class="playable '.$class.' ninesix draggable indent containerbox" name="'.rawurlencode($data['uri']).'">';
 		}
 
-		print domainIcon($d, 'collectionicon');
+		print domainIcon($d, 'inline-icon');
 
 		// Track Number
 		if ($data['numtracks'] > 0) {
@@ -59,7 +59,7 @@ class uibits {
 		}
 		if ($data['tags']) {
 			print '<div class="fixed playlistrow2 tracktags">';
-			print '<i class="icon-tags collectionicon"></i>'.$data['tags'];
+			print '<i class="icon-tags inline-icon"></i>'.$data['tags'];
 			print '</div>';
 		}
 		print '</div>';
@@ -73,7 +73,7 @@ class uibits {
 
 		// Menu Button
 		if ($data['ttid']) {
-			$button_class = "icon-menu playlisticonr fixed clickable clickicon invisibleicon clicktrackmenu";
+			$button_class = "icon-menu inline-icon fixed clickable clickicon invisibleicon clicktrackmenu";
 			if ($data['lm'] === null) {
 				$button_class .= ' clickremovedb';
 			}
@@ -179,7 +179,7 @@ class uibits {
 			}
 			$classes[] = 'clickratedtracks';
 			if (count($classes) > 0) {
-				$h .= '<div class="icon-menu playlisticonr fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'" who="'.$albumid.'" why="'.$obj['why'].'" spalbumid="'.$spalbumid.'" uri="'.rawurlencode($obj['AlbumUri']).'"></div>';
+				$h .= '<div class="icon-menu inline-icon fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'" who="'.$albumid.'" why="'.$obj['why'].'" spalbumid="'.$spalbumid.'" uri="'.rawurlencode($obj['AlbumUri']).'"></div>';
 			}
 		}
 		$h .= '</div>';
@@ -198,7 +198,7 @@ class uibits {
 		print '<div class="'.$c.' clickalbum playable draggable containerbox menuitem" name="'.$prefix.$dircount.'">';
 		print '<input type="hidden" name="dirpath" value="'.rawurlencode($fullpath).'" />';
 		print '<i class="icon-toggle-closed menu openmenu mh fixed '.$c.'" name="'.$prefix.$dircount.'"></i>';
-		print '<i class="icon-folder-open-empty fixed collectionicon"></i>';
+		print '<i class="icon-folder-open-empty fixed inline-icon"></i>';
 		print '<div class="expand">'.htmlentities(urldecode($displayname)).'</div>';
 		print '</div>';
 		if ($printcontainer) {
@@ -216,7 +216,7 @@ class uibits {
 		print '<input type="hidden" value="'.rawurlencode($att['URL']).'" />';
 		print '<input type="hidden" value="'.rawurlencode($att['text']).'" />';
 		print '<i class="openmenu mh menu directory '.$prefix.' fixed icon-toggle-closed" name="'.$prefix.'_'.$name.'"></i>';
-		print '<i class="icon-folder-open-empty fixed collectionicon"></i>';
+		print '<i class="icon-folder-open-empty fixed inline-icon"></i>';
 		print '<div class="expand">'.$att['text'].'</div>';
 		print '</div>';
 		if ($closeit) {
@@ -236,7 +236,7 @@ class uibits {
 
 	public static function addUserRadioButtons($html, $index, $uri, $name, $image) {
 		$out = phpQuery::newDocument($html);
-		$extra = '<div class="fixed clickable clickradioremove clickicon yourradio" name="'.$index.'"><i class="icon-cancel-circled playlisticonr"></i></div>';
+		$extra = '<i class="fixed clickable clickradioremove clickicon yourradio icon-cancel-circled inline-icon" name="'.$index.'"></i>';
 		$out->find('.menuitem')->append($extra);
 		return $out;
 	}
@@ -246,9 +246,9 @@ class uibits {
 		if ($delete) {
 			$add = ($is_user) ? "user" : "";
 			$h = '<div class="fixed containerbox vertical">';
-			$h .= '<i class="icon-floppy expand collectionicon clickable clickicon clickrename'.$add.'playlist"></i>';
+			$h .= '<i class="icon-floppy expand inline-icon clickable clickicon clickrename'.$add.'playlist"></i>';
 			$h .= '<input type="hidden" value="'.$name.'" />';
-			$h .= '<i class="icon-cancel-circled fixed collectionicon clickable clickicon clickdelete'.$add.'playlist"></i>';
+			$h .= '<i class="icon-cancel-circled fixed inline-icon clickable clickicon clickdelete'.$add.'playlist"></i>';
 			$h .= '<input type="hidden" value="'.$name.'" />';
 			$h .= '</div>';
 			$out->find('.menuitem')->append($h);

@@ -211,7 +211,7 @@ print '<i title="'.language::gettext('button_forward').'" id="forwardbutton" cla
 	<div id="albumlist" class="invisible noborder">
 <?php
 	print '<div class="vertical-centre configtitle">';
-	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
+	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu smallicon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
 	print '<div class="textcentre expand"><b>'.language::gettext('button_local_music').'</b></div>';
 	print '</div>';
 	collectionButtons();
@@ -222,7 +222,7 @@ print '<i title="'.language::gettext('button_forward').'" id="forwardbutton" cla
 	<div id="searcher" class="invisible noborder">
 	<div class="vertical-centre configtitle">
 	<?php
-		print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
+		print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu smallicon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
 		print '<div class="textcentre expand"><b>'.language::gettext('label_searchfor').'</b></div>';
 	?>
 	</div>
@@ -258,7 +258,7 @@ foreach($sp as $p) {
 	<div id="podcastslist" class="invisible selecotron">
 <?php
 print '<div class="vertical-centre configtitle">';
-print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
+print '<i class="icon-menu smallicon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
 print '</div>';
 include("includes/podcast_base.php");
@@ -291,7 +291,7 @@ if (prefs::$prefs['player_backend'] == "mopidy") {
 	print '<div class="textcentre textunderline"><b>Music From Your Collection</b></div>';
 }
 ?>
-<div class="fullwidth padleft" id="pluginplaylists"></div>
+<div class="fullwidth" id="pluginplaylists"></div>
 
 
 <?php
@@ -329,7 +329,7 @@ print '<div id="artistinformation" class="infotext noselection"><h2 class="infob
 <div id="tagadder" class="dropmenu dropshadow mobmenu">
 	<div class="vertical-centre configtitle moveable"><div class="textcentre expand"><b>
 <?php
-print language::gettext("lastfm_addtags").'</b></div><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div>';
+print language::gettext("lastfm_addtags").'</b></div><i class="icon-cancel-circled clickicon smallicon tright" onclick="tagAdder.close()"></i></div>';
 ?>
-	<div class="containerbox padright vertical-centre tagaddbox"></div>
+	<div class="containerbox vertical-centre tagaddbox"></div>
 </div>

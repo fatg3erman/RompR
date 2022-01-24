@@ -3,6 +3,12 @@
 = Standard HTML Elements
 =====================================================================
 */
+:root {
+	--inline-track-icon-size: 20px;
+	--inline-clickable-icon-size: 28px;
+	--inline-clickable-icon-border: 6px;
+	--menu-toggle-icon-size: 20px;
+}
 
 h1 {
 	font-size:130%;
@@ -256,7 +262,7 @@ div.top_drop_menu.albumbitsmenu {
 }
 
 .pref {
-	margin-left:8px;
+	/*margin-left:8px;*/
 	margin-bottom:12px;
 }
 
@@ -288,7 +294,7 @@ div.top_drop_menu.albumbitsmenu {
 .menuitem {
 	font-weight:bold;
 	margin:0px;
-	padding-left:4px;
+	padding-left:0px;
 	padding-right:0px;
 	padding-top:6px;
 	padding-bottom:6px;
@@ -299,7 +305,7 @@ div.top_drop_menu.albumbitsmenu {
 .playlistalbum {
 	font-weight:bold;
 	margin:0px;
-	padding-left:4px;
+	padding-left:0px;
 	padding-right:0px;
 	padding-top:6px;
 	padding-bottom:6px;
@@ -308,8 +314,8 @@ div.top_drop_menu.albumbitsmenu {
 }
 
 .menu {
-	width:1.5em;
-	height:1.5em;
+	width: var(--menu-toggle-icon-size);
+	height: var(--menu-toggle-icon-size);
 	vertical-align:middle;
 	cursor:pointer;
 	box-sizing:border-box;
@@ -466,61 +472,10 @@ i.phone-dropdown-button {
 	padding-bottom:4px;
 }
 
-.playlisticon
-{
-	padding:0px;
-	margin-right:4px;
-	margin-bottom:2px;
-	margin-top:2px;
-	vertical-align:middle;
-	box-sizing:border-box;
-	border:6px solid transparent;
-	height: 26px;
-	width: 26px;
-}
-
-.collectionicon {
-	padding:0px;
-	margin-right:8px;
-	margin-bottom:2px;
-	margin-top:2px;
-	vertical-align:middle;
-	width:20px;
-	height:20px
-}
-
-.submenuspacer {
-	/*This needs to be the same width as collectionicon*/
-	margin-left:28px;
-}
-
-.playlisticonr {
-	padding:0px;
-	margin-left:4px;
-	margin-bottom:2px;
-	margin-top:2px;
-	margin-right:2px;
-	vertical-align:middle;
-	box-sizing:border-box;
-	border:8px solid transparent;
-	width:32px;
-	height:32px;
-}
-
-#sortable .playlisticonr {
-	margin-right:4px;
-	width: 48px;
-}
-
-#collection .playlisticonr {
-	margin-right:4px;
-	width: 48px;
-}
-
-#sortable .track>div>div.clickable {
+/*#sortable .track>div>div.clickable {
 	margin-right: 8px;
 }
-
+*/
 #sortable {
 	position: relative;
 }
@@ -570,14 +525,6 @@ i.phone-dropdown-button {
 
 .dropdown-button {
 	margin-left:-20px !important;
-}
-
-.padright {
-	padding-right:4px;
-}
-
-.padleft {
-	padding-left:4px;
 }
 
 .whatdoicallthis {

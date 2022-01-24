@@ -185,18 +185,18 @@ function faveFinder(returnall) {
 
 	this.trackHtml = function(data, breaks) {
 		var html = "";
-		// html += '<i class="icon-no-response-playbutton clickicon playable collectionicon" name="'+data.uri+'"></i>';
+		// html += '<i class="icon-no-response-playbutton clickicon playable inline-icon" name="'+data.uri+'"></i>';
 		var u = data.file;
 		if (u.match(/spotify:/)) {
-			html += '<i class="icon-spotify-circled collectionicon"></i>';
+			html += '<i class="icon-spotify-circled inline-icon"></i>';
 		} else if (u.match(/soundcloud:/)) {
-			html += '<i class="icon-soundcloud-circled collectionicon"></i>';
+			html += '<i class="icon-soundcloud-circled inline-icon"></i>';
 		} else if (u.match(/youtube:/)) {
-			html += '<i class="icon-youtube-circled collectionicon"></i>';
+			html += '<i class="icon-youtube-circled inline-icon"></i>';
 		} else if (u.match(/gmusic:/)) {
-			html += '<i class="icon-gmusic-circled collectionicon"></i>';
+			html += '<i class="icon-gmusic-circled inline-icon"></i>';
 		} else if (u.match(/^podcast/)) {
-			html += '<i class="icon-podcast-circled collectionicon"></i>';
+			html += '<i class="icon-podcast-circled inline-icon"></i>';
 		}
 		html += '<b>'+data.Title+'</b>'+brk(breaks);
 		if (data.trackartist) {

@@ -105,7 +105,7 @@
         position:relative;
         left:-48px;
         z-index:1;
-        margin-right:-36px;
+        margin-right:-48px;
     }
 
     #buttons {
@@ -168,7 +168,7 @@
         position:relative;
         left:-40px;
         z-index:1;
-        margin-right:-32px;
+        margin-right:-40px;
     }
 }
 

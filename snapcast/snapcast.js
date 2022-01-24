@@ -562,7 +562,7 @@ function snapcastClient() {
 		grouplist = $('<select>', {class: 'snapclientgroup'}).appendTo(sel);
 
 		var lholder = $('<div>', {class: 'containerbox fixed vertical-centre'}).appendTo(j);
-		$('<div>', {class: 'fixed padright'}).appendTo(lholder).html(language.gettext('snapcast_latency'));
+		$('<div>', {class: 'fixed'}).appendTo(lholder).html(language.gettext('snapcast_latency'));
 		lb = $('<input>', {type: 'text', class: 'fixed', name: "latency", style: "width:4em"}).appendTo(lholder);
 		lb.on('keyup', self.setLatency);
 

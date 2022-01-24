@@ -5,9 +5,9 @@ include ("includes/functions.php");
 prefs::$database = new get_wishlist();
 $wishlist = prefs::$database->getwishlist($_REQUEST['sortby']);
 if (count($wishlist) > 0) {
-	print '<div class="containerbox padright noselection"><button class="fixed infoclick plugclickable clickclearwishlist">Clear Wishlist</button><div class="expand"></div></div>';
+	print '<div class="containerbox noselection"><button class="fixed infoclick plugclickable clickclearwishlist">Clear Wishlist</button><div class="expand"></div></div>';
 	print '<div class="configtitle brick_wide">Sort By</div>';
-	print '<div class="containerbox padright noselection">';
+	print '<div class="containerbox noselection">';
 	print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_artist" class="topcheck savulon" type="radio" name="sortwishlistby" value="artist"><label for="wishlist_sort_artist">'.language::gettext('label_artist').'</label></div>';
 	print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_date" class="topcheck savulon" type="radio" name="sortwishlistby" value="date"><label for="wishlist_sort_date">'.language::gettext('label_dateadded').'</label></div>';
 	print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_station" class="topcheck savulon" type="radio" name="sortwishlistby" value="station"><label for="wishlist_sort_station">'.language::gettext('label_radiostation').'</label></div>';
@@ -29,7 +29,7 @@ foreach ($wishlist as $obj) {
 		print '<div class="fixed playlistrow2 trackrating"><i class="icon-'.$obj['rating'].'-stars rating-icon-small nopointer"></i></div>';
 	}
 	if ($obj['tags']) {
-		print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags collectionicon"></i>'.$obj['tags'].'</div>';
+		print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags inline-icon"></i>'.$obj['tags'].'</div>';
 	}
 	print '</div>';
 	print '<div class="expand containerbox vertical">';

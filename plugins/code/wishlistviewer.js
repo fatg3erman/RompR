@@ -173,13 +173,13 @@ var wishlistViewer = function() {
 			var resultsDiv = $('<div>', {id: 'wlsearch_'+results[0].key, class: 'toggledown'}).appendTo(trackDiv);
 			if (results.length > 0 && results[0].file) {
 				var dropper = $("<div>", {class: 'containerbox fixed'}).insertBefore(resultsDiv);
-				dropper.append('<i class="openmenu icon-menu clickicon fixed collectionicon" name="wlsearch_'+results[0].reqid+'"></i>');
+				dropper.append('<i class="openmenu icon-menu clickicon fixed inline-icon" name="wlsearch_'+results[0].reqid+'"></i>');
 				for (var i = 0; i < results.length; i++) {
 					var data = results[i];
 					var firstTrack = $('<div>', {class: 'containerbox vertical-centre underline', style: 'margin: 0'}).appendTo(resultsDiv);
-					var trackDetails = $('<div>', {romprindex: i, romprkey: data.reqid, class: 'backhi plugclickable infoclick choosenew ninesix indent padright expand'}).html(trawler.trackHtml(data, true)).appendTo(firstTrack);
+					var trackDetails = $('<div>', {romprindex: i, romprkey: data.reqid, class: 'backhi plugclickable infoclick choosenew ninesix indent expand'}).html(trawler.trackHtml(data, true)).appendTo(firstTrack);
 					firstTrack.append('<div class="fixed invisible importbutton"><button class="plugclickable infoclick importrow">Import</button></div>');
-					firstTrack.prepend('<div class="fixed invisible playbutton"><i class="icon-no-response-playbutton clickicon playable collectionicon" name="'+data.file+'"></i></div>');
+					firstTrack.prepend('<div class="fixed invisible playbutton"><i class="icon-no-response-playbutton clickicon playable inline-icon" name="'+data.file+'"></i></div>');
 				}
 			} else {
 				resultsDiv.append('<div class="expand"><b><i>'+language.gettext("label_notfound")+'</i></b></div>');
