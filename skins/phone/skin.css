@@ -224,7 +224,7 @@ button.spinable.icon-spin6 {
 	width: calc(100% - 32px - 6em);
 }
 
-#pluginplaylists button {
+[id^="pluginplaylists"] button {
 	height: 3em;
 }
 
