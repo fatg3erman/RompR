@@ -1788,9 +1788,9 @@ div.pref div.selectholder:not(.snapcast_select)
 	width:58%;
 }
 
-div.pref div.selectholder.snapcast_select
+div.selectholder.snapcast_select
 {
-	margin-right: 1em;
+	padding-right: 1em;
 }
 
 .snapcastgroup input[type="text"].expand {
@@ -1800,6 +1800,15 @@ div.pref div.selectholder.snapcast_select
 	color: var(--text-colour) !important;
 }
 
+.snapcastclient input[type="text"].fixed {
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+/*select.snapclientgroup {
+	margin-right: 1em;
+}
+*/
 .snapcastgroup {
 	margin-bottom: 0.5em;
 }

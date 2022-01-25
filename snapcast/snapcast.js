@@ -545,7 +545,6 @@ function snapcastClient() {
 		$('<div>', {class: 'fixed tag', name: 'notcon'}).appendTo(title);
 		var client = $('<div>', {class: 'containerbox'}).appendTo(holder);
 		var m = $('<i>', {class: "inline-icon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setGroup);
-		var rb = $('<i>', {class: "fixed inline-icon icon-cancel-circled clickicon"}).appendTo(title).on('click', self.deleteClient);
 		vc = $('<div>', {class: 'canbefaded invisible containerbox vertical-centre'}).appendTo(holder);
 		volume = $('<div>', {class: 'expand playlistrow2'}).appendTo(vc);
 		var m = $('<i>', {class: "inline-icon fixed clickicon", name :"clientmuted"}).appendTo(vc).on('click', self.setMute);
@@ -565,6 +564,8 @@ function snapcastClient() {
 		$('<div>', {class: 'fixed'}).appendTo(lholder).html(language.gettext('snapcast_latency'));
 		lb = $('<input>', {type: 'text', class: 'fixed', name: "latency", style: "width:4em"}).appendTo(lholder);
 		lb.on('keyup', self.setLatency);
+
+		var rb = $('<i>', {class: "fixed inline-icon icon-cancel-circled clickicon"}).appendTo(lholder).on('click', self.deleteClient);
 
 		if ($('#snapcast-secondary').length > 0) {
 			// holder2 = $('<div>', {class: 'fixed'}).insertAfter('#snapcast-secondary');
