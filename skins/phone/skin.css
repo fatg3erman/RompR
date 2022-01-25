@@ -1335,6 +1335,10 @@ div.playable.clicktrack {
 		width: 42%;
 	}
 
+	.album_menu_image {
+		max-height: unset;
+	}
+
 	.mainpane:not(#infopane):not(#infobar) {
 		border-left: 1px solid var(--border-colour);
 		border-right: 1px solid var(--border-colour);
