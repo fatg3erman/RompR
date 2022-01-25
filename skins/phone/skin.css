@@ -220,8 +220,8 @@ button.spinable.icon-spin6 {
 
 [id^="pluginplaylists"] .drop-box {
 	margin-left: 40px;
-	/* 40px is the width of svg-square, 32px is the size of the dropdown menu icon */
-	width: calc(100% - 32px - 6em);
+	/* 40px is the width of svg-square, 6em seems to make up for the button */
+	width: calc(100% - 6em);
 }
 
 [id^="pluginplaylists"] button {

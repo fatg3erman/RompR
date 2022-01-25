@@ -100,7 +100,7 @@
 			<div id="dbtags" class="invisible">
 			</div>
 		</div>
-		<div id="nowplaying">
+		<div id="nowplaying" class="containerbox vertical-centre">
 			<div id="nptext"></div>
 		</div>
 	</div>

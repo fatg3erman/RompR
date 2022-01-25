@@ -65,7 +65,7 @@
 
 		<div id="nowplaying-text-buttons" class="expand containerbox vertical">
 
-			<div id="nowplaying" class="expand">
+			<div id="nowplaying" class="expand containerbox vertical-centre">
 				<div id="nptext" class="calculating">&nbsp;</div>
 			</div>
 

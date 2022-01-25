@@ -69,7 +69,7 @@
 			<img id="albumpicture" />
 		</div>
 		<div id="nowplaying-text-wrapper" class="expand">
-			<div id="nowplaying">
+			<div id="nowplaying" class="containerbox vertical-centre">
 				<div id="nptext"></div>
 			</div>
 			<div id="nowplaying_icons" class="clearfix">

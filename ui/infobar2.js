@@ -273,8 +273,9 @@ var infobar = function() {
 
 			}
 
-			var top = Math.max(0, Math.floor((maxheight - nptext.height())/2));
-			nptext.css("padding-top", top+"px").removeClass('calculating').addClass('ready');
+			// var top = Math.max(0, Math.floor((maxheight - nptext.height())/2));
+			// nptext.css("padding-top", top+"px").removeClass('calculating').addClass('ready');
+			nptext.removeClass('calculating').addClass('ready');
 
 		}
 	}
