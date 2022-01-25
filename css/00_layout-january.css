@@ -16,6 +16,10 @@
 	--inline-clickable-icon-size: 16px;
 	--inline-clickable-icon-border-width: 0 0 0 4px;
 	--menu-toggle-icon-size: 14px;
+
+	--small-icon-size: 20px;
+	--medium-icon-size: 30px;
+	--svg-square-icon-size: 32px;
 }
 
 body.mobile #headerbar
@@ -117,6 +121,7 @@ div.notification.new {
 	font-size:110%;
 	display:flex;
 	align-items:center;
+	min-height: var(--small-icon-size);
 }
 
 body.mobile .configtitle
@@ -453,8 +458,8 @@ img.notexist,img.notfound {
 {
 	padding:0px;
 	margin:4px;
-	height:20px;
-	width:20px;
+	height: var(--small-icon-size);
+	width:var(--small-icon-size);
 	vertical-align:middle;
 }
 
@@ -462,14 +467,14 @@ img.notexist,img.notfound {
 {
 	padding:0px;
 	margin:2px;
-	height:30px;
-	width:30px;
+	height: var(--medium-icon-size);
+	width: var(--medium-icon-size);
 	vertical-align:middle;
 }
 
 .svg-square {
-	width:32px;
-	height:32px;
+	width: var(--svg-square-icon-size);
+	height: var(--svg-square-icon-size);
 	vertical-align:middle;
 }
 
@@ -485,7 +490,8 @@ img.notexist,img.notfound {
 }
 
 .inline-icon.clickicon,
-.inline-icon.infoclick {
+.inline-icon.infoclick,
+.timerspacer {
 	margin-left: 6px;
 	margin-right: 0px;
 	height: var(--inline-clickable-icon-size);
@@ -493,6 +499,7 @@ img.notexist,img.notfound {
 	border-width: var(--inline-clickable-icon-border-width);
 	border-style: solid;
 	border-color: transparent;
+	box-sizing: border-box;
 }
 
 .submenuspacer {

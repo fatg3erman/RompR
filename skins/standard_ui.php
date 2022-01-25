@@ -182,6 +182,11 @@ class uibits {
 				$h .= '<div class="icon-menu inline-icon fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'" who="'.$albumid.'" why="'.$obj['why'].'" spalbumid="'.$spalbumid.'" uri="'.rawurlencode($obj['AlbumUri']).'"></div>';
 			}
 		}
+
+		if (array_key_exists('podcounts', $obj)) {
+			$h .= $obj['podcounts'];
+		}
+
 		$h .= '</div>';
 		return $h;
 	}
@@ -226,34 +231,6 @@ class uibits {
 
 	public static function playlistPlayHeader($name, $text) {
 
-	}
-
-	public static function addPodcastCounts($html, $extra) {
-		$out = phpQuery::newDocument($html);
-		$out->find('.menuitem')->append($extra);
-		return $out;
-	}
-
-	public static function addUserRadioButtons($html, $index, $uri, $name, $image) {
-		$out = phpQuery::newDocument($html);
-		$extra = '<i class="fixed clickable clickradioremove clickicon yourradio icon-cancel-circled inline-icon" name="'.$index.'"></i>';
-		$out->find('.menuitem')->append($extra);
-		return $out;
-	}
-
-	public static function addPlaylistControls($html, $delete, $is_user, $name) {
-		$out = phpQuery::newDocument($html);
-		if ($delete) {
-			$add = ($is_user) ? "user" : "";
-			$h = '<div class="fixed containerbox vertical">';
-			$h .= '<i class="icon-floppy expand inline-icon clickable clickicon clickrename'.$add.'playlist"></i>';
-			$h .= '<input type="hidden" value="'.$name.'" />';
-			$h .= '<i class="icon-cancel-circled fixed inline-icon clickable clickicon clickdelete'.$add.'playlist"></i>';
-			$h .= '<input type="hidden" value="'.$name.'" />';
-			$h .= '</div>';
-			$out->find('.menuitem')->append($h);
-		}
-		return $out;
 	}
 
 	public static function albumSizer() {

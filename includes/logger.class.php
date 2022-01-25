@@ -69,7 +69,7 @@
 				// or attempt to have different processes in different colours.
 				// This helps to keep track of things when multiple concurrent things are happening at once.
 				$col = self::$debug_colours[$pid % 10];
-				error_log("\033[90m".strftime('%T').' ['.$pid.'] '.self::$debug_names[$level]." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,self::$outfile);
+				error_log("\033[90m".date('M d H:i:s').' ['.$pid.'] '.self::$debug_names[$level]." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,self::$outfile);
 			} else {
 				error_log(self::$debug_names[$level].' : '.$module.$in.": ".$out,0);
 			}

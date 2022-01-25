@@ -18,7 +18,9 @@ Adding RompR as an icon to your home screen is the best way to run it.
 * Moved Players and Snapcast to the top of the Prefs panel, since the Background Images panel now means you
 had to scroll a long way down to reach them.
 * 'Play From Here' option on the track popup menu, to mimic what CD Player Mode does when not in CD Player Mode
-
+* Remove dependency on PHPQuery after an update to PHP 8.1 broke it without warning.
+* Fix a slew of issues caused by an "upgrade" to PHP 8.1 which has suddenly deprecated loads of stuff and started
+throwing fatal errors all over the place without warning. Please Stop Doing This.
 
 ## Version 1.60
 * I noticed an error in the installation instructions.

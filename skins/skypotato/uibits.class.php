@@ -123,8 +123,10 @@ class uibits {
 			if (array_key_exists('plpath', $obj)) {
 				$h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';
 			}
-			if ($obj['class'] == 'podcast') {
-				$c = ' wrap';
+			if (strpos($obj['class'], 'podcast') !== false ||
+				strpos($obj['class'], 'playlist') !== false ||
+				strpos($obj['class'], 'faveradio') !== false) {
+				$c = ' vertical';
 			} else {
 				$c = '';
 			}
@@ -153,6 +155,22 @@ class uibits {
 		$h .= '</div>';
 
 		$h .= '</div>';
+
+		if (array_key_exists('podcounts', $obj)) {
+			if (strpos($obj['class'], 'faveradio') !== false) {
+				$obj['podcounts'] = '<div class="fixed helpfulalbum fullwidth">'.$obj['podcounts'].'</div>';
+			}
+			if (strpos($obj['class'], 'playlist') !== false ||
+				strpos($obj['class'], 'faveradio') !== false) {
+				$bing = str_replace('fixed containerbox vertical', 'fixed containerbox helpfulalbum', $obj['podcounts']);
+				$bing = str_replace('fixed inline-icon', 'expand smallicon', $bing);
+				$bing = str_replace('expand inline-icon', 'expand smallicon', $bing);
+				$h .= $bing;
+			} else {
+				$h .= '<div class="helpfulalbum fixed podcastcounts">'.$obj['podcounts'].'</div>';
+			}
+		}
+
 		$h .= '</div>';
 		$h .= '</div>';
 
@@ -268,41 +286,6 @@ class uibits {
 		print '<div class="textcentre clickloadplaylist playable ninesix" name="'.$name.'">'.language::gettext('label_play_all');
 		print '<input type="hidden" name="dirpath" value="'.$name.'" />';
 		print '</div>';
-	}
-
-	public static function addPodcastCounts($html, $extra) {
-		$out = phpQuery::newDocument($html);
-		$out->find('.containerbox.wrap')->removeClass('wrap')->addClass('vertical');
-		$extra = '<div class="helpfulalbum fixed podcastcounts">'.$extra.'</div>';
-		$out->find('.containerbox.vertical')->append($extra);
-		return $out;
-	}
-
-	public static function addUserRadioButtons($html, $index, $uri, $name, $image) {
-		$out = phpQuery::newDocument($html);
-		$extra = '<div class="fixed containerbox">';
-		$extra .= '<div class="expand"></div>';
-		$extra .= '<i class="clickable clickradioremove clickicon icon-cancel-circled inline-icon yourradio" name="'.$index.'"></i>';
-		$extra .= "</div>";
-		$out->find('.helpfulalbum')->append($extra);
-		return $out;
-	}
-
-	public static function addPlaylistControls($html, $delete, $is_user, $name) {
-		$out = phpQuery::newDocument($html);
-		if ($delete) {
-			$add = ($is_user) ? "user" : "";
-			$h = '<div class="fixed containerbox">';
-			$h .= '<i class="icon-floppy fixed smallicon clickable clickicon clickrename'.$add.'playlist"></i>';
-			$h .= '<input type="hidden" value="'.$name.'" />';
-			$h .= '<div class="expand"></div>';
-			$h .= '<i class="icon-cancel-circled fixed smallicon clickable clickicon clickdelete'.$add.'playlist"></i>';
-			$h .= '<input type="hidden" value="'.$name.'" />';
-			$h .= '</div>';
-			// $out->find('.helpfulalbum')->append($h);
-			phpQuery::newDocument($h)->insertAfter($out->find('img.plimage'));
-		}
-		return $out;
 	}
 
 	public static function albumSizer() {

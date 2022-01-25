@@ -153,7 +153,19 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 				$used_images[] = $i;
 			}
 			$extra_class = ($delete && !$is_user) ? ' canreorder' : '';
-			$html = uibits::albumHeader(array(
+
+			$buttons = '';
+			if ($delete) {
+				$add = ($is_user) ? "user" : "";
+				$buttons = '<div class="fixed containerbox vertical">';
+				$buttons .= '<i class="icon-floppy expand inline-icon clickable clickicon clickrename'.$add.'playlist"></i>';
+				$buttons .= '<input type="hidden" value="'.rawurlencode($name).'" />';
+				$buttons .= '<i class="icon-cancel-circled fixed inline-icon clickable clickicon clickdelete'.$add.'playlist"></i>';
+				$buttons .= '<input type="hidden" value="'.rawurlencode($name).'" />';
+				$buttons .= '</div>';
+			}
+
+			print uibits::albumHeader(array(
 				'id' => 'pholder_'.md5($name),
 				'Image' => $image,
 				'Searched' => 1,
@@ -166,10 +178,9 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 				'userplaylist' => $class,
 				'plpath' => $link,
 				'class' => preg_replace('/clickload/', '', $class).$extra_class,
-				'expand' => true
+				'expand' => true,
+				'podcounts' => $buttons
 			));
-			$out = uibits::addPlaylistControls($html, $delete, $is_user, rawurlencode($name));
-			print $out->html();
 			break;
 
 		case "clicktrack":

@@ -387,13 +387,6 @@ button.spinable.icon-spin6 {
 	display:none;
 }
 
-/* Must be same as above */
-.timerspacer {
-	margin-left: 8px;
-	height: 16px;
-	width: 16px;
-}
-
 .invisibleicon {
 	display: block !important;
 	opacity: 0;
@@ -413,11 +406,21 @@ button.spinable.icon-spin6 {
 	vertical-align:middle;
 }
 
-/*.headercontainer {
-	max-height:36px;
-	padding-top:4px;
+.podcounts {
+	margin-left: 4px;
+	margin-bottom: 4px;
+	margin-right: 4px;
 }
-*/
+
+.podcounts>.newpod {
+	display: inline;
+	float: left;
+}
+
+.podcounts>.unlistenedpod {
+	float: right;
+}
+
 .dragmenu {
 	cursor:move;
 }

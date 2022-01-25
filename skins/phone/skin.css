@@ -619,10 +619,6 @@ div.playable.clicktrack {
 	align-items: center;
 }
 
-.timerspacer {
-	width: 50px;
-}
-
 #sortable {
 	position: relative;
 	top: 0;

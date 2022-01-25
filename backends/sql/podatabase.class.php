@@ -867,19 +867,6 @@ class poDatabase extends database {
 
 		$cls = ($subscribed == 1) ? 'podcast subscribed-podcast' : 'podcast unsubscribed-podcast';
 
-		$html = uibits::albumHeader(array(
-			'id' => 'podcast_'.$y->PODindex,
-			'Image' => $img,
-			'Searched' => 1,
-			'AlbumUri' => null,
-			'Year' => null,
-			'Artistname' => $aname,
-			'Albumname' => htmlspecialchars(html_entity_decode($y->Title)),
-			'why' => null,
-			'ImgKey' => 'none',
-			'class' => $cls
-		));
-
 		$extra = '<div class="fixed podcounts">';
 		if ($y ->Subscribed == 1) {
 			$uc = $this->get_podcast_counts($y->PODindex);
@@ -899,15 +886,19 @@ class poDatabase extends database {
 		}
 		$extra .= '</div>';
 
-		// phpQuery is something like 160K of extra code. Just to do this.
-		// The fact that I'm willing to include it indicates just how crap php's DOMDocument is
-
-		// phpQuery barfs at our '&rompr_resize_size' because it's expecting an HTML entity after &
-		$html = preg_replace('/&rompr_/','&amp;rompr_', $html);
-		$out = uibits::addPodcastCounts($html, $extra);
-		$h = $out->html();
-		$html = preg_replace('/&amp;rompr_/','&rompr_', $h);
-		print $html;
+		print uibits::albumHeader(array(
+			'id' => 'podcast_'.$y->PODindex,
+			'Image' => $img,
+			'Searched' => 1,
+			'AlbumUri' => null,
+			'Year' => null,
+			'Artistname' => $aname,
+			'Albumname' => htmlspecialchars(html_entity_decode($y->Title)),
+			'why' => null,
+			'ImgKey' => 'none',
+			'class' => $cls,
+			'podcounts' => $extra
+		));
 
 		print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
 	}

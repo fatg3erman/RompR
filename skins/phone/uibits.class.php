@@ -107,7 +107,7 @@ class uibits {
 		return self::artistHeader($id, $name);
 	}
 
-	public static function noAlbumsHaeder() {
+	public static function noAlbumsHeader() {
 		print '<div class="playlistrow2" style="padding-left:64px">'.
 			language::gettext("label_noalbums").'</div>';
 	}
@@ -134,6 +134,11 @@ class uibits {
 		$h .= artistNameHtml($obj);
 		$h .= '</div>';
 		$h .= '</div>';
+
+		if (array_key_exists('podcounts', $obj)) {
+			$h .= $obj['podcounts'];
+		}
+
 		$h .= '<div class="progressbar invisible wafflything"><div class="wafflebanger"></div></div>';
 		$h .= '</div>';
 		return $h;
@@ -261,34 +266,6 @@ class uibits {
 		// logger::log('PLAYLISTPLAYHDR','name is',$name);
 		print '<input type="hidden" name="dirpath" value="'.$name.'" />';
 		print '</div>';
-	}
-
-	public static function addPodcastCounts($html, $extra) {
-		$out = phpQuery::newDocument($html);
-		$out->find('.menuitem')->append($extra);
-		return $out;
-	}
-
-	public static function addUserRadioButtons($html, $index, $uri, $name, $image) {
-		$out = phpQuery::newDocument($html);
-		$extra = '<i class="icon-cancel-circled inline-icon fixed clickable clickradioremove clickicon yourradio" name="'.$index.'"></i>';
-		$out->find('.menuitem')->append($extra);
-		return $out;
-	}
-
-	public static function addPlaylistControls($html, $delete, $is_user, $name) {
-		$out = phpQuery::newDocument($html);
-		if ($delete) {
-			$add = ($is_user) ? "user" : "";
-			$h = '<div class="fixed containerbox vertical">';
-			$h .= '<i class="icon-floppy fixed smallicon clickable clickicon clickrename'.$add.'playlist"></i>';
-			$h .= '<input type="hidden" value="'.$name.'" />';
-			$h .= '<i class="icon-cancel-circled fixed smallicon clickable clickicon clickdelete'.$add.'playlist"></i>';
-			$h .= '<input type="hidden" value="'.$name.'" />';
-			$h .= '</div>';
-			$out->find('.menuitem')->append($h);
-		}
-		return $out;
 	}
 
 	public static function albumSizer() {

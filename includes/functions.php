@@ -44,20 +44,17 @@ function format_podcast_text($d) {
 	$d = preg_replace('/<hr *\/*>/', '<br />', $d);
 	$d = preg_replace('/<a/', '<a terget="_blank"', $d);
 	return $d;
-	// $doc = phpQuery::newDocument('<html>'.$d.'</html>');
-	// $doc->find('a')->attr('target', '_blank');
-	// return $doc->html();
 }
 
 function format_time($t,$f=':') {
 	if (($t/86400) >= 1) {
-		return sprintf("%d%s%2d%s%02d%s%02d", ($t/86400), " ".language::gettext("label_days")." ",
-			($t/3600)%24, $f, ($t/60)%60, $f, $t%60);
+		return sprintf("%d%s%2d%s%02d%s%02d", (int) round($t/86400), " ".language::gettext("label_days")." ",
+			(int) round(($t/3600)%24), $f, (int) round(($t/60)%60), $f, (int) round($t%60));
 	}
 	if (($t/3600) >= 1) {
-		return sprintf("%2d%s%02d%s%02d", ($t/3600), $f, ($t/60)%60, $f, $t%60);
+		return sprintf("%2d%s%02d%s%02d", (int) round($t/3600), $f, (int) round(($t/60)%60), $f, (int) round($t%60));
 	} else {
-		return sprintf("%02d%s%02d", ($t/60)%60, $f, $t%60);
+		return sprintf("%02d%s%02d", (int) round(($t/60)%60), $f, (int) round($t%60));
 	}
 }
 
@@ -353,7 +350,7 @@ function domainIcon($d, $c) {
 
 function domainHtml($uri) {
 	$h = domainIcon(getDomain($uri), 'inline-icon');
-	if ($h == '') {
+	if ($h == '' && $uri != null) {
 		if (strtolower(pathinfo($uri, PATHINFO_EXTENSION)) == "cue") {
 			$h = '<i class="icon-doc-text inline-icon fixed"></i>';
 		}

@@ -45,7 +45,7 @@ function do_radio_list() {
 
 		$albumimage = new albumImage(array('artist' => 'STREAM', 'album' => $playlist['StationName']));
 
-		$html = uibits::albumHeader(array(
+		print uibits::albumHeader(array(
 			'id' => 'nodrop',
 			'Image' => $playlist['Image'],
 			'Searched' => 1,
@@ -59,11 +59,9 @@ function do_radio_list() {
 			'streamname' => $playlist['StationName'],
 			'streamimg' => $playlist['Image'],
 			'class' => 'faveradio',
-			'expand' => true
+			'expand' => true,
+			'podcounts' => '<i class="clickable clickradioremove clickicon yourradio icon-cancel-circled fixed inline-icon" name="'.$playlist['Stationindex'].'"></i>'
 		));
-
-		$out = uibits::addUserRadioButtons($html, $playlist['Stationindex'], $playlist['PlaylistUrl'], $playlist['StationName'], $playlist['Image']);
-		print $out->html();
 
 	}
 
