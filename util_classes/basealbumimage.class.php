@@ -37,7 +37,7 @@ class baseAlbumImage {
 				$this->mbid = null;
 			}
 		}
-		if (prefs::$prefs['player_backend'] == 'mopidy') {
+		if (prefs::$prefs['player_backend'] == 'mopidy' && $this->albumpath != null) {
 			$this->albumpath = urldecode($this->albumpath);
 		}
 		$this->image_downloaded = false;

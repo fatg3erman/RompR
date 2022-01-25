@@ -110,6 +110,7 @@ class url_downloader {
 		// This function returns a boolean true if the download succeeded, false otherwise
 		//
 
+		logger::log("URL_DOWNLOADER", "Downloading ".$this->options['url']);
 		$this->file = $file;
 		if ($this->file === null && $this->options['cache'] === null) {
 			logger::trace("URL_DOWNLOADER", "  Returning data as string");

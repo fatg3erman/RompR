@@ -141,28 +141,29 @@ var spotiCrazyRadio = function() {
 				$("#pluginplaylists_crazy").append('<div class="textcentre textunderline"><b>Create Your Own Spotify Playlist Generator</b></div>');
 				$("#pluginplaylists_crazy").append('<div class="textcentre tiny">Enter some Genres, set the parameters, and click Play.<br>You can drag both ends of the sliders to set a range.</div>');
 
-				var a = $('<div>', {class: "menuitem spacer", style: "margin-right:8px"}).appendTo("#pluginplaylists_crazy");
-				var c = $('<div>', {class: "containerbox expand spacer vertical-centre"}).
-					appendTo(a).makeTagMenu({
-					textboxname: 'spotigenres',
-					placeholder: 'Enter Genres',
-					populatefunction: populateSpotiTagMenu
-				});
+				var a = $('<div>', {class: "menuitem spacer"}).appendTo("#pluginplaylists_crazy");
+
+				var c = $("<input>", {class: 'enter clearbox', name: 'spotigenres', type: 'text', placeholder: 'Genres'}).appendTo(a);
+
+				// var c = $('<div>', {class: "containerbox expand spacer vertical-centre"}).
+				// 	appendTo(a).makeTagMenu({
+				// 	textboxname: 'spotigenres',
+				// 	placeholder: 'Enter Genres',
+				// 	populatefunction: populateSpotiTagMenu
+				// });
 
 				var table = $('<table>').appendTo('#pluginplaylists_crazy');
 				['energy', 'danceability', 'valence', 'instrumentalness', 'acousticness', 'tempo', 'liveness', 'popularity'].forEach(function(i) {
 					addParameter(i, table)
 				});
 
-				html = '<div class="containerbox vertical-centre bacon">';
-				html += '<div class="expand"></div>';
-				html += '<button class="fixed iconbutton savebutton" '+
-					'onclick="crazyRadioManager.saveCrazyRadioSettings(event)"></button>';
-				html += '<button class="fixed iconbutton icon-no-response-playbutton" '+
-					'onclick="crazyRadioManager.go()"></button>';
+				html = '<div id="crazy-radio-buttons" class="containerbox vertical-centre">';
+				html += '<i class="expand smallicon icon-floppy"></i>';
+				html += '<i class="expand smallicon icon-no-response-playbutton"></i>';
 				html += '</div>';
 				$("#pluginplaylists_crazy").append(html);
-
+				$('#crazy-radio-buttons .icon-floppy').on('click', crazyRadioManager.saveCrazyRadioSettings);
+				$('#crazy-radio-buttons .icon-no-response-playbutton').on('click', crazyRadioManager.go);
 				crazyRadioManager.loadSavedCrazies();
 			}
 		}

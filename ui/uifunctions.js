@@ -416,17 +416,17 @@ function getrgbs(percent,min) {
 
 }
 
-function populateSpotiTagMenu(callback) {
-	spotify.recommendations.getGenreSeeds(
-		function(data) {
-			debug.debug("SPOTIFY","Got Genre Seeds",data);
-			callback(data.genres);
-		},
-		function(data) {
-			debug.error("SPOTIFY","Got error requesting genre seeds",data);
-		}
-	);
-}
+// function populateSpotiTagMenu(callback) {
+// 	spotify.recommendations.getGenreSeeds(
+// 		function(data) {
+// 			debug.debug("SPOTIFY","Got Genre Seeds",data);
+// 			callback(data.genres);
+// 		},
+// 		function(data) {
+// 			debug.error("SPOTIFY","Got error requesting genre seeds",data);
+// 		}
+// 	);
+// }
 
 function displayRating(where, what) {
 	$(where).removeClass("icon-0-stars icon-1-stars icon-2-stars icon-3-stars icon-4-stars icon-5-stars");

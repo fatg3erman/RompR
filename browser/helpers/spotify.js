@@ -253,15 +253,15 @@ var spotify = function() {
 
 		recommendations: {
 
-			getGenreSeeds: function(success, fail) {
-				var data = {
-					method: 'get_genreseeds',
-					params: {
-						cache: true
-					}
-				};
-				spotify.request('', data, success, fail, true);
-			},
+			// getGenreSeeds: function(success, fail) {
+			// 	var data = {
+			// 		method: 'get_genreseeds',
+			// 		params: {
+			// 			cache: true
+			// 		}
+			// 	};
+			// 	spotify.request('', data, success, fail, true);
+			// },
 
 			getRecommendations: function(param, success, fail) {
 				var data = {

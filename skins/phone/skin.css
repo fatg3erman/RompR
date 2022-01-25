@@ -599,7 +599,7 @@ i.phone-dropdown-button {
 
 /* This makes the input cover the button so it looks nice
 	2em is the size of the button and 4px is its margin */
-div.containerbox.combobox>div.expand {
+.dropdown-menu-holder {
 	margin-right: calc(-2em - 4px);
 }
 
@@ -1393,6 +1393,11 @@ div.playable.clicktrack {
 
 	:root {
 		--display-mode: 2;
+	}
+
+	#nowplaying {
+		padding-right: 4px;
+		padding-left: 2px;
 	}
 
 	#playbackTime {

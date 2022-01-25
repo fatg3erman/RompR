@@ -38,7 +38,7 @@ class imageHandler {
 
 	public function resizeToWidth($width) {
 		logger::trace('IMAGEHANDLER', 'Resizing to width', $width);
-		$this->image->resizeToWidth(floor($width));
+		$this->image->resizeToWidth($width);
 	}
 
 	public function get_image_dimensions() {

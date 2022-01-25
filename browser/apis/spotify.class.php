@@ -179,17 +179,17 @@ class spotify {
 		return self::request($url, $print_data, $use_cache);
 	}
 
-	public static function get_genreseeds($params, $print_data) {
+	// public static function get_genreseeds($params, $print_data) {
 
-		//
-		// params:
-		// 		cache 	: boolean
-		//
+	// 	//
+	// 	// params:
+	// 	// 		cache 	: boolean
+	// 	//
 
-		$url = self::BASE_URL.'/v1/recommendations/available-genre-seeds';
-		return self::request($url, $print_data, $params['cache']);
+	// 	$url = self::BASE_URL.'/v1/recommendations/available-genre-seeds';
+	// 	return self::request($url, $print_data, $params['cache']);
 
-	}
+	// }
 
 	public static function get_recommendations($params, $print_data) {
 
