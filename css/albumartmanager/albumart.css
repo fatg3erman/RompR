@@ -108,6 +108,10 @@ img#browns {
 	height: 100px;
 }
 
+.imageeditor-opened {
+	min-width: 100% !important;
+}
+
 #brian {
 	padding-left:8px;
 	padding-right:8px;

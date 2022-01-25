@@ -1336,7 +1336,7 @@ div.playable.clicktrack {
 	}
 
 	.album_menu_image {
-		max-height: unset;
+		max-height: 75vh;
 	}
 
 	.mainpane:not(#infopane):not(#infobar) {

@@ -216,7 +216,7 @@ class gd_Image {
 			$this->reset();
 		} else {
 			$height = $this->getheight() * $ratio;
-			$this->resize($width,$height);
+			$this->resize(floor($width), floor($height));
 		}
 	}
 

@@ -355,6 +355,7 @@ var imageEditor = function() {
 			currhighlight = where.parent();
 			currhighlight.addClass('highlighted');
 			currparent = newpos;
+			currparent.addClass('imageeditor-opened');
 
 			bigimg.src = "";
 			bigdiv.empty();
@@ -454,6 +455,7 @@ var imageEditor = function() {
 			bigdiv.remove();
 			bigdiv = null;
 			currhighlight.removeClass('highlighted');
+			currparent.removeClass('imageeditor-opened');
 			currhighlight = null;
 			currparent = null;
 			currname = null;

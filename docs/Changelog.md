@@ -6,10 +6,10 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Improve Metadata backup so it now restores all data including Podcasts and Radio Stations.
 * Improve Themes to make them easier to edit. Add two new ones. in the process I decided to delete
 some of the old ones as they were ugly and I couldn't be bothered to update them.
-* Quite a few small UI tweaks to make things a bit more consistent. It's true to say that the Phone and Skypotato skins are
-my favourites and the others don't get a lot of attention any more. The Tablet skin is deprecated and will receive no further development.
-I don't have the time to develop 5 skins, and mobile browsers are finicky and bug ridden. Testing the phone skin takes as much time as
-testing all the desktop skins put together.
+* Major changes to the CSS and UI code, especially in the Phone skin.
+* I have decided to deprecate the Tablet and Fruits skins. 5 skins is too much to maintain. If you're using these skins
+and you really want them kept, please somehow let me know. If enough people want them I may decide to keep them,
+otherwise they will be removed in a future release. As of this release I cannot guarantee that thwy will work.
 * The button bar on the phone skin has been moved to the bottom of the screen because having it at the top
 conflicted with a built-in touch event on Safari for iPhone. Definitely a Safari bug but I can't fix those...
 * On iOS Safari, the Phone skin will try to ensure that the browser hides the address bar because Safari always behaves as though
@@ -17,10 +17,11 @@ it is hidden even when it isn't. Except when it doesn't. It'll try to make Chrom
 Adding RompR as an icon to your home screen is the best way to run it.
 * Moved Players and Snapcast to the top of the Prefs panel, since the Background Images panel now means you
 had to scroll a long way down to reach them.
-* 'Play From Here' option on the track popup menu, to mimic what CD Player Mode does when not in CD Player Mode
-* Remove dependency on PHPQuery after an update to PHP 8.1 broke it without warning.
+* 'Play From Here' option on the track popup menu, to mimic what CD Player Mode does when not in CD Player Mode.
 * Fix a slew of issues caused by an "upgrade" to PHP 8.1 which has suddenly deprecated loads of stuff and started
-throwing fatal errors all over the place without warning. Please Stop Doing This.
+throwing fatal errors all over the place without warning, even in its internal functions. Please Stop Doing This.
+* As much as possible, remove dependency on PHPQuery after PHP 8.1 broke it without warning.
+
 
 ## Version 1.60
 * I noticed an error in the installation instructions.

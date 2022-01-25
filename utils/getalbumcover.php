@@ -123,7 +123,7 @@ function tryLocal($albumimage) {
 			}
 		}
 	}
-	if (count($files) > 1) {
+	if (count($files) > 0) {
 		logger::trace("GETALBUMCOVER", "    Returning ".$files[0]);
 		$delaytime = 1;
 		return $files[0];
