@@ -133,12 +133,12 @@ class uibits {
 		$h .= domainHtml($obj['AlbumUri']);
 		$h .= artistNameHtml($obj);
 		$h .= '</div>';
-		$h .= '</div>';
 
 		if (array_key_exists('podcounts', $obj)) {
 			$h .= $obj['podcounts'];
 		}
 
+		$h .= '</div>';
 		$h .= '<div class="progressbar invisible wafflything"><div class="wafflebanger"></div></div>';
 		$h .= '</div>';
 		return $h;
