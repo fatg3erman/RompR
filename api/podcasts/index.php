@@ -86,8 +86,9 @@ if ($podid === false) {
 
 
 function handle_error($errno, $errstr, $errfile, $errline) {
-	logger::error("PODCASTS", "Error",$errno,$errstr,"in",$errfile,"at line",$errline);
 	header('HTTP/1.1 400 Bad Request');
+	logger::error("PODCASTS", "Error",$errno,$errstr,"in",$errfile,"at line",$errline);
+	print "Error ".$errstr." in ".$errfile." at line ".$errline;
 	exit(0);
 }
 

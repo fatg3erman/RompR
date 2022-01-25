@@ -609,20 +609,20 @@ class poDatabase extends database {
 		print '<div class="whatdoicallthis">'.format_podcast_text($y->Description).'</div>';
 		if ($y->Subscribed == 1) {
 			print '<div class="containerbox bumpad">';
-			print '<i title="'.language::gettext("podcast_configure").'" class="icon-cog-alt podicon '.
+			print '<i title="'.language::gettext("podcast_configure").'" class="icon-cog-alt inline-icon '.
 				'clickicon openmenu fixed tooltip spinable" name="podconf_'.$pm.'"></i>';
-			print '<i title="'.language::gettext("podcast_refresh").'" class="icon-refresh podicon podaction podcast clickable '.
+			print '<i title="'.language::gettext("podcast_refresh").'" class="icon-refresh inline-icon podaction podcast clickable '.
 				'clickicon fixed tooltip spinable" name="refresh_'.$pm.'"></i>';
-			print '<i title="'.language::gettext("podcast_download_all").'" class="icon-download podicon '.
+			print '<i title="'.language::gettext("podcast_download_all").'" class="icon-download inline-icon '.
 				'clickable clickicon podgroupload podcast fixed tooltip spinable" name="podgroupload_'.$pm.'"></i>';
-			print '<i title="'.language::gettext("podcast_mark_all").'" class="icon-headphones podicon podcast podaction '.
+			print '<i title="'.language::gettext("podcast_mark_all").'" class="icon-headphones inline-icon podcast podaction '.
 				'clickable clickicon fixed tooltip spinable" name="channellistened_'.$pm.'"></i>';
 			print '<div class="expand"></div>';
-			print '<i title="'.language::gettext("podcast_undelete").'" class="icon-trash podicon podcast podaction oneeighty '.
+			print '<i title="'.language::gettext("podcast_undelete").'" class="icon-trash inline-icon podcast podaction oneeighty '.
 				'clickable clickicon fixed tooltip spinable" name="channelundelete_'.$pm.'"></i>';
-			print '<i title="'.language::gettext("podcast_removedownloaded").'" class="icon-download podicon podcast podaction oneeighty '.
+			print '<i title="'.language::gettext("podcast_removedownloaded").'" class="icon-download inline-icon podcast podaction oneeighty '.
 				'clickable clickicon fixed tooltip spinable" name="removedownloaded_'.$pm.'"></i>';
-			print '<i title="'.language::gettext("podcast_delete").'" class="icon-cancel-circled podicon '.
+			print '<i title="'.language::gettext("podcast_delete").'" class="icon-cancel-circled inline-icon '.
 					'clickable clickicon podremove podcast fixed tooltip spinable" name="podremove_'.$pm.'"></i>';
 			print '</div>';
 
@@ -786,14 +786,14 @@ class poDatabase extends database {
 		if ($y->Subscribed == 1) {
 			if ($item->New == 1) {
 				print '<i title="'.language::gettext("podcast_tooltip_new").
-					'" class="icon-sun fixed newpodicon tooltip"></i>';
+					'" class="icon-sun fixed smallicon tooltip"></i>';
 			} else if ($item->Listened == 0) {
 				print '<i title="'.language::gettext("podcast_tooltip_notnew").
-					'" class="icon-unlistened fixed oldpodicon tooltip"></i>';
+					'" class="icon-unlistened fixed smallicon tooltip"></i>';
 			}
 		}
 		print '<div class="podtitle expand">'.htmlspecialchars(html_entity_decode($item->Title)).'</div>';
-		print '<i class="fixed icon-no-response-playbutton podicon"></i>';
+		print '<i class="fixed icon-no-response-playbutton inline-icon"></i>';
 		print '</div>';
 
 		if ($item->Progress > 0) {
@@ -825,7 +825,7 @@ class poDatabase extends database {
 		if ($y->Subscribed == 1) {
 			print '<div class="clearfix" name="podcontrols_'.$pm.'">';
 			if ($item->Downloaded == 1) {
-				print '<i class="icon-floppy podicon tleft tooltip clickable clickicon podcast podremdownload spinable" title="'.
+				print '<i class="icon-floppy inline-icon tleft tooltip clickable clickicon podcast podremdownload spinable" title="'.
 					language::gettext("podcast_tooltip_downloaded").'" name="podremdownload_'.$item->PODTrackindex.'"></i>';
 			} else {
 				if ($item->New == 1) {
@@ -833,17 +833,17 @@ class poDatabase extends database {
 				} else {
 					$extraclass = '';
 				}
-				print '<i class="icon-download podicon clickable clickicon tleft podcast poddownload spinable'.$extraclass.' tooltip" title="'.
+				print '<i class="icon-download inline-icon clickable clickicon tleft podcast poddownload spinable'.$extraclass.' tooltip" title="'.
 					language::gettext("podcast_tooltip_download").'" name="poddownload_'.$item->PODTrackindex.'"></i>';
 			}
 			if ($item->Listened == 0) {
-				print '<i class="icon-headphones podicon clickable clickicon tleft podcast podmarklistened tooltip spinable" title="'.
+				print '<i class="icon-headphones inline-icon clickable clickicon tleft podcast podmarklistened tooltip spinable" title="'.
 					language::gettext("podcast_tooltip_mark").'" name="podmarklistened_'.$item->PODTrackindex.'"></i>';
 			}
-			print '<i class="icon-cancel-circled podicon clickable clickicon tright podtrackremove podcast tooltip spinable" title="'.
+			print '<i class="icon-cancel-circled inline-icon clickable clickicon tright podtrackremove podcast tooltip spinable" title="'.
 				language::gettext("podcast_tooltip_delepisode").'" name="podtrackremove_'.$item->PODTrackindex.'" ></i>';
 			if ($item->Listened == 1) {
-				print '<i class="icon-headphones podicon clickable clickicon tright podcast podmarkunlistened tooltip spinable oneeighty" title="'.
+				print '<i class="icon-headphones inline-icon clickable clickicon tright podcast podmarkunlistened tooltip spinable oneeighty" title="'.
 					language::gettext("podcast_tooltip_unlistened").'" name="podmarkunlistened_'.$item->PODTrackindex.'"></i>';
 			}
 			print '</div>';
@@ -882,7 +882,7 @@ class poDatabase extends database {
 				$extra .= '<span></span>';
 			}
 		} else {
-			$extra .= '<i class="clickicon clickable clickpodsubscribe podcast icon-rss podicon tooltip spinable" title="Subscribe to this podcast"></i><input type="hidden" value="'.$y->PODindex.'" />';
+			$extra .= '<i class="clickicon clickable clickpodsubscribe podcast icon-rss inline-icon tooltip spinable" title="Subscribe to this podcast"></i><input type="hidden" value="'.$y->PODindex.'" />';
 		}
 		$extra .= '</div>';
 

@@ -14,7 +14,8 @@
 	--config-panel-pad-right: 4px;
 	--inline-track-icon-size: 16px;
 	--inline-clickable-icon-size: 16px;
-	--inline-clickable-icon-border-width: 0 0 0 4px;
+	--inline-clickable-icon-border-width: none;
+	--inline-clickable-icon-border-style: none;
 	--menu-toggle-icon-size: 14px;
 
 	--small-icon-size: 20px;
@@ -497,9 +498,13 @@ img.notexist,img.notfound {
 	height: var(--inline-clickable-icon-size);
 	width: var(--inline-clickable-icon-size);
 	border-width: var(--inline-clickable-icon-border-width);
-	border-style: solid;
+	border-style: var(--inline-clickable-icon-border-style);
 	border-color: transparent;
 	box-sizing: border-box;
+}
+
+#podcastslist div>i.clickicon:first-child {
+	margin-left: 0px;
 }
 
 .submenuspacer {
@@ -789,18 +794,10 @@ div.unplayable {
 	margin:2px;
 }
 
-.newpodicon
-{
-	height:24px;
-	width:24px;
-	margin-top:2px;
-}
 
-.oldpodicon
-{
-	height:20px;
-	width:20px;
-	margin-top:2px;
+/* For the duration field in podcast episodes */
+div.podtitle>div.fixed {
+	margin-left: 1em;
 }
 
 .podoptions

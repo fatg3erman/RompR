@@ -21,7 +21,7 @@
 			if (count($outputdata) == 1) {
 				$f = ($outputdata[0]['outputname'] == "Mute") ? 0 : 1;
 				$c = ($outputdata[0]['outputenabled'] == $f) ? 'icon-output' : 'icon-output-mute';
-				print '<i id="mutebutton" onclick="player.controller.doMute()" class="'.$c.' fixed podicon clickicon"></i>';
+				print '<i id="mutebutton" onclick="player.controller.doMute()" class="'.$c.' fixed inline-icon clickicon"></i>';
 			}
 			print '</div>';
 			if (count($outputdata) > 1) {

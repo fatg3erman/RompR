@@ -6,7 +6,7 @@ print '<div class="containerbox vertical-centre is-coverable"><div class="expand
 print '<button class="fixed searchbutton iconbutton spinable" onclick="podcasts.search()"></button>';
 print '</div>';
 
-print '<div class="fullwidth noselection clearfix is-coverable"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon spinable" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
+print '<div class="fullwidth noselection clearfix is-coverable"><img id="podsclear" class="tright icon-cancel-circled inline-icon clickicon spinable" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
 print '<div id="podcast_search" class="fullwidth noselection is-albumlist"></div>';
 
 print '<div id="podholder" class="collectionpanel">';

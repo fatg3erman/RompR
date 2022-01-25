@@ -8,6 +8,7 @@
 	--inline-track-icon-size: 16px;
 	--inline-clickable-icon-size: 16px;
 	--inline-clickable-icon-border-width: none;
+	--inline-clickable-icon-border-style: none;
 }
 
 body {
@@ -42,6 +43,18 @@ input[type=text],input[type="number"] {
 	max-width: inherit;
 	padding-top:4px;
 	margin:0px;
+}
+
+#nowplaying {
+	font-size:8pt;
+	padding-top:0px;
+	padding-bottom:0px;
+	height:60px;
+	width:100%;
+	overflow:hidden;
+	box-sizing:border-box;
+	border-right:4px solid transparent;
+	border-left:4px solid transparent;
 }
 
 #progress {
@@ -82,56 +95,8 @@ input[type=text],input[type="number"] {
 	line-height:110%;
 }
 
-/* This creates boxes that flex-wrap correctly but with a gap between them and some apparent padding.
-   You can't use margin-left or right in wrap because the calculations don't take them into account */
-div.playable.smartradio.collectionitem {
-	background-color: var(--album2-colour);
-	background-clip: padding-box;
-	border-top: 4px solid var(--album2-colour);
-	border-top: 4px solid var(--album2-colour);
-}
-
-div.collectionpanel>div.configtitle>div.textcentre {
-	font-size:140%;
-}
-
-div.collectionpanel>div.playable.clickalbum.brick_wide {
-	margin-top: 8px;
-}
-
 #albumpicture {
 	width: auto;
-}
-
-.album-play-controls {
-	margin-bottom: 1em;
-}
-
-.timebox {
-	min-width: 4em;
-	font-size:9pt;
-	font-weight:bold;
-	line-height:100%;
-}
-
-.tboxl {
-	text-align:left;
-}
-
-.tboxr {
-	text-align:right;
-}
-
-#nowplaying {
-	font-size:8pt;
-	padding-top:0px;
-	padding-bottom:0px;
-	height:60px;
-	width:100%;
-	overflow:hidden;
-	box-sizing:border-box;
-	border-right:4px solid transparent;
-	border-left:4px solid transparent;
 }
 
 #nowplaying-info-wrapper {
@@ -257,17 +222,6 @@ div.collectionpanel>div.playable.clickalbum.brick_wide {
 	display:none;
 }
 
-#plmode {
-	font-size:8pt;
-	height:22px;
-	line-height:22px;
-}
-
-div[id^=zalbum] .podcastresume>.fixed
-{
-	padding-left: 24px;
-}
-
 #flowcontrols {
 	height: 36px;
 }
@@ -275,6 +229,33 @@ div[id^=zalbum] .podcastresume>.fixed
 #flowcontrols i {
 	max-height: 24px;
 	margin-top:4px;
+}
+
+#plmode {
+	font-size:8pt;
+	height:22px;
+	line-height:22px;
+}
+
+.album-play-controls {
+	margin-bottom: 1em;
+}
+
+/* These are the two time display boxes under the progress bar*/
+
+.timebox {
+	min-width: 4em;
+	font-size:9pt;
+	font-weight:bold;
+	line-height:100%;
+}
+
+.tboxl {
+	text-align:left;
+}
+
+.tboxr {
+	text-align:right;
 }
 
 /*
@@ -598,22 +579,6 @@ div.rightmenu
 
 /*
 =====================================================================
-= Podcasts
-=====================================================================
-*/
-
-.podicon {
-	padding:0px;
-	margin:2px;
-	height:20px;
-	width:20px;
-	vertical-align:middle;
-	box-sizing: border-box;
-	border: 2px solid transparent;
-}
-
-/*
-=====================================================================
 = Responsive Layout
 =====================================================================
 */
@@ -695,6 +660,32 @@ div.rightmenu
 		height: 24px !important;
 		width: 18px !important;
 	}
+}
+
+/*
+	Customisations that make this skin work
+*/
+
+/* This creates boxes that flex-wrap correctly but with a gap between them and some apparent padding.
+   You can't use margin-left or right in wrap because the calculations don't take them into account */
+div.playable.smartradio.collectionitem {
+	background-color: var(--album2-colour);
+	background-clip: padding-box;
+	border-top: 4px solid var(--album2-colour);
+	border-top: 4px solid var(--album2-colour);
+}
+
+div.collectionpanel>div.configtitle>div.textcentre {
+	font-size:140%;
+}
+
+div.collectionpanel>div.playable.clickalbum.brick_wide {
+	margin-top: 8px;
+}
+
+div[id^=zalbum] .podcastresume>.fixed
+{
+	padding-left: 24px;
 }
 
 .collectionitem {

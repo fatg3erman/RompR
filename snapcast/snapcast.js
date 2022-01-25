@@ -400,7 +400,7 @@ function snapcastGroup() {
 		var sel = $('<div>', {class: 'selectholder snapcast_select expand'}).appendTo(title);
 		streammenu = $('<select>', {class: 'snapgroupstream'}).appendTo(sel);
 
-		mutebutton = $('<i>', {class: "podicon fixed clickicon", name: "groupmuted"}).appendTo(title).on('click', self.setMute);
+		mutebutton = $('<i>', {class: "inline-icon fixed clickicon", name: "groupmuted"}).appendTo(title).on('click', self.setMute);
 	}
 
 	this.removeSelf = function() {
@@ -544,11 +544,11 @@ function snapcastClient() {
 
 		$('<div>', {class: 'fixed tag', name: 'notcon'}).appendTo(title);
 		var client = $('<div>', {class: 'containerbox'}).appendTo(holder);
-		var m = $('<i>', {class: "podicon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setGroup);
-		var rb = $('<i>', {class: "fixed podicon icon-cancel-circled clickicon"}).appendTo(title).on('click', self.deleteClient);
+		var m = $('<i>', {class: "inline-icon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setGroup);
+		var rb = $('<i>', {class: "fixed inline-icon icon-cancel-circled clickicon"}).appendTo(title).on('click', self.deleteClient);
 		vc = $('<div>', {class: 'canbefaded invisible containerbox vertical-centre'}).appendTo(holder);
 		volume = $('<div>', {class: 'expand playlistrow2'}).appendTo(vc);
-		var m = $('<i>', {class: "podicon fixed clickicon", name :"clientmuted"}).appendTo(vc).on('click', self.setMute);
+		var m = $('<i>', {class: "inline-icon fixed clickicon", name :"clientmuted"}).appendTo(vc).on('click', self.setMute);
 		volume.volumeControl({
 			orientation: 'horizontal',
 			command: self.setVolume

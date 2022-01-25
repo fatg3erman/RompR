@@ -46,16 +46,16 @@ function format_podcast_text($d) {
 	return $d;
 }
 
-function format_time($t,$f=':') {
-	if (($t/86400) >= 1) {
-		return sprintf("%d%s%2d%s%02d%s%02d", (int) round($t/86400), " ".language::gettext("label_days")." ",
-			(int) round(($t/3600)%24), $f, (int) round(($t/60)%60), $f, (int) round($t%60));
-	}
-	if (($t/3600) >= 1) {
-		return sprintf("%2d%s%02d%s%02d", (int) round($t/3600), $f, (int) round(($t/60)%60), $f, (int) round($t%60));
-	} else {
-		return sprintf("%02d%s%02d", (int) round(($t/60)%60), $f, (int) round($t%60));
-	}
+function format_time($t, $f = ':') {
+
+	if (($t/86400) >= 1)
+		return floor($t/86400).' '.language::gettext('label_days').' '.date('G'.$f.'i'.$f.'s', $t);
+
+	if (($t/3600) >= 1)
+		return date('G'.$f.'i'.$f.'s', $t);
+
+	return date('i'.$f.'s', $t);
+
 }
 
 function munge_album_name($name) {

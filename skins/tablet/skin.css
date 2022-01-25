@@ -6,7 +6,8 @@
 :root {
 	--inline-track-icon-size: 20px;
 	--inline-clickable-icon-size: 28px;
-	--inline-clickable-icon-border: 6px;
+	--inline-clickable-icon-border-width: 6px;
+	--inline-clickable-icon-border-style: solid;
 	--menu-toggle-icon-size: 20px;
 }
 
@@ -447,7 +448,7 @@ div.rightmenu {
 	padding-left: 1em;
 }
 
-.podicon {
+.inline-icon {
 	margin-top:4px;
 	margin-bottom:4px;
 	margin-left:4px;

@@ -12,6 +12,7 @@
 	--inline-track-icon-size: 20px;
 	--inline-clickable-icon-size: 28px;
 	--inline-clickable-icon-border-width: 6px;
+	--inline-clickable-icon-border-style: solid;
 
 	--mainpane-left-padding: 4px;
 	--mainpane-right-padding: 4px;
@@ -589,18 +590,6 @@ div.rightmenu {
 .clickstream {
 	padding-top: 4px;
 	padding-bottom: 4px;
-}
-
-.podicon {
-	margin-top:4px;
-	margin-bottom:4px;
-	margin-left:4px;
-	margin-right:4px;
-	height:36px;
-	width:36px;
-	vertical-align:middle;
-	box-sizing:border-box;
-	border:8px solid transparent;
 }
 
 i.phone-dropdown-button {
