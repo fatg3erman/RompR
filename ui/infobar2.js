@@ -214,7 +214,8 @@ var infobar = function() {
 		/* Empty it - but we need to have at least an nbsp in there for phone skin where
 			we use flexbox vertical, otherwise the height will be zero, and we need to set font size
 			to zero otherwise the flexbox will just keep expanding when we change the contents */
-		nptext.removeClass('ready calculating').addClass('calculating').html('&nbsp').css('padding-top', '0px').css('font-size', '0px');
+		nptext.removeClass('ready calculating').addClass('calculating').html('&nbsp');
+		set_css_variable('--nptext-font-size', '0px');
 		var maxheight = parent.height();
 		var maxwidth = parent.width();
 
@@ -222,9 +223,9 @@ var infobar = function() {
 		var fontsize = Math.floor((maxheight/1.75)/1.25);
 		var two_lines = getLines(2);
 
-		nptext.css('font-size', fontsize+'px');
+		set_css_variable('--nptext-font-size', fontsize+'px');
 
-		// debug.log('BIGGEROZE', 'Start font size is',fontsize);
+		// debug.log('BIGGER_START','Font Size',fontsize,'Max Height',maxheight,'Max Width',maxwidth);
 
 		if (two_lines[0] != ' ') {
 			put_text_in_area(two_lines, nptext);
@@ -236,24 +237,31 @@ var infobar = function() {
 			while (fontsize > 8 && (nptext.outerHeight(true) > maxheight || nptext.outerWidth(true) > maxwidth)) {
 				fontsize = fontsize / 2;
 				final_fontsize = fontsize;
-				// debug.log('BIGGEROZE', 'Reduce font size to',fontsize);
-				nptext.css('font-size', fontsize+'px');
+				set_css_variable('--nptext-font-size', fontsize+'px');
+				// debug.log('BIGGER_DOWN','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
 			}
-			var increment = final_fontsize / 2;
+			var increment = final_fontsize / 4;
+
+			// debug.log('BIGGER-UP', 'Increment is',increment);
+
 			while (
 					increment > 1 &&
-					(nptext.outerHeight(true) < maxheight || nptext.outerWidth(true) < maxwidth) &&
-					!(nptext.outerHeight(true) > maxheight || nptext.outerWidth(true) > maxwidth)
+					(nptext.outerHeight(true) < maxheight || nptext.outerWidth(true) < maxwidth)
 			) {
-				final_fontsize = fontsize;
 				fontsize += increment;
 				increment = increment / 2;
-				// debug.log('BIGGEROZE', 'Increase font size to',fontsize);
-				nptext.css('font-size', fontsize+'px');
+				// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
+				set_css_variable('--nptext-font-size', fontsize+'px');
+				if (nptext.outerHeight(true) < maxheight && nptext.outerWidth(true) < maxwidth) {
+					// debug.log('BIGGER_UP','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
+					final_fontsize = fontsize
+				} else {
+					break;
+				}
 			}
 
 			// debug.log('BIGGEROZE', 'Final font size is',final_fontsize);
-			nptext.css('font-size', final_fontsize+'px');
+			set_css_variable('--nptext-font-size', final_fontsize+'px');
 
 			if (npinfo.Title && npinfo.Album && npinfo.Artist) {
 				/* Does it still fit if we use 3 lines -  this is because
@@ -267,7 +275,7 @@ var infobar = function() {
 				*/
 				var three_lines = getLines(3);
 				put_text_in_area(three_lines, nptext);
-				if (nptext.outerHeight(true) > maxheight) {
+				if (nptext.outerHeight(true) > maxheight || nptext.outerWidth(true) > maxwidth) {
 					put_text_in_area(two_lines, nptext);
 				}
 

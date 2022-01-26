@@ -1385,6 +1385,10 @@ div.playable.clicktrack {
 		--display-mode: 2;
 	}
 
+	#nptext {
+		min-width: unset;
+	}
+
 	#nowplaying {
 		padding-right: 4px;
 		padding-left: 2px;

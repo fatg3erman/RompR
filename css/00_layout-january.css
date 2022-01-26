@@ -21,6 +21,8 @@
 	--small-icon-size: 20px;
 	--medium-icon-size: 30px;
 	--svg-square-icon-size: 32px;
+
+	--nptext-font-size: 0px;
 }
 
 body.mobile #headerbar
@@ -639,6 +641,7 @@ img.notexist,img.notfound {
 #nptext
 {
 	opacity: 0;
+	font-size: var(--nptext-font-size);
 }
 
 #nptext.ready
