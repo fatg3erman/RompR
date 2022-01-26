@@ -219,7 +219,10 @@ var infobar = function() {
 			we use flexbox vertical, otherwise the height will be zero, and we need to set font size
 			to zero otherwise the flexbox will just keep expanding when we change the contents */
 		nptext.removeClass('ready calculating').addClass('calculating').html('&nbsp');
-		set_css_variable('--nptext-font-size', '0px');
+
+		nptext.css('font-size', '0px');
+		// set_css_variable('--nptext-font-size', '0px');
+
 		var maxheight = parent.height();
 		var maxwidth = parent.width();
 
@@ -241,7 +244,8 @@ var infobar = function() {
 			while (fontsize > 8 && (nptext.outerHeight(true) > maxheight || nptext.outerWidth(true) > maxwidth)) {
 				fontsize = fontsize / 2;
 				final_fontsize = fontsize;
-				set_css_variable('--nptext-font-size', fontsize+'px');
+				nptext.css('font-size', fontsize+'px');
+				// set_css_variable('--nptext-font-size', fontsize+'px');
 				// debug.log('BIGGER_DOWN','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
 			}
 			var increment = final_fontsize / 4;
@@ -255,7 +259,8 @@ var infobar = function() {
 				fontsize += increment;
 				increment = increment / 2;
 				// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
-				set_css_variable('--nptext-font-size', fontsize+'px');
+				nptext.css('font-size', fontsize+'px');
+				// set_css_variable('--nptext-font-size', fontsize+'px');
 				if (nptext.outerHeight(true) < maxheight && nptext.outerWidth(true) < maxwidth) {
 					// debug.log('BIGGER_UP','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
 					final_fontsize = fontsize
@@ -265,7 +270,8 @@ var infobar = function() {
 			}
 
 			// debug.log('BIGGEROZE', 'Final font size is',final_fontsize);
-			set_css_variable('--nptext-font-size', final_fontsize+'px');
+			nptext.css('font-size', final_fontsize+'px');
+			// set_css_variable('--nptext-font-size', final_fontsize+'px');
 
 			if (npinfo.Title && npinfo.Album && npinfo.Artist) {
 				/* Does it still fit if we use 3 lines -  this is because
