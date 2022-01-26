@@ -230,7 +230,8 @@ var infobar = function() {
 		var fontsize = Math.floor((maxheight/1.75)/1.25);
 		var two_lines = getLines(2);
 
-		set_css_variable('--nptext-font-size', fontsize+'px');
+		nptext.css('font-size', '0px');
+		// set_css_variable('--nptext-font-size', fontsize+'px');
 
 		// debug.log('BIGGER_START','Font Size',fontsize,'Max Height',maxheight,'Max Width',maxwidth);
 
