@@ -129,6 +129,8 @@ var infobar = function() {
 
 	function getLines(numlines) {
 
+		// debug.log('GETLINES', npinfo);
+
 		var lines;
 		switch (numlines) {
 			case 2:
@@ -144,7 +146,9 @@ var infobar = function() {
 						lines[1].text = npinfo.stream;
 					}
 				} else if (npinfo.Album && npinfo.Title) {
-					lines[1].text = '<i>'+frequentLabels.on+'</i>'+" "+npinfo.Album;
+					if (!(playlistinfo.type == 'stream' && npinfo.Title == npinfo.Album)) {
+						lines[1].text = '<i>'+frequentLabels.on+'</i>'+" "+npinfo.Album;
+					}
 				}
 				break;
 
