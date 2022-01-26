@@ -248,21 +248,21 @@ var infobar = function() {
 
 			// debug.log('BIGGER-UP', 'Increment is',increment);
 
-			// while (
-			// 		increment > 1 &&
-			// 		(nptext.outerHeight(true) < maxheight || nptext.outerWidth(true) < maxwidth)
-			// ) {
-			// 	fontsize += increment;
-			// 	increment = increment / 2;
-			// 	// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
-			// 	set_css_variable('--nptext-font-size', fontsize+'px');
-			// 	if (nptext.outerHeight(true) < maxheight && nptext.outerWidth(true) < maxwidth) {
-			// 		// debug.log('BIGGER_UP','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
-			// 		final_fontsize = fontsize
-			// 	} else {
-			// 		break;
-			// 	}
-			// }
+			while (
+					increment > 1 &&
+					(nptext.outerHeight(true) < maxheight || nptext.outerWidth(true) < maxwidth)
+			) {
+				fontsize += increment;
+				increment = increment / 2;
+				// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
+				set_css_variable('--nptext-font-size', fontsize+'px');
+				if (nptext.outerHeight(true) < maxheight && nptext.outerWidth(true) < maxwidth) {
+					// debug.log('BIGGER_UP','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
+					final_fontsize = fontsize
+				} else {
+					break;
+				}
+			}
 
 			// debug.log('BIGGEROZE', 'Final font size is',final_fontsize);
 			set_css_variable('--nptext-font-size', final_fontsize+'px');
