@@ -218,16 +218,6 @@ input[type=text],input[type="number"] {
 	line-height:22px;
 }
 
-#audiobooks .podcastresume>.fixed
-{
-	padding-left: 24px;
-}
-
-#audiobooks .podcastresume>.expand
-{
-	margin-right: 4px;
-}
-
 #flowcontrols {
 	height: 36px;
 }

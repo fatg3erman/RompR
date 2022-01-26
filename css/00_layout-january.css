@@ -845,6 +845,20 @@ div.podtitle>div.fixed {
 	margin-bottom: 0.5em;
 }
 
+.podcastresume>.fixed:nth-child(2)
+{
+	margin-right: 1em;
+}
+
+.podcastresume>.progressbar
+{
+	height: 0.75em;
+}
+
+.podcastitem .tracknumber {
+	display: none;
+}
+
 /*
 =====================================================================
 =
@@ -1483,6 +1497,10 @@ a.infoclick.clickreleasepage
 	padding-top:4px;
 	box-sizing:border-box;
 	max-width:100%;
+}
+
+.helpfulalbum:not(.podcastcounts)
+{
     background-color: var(--highlight-bg-colour);
     background-image: var(--highlight-bg-image);
 }

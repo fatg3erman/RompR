@@ -301,17 +301,7 @@ button.spinable.icon-spin6 {
 	height: unset;
 }
 
-#audiobooks .podcastresume>.fixed
-{
-	padding-left: 32px;
-}
-
-#audiobooks .podcastresume>.expand
-{
-	margin-right: 4px;
-}
-
-#audiobooks .podcastresume
+.podcastresume
 {
 	border-top: none !important;
 }

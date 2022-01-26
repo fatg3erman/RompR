@@ -683,11 +683,6 @@ div.collectionpanel>div.playable.clickalbum.brick_wide {
 	margin-top: 8px;
 }
 
-div[id^=zalbum] .podcastresume>.fixed
-{
-	padding-left: 24px;
-}
-
 .collectionitem {
 	box-sizing:border-box;
 	border: 4px solid transparent;

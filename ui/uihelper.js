@@ -451,12 +451,12 @@ var uiHelper = function() {
 					var thething = $(
 						'<div>',
 						{
-							class: 'containerbox fullwidth playlistrow2 vertical-centre podcastresume playable ',
+							class: 'containerbox fullwidth vertical-centre podcastresume playable ',
 							name: $(this).prev().attr('name')
 						}
 					).insertBefore($(this));
-					thething.append('<div class="fixed">'+language.gettext('label_resume')+'</div>');
-					var bar = $('<div>', {class: 'expand', style: "height: 0.5em"}).appendTo(thething);
+					thething.append('<div class="tracknumber fixed"></div><div class="fixed playlistrow2">'+language.gettext('label_resume')+' ('+formatTimeString(pos)+')</div>');
+					var bar = $('<div>', {class: 'expand'}).appendTo(thething);
 					bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
 				});
 

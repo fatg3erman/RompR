@@ -207,16 +207,6 @@ div {
 	width:100%;
 }
 
-#audiobooks .podcastresume>.fixed
-{
-	padding-left: 32px;
-}
-
-#audiobooks .podcastresume>.expand
-{
-	margin-right: 4px;
-}
-
 #flowcontrols {
 	height: 36px;
 }
