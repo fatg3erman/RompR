@@ -213,15 +213,14 @@ var infobar = function() {
 			return;
 		}
 
+		// Did try using set-css-variable here but that turned out to be really slow
+
 		var nptext = $('#nptext');
 		var parent = nptext.parent();
 		/* Empty it - but we need to have at least an nbsp in there for phone skin where
 			we use flexbox vertical, otherwise the height will be zero, and we need to set font size
 			to zero otherwise the flexbox will just keep expanding when we change the contents */
-		nptext.removeClass('ready calculating').addClass('calculating').html('&nbsp');
-
-		nptext.css('font-size', '0px');
-		// set_css_variable('--nptext-font-size', '0px');
+		nptext.removeClass('ready calculating').addClass('calculating').html('&nbsp').css('font-size', '0px');
 
 		var maxheight = parent.height();
 		var maxwidth = parent.width();
@@ -230,8 +229,7 @@ var infobar = function() {
 		var fontsize = Math.floor((maxheight/1.75)/1.25);
 		var two_lines = getLines(2);
 
-		nptext.css('font-size', '0px');
-		// set_css_variable('--nptext-font-size', fontsize+'px');
+		nptext.css('font-size', fontsize+'px');
 
 		// debug.log('BIGGER_START','Font Size',fontsize,'Max Height',maxheight,'Max Width',maxwidth);
 
@@ -246,7 +244,6 @@ var infobar = function() {
 				fontsize = fontsize / 2;
 				final_fontsize = fontsize;
 				nptext.css('font-size', fontsize+'px');
-				// set_css_variable('--nptext-font-size', fontsize+'px');
 				// debug.log('BIGGER_DOWN','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
 			}
 			var increment = final_fontsize / 4;
@@ -272,7 +269,6 @@ var infobar = function() {
 
 			// debug.log('BIGGEROZE', 'Final font size is',final_fontsize);
 			nptext.css('font-size', final_fontsize+'px');
-			// set_css_variable('--nptext-font-size', final_fontsize+'px');
 
 			if (npinfo.Title && npinfo.Album && npinfo.Artist) {
 				/* Does it still fit if we use 3 lines -  this is because

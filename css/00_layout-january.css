@@ -641,7 +641,6 @@ img.notexist,img.notfound {
 #nptext
 {
 	opacity: 0;
-	font-size: var(--nptext-font-size);
 }
 
 #nptext.ready
