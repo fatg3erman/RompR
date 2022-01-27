@@ -459,7 +459,7 @@ div.rightmenu
 	}
 }
 
-@media screen and (min-height: 800px) and (max-height: 939px) {
+@media screen and (min-height: 800px) and (max-height: 939px) and (min-width: 649px) {
 	.infobarlayout {
 		height:115px;
 	}
@@ -475,7 +475,7 @@ div.rightmenu
 	}
 }
 
-@media screen and (min-height: 940px) and (max-height: 1099px) {
+@media screen and (min-height: 940px) and (max-height: 1099px) and (min-width: 649px)  {
 	.infobarlayout {
 		height:140px;
 	}
@@ -491,7 +491,7 @@ div.rightmenu
 	}
 }
 
-@media screen and (min-height: 1100px) {
+@media screen and (min-height: 1100px) and (min-width: 649px)  {
 	.infobarlayout {
 		height:160px;
 	}
