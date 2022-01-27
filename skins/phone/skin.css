@@ -176,7 +176,8 @@ button.spinable.icon-spin6 {
 	max-width: 100%;
 }
 
-/* min-content is important in case we have a long word that doesn't wrap */
+/* min-content is important in the case where nowplaying
+	is taller than it is wide */
 
 #nptext {
 	text-align:center;
@@ -1383,10 +1384,6 @@ div.playable.clicktrack {
 
 	:root {
 		--display-mode: 2;
-	}
-
-	#nptext {
-		min-width: unset;
 	}
 
 	#nowplaying {

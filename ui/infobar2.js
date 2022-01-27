@@ -297,10 +297,10 @@ var infobar = function() {
 
 	return {
 
-		rejigTheText: function() {
+		rejigTheText: async function() {
 			if (!biggerizing) {
 				biggerizing = true;
-				biggerize();
+				await biggerize();
 				biggerizing = false;
 			}
 		},
