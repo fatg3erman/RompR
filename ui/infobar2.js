@@ -246,10 +246,10 @@ var infobar = function() {
 				nptext.css('font-size', fontsize+'px');
 				// debug.log('BIGGER_DOWN','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
 			}
-			var increment = final_fontsize / 4;
 
+			// This is nice to od but it slows us down a bit.
+			// var increment = final_fontsize / 4;
 			// debug.log('BIGGER-UP', 'Increment is',increment);
-
 			// while (
 			// 		increment > 1 &&
 			// 		(nptext.outerHeight(true) < maxheight || nptext.outerWidth(true) < maxwidth)
@@ -288,8 +288,6 @@ var infobar = function() {
 
 			}
 
-			// var top = Math.max(0, Math.floor((maxheight - nptext.height())/2));
-			// nptext.css("padding-top", top+"px").removeClass('calculating').addClass('ready');
 			nptext.removeClass('calculating').addClass('ready');
 
 		}
