@@ -320,9 +320,9 @@ var uiHelper = function() {
 
 	return {
 
-		adjustLayout: function() {
+		adjustLayout: async function() {
 			if (startBackgroundInitTasks.readytogo) {
-				layoutProcessor.adjustLayout();
+				await layoutProcessor.adjustLayout();
 			}
 		},
 

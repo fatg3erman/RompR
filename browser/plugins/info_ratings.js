@@ -71,7 +71,8 @@ var info_ratings = function() {
 						$("#dbtags").append('<span class="tag">'+trackmeta.usermeta.Tags[i]+
 							'<i class="icon-cancel-circled clickicon tagremover inline-icon" style="display:none"></i></span> ');
 					}
-					uiHelper.adjustLayout();
+					infobar.rejigTheText();
+					// uiHelper.adjustLayout();
 				}
 				// Make sure the browser updates the file info display
 				nowplaying.reDo(parent.nowplayingindex, 'file');

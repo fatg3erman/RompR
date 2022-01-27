@@ -526,6 +526,7 @@ var layoutProcessor = function() {
 
 			if (source == 'infopane') {
 				$('#infopane').removeClass('invisible');
+				browser.rePoint();
 			} else {
 				var display_mode = get_css_variable('--display-mode');
 				if (display_mode == 2 && (source == 'infobar' || source == 'playlistm')) {
@@ -535,9 +536,11 @@ var layoutProcessor = function() {
 				$('.mainpane:not(.invisible):not(#'+source+')').removeClass('invisible').addClass('invisible');
 				$('#'+source).removeClass('invisible');
 				oldchooser = source;
+				// Need to do this here - at the very least we need to reig the text
+				// because we might be switching to infobar from another panel
+				infobar.rejigTheText();
 			}
 			prefs.save({chooser: source});
-			uiHelper.adjustLayout();
 		},
 
 		mobile_browser_shitness: function() {
@@ -548,7 +551,6 @@ var layoutProcessor = function() {
 		},
 
 		adjustLayout: async function() {
-			infobar.updateWindowValues();
 			// When rotating from portrait to landscape in 3 column mode, if we're viewing
 			// the tracklist in porttrait mode we need to re-display a chooser panel  or
 			// we end up with only 2 columns

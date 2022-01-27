@@ -321,7 +321,7 @@ var infobar = function() {
 			aImg.onerror = function() {
 				debug.warn("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
 				$('img[name="'+$(this).attr('name')+'"]').addClass("notfound");
-				$('#albumpicture').fadeOut('fast',uiHelper.adjustLayout);
+				$('#albumpicture').fadeOut('fast',infobar.rejigTheText);
 			}
 
 			return {
@@ -486,7 +486,7 @@ var infobar = function() {
 			setTheText(playlistinfo);
 		},
 
-		setNowPlayingInfo: function(info) {
+		setNowPlayingInfo: async function(info) {
 			//Now playing info
 			debug.log("INFOBAR","NPinfo",info);
 			if (playlistinfo.file) {
@@ -539,8 +539,9 @@ var infobar = function() {
 				infobar.albumImage.setKey(info.ImgKey);
 			}
 			infobar.albumImage.setSource(info);
-			infobar.checkForTrackSpecificImage(info);
-			uiHelper.adjustLayout();
+			await infobar.checkForTrackSpecificImage(info);
+			await infobar.rejigTheText();
+			// uiHelper.adjustLayout();
 		},
 
 		checkForTrackSpecificImage: async function(info) {

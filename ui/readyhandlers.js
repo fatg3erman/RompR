@@ -7,7 +7,8 @@ function rendered() {
 	debug.debug('ALBUMPICTURE', 'Rendered');
 	$('#albumpicture').fadeIn('fast');
 	$('#albumpicture').removeClass('clickicon').addClass('clickicon').off('click').on('click', infobar.albumImage.displayOriginalImage);
-	uiHelper.adjustLayout();
+	// uiHelper.adjustLayout();
+	infobar.rejigTheText();
 }
 
 function startRender() {
