@@ -791,6 +791,10 @@ div.playable.clicktrack {
 	flex-basis: auto;
 }
 
+span.timer-time {
+	vertical-align: top;
+}
+
 /*
 =====================================================================
 = Responsive Layout - General

@@ -14,12 +14,18 @@ jQuery.fn.menuReveal = async function() {
 			$('#podcast_search').addClass('menu-covered');
 		if (self.prev().hasClass('unsubscribed-podcast'))
 			$('#podholder').addClass('menu-covered');
-		var tt = self.find('input.albumtime').val();
-		if (tt) {
-			var d = $('<div>', {class: 'album-time'}).html(tt).appendTo(self);
-			$('<i>', {class: 'icon-blank timerspacer'}).appendTo(d);
-		}
+		self.makeTimerSpan();
 		await self.show(0).promise();
+	}
+	return this;
+}
+
+jQuery.fn.makeTimerSpan = function() {
+	var self = $(this);
+	var tt = self.find('input.albumtime').val();
+	if (tt) {
+		var d = $('<div>', {class: 'album-time'}).html('<span class="timer-time">'+tt+'</span>').appendTo(self);
+		$('<i>', {class: 'icon-blank timerspacer'}).appendTo(d);
 	}
 	return this;
 }
@@ -239,7 +245,7 @@ jQuery.fn.insertAlbumAfter = function(albumindex, html, tracklist) {
 		var me = $(this);
 		var is_covered = $('.openmenu[name="'+albumindex+'"]').hasClass('menu-covered');
 		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
-		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
+		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums().makeTimerSpan();
 		$(html).insertAfter(me).scootTheAlbums();
 		if (is_covered)
 			$('.openmenu[name="'+albumindex+'"]').not('.backmenu').addClass('menu-covered');
@@ -252,7 +258,7 @@ jQuery.fn.insertAlbumAtStart = function(albumindex, html, tracklist) {
 		var is_covered = $('.openmenu[name="'+albumindex+'"]').hasClass('menu-covered');
 		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
 		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
-		$(html).insertAfter(me.children('.vertical-centre.configtitle').next()).scootTheAlbums();
+		$(html).insertAfter(me.children('.vertical-centre.configtitle').next()).scootTheAlbums().makeTimerSpan();
 		if (is_covered)
 			$('.openmenu[name="'+albumindex+'"]').not('.backmenu').addClass('menu-covered');
 	});
