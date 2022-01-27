@@ -636,9 +636,16 @@ img.notexist,img.notfound {
 
 /* Text area showing current track name, album & artist */
 
+#nowplaying {
+	min-width: 100%;
+	width: min-content;
+}
+
 #nptext
 {
 	opacity: 0;
+	width: min-content;
+	min-width: 100%;
 }
 
 #nptext.ready

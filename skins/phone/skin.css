@@ -171,18 +171,19 @@ button.spinable.icon-spin6 {
 	overflow:hidden;
 }
 
-#nowplaying {
-	width: 100%;
-	max-width: 100%;
+/*#nowplaying {
+	min-width: 100%;
+	width: min-content;
 }
-
+*/
 /* min-content is important in the case where nowplaying
 	is taller than it is wide */
 
 #nptext {
 	text-align:center;
-	width: min-content;
+/*	width: min-content;
 	min-width: 100%;
+*/
 }
 
 #nptext.ready {

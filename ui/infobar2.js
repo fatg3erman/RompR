@@ -213,6 +213,10 @@ var infobar = function() {
 			return;
 		}
 
+		// Note this relies on nowplaying and nptext having min-with: 100% and width: min-content
+		// and nowplaying being wrapped in a div from which I can calculate the max width.
+		// If we don't do this then long words that don't wrap can extend beyond the edge of the
+		// text area, especially when the area is taller than it is wide
 		// Did try using set-css-variable here but that turned out to be really slow
 
 		var nptext = $('#nptext');
@@ -223,7 +227,7 @@ var infobar = function() {
 		nptext.removeClass('ready calculating').addClass('calculating').html('&nbsp').css('font-size', '0px');
 
 		var maxheight = parent.height();
-		var maxwidth = parent.width();
+		var maxwidth = parent.parent().width();
 
 		// Start with a font size that will fill the height if no text wraps
 		var fontsize = Math.floor((maxheight/1.75)/1.25);
@@ -241,31 +245,31 @@ var infobar = function() {
 			// change when we adjust the font size.
 			var final_fontsize = fontsize;
 			while (fontsize > 8 && (nptext.outerHeight(true) > maxheight || nptext.outerWidth(true) > maxwidth)) {
-				fontsize = fontsize / 2;
+				fontsize = Math.floor(fontsize / 2);
 				final_fontsize = fontsize;
 				nptext.css('font-size', fontsize+'px');
 				// debug.log('BIGGER_DOWN','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
 			}
 
-			// This is nice to od but it slows us down a bit.
-			// var increment = final_fontsize / 4;
+			// This is nice to do but it slows us down a bit.
+			var increment = final_fontsize / 4;
 			// debug.log('BIGGER-UP', 'Increment is',increment);
-			// while (
-			// 		increment > 1 &&
-			// 		(nptext.outerHeight(true) < maxheight || nptext.outerWidth(true) < maxwidth)
-			// ) {
-			// 	fontsize += increment;
-			// 	increment = increment / 2;
-			// 	// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
-			// 	nptext.css('font-size', fontsize+'px');
-			// 	// set_css_variable('--nptext-font-size', fontsize+'px');
-			// 	if (nptext.outerHeight(true) < maxheight && nptext.outerWidth(true) < maxwidth) {
-			// 		// debug.log('BIGGER_UP','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
-			// 		final_fontsize = fontsize
-			// 	} else {
-			// 		break;
-			// 	}
-			// }
+			while (
+					increment > 1 &&
+					(nptext.outerHeight(true) < maxheight || nptext.outerWidth(true) < maxwidth)
+			) {
+				fontsize = Math.floor(fontsize + increment);
+				increment = increment / 2;
+				// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
+				nptext.css('font-size', fontsize+'px');
+				// set_css_variable('--nptext-font-size', fontsize+'px');
+				if (nptext.outerHeight(true) < maxheight && nptext.outerWidth(true) < maxwidth) {
+					// debug.log('BIGGER_UP','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
+					final_fontsize = fontsize
+				} else {
+					break;
+				}
+			}
 
 			// debug.log('BIGGEROZE', 'Final font size is',final_fontsize);
 			nptext.css('font-size', final_fontsize+'px');
