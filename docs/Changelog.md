@@ -7,9 +7,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Improve Themes to make them easier to edit. Add two new ones. in the process I decided to delete
 some of the old ones as they were ugly and I couldn't be bothered to update them.
 * Major changes to the CSS and UI code, especially in the Phone skin.
-* I have decided to deprecate the Tablet and Fruits skins. 5 skins is too much to maintain. If you're using these skins
-and you really want them kept, please somehow let me know. If enough people want them I may decide to keep them,
-otherwise they will be removed in a future release. As of this release I cannot guarantee that thwy will work.
+* 5 skins is too much to maintain. The Tablet and Fruit skins have been removed. If you update from an earlier version
+you should delete them from your installation as they will no longer function.
 * The button bar on the phone skin has been moved to the bottom of the screen because having it at the top
 conflicted with a built-in touch event on Safari for iPhone. Definitely a Safari bug but I can't fix those...
 * On iOS Safari, the Phone skin will try to ensure that the browser hides the address bar because Safari always behaves as though

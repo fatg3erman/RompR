@@ -35,18 +35,14 @@ jQuery.fn.toggleClosed = function() {
 jQuery.fn.makeSpinner = function() {
 	return this.each(function() {
 		var self = $(this);
-		// This is a general-purpose function. It'll make an element spin, but we use it to signify
-		// there's something happening. In some skins or circumstances there isn't a spinnable element.
-		// in those cases we can add a left-to-right wafflebanger to the element in question and that
-		// will be used instead of a spinner.
-		var waffler = self.find('.wafflything');
-		if (waffler.length > 0) {
+		if (self.find('.wafflything').length > 0) {
+			var waffler = self.find('.wafflything');
 			if (!waffler.children('.wafflebanger').first().hasClass("wafflebanger-moving")) {
 				waffler.fadeIn(100).children('.wafflebanger').addClass('wafflebanger-moving');
 			}
-		} else {
-			if (self.hasClass('icon-spin6') || $(this).hasClass('spinner')) {
-				debug.debug('UIHELPER', 'Trying to create spinner on already spinning element');
+		} else if (self.hasClass('icon-toggle-closed') || self.hasClass('icon-toggle-open') || self.hasClass('spinable')) {
+			if (self.hasClass('icon-spin6') || self.hasClass('spinner')) {
+				debug.trace('UIHELPER', 'Trying to create spinner on already spinning element');
 				return;
 			}
 			var originalclasses = new Array();
@@ -54,31 +50,38 @@ jQuery.fn.makeSpinner = function() {
 			if (self.attr("class")) {
 				var classes = self.attr("class").split(/\s/);
 			}
-			for (let c of classes) {
-				if (c == "invisible" || (/^icon/.test(c))) {
-					originalclasses.push(c);
-					self.removeClass(c);
+			for (var i = 0, len = classes.length; i < len; i++) {
+				if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
+					originalclasses.push(classes[i]);
+					self.removeClass(classes[i]);
 				}
 			}
 			self.attr("originalclass", originalclasses.join(" "));
 			self.addClass('icon-spin6 spinner');
+		} else {
+			self.addClass('clickflash');
 		}
+		return this;
 	});
 }
 
 jQuery.fn.stopSpinner = function() {
 	return this.each(function() {
 		var self = $(this);
-		var waffler = self.find('.wafflything');
-		if (waffler.length > 0) {
-			waffler.hide().children('.wafflebanger').removeClass('wafflebanger-moving');
-		} else {
+		if (self.hasClass('spinner')) {
 			self.removeClass('icon-spin6 spinner');
 			if (self.attr("originalclass")) {
 				self.addClass(self.attr("originalclass"));
 				self.removeAttr("originalclass");
 			}
+		} else if (self.find('.wafflything').length > 0) {
+			var waffler = self.find('.wafflything');
+			waffler.hide().children('.wafflebanger').removeClass('wafflebanger-moving');
+			self.removeClass('clickflash');
+		} else {
+			self.removeClass('clickflash');
 		}
+		return this;
 	});
 }
 

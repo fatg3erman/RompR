@@ -117,6 +117,13 @@ if(array_key_exists('skin', $_REQUEST)) {
 	}
 }
 $skin = trim($skin);
+
+if ($skin == 'tablet')
+	$skin = 'phone';
+
+if ($skin == 'fruit')
+	$skin = 'skypotato';
+
 if (is_dir('skins/'.$skin)) {
 	setcookie('skin', $skin, time()+365*24*60*60*10,'/');
 	logger::core("INIT", "Using skin : ".$skin);

@@ -214,58 +214,6 @@ jQuery.fn.isClosed = function() {
 	}
 }
 
-jQuery.fn.makeSpinner = function() {
-	return this.each(function() {
-		var self = $(this);
-		if (self.find('.wafflything').length > 0) {
-			var waffler = self.find('.wafflything');
-			if (!waffler.children('.wafflebanger').first().hasClass("wafflebanger-moving")) {
-				waffler.fadeIn(100).children('.wafflebanger').addClass('wafflebanger-moving');
-			}
-		} else if (self.hasClass('icon-toggle-closed') || self.hasClass('icon-toggle-open') || self.hasClass('spinable')) {
-			if (self.hasClass('icon-spin6') || self.hasClass('spinner')) {
-				debug.trace('UIHELPER', 'Trying to create spinner on already spinning element');
-				return;
-			}
-			var originalclasses = new Array();
-			var classes = '';
-			if (self.attr("class")) {
-				var classes = self.attr("class").split(/\s/);
-			}
-			for (var i = 0, len = classes.length; i < len; i++) {
-				if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
-					originalclasses.push(classes[i]);
-					self.removeClass(classes[i]);
-				}
-			}
-			self.attr("originalclass", originalclasses.join(" "));
-			self.addClass('icon-spin6 spinner');
-		} else {
-			if (!$('#'+self.attr('name')).is(':visible')) {
-				self.addClass('clickflash');
-			}
-		}
-	});
-}
-
-jQuery.fn.stopSpinner = function() {
-	return this.each(function() {
-		var self = $(this);
-		if (self.hasClass('spinner')) {
-			self.removeClass('icon-spin6 spinner');
-			if (self.attr("originalclass")) {
-				self.addClass(self.attr("originalclass"));
-				self.removeAttr("originalclass");
-			}
-		} else if (self.find('.wafflything').length > 0) {
-			var waffler = self.find('.wafflything');
-			waffler.hide().children('.wafflebanger').removeClass('wafflebanger-moving');
-		} else {
-			self.removeClass('clickflash');
-		}
-	});
-}
-
 jQuery.fn.animatePanel = function(options) {
 	var settings = $.extend({},options);
 	var panel = this.attr("id");
