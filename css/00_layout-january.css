@@ -754,6 +754,26 @@ div.unplayable {
 	background-color: transparent !important;
 }
 
+.tracks_0 {
+	display: none;
+}
+
+.tracks_1 {
+	width: 1em;
+}
+
+.tracks_2 {
+	width: 1.9em;
+}
+
+.tracks_3 {
+	width: 2.8em;
+}
+
+.tracks_4 {
+	width: 3.8em;
+}
+
 /*
 =====================================================================
 =

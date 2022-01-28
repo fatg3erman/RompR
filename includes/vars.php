@@ -16,6 +16,7 @@ if (!$dtz) {
 
 CONST CLASS_DIRS = array(
 	'includes',
+	'skins',
 	'backends/sql',
 	'collection',
 	'collection/sortby',

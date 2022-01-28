@@ -319,7 +319,7 @@ class sortby_base {
 		$tracktype = null;
 		foreach ($trackarr as $arr) {
 			$arr['numdiscs'] = $numdiscs;
-			$arr['numtracks'] = $numtracks;
+			$arr['numtracks'] = ($numtracks == 0) ? 'tracks_0' : 'tracks_'.strlen($numtracks);
 			logger::debug('SORTBY', 'Track', $arr['title']);
 			$total_time += $arr['time'];
 			if ($arr['numdiscs'] > 1 && $arr['disc'] != $currdisc && $arr['disc'] > 0) {
