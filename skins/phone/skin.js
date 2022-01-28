@@ -226,13 +226,14 @@ jQuery.fn.removeCollectionDropdown = function() {
 		if (!self.hasClass('configtitle')) {
 			self.findParentScroller().restoreScrollPos();
 		}
-		self.siblings().show();
+		self.siblings().removeClass('menu-covered');
 		self.clearOut().remove();
 	});
 }
 
 jQuery.fn.removeCollectionItem = function() {
 	this.each(function() {
+		// $(this).siblings().removeClass('menu-covered');
 		$(this).clearOut().remove();
 	});
 }
