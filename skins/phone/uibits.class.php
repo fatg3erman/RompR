@@ -22,11 +22,11 @@ class uibits {
 		// Outer container
 		if ($data['playable'] == 1 or $data['playable'] == 3) {
 			// Note - needs clicktrack and name in case it is a removeable track
-			print '<div class="unplayable clicktrack ninesix indent containerbox calign" name="'.rawurlencode($data['uri']).'">';
+			print '<div class="unplayable clicktrack ninesix indent containerbox" name="'.rawurlencode($data['uri']).'">';
 		} else if ($data['uri'] == null) {
-			print '<div class="playable '.$class.' ninesix draggable indent containerbox calign" name="'.$data['ttid'].'">';
+			print '<div class="playable '.$class.' ninesix draggable indent containerbox" name="'.$data['ttid'].'">';
 		} else {
-			print '<div class="playable '.$class.' ninesix draggable indent containerbox calign" name="'.rawurlencode($data['uri']).'">';
+			print '<div class="playable '.$class.' ninesix draggable indent containerbox" name="'.rawurlencode($data['uri']).'">';
 		}
 
 		print domainIcon($d, 'inline-icon');
