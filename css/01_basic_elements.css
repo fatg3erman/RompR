@@ -150,9 +150,10 @@ button.iconbutton
 	background-size: contain;
 	background-position:center;
 	background-repeat:no-repeat;
-	border: none !important;
+	border: 4px solid transparent !important;
 	opacity: 0.8;
 	background-color:transparent !important;
+	box-sizing: border-box;
 }
 
 button.iconbutton:hover
@@ -234,23 +235,23 @@ option
 
 input[type="text"],input[type="number"]
 {
-    color: var(--text-entry-text-colour);
+    color: var(--text-entry-text-colour) !important;
     transition: all 0.5s ease;
-    background-color:  var(--text-entry-bg-colour);
-    border-bottom: 1px solid  var(--text-entry-border-colour);
+    background-color:  var(--text-entry-bg-colour) !important;
+    border-bottom: 1px solid  var(--text-entry-border-colour) !important;
 }
 
 input[type="text"]:hover,input[type="number"]:hover
 {
     transition: all 0.5s ease;
-    background-color: var(--text-entry-hover-bg-colour);
-    border-bottom: 1px solid var(--text-entry-hover-border-colour);
+    background-color: var(--text-entry-hover-bg-colour) !important;
+    border-bottom: 1px solid var(--text-entry-hover-border-colour) !important;
 }
 
 input[type="text"]:focus,input[type="number"]:focus,input[type="text"]:focus-visible,input[type="number"]:focus-visible
 {
     transition: all 0.5s ease;
-    background-color: var(--text-entry-active-bg-colour);
-    border-bottom:1px solid var(--text-entry-active-border-colour);
+    background-color: var(--text-entry-active-bg-colour) !important;
+    border-bottom:1px solid var(--text-entry-active-border-colour) !important;
     outline: none;
 }

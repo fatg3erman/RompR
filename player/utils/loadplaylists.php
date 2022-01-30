@@ -157,10 +157,10 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 			$buttons = '';
 			if ($delete) {
 				$add = ($is_user) ? "user" : "";
-				$buttons = '<div class="fixed containerbox vertical">';
-				$buttons .= '<i class="icon-floppy expand inline-icon clickable clickicon clickrename'.$add.'playlist"></i>';
+				$buttons = '<div class="album-extra-controls">';
+				$buttons .= '<i class="icon-floppy inline-icon clickable clickicon clickrename'.$add.'playlist"></i>';
 				$buttons .= '<input type="hidden" value="'.rawurlencode($name).'" />';
-				$buttons .= '<i class="icon-cancel-circled fixed inline-icon clickable clickicon clickdelete'.$add.'playlist"></i>';
+				$buttons .= '<i class="icon-cancel-circled inline-icon clickable clickicon clickdelete'.$add.'playlist"></i>';
 				$buttons .= '<input type="hidden" value="'.rawurlencode($name).'" />';
 				$buttons .= '</div>';
 			}
@@ -168,17 +168,11 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 			print uibits::albumHeader(array(
 				'id' => 'pholder_'.md5($name),
 				'Image' => $image,
-				'Searched' => 1,
-				'AlbumUri' => null,
-				'Year' => null,
-				'Artistname' => '',
 				'Albumname' => $name,
-				'why' => 'whynot',
 				'ImgKey' => $albumimage->get_image_key(),
 				'userplaylist' => $class,
 				'plpath' => $link,
 				'class' => preg_replace('/clickload/', '', $class).$extra_class,
-				'expand' => true,
 				'podcounts' => $buttons
 			));
 			break;

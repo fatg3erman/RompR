@@ -180,7 +180,7 @@ class musicCollection extends collection_base {
 		$this->options['doing_search'] = true;
 		$this->options['trackbytrack'] = true;
 		$album_details = $this->get_album_details($index);
-		$uri = $album_details[0]['AlbumUri'];
+		$uri = $album_details['AlbumUri'];
 
 		if (substr($uri, 0, 8) == 'podcast+') {
 			$this->browse_podcast_search_result($uri);
@@ -196,8 +196,8 @@ class musicCollection extends collection_base {
 		$just_added = $this->find_justadded_albums();
 		if (is_array($just_added) && count($just_added) > 0 && $just_added[0] != $index) {
 			logger::log('BROWSEALBUM', 'New album',$just_added[0],'was created. Setting it to',$index);
-			if ($album_details[0]['Image'] != null) {
-				$this->set_image_for_album($just_added[0], $album_details[0]['Image']);
+			if ($album_details['Image'] != null) {
+				$this->set_image_for_album($just_added[0], $album_details['Image']);
 			}
 			$this->replace_album_in_database($index, $just_added[0]);
 		}

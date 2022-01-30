@@ -337,6 +337,9 @@ function tryMopidy($albumimage) {
 }
 
 function tryMPD($albumimage) {
+	if ($albumimage->trackuri == '')
+		return '';
+
 	global $player;
 	logger::log('GETALBUMCOVER', 'Trying MPD Images. TrackURI is', $albumimage->trackuri);
 	$player->open_mpd_connection();

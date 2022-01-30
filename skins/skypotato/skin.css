@@ -9,6 +9,8 @@
 	--inline-clickable-icon-size: 16px;
 	--inline-clickable-icon-border-width: none;
 	--inline-clickable-icon-border-style: none;
+
+	--track-control-icon-size: var(--small-icon-size);
 }
 
 body {
@@ -239,6 +241,10 @@ input[type=text],input[type="number"] {
 
 .album-play-controls {
 	margin-bottom: 1em;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	border-top: 1px solid var(--border-colour);
+	border-bottom: 1px solid var(--border-colour);
 }
 
 /* These are the two time display boxes under the progress bar*/
@@ -491,6 +497,35 @@ button.spinable.icon-spin6 {
 	justify-content: center;
 }
 
+.album-extra-controls {
+	display: flex;
+	flex-direction: row;
+	flex-grow: 0;
+	flex-shrink: 0;
+	text-align: center;
+	justify-content: center;
+}
+
+.album-extra-controls>i {
+	flex-grow: 1;
+	flex-shrink: 1;
+	width: var(--small-icon-size);
+	height: var(--small-icon-size);
+}
+
+.album-extra-controls>span {
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+
+.newpod {
+	margin-left: unset;
+}
+
+.artistnamething {
+	font-size:140%;
+}
+
 /*
 =====================================================================
 = Info Panel - General
@@ -723,7 +758,7 @@ div.collectionpanel>div.playable.clickalbum.brick_wide {
 }
 
 .minwidthed2.expand>.tagh.albumthing, .dropmenu.minwidthed2>.tagh.albumthing, .collectionitem.masonry_opened>.openmenu .tagh.albumthing {
-	margin-bottom: 0.75em;
+	margin-bottom: 0.25em;
 	font-size: 140%;
 }
 

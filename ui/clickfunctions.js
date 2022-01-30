@@ -2,12 +2,23 @@ var clickRegistry = function() {
 
 	var clickHandlers = new Array();
 	var menuLoaders = new Array();
+	var loadCallbacks = new Array();
 
 	function findMenuLoader(clickedElement, menutoopen) {
 		for (var classname in menuLoaders) {
 			if (clickedElement.hasClass(classname)) {
 				debug.trace('DOMENU', 'Filling Menu using',menuLoaders[classname].name);
 				return menuLoaders[classname](clickedElement, menutoopen);
+			}
+		}
+		return false;
+	}
+
+	function findLoadCallback(clickedElement, menutoopen) {
+		for (var classname in loadCallbacks) {
+			if (clickedElement.hasClass(classname)) {
+				debug.trace('DOMENU', 'Calling back using',loadCallbacks[classname].name);
+				loadCallbacks[classname]();
 			}
 		}
 		return false;
@@ -33,6 +44,10 @@ var clickRegistry = function() {
 
 		addMenuHandlers: function(cls, loader) {
 			menuLoaders[cls] = loader;
+		},
+
+		addLoadCallback: function(cls, loader) {
+			loadCallbacks[cls] = loader;
 		},
 
 		doMenu: async function(event) {
@@ -117,12 +132,12 @@ var clickRegistry = function() {
 			opts.target.updateTracklist();
 			if (opts.target.hasClass('is-albumlist')) {
 				opts.target.doThingsAfterDisplayingListOfAlbums();
-				if (opts.scoot) {
-					debug.log('HELLO', 'Doing that thing');
+				if (opts.scoot)
 					opts.target.scootTheAlbums();
-				}
+
 			}
 			uiHelper.doCollectionStripyStuff();
+			findLoadCallback(opts.clickedElement, menutoopen);
 			return success;
 		}
 	}
@@ -996,35 +1011,33 @@ function makeAlbumMenu(e, element) {
 		$.each(opts, function(i, v) {
 			d.append($('<div>', {
 				class: 'backhi clickable menuitem clickalbum fakedouble closepopup',
-				name: i+'album'+$(element).attr('name')
+				name: i+'album'+$(element).attr('db_album')
 			}).html(v))
 		});
 	}
-	// Some sort modes (eg rating, tag) have a _ in the album selector and I can't currently
-	// be bothered to make certain options work in that case. (eg remove album from collection -
-	// does that apply to the entire album or just the bit you can see that is rated 3?)
-	if ($(element).hasClass('clickamendalbum') && $(element).attr('name').indexOf('_') == -1) {
+
+	if ($(element).hasClass('clickamendalbum')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem amendalbum closepopup',
-			name: $(element).attr('name')
+			name: $(element).attr('who')
 		}).html(language.gettext('label_amendalbum')));
 	}
-	if ($(element).hasClass('clickremovealbum') && $(element).attr('name').indexOf('_') == -1) {
+	if ($(element).hasClass('clickremovealbum')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem removealbum closepopup',
-			name: $(element).attr('name')
+			name: $(element).attr('who')
 		}).html(language.gettext('label_removealbum')));
 	}
-	if ($(element).hasClass('clicksetasaudiobook') && $(element).attr('name').indexOf('_') == -1) {
+	if ($(element).hasClass('clicksetasaudiobook')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem setasaudiobook closepopup',
-			name: $(element).attr('name')
+			name: $(element).attr('who')
 		}).html(language.gettext('label_move_to_audiobooks')));
 	}
 	if ($(element).hasClass('clicksetasmusiccollection')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem setasmusiccollection closepopup',
-			name: $(element).attr('name')
+			name: $(element).attr('who')
 		}).html(language.gettext('label_move_to_collection')));
 	}
 	if ($(element).hasClass('clickaddtollviabrowse')) {
@@ -1042,13 +1055,13 @@ function makeAlbumMenu(e, element) {
 	if ($(element).hasClass('clickusetrackimages')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem usetrackimages closepopup',
-			name: $(element).attr('name')
+			name: $(element).attr('who')
 		}).html(language.gettext('label_usetrackimages')));
 	}
 	if ($(element).hasClass('clickunusetrackimages')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem unusetrackimages closepopup',
-			name: $(element).attr('name')
+			name: $(element).attr('who')
 		}).html(language.gettext('label_unusetrackimages')));
 	}
 	menu.open();

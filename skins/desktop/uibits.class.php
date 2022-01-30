@@ -10,25 +10,24 @@ class uibits extends ui_elements {
 	}
 
 	public static function albumHeader($obj) {
+		$obj = array_merge(self::DEFAULT_ALBUM_PARAMS, $obj);
 		$h = '';
-		if ($obj['why'] === null) {
+		if ($obj['playable'] === false) {
 			$h .= '<div class="containerbox menuitem">';
 		} else if ($obj['AlbumUri'] && strtolower(pathinfo($obj['AlbumUri'], PATHINFO_EXTENSION)) == "cue") {
-			logger::log("UI", "Cue Sheet found for album ".$obj['Albumname']);
 			$h .= '<div class="clickcue playable draggable containerbox menuitem" name="'.rawurlencode($obj['AlbumUri']).'">';
-		} else if (array_key_exists('streamuri', $obj)) {
+		} else if ($obj['streamuri']) {
 			$h .= '<div class="clickstream playable draggable containerbox menuitem" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
-		} else if (array_key_exists('userplaylist', $obj)) {
+		} else if ($obj['userplaylist']) {
 			$h .= '<div class="playable '.$obj['userplaylist'].' draggable containerbox menuitem" name="'.$obj['plpath'].'">';
 		} else {
 			$h .= '<div class="clickalbum playable draggable containerbox menuitem" name="'.$obj['id'].'">';
 		}
-		if (array_key_exists('plpath', $obj)) {
+		if ($obj['plpath'])
 			$h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';
-		}
-		if ($obj['id'] != 'nodrop') {
+
+		if ($obj['openable'])
 			$h .= '<i class="icon-toggle-closed menu openmenu mh fixed '.$obj['class'].'" name="'.$obj['id'].'"></i>';
-		}
 
 		$h .= '<div class="smallcover fixed">';
 		$albumimage = new baseAlbumImage(array('baseimage' => $obj['Image']));
@@ -39,49 +38,24 @@ class uibits extends ui_elements {
 
 		$h .= artistNameHtml($obj);
 
-		$h .= '</div>';
-		if ($obj['why'] == "a" || $obj['why'] == "z" || $obj['why'] == 'b') {
-			$id = preg_replace('/^.album/','',$obj['id']);
-			$albumid = preg_replace('/_\d+$/','',$id);
-			$iab = prefs::$database->album_is_audiobook($albumid);
-			$classes = array();
-			if ($obj['why'] != 'b') {
-				if (prefs::$database->num_collection_tracks($albumid) == 0) {
-					$classes[] = 'clickamendalbum clickremovealbum';
-				}
-				if ($iab == 0) {
-					$classes[] = 'clicksetasaudiobook';
-				} else if ($iab == 2) {
-					$classes[] = 'clicksetasmusiccollection';
-				}
-			}
-			if (array_key_exists('useTrackIms', $obj)) {
-				if ($obj['useTrackIms'] == 1) {
-					$classes[] = 'clickunusetrackimages';
-				} else {
-					$classes[] = 'clickusetrackimages';
-				}
-			}
-			if ($obj['AlbumUri']) {
-				$classes[] = 'clickalbumoptions';
-			} else {
-				$classes[] = 'clickcolloptions';
-			}
-			if ($obj['why'] == 'b' && $obj['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $obj['AlbumUri'], $matches)) {
-				$classes[] = 'clickaddtollviabrowse clickaddtocollectionviabrowse';
-				$spalbumid = $matches[1];
-			} else {
-				$spalbumid = '';
-			}
-			$classes[] = 'clickratedtracks';
-			if (count($classes) > 0) {
-				$h .= '<div class="icon-menu inline-icon fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'" who="'.$albumid.'" why="'.$obj['why'].'" spalbumid="'.$spalbumid.'" uri="'.rawurlencode($obj['AlbumUri']).'"></div>';
+		if ($obj['id'] !== null) {
+			$a = preg_match('/(a|b|c|r|t|y|u|z|x)(.*?)(\d+|root)_*(\d+)*/', $obj['id'], $matches);
+			if ($a) {
+				$what = $matches[2];
+				$who = $matches[3];
+				$when = (array_key_exists(4, $matches)) ? $matches[4] : null;
+				$h .= self::make_track_control_buttons(
+					$obj['why'],
+					$what,
+					$who,
+					$when,
+					array_merge($obj, ['buttons' => false, 'iconclass' => 'fixed'])
+				);
 			}
 		}
 
-		if (array_key_exists('podcounts', $obj)) {
+		if ($obj['podcounts'])
 			$h .= $obj['podcounts'];
-		}
 
 		$h .= '</div>';
 		return $h;

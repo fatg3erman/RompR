@@ -20,6 +20,10 @@ had to scroll a long way down to reach them.
 * Fix a slew of issues caused by an "upgrade" to PHP 8.1 which has suddenly deprecated loads of stuff and started
 throwing fatal errors all over the place without warning, even in its internal functions. Please Stop Doing This.
 * As much as possible, remove dependency on PHPQuery after PHP 8.1 broke it without warning.
+* Fix Icecast so search and pagination works again
+* Change all radio station browsers so you just have to click the station title to play it. Having no
+extra menus makes the UI much easier to handle.
+* Change Soma FM so the stream quality is a global selector.
 
 
 ## Version 1.60

@@ -9,17 +9,11 @@ class somafmplugin {
 	public function doHeader() {
 		// print '<div id="somafmplugin">';
 		print uibits::albumHeader(array(
+			'playable' => false,
 			'id' => 'somafmlist',
 			'Image' => 'newimages/somafmlogo.svg',
-			'Searched' => 1,
-			'AlbumUri' => null,
-			'Year' => null,
-			'Artistname' => '',
 			'Albumname' => language::gettext('label_somafm'),
-			'why' => null,
-			'ImgKey' => 'none',
 			'class' => 'radio somafmroot',
-			'expand' => true
 		));
 		print '<div id="somafmlist" class="dropmenu notfilled is-albumlist">';
 		print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
@@ -28,7 +22,7 @@ class somafmplugin {
 
 	public function doStationList() {
 		uibits::directoryControlHeader('somafmlist', language::gettext('label_somafm'));
-		print '<div class="containerbox indent ninesix bumpad brick_wide">';
+		print '<div class="containerbox ninesix bumpad brick_wide">';
 		print '<a href="http://somafm.com" target="_blank">'.language::gettext("label_soma_beg").'</a>';
 		print '</div>';
 		// NB Don't use the cache, it fucks up 'Last Played'
@@ -53,35 +47,29 @@ class somafmplugin {
 		return 'getRemoteImage.php?url='.$img;
 	}
 
-	private function format_listenlink($c, $p, $label) {
-		$img = $this->getimage($c);
-		print '<div class="clickstream playable draggable indent containerbox vertical-centre" name="'.rawurlencode((string) $p).'" streamimg="'.$img.'" streamname="'.$c->title.'">';
-		print '<i class="icon-no-response-playbutton inline-icon fixed"></i>';
-		print '<i class="'.audioClass($p[0]['format']).' inline-icon fixed"></i>';
-		print '<div class="expand">'.$label.'&nbsp';
-		switch ($p[0]['format']) {
+	private function format_codec($c) {
+		switch ($c) {
 			case 'mp3':
-				print 'MP3';
+				return 'MP3';
 				break;
 			case 'aac':
-				print 'AAC';
+				return 'AAC';
 				break;
 			case 'aacp':
-				print 'AAC Plus';
+				return 'AAC_Plus';
 				break;
 			default:
-				print 'Unknown Format';
+				return 'Unknown_Format';
 				break;
 
 		}
-		print '</div>';
-		print '</div>';
 	}
 
 	private function doAllStations($content) {
 		logger::trace("SOMAFM", "Loaded Soma FM channels list");
 		try {
 			$x = simplexml_load_string($content);
+			$this->build_format_list($x);
 			$count = 0;
 			foreach ($x->channel as $channel) {
 				$this->doChannel($count, $channel);
@@ -92,69 +80,81 @@ class somafmplugin {
 		}
 	}
 
+	private function listenlink_type($t, $p) {
+		return $t.'_'.$this->format_codec((string) $p[0]['format']);
+	}
+
+	private function build_format_list($x) {
+		$highest_formats = [];
+		$fast_formats = [];
+		$slow_formats = [];
+		foreach ($x->channel as $channel) {
+			if ($channel->highestpls) {
+				$highest_formats[] = $this->listenlink_type('high_quality', $channel->highestpls);
+			}
+			foreach ($channel->fastpls as $h) {
+				$fast_formats[] = $this->listenlink_type('standard_quality', $h);
+			}
+			foreach ($channel->slowpls as $h) {
+				$slow_formats[] = $this->listenlink_type('low_quality', $h);
+			}
+		}
+		$all_formats = array_merge(
+			['highest_available_quality'],
+			array_unique($highest_formats),
+			array_unique($fast_formats),
+			array_unique($slow_formats)
+		);
+		print '<div class="fullwidth containerbox vertical-centre brick_wide">';
+		print '<div class="selectholder expand">';
+		print '<select id="somafm_qualityselector" class="saveomatic">';
+		foreach($all_formats as $format) {
+			print '<option value="'.$format.'">'.ucfirst(str_replace('_', ' ', $format)).'</option>';
+		}
+		print '</select>';
+		print '</div>';
+		print '</div>';
+	}
+
 	private function doChannel($count, $channel) {
 		logger::trace("SOMAFM", "Channel :", (string) $channel->title);
+
+		$extralines = [utf8_encode($channel->description)];
+
+		if ($channel->dj)
+			$extralines[] = '<b>DJ: </b>'.$channel->dj;
+
+		if ($channel->listeners)
+			$extralines[] = $channel->listeners.' '.trim(language::gettext("lastfm_listeners"), ':');
+
+		$formats = [];
 		if ($channel->highestpls) {
-			$pls = (string) $channel->highestpls;
-		} else {
-			$pls = (string) $channel->fastpls[0];
+			$formats[] = [$channel->highestpls, $this->listenlink_type('high_quality', $channel->highestpls)];
+		}
+		foreach ($channel->fastpls as $h) {
+			$formats[] = [$h, $this->listenlink_type('standard_quality', $h)];
+		}
+		foreach ($channel->slowpls as $h) {
+			$formats[] = [$h, $this->listenlink_type('low_quality', $h)];
+		}
+
+		$format_info = '<input type="hidden" name="highest_available_quality" value="'.(string) $formats[0][0].'" />';
+		foreach ($formats as $format) {
+			$format_info .= '<input type="hidden" name="'.$format[1].'" value="'.(string) $format[0].'" />';
 		}
 
 		print uibits::albumHeader(array(
-			'id' => 'somafm_'.$count,
+			'openable' => false,
 			'Image' => $this->getimage($channel),
-			'Searched' => 1,
-			'AlbumUri' => null,
-			'Year' => null,
-			'Artistname' => utf8_encode($channel->genre),
+			'Artistname' => '<i>'.utf8_encode($channel->genre).'</i>',
 			'Albumname' => utf8_encode($channel->title),
-			'why' => 'whynot',
-			'ImgKey' => 'none',
-			'streamuri' => $pls,
+			'streamuri' => (string) $formats[0][0],
 			'streamname' => (string) $channel->title,
 			'streamimg' => $this->getimage($channel),
-			'class' => 'radiochannel'
+			'class' => 'radiochannel soma-fm',
+			'extralines' => $extralines,
+			'podcounts' => $format_info
 		));
-
-		print '<div id="somafm_'.$count.'" class="dropmenu">';
-		uibits::trackControlHeader('','','somafm_'.$count, null, array(array('Image' => $this->getimage($channel))));
-		if ($channel->description) {
-			print '<div class="containerbox ninesix indent">'.utf8_encode($channel->description).'</div>';
-		}
-		if ($channel->listeners) {
-			print '<div class="containerbox indent">';
-			print '<div class="expand">'.$channel->listeners.' '.trim(language::gettext("lastfm_listeners"),':').'</div>';
-			print '</div>';
-		}
-		print '<div class="containerbox rowspacer"></div>';
-		if ($channel->lastPlaying) {
-			print '<div class="containerbox indent vertical-centre">';
-			print '<b>'.language::gettext('label_last_played').'</b>&nbsp;';
-			print $channel->lastPlaying;
-			print '</div>';
-		}
-		if ($channel->twitter && $channel->dj) {
-			print '<a href="http://twitter.com/@'.$channel->twitter.'" target="_blank">';
-			print '<div class="containerbox indent vertical-centre">';
-			print '<i class="icon-twitter-logo inline-icon fixed"></i>';
-			print '<div class="expand"><b>DJ: </b>'.$channel->dj.'</div>';
-			print '</div></a>';
-		}
-
-		print '<div class="containerbox rowspacer"></div>';
-
-		if ($channel->highestpls) {
-			$this->format_listenlink($channel, $channel->highestpls, "High Quality");
-		}
-		foreach ($channel->fastpls as $h) {
-			$this->format_listenlink($channel, $h, "Standard Quality");
-		}
-		foreach ($channel->slowpls as $h) {
-			$this->format_listenlink($channel, $h, "Low Quality");
-		}
-		print '<div class="containerbox rowspacer"></div>';
-
-		print '</div>';
 	}
 }
 

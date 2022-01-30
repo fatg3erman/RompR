@@ -46,20 +46,14 @@ function do_radio_list() {
 		$albumimage = new albumImage(array('artist' => 'STREAM', 'album' => $playlist['StationName']));
 
 		print uibits::albumHeader(array(
-			'id' => 'nodrop',
+			'openable' => false,
 			'Image' => $playlist['Image'],
-			'Searched' => 1,
-			'AlbumUri' => null,
-			'Year' => null,
-			'Artistname' => null,
 			'Albumname' => $playlist['StationName'],
-			'why' => 'whynot',
 			'ImgKey' => $albumimage->get_image_key(),
 			'streamuri' => $playlist['PlaylistUrl'],
 			'streamname' => $playlist['StationName'],
 			'streamimg' => $playlist['Image'],
 			'class' => 'faveradio',
-			'expand' => true,
 			'podcounts' => '<i class="clickable clickradioremove clickicon yourradio icon-cancel-circled fixed inline-icon" name="'.$playlist['Stationindex'].'"></i>'
 		));
 

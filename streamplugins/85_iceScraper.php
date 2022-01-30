@@ -15,7 +15,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 		}
 	} else if (array_key_exists('searchfor', $_REQUEST) && $_REQUEST['searchfor'] != '') {
 		logger::log("ICESCRAPER", "Searching For ".$_REQUEST['searchfor']);
-		$getstr = $getstr . "search?search=" . $_REQUEST['searchfor'];
+		$getstr = $getstr . "search?q=" . $_REQUEST['searchfor'];
 	}
 	logger::log("ICESCRAPER", "Getting ".$getstr);
 	// NB Don't use the cache, station links often don't stay live long enough
@@ -31,7 +31,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 	logger::debug("ICESCRAPER", "Page Title Is ".$page_title);
 
 	$list = $doc->find('div.card.shadow-sm');
-	$count = 0;
 	uibits::directoryControlHeader('icecastlist', language::gettext('label_icecast'));
 	print '<div class="containerbox vertical-centre fullwidth"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
 	if (array_key_exists("searchfor", $_REQUEST)) {
@@ -58,57 +57,34 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 		if ($listenlink != '') {
 			print uibits::albumHeader(array(
-				'id' => 'icecast_'.$count,
+				'openable' => false,
 				'Image' => 'newimages/icecast.svg',
-				'Searched' => 1,
-				'AlbumUri' => null,
-				'Year' => null,
-				'Artistname' => implode(', ', $stream_tags),
-				'Albumname' => htmlspecialchars($server_name),
-				'why' => 'whynot',
-				'ImgKey' => 'none',
+				'Artistname' => implode(', ', $stream_tags).' - '.$server_description,
+				'Albumname' => htmlspecialchars($server_name).' '.'<i class="'.audioClass($format).' inline-icon fixed"></i>',
 				'streamuri' => $listenlink,
 				'streamname' => $server_name,
-				// 'streamimg' => 'newimages/icecast.svg',
 				'streamimg' => '',
 				'class' => 'radiochannel'
 			));
-			print '<div id="icecast_'.$count.'" class="dropmenu">';
-			uibits::trackControlHeader('','','icecast_'.$count, null, array(array('Image' => 'newimages/icecast.svg')));
-			print '<div class="containerbox rowspacer"></div>';
-			print '<div class="indent">'.$server_description.'</div>';
-			print '<div class="containerbox rowspacer"></div>';
-			print '<div class="stream-description icescraper clickstream playable draggable indent" name="'.rawurlencode($listenlink).'" streamname="'.$server_name.'" streamimg="">';
-			print '<i class="icon-no-response-playbutton collectionicon"></i>';
-			print '<b>Listen</b> '.$format;
-			print '</div>';
-			print '</div>';
 		}
-		$count++;
 	}
 
-	$pager = $doc->find('ul.pager')->children('li');
+	$pager = $doc->find('ul.pagination')->children('li.page-item')->not('.disabled');
 	print '<div class="containerbox wrap brick_wide configtitle textcentre">';
 	foreach ($pager as $page) {
-		$link = pq($page)->children('a')->attr('href');
-		print '<div class="clickable icescraper clickicon clickicepager expand" name="/search'.$link.'">'.pq($page)->children('a')->text().'</div>';
+		$link = pq($page)->children('a.page-link')->attr('href');
+		print '<div class="clickable icescraper clickicon clickicepager expand" name="search'.$link.'">'.pq($page)->children('a')->text().'</div>';
 	}
 	print '</div>';
 
 } else {
 	// print '<div id="icecastplugin">';
 	print uibits::albumHeader(array(
+		'playable' => false,
 		'id' => 'icecastlist',
 		'Image' => 'newimages/icecast.svg',
-		'Searched' => 1,
-		'AlbumUri' => null,
-		'Year' => null,
-		'Artistname' => '',
 		'Albumname' => language::gettext('label_icecast'),
-		'why' => null,
-		'ImgKey' => 'none',
-		'class' => 'radio icecastroot',
-		'expand' => true
+		'class' => 'radio icecastroot'
 	));
 	print '<div id="icecastlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
 	// print '</div>';

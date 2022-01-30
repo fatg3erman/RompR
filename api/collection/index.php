@@ -159,8 +159,8 @@ function browse_album() {
 		]
 	);
 	$ad = prefs::$database->get_album_details($who);
-	$albumlink = $ad[0]['AlbumUri'];
-	logger::trace('BROWSEALBUM',$why,$what,$who,$ad[0]['Artistname'],$albumlink);
+	$albumlink = $ad['AlbumUri'];
+	logger::trace('BROWSEALBUM',$why,$what,$who,$ad['Artistname'],$albumlink);
 	if (substr($albumlink, 0, 8) == 'podcast+') {
 		logger::trace("ALBUMS", "Browsing For Podcast ".substr($albumlink, 9));
 		$podatabase = new poDatabase();
@@ -179,8 +179,8 @@ function browse_album() {
 		$a = prefs::$database->find_justadded_albums();
 		if (is_array($a) && count($a) > 0 && $a[0] != $who) {
 			logger::log('BROWSEALBUM', 'New album',$a[0],'was created. Setting it to',$who);
-			if ($ad[0]['Image'] != null) {
-				prefs::$database->set_image_for_album($a[0], $ad[0]['Image']);
+			if ($ad['Image'] != null) {
+				prefs::$database->set_image_for_album($a[0], $ad['Image']);
 			}
 			prefs::$database->replace_album_in_database($who, $a[0]);
 		}

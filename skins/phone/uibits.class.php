@@ -8,16 +8,18 @@ class uibits extends ui_elements {
 	}
 
 	public static function albumHeader($obj) {
+		$obj = array_merge(self::DEFAULT_ALBUM_PARAMS, $obj);
 		$h = '';
-		if ($obj['id'] == 'nodrop') {
-			// Hacky at the moment, we only use nodrop for streams but here there is no checking
-			// because I'm lazy.
+
+		// In this skin, no albumheaders are playable except for radio channels, so anything with a
+		// streamuri is not openable and anything without one is openable
+
+		if ($obj['streamuri']) {
 			$h .= '<div class="clickstream playable clickicon '.$obj['class'].'" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
 		} else {
-			if (array_key_exists('plpath', $obj)) {
-				logger::debug('ALBUMHEADER','plpath is',$obj['plpath']);
+			if ($obj['plpath'])
 				$h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';
-			}
+
 			$h .= '<div class="openmenu menu '.$obj['class'].'" name="'.$obj['id'].'">';
 		}
 		$h .= '<div class="containerbox menuitem">';
@@ -27,11 +29,9 @@ class uibits extends ui_elements {
 		$h .= '</div>';
 		$h .= domainHtml($obj['AlbumUri']);
 		$h .= artistNameHtml($obj);
-		$h .= '</div>';
 
-		if (array_key_exists('podcounts', $obj)) {
+		if ($obj['podcounts'])
 			$h .= $obj['podcounts'];
-		}
 
 		$h .= '</div>';
 		$h .= '<div class="progressbar invisible wafflything"><div class="wafflebanger"></div></div>';
@@ -55,64 +55,13 @@ class uibits extends ui_elements {
 	public static function trackControlHeader($why, $what, $who, $when, $dets) {
 		$db_album = ($when === null) ? $who : $who.'_'.$when;
 		$html = '<div class="menu backmenu openmenu" name="'.$why.$what.$db_album.'"></div>';
-		$iab = -1;
-		$play_col_button = 'icon-music';
-		if ($what == 'album' && ($why == 'a' || $why == 'z')) {
-			$iab = prefs::$database->album_is_audiobook($who);
-			$play_col_button = ($iab == 0) ? 'icon-music' : 'icon-audiobook';
-		}
-		foreach ($dets as $det) {
-			$albumimage = new baseAlbumImage(array('baseimage' => $det['Image']));
-			$images = $albumimage->get_images();
-			$html .= '<div class="album-menu-header"><img class="album_menu_image" src="'.$images['asdownloaded'].'" /></div>';
-			if ($why != '') {
-				$html .= '<div class="containerbox wrap album-play-controls">';
-				if ($det['AlbumUri']) {
-					$albumuri = rawurlencode($det['AlbumUri']);
-					if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-						$html .= '<div class="icon-no-response-playbutton medicon expand playable clickcue noselect tooltip" name="'.$albumuri.'" title="'.language::gettext('label_play_whole_album').'"></div>';
-					} else {
-						$html .= '<div class="icon-no-response-playbutton medicon expand clicktrack playable noselect tooltip" name="'.$albumuri.'" title="'.language::gettext('label_play_whole_album').'"></div>';
-						$html .= '<div class="'.$play_col_button.' medicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.language::gettext('label_from_collection').'"></div>';
-					}
-				} else {
-					$html .= '<div class="'.$play_col_button.' medicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.language::gettext('label_from_collection').'"></div>';
-				}
-				$html .= '<div class="icon-single-star medicon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" title="'.language::gettext('label_with_ratings').'"></div>';
-				$html .= '<div class="icon-tags medicon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$db_album.'" title="'.language::gettext('label_with_tags').'"></div>';
-				$html .= '<div class="icon-ratandtag medicon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$db_album.'" title="'.language::gettext('label_with_tagandrat').'"></div>';
-				$html .= '<div class="icon-ratortag medicon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$db_album.'" title="'.language::gettext('label_with_tagorrat').'"></div>';
-				$classes = array();
-				if ($why != 'b') {
-					if (prefs::$database->num_collection_tracks($who) == 0) {
-						$classes[] = 'clickamendalbum clickremovealbum';
-					}
-					if ($iab == 0) {
-						$classes[] = 'clicksetasaudiobook';
-					} else if ($iab == 2) {
-						$classes[] = 'clicksetasmusiccollection';
-					}
-				}
-				if (array_key_exists('useTrackIms', $det)) {
-					if ($det['useTrackIms'] == 1) {
-						$classes[] = 'clickunusetrackimages';
-					} else {
-						$classes[] = 'clickusetrackimages';
-					}
-				}
-				if ($why == 'b' && $det['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $det['AlbumUri'], $matches)) {
-					$classes[] = 'clickaddtollviabrowse clickaddtocollectionviabrowse';
-					$spalbumid = $matches[1];
-				} else {
-					$spalbumid = '';
-				}
-				if (count($classes) > 0) {
-					$html .= '<div class="icon-menu medicon expand clickable clickicon clickalbummenu noselect '.implode(' ',$classes).'" name="'.$who.'" why="'.$why.'" spalbumid="'.$spalbumid.'"></div>';
-				}
+		if ($dets['Albumname'])
+			$html .= '<div class="vertical-centre configtitle fullwidth"><div class="textcentre expand"><b>'.$dets['Albumname'].'</b></div></div>';
 
-				$html .= '</div>';
-			}
-		}
+		$albumimage = new baseAlbumImage(array('baseimage' => $dets['Image']));
+		$images = $albumimage->get_images();
+		$html .= '<div class="album-menu-header"><img class="album_menu_image" src="'.$images['asdownloaded'].'" /></div>';
+		$html .= self::make_track_control_buttons($why, $what, $who, $when, $dets);
 		print $html;
 	}
 

@@ -288,9 +288,9 @@ include('skins/playlist.php');
 		<i class="icon-search topimg choosepanel expand" name="searchpane"></i>
 		<i class="icon-folder-open-empty onlywide topimg choosepanel expand" name="filelist"></i>
 		<i class="icon-radio-tower topimg choosepanel expand" name="radiolist"></i>
-		<i class="icon-podcast-circled topimg choosepanel expand" name="podcastslist"></i>
+		<i class="icon-podcast-circled topimg choosepanel expand spinable" name="podcastslist"></i>
 		<i class="choosepanel onlywide icon-audiobook topimg expand" name="audiobooklist"></i>
-		<i class="choosepanel onlywide icon-doc-text topimg expand" name="playlistman"></i>
+		<i class="choosepanel onlywide icon-doc-text topimg expand spinable" name="playlistman"></i>
 		<i class="choosepanel icon-wifi topimg expand" name="pluginplaylistholder"></i>
 		<div class="onlyverywide containerbox expandabit topbarplaycontrols">
 			<i class="prev-button icon-fast-backward topimg expand"></i>

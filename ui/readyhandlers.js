@@ -207,6 +207,16 @@ function carry_on_starting() {
 	}
 	snapcast.initialise();
 	startBackgroundInitTasks.doNextTask();
+
+	// Disable autocomplete for all text input elements, otherwise Chrome overrdies the background
+	// colour and background image with its own internal ones and there's nothing we can do in css
+	// to override it. What is happening to Chrome? They're the new Internet Explorer.
+	$(document).on('focus', 'input[type="text"]', function() {
+		$(this).attr('autocomplete', 'off');
+	});
+	$(document).on('focus', 'input[type="number"]', function() {
+		$(this).attr('autocomplete', 'off');
+	});
 }
 
 function get_geo_country() {

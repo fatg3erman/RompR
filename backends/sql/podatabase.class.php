@@ -605,7 +605,7 @@ class poDatabase extends database {
 			$aa = $aa . ' - ';
 		}
 		$pm = $y->PODindex;
-		uibits::trackControlHeader('','','podcast_'. $pm, null, array(array('Image' => $y->Image)));
+		uibits::trackControlHeader('','','podcast_'. $pm, null, ['Image' => $y->Image, 'Albumname' => $y->Title]);
 		print '<div class="whatdoicallthis">'.format_podcast_text($y->Description).'</div>';
 		if ($y->Subscribed == 1) {
 			print '<div class="containerbox bumpad">';
@@ -861,13 +861,13 @@ class poDatabase extends database {
 		}
 
 		$aname = htmlspecialchars(html_entity_decode($y->Artist));
-		if ($y->Category) {
-			$aname .= '<br /><span class="playlistrow2">'.htmlspecialchars($y->Category).'</span>';
-		}
+		$extralines = [];
+		if ($y->Category)
+			$extralines[] = '<i>'.htmlspecialchars($y->Category).'</i>';
 
 		$cls = ($subscribed == 1) ? 'podcast subscribed-podcast' : 'podcast unsubscribed-podcast';
 
-		$extra = '<div class="fixed podcounts">';
+		$extra = '<div class="album-extra-controls">';
 		if ($y ->Subscribed == 1) {
 			$uc = $this->get_podcast_counts($y->PODindex);
 			$extra .= '<span id="podnumber_'.$y->PODindex.'"';
@@ -887,17 +887,14 @@ class poDatabase extends database {
 		$extra .= '</div>';
 
 		print uibits::albumHeader(array(
+			'playable' => false,
 			'id' => 'podcast_'.$y->PODindex,
 			'Image' => $img,
-			'Searched' => 1,
-			'AlbumUri' => null,
-			'Year' => null,
-			'Artistname' => $aname,
+			'Artistname' => htmlspecialchars(html_entity_decode($y->Artist)),
 			'Albumname' => htmlspecialchars(html_entity_decode($y->Title)),
-			'why' => null,
-			'ImgKey' => 'none',
 			'class' => $cls,
-			'podcounts' => $extra
+			'podcounts' => $extra,
+			'extralines' => $extralines
 		));
 
 		print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';

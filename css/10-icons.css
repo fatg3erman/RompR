@@ -135,7 +135,8 @@
 .button-disabled { opacity: 0.1 }
 
 .clearbox {
-    background-image: var(--icon-cancel-circled);
+    /* We need some !importants here to override Chrome's stupidity of unsetting things when it autocompletes  */
+    background-image: var(--icon-cancel-circled) !important;
     /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
     background-size: auto 50%;
     background-position: right 2px center;

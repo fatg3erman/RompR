@@ -546,11 +546,27 @@ class collection_base extends database {
 	}
 
 	public function get_album_details($albumindex) {
-		return $this->generic_sql_query(
+		$retval = [
+			'Albumname' => 'Unknown Album',
+			'Artistname' => 'Unknown Artist',
+			'Image' => 'newimages/vinyl_record.svg',
+			'AlbumUri' => null,
+			'useTrackIms' => false
+		];
+
+		$details = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
 			"SELECT Albumname, Artistname, Image, AlbumUri, useTrackIms
 			FROM Albumtable
 			JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-			WHERE Albumindex = ".$albumindex );
+			WHERE Albumindex = ?",
+			$albumindex
+		);
+
+		if (count($details) > 0) {
+			$retval = array_merge($retval, $details[0]);
+		}
+
+		return $retval;
 	}
 
 	public function dumpAlbums($which) {

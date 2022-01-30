@@ -18,6 +18,8 @@
 	--mainpane-right-padding: 4px;
 	--playlist-left-padding: var(--mainpane-left-padding);
 	--playlist-right-padding: var(--mainpane-right-padding);
+
+	--track-control-icon-size: var(--medium-icon-size);
 }
 
 body {
@@ -582,6 +584,27 @@ div.rightmenu {
 .clickstream {
 	padding-top: 4px;
 	padding-bottom: 4px;
+}
+
+.album-extra-controls {
+	height: var(--cover-size);
+	display: flex;
+	flex-direction: column;
+	flex-grow: 0;
+	flex-shrink: 0;
+	text-align: center;
+	margin-left: 1em;
+	justify-content: center;
+}
+
+.album-extra-controls>i {
+	flex-grow: 1;
+	flex-shrink: 1;
+}
+
+.album-extra-controls>span {
+	margin-top: 2px;
+	margin-bottom: 2px;
 }
 
 i.phone-dropdown-button {

@@ -10,17 +10,11 @@ class tuneinplugin {
 	public function doHeader() {
 		// print '<div id="tuneinradio">';
 		print uibits::albumHeader(array(
+			'playable' => false,
 			'id' => 'tuneinlist',
 			'Image' => 'newimages/tunein-logo.svg',
-			'Searched' => 1,
-			'AlbumUri' => null,
-			'Year' => null,
-			'Artistname' => '',
 			'Albumname' => language::gettext('label_tuneinradio'),
-			'why' => null,
-			'ImgKey' => 'none',
 			'class' => 'radio tuneinroot',
-			'expand' => true
 		));
 		print '<div id="tuneinlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
 		// print '</div>';
@@ -97,15 +91,11 @@ class tuneinplugin {
 					}
 
 					print uibits::albumHeader(array(
-						'id' => 'nodrop',
+						'openable' => false,
 						'Image' => 'getRemoteImage.php?url='.rawurlencode($att['image']),
-						'Searched' => 1,
-						'AlbumUri' => null,
 						'Year' => $year,
 						'Artistname' => ((string) $att['playing'] != (string) $att['subtext']) ? $att['subtext'] : null,
 						'Albumname' => $att['text'],
-						'why' => 'whynot',
-						'ImgKey' => 'none',
 						'streamuri' => $att['URL'],
 						'streamname' => $sname,
 						'streamimg' => 'getRemoteImage.php?url='.rawurlencode($att['image']),

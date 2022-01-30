@@ -16,7 +16,7 @@ if (preg_match('#prefs/userstreams/.*\.jpg#', $request) || preg_match('#prefs/us
 	header("Location: ".$redirect);
 } else if (preg_match('#themes/.*\.js#', $request)) {
 } else if (preg_match('#albumart/.*?\.[jpg|png|svg|gif|webp]#', $request)) {
-	$redirect = $base_url.'/newimages/compact-disc.png';
+	$redirect = $base_url.'/newimages/vinyl_record.svg';
 	header("HTTP/1.1 307 Temporary Redirect");
 	header("Location: ".$redirect);
 } else {

@@ -164,12 +164,14 @@ var podcasts = function() {
 		},
 
 		reloadList: async function() {
+			$('.choosepanel[name="podcastslist"]').makeSpinner();
 			await clickRegistry.loadContentIntoTarget({
 				target: $('#fruitbat'),
 				clickedElement: $('i.icon-podacst-cricled.choosepanel'),
 				uri: "api/podcasts/?populate=1"
 			});
 			podcasts.doNewCount();
+			$('.choosepanel[name="podcastslist"]').stopSpinner();
 		},
 
 		getPodcast: function(clickedElement, menutoopen) {
@@ -445,7 +447,11 @@ var podcasts = function() {
 				uri: 'api/podcasts/',
 				data: {search: encodeURIComponent($('#podcastsearch').val()), populate: 1}
 			});
-			$('#podcast_search').prepend('<div class="configtitle vertical-centre brick_wide" style="width:100%"><div class="textcentre expand"><b>Search Results for &quot;'+$('#podcastsearch').val()+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
+			$('#podcast_search').prepend('<div class="configtitle vertical-centre brick_wide" style="width:100%">'
+											+'<div class="textcentre expand"><b>Search Results for &quot;'+$('#podcastsearch').val()+'&quot;</b></div>'
+											+'<i class="clickable clickicon smallicon icon-cancel-circled removepodsearch podcast fixed"></i>'
+											+'</div>'
+										);
 		},
 
 		clearsearch: function() {

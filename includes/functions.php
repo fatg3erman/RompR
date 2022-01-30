@@ -227,6 +227,7 @@ function audioClass($filetype, $domain = '') {
 		case "aacp":
 		case "audio/aac":
 		case "audio/aacp":
+		case "aac.h.264":
 			return 'icon-aac-audio';
 			break;
 
@@ -241,6 +242,7 @@ function audioClass($filetype, $domain = '') {
 
 		case "ogg":
 		case "ogg vorbis":
+		case "vorbis":
 			return 'icon-ogg-audio';
 			break;
 
@@ -359,13 +361,18 @@ function domainHtml($uri) {
 }
 
 function artistNameHtml($obj) {
-	$h = '<div class="expand">'.$obj['Albumname'];
-	if ($obj['Year'] && prefs::$prefs['sortbydate']) {
+	$h = '<div class="artistnamething">'.$obj['Albumname'];
+	if ($obj['Year'] && prefs::$prefs['sortbydate'])
 		$h .= ' <span class="notbold">('.$obj['Year'].')</span>';
+
+	if ($obj['Artistname'])
+		$h .= '<br /><span class="notbold">'.$obj['Artistname'].'</span>';
+
+	foreach($obj['extralines'] as $line) {
+		$h .= '<br /><span class="notbold">'.$line.'</span>';
 	}
-	if ($obj['Artistname']) {
-		$h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
-	}
+
+	$h .= '</div>';
 	return $h;
 }
 

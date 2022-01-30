@@ -170,7 +170,8 @@ class prefs {
 		"bgimgparms" => ['dummy' => 'baby'],
 		"chartoption" => 0,
 		"consume_workaround" => false,
-		"we_do_consume" => false
+		"we_do_consume" => false,
+		"somafm_quality" => 'highest_quality'
 	);
 
 	// Prefs that should not be exposed to the browser for security reasons

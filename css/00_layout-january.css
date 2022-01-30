@@ -21,6 +21,7 @@
 	--small-icon-size: 20px;
 	--medium-icon-size: 30px;
 	--svg-square-icon-size: 32px;
+	--track-control-icon-size: var(--inline-clickable-icon-size);
 }
 
 body.mobile #headerbar
@@ -473,6 +474,14 @@ img.notexist,img.notfound {
 	vertical-align:middle;
 }
 
+.track-control-icon {
+	padding: 0px;
+	margin: 4px;
+	height: var(--track-control-icon-size);
+	width: var(--track-control-icon-size);
+	vertical-align: middle;
+}
+
 .svg-square {
 	width: var(--svg-square-icon-size);
 	height: var(--svg-square-icon-size);
@@ -777,6 +786,26 @@ div.unplayable {
 /*
 =====================================================================
 =
+= Radio Stations
+=
+=====================================================================
+*/
+
+.clickicepager {
+	border-left: 1px solid var(--border-colour);
+}
+
+.clickicepager:nth-child(1) {
+	border-left: none;
+}
+
+.stream-disabled {
+	opacity: 0.4;
+}
+
+/*
+=====================================================================
+=
 = Podcasts
 =
 =====================================================================
@@ -792,15 +821,11 @@ div.unplayable {
 	padding-right:6px;
 	background-color: rgba(255, 0, 0, 0.9);
 	border-radius: 1em;
+	text-align: center;
 	color: black;
 	display: table;
 	margin-left: auto;
 	margin-right: auto;
-}
-
-.podcounts {
-	text-align: center;
-	margin-left: 1em;
 }
 
 .unlistenedpod
@@ -811,6 +836,7 @@ div.unplayable {
 	padding-right:6px;
 	background-color: rgba(255, 160, 0, 0.9);
 	border-radius: 1em;
+	text-align: center;
 	color: black;
 }
 
@@ -1385,7 +1411,6 @@ div.info-box-expand .underline:nth-child(1) {
 	float:right;
 }
 
-
 .infobox caption {
 	font-size:120%;
 	font-weight:bold;
@@ -1584,9 +1609,18 @@ a.infoclick.clickreleasepage
 }
 
 .artistnamething {
-	font-size:140%;
+	flex-grow: 1;
+	flex-shrink: 1;
 	line-height:1.1em;
 	word-wrap:break-word;
+}
+
+.artistnamething>span.notbold {
+	font-size: calc(0.9 * var(--font-size));
+}
+
+.albumwidget .artistnamething {
+	font-size:140%;
 }
 
 .rowspacer

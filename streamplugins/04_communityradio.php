@@ -60,17 +60,11 @@ class commradioplugin {
 	private function doHeader() {
 		// print '<div id="communityradioplugin">';
 		print uibits::albumHeader(array(
+			'playable' => false,
 			'id' => 'communityradiolist',
 			'Image' => 'newimages/broadcast.svg',
-			'Searched' => 1,
-			'AlbumUri' => null,
-			'Year' => null,
-			'Artistname' => '',
 			'Albumname' => language::gettext('label_communityradio'),
-			'why' => null,
-			'ImgKey' => 'none',
 			'class' => 'radio commradioroot',
-			'expand' => true
 		));
 		print '<div id="communityradiolist" class="dropmenu notfilled">';
 		print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
@@ -293,43 +287,27 @@ class commradioplugin {
 	}
 
 	private function doStation($station, $index) {
+		$buttons = '';
+		if ($station['homepage']) {
+			$buttons = '<div class="album-extra-controls">';
+			$buttons .= '<a href="'.$station['homepage'].'" target="_blank">';
+			$buttons .= '<i class="icon-www inline-icon fixed"></i>';
+			$buttons .= '</a>';
+			$buttons .= '</div>';
+		}
+
 		print uibits::albumHeader(array(
-			'id' => 'communityradio_'.$index,
+			'openable' => false,
 			'Image' => $this->comm_radio_get_image($station),
-			'Searched' => 1,
-			'AlbumUri' => null,
-			'Year' => null,
-			'Artistname' => preg_replace('/,/', ', ', htmlspecialchars($station['tags'])),
-			'Albumname' => htmlspecialchars($station['name']),
-			'why' => 'whynot',
-			'ImgKey' => 'none',
+			'Artistname' => htmlspecialchars($station['state'].$station['country']),
+			'Albumname' => htmlspecialchars($station['name']).' '.'<i class="'.audioClass($station['codec']).' inline-icon fixed"></i>',
 			'streamuri' => $station['playurl'],
 			'streamname' => $station['name'],
 			'streamimg' => $this->comm_radio_get_stream_image($station),
-			'class' => 'radiochannel'
+			'class' => 'radiochannel',
+			'podcounts' => $buttons,
+			'extralines' => [preg_replace('/,/', ', ', htmlspecialchars($station['tags']))]
 		));
-		print '<div id="communityradio_'.$index.'" class="dropmenu">';
-		uibits::trackControlHeader('','','communityradio_'.$index, null, array(array('Image' => $this->comm_radio_get_image($station))));
-		// print '<div class="containerbox expand ninesix indent"><b>Listen:</b></div>';
-		print '<div class="containerbox ninesix indent">'.htmlspecialchars($station['state'].$station['country']).'</div>';
-
-		print '<div class="containerbox ninesix indent">'.$station['votes'].' Upvotes, '.$station['negativevotes'].' Downvotes</div>';
-		if ($station['homepage']) {
-			print '<a href="'.$station['homepage'].'" target="_blank">';
-			print '<div class="containerbox vertical-centre">';
-			print '<i class="icon-www inline-icon fixed"></i>';
-			print '<div class="expand">'.language::gettext('label_station_website').'</div>';
-			print '</div>';
-			print '</a>';
-		}
-		print '<div class="containerbox rowspacer"></div>';
-		print '<div class="clickstream playable draggable containerbox vertical-centre" name="'.rawurlencode($station['playurl']).'" streamimg="'.$this->comm_radio_get_stream_image($station).'" streamname="'.$station['name'].'">';
-		print '<i class="icon-no-response-playbutton inline-icon"></i>';
-		print '<i class="'.audioClass($station['codec']).' inline-icon fixed"></i>';
-		print '<div class="expand">'.$station['bitrate'].'kbps &nbsp'.$station['codec'].'</div>';
-		print '</div>';
-		print '</div>';
-
 	}
 
 	private function makeSelector($json, $root) {

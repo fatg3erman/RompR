@@ -23,8 +23,6 @@ function doSearchBoxes($sterms) {
 	print '</div>';
 
 	print '<div class="containerbox">';
-	// print '<i class="fixed podicon icon-music choose-resultmode clickable clickicon" title="'.ucfirst(language::gettext('label_resultscollection')).'"></i>';
-	// print '<i class="fixed podicon icon-folder-open-empty choose-resultmode clickable clickicon" title="'.ucfirst(language::gettext('label_resultstree')).'"></i>';
 	print '<div class="expand"></div>';
 	print '<button name="playersearch" class="searchbutton iconbutton cleargroup spinable" class="fixed" onclick="player.controller.search(\'search\')"></button>';
 	print '</div>';

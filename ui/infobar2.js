@@ -310,7 +310,7 @@ var infobar = function() {
 		albumImage: function() {
 			var aImg = new Image();
 			var current_image;
-			const noimage = "newimages/compact-disc.png";
+			const noimage = "newimages/vinyl_record.svg";
 			const notafile = "newimages/thisdoesntexist.png";
 
 			aImg.onload = function() {

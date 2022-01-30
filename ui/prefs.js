@@ -192,7 +192,8 @@ var prefs = function() {
 		'playlistbuttons_isopen',
 		'collectionbuttons_isopen',
 		'advsearchoptions_isopen',
-		'podcastbuttons_isopen'
+		'podcastbuttons_isopen',
+		"somafm_quality"
 	];
 
 	const cookiePrefs = [
