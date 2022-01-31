@@ -118,6 +118,10 @@ input.inputfile
 	z-index: -1;
 }
 
+.styledinputs input[type="radio"] + label {
+	display: block !important;
+}
+
 div.filebutton
 {
 	word-break: break-all;
@@ -177,6 +181,12 @@ button:hover, input[type="button"]:hover, div.filebutton:hover
     background-image: var(--button-bg-hover-image);
     border: var(--button-hover-border);
     text-shadow: var(--button-hover-shadow);
+}
+
+button.config-button {
+	box-sizing: border-box;
+	flex-basis: 0;
+	max-width: fit-content;
 }
 
 input[type=checkbox], input[type=radio]

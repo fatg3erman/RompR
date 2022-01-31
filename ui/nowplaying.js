@@ -418,7 +418,7 @@ var nowplaying = function() {
 			if (index > 0) {
 				debug.log("NOWPLAYING", "Setting Rating to",rating,"on index",index);
 				tracks_played[index].setMeta('set', 'Rating', rating.toString());
-				if (prefs.synclove && lastfm.isLoggedIn()) {
+				if (parseInt(prefs.synclovevalue) > 0 && lastfm.isLoggedIn()) {
 					if (rating >= prefs.synclovevalue) {
 						tracks_played[index].love();
 					} else {
@@ -481,7 +481,7 @@ var nowplaying = function() {
 		love: function() {
 			if (lastfm.isLoggedIn()) {
 				tracks_played[findCurrentTrack()].love();
-				if (prefs.synclove) {
+				if (parseInt(prefs.synclovevalue) > 0) {
 					tracks_played[findCurrentTrack()].setMeta('set', 'Rating', prefs.synclovevalue);
 				}
 			}
@@ -490,7 +490,7 @@ var nowplaying = function() {
 		unlove: function() {
 			if (lastfm.isLoggedIn()) {
 				tracks_played[findCurrentTrack()].unlove();
-				if (prefs.synclove) {
+				if (parseInt(prefs.synclovevalue) > 0) {
 					tracks_played[findCurrentTrack()].setMeta('set', 'Rating', 0);
 				}
 			}

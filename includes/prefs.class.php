@@ -118,8 +118,7 @@ class prefs {
 		"alarm_snoozetime" => 8,
 		"lastfmlang" => "interface",
 		"synctags" => false,
-		"synclove" => false,
-		"synclovevalue" => "5",
+		"synclovevalue" => "0",
 		"theme" => "Numismatist.css",
 		"icontheme" => "Bobalophagus-Dark",
 		"coversize" => 48,
@@ -171,7 +170,7 @@ class prefs {
 		"chartoption" => 0,
 		"consume_workaround" => false,
 		"we_do_consume" => false,
-		"somafm_quality" => 'highest_quality'
+		"somafm_quality" => 'highest_available_quality'
 	);
 
 	// Prefs that should not be exposed to the browser for security reasons
@@ -189,6 +188,11 @@ class prefs {
 		'spotify_token_expires',
 		'bing_api_key'
 	);
+
+	const PREFS_WITHOUT_DEFAULTS = [
+		'interface_language' => null,
+		'collection_type' => null
+	];
 
 	public static function load() {
 
@@ -208,6 +212,9 @@ class prefs {
 						error_log("ERROR!              : COULD NOT LOAD PREFS");
 						exit(1);
 					}
+					// Old prefs files might have values we've removed. This removes those values
+					$sp = array_intersect_key($sp, array_merge(self::$prefs, self::PREFS_WITHOUT_DEFAULTS));
+
 					self::$prefs = array_replace(self::$prefs, $sp);
 					self::$prefs['player_backend'] = 'none';
 					logger::setLevel(self::$prefs['debug_enabled']);

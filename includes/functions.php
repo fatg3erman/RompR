@@ -205,6 +205,10 @@ function getYear($date) {
 	}
 }
 
+function get_filename($file) {
+	return pathinfo($file, PATHINFO_FILENAME);
+}
+
 function trim_content_type($filetype) {
 	$filetype = preg_replace('/;.*/','',$filetype);
 	$filetype = trim(strtolower($filetype));
@@ -515,27 +519,21 @@ function rrmdir($path) {
 function collectionButtons() {
 	print '<div id="collectionbuttons" class="invisible toggledown is-coverable">';
 
-	print '<div class="containerbox vertical-centre">';
-	print '<div class="selectholder">';
-	print '<select id="sortcollectionbyselector" class="saveomatic">';
-	foreach (COLLECTION_SORT_MODES as $mode => $key) {
-		print '<option value="'.$mode.'">'.ucfirst(language::gettext($key)).'</option>';
-	}
-	print '</select>';
-	print '</div>';
-	print '</div>';
+	uibits::ui_select_box([
+		'id' => 'sortcollectionby',
+		'options' => array_map('ucfirst', array_map('language::gettext', COLLECTION_SORT_MODES))
+	]);
 
-	print '<div class="containerbox vertical-centre">';
-	print '<div class="selectholder">';
-	print '<select id="collectionrangeselector" class="saveomatic">';
-	print '<option value="'.ADDED_ALL_TIME.'">'.language::gettext('label_all_time').'</option>';
-	print '<option value="'.ADDED_TODAY.'">'.language::gettext('label_today').'</option>';
-	print '<option value="'.ADDED_THIS_WEEK.'">'.language::gettext('label_thisweek').'</option>';
-	print '<option value="'.ADDED_THIS_MONTH.'">'.language::gettext('label_thismonth').'</option>';
-	print '<option value="'.ADDED_THIS_YEAR.'">'.language::gettext('label_thisyear').'</option>';
-	print '</select>';
-	print '</div>';
-	print '</div>';
+	uibits::ui_select_box([
+		'id' => 'collectionrange',
+		'options' => [
+			ADDED_ALL_TIME => language::gettext('label_all_time'),
+			ADDED_TODAY => language::gettext('label_today'),
+			ADDED_THIS_WEEK => language::gettext('label_thisweek'),
+			ADDED_THIS_MONTH => language::gettext('label_thismonth'),
+			ADDED_THIS_YEAR => language::gettext('label_thisyear')
+		]
+	]);
 
 	print '<div class="styledinputs">
 	<input class="autoset toggle" type="checkbox" id="sortbydate">

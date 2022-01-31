@@ -85,35 +85,25 @@ class somafmplugin {
 	}
 
 	private function build_format_list($x) {
-		$highest_formats = [];
-		$fast_formats = [];
-		$slow_formats = [];
+		$all_formats = ['highest_available_quality' => 'Highest Available Quality'];
 		foreach ($x->channel as $channel) {
 			if ($channel->highestpls) {
-				$highest_formats[] = $this->listenlink_type('high_quality', $channel->highestpls);
+				$format = $this->listenlink_type('high_quality', $channel->highestpls);
+				$all_formats[$format] = ucwords(str_replace('_', ' ', $format));
 			}
 			foreach ($channel->fastpls as $h) {
-				$fast_formats[] = $this->listenlink_type('standard_quality', $h);
+				$format = $this->listenlink_type('standard_quality', $h);
+				$all_formats[$format] = ucwords(str_replace('_', ' ', $format));
 			}
 			foreach ($channel->slowpls as $h) {
-				$slow_formats[] = $this->listenlink_type('low_quality', $h);
+				$format = $this->listenlink_type('low_quality', $h);
+				$all_formats[$format] = ucwords(str_replace('_', ' ', $format));
 			}
 		}
-		$all_formats = array_merge(
-			['highest_available_quality'],
-			array_unique($highest_formats),
-			array_unique($fast_formats),
-			array_unique($slow_formats)
-		);
-		print '<div class="fullwidth containerbox vertical-centre brick_wide">';
-		print '<div class="selectholder expand">';
-		print '<select id="somafm_qualityselector" class="saveomatic">';
-		foreach($all_formats as $format) {
-			print '<option value="'.$format.'">'.ucfirst(str_replace('_', ' ', $format)).'</option>';
-		}
-		print '</select>';
-		print '</div>';
-		print '</div>';
+		uibits::ui_select_box([
+			'id' => 'somafm_quality',
+			'options' => $all_formats,
+		]);
 	}
 
 	private function doChannel($count, $channel) {

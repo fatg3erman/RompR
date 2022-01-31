@@ -178,6 +178,10 @@ input[type=text],input[type="number"] {
 	height: 32px;
 }
 
+#headerbar i.invisible {
+	display: none;
+}
+
 #infopanecontrols {
 	text-align: center;
 }
@@ -807,5 +811,17 @@ div.helpfulalbum>div.tagh.albumthing {
 #pluginplaylistslist .collectionitem .menuitem {
 	padding-left:0px;
 	height:100%;
+}
+
+/*
+=====================================================================
+=
+= Things that need to be here so they override other things
+=
+=====================================================================
+*/
+
+.invisible {
+	display:none;
 }
 

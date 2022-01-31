@@ -242,12 +242,12 @@ var info_lastfm = function() {
 					imagePopup.create(element, event, element.next().val());
 				} else if (element.hasClass('clickunlove')) {
 					self[source].unlove();
-					if (prefs.synclove) {
+					if (parseInt(prefs.synclovevalue) != 0) {
 						parent.setMeta('set', 'Rating', '0');
 					}
 				} else if (element.hasClass('clicklove')) {
 					self[source].love();
-					if (prefs.synclove) {
+					if (parseInt(prefs.synclovevalue) > 0) {
 						parent.setMeta('set', 'Rating', prefs.synclovevalue);
 					}
 				}
@@ -695,7 +695,7 @@ var info_lastfm = function() {
 							trackmeta.lastfm.data.track.userloved = 1;
 							if (prefs.autotagname != '') {
 								self.track.addtags(prefs.autotagname);
-								if (prefs.synctags && prefs.synclove) {
+								if (prefs.synctags && parseInt(prefs.synclovevalue) > 0) {
 									parent.setMeta('set', 'Tags', [prefs.autotagname]);
 								}
 							}
@@ -704,7 +704,7 @@ var info_lastfm = function() {
 							trackmeta.lastfm.data.track.userloved = 0;
 							if (prefs.autotagname != '') {
 								self.track.removetags(prefs.autotagname);
-								if (prefs.synctags && prefs.synclove) {
+								if (prefs.synctags && parseInt(prefs.synclovevalue) > 0) {
 									parent.setMeta('remove', 'Tags', prefs.autotagname);
 								}
 							}

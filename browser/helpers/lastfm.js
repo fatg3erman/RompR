@@ -118,9 +118,9 @@ function LastFM() {
 				return null;
 				break;
 			case "interface":
-				if (interfaceLanguage.substr(2,1) == '-') {
+				if (prefs.interface_language.substr(2,1) == '-') {
 					// Just in case it's "pirate";
-					return interfaceLanguage.substr(0,2);
+					return prefs.interface_language.substr(0,2);
 				} else {
 					return 'en';
 				}

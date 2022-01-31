@@ -438,13 +438,13 @@ var layoutProcessor = function() {
 		panelMapping: function() {
 			return {
 				"albumlist": 'albumlist',
-				"searcher": 'searcher',
+				"searcher": 'searchpane',
 				"filelist": 'filelist',
 				"radiolist": 'radiolist',
 				"audiobooklist": "audiobooklist",
 				"podcastslist": 'podcastslist',
 				"playlistslist": 'playlistman',
-				"pluginplaylistslist": 'pluginplaylists'
+				"pluginplaylistslist": 'pluginplaylistholder'
 			}
 		},
 

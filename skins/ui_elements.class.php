@@ -273,6 +273,251 @@ class ui_elements {
 		return $html;
 	}
 
+	// id is the pref parameter for which this is a select box
+	// If id is null this will not be a pref box, if it is it will
+	// have an id of [id]selector
+	// options is an array of key => value pairs
+	//  key = the select value
+	//  value = the text to display
+	// This is a confusing way round but it's obvious in the code
+	// that that is the logical way for it to be
+	// disabled is an aray of keys from the above that should
+	// be in the list but disabled
+	const DEFAULT_SELECT_BOX = [
+		'id' => null,
+		'options' => [],
+		'selected' => null,
+		'disabled' => [],
+		'label' => null,
+		'class' => '',
+		'typeclass' => 'saveomatic'
+	];
+
+	public static function ui_select_box($opts) {
+		$opts = array_merge(self::DEFAULT_SELECT_BOX, $opts);
+		if ($opts['label']) {
+			print '<div class="pref containerbox vertical-centre';
+			if ($opts['class'] != '')
+				print ' '.$opts['class'];
+
+			print '">';
+			print '<div class="divlabel">'			;
+			print $opts['label'];
+			print '</div>';
+		} else {
+			print '<div class="fullwidth containerbox vertical-centre brick_wide';
+			if ($opts['class'] != '')
+				print ' '.$opts['class'];
+
+			print '">';
+		}
+		print '<div class="selectholder expand">';
+		if ($opts['id']) {
+			print '<select id="'.$opts['id'].'selector"';
+			if ($opts['typeclass'])
+				print ' class="'.$opts['typeclass'].'"';
+
+			print '>';
+		} else {
+			print '<select>';
+		}
+		foreach ($opts['options'] as $value => $text) {
+			print '<option value="'.$value.'"';
+			if ($value == $opts['selected'])
+				print ' selected';
+
+			if (in_array($value, $opts['disabled']))
+				print ' disabled';
+
+			print '>'.$text.'</option>';
+		}
+		print '</select>';
+		print '</div>';
+		print '</div>';
+
+	}
+
+	const DEFAULT_TEXTENTRY = [
+		'label' => null,
+		'size' => 255,
+		'id' => null,
+		'type' => 'text',
+		'class' => '',
+		'is_array' => false
+	];
+
+	public static function ui_textentry($opts) {
+		$opts = array_merge(self::DEFAULT_TEXTENTRY, $opts);
+
+		if ($opts['size'] < 20) {
+			print '<div class="pref containerbox vertical-centre';
+			if ($opts['class'] != '')
+				print ' '.$opts['class'];
+
+			print '">';
+			print '<div class="expand">'.language::gettext($opts['label']).'</div>';
+			print '<input class="saveotron fixed';
+			if ($opts['is_array'])
+				print ' arraypref';
+
+			print '" id="'.$opts['id'].'" type="'.$opts['type'].'" size="'.$opts['size'].'" ';
+			print 'style="margin-left: 1em;width: '.($opts['size']+1).'em" />';
+		} else {
+			print '<div class="pref';
+			if ($opts['class'] != '')
+				print ' '.$opts['class'];
+
+			print '">';
+			if ($opts['label'])
+				print language::gettext($opts['label']);
+
+			print '<input class="saveotron prefinput';
+			if ($opts['is_array'])
+				print ' arraypref';
+
+			print '" id="'.$opts['id'].'" type="'.$opts['type'].'" size="'.$opts['size'].'" />';
+		}
+
+		print '</div>';
+
+	}
+
+	const DEFAULT_CHECKBOX = [
+		'id' => null,
+		'label' => null,
+		'class' => '',
+		'typeclass' => 'autoset toggle'
+	];
+	// This will create a holder div and then as many select boxes as are specified
+	// in $opts. $opts can be an array with just one checkbox details, or an array
+	// of arrays of checkboxes
+	// class is applied to the outer container and only needs to be defined in the first entry
+	public static function ui_checkbox($opts) {
+		if (!array_key_exists(0, $opts)) {
+			$opts = [$opts];
+		}
+
+		foreach ($opts as $i => $box) {
+			$opts[$i] = array_merge(self::DEFAULT_CHECKBOX, $box);
+		}
+
+		print '<div class="pref styledinputs';
+		if ($opts[0]['class'] != '')
+			print ' '.$opts[0]['class'];
+
+		print '">';
+		foreach ($opts as $box) {
+			print '<input';
+			if ($box['typeclass'])
+				print ' class="'.$box['typeclass'].'"';
+
+			print ' type="checkbox" id="'.$box['id'].'" />';
+			print '<label for="'.$box['id'].'">'.language::gettext($box['label']).'</label>';
+		}
+		print '</div>';
+	}
+
+	const DEFAULT_RADIO = [
+		'typeclass' => 'topcheck savulon',
+		'name' => null,
+		'id' => null,
+		'label' => null,
+		'value' => null,
+		'class' => ''
+	];
+
+	public static function ui_radio($opts) {
+		if (!array_key_exists(0, $opts)) {
+			$opts = [$opts];
+		}
+
+		foreach ($opts as $i => $box) {
+			$opts[$i] = array_merge(self::DEFAULT_RADIO, $box);
+		}
+
+		print '<div class="pref styledinputs';
+		if ($opts[0]['class'] != '')
+			print ' '.$opts[0]['class'];
+
+		print '">';
+
+		foreach ($opts as $box) {
+			print '<input';
+			if ($box['typeclass'])
+				print ' class="'.$box['typeclass'].'"';
+
+			print ' type="radio" name="'.$box['name'].'" value="'.$box['value'].'" id="'.$box['id'].'" />';
+			print '<label for="'.$box['id'].'">'.language::gettext($box['label']).'</label>';
+		}
+		print '</div>';
+
+	}
+
+	const DEFAULT_CONFIG_HEADER = [
+		'lefticon' => null,
+		'righticon' => null,
+		'label' => null,
+		'main_icon' => null,
+		'class' => ''
+	];
+
+	public static function ui_config_header($opts) {
+		$opts = array_merge(self::DEFAULT_CONFIG_HEADER, $opts);
+		print '<div class="configtitle config-panel">';
+		print '<i class="medicon';
+		if ($opts['lefticon'])
+			print ' '.$opts['lefticon'];
+
+		print '"></i>';
+		if ($opts['label']) {
+			print '<div class="textcentre expand';
+			if ($opts['class'] != '')
+				print ' '.$opts['class'];
+
+			print '"><b>'.language::gettext($opts['label']).'</b></div>';
+		} else if ($opts['main_icon']) {
+			print '<i class="expand alignmid '.$opts['main_icon'].'"></i>';
+		}
+		print '<i class="medicon';
+		if ($opts['righticon'])
+			print ' '.$opts['righticon'];
+
+		print '"></i>';
+		print '</div>';
+	}
+
+	const DEFAULT_BUTTON = [
+		'label' => null,
+		'onclick' => null,
+		'name' => null
+	];
+
+	public static function ui_config_button($opts) {
+		if (!array_key_exists(0, $opts)) {
+			$opts = [$opts];
+		}
+
+		foreach ($opts as $i => $box) {
+			$opts[$i] = array_merge(self::DEFAULT_BUTTON, $box);
+		}
+
+		print '<div class="containerbox textcentre vertical-centre center wrap">';
+		foreach ($opts as $box) {
+			print '<button class="expand config-button"';
+			if ($box['onclick'])
+				print ' onclick="'.$box['onclick'].'"';
+
+			if ($box['name'])
+				print ' name="'.$box['name'].'"';
+
+			print '>';
+			print language::gettext($box['label']);
+			print '</button>';
+		}
+		print '</div>';
+
+	}
+
 }
 
 ?>

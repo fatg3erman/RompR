@@ -81,6 +81,7 @@ var sleepHelper = function() {
 
 		goToWakeMode: function() {
 			clearTimeout(windowActivationTimer);
+			checkProgress();
 			for (var f of wakeHelpers) {
 				debug.trace('SLEEPHELPER', 'Calling Wake Mode Helper',f.name);
 				f.call();
@@ -153,7 +154,6 @@ var prefs = function() {
 		"alarm_snoozetime",
 		"lastfmlang",
 		"synctags",
-		"synclove",
 		"synclovevalue",
 		"theme",
 		'clickmode',
@@ -583,6 +583,12 @@ var prefs = function() {
 
 			prefs.fontfamily = prefs.fontfamily.replace('_', ' ');
 
+			// Update old synclove pref
+			if (localStorage.getItem("prefs.synclove") === false) {
+				localStorage.setItem("prefs.synclovevalue", JSON.stringify(0));
+				localStorage.removeItem("prefs.synclove");
+			}
+
 			prefs.doClickCss();
 
 			if (callback)
@@ -724,7 +730,6 @@ var prefs = function() {
 					break;
 
 				case "consume_workaround":
-				debug.log('ARSE',player.status.consume,prefobj[prefname]);
 					if (player.status.consume == 1 && prefobj[prefname]) {
 						infobar.notify(language.gettext('warn_consumearound'));
 						prefobj[prefname] = false;
@@ -765,7 +770,6 @@ var prefs = function() {
 		},
 
 		setPrefs: async function() {
-			$("#langselector").val(interfaceLanguage);
 
 			$("#scrobwrangler").rangechooser({
 				range: 100,
@@ -866,15 +870,13 @@ var prefs = function() {
 					callback = layoutProcessor.changeCollectionSortMode;
 					break;
 
+				case 'interface_language':
+					callback = reloadWindow;
+					break;
+
 
 			}
 			prefs.save(prefobj, callback);
-		},
-
-		changelanguage: function() {
-			prefs.save({interface_language: $("#langselector").val()}, function() {
-				location.reload(true);
-			});
 		},
 
 		saveTextBoxes: function() {

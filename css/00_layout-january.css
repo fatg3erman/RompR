@@ -126,6 +126,10 @@ div.notification.new {
 	min-height: var(--small-icon-size);
 }
 
+.configtitle.config-panel:not(:first-child) {
+	margin-top: 0.75em;
+}
+
 body.mobile .configtitle
 {
     width:100%;
@@ -2317,7 +2321,7 @@ div.top_drop_menu div.notenabled, div.togglecontainer.notenabled, div#flowcontro
 /*
 =====================================================================
 =
-= Thinsg that need to be here so they override other things
+= Things that need to be here so they override other things
 =
 =====================================================================
 */

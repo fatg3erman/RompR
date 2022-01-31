@@ -43,30 +43,25 @@ function doPodcastBase() {
 	print '<div class="spacer"></div>';
 
 	$sortoptions = array(
-		ucfirst(strtolower(language::gettext('title_title'))) => 'Title',
-		language::gettext('label_publisher') => 'Artist',
-		language::gettext('label_category') => 'Category',
-		language::gettext('label_new_episodes') => 'new',
-		language::gettext('label_unlistened_episodes') => 'unlistened'
+		'Title' => ucfirst(strtolower(language::gettext('title_title'))),
+		'Artist' => language::gettext('label_publisher'),
+		'Category' => language::gettext('label_category'),
+		'new' => language::gettext('label_new_episodes'),
+		'unlistened' => language::gettext('label_unlistened_episodes')
 	);
 
 	print '<div class="containerbox"><b>'.language::gettext('label_sortby').'</b></div>';
 
 	for ($count = 0; $count < prefs::$prefs['podcast_sort_levels']; $count++) {
-		print '<div class="containerbox vertical-centre">';
-		print '<div class="selectholder expand">';
-		print '<select id="podcast_sort_'.$count.'selector" class="saveomatic">';
-		$options = '';
-		foreach ($sortoptions as $i => $o) {
-			$options .= '<option value="'.$o.'">'.$i.'</option>';
-		}
-		print preg_replace('/(<option value="'.prefs::$prefs['podcast_sort_'.$count].'")/', '$1 selected', $options);
-		print '</select>';
-		print '</div>';
-		print '</div>';
-		if ($count < prefs::$prefs['podcast_sort_levels']-1) {
-			print '<div class="indent playlistrow2">'.language::gettext('label_then').'</div>';
-		}
+		uibits::ui_select_box([
+			'id' => 'podcast_sort_'.$count,
+			'options' => $sortoptions,
+			'selected' => prefs::$prefs['podcast_sort_'.$count]
+		]);
+
+		if ($count < prefs::$prefs['podcast_sort_levels']-1)
+			print '<div class="playlistrow2">'.language::gettext('label_then').'</div>';
+
 	}
 	print '</div>';
 

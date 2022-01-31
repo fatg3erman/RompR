@@ -48,6 +48,7 @@ class language {
 	public static function get_browser_locale() {
 		if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER)) {
 			$lngs = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+			logger::log('LANGUAGE', 'Browser is telling us the language is',$lngs[0]);
 			return $lngs[0];
 		} else {
 			return 'en-GB';
