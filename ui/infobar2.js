@@ -229,8 +229,10 @@ var infobar = function() {
 		var maxheight = parent.height();
 		var maxwidth = parent.parent().width();
 
-		// Start with a font size that will fill the height if no text wraps
-		var fontsize = Math.floor((maxheight/1.75)/1.25);
+		// Start with a font size that will fill the height if no text wraps.
+		// This is like (maxheight/1.75)/1.25 which is based on the relative font
+		// sizes set in the CSS
+		var fontsize = Math.floor(maxheight*0.45);
 		var two_lines = getLines(2);
 
 		nptext.css('font-size', fontsize+'px');
