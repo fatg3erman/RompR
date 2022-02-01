@@ -191,7 +191,8 @@ class prefs {
 
 	const PREFS_WITHOUT_DEFAULTS = [
 		'interface_language' => null,
-		'collection_type' => null
+		'collection_type' => null,
+		'mopidy_http_port' => null
 	];
 
 	public static function load() {

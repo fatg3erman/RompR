@@ -463,7 +463,7 @@ class ui_elements {
 
 	public static function ui_config_header($opts) {
 		$opts = array_merge(self::DEFAULT_CONFIG_HEADER, $opts);
-		print '<div class="configtitle config-panel">';
+		print '<div class="configtitle">';
 		print '<i class="medicon';
 		if ($opts['lefticon'])
 			print ' '.$opts['lefticon'];

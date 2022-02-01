@@ -126,7 +126,9 @@ div.notification.new {
 	min-height: var(--small-icon-size);
 }
 
-.configtitle.config-panel:not(:first-child) {
+#configpanel .configtitle:not(:first-child),
+#prefsm .configtitle:not(:first-child)
+{
 	margin-top: 0.75em;
 }
 
@@ -726,13 +728,6 @@ img.notexist,img.notfound {
     border-top: var(--sources-border-top);
     background-color: var(--sources-bg-colour);
     background-image: var(--sources-bg-image);
-}
-
-/* Holds the Collection search options and values */
-
-#collectionsearcher
-{
-	padding-left:4px;
 }
 
 /* Alternating colours for root items */

@@ -71,24 +71,36 @@ class commradioplugin {
 		// print '</div>';
 	}
 
+	private static function map_labels($a) {
+		return 'Order By '.ucfirst($a);
+	}
+
 	private function doDropdownHeader() {
 		print '<div class="is-coverable skypotatohack">';
 
 		uibits::directoryControlHeader('communityradiolist', language::gettext('label_communityradio'));
-		print '<div class="fullwidth containerbox vertical-centre">';
-		// print '<div class="fixed comm-search-label"><span class="cslt"><b>Order By</b></span></div>';
-		print '<div class="selectholder expand">';
-		print '<select id="communityradioorderbyselector" class="saveomatic">';
-		foreach (array('name', 'country', 'language', 'state', 'tags', 'votes', 'bitrate') as $o) {
-			print '<option value="'.$o.'"';
-			if (prefs::$prefs['communityradioorderby'] == $o) {
-				print ' selected';
-			}
-			print '>Order By '.ucfirst($o).'</option>';
-		}
-		print '</select>';
-		print '</div>';
-		print '</div>';
+		$terms = ['name', 'country', 'language', 'state', 'tags', 'votes', 'bitrate'];
+		$labels = array_map('self::map_labels', $terms);
+		uibits::ui_select_box([
+			'id' => 'communityradioorderby',
+			'options' => array_combine($terms, $labels),
+			'selected' => prefs::$prefs['communityradioorderby']
+		]);
+
+		// print '<div class="fullwidth containerbox vertical-centre">';
+		// // print '<div class="fixed comm-search-label"><span class="cslt"><b>Order By</b></span></div>';
+		// print '<div class="selectholder expand">';
+		// print '<select id="communityradioorderbyselector" class="saveomatic">';
+		// foreach (array('name', 'country', 'language', 'state', 'tags', 'votes', 'bitrate') as $o) {
+		// 	print '<option value="'.$o.'"';
+		// 	if (prefs::$prefs['communityradioorderby'] == $o) {
+		// 		print ' selected';
+		// 	}
+		// 	print '>Order By '.ucfirst($o).'</option>';
+		// }
+		// print '</select>';
+		// print '</div>';
+		// print '</div>';
 
 		print '<div class="fullwidth cleargroupparent">';
 		foreach ($this->searchterms as $term) {
