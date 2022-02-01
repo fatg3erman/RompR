@@ -87,25 +87,9 @@ class commradioplugin {
 			'selected' => prefs::$prefs['communityradioorderby']
 		]);
 
-		// print '<div class="fullwidth containerbox vertical-centre">';
-		// // print '<div class="fixed comm-search-label"><span class="cslt"><b>Order By</b></span></div>';
-		// print '<div class="selectholder expand">';
-		// print '<select id="communityradioorderbyselector" class="saveomatic">';
-		// foreach (array('name', 'country', 'language', 'state', 'tags', 'votes', 'bitrate') as $o) {
-		// 	print '<option value="'.$o.'"';
-		// 	if (prefs::$prefs['communityradioorderby'] == $o) {
-		// 		print ' selected';
-		// 	}
-		// 	print '>Order By '.ucfirst($o).'</option>';
-		// }
-		// print '</select>';
-		// print '</div>';
-		// print '</div>';
-
 		print '<div class="fullwidth cleargroupparent">';
 		foreach ($this->searchterms as $term) {
 			print '<div class="containerbox vertical-centre fullwidth" name="'.$term.'">';
-			// print '<div class="fixed comm-search-label"><span class="cslt"><b>'.ucfirst($term).'</b></span></div>';
 			print '<div class="expand">';
 			print '<input class="comm_radio_searchterm clearbox enter cleargroup" name="'.$term.'" type="text" placeholder="'.ucfirst($term).'"/>';
 			print '</div>';

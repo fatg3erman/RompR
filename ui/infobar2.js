@@ -245,7 +245,7 @@ var infobar = function() {
 			// change when we adjust the font size.
 			var final_fontsize = fontsize;
 			while (fontsize > 8 && (nptext.outerHeight(true) > maxheight || nptext.outerWidth(true) > maxwidth)) {
-				fontsize = Math.floor(fontsize / 2);
+				fontsize = Math.floor(fontsize * 0.75);
 				final_fontsize = fontsize;
 				nptext.css('font-size', fontsize+'px');
 				// debug.log('BIGGER_DOWN','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));

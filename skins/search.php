@@ -43,27 +43,10 @@ function startAdvSearchOptions() {
 		'options' => $sopts
 	]);
 
-	// print '<div class="containerbox vertical-centre">';
-	// print '<div class="selectholder">';
-	// print '<select id="sortresultsbyselector" class="saveomatic">';
-	// print '<option value="sameas">'.language::gettext('label_sameascollection').'</option>';
-	// foreach (COLLECTION_SORT_MODES as $mode => $key) {
-	// 	print '<option value="'.$mode.'">'.ucfirst(language::gettext($key)).'</option>';
-	// }
-	// print '<option value="results_as_tree">'.language::gettext('label_resultstree').'</option>';
-	// print '</select>';
-	// print '</div>';
-	// print '</div>';
-
 	uibits::ui_checkbox([
 		'id' => 'tradsearch',
 		'label' => 'label_tradsearch'
 	]);
-
-	// print '<div class="styledinputs" style="padding-top:4px">';
-	// print '<input class="autoset toggle" type="checkbox" id="tradsearch">
-	// <label for="tradsearch">'.language::gettext("label_tradsearch").'</label>';
-	// print '</div>';
 
 }
 ?>
