@@ -253,18 +253,16 @@ var infobar = function() {
 				// debug.log('BIGGER_DOWN','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
 			}
 
-			// This is nice to do but it slows us down a bit.
 			var increment = final_fontsize / 4;
 			// debug.log('BIGGER-UP', 'Increment is',increment);
 			while (
-					increment > 1 &&
-					(nptext.outerHeight(true) < maxheight || nptext.outerWidth(true) < maxwidth)
+					increment > 1
+					// && (nptext.outerHeight(true) < maxheight || nptext.outerWidth(true) < maxwidth)
 			) {
 				fontsize = Math.floor(fontsize + increment);
 				increment = increment / 2;
 				// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
 				nptext.css('font-size', fontsize+'px');
-				// set_css_variable('--nptext-font-size', fontsize+'px');
 				if (nptext.outerHeight(true) < maxheight && nptext.outerWidth(true) < maxwidth) {
 					// debug.log('BIGGER_UP','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
 					final_fontsize = fontsize
