@@ -489,7 +489,8 @@ class ui_elements {
 	const DEFAULT_BUTTON = [
 		'label' => null,
 		'onclick' => null,
-		'name' => null
+		'name' => null,
+		'typeclass' => 'config-button'
 	];
 
 	public static function ui_config_button($opts) {
@@ -503,7 +504,7 @@ class ui_elements {
 
 		print '<div class="containerbox textcentre vertical-centre center wrap">';
 		foreach ($opts as $box) {
-			print '<button class="expand config-button"';
+			print '<button class="expand '.$box['typeclass'].'"';
 			if ($box['onclick'])
 				print ' onclick="'.$box['onclick'].'"';
 

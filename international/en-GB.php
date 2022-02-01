@@ -728,7 +728,8 @@ language::add_translations([
 	"label_bg_global" =>					'Use In All Browsers',
 	"label_bg_only" =>						'For This Browser Only',
 	"label_playfromhere" =>					'Play From Here',
-	"config_browserid" =>					'Browser ID'
+	"config_browserid" =>					'Browser ID',
+	"button_clearwishlist" =>				'Clear Wishlist'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------
