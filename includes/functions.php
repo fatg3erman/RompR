@@ -535,23 +535,31 @@ function collectionButtons() {
 		]
 	]);
 
-	print '<div class="styledinputs">
-	<input class="autoset toggle" type="checkbox" id="sortbydate">
-	<label for="sortbydate">'.language::gettext('config_sortbydate').'</label>
-	<div class="pref">
-	<input class="autoset toggle" type="checkbox" id="notvabydate">
-	<label for="notvabydate">'.language::gettext('config_notvabydate').'</label>
-	</div>
-	</div>';
-
+	uibits::ui_checkbox(['id' => 'sortbydate', 'label' => 'config_sortbydate']);
+	uibits::ui_checkbox(['id' => 'notvabydate', 'label' => 'config_notvabydate']);
 	if (prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['mopidy_remote'] == false) {
 		if (prefs::$prefs['collection_player'] == prefs::$prefs['player_backend'] || prefs::$prefs['collection_player'] == null) {
-			print '<div class="textcentre">
-			<button name="donkeykong">'.language::gettext('config_updatenow').'</button>
-			</div>';
+			uibits::ui_config_button(['label' => 'config_updatenow', 'name' => 'donkeykong']);
 		}
 	}
-	print '</div>';
+	print'</div>';
+	// print '<div class="styledinputs">
+	// <input class="autoset toggle" type="checkbox" id="sortbydate">
+	// <label for="sortbydate">'.language::gettext('config_sortbydate').'</label>
+	// <div class="pref">
+	// <input class="autoset toggle" type="checkbox" id="notvabydate">
+	// <label for="notvabydate">'.language::gettext('config_notvabydate').'</label>
+	// </div>
+	// </div>';
+
+	// if (prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['mopidy_remote'] == false) {
+	// 	if (prefs::$prefs['collection_player'] == prefs::$prefs['player_backend'] || prefs::$prefs['collection_player'] == null) {
+	// 		print '<div class="textcentre">
+	// 		<button name="donkeykong">'.language::gettext('config_updatenow').'</button>
+	// 		</div>';
+	// 	}
+	// }
+	// print '</div>';
 
 }
 

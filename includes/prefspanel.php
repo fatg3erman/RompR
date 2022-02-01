@@ -486,23 +486,20 @@ uibits::ui_config_header([
 	'lefticon' => 'icon-music'
 ]);
 
-if (prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['mopidy_remote'] == false) {
-	if (prefs::$prefs['collection_player'] == prefs::$prefs['player_backend'] || prefs::$prefs['collection_player'] == null) {
-		$update_buttons = [
-			[
-				'label' => 'config_updatenow',
-				'name' => 'donkeykong'
-			]
-		];
-		if (prefs::$prefs['player_backend'] == "mpd" && prefs::$prefs['collection_player'] !== null) {
-			$update_buttons[] = [
-				'label' => 'config_rescan',
-				'name' => 'dinkeyking'
-			];
-		}
-		uibits::ui_config_button($update_buttons);
-	}
+$update_buttons = [
+	[
+		'label' => 'config_updatenow',
+		'name' => 'donkeykong'
+	]
+];
+if (prefs::$prefs['player_backend'] == "mpd" && prefs::$prefs['collection_player'] !== null) {
+	$update_buttons[] = [
+		'label' => 'config_rescan',
+		'name' => 'dinkeyking'
+	];
 }
+uibits::ui_config_button($update_buttons);
+
 //
 // Album Sorting
 //
