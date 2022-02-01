@@ -5,14 +5,49 @@ include ("includes/functions.php");
 prefs::$database = new get_wishlist();
 $wishlist = prefs::$database->getwishlist($_REQUEST['sortby']);
 if (count($wishlist) > 0) {
-	print '<div class="containerbox noselection"><button class="fixed infoclick plugclickable clickclearwishlist">Clear Wishlist</button><div class="expand"></div></div>';
-	print '<div class="configtitle brick_wide">Sort By</div>';
-	print '<div class="containerbox noselection">';
-	print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_artist" class="topcheck savulon" type="radio" name="sortwishlistby" value="artist"><label for="wishlist_sort_artist">'.language::gettext('label_artist').'</label></div>';
-	print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_date" class="topcheck savulon" type="radio" name="sortwishlistby" value="date"><label for="wishlist_sort_date">'.language::gettext('label_dateadded').'</label></div>';
-	print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_station" class="topcheck savulon" type="radio" name="sortwishlistby" value="station"><label for="wishlist_sort_station">'.language::gettext('label_radiostation').'</label></div>';
-	print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_rating" class="topcheck savulon" type="radio" name="sortwishlistby" value="rating"><label for="wishlist_sort_rating">'.language::gettext('label_rating').'</label></div>';
-	print '</div>';
+	uibits::ui_config_button([
+		'label' => 'button_clearwishlist',
+		'typeclass' => 'infoclick plugclickable clickclearwishlist'
+	]);
+	// print '<div class="containerbox noselection"><button class="fixed infoclick plugclickable clickclearwishlist">Clear Wishlist</button><div class="expand"></div></div>';
+	uibits::ui_config_header([
+		'label' => 'label_sortby'
+	]);
+	// print '<div class="configtitle brick_wide">Sort By</div>';
+	uibits::ui_radio([
+		[
+			'name' => 'sortwishlistby',
+			'id' => 'wishlist_sort_artist',
+			'value'=> 'artist',
+			'label' => 'label_artist'
+		],
+		[
+			'name' => 'sortwishlistby',
+			'id' => 'wishlist_sort_date',
+			'value'=> 'date',
+			'label' => 'label_dateadded'
+		],
+		[
+			'name' => 'sortwishlistby',
+			'id' => 'wishlist_sort_station',
+			'value'=> 'station',
+			'label' => 'label_radiostation'
+		],
+		[
+			'name' => 'sortwishlistby',
+			'id' => 'wishlist_sort_rating',
+			'value'=> 'rating',
+			'label' => 'label_rating'
+		]
+	]);
+
+
+	// print '<div class="containerbox noselection">';
+	// print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_artist" class="topcheck savulon" type="radio" name="sortwishlistby" value="artist"><label for="wishlist_sort_artist">'.language::gettext('label_artist').'</label></div>';
+	// print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_date" class="topcheck savulon" type="radio" name="sortwishlistby" value="date"><label for="wishlist_sort_date">'.language::gettext('label_dateadded').'</label></div>';
+	// print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_station" class="topcheck savulon" type="radio" name="sortwishlistby" value="station"><label for="wishlist_sort_station">'.language::gettext('label_radiostation').'</label></div>';
+	// print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_rating" class="topcheck savulon" type="radio" name="sortwishlistby" value="rating"><label for="wishlist_sort_rating">'.language::gettext('label_rating').'</label></div>';
+	// print '</div>';
 }
 foreach ($wishlist as $obj) {
 	logger::log("WISHLIST", "Found Track",$obj['title'],"by",$obj['albumartist']);
