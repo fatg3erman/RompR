@@ -15,13 +15,13 @@ class uibits extends ui_elements {
 		if ($obj['playable'] === false) {
 			$h .= '<div class="containerbox menuitem">';
 		} else if ($obj['AlbumUri'] && strtolower(pathinfo($obj['AlbumUri'], PATHINFO_EXTENSION)) == "cue") {
-			$h .= '<div class="clickcue playable draggable containerbox menuitem" name="'.rawurlencode($obj['AlbumUri']).'">';
+			$h .= '<div class="clickcue playable draggable containerbox menuitem '.$obj['class'].'" name="'.rawurlencode($obj['AlbumUri']).'">';
 		} else if ($obj['streamuri']) {
-			$h .= '<div class="clickstream playable draggable containerbox menuitem" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
+			$h .= '<div class="clickstream playable draggable containerbox menuitem '.$obj['class'].'" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
 		} else if ($obj['userplaylist']) {
-			$h .= '<div class="playable '.$obj['userplaylist'].' draggable containerbox menuitem" name="'.$obj['plpath'].'">';
+			$h .= '<div class="playable '.$obj['userplaylist'].' draggable containerbox menuitem '.$obj['class'].'" name="'.$obj['plpath'].'">';
 		} else {
-			$h .= '<div class="clickalbum playable draggable containerbox menuitem" name="'.$obj['id'].'">';
+			$h .= '<div class="clickalbum playable draggable containerbox menuitem '.$obj['class'].'" name="'.$obj['id'].'">';
 		}
 		if ($obj['plpath'])
 			$h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';

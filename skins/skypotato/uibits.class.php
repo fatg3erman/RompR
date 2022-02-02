@@ -56,9 +56,14 @@ class uibits extends ui_elements {
 		if ($fragment || $who == 'root') {
 			return '';
 		}
-		$html = '<div class="vertical-centre configtitle fullwidth"><div class="textcentre expand"><b>'.$artist.'</b></div></div>';
+		ob_start();
+		self::ui_config_header([
+			'label_text' => $artist
+		]);
+		$html = ob_get_contents();
+		ob_end_clean();
 		if ($playall) {
-			$html .= '<div class="textcentre clickalbum playable brick_wide noselect" name="'.$why.'artist'.$who.'">'.language::gettext('label_play_all').'</div>';
+			$html .= '<div class="textcentre clickalbum playable fullwidth noselect" name="'.$why.'artist'.$who.'">'.language::gettext('label_play_all').'</div>';
 		}
 		return $html;
 	}
@@ -70,7 +75,7 @@ class uibits extends ui_elements {
 	public static function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printcontainer = false) {
 		$c = ($printcontainer) ? "searchdir" : "directory";
 		print '<input type="hidden" name="dirpath" value="'.rawurlencode($fullpath).'" />';
-		print '<div class="'.$c.' menu openmenu containerbox menuitem brick_wide" name="'.$prefix.$dircount.'">';
+		print '<div class="'.$c.' menu openmenu containerbox menuitem fullwidth" name="'.$prefix.$dircount.'">';
 		print '<i class="icon-folder-open-empty fixed inline-icon"></i>';
 		print '<div class="expand">'.htmlentities(urldecode($displayname)).'</div>';
 		print '</div>';
@@ -82,7 +87,9 @@ class uibits extends ui_elements {
 	public static function directoryControlHeader($prefix, $name = null) {
 		logger::log('SKIN', 'DCH prefix is',$prefix,'name is',$name);
 		if ($name !== null && !preg_match('/^pholder_/', $prefix)) {
-			print '<div class="vertical-centre configtitle fullwidth"><div class="textcentre expand"><b>'.$name.'</b></div></div>';
+			self::ui_config_header([
+				'label_text' => $name
+			]);
 		}
 	}
 
@@ -90,7 +97,7 @@ class uibits extends ui_elements {
 		$name = md5($att['URL']);
 		print '<input type="hidden" value="'.rawurlencode($att['URL']).'" />';
 		print '<input type="hidden" value="'.rawurlencode($att['text']).'" />';
-		print '<div class="menu openmenu '.$prefix.' directory containerbox menuitem brick_wide" name="'.$prefix.'_'.$name.'">';
+		print '<div class="menu openmenu '.$prefix.' directory containerbox menuitem fullwidth" name="'.$prefix.'_'.$name.'">';
 		print '<i class="icon-folder-open-empty fixed inline-icon"></i>';
 		print '<div class="expand">'.$att['text'].'</div>';
 		print '</div>';

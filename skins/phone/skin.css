@@ -75,12 +75,13 @@ button.spinable.icon-spin6 {
 
 .dropmenu>div.playable:nth-of-type(even),
 .dropmenu>div.menuitem:nth-of-type(even),
+#collection>div.menu:nth-of-type(even),
+#audiobooks>div.menu:nth-of-type(even),
+#searchresultholder>div.menu:nth-of-type(even),
 .dropmenu>div.album:nth-of-type(even),
 .mainpane .faveradio:nth-of-type(even),
 .mainpane .radio:nth-of-type(4n),
-.dropmenu .radiochannel:nth-of-type(4n),
-#communitystations .radiochannel:nth-of-type(4n-1),
-#icecastlist .radiochannel:nth-of-type(4n-1),
+#communitystations .radiochannel:nth-of-type(even),
 .mainpane .podcastitem,
 .mainpane .podcast.openmenu:nth-of-type(4n),
 .mainpane .directory:nth-of-type(even)
@@ -483,10 +484,6 @@ div.albumbitsmenu {
 
 .popupcontents>div {
 	padding: 8px;
-}
-
-.dropmenu .menuitem {
-	margin-top: 4px;
 }
 
 .menuspacer {

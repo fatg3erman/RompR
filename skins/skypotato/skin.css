@@ -274,6 +274,18 @@ input[type=text],input[type="number"] {
 =====================================================================
 */
 
+#collection>div.menu:nth-of-type(even),
+#audiobooks>div.menu:nth-of-type(even),
+#searchresultholder>div.menu:nth-of-type(even),
+#filecollection>div.menu:nth-of-type(even),
+.collectionpanel>div.directory:nth-of-type(even),
+div.is-albumlist>div.playable:nth-of-type(even),
+div.is-albumlist>div.directory:nth-of-type(even)
+{
+    background-color: var(--album2-colour);
+    background-clip:border-box;
+}
+
 button.iconbutton {
 	height: 2em;
 	width: 2em;
@@ -559,14 +571,6 @@ button.spinable.icon-spin6 {
 	margin-top:8px;
 }
 
-.brick_wide {
-	width: 100%;
-}
-
-#searchresultholder .indent.brick_wide {
-	margin-left: 0px;
-}
-
 .info-box-list img {
 	max-width: 220px;
 }
@@ -705,21 +709,18 @@ div.rightmenu
 	Customisations that make this skin work
 */
 
-/* This creates boxes that flex-wrap correctly but with a gap between them and some apparent padding.
-   You can't use margin-left or right in wrap because the calculations don't take them into account */
 div.playable.smartradio.collectionitem {
 	background-color: var(--album2-colour);
 	background-clip: padding-box;
-	border-top: 4px solid var(--album2-colour);
-	border-top: 4px solid var(--album2-colour);
+	padding: 4px;
 }
 
 div.collectionpanel>div.configtitle>div.textcentre {
 	font-size:140%;
 }
 
-div.collectionpanel>div.playable.clickalbum.brick_wide {
-	margin-top: 8px;
+div[id^=dirholder]>div.clicktrack.line {
+	width: 100%;
 }
 
 .collectionitem {
@@ -772,10 +773,6 @@ div.collectionpanel>div.playable.clickalbum.brick_wide {
 	width: 20em;
 	display:block;
 	overflow:hidden;
-}
-
-#pluginplaylistslist .collectionitem.brick_wide {
-	margin-bottom:4px;
 }
 
 #pluginplaylistslist .collectionitem .helpfulalbum {

@@ -201,6 +201,10 @@ input[type=text],input[type="number"]
 	box-sizing: border-box;
 }
 
+::placeholder {
+	color: var(--placeholder-colour);
+}
+
 select
 {
 	width:100%;

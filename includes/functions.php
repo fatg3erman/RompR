@@ -800,7 +800,7 @@ function printFileSearch(&$tree) {
 
 function printFileItem($displayname, $fullpath, $time) {
 	$ext = strtolower(pathinfo($fullpath, PATHINFO_EXTENSION));
-	print '<div class="clickable clicktrack playable ninesix draggable indent containerbox line brick_wide" name="'.
+	print '<div class="clickable clicktrack playable ninesix draggable indent containerbox line" name="'.
 		rawurlencode($fullpath).'">';
 	print '<i class="'.audioClass($ext, getDomain($fullpath)).' fixed inline-icon"></i>';
 	print '<div class="expand">'.$displayname.'</div>';

@@ -22,7 +22,7 @@ class somafmplugin {
 
 	public function doStationList() {
 		uibits::directoryControlHeader('somafmlist', language::gettext('label_somafm'));
-		print '<div class="containerbox ninesix bumpad brick_wide">';
+		print '<div class="containerbox ninesix bumpad fullwidth">';
 		print '<a href="http://somafm.com" target="_blank">'.language::gettext("label_soma_beg").'</a>';
 		print '</div>';
 		// NB Don't use the cache, it fucks up 'Last Played'

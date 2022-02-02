@@ -39,7 +39,10 @@ if (array_key_exists('populate', $_REQUEST)) {
 	print ' /></div>';
 	print '<button class="fixed searchbutton iconbutton" name="cornwallis"></button></div>';
 
-	print '<div class="configtitle brick_wide"><div class="textcentre expand"><b>'.$page_title.'</b></div></div>';
+	uibits::ui_config_header([
+		'label_text' => $page_title
+	]);
+
 	foreach ($list as $server) {
 		$server_web_link = '';
 		$server_name = pq($server)->find('.card-title')->text();
@@ -70,7 +73,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 	}
 
 	$pager = $doc->find('ul.pagination')->children('li.page-item')->not('.disabled');
-	print '<div class="containerbox wrap brick_wide configtitle textcentre">';
+	print '<div class="containerbox wrap configtitle textcentre">';
 	foreach ($pager as $page) {
 		$link = pq($page)->children('a.page-link')->attr('href');
 		print '<div class="clickable icescraper clickicon clickicepager expand" name="search'.$link.'">'.pq($page)->children('a')->text().'</div>';
@@ -86,8 +89,11 @@ if (array_key_exists('populate', $_REQUEST)) {
 		'Albumname' => language::gettext('label_icecast'),
 		'class' => 'radio icecastroot'
 	));
-	print '<div id="icecastlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
-	// print '</div>';
+	print '<div id="icecastlist" class="dropmenu notfilled is-albumlist">';
+	uibits::ui_config_header([
+		'label' => 'label_loading'
+	]);
+	print '</div>';
 }
 
 function munge_ice_text($text) {

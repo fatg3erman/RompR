@@ -447,7 +447,7 @@ var podcasts = function() {
 				uri: 'api/podcasts/',
 				data: {search: encodeURIComponent($('#podcastsearch').val()), populate: 1}
 			});
-			$('#podcast_search').prepend('<div class="configtitle vertical-centre brick_wide" style="width:100%">'
+			$('#podcast_search').prepend('<div class="configtitle vertical-centre">'
 											+'<div class="textcentre expand"><b>Search Results for &quot;'+$('#podcastsearch').val()+'&quot;</b></div>'
 											+'<i class="clickable clickicon smallicon icon-cancel-circled removepodsearch podcast fixed"></i>'
 											+'</div>'

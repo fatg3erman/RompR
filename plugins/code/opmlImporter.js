@@ -9,7 +9,7 @@ var opmlImporter = function() {
 			if (opmlv == null) {
 				opmlv = browser.registerExtraPlugin("opmlv", language.gettext("label_opmlimporter"), opmlImporter, 'https://fatg3erman.github.io/RompR/OPML-Importer');
 				$('#opmlvfoldup').append(
-					'<div class="fullwidth brick_wide">'+
+					'<div class="fullwidth">'+
 					'<form id="opmluploader" action="plugins/code/opmluploader.php" method="post" enctype="multipart/form-data">'+
 					'<div class="filebutton textcentre">'+
 					'<input class="inputfile" name="opmlfile" id="opmlfile" type="file" />'+
@@ -22,7 +22,7 @@ var opmlImporter = function() {
 				$('#opmlvfoldup').append('<div id="opmllist"></div>');
 				$('#opmlvfoldup').append('<h2>'+language.gettext('label_opmlexp')+'</h2>')
 				$('#opmlvfoldup').append(
-					'<div class="fullwidth brick_wide">'+
+					'<div class="fullwidth">'+
 					'<a href="plugins/code/opmlexport.php" download="podcasts.opml">'+
 					'<button>'+language.gettext('button_opmlexp')+'</button>'+
 					'</a>'+

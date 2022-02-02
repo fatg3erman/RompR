@@ -354,7 +354,7 @@ class commradioplugin {
 	private function comm_radio_do_page_buttons($page, $count, $per_page) {
 		// Always create the div even if we put nothing in it otherwise the nth-of-type css selector
 		// on the image themes doesn't work
-		print '<div class="fullwidth brick_wide">';
+		print '<div class="fullwidth">';
 		print '<div class="containerbox noselection menuitem">';
 
 		if ($count >= $this->pagination) {
@@ -367,7 +367,7 @@ class commradioplugin {
 
 			$firstpage = max(0, $page-4);
 			$lastpage = min($firstpage+9, round(($count/$per_page), 0, PHP_ROUND_HALF_DOWN));
-			print '<div class="textcentre brick_wide containerbox wrap menuitem">';
+			print '<div class="textcentre fullwidth containerbox wrap menuitem">';
 			for ($p = $firstpage; $p < $lastpage; $p++) {
 				print '<div class="clickable commradio clickicon clickcommradiopager expand';
 				if ($p == $page) {

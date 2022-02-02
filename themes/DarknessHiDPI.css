@@ -19,6 +19,7 @@
     --highlight-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.15) 12%, rgba(0, 0, 0, 0.1) 51%);
 
     --text-colour: #dddddd;
+    --placeholder-colour: #707070;
     --border-colour: #dedede;
     --border-colour-dark: #999999;
     --link-colour: #dcdcff;

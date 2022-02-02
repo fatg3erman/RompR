@@ -16,8 +16,11 @@ class tuneinplugin {
 			'Albumname' => language::gettext('label_tuneinradio'),
 			'class' => 'radio tuneinroot',
 		));
-		print '<div id="tuneinlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
-		// print '</div>';
+		print '<div id="tuneinlist" class="dropmenu notfilled is-albumlist">';
+		uibits::ui_config_header([
+			'label' => 'label_loading'
+		]);
+		print '</div>';
 	}
 
 	public function parseParams() {
@@ -61,9 +64,9 @@ class tuneinplugin {
 			switch ($att['type']) {
 
 				case '':
-					print '<div class="configtitle textcentre brick_wide">';
-					print '<div class="expand">'.$att['text'].'</div>';
-					print '</div>';
+					uibits::ui_config_header([
+						'label_text' => $att['text']
+					]);
 					$this->parse_tree($o, $title);
 					break;
 

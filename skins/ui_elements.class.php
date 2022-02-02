@@ -305,7 +305,7 @@ class ui_elements {
 			print $opts['label'];
 			print '</div>';
 		} else {
-			print '<div class="fullwidth containerbox vertical-centre brick_wide';
+			print '<div class="fullwidth containerbox vertical-centre';
 			if ($opts['class'] != '')
 				print ' '.$opts['class'];
 
@@ -458,13 +458,20 @@ class ui_elements {
 		'righticon' => null,
 		'label' => null,
 		'main_icon' => null,
-		'class' => ''
+		'class' => '',
+		'icon_size' => 'medicon',
+		'label_text' => null,
+		'id' => null
 	];
 
 	public static function ui_config_header($opts) {
 		$opts = array_merge(self::DEFAULT_CONFIG_HEADER, $opts);
-		print '<div class="configtitle">';
-		print '<i class="medicon';
+		print '<div class="configtitle"';
+		if ($opts['id'])
+			print ' id="'.$opts['id'].'"';
+
+		print '>';
+		print '<i class="'.$opts['icon_size'];
 		if ($opts['lefticon'])
 			print ' '.$opts['lefticon'];
 
@@ -477,8 +484,15 @@ class ui_elements {
 			print '"><b>'.language::gettext($opts['label']).'</b></div>';
 		} else if ($opts['main_icon']) {
 			print '<i class="expand alignmid '.$opts['main_icon'].'"></i>';
+		} else if ($opts['label_text']) {
+			print '<div class="textcentre expand';
+			if ($opts['class'] != '')
+				print ' '.$opts['class'];
+
+			print '"><b>'.$opts['label_text'].'</b></div>';
 		}
-		print '<i class="medicon';
+
+		print '<i class="'.$opts['icon_size'];
 		if ($opts['righticon'])
 			print ' '.$opts['righticon'];
 

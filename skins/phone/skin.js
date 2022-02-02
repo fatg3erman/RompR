@@ -537,7 +537,7 @@ var layoutProcessor = function() {
 		makeCollectionDropMenu: function(element, name) {
 			var c = 'dropmenu notfilled is-albumlist';
 			if (
-				/^[abz](album|artist)/.test(name) ||
+				/^[abz](album|artist|genre|rating|tag)/.test(name) ||
 				element.hasClass('directory') ||
 				element.hasClass('playlist') ||
 				element.hasClass('userplaylist')

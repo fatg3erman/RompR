@@ -472,7 +472,7 @@ class collection_base extends database {
 	}
 
 	public function collectionStats() {
-		$html = '<div id="fothergill" class="brick brick_wide">';
+		$html = '<div id="fothergill" class="fullwidth">';
 		if (prefs::$prefs['collectionrange'] == ADDED_ALL_TIME) {
 			$html .= $this->alistheader($this->get_stat('ArtistCount'),
 								$this->get_stat('AlbumCount'),
@@ -490,7 +490,7 @@ class collection_base extends database {
 	}
 
 	public function audiobookStats() {
-		$html = '<div id="mingus" class="brick brick_wide">';
+		$html = '<div id="mingus" class="fullwidth">';
 
 		if (prefs::$prefs['collectionrange'] == ADDED_ALL_TIME) {
 			$html .= $this->alistheader($this->get_stat('BookArtists'),
@@ -527,7 +527,7 @@ class collection_base extends database {
 			"SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND
 			Hidden=0 AND isSearchResult > 0", false, null, 'TotalTime', 0);
 
-		$html =  '<div id="searchstats" class="brick brick_wide">';
+		$html =  '<div id="searchstats" class="fullwidth">';
 		$html .= $this->alistheader($numartists, $numalbums, $numtracks, format_time($numtime));
 		$html .= '</div>';
 		return $html;

@@ -19,6 +19,7 @@
     --highlight-bg-image: none;
 
     --text-colour: #eeeeee;
+    --placeholder-colour: #707070;
     --border-colour: var(--max-progress-colour);
     --border-colour-dark: var(--min-progress-colour);
     --link-colour: yellow;

@@ -124,6 +124,7 @@ div.notification.new {
 	display:flex;
 	align-items:center;
 	min-height: var(--small-icon-size);
+	width: 100%;
 }
 
 #configpanel .configtitle:not(:first-child),
@@ -744,13 +745,13 @@ img.notexist,img.notfound {
 
 /* Artist name banner used in Albums By Artist */
 
-.artistbanner
+/*.artistbanner
 {
 	margin-left:4px;
 	padding-left:8px;
 	margin-top:8px;
 }
-
+*/
 div.unplayable {
 	opacity: 0.4;
 }
@@ -1746,11 +1747,6 @@ a.infoclick.clickreleasepage
 }
 
 .medium_masonry_holder .masonry_opened
-{
-	width: 98% !important;
-}
-
-.medium_masonry_holder .brick_wide
 {
 	width: 98% !important;
 }

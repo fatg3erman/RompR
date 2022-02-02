@@ -19,6 +19,7 @@
     --highlight-bg-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.2));
 
     --text-colour: #111111;
+    --placeholder-colour: #808080;
     --border-colour: #333333;
     --border-colour-dark: #333333;
     --link-colour: yellow;

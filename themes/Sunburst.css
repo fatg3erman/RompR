@@ -19,6 +19,7 @@
     --highlight-bg-image: radial-gradient(circle farthest-side at top left, yellow, orange, red);
 
     --text-colour: black;
+    --placeholder-colour: #a0a0a0;
     --border-colour: yellow;
     --border-colour-dark: orange;
     --link-colour: #0b0080;

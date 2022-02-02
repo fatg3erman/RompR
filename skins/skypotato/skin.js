@@ -112,7 +112,8 @@ jQuery.fn.appendDummySpacers = function() {
 				$('<div>',  {class: "collectionitem collection_spacer"}).insertAfter(lastitem);
 			}
 		}
-		$(this).find('.configtitle.brick_wide').insertDummySpacers();
+		// Think this is for Albums By Artist mode, also for radio station browsers
+		$(this).find('.configtitle').insertDummySpacers();
 	});
 }
 
@@ -809,7 +810,7 @@ var layoutProcessor = function() {
 				if (n.indexOf('_') == -1) {
 					return makeNewPanel(element, name);
 				} else {
-					return $('<div>', {id: name, class: 'indent containerbox wrap brick_wide notfilled removeable is-albumlist', style: 'display: none'}).insertAfter(element);
+					return $('<div>', {id: name, class: 'indent containerbox wrap fullwidth notfilled removeable is-albumlist', style: 'display: none'}).insertAfter(element);
 				}
 			} else if (element.hasClass('searchdir')) {
 
@@ -863,12 +864,6 @@ var layoutProcessor = function() {
 				orientation: 'vertical',
 				command: player.controller.volume
 			});
-			// $('#radiolist').children().not('.menuitem').each(function() {
-			// 	var c = $(this).find('.artistnamething').html();
-			// 	$(this).find('.openmenu').addClass('menuitem').html(c).detach().prependTo($(this));
-			// 	$(this).find('.collectionitem').remove();
-			// });
-			// $('#radiolist>div:nth-child(odd)').not('.configtitle').addClass('album2');
 			$(document).on('click', '.clickaddtoplaylist', function() {
 				$('#addtoplaylistmenu').parent().parent().parent().hide();
 			});
