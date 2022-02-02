@@ -76,7 +76,7 @@ class commradioplugin {
 	}
 
 	private function doDropdownHeader() {
-		print '<div class="is-coverable skypotatohack">';
+		print '<div class="is-coverable">';
 
 		uibits::directoryControlHeader('communityradiolist', language::gettext('label_communityradio'));
 		$terms = ['name', 'country', 'language', 'state', 'tags', 'votes', 'bitrate'];

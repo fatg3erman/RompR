@@ -17,7 +17,7 @@ class tuneinplugin {
 			'class' => 'radio tuneinroot',
 		));
 		print '<div id="tuneinlist" class="dropmenu notfilled is-albumlist">';
-		uibits::ui_config_header([
+		print uibits::ui_config_header([
 			'label' => 'label_loading'
 		]);
 		print '</div>';
@@ -64,7 +64,7 @@ class tuneinplugin {
 			switch ($att['type']) {
 
 				case '':
-					uibits::ui_config_header([
+					print uibits::ui_config_header([
 						'label_text' => $att['text']
 					]);
 					$this->parse_tree($o, $title);

@@ -455,49 +455,89 @@ class ui_elements {
 
 	const DEFAULT_CONFIG_HEADER = [
 		'lefticon' => null,
+		'lefticon_name' => null,
 		'righticon' => null,
 		'label' => null,
 		'main_icon' => null,
 		'class' => '',
 		'icon_size' => 'medicon',
 		'label_text' => null,
+		'title_class' => null,
 		'id' => null
+	];
+
+	const HELP_LINKS = [
+		'button_local_music' => 'https://fatg3erman.github.io/RompR/Music-Collection',
+		'label_searchfor' => 'https://fatg3erman.github.io/RompR/Searching-For-Music',
+		'button_internet_radio' => 'https://fatg3erman.github.io/RompR/Internet-Radio',
+		'label_podcasts' => 'https://fatg3erman.github.io/RompR/Podcasts',
+		'label_audiobooks' => 'https://fatg3erman.github.io/RompR/Spoken-Word',
+		'label_pluginplaylists' => 'https://fatg3erman.github.io/RompR/Personalised-Radio',
+		'config_players' => 'https://fatg3erman.github.io/RompR/Using-Multiple-Players',
+		'icon-snapcast' => 'https://fatg3erman.github.io/RompR/snapcast',
+		'icon-lastfm-logo' => 'https://fatg3erman.github.io/RompR/LastFM'
 	];
 
 	public static function ui_config_header($opts) {
 		$opts = array_merge(self::DEFAULT_CONFIG_HEADER, $opts);
-		print '<div class="configtitle"';
+		$html = '';
+		$html .= '<div class="configtitle';
+		if ($opts['title_class'])
+			$html .= ' '.$opts['title_class'];
+
+		$html .= '"';
 		if ($opts['id'])
-			print ' id="'.$opts['id'].'"';
+			$html .= ' id="'.$opts['id'].'"';
 
-		print '>';
-		print '<i class="'.$opts['icon_size'];
+		$html .= '>';
+		$html .= '<i class="'.$opts['icon_size'];
 		if ($opts['lefticon'])
-			print ' '.$opts['lefticon'];
+			$html .= ' '.$opts['lefticon'];
 
-		print '"></i>';
+		$html .= '"';
+		if ($opts['lefticon_name'])
+			$html .= ' name="'.$opts['lefticon_name'].'"';
+
+		$html .= '></i>';
 		if ($opts['label']) {
-			print '<div class="textcentre expand';
+			$html .= '<div class="textcentre expand';
 			if ($opts['class'] != '')
-				print ' '.$opts['class'];
+				$html .= ' '.$opts['class'];
 
-			print '"><b>'.language::gettext($opts['label']).'</b></div>';
+			$html .= '"><b>'.language::gettext($opts['label']).'</b></div>';
 		} else if ($opts['main_icon']) {
-			print '<i class="expand alignmid '.$opts['main_icon'].'"></i>';
+			$html .= '<i class="expand alignmid '.$opts['main_icon'].'"></i>';
 		} else if ($opts['label_text']) {
-			print '<div class="textcentre expand';
+			$html .= '<div class="textcentre expand';
 			if ($opts['class'] != '')
-				print ' '.$opts['class'];
+				$html .= ' '.$opts['class'];
 
-			print '"><b>'.$opts['label_text'].'</b></div>';
+			$html .= '"><b>'.$opts['label_text'].'</b></div>';
 		}
 
-		print '<i class="'.$opts['icon_size'];
-		if ($opts['righticon'])
-			print ' '.$opts['righticon'];
+		if (array_key_exists($opts['label'], self::HELP_LINKS) && !$opts['righticon']) {
+			$html .= '<a href="'.self::HELP_LINKS[$opts['label']].'" target="_blank">';
+		}
+		if (array_key_exists($opts['main_icon'], self::HELP_LINKS) && !$opts['righticon']) {
+			$html .= '<a href="'.self::HELP_LINKS[$opts['main_icon']].'" target="_blank">';
+		}
+		$html .= '<i class="right-icon '.$opts['icon_size'];
+		if ($opts['righticon']) {
+			$html .= ' '.$opts['righticon'];
+		} else if (array_key_exists($opts['label'], self::HELP_LINKS) ||
+				   array_key_exists($opts['main_icon'], self::HELP_LINKS))
+		{
+			$html .= ' icon-info-circled';
+		}
 
-		print '"></i>';
-		print '</div>';
+		$html .= '"></i>';
+		if ((array_key_exists($opts['label'], self::HELP_LINKS) ||
+ 		    array_key_exists($opts['main_icon'], self::HELP_LINKS)) && !$opts['righticon'])
+		{
+			$html .= '</a>';
+		}
+		$html .= '</div>';
+		return $html;
 	}
 
 	const DEFAULT_BUTTON = [

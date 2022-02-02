@@ -158,7 +158,7 @@ var player = function() {
 					numhosts++;
 					$(this).append('<input type="radio" class="topcheck savulon" name="currenthost_duplicate'+index+'" value="'+
 						i+'" id="host_'+escape(i)+index+'">'+
-						'<label for="host_'+escape(i)+index+'">'+i+'</label><br/>');
+						'<label for="host_'+escape(i)+index+'">'+i+'</label>');
 				}
 			});
 			$('[name="playerdefs"] > .savulon').off('click').on('click', prefs.toggleRadio);

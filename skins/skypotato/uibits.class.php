@@ -56,12 +56,9 @@ class uibits extends ui_elements {
 		if ($fragment || $who == 'root') {
 			return '';
 		}
-		ob_start();
-		self::ui_config_header([
+		$html = self::ui_config_header([
 			'label_text' => $artist
 		]);
-		$html = ob_get_contents();
-		ob_end_clean();
 		if ($playall) {
 			$html .= '<div class="textcentre clickalbum playable fullwidth noselect" name="'.$why.'artist'.$who.'">'.language::gettext('label_play_all').'</div>';
 		}
@@ -87,7 +84,7 @@ class uibits extends ui_elements {
 	public static function directoryControlHeader($prefix, $name = null) {
 		logger::log('SKIN', 'DCH prefix is',$prefix,'name is',$name);
 		if ($name !== null && !preg_match('/^pholder_/', $prefix)) {
-			self::ui_config_header([
+			print self::ui_config_header([
 				'label_text' => $name
 			]);
 		}

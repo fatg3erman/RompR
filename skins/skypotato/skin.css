@@ -140,8 +140,9 @@ input[type=text],input[type="number"] {
 
 #tagadder {
 	width:400px;
-	padding-right:8px;
-	padding-bottom:4px;
+	padding-right: 4px;
+	padding-left: 4px;
+	padding-bottom: 4px;
 }
 
 #playcount {
@@ -326,10 +327,6 @@ button.spinable.icon-spin6 {
 	height:auto;
 }
 
-.skypotatohack {
-	width:  100%;
-}
-
 .controlbutton-left
 {
 	padding-right:2px;
@@ -372,7 +369,7 @@ button.spinable.icon-spin6 {
 }
 
 .dropmenu {
-	padding-left:16px;
+	padding-left:8px;
 }
 
 .npicon {

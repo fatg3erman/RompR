@@ -9,7 +9,7 @@ if (count($wishlist) > 0) {
 		'label' => 'button_clearwishlist',
 		'typeclass' => 'infoclick plugclickable clickclearwishlist config-button'
 	]);
-	uibits::ui_config_header([
+	print uibits::ui_config_header([
 		'label' => 'label_sortby'
 	]);
 	uibits::ui_radio([
@@ -38,7 +38,7 @@ if (count($wishlist) > 0) {
 			'label' => 'label_rating'
 		]
 	]);
-	uibits::ui_config_header([
+	print uibits::ui_config_header([
 		'label' => 'label_wishlist'
 	]);
 }

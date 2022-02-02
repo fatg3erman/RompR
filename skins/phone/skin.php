@@ -94,10 +94,13 @@
 
 <div id="albumlist" class="scroller mainpane invisible pright">
 <?php
-	print '<div class="configtitle is-coverable">';
-	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu smallicon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
-	print '<div class="textcentre expand"><b>'.language::gettext('button_local_music').'</b></div>';
-	print '</div>';
+	print uibits::ui_config_header([
+		'lefticon' => 'icon-menu clickicon fixed openmenu',
+		'lefticon_name' => 'collectionbuttons',
+		'label' => 'button_local_music',
+		'icon_size' => 'smallicon',
+		'title_class' => 'is-coverable'
+	]);
 	collectionButtons();
 ?>
 	<div id="collection" class="noborder selecotron">
@@ -106,13 +109,13 @@
 
 <div id='searchpane' class="scroller mainpane invisible pright">
 <div id="search" class="noborder is-coverable">
-<div class="configtitle">
 <?php
-	print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu smallicon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
-	print '<div class="textcentre expand"><b>'.language::gettext('label_searchfor').'</b></div>';
-?>
-</div>
-<?php
+print uibits::ui_config_header([
+	'lefticon' => 'icon-menu clickicon fixed openmenu',
+	'lefticon_name' => 'advsearchoptions',
+	'label' => 'label_searchfor',
+	'icon_size' => 'smallicon'
+]);
 include("player/".prefs::$prefs['player_backend']."/search.php");
 ?>
 </div>
@@ -120,21 +123,22 @@ include("player/".prefs::$prefs['player_backend']."/search.php");
 </div>
 
 <div id="filelist" class="scroller mainpane invisible pright">
-	<div class="configtitle is-coverable">
-<?php
-	print '<div class="textcentre expand"><b>'.language::gettext('button_file_browser').'</b></div>';
-?>
-	</div>
+	<?php
+	print uibits::ui_config_header([
+		'label' => 'button_file_browser',
+		'icon_size' => 'smallicon',
+		'title_class' => 'is-coverable'
+	]);
+	?>
 	<div id="filecollection" class="noborder selecotron"></div>
 </div>
 
 <div id="radiolist" class="scroller mainpane invisible pright">
-	<div class="configtitle">
 <?php
-print '<div class="expand textcentre"><b>'.language::gettext('button_internet_radio').'</b></div>';
-?>
-	</div>
-<?php
+print uibits::ui_config_header([
+	'label' => 'button_internet_radio',
+	'icon_size' => 'smallicon'
+]);
 $sp = glob("streamplugins/*.php");
 foreach($sp as $p) {
 include($p);
@@ -144,20 +148,25 @@ include($p);
 
 <div id="podcastslist" class="scroller mainpane invisible pright">
 <?php
-print '<div class="configtitle is-coverable">';
-print '<i class="icon-menu smallicon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
-print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
-print '</div>';
+print uibits::ui_config_header([
+	'lefticon' => 'icon-menu clickicon fixed openmenu',
+	'lefticon_name' => 'podcastbuttons',
+	'label' => 'label_podcasts',
+	'icon_size' => 'smallicon',
+	'title_class' => 'is-coverable'
+]);
 include("includes/podcast_base.php");
 ?>
 </div>
 
 <div id="audiobooklist" class="scroller mainpane invisible pright">
-	<div class="configtitle is-coverable">
-<?php
-	print '<div class="textcentre expand"><b>'.language::gettext('label_audiobooks').'</b></div>';
-?>
-	</div>
+	<?php
+	print uibits::ui_config_header([
+		'label' => 'label_audiobooks',
+		'icon_size' => 'smallicon',
+		'title_class' => 'is-coverable'
+	]);
+	?>
 	<div id="audiobooks" class="noborder selecotron"></div>
 </div>
 
@@ -166,27 +175,32 @@ if ($use_smartradio) {
 ?>
 <div id="pluginplaylistholder" class="scroller mainpane invisible pright">
 <?php
-print '<div class="configtitle">';
-print '<div class="expand textcentre"><b>'.language::gettext('label_pluginplaylists').'</b></div>';
-print '</div>';
-?>
-<?php
+	print uibits::ui_config_header([
+		'label' => 'label_pluginplaylists',
+		'icon_size' => 'smallicon'
+	]);
 if (prefs::$prefs['player_backend'] == "mopidy") {
-	print '<div class="textcentre textunderline"><b>Music From Your Collection</b></div>';
+	print uibits::ui_config_header([
+		'label' => 'label_mfyc'
+	]);
 }
 ?>
 <div class="fullwidth" id="pluginplaylists"></div>
 
 <?php
 if (prefs::$prefs['player_backend'] == "mopidy") {
-	print '<div class="textcentre textunderline"><b>Music From Spotify</b></div>';
+	print uibits::ui_config_header([
+		'label' => 'label_mfsp'
+	]);
 }
 ?>
 <div class="fullwidth" id="pluginplaylists_spotify"></div>
 
 <?php
 if (prefs::$prefs['player_backend'] == "mopidy") {
-	print '<div class="textcentre textunderline"><b>Music From Everywhere</b></div>';
+	print uibits::ui_config_header([
+		'label' => 'label_mfe'
+	]);
 	print '<div id="radiodomains" class="pref" style="padding-left:8px"><b>Play From These Sources:</b></div>';
 }
 ?>
@@ -199,7 +213,11 @@ if (prefs::$prefs['player_backend'] == "mopidy") {
 
 <div id="playlistman" class="scroller mainpane invisible pright">
 <?php
-	print '<div class="configtitle is-coverable"><div class="textcentre expand"><b>'.language::gettext('button_saveplaylist').'</b></div></div>';
+	print uibits::ui_config_header([
+		'label' => 'button_saveplaylist',
+		'icon_size' => 'smallicon',
+		'title_class' => 'is-coverable'
+	]);
 ?>
 	<div class="containerbox vertical-centre is-coverable" ><div class="fixed">
 	</div><div class="expand"><input class="enter clearbox" id="playlistname" type="text" size="200"/></div>
@@ -207,11 +225,13 @@ if (prefs::$prefs['player_backend'] == "mopidy") {
 		print '<button class="fixed iconbutton savebutton"></button>';
 ?>
 	</div>
-	<div class="configtitle is-coverable">
 <?php
-	print '<div class="expand textcentre"><b>'.language::gettext('button_loadplaylist').'</b></div>';
+	print uibits::ui_config_header([
+		'label' => 'button_loadplaylist',
+		'icon_size' => 'smallicon',
+		'title_class' => 'is-coverable'
+	]);
 ?>
-	</div>
 	<div class="pref">
 		<div id="playlistslist">
 			<div id="storedplaylists" class="is-albumlist"></div>
@@ -239,16 +259,34 @@ include('skins/playlist.php');
 <?php
 	include('player/utils/outputs.php');
 	if (prefs::$prefs['hide_master_volume']) {
-			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>'.language::gettext('label_volume').'</b></div></div>';
+
+			print uibits::ui_config_header([
+				'label' => 'button_volume',
+				'title_class' => 'nohelp invisible',
+				'id' => 'snapheader'
+			]);
+
+
+			// print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>'.language::gettext('label_volume').'</b></div></div>';
 			print '<div class="pref" id="snapcastgroups"></div>';
 			if (count($outputdata) > 1) {
-				print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('config_audiooutputs').'</b></div></div>';
+
+				print uibits::ui_config_header([
+					'label' => 'config_audiooutputs'
+				]);
+
+				// print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('config_audiooutputs').'</b></div></div>';
 				print '<div class="pref">';
 				printOutputCheckboxes();
 				print '</div>';
 			}
 	} else {
-			print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_volume').'</b></div></div>';
+
+			print uibits::ui_config_header([
+				'label' => 'label_volume'
+			]);
+
+			// print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_volume').'</b></div></div>';
 			print '<div id="volumecontrol" class="containerbox fullwidth menuitem">';
 			print '<div id="volume" class="expand"></div>';
 			if (count($outputdata) == 1) {
@@ -258,16 +296,29 @@ include('skins/playlist.php');
 			}
 			print '</div>';
 			if (count($outputdata) > 1) {
-				print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('config_audiooutputs').'</b></div></div>';
+				print uibits::ui_config_header([
+					'label' => 'config_audiooutputs'
+				]);
+				// print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('config_audiooutputs').'</b></div></div>';
 				print '<div class="pref">';
 				printOutputCheckboxes();
 				print '</div>';
 			}
 	}
-			print '<div class="configtitle nohelp player-title"><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';
+
+			print uibits::ui_config_header([
+				'label' => 'config_players',
+				'title_class' => 'nohelp player-title'
+			]);
+			// print '<div class="configtitle nohelp player-title"><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';
 			print '<div class="pref styledinputs" name="playerdefs"></div>';
 	if (!prefs::$prefs['hide_master_volume']) {
-			print '<div class="configtitle nohelp invisible" id="snapheader"><i class="fullwidth alignmid icon-snapcast"></i></div>';
+			print uibits::ui_config_header([
+				'main_icon' => 'icon-snapcast',
+				'title_class' => 'nohelp invisible',
+				'id' => 'snapheader'
+			]);
+			// print '<div class="configtitle nohelp invisible" id="snapheader"><i class="fullwidth alignmid icon-snapcast"></i></div>';
 			print '<div class="pref" id="snapcastgroups"></div>';
 	}
 ?>

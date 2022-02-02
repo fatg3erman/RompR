@@ -148,16 +148,11 @@ class sortby_albumbyartist extends sortby_base {
 	}
 
 	private function artistBanner($a, $i) {
-		ob_start();
-		uibits::ui_config_header([
+		$html = uibits::ui_config_header([
 			'label_text' => $a,
-			'id' => $this->why.'artist'.$i,
-			'icon_size' => 'smallicon'
+			'id' => $this->why.'artist'.$i
 		]);
-		$html = ob_get_contents();
-		ob_end_clean();
 		return $html;
- 		// return '<div class="configtitle artistbanner brick brick_wide" id="'.$this->why.'artist'.$i.'"><b>'.$a.'</b></div>';
  	}
 }
 

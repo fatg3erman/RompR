@@ -29,7 +29,7 @@ language::add_translations([
 	"button_stopafter" =>					"Stop After Current Track",
 	"button_next" =>						"Next Track",
 	"button_love" =>						"Love this track",
-	"button_volume" =>						"Drag to change volume",
+	"button_volume" =>						"Volume",
 
 	// Configuration menu entries
 	"config_theme" =>						"THEME",
@@ -729,7 +729,11 @@ language::add_translations([
 	"label_bg_only" =>						'For This Browser Only',
 	"label_playfromhere" =>					'Play From Here',
 	"config_browserid" =>					'Browser ID',
-	"button_clearwishlist" =>				'Clear Wishlist'
+	"button_clearwishlist" =>				'Clear Wishlist',
+	"label_mfyc" =>							'Music From Your Collection',
+	"label_mfsp" =>							'Music From Spotify',
+	"label_mfe" =>							'Music From Everywhere',
+	"label_playqueue" =>					'Play Queue'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

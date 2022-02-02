@@ -897,7 +897,9 @@ class poDatabase extends database {
 			'extralines' => $extralines
 		));
 
-		print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
+		print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu notfilled is-albumlist">';
+		print uibits::ui_config_header(['label' => 'label_loading']);
+		print '</div>';
 	}
 
 	public function removePodcast($podid) {
@@ -1365,7 +1367,7 @@ class poDatabase extends database {
 		$result = $this->generic_sql_query($qstring, false, PDO::FETCH_OBJ);
 		// Hack to make phone skin and skypotato skin work without too much extra effort
 		if ($subscribed == 1)
-			print '<div class="configtitle skypotatohack"><div class="textcentre expand"><b>'.language::gettext('label_subbed_podcasts').'</b></div></div>';
+			print uibits::ui_config_header(['label' => 'label_subbed_podcasts']);
 		foreach ($result as $obj) {
 			$this->doPodcastHeader($obj, $subscribed);
 		}

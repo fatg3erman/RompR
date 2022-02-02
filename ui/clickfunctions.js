@@ -320,6 +320,7 @@ function bindClickHandlers() {
 	// which stops the events from propagating;
 	$('.toggle').on('click', prefs.togglePref);
 	$('.savulon').on('click', prefs.toggleRadio);
+	$('.close-tagadder').on('click', tagAdder.close);
 	$(document).on('keyup', ".saveotron", prefs.saveTextBoxes);
 	$(document).on('change', ".saveomatic", prefs.saveSelectBoxes);
 	$('.clickreplaygain').on('click', player.controller.replayGain);

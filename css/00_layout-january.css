@@ -10,7 +10,7 @@
 /* Top bar on phone and Tablet skins, control bar below infopane on desktop and fruit */
 
 :root {
-	--config-panel-pad-left: 8px;
+	--config-panel-pad-left: 4px;
 	--config-panel-pad-right: 4px;
 	--inline-track-icon-size: 16px;
 	--inline-clickable-icon-size: 16px;
@@ -125,6 +125,7 @@ div.notification.new {
 	align-items:center;
 	min-height: var(--small-icon-size);
 	width: 100%;
+	background-clip: padding-box;
 }
 
 #configpanel .configtitle:not(:first-child),

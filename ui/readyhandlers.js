@@ -183,7 +183,6 @@ function carry_on_starting() {
 	prefs.setTheme();
 	infobar.createProgressBar();
 	pluginManager.doEarlyInit();
-	createHelpLinks();
 	browser.createButtons();
 	uiHelper.initialise();
 	player.defs.replacePlayerOptions();
@@ -230,30 +229,6 @@ function get_geo_country() {
 				prefs.save({lastfm_country_code: result.countryCode, country_userset: true});
 			} else {
 				debug.error("GET COUNTRY","Country code error",result);
-			}
-		});
-	}
-}
-
-function createHelpLinks() {
-	var helplinks = {};
-	helplinks[language.gettext('button_local_music')] = 'https://fatg3erman.github.io/RompR/Music-Collection';
-	helplinks[language.gettext('label_searchfor')] = 'https://fatg3erman.github.io/RompR/Searching-For-Music';
-	helplinks[language.gettext('button_internet_radio')] = 'https://fatg3erman.github.io/RompR/Internet-Radio';
-	helplinks[language.gettext('label_podcasts')] = 'https://fatg3erman.github.io/RompR/Podcasts';
-	helplinks[language.gettext('label_audiobooks')] = 'https://fatg3erman.github.io/RompR/Spoken-Word';
-	helplinks[language.gettext('label_pluginplaylists')] = 'https://fatg3erman.github.io/RompR/Personalised-Radio';
-	helplinks[language.gettext('label_lastfm')] = 'https://fatg3erman.github.io/RompR/LastFM';
-	helplinks[language.gettext('config_players')] = 'https://fatg3erman.github.io/RompR/Using-Multiple-Players';
-	helplinks[language.gettext('config_snapcast')] = 'https://fatg3erman.github.io/RompR/snapcast';
-
-	for (var i in helplinks) {
-		debug.debug("HELPLINKS","Appending Help Link For",i);
-		$('b:contains("'+i+'")').each(function() {
-			if ($(this).parent().hasClass('configtitle') && !$(this).parent().hasClass('nohelp')) {
-				$(this).parent().append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled smallicon tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');
-			} else if ($(this).parent().parent().hasClass('configtitle') && $(this).parent().parent().hasClass('vertical-centre')) {
-				$(this).parent().parent().append('<div class="fixed"><a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled smallicon tooltip" title="'+language.gettext('label_gethelp')+'"></i></a></div>');
 			}
 		});
 	}

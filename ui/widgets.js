@@ -763,12 +763,17 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 		this.dragging = false;
 		this._mouseInit();
 		if (this.options.addClassTo) {
-			this.element.find('.'+this.options.addClassTo).first().addClass(this.options.handleClass)
-				.append('<i class="icon-cancel-circled smallicon tright clickicon closemenu"></i>');
+			var act = this.element.find('.'+this.options.addClassTo).first();
+			act.addClass(this.options.handleClass).find('.right-icon').addClass('icon-cancel-circled clickicon closemenu');
+
+			// act.find('.right-icon').addClass('icon-cancel-circled clickicon closemenu');
+
+			// this.element.find('.'+this.options.addClassTo).first().addClass(this.options.handleClass)
+			// 	.append('<i class="icon-cancel-circled smallicon tright clickicon closemenu"></i>');
+
 			var hl = this.element.find('input.helplink');
 			if (hl.length > 0) {
-				this.element.find('.'+this.options.addClassTo).first()
-					.append('<a href="'+hl.first().val()+'" target="_blank"><i class="icon-info-circled smallicon tright"></i></a>');
+				act.append('<a href="'+hl.first().val()+'" target="_blank"><i class="icon-info-circled smallicon tright"></i></a>');
 			}
 
 		}

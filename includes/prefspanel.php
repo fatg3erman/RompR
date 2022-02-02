@@ -3,12 +3,18 @@
 // There may appear to be a lot of unnecessary divs wrapping around things here
 // but it makes it work in Safari. DO NOT CHANGE IT!
 
+print uibits::ui_config_header([
+	'label' => 'button_prefs',
+	'icon_size' => 'smallicon'
+]);
+
+
 // =======================================================
 //
 // Players
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'label' => 'config_players'
 ]);
 print '<div class="fullwidth">';
@@ -35,7 +41,7 @@ print '</div>';
 // Snapcast
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'main_icon' => 'icon-snapcast'
 ]);
 print '<div class="fullwidth">';
@@ -58,7 +64,7 @@ print '</div>';
 // Skin
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'label' => 'settings_appearance'
 ]);
 $skins = glob("skins/*");
@@ -135,7 +141,7 @@ uibits::ui_select_box([
 // =======================================================
 print '<div id="custombackground">';
 
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'label' => 'config_background',
 	'class' => 'open_magic_div'
 ]);
@@ -223,7 +229,7 @@ print '</div>';
 // Sources Panel Hiding
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'label' => 'settings_panels'
 ]);
 
@@ -243,7 +249,7 @@ if ($skin == "desktop")
 // Interface
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'label' => 'settings_interface'
 ]);
 uibits::ui_checkbox(['id' => 'scrolltocurrent', 'label' => 'config_autoscroll']);
@@ -296,7 +302,7 @@ if ($skin != "phone") {
 // Biography and Language
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'label' => 'settings_language'
 ]);
 
@@ -337,7 +343,7 @@ uibits::ui_select_box([
 // Album Art
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'label' => 'albumart_title',
 	'lefticon' => 'icon-cd'
 ]);
@@ -353,7 +359,7 @@ uibits::ui_textentry([
 // Smart Radio
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'label' => 'label_pluginplaylists',
 	'lefticon' => 'icon-wifi'
 ]);
@@ -369,7 +375,7 @@ uibits::ui_textentry([
 // Audiobooks
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'label' => 'label_audiobooks',
 	'lefticon' => 'icon-audiobook'
 ]);
@@ -390,7 +396,7 @@ uibits::ui_textentry([
 // Podcasts
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'label' => 'label_podcasts',
 	'lefticon' => 'icon-podcast-circled'
 ]);
@@ -437,7 +443,7 @@ uibits::ui_checkbox(['id' => 'podcast_mark_new_as_unlistened', 'label' => 'confi
 // Last.FM
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'main_icon' => 'icon-lastfm-logo'
 ]);
 
@@ -481,7 +487,7 @@ uibits::ui_select_box([
 // Collection Options
 //
 // =======================================================
-uibits::ui_config_header([
+print uibits::ui_config_header([
 	'label' => 'button_local_music',
 	'lefticon' => 'icon-music'
 ]);

@@ -142,9 +142,9 @@ var snapcast = function() {
 				snapcastRequest({
 					method: "Server.GetStatus"
 				});
-				$('#snapheader').show();
+				$('#snapheader').removeClass('invisible');
 			} else {
-				$('#snapheader').hide();
+				$('#snapheader').addClass('invisible');
 			}
 		},
 

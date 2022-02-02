@@ -1,7 +1,6 @@
 var infobar = function() {
 
 	var playlistinfo = {};
-	var lfminfo = {};
 	var npinfo = {};
 	var starttime = 0;
 	var scrobbled = false;
@@ -494,7 +493,6 @@ var infobar = function() {
 			}
 			playlistinfo = info;
 			infobar.markCurrentTrack();
-			lfminfo = {};
 			scrobbled = false;
 			starttime = Math.floor(Date.now()/1000);
 			nowplaying_updated = false;
@@ -573,9 +571,13 @@ var infobar = function() {
 		},
 
 		setLastFMCorrections: function(info) {
-			lfminfo = info;
+			debug.log('INFOBAR', 'LastFm Corrections',info);
 			if (prefs.lastfm_autocorrect && playlistinfo.metadata.iscomposer == 'false' && playlistinfo.type != "stream" && playlistinfo.type != "podcast") {
-				setTheText(info);
+				setTheText({
+					Album: info.album,
+					trackartist: info.trackartist,
+					Title: info.title
+				});
 			}
 			infobar.albumImage.setSecondarySource(info);
 		},

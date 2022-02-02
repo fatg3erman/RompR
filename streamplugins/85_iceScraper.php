@@ -39,7 +39,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 	print ' /></div>';
 	print '<button class="fixed searchbutton iconbutton" name="cornwallis"></button></div>';
 
-	uibits::ui_config_header([
+	print uibits::ui_config_header([
 		'label_text' => $page_title
 	]);
 
@@ -90,7 +90,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 		'class' => 'radio icecastroot'
 	));
 	print '<div id="icecastlist" class="dropmenu notfilled is-albumlist">';
-	uibits::ui_config_header([
+	print uibits::ui_config_header([
 		'label' => 'label_loading'
 	]);
 	print '</div>';

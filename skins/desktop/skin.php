@@ -87,7 +87,10 @@
 					?>
 					<div class="top_drop_menu dropshadow leftmenu normalmenu useasfixed">
 						<?php
-						print '<div class="configtitle vertical-centre"><div class="textcentre expand"><b>'.language::gettext('button_addtoplaylist').'</b></div></div>';
+						print uibits::ui_config_header([
+							'label' => 'button_addtoplaylist',
+							'icon_size' => 'smallicon'
+						]);
 						?>
 						<div id="addtoplaylistmenu" class="clearfix">
 						</div>
@@ -145,15 +148,12 @@ print '<i class="icon-menu topimg tooltip topdrop expand" title="'.language::get
 print '<i class="icon-versions topimg tooltip topdrop expand" title="'.language::gettext('button_history').'">';
 ?>
 <div class="top_drop_menu dropshadow leftmenu widemenu stayopen" id="hpscr">
-	<div class="vertical-centre configtitle">
-		<div class="textcentre expand">
-			<b>
-<?php
-	print language::gettext('button_history');
-?>
-			</b>
-		</div>
-	</div>
+	<?php
+	print uibits::ui_config_header([
+		'label' => 'button_history',
+		'icon_size' => 'smallicon'
+	]);
+	?>
 	<div id="historypanel" class="clearfix"></div>
 </div>
 </i>
@@ -188,7 +188,10 @@ print '<i class="icon-floppy topimg tooltip topdrop expand" title="'.language::g
 ?>
 <div class="top_drop_menu dropshadow rightmenu widemenu stayopen" id="plsaver">
 <?php
-print '<div class="vertical-centre configtitle"><div class="textcentre expand"><b>'.language::gettext('button_saveplaylist').'</b></div></div>';
+print uibits::ui_config_header([
+	'label' => 'button_saveplaylist',
+	'icon_size' => 'smallicon'
+]);
 print '<div class="containerbox vertical-centre"><div class="expand">
 <input class="enter clearbox" id="playlistname" type="text" size="200"/></div>';
 print '<button class="fixed iconbutton savebutton"></button></div>';
@@ -205,22 +208,26 @@ print '<button class="fixed iconbutton savebutton"></button></div>';
 
 	<div id="albumlist" class="invisible noborder">
 <?php
-	print '<div class="vertical-centre configtitle">';
-	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu smallicon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
-	print '<div class="textcentre expand"><b>'.language::gettext('button_local_music').'</b></div>';
-	print '</div>';
+	print uibits::ui_config_header([
+		'lefticon' => 'icon-menu clickicon fixed openmenu',
+		'lefticon_name' => 'collectionbuttons',
+		'label' => 'button_local_music',
+		'icon_size' => 'smallicon'
+	]);
 	collectionButtons();
 ?>
 	<div id="collection" class="noborder selecotron"></div>
 	</div>
 
 	<div id="searcher" class="invisible noborder">
-	<div class="vertical-centre configtitle">
 	<?php
-		print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu smallicon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
-		print '<div class="textcentre expand"><b>'.language::gettext('label_searchfor').'</b></div>';
+	print uibits::ui_config_header([
+		'lefticon' => 'icon-menu clickicon fixed openmenu',
+		'lefticon_name' => 'advsearchoptions',
+		'label' => 'label_searchfor',
+		'icon_size' => 'smallicon'
+	]);
 	?>
-	</div>
 <?php
 include("player/".prefs::$prefs['player_backend']."/search.php");
 ?>
@@ -228,21 +235,21 @@ include("player/".prefs::$prefs['player_backend']."/search.php");
 	</div>
 
 	<div id="filelist" class="invisible">
-		<div class="vertical-centre configtitle">
-<?php
-		print '<div class="textcentre expand"><b>'.language::gettext('button_file_browser').'</b></div>';
-?>
-		</div>
+	<?php
+	print uibits::ui_config_header([
+		'label' => 'button_file_browser',
+		'icon_size' => 'smallicon'
+	]);
+	?>
 	<div id="filecollection" class="noborder selecotron"></div>
 	</div>
 
 	<div id="radiolist" class="invisible">
-		<div class="vertical-centre configtitle">
-<?php
-	print '<div class="expand textcentre"><b>'.language::gettext('button_internet_radio').'</b></div>';
-?>
-		</div>
-<?php
+	<?php
+	print uibits::ui_config_header([
+		'label' => 'button_internet_radio',
+		'icon_size' => 'smallicon'
+	]);
 $sp = glob("streamplugins/*.php");
 foreach($sp as $p) {
 	include($p);
@@ -251,38 +258,44 @@ foreach($sp as $p) {
 	</div>
 	<div id="podcastslist" class="invisible selecotron">
 <?php
-print '<div class="vertical-centre configtitle">';
-print '<i class="icon-menu smallicon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
-print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
-print '</div>';
+print uibits::ui_config_header([
+	'lefticon' => 'icon-menu clickicon fixed openmenu',
+	'lefticon_name' => 'podcastbuttons',
+	'label' => 'label_podcasts',
+	'icon_size' => 'smallicon'
+]);
 include("includes/podcast_base.php");
 ?>
 	</div>
 	<div id="audiobooklist" class="invisible noborder">
-		<div class="vertical-centre configtitle">
-<?php
-		print '<div class="textcentre expand"><b>'.language::gettext('label_audiobooks').'</b></div>';
-?>
-		</div>
+	<?php
+	print uibits::ui_config_header([
+		'label' => 'label_audiobooks',
+		'icon_size' => 'smallicon'
+	]);
+	?>
 		<div id="audiobooks" class="noborder selecotron"></div>
 	</div>
 	<div id="playlistslist" class="invisible">
-		<div class="vertical-centre configtitle">
-<?php
-		print '<div class="expand textcentre"><b>'.language::gettext('button_loadplaylist').'</b></div>';
-?>
-		</div>
+	<?php
+	print uibits::ui_config_header([
+		'label' => 'button_loadplaylist',
+		'icon_size' => 'smallicon'
+	]);
+	?>
 		<div id="storedplaylists" class="noborder selecotron is-albumlist"></div>
 	</div>
 
 	<div id="pluginplaylistslist" class="invisible noselection">
-<?php
-print '<div class="vertical-centre configtitle">';
-print '<div class="expand textcentre"><b>'.language::gettext('label_pluginplaylists').'</b></div>';
-print '</div>';
-
+	<?php
+	print uibits::ui_config_header([
+		'label' => 'label_pluginplaylists',
+		'icon_size' => 'smallicon'
+	]);
 if (prefs::$prefs['player_backend'] == "mopidy") {
-	print '<div class="textcentre textunderline"><b>Music From Your Collection</b></div>';
+	print uibits::ui_config_header([
+		'label' => 'label_mfyc'
+	]);
 }
 ?>
 <div class="fullwidth" id="pluginplaylists"></div>
@@ -290,14 +303,18 @@ if (prefs::$prefs['player_backend'] == "mopidy") {
 
 <?php
 if (prefs::$prefs['player_backend'] == "mopidy") {
-	print '<div class="textcentre textunderline"><b>Music From Spotify</b></div>';
+	print uibits::ui_config_header([
+		'label' => 'label_mfsp'
+	]);
 }
 ?>
 <div class="fullwidth" id="pluginplaylists_spotify"></div>
 
 <?php
 if (prefs::$prefs['player_backend'] == "mopidy") {
-	print '<div class="textcentre textunderline"><b>Music From Everywhere</b></div>';
+	print uibits::ui_config_header([
+		'label' => 'label_mfe'
+	]);
 	print '<div id="radiodomains" class="pref" style="padding-left:8px"><b>Play From These Sources:</b></div>';
 }
 ?>
@@ -322,10 +339,17 @@ include("skins/playlist.php");
 ?>
 </div>
 </div>
+
+
 <div id="tagadder" class="dropmenu dropshadow mobmenu">
-	<div class="vertical-centre configtitle moveable"><div class="textcentre expand"><b>
 <?php
-print language::gettext("lastfm_addtags").'</b></div><i class="icon-cancel-circled clickicon smallicon tright" onclick="tagAdder.close()"></i></div>';
+print uibits::ui_config_header([
+	'lefticon' => 'icon-tags',
+	'label' => 'lastfm_addtags',
+	'title_class' => 'moveable',
+	'icon_size' => 'smallicon',
+	'righticon' => 'icon-cancel-circled clickicon close-tagadder'
+])
 ?>
 	<div class="containerbox vertical-centre tagaddbox"></div>
 </div>
