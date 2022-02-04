@@ -157,11 +157,6 @@ var layoutProcessor = function() {
 			}
 		},
 
-		setTagAdderPosition: function(position) {
-			$("#tagadder").css({top: Math.min(position.y+8, $(window).height() - $('#tagadder').height()),
-				left: Math.min($(window).width() - $('#tagadder').width(),  position.x-16)});
-		},
-
 		setPlaylistHeight: function() {
 			// var newheight = $("#bottompage").height() - $("#playlist_top").outerHeight();
 			// if ($("#playlistbuttons").is(":visible")) {
@@ -332,9 +327,6 @@ var layoutProcessor = function() {
 			$('#volume').volumeControl({
 				orientation: 'vertical',
 				command: player.controller.volume
-			});
-			$(document).on('click', '.clickaddtoplaylist', function() {
-				$('#addtoplaylistmenu').parent().parent().parent().hide();
 			});
 		},
 

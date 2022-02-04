@@ -56,7 +56,7 @@ input[type=text],input[type="number"] {
 	overflow:hidden;
 	box-sizing:border-box;
 	border-right:4px solid transparent;
-	border-left:4px solid transparent;
+	/*border-left:4px solid transparent;*/
 }
 
 #progress {
@@ -138,22 +138,16 @@ input[type=text],input[type="number"] {
 	line-height:22px;
 }
 
-#tagadder {
-	width:400px;
-	padding-right: 4px;
-	padding-left: 4px;
-	padding-bottom: 4px;
-}
-
 #playcount {
 	overflow:hidden;
 	opacity:0.9;
 	font-size:8pt;
 	height:22px;
 	line-height:22px;
+	margin-right: 8px;
 }
 
-#lastfm {
+/*#lastfm {
 	float:left;
 	margin-left:4px;
 	padding-top:1px;
@@ -163,7 +157,7 @@ input[type=text],input[type="number"] {
 	margin-right:2px;
 	margin-left:2px;
 }
-
+*/
 #headerbar {
 	padding:0px;
 	margin:0px;
@@ -335,7 +329,7 @@ button.spinable.icon-spin6 {
 
 .topstats {
 	float:left;
-	margin-right:8px;
+	margin-right:4px;
 	margin-top:1px;
 }
 
@@ -652,7 +646,7 @@ div.rightmenu
 		margin-left:4px !important;
 	}
 
-	.controlbutton-main
+	.controlbutton
 	{
 		width:32px !important;
 		height:32px !important;
@@ -688,7 +682,7 @@ div.rightmenu
 		margin-left:4px !important;
 	}
 
-	.controlbutton-main
+	.controlbutton
 	{
 		width:36px !important;
 		height:36px !important;

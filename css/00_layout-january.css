@@ -412,6 +412,11 @@ i.icon-menu {
     box-shadow: var(--drop-shadow);
 }
 
+.topshadow
+{
+    box-shadow: var(--top-shadow);
+}
+
 .highlighted
 {
     background-color: var(--highlight-bg-colour);
@@ -629,12 +634,14 @@ img.notexist,img.notfound {
 
 /* Add Tags popup - when clicking + in nowplaying */
 
-#tagadder
+.mobmenu
 {
     background-color: var(--top_drop_menu-bg-colour);
     background-image: var(--top_drop_menu-bg-image);
 	z-index:1500;
+	max-height:50vh;
 	position:absolute;
+	overflow-y:scroll;
 }
 
 /* Icons, tags, ratings etc in now playing */
@@ -649,6 +656,11 @@ img.notexist,img.notfound {
 .tag {
 	white-space:nowrap;
 	margin-right:1em;
+}
+
+.playspan {
+	font-weight: bold;
+	white-space: nowrap;
 }
 
 /* Text area showing current track name, album & artist */

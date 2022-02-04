@@ -10,7 +10,7 @@ $prefix = (array_key_exists('prefix', $_REQUEST)) ? $_REQUEST['prefix'].'_' : "d
 $player = new fileCollector(['tags' => null, 'rating' => null]);
 if ($player->is_connected()) {
 	if ($path == "") {
-		// print '<div class="configtitle textcentre expand" style="margin-left:8px"><b>'.language::gettext('button_file_browser').'</b></div>';
+
 	} else {
 		uibits::directoryControlHeader($prefix);
 	}

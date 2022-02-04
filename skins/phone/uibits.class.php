@@ -45,7 +45,9 @@ class uibits extends ui_elements {
 		}
 		$html = '<div class="menu backmenu openmenu" name="'.$why.$what.$who.'">';
 		$html .='</div>';
-		$html .= '<div class="vertical-centre configtitle fullwidth"><div class="textcentre expand"><b>'.$artist.'</b></div></div>';
+		$html .= uibits::ui_config_header([
+			'label_text' => $artist
+		]);
 		if ($playall) {
 			$html .= '<div class="textcentre clickalbum playable ninesix noselect" name="'.$why.$what.$who.'">'.language::gettext('label_play_all').'</div>';
 		}
@@ -56,7 +58,7 @@ class uibits extends ui_elements {
 		$db_album = ($when === null) ? $who : $who.'_'.$when;
 		$html = '<div class="menu backmenu openmenu" name="'.$why.$what.$db_album.'"></div>';
 		if ($dets['Albumname'])
-			$html .= '<div class="vertical-centre configtitle fullwidth"><div class="textcentre expand"><b>'.$dets['Albumname'].'</b></div></div>';
+			$html .= uibits::ui_config_header(['label_text' => $dets['Albumname']]);
 
 		$albumimage = new baseAlbumImage(array('baseimage' => $dets['Image']));
 		$images = $albumimage->get_images();
@@ -77,11 +79,11 @@ class uibits extends ui_elements {
 		}
 	}
 
-	public static function directoryControlHeader($prefix, $name = null) {
+	public static function directoryControlHeader($prefix, $name = null, $icon = 'icon-folder-open-empty') {
 		print '<div class="menu backmenu openmenu" name="'.trim($prefix, '_').'"></div>';
-		if ($name !== null) {
-			print '<div class="vertical-centre configtitle fullwidth"><div class="textcentre expand"><b>'.$name.'</b></div></div>';
-		}
+		if ($name !== null)
+			print uibits::ui_config_header(['label_text' => $name, 'iconsize' => 'smallicon', 'lefticon' => $icon]);
+
 	}
 
 	public static function printRadioDirectory($att, $closeit, $prefix) {
@@ -107,7 +109,6 @@ class uibits extends ui_elements {
 			print '<div class="album-menu-header"><img class="lazy album_menu_image" data-src="'.$images['asdownloaded'].'" /></div>';
 		}
 		print '<div class="textcentre clickloadplaylist playable ninesix" name="'.$name.'">'.language::gettext('label_play_all');
-		// logger::log('PLAYLISTPLAYHDR','name is',$name);
 		print '<input type="hidden" name="dirpath" value="'.$name.'" />';
 		print '</div>';
 	}

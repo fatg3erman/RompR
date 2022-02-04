@@ -19,6 +19,7 @@ var language = function() {
 			if (key === null || key == '') {
 				return "";
 			}
+			args = getArray(args);
 			if (tags[key] === undefined) {
 				debug.error("LANGUAGE","Unknown key",key);
 				return "UNKNOWN TRANSLATION "+key;

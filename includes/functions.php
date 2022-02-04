@@ -516,32 +516,6 @@ function rrmdir($path) {
 	rmdir($path);
 }
 
-function collectionButtons() {
-	print '<div id="collectionbuttons" class="invisible toggledown is-coverable">';
-
-	uibits::ui_select_box([
-		'id' => 'sortcollectionby',
-		'options' => array_map('ucfirst', array_map('language::gettext', COLLECTION_SORT_MODES))
-	]);
-
-	uibits::ui_select_box([
-		'id' => 'collectionrange',
-		'options' => [
-			ADDED_ALL_TIME => language::gettext('label_all_time'),
-			ADDED_TODAY => language::gettext('label_today'),
-			ADDED_THIS_WEEK => language::gettext('label_thisweek'),
-			ADDED_THIS_MONTH => language::gettext('label_thismonth'),
-			ADDED_THIS_YEAR => language::gettext('label_thisyear')
-		]
-	]);
-
-	uibits::ui_checkbox(['id' => 'sortbydate', 'label' => 'config_sortbydate']);
-	uibits::ui_checkbox(['id' => 'notvabydate', 'label' => 'config_notvabydate']);
-	uibits::ui_config_button(['label' => 'config_updatenow', 'name' => 'donkeykong']);
-
-	print'</div>';
-}
-
 function http_status_code_string($code)
 {
 	// Source: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes

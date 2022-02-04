@@ -42,30 +42,19 @@ var info_ratings = function() {
 					}
 					var playtext = '';
 					if (trackmeta.usermeta.Playcount && trackmeta.usermeta.Playcount > 0) {
-						playtext = '<span class="playspan"><b>PLAYS </b>&nbsp;'+trackmeta.usermeta.Playcount+'</span>';
-						if (uiHelper.showTagButton()) {
-							$("#playcount").html(playtext);
-						}
-						if (typeof charts != 'undefined') {
+						playtext = '<span class="playspan">'+language.gettext('label_numplays', trackmeta.usermeta.Playcount.toString())+'</span>';
+						$("#playcount").html(playtext);
+						if (typeof charts != 'undefined')
 							charts.reloadAll();
-						}
-						if (typeof recentlyPlayed != 'undefined') {
+
+						if (typeof recentlyPlayed != 'undefined')
 							recentlyPlayed.reloadAll();
-						}
+
 					} else {
 						$("#playcount").empty();
 					}
 					displayRating("#ratingimage", trackmeta.usermeta.Rating);
-					if (uiHelper.showTagButton()) {
-						$("#dbtags").html('<i class="icon-tags clickicon inline-icon" '+
-							'onclick="tagAdder.show(event)" style="margin-left:2px;margin-top:0px;margin-right:1em;"></i>');
-					} else {
-						$('#dbtags').html(playtext);
-						if (trackmeta.usermeta.Tags.length > 0) {
-							debug.log('RATINGS PLUGIN', 'Tags are',trackmeta.usermeta.Tags.length);
-							$('#dbtags').append('<span><b>'+language.gettext("musicbrainz_tags")+' &nbsp;</b></span>');
-						}
-					}
+					$('#dbtags').empty();
 					for(var i = 0; i < trackmeta.usermeta.Tags.length; i++) {
 						$("#dbtags").append('<span class="tag">'+trackmeta.usermeta.Tags[i]+
 							'<i class="icon-cancel-circled clickicon tagremover inline-icon" style="display:none"></i></span> ');

@@ -214,26 +214,22 @@ foreach($inc as $i) {
 	logger::log("INIT", "Including Info Panel Plugin ".$i);
 	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
-if ($use_smartradio) {
-	$inc = glob("radios/*.js");
-	ksort($inc);
-	foreach($inc as $i) {
-		logger::log("INIT", "Including Smart Radio Plugin ".$i);
-		print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
-	}
+$inc = glob("radios/*.js");
+ksort($inc);
+foreach($inc as $i) {
+	logger::log("INIT", "Including Smart Radio Plugin ".$i);
+	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
-if ($use_plugins) {
-	$inc = glob("plugins/*.js");
+$inc = glob("plugins/*.js");
+foreach($inc as $i) {
+	logger::log("INIT", "Including Plugin ".$i);
+	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
+}
+if (prefs::$prefs['load_plugins_at_loadtime']) {
+	$inc = glob("plugins/code/*.js");
 	foreach($inc as $i) {
-		logger::log("INIT", "Including Plugin ".$i);
+		logger::log("INIT", "DEVELOPMENT MODE : Including Plugin ".$i);
 		print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
-	}
-	if (prefs::$prefs['load_plugins_at_loadtime']) {
-		$inc = glob("plugins/code/*.js");
-		foreach($inc as $i) {
-			logger::log("INIT", "DEVELOPMENT MODE : Including Plugin ".$i);
-			print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
-		}
 	}
 }
 

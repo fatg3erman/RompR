@@ -2,13 +2,12 @@
 <div id="notifications"></div>
 
 <div class="fullwidth containerbox" id="thetopbit">
+
+	<!-- Play Buttons -->
+
 	<div id="groonburger" class="fixed containerbox vertical controlbutton-left">
 <?php
-		print '<i title="'.language::gettext('button_previous').'" class="prev-button fixed icon-fast-backward clickicon controlbutton-small tooltip"></i>';
-		print '<i title="'.language::gettext('button_play').'" class="play-button fixed icon-play-circled clickicon controlbutton-main tooltip"></i>';
-		print '<i title="'.language::gettext('button_stop').'" class="stop-button fixed icon-stop-1 clickicon controlbutton-small tooltip"></i>';
-		print '<i title="'.language::gettext('button_stopafter').'" class="stopafter-button fixed icon-to-end-1 clickicon controlbutton-small tooltip"></i>';
-		print '<i title="'.language::gettext('button_next').'" class="next-button fixed icon-fast-forward clickicon controlbutton-small tooltip"></i>';
+	uibits::main_play_buttons();
 ?>
 	</div>
 	<div class="fixed">
@@ -24,45 +23,15 @@
 				<div id="nptext"></div>
 			</div>
 			<div id="nowplaying_icons" class="clearfix">
-				<div id="subscribe" class="invisible topstats">
-					<?php
-					print '<i title="'.language::gettext('button_subscribe').
-						'" class="icon-rss npicon clickicon tooltip"></i>';
-					?>
-					<input type="hidden" id="nppodiput" value="" />
-				</div>
-				<div id="addtoplaylist" class="invisible topstats">
-					<?php
-					print '<i title="'.language::gettext('button_addtoplaylist').
-						'" class="icon-doc-text npicon clickicon tooltip topdrop">';
-					?>
-					<div class="top_drop_menu dropshadow leftmenu normalmenu useasfixed">
-						<?php
-						print uibits::ui_config_header([
-							'label' => 'button_addtoplaylist',
-							'icon_size' => 'smallicon'
-						]);
-						?>
-						<div id="addtoplaylistmenu" class="clearfix">
-						</div>
-					</div>
-					</i>
-				</div>
-				<div id="stars" class="invisible topstats">
-					<i id="ratingimage" class="icon-0-stars rating-icon-big"></i>
-					<input type="hidden" value="-1" />
-				</div>
-				<div id="lastfm" class="invisible topstats">
-					<?php
-					print '<i title="'.language::gettext('button_love').
-						'" class="icon-heart npicon clickicon tooltip spinable" id="love"></i>';
-					?>
-				</div>
 				<div id="playcount" class="topstats"></div>
-				<div id="dbtags" class="invisible topstats">
-				</div>
+				<?php
+				uibits::ui_nowplaying_icons();
+				?>
 			</div>
 		</div>
+
+		<!-- Vertical small icons -->
+
 		<div id="gronky" class="containerbox vertical">
 			<div class="containerbox vertical fixed" id="righthandtop"></div>
 <?php
@@ -109,6 +78,9 @@ include ("includes/prefspanel.php");
 		</div>
 
 <?php
+
+	// Volume Control
+
 	include('player/utils/outputs.php');
 
 	if (count($outputdata) > 1) {
@@ -149,6 +121,9 @@ include ("includes/prefspanel.php");
 	}
 ?>
 	</div>
+
+	<!-- Progress Bar -->
+
 	<div id="theotherthing" class="fixed infobarnoheight containerbox vertical-centre">
 			<div id="playposss" class="fixed timebox tboxl"></div>
 			<div class="expand"><div id="progress"></div></div>
@@ -180,30 +155,38 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 
 <div id="sources" class="column noborder tleft">
 
+	<!-- Music Collection -->
+
 	<div id="albumlist" class="invisible noborder">
-<?php
-	print uibits::ui_config_header([
-		'lefticon' => 'icon-menu clickicon fixed openmenu',
-		'lefticon_name' => 'collectionbuttons',
-		'label' => 'button_local_music',
-		'icon_size' => 'smallicon'
-	]);
-	collectionButtons();
-?>
-	<div id="collection" class="noborder selecotron"></div>
+		<?php
+		print uibits::ui_config_header([
+			'lefticon' => 'icon-menu clickicon fixed openmenu',
+			'lefticon_name' => 'collectionbuttons',
+			'label' => 'button_local_music',
+			'icon_size' => 'smallicon'
+		]);
+		uibits::collection_options_box();
+		?>
+		<div id="collection" class="noborder selecotron"></div>
 	</div>
 
+	<!-- Spoken Word -->
+
 	<div id="audiobooklist" class="invisible noborder">
-	<?php
-	print uibits::ui_config_header([
-		'label' => 'label_audiobooks',
-		'icon_size' => 'smallicon'
-	]);
-	?>
+		<?php
+		print uibits::ui_config_header([
+			'label' => 'label_audiobooks',
+			'icon_size' => 'smallicon'
+		]);
+		?>
 		<div id="audiobooks" class="noborder selecotron"></div>
 	</div>
 
+	<!-- Extra Plugins -->
+
 	<div id="specialplugins" class="invisible noborder"></div>
+
+	<!-- History -->
 
 	<div id="historyholder" class="invisible noborder">
 		<?php
@@ -215,59 +198,70 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 		<div id="historypanel"></div>
 	</div>
 
+	<!-- Search Panel -->
+
 	<div id="searcher" class="invisible noborder">
-	<?php
-	print uibits::ui_config_header([
-		'lefticon' => 'icon-menu clickicon fixed openmenu',
-		'lefticon_name' => 'advsearchoptions',
-		'label' => 'label_searchfor',
-		'icon_size' => 'smallicon'
-	]);
-	?>
-<?php
-include("player/".prefs::$prefs['player_backend']."/search.php");
-?>
-	<div id="searchresultholder" class="noborder selecotron is-albumlist"></div>
+		<?php
+		print uibits::ui_config_header([
+			'lefticon' => 'icon-menu clickicon fixed openmenu',
+			'lefticon_name' => 'advsearchoptions',
+			'label' => 'label_searchfor',
+			'icon_size' => 'smallicon'
+		]);
+		include("player/".prefs::$prefs['player_backend']."/search.php");
+		?>
+		<div id="searchresultholder" class="noborder selecotron is-albumlist"></div>
 	</div>
+
+	<!-- File Browser -->
 
 	<div id="filelist" class="invisible">
-	<?php
-	print uibits::ui_config_header([
-		'label' => 'button_file_browser',
-		'icon_size' => 'smallicon'
-	]);
-	?>
-	<div id="filecollection" class="noborder selecotron"></div>
+		<?php
+		print uibits::ui_config_header([
+			'label' => 'button_file_browser',
+			'icon_size' => 'smallicon'
+		]);
+		?>
+		<div id="filecollection" class="noborder selecotron"></div>
 	</div>
+
+	<!-- Internet Radio -->
 
 	<div id="radiolist" class="invisible">
-	<?php
-	print uibits::ui_config_header([
-		'label' => 'button_internet_radio',
-		'icon_size' => 'smallicon'
-	]);
-$sp = glob("streamplugins/*.php");
-foreach($sp as $p) {
-	include($p);
-}
-?>
+		<?php
+		print uibits::ui_config_header([
+			'label' => 'button_internet_radio',
+			'icon_size' => 'smallicon'
+		]);
+		$sp = glob("streamplugins/*.php");
+		foreach($sp as $p) {
+			include($p);
+		}
+		?>
 	</div>
 
+	<!-- Podcasts -->
+
 	<div id="podcastslist" class="helpfulholder noselection invisible">
-<?php
-print uibits::ui_config_header([
-	'lefticon' => 'icon-menu clickicon fixed openmenu',
-	'lefticon_name' => 'podcastbuttons',
-	'label' => 'label_podcasts',
-	'icon_size' => 'smallicon'
-]);
-include("includes/podcast_base.php");
-?>
+		<?php
+		print uibits::ui_config_header([
+			'lefticon' => 'icon-menu clickicon fixed openmenu',
+			'lefticon_name' => 'podcastbuttons',
+			'label' => 'label_podcasts',
+			'icon_size' => 'smallicon'
+		]);
+		include("includes/podcast_base.php");
+		?>
 	</div>
 
 </div>
 
+<!-- Info Panel -->
+
 <div id="infopane" class="cmiddle noborder infowiki tleft">
+
+	<!-- Saved Playlists -->
+
 	<div id="playlistslist" class="invisible">
 		<?php
 		print uibits::ui_config_header([
@@ -277,44 +271,16 @@ include("includes/podcast_base.php");
 		?>
 		<div id="storedplaylists" class="helpfulholder noselection containerbox wrap is-albumlist"></div>
 	</div>
+
+	<!-- Smart Radio -->
+
 	<div id="pluginplaylistslist" class="invisible noselection">
-<?php
-	print uibits::ui_config_header([
-		'label' => 'label_pluginplaylists',
-		'icon_size' => 'smallicon'
-	]);
+		<?php
+		uibits::pluginplaylists_base(['class' => 'helpfulholder noselection containerbox wrap']);
+		?>
+	</div>
 
-if (prefs::$prefs['player_backend'] == "mopidy") {
-	print uibits::ui_config_header([
-		'label' => 'label_mfyc'
-	]);
-}
-?>
-<div class="helpfulholder noselection containerbox wrap" id="pluginplaylists"></div>
-
-
-<?php
-if (prefs::$prefs['player_backend'] == "mopidy") {
-	print uibits::ui_config_header([
-		'label' => 'label_mfsp'
-	]);
-}
-?>
-<div class="helpfulholder noselection containerbox wrap" id="pluginplaylists_spotify"></div>
-
-<?php
-if (prefs::$prefs['player_backend'] == "mopidy") {
-	print uibits::ui_config_header([
-		'label' => 'label_mfe'
-	]);
-	print '<div id="radiodomains" class="pref"><b>Play From These Sources:</b></div>';
-}
-?>
-<div class="helpfulholder noselection containerbox wrap" id="pluginplaylists_everywhere"></div>
-
-<div class="clearfix containerbox vertical" id="pluginplaylists_crazy">
-</div>
-</div>
+	<!-- Info Panel Proper -->
 
 	<div id="infoholder" class="collectionpanel invisible">
 	<div id="infopanecontrols">
@@ -325,12 +291,9 @@ if (prefs::$prefs['player_backend'] == "mopidy") {
 ?>
 		</div>
 	</div>
-	<div id="artistchooser" class="infotext noselection invisible"></div>
 <?php
-print '<div id="artistinformation" class="infotext noselection"><h2 class="infobanner soangly" align="center">'.language::gettext('label_emptyinfo').'</h2></div>';
+	uibits::infopane_default_contents();
 ?>
-<div id="albuminformation" class="infotext noselection"></div>
-<div id="trackinformation" class="infotext"></div>
 </div>
 <div id="pluginholder" class="collectionpanel invisible">
 </div>
@@ -338,15 +301,30 @@ print '<div id="artistinformation" class="infotext noselection"><h2 class="infob
 
 </div>
 
-<div id="tagadder" class="dropmenu dropshadow mobmenu">
+<!-- Floating Add tags Popup -->
+
+<div id="tagadder" class="dropmenu dropshadow mobmenu widemenu">
+	<?php
+	print uibits::ui_config_header([
+		'lefticon' => 'icon-tags',
+		'label' => 'lastfm_addtags',
+		'title_class' => 'moveable',
+		'icon_size' => 'smallicon',
+		'righticon' => 'icon-cancel-circled clickicon close-tagadder'
+	])
+	?>
+	<div class="containerbox vertical-centre tagaddbox"></div>
+</div>
+
+<div id="pladddropdown" class="dropmenu dropshadow mobmenu widemenu">
 <?php
 print uibits::ui_config_header([
-	'lefticon' => 'icon-tags',
-	'label' => 'lastfm_addtags',
+	'lefticon' => 'icon-doc-text',
+	'label' => 'button_addtoplaylist',
 	'title_class' => 'moveable',
 	'icon_size' => 'smallicon',
-	'righticon' => 'icon-cancel-circled clickicon close-tagadder'
+	'righticon' => 'icon-cancel-circled clickicon close-pladd'
 ])
 ?>
-	<div class="containerbox vertical-centre tagaddbox"></div>
+	<div id="addtoplaylistmenu" class="clearfix"></div>
 </div>

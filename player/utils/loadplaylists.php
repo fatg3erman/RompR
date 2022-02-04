@@ -58,7 +58,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
 }
 
 function do_playlist_tracks($pl, $icon, $target) {
-	uibits::directoryControlHeader($target, $pl);
+	uibits::directoryControlHeader($target, $pl, 'icon-doc-text');
 	uibits::playlistPlayHeader(rawurlencode($pl), $pl);
 	$player = new player();
 	$c = 0;
@@ -122,7 +122,7 @@ function do_user_playlist_tracks($pl, $icon, $target) {
 	}
 
 	$tracks = internetPlaylist::load_internet_playlist($pl, '', '', true);
-	uibits::directoryControlHeader($target, $pl_name);
+	uibits::directoryControlHeader($target, $pl_name, 'icon-doc-text');
 	uibits::playlistPlayHeader(rawurlencode($pl), $pl_name);
 	foreach ($tracks as $c => $track) {
 		add_playlist(

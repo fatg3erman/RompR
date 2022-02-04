@@ -12,7 +12,7 @@ var tagAdder = function() {
 			}  else {
 				index = idx;
 				var position = getPosition(evt);
-				layoutProcessor.setTagAdderPosition(position);
+				uiHelper.setFloaterPosition($('#tagadder'), position);
 				$("#tagadder").slideDown('fast');
 				lastelement = evt.target;
 			}
@@ -42,6 +42,24 @@ var tagAdder = function() {
 					debug.error("DB TRACKS", "Failed to get tags");
 				}
 			);
+		}
+	}
+}();
+
+var addToPlaylist = function(evt) {
+	return {
+		show: function() {
+			if ($('#pladddropdown').is(':visible')) {
+				$('#pladddropdown').slideUp('fast');
+			} else {
+				var position = getPosition(evt);
+				uiHelper.setFloaterPosition($('#pladddropdown'), position);
+				$("#pladddropdown").slideDown('fast');
+			}
+		},
+
+		close: function() {
+			$('#pladddropdown').slideUp('fast');
 		}
 	}
 }();

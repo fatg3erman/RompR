@@ -448,10 +448,6 @@ var layoutProcessor = function() {
 			}
 		},
 
-		setTagAdderPosition: function(position) {
-
-		},
-
 		setPlaylistHeight: function() {
 			// var newheight = $("#playlistm").height() - $("#playlist_top").outerHeight(true);
 			// if ($("#playlistbuttons").is(":visible")) {
@@ -517,10 +513,6 @@ var layoutProcessor = function() {
 			setTimeout(layoutProcessor.mobile_browser_shitness, 500);
 		},
 
-		showTagButton: function() {
-			return false;
-		},
-
 		displayCollectionInsert: function(details) {
 			infobar.notify(
 				(details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw')
@@ -532,6 +524,10 @@ var layoutProcessor = function() {
 
 		setRadioModeHeader: function(html) {
 			$("#plmode").html(html);
+		},
+
+		setFloaterPosition: function(e, p) {
+
 		},
 
 		makeCollectionDropMenu: function(element, name) {
@@ -562,7 +558,6 @@ var layoutProcessor = function() {
 				command: player.controller.volume
 			});
 			doSwipeCss();
-			$(document).on('click', '.clickaddtoplaylist', addToPlaylist.close);
 		},
 
 		getElementPlaylistOffset: function(element) {
@@ -619,7 +614,11 @@ jQuery.fn.trackDragger = function() {
 var addToPlaylist = function() {
 	return {
 		open: function() {
-			$('#pladddropdown').slideDown('fast');
+			if ($('#pladddropdown').is(':visible')) {
+				$('#pladddropdown').slideUp('fast');
+			} else {
+				$('#pladddropdown').slideDown('fast');
+			}
 		},
 		close: function() {
 			$('#pladddropdown').slideUp('fast');

@@ -81,11 +81,11 @@ class uibits extends ui_elements {
 		}
 	}
 
-	public static function directoryControlHeader($prefix, $name = null) {
-		logger::log('SKIN', 'DCH prefix is',$prefix,'name is',$name);
+	public static function directoryControlHeader($prefix, $name = null, $icon = 'icon-folder-open-empty') {
 		if ($name !== null && !preg_match('/^pholder_/', $prefix)) {
 			print self::ui_config_header([
-				'label_text' => $name
+				'label_text' => $name,
+				'lefticon' => $icon
 			]);
 		}
 	}
@@ -98,7 +98,6 @@ class uibits extends ui_elements {
 		print '<i class="icon-folder-open-empty fixed inline-icon"></i>';
 		print '<div class="expand">'.$att['text'].'</div>';
 		print '</div>';
-		// print '<div id="'.$prefix.'_'.$name.'" class="invisible indent containerbox wrap fullwidth notfilled is-albumlist removeable">';
 		if ($closeit) {
 			print '</div>';
 		}

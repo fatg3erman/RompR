@@ -94,6 +94,7 @@
     --album1-colour: transparent;
     --album2-colour: #252525;
     --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.9);
+    --top-shadow: 0px -7px 5px rgba(0, 0, 0, 0.9);
 
     --bordered-top: 1px solid #000000;
     --bordered-right: 1px solid #232323;

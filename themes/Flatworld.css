@@ -93,6 +93,7 @@
 
     --album2-colour: transparent;
     --drop-shadow: unset;
+    --top-shadow: unset;
 
     --bordered-top: 1px solid #9a9a9a;
     --bordered-right: 1px solid #9a9a9a;

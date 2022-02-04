@@ -93,6 +93,7 @@
 
     --album2-colour: rgba(150,150,150,0.1);
     --drop-shadow: 6px 6px 6px rgba(0, 0, 0, 0.7);
+    --top-shadow: 0px -7px 5px rgba(0, 0, 0, 0.7);
 
     --bordered-top: none;
     --bordered-right: none;

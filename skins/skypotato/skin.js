@@ -533,11 +533,6 @@ var layoutProcessor = function() {
 			}
 		},
 
-		setTagAdderPosition: function(position) {
-			$("#tagadder").css({top: Math.min(position.y+8, $(window).height() - $('#tagadder').height()),
-				left: Math.min($(window).width() - $('#tagadder').width(),  position.x-16)});
-		},
-
 		setPlaylistHeight: function() {
 			// $('#phacker').fanoogleMenus();
 		},
@@ -863,9 +858,6 @@ var layoutProcessor = function() {
 			$('#volume').volumeControl({
 				orientation: 'vertical',
 				command: player.controller.volume
-			});
-			$(document).on('click', '.clickaddtoplaylist', function() {
-				$('#addtoplaylistmenu').parent().parent().parent().hide();
 			});
 			setupCollectionDisplay();
 		},

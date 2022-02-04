@@ -573,6 +573,115 @@ class ui_elements {
 
 	}
 
+	public static function infopane_default_contents() {
+		print '<div id="artistchooser" class="infotext noselection invisible"></div>';
+		print '<div id="artistinformation" class="infotext">';
+		print '<h2 class="infobanner" align="center">'.language::gettext('label_emptyinfo').'</h2>';
+		print '</div>';
+		print '<div id="albuminformation" class="infotext"></div>';
+		print '<div id="trackinformation" class="infotext"></div>';
+	}
+
+	const DEFAULT_PLUGINPLAYLISTS = [
+		'class' => 'fullwidth'
+	];
+
+	public static function pluginplaylists_base($opts) {
+		$opts = array_merge(self::DEFAULT_PLUGINPLAYLISTS, $opts);
+		print self::ui_config_header([
+			'label' => 'label_pluginplaylists',
+			'icon_size' => 'smallicon'
+		]);
+		if (prefs::$prefs['player_backend'] == "mopidy") {
+			print self::ui_config_header([
+				'label' => 'label_mfyc'
+			]);
+		}
+		/* Main Holder */
+		print '<div class="'.$opts['class'].'" id="pluginplaylists"></div>';
+
+		if (prefs::$prefs['player_backend'] == "mopidy") {
+			print uibits::ui_config_header([
+				'label' => 'label_mfsp'
+			]);
+		}
+		/* Music From Spotify */
+		print '<div class="'.$opts['class'].'" id="pluginplaylists_spotify"></div>';
+
+		if (prefs::$prefs['player_backend'] == "mopidy") {
+			print self::ui_config_header([
+				'label' => 'label_mfe'
+			]);
+			print '<div id="radiodomains" class="pref"><b>Play From These Sources:</b></div>';
+		}
+		/* Music From Everywhere */
+		print '<div class="'.$opts['class'].'" id="pluginplaylists_everywhere"></div>';
+		/* Slidery stuff (to be moved) */
+		print '<div class="clearfix containerbox vertical" id="pluginplaylists_crazy"></div>';
+
+	}
+
+	public static function main_play_buttons() {
+		print '<i title="'.language::gettext('button_previous').
+			'" class="fixed prev-button icon-fast-backward clickicon controlbutton-small tooltip"></i>';
+		print '<i title="'.language::gettext('button_play').
+			'" class="fixed play-button icon-play-circled shiftleft clickicon controlbutton tooltip"></i>';
+		print '<i title="'.language::gettext('button_stop').
+			'" class="fixed stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small tooltip"></i>';
+		print '<i title="'.language::gettext('button_stopafter').
+			'" class="fixed stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small tooltip"></i>';
+		print '<i title="'.language::gettext('button_next').
+			'" class="fixed next-button icon-fast-forward shiftleft4 clickicon controlbutton-small tooltip"></i>';
+	}
+
+	public static function collection_options_box() {
+		print '<div id="collectionbuttons" class="invisible toggledown is-coverable">';
+
+		self::ui_select_box([
+			'id' => 'sortcollectionby',
+			'options' => array_map('ucfirst', array_map('language::gettext', COLLECTION_SORT_MODES))
+		]);
+
+		self::ui_select_box([
+			'id' => 'collectionrange',
+			'options' => [
+				ADDED_ALL_TIME => language::gettext('label_all_time'),
+				ADDED_TODAY => language::gettext('label_today'),
+				ADDED_THIS_WEEK => language::gettext('label_thisweek'),
+				ADDED_THIS_MONTH => language::gettext('label_thismonth'),
+				ADDED_THIS_YEAR => language::gettext('label_thisyear')
+			]
+		]);
+
+		self::ui_checkbox(['id' => 'sortbydate', 'label' => 'config_sortbydate']);
+		self::ui_checkbox(['id' => 'notvabydate', 'label' => 'config_notvabydate']);
+		self::ui_config_button(['label' => 'config_updatenow', 'name' => 'donkeykong']);
+
+		print'</div>';
+	}
+
+	public static function ui_nowplaying_icons() {
+		print '<div id="stars" class="invisible topstats">';
+		print '<i id="ratingimage" class="icon-0-stars rating-icon-big"></i>';
+		print '<input type="hidden" value="-1" />';
+		print '</div>';
+		print '<div id="subscribe" class="invisible topstats">';
+		print '<i title="'.language::gettext('button_subscribe').'" class="icon-rss npicon clickicon tooltip"></i>';
+		print '<input type="hidden" id="nppodiput" value="" />';
+		print '</div>';
+		print '<div id="addtoplaylist" class="invisible topstats">';
+		print '<i title="'.language::gettext('button_addtoplaylist').'" class="icon-doc-text npicon clickicon tooltip"></i>';
+		print '</div>';
+		print '<div id="lastfm" class="invisible topstats">';
+		print '<i title="'.language::gettext('button_love').'" class="icon-heart npicon clickicon tooltip spinable" id="love"></i>';
+		print '</div>';
+		print '<div id="ptagadd" class="invisible topstats">';
+		print '<i class="icon-tags npicon clickicon"></i>';
+		print '</div>';
+		print '<div id="dbtags" class="invisible topstats">'."\n";
+		print '</div>';
+	}
+
 }
 
 ?>

@@ -184,7 +184,6 @@ function playerController() {
 				clickedElement: $('.choosepanel[name="playlistslist"]'),
 				uri: "player/utils/loadplaylists.php"
 			});
-			$('b:contains("'+language.gettext('button_loadplaylist')+'")').parent('.configtitle').append('<a href="https://fatg3erman.github.io/RompR/Using-Saved-Playlists" target="_blank"><i class="icon-info-circled smallicon tright"></i></a>');
 			for (var i in openplaylists) {
 				$('i.menu.openmenu.playlist.icon-toggle-closed[name="'+openplaylists[i]+'"]').click();
 			}

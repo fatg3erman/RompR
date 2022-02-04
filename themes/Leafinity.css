@@ -94,6 +94,7 @@
 
     --album2-colour: var(--document-bg-colour);
     --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.4);
+    --top-shadow: 0px -7px 5px rgba(0, 0, 0, 0.4);
 
     --bordered-top: none;
     --bordered-right: none;

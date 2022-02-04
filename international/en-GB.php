@@ -733,7 +733,8 @@ language::add_translations([
 	"label_mfyc" =>							'Music From Your Collection',
 	"label_mfsp" =>							'Music From Spotify',
 	"label_mfe" =>							'Music From Everywhere',
-	"label_playqueue" =>					'Play Queue'
+	"label_playqueue" =>					'Play Queue',
+	"label_numplays" =>						'%s Plays'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

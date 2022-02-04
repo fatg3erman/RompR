@@ -466,14 +466,6 @@ var uiHelper = function() {
 			}
 		},
 
-		showTagButton: function() {
-			try {
-				return layoutProcessor.showTagButton();
-			} catch (err) {
-				return true;
-			}
-		},
-
 		makeSortablePlaylist: function(id) {
 			try {
 				return layoutProcessor.makeSortablePlaylist(id);
@@ -606,6 +598,18 @@ var uiHelper = function() {
 			try {
 				return layoutProcessor.doCollectionStripyStuff();
 			} catch (err) {
+
+			}
+		},
+
+		setFloaterPosition: function(element, position) {
+			try {
+				return layoutProcessor.setFloaterPosition(element, position);
+			} catch (err) {
+				element.css({
+					top: Math.min(position.y+8, $(window).height() - element.height()),
+					left: Math.min($(window).width() - element.width(),  position.x-16)
+				});
 
 			}
 		}

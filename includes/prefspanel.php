@@ -253,8 +253,7 @@ print uibits::ui_config_header([
 	'label' => 'settings_interface'
 ]);
 uibits::ui_checkbox(['id' => 'scrolltocurrent', 'label' => 'config_autoscroll']);
-if ($use_plugins)
-	uibits::ui_checkbox(['id' => 'auto_discovembobulate', 'label' => 'config_discovembobulate']);
+uibits::ui_checkbox(['id' => 'auto_discovembobulate', 'label' => 'config_discovembobulate']);
 
 uibits::ui_checkbox(['id' => 'displaycomposer', 'label' => 'config_displaycomposer']);
 uibits::ui_checkbox(['id' => 'use_albumart_in_playlist', 'label' => 'config_albumartinplaylist']);

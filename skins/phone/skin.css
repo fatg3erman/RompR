@@ -117,7 +117,6 @@ button.spinable.icon-spin6 {
 	height:2em;
 }
 
-
 /*
 =====================================================================
 =
@@ -141,6 +140,8 @@ button.spinable.icon-spin6 {
 
 #nowplaying_icons {
 	order:  1;
+	overflow:hidden;
+	margin-top: 2px;
 }
 
 #nowplaying-text-buttons {
@@ -168,10 +169,6 @@ button.spinable.icon-spin6 {
 	padding-top:2px !important;
 	padding-bottom:0px !important;
 	text-align:center;
-}
-
-#nowplaying_icons {
-	overflow:hidden;
 }
 
 /*#nowplaying {
@@ -202,14 +199,14 @@ button.spinable.icon-spin6 {
 	height:34px;
 }
 
-#dbtags {
+#dbtags, #playcount {
 	clear: both;
-	margin-top:4px;
+	/*margin-top:4px;*/
 	padding-top:0px;
 	overflow:hidden;
 	opacity:0.9;
 	font-size:8pt;
-	line-height:12pt;
+	/*line-height:12pt;*/
 }
 
 #stars {
@@ -345,7 +342,6 @@ div.albumbitsmenu {
 	/*This is needed or iOS Safari won't register the clicks!*/
 	cursor:pointer;
 }
-
 
 .dropmenu>.configtitle
 {
@@ -741,18 +737,6 @@ div.playable.clicktrack {
 	}
 }
 
-.mobmenu
-{
-	position:absolute;
-	top:4px;
-	left:4px;
-	width:95%;
-	max-height:95%;
-	box-sizing:border-box;
-	padding:8px;
-	overflow-y:scroll !important;
-}
-
 .backmenu
 {
     background-color: var(--highlight-bg-colour);
@@ -904,7 +888,7 @@ span.timer-time {
 		height: 100%;
 	}
 
-	#dbtags {
+	#dbtags, #playcount {
 		float: none;
 		width: 100%;
 		text-align: center;
@@ -923,15 +907,9 @@ span.timer-time {
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
-		margin-bottom: 4px;
+		/*margin-bottom: 4px;*/
 		float: right;
 		display: inline-block;
-	}
-
-	#dbtags .playspan {
-		margin-right: auto;
-		margin-left: auto;
-		display: table;
 	}
 
 }
@@ -1036,7 +1014,7 @@ span.timer-time {
 		float: right;
 	}
 
-	#dbtags {
+	#dbtags, #playcount {
 		text-align: center;
 	}
 
@@ -1134,7 +1112,7 @@ span.timer-time {
 		float: right;
 	}
 
-	#dbtags {
+	#dbtags, #playcount {
 		text-align: right;
 	}
 
@@ -1182,16 +1160,21 @@ span.timer-time {
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #subscribe, #stars {
-		margin-bottom: 8px;
+		/*margin-bottom: 8px;*/
 	}
 
 	#stars {
 		float: right;
 	}
 
-	#dbtags {
+	#dbtags, #playcount {
 		text-align: center;
 	}
+
+	#progress {
+		height:  6px;
+	}
+
 }
 
 /* This is the same as the above, it's here for when width > 640 but height < 320 */
@@ -1232,16 +1215,21 @@ span.timer-time {
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #subscribe, #stars {
-		margin-bottom: 8px;
+		/*margin-bottom: 8px;*/
 	}
 
 	#stars {
 		float: right;
 	}
 
-	#dbtags {
+	#dbtags, #playcount {
 		text-align: center;
 	}
+
+	#progress {
+		height:  6px;
+	}
+
 }
 
 /*
@@ -1284,7 +1272,7 @@ span.timer-time {
 		height: 100%;
 	}
 
-	#dbtags {
+	#dbtags, #playcount {
 		float: none;
 		width: 100%;
 		text-align: center;
@@ -1303,15 +1291,13 @@ span.timer-time {
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
-		margin-bottom: 4px;
+		/*margin-bottom: 4px;*/
 		float: right;
 		display: inline-block;
 	}
 
-	#dbtags .playspan {
-		margin-right: auto;
-		margin-left: auto;
-		display: table;
+	#progress {
+		height:  6px;
 	}
 
 	:root {
@@ -1375,7 +1361,7 @@ span.timer-time {
 		border: 4px solid transparent;
 	}
 
-	#dbtags {
+	#dbtags, #playcount {
 		float: none;
 		width: 100%;
 		text-align: center;
@@ -1396,15 +1382,9 @@ span.timer-time {
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
-		margin-bottom: 4px;
+		/*margin-bottom: 4px;*/
 		float: none;
 		display: inline-block;
-	}
-
-	#dbtags .playspan {
-		margin-right: auto;
-		margin-left: auto;
-		display: table;
 	}
 
 	:root {
