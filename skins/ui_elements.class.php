@@ -665,10 +665,6 @@ class ui_elements {
 		print '<i id="ratingimage" class="icon-0-stars rating-icon-big"></i>';
 		print '<input type="hidden" value="-1" />';
 		print '</div>';
-		print '<div id="subscribe" class="invisible topstats">';
-		print '<i title="'.language::gettext('button_subscribe').'" class="icon-rss npicon clickicon tooltip"></i>';
-		print '<input type="hidden" id="nppodiput" value="" />';
-		print '</div>';
 		print '<div id="addtoplaylist" class="invisible topstats">';
 		print '<i title="'.language::gettext('button_addtoplaylist').'" class="icon-doc-text npicon clickicon tooltip"></i>';
 		print '</div>';

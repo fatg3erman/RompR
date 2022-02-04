@@ -191,7 +191,7 @@ button.spinable.icon-spin6 {
 	margin-left: auto;
 }
 
-#lastfm, #addtoplaylist, #ptagadd, #subscribe {
+#lastfm, #addtoplaylist, #ptagadd {
 	float:right;
 	margin-left:6px;
 	margin-right:6px;
@@ -906,7 +906,7 @@ span.timer-time {
 		text-align: center;
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
+	#lastfm, #addtoplaylist, #ptagadd {
 		/*margin-bottom: 4px;*/
 		float: right;
 		display: inline-block;
@@ -1029,7 +1029,7 @@ span.timer-time {
         padding: 0px;
     }
 
-	#lastfm, #addtoplaylist, #ptagadd, #subscribe, #stars {
+	#lastfm, #addtoplaylist, #ptagadd, #stars {
 		height: 24px;
 		line-height: 24px;
 		margin-left: 4px;
@@ -1159,7 +1159,7 @@ span.timer-time {
 		object-fit: scale-down;
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #subscribe, #stars {
+	#lastfm, #addtoplaylist, #ptagadd, #stars {
 		/*margin-bottom: 8px;*/
 	}
 
@@ -1214,7 +1214,7 @@ span.timer-time {
 		object-fit: scale-down;
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #subscribe, #stars {
+	#lastfm, #addtoplaylist, #ptagadd, #stars {
 		/*margin-bottom: 8px;*/
 	}
 
@@ -1290,7 +1290,7 @@ span.timer-time {
 		text-align: center;
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
+	#lastfm, #addtoplaylist, #ptagadd {
 		/*margin-bottom: 4px;*/
 		float: right;
 		display: inline-block;
@@ -1381,7 +1381,7 @@ span.timer-time {
 		text-align: center;
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
+	#lastfm, #addtoplaylist, #ptagadd {
 		/*margin-bottom: 4px;*/
 		float: none;
 		display: inline-block;

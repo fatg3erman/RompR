@@ -113,7 +113,7 @@ var player = function() {
 				helplink: "https://fatg3erman.github.io/RompR/Using-Multiple-Players"});
 			var mywin = playerpu.create();
 			numhosts = 0;
-			mywin.append('<table align="center" cellpadding="2" id="playertable" width="96%"></table>');
+			mywin.append('<table align="center" cellpadding="2" id="playertable" width="100%"></table>');
 			$("#playertable").append('<tr><th>NAME</th><th>HOST</th><th>PORT</th><th>PASSWORD</th><th>UNIX SOCKET</th><th>REMOTE</th></tr>');
 			for (var i in prefs.multihosts) {
 				$("#playertable").append('<tr class="hostdef" name="'+escape(i)+'">'+

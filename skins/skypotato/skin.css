@@ -128,6 +128,7 @@ input[type=text],input[type="number"] {
 	overflow:auto;
 	position:relative;
 	display:block;
+	padding-left: 4px;
 }
 
 #dbtags {
@@ -147,17 +148,6 @@ input[type=text],input[type="number"] {
 	margin-right: 8px;
 }
 
-/*#lastfm {
-	float:left;
-	margin-left:4px;
-	padding-top:1px;
-}
-
-#lastfm img {
-	margin-right:2px;
-	margin-left:2px;
-}
-*/
 #headerbar {
 	padding:0px;
 	margin:0px;

@@ -113,10 +113,6 @@ Double-click the Resume bar to add the podcast to the Play Queue and start playb
 
 If the episode is already in the playlist, the episode will not be added again, instead the exisiting item in the playlist will be played from the resume position.
 
-## Using Mopidy-Podcasts
-
-Users of the mopidy-podcasts backend will know that it has its own search engines, these are accessed using the main RompЯ search panel. If you're playing a podcast episode via that backend, an RSS icon will appear in the now playing area. Clicking that icon will add that podcast to your list of subscribed podcasts.
-
 ## Browsing Podcasts
 
 You can also browse for Podcast episodes using the [TuneIn Radio Directory](/RompR/Internet-Radio), though you will not be able to subscribe to podcasts you play this way.

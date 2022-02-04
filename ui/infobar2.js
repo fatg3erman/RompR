@@ -511,15 +511,6 @@ var infobar = function() {
 				$("#playcount").addClass('invisible');
 				showLove(false);
 			}
-			if (info.file != "") {
-				var f = info.file.match(/^podcast[\:|\+](http.*?)\#/);
-				if (f && f[1]) {
-					$("#nppodiput").val(f[1]);
-					$("#subscribe").removeClass('invisible');
-				} else {
-					$("#subscribe").addClass('invisible');
-				}
-			}
 			if (info.type != 'stream') {
 				$("#addtoplaylist").removeClass('invisible');
 			} else {
@@ -529,7 +520,6 @@ var infobar = function() {
 				$("#stars").addClass('invisible');
 				$("#dbtags").addClass('invisible');
 				$("#playcount").addClass('invisible');
-				$("#subscribe").addClass('invisible');
 				$("#addtoplaylist").addClass('invisible');
 				$("#ptagadd").addClass('invisible');
 				showLove(false);

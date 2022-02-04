@@ -1493,6 +1493,7 @@ function popup(opts) {
 		toggleable: false,
 		hasclosebutton: true,
 		fitheight: false,
+		hasscrollbar: false,
 		closecallbacks: {}
 	}
 
@@ -1537,7 +1538,6 @@ function popup(opts) {
 		self.adjustCSS(true, true);
 		self.setCSS();
 		win.css({opacity: 1});
-		contentholder.addCustomScrollBar();
 	}
 
 	this.close = function(event) {
@@ -1586,6 +1586,10 @@ function popup(opts) {
 				options.css.top =  Math.max(0, (w.y/2 - options.css.height/2));
 			}
 			options.css.height = Math.min(options.css.height, (w.y - options.css.top));
+		}
+		if (!options.hasscrollbar && (options.css.height - titlebar.outerHeight(true)) < contents.outerHeight(true)) {
+			contentholder.addCustomScrollBar();
+			options.hasscrollbar = true;
 		}
 	}
 
