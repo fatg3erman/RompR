@@ -485,7 +485,7 @@ var alarmclock = function() {
 				return false;
 			}
 			var holder = uiHelper.makeDropHolder('alarmpanel', d, true);
-			holder.append('<div class="configtitle"><div class="textcentre expand"><b>'+language.gettext('button_alarm')+'</b></div></div>');
+			holder.append(uiHelper.ui_config_header({label: 'button_alarm', icon_size: 'smallicon'}));
 			topofwindow = $('<input>', {type: "hidden", class: "helplink", value: "https://fatg3erman.github.io/RompR/Alarm-And-Sleep"}).appendTo(holder);
 			fillWindow();
 			createNewAlarmBox(holder);

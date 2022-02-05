@@ -2170,9 +2170,19 @@ div.plugin_backi_drop-images {
 =====================================================================
 */
 
+.modal-blackout {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0,0,0,0.5);
+	z-index: 20000;
+}
+
 .popupwindow {
 	position:absolute;
-	display:none;
+	display:block;
 	z-index:20001;
 	overflow-y: hidden;
 	overflow-x: hidden;
@@ -2197,11 +2207,9 @@ div.plugin_backi_drop-images {
 }
 
 .popupcontents {
-	padding:8px;
-}
-
-.popup_handle {
-	width:100%;
+	padding-left: 2px;
+	padding-right: 2px;
+	padding-top: 2px;
 }
 
 /*

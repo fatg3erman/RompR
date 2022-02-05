@@ -226,19 +226,20 @@ var prefs = function() {
 	function offerToTransferPlaylist() {
 		var fnarkle = new popup({
 			css: {
-				width: 300,
-				height: 200
+				width: 360,
+				height: 800
 			},
 			title: language.gettext('label_transferplaylist'),
-			hasclosebutton: false
+			hasclosebutton: false,
+			fitheight: true,
+			button_min_width: '4em',
+			modal: true
 		});
 		var mywin = fnarkle.create();
-		var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
-		var yes = $('<button>', {class: 'expand'}).appendTo(d);
-		var space = $('<div>', {class: 'fixed', style: 'width:3em'}).appendTo(d);
-		var no = $('<button>', {class: 'expand'}).appendTo(d);
-		yes.html(language.gettext('label_yes'));
-		no.html(language.gettext('label_no'));
+
+		var yes = fnarkle.add_button('left', 'label_yes');
+		var no = fnarkle.add_button('right', 'label_no');
+
 		fnarkle.useAsCloseButton(yes, transferPlaylist);
 		fnarkle.useAsCloseButton(no, dontTransferPlaylist);
 		fnarkle.open();

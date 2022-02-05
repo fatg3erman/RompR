@@ -764,19 +764,15 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 		this._mouseInit();
 		if (this.options.addClassTo) {
 			var act = this.element.find('.'+this.options.addClassTo).first();
-			act.addClass(this.options.handleClass).find('.right-icon').addClass('icon-cancel-circled clickicon closemenu');
-
-			// act.find('.right-icon').addClass('icon-cancel-circled clickicon closemenu');
-
-			// this.element.find('.'+this.options.addClassTo).first().addClass(this.options.handleClass)
-			// 	.append('<i class="icon-cancel-circled smallicon tright clickicon closemenu"></i>');
-
+			var close = act.find('.right-icon').addClass('icon-cancel-circled clickicon closemenu');
+			act.addClass(this.options.handleClass);
 			var hl = this.element.find('input.helplink');
 			if (hl.length > 0) {
-				act.append('<a href="'+hl.first().val()+'" target="_blank"><i class="icon-info-circled smallicon tright"></i></a>');
+				act.prepend('<i class="icon-blank smallicon"></i>');
+				$('<a href="'+hl.first().val()+'" target="_blank"><i class="icon-info-circled smallicon tright"></i></a>').insertBefore(close);
 			}
-
 		}
+
 		if (self.options.handleshow) {
 			this._parent = this.element.parent();
 			this.element.find('.closemenu').on('click', $.proxy(self.toggleMenu, self));
@@ -787,31 +783,7 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 				}
 			});
 		}
-
-		// Pretty sure we don't need this now. It was monitoring the contents to see if they
-		// changed size and then resizing the container, but now we just use css max-height
-		// so there isn't a fixed height on the container
-		// if (self.element.find('.mCSB_container').length > 0) {
-		// 	if (typeof(ResizeObserver) == 'function') {
-		// 		let resizeObserver = new ResizeObserver(function(entries, myself) {
-		// 			clearTimeout(self.resizetimer);
-		// 			self.resizetimer = setTimeout($.proxy(self.resizeme, self), 10);
-		// 		});
-		// 		resizeObserver.observe(self.element.find('.mCSB_container').get()[0]);
-		// 	} else {
-		// 		// Safari, Edge, Firefox for Android. Also IE but who gives a fuck?
-		// 		self.resizetimer = setTimeout($.proxy(self.resizeme, self), 1000);
-		// 	}
-		// }
 	},
-
-	// resizeme: function() {
-	// 	var self = this;
-	// 	self.element.fanoogleMenus();
-	// 	if (typeof(ResizeObserver) != 'function') {
-	// 		self.resizetimer = setTimeout($.proxy(self.resizeme, self), 1000);
-	// 	}
-	// },
 
 	_mouseCapture: function(event) {
 		// Seemingly this is crucial to stop the event bubbling up the tree
@@ -1478,6 +1450,7 @@ function popup(opts) {
 	var titlebar;
 	var contents;
 	var contentholder;
+	var modal_screen = null;
 
 	var options = {
 		css: {
@@ -1494,7 +1467,10 @@ function popup(opts) {
 		hasclosebutton: true,
 		fitheight: false,
 		hasscrollbar: false,
-		closecallbacks: {}
+		closecallbacks: {},
+		buttons: null,
+		button_min_width: '1em',
+		modal: false
 	}
 
 	for (var i in opts) {
@@ -1514,27 +1490,37 @@ function popup(opts) {
 				return false;
 			}
 		}
+
+		if (options.modal)
+			modal_screen = $('<div>', {class: 'modal-blackout'}).appendTo($('body'));
+
 		win = $('<div>', { id: winid, class: "popupwindow dropshadow noselection" }).appendTo($('body'));
 		var container = $('<div>', {class: 'containerbox vertical popupcontentcontainer'}).appendTo(win);
-		titlebar = $('<div>', { class: "popup_handle dragmenu fixed" }).appendTo(container);
-		var ct = $('<div>', {class: "configtitle"}).appendTo(titlebar);
-		var tit = $('<div>', { class: "expand textcentre"}).appendTo(ct)
-		tit.html('<b>'+options.title+'</b>');
-		if (options.hasclosebutton) {
-			tit.append('<i class="icon-cancel-circled smallicon clickicon tright"></i>');
+		var tit_options = {
+			title_class: 'dragmenu',
+			label_text: options.title,
+			icon_size: 'smallicon'
 		}
-		if (options.helplink) {
-			tit.append('<a href="'+options.helplink+'" target="_blank"><i class="icon-info-circled smallicon clickicon tright"></i></a>');
-		}
+
+		container.append(uiHelper.ui_config_header(tit_options));
+		titlebar = container.children('.configtitle');
+		if (options.helplink)
+			container.append($('<input>', {class: 'helplink', value: options.helplink, type: 'hidden'}));
 		contentholder = $('<div>', {class: 'popupcontentholder expand'}).appendTo(container);
 		contents = $('<div>',{class: 'popupcontents clearfix'}).appendTo(contentholder);
-		titlebar.find('.icon-cancel-circled').on('click',  function() {self.close(false)});
-		win.floatingMenu({handleshow: false, handleclass: 'popup_handle', movecallback: self.moved });
+
+		win.floatingMenu({
+			handleshow: false,
+			handleclass: 'configtitle',
+			movecallback: self.moved,
+			addClassTo: (options.hasclosebutton) ? 'configtitle' : false
+		});
+		titlebar.find('.closemenu').on('click',  function() {self.close(false)});
 		return contents;
 	}
 
 	this.open = function() {
-		win.css({display: 'block'});
+		win.css({opacity: 1});
 		self.adjustCSS(true, true);
 		self.setCSS();
 		win.css({opacity: 1});
@@ -1547,9 +1533,11 @@ function popup(opts) {
 		if (options.closecallbacks.hasOwnProperty(button) && options.closecallbacks[button] !== false) {
 			result = options.closecallbacks[button]();
 		}
-		if (result !== false) {
+		if (result !== false)
 			win.remove();
-		}
+
+		if (modal_screen != null)
+			modal_screen.remove();
 	}
 
 	this.moved = function(pos) {
@@ -1615,6 +1603,13 @@ function popup(opts) {
 	this.setWindowToContentsSize = function() {
 		self.adjustCSS(false, false);
 		self.setCSS();
+	}
+
+	this.add_button = function(side, label) {
+		if (options.buttons == null)
+			options.buttons = $('<div>', {class: 'clearfix'}).appendTo(contents);
+
+		return $('<button>', {class: 't'+side, style: 'min-width: '+options.button_min_width}).html(language.gettext(label)).appendTo(options.buttons);
 	}
 
 }

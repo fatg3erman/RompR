@@ -129,18 +129,17 @@ var player = function() {
 				$('#mopidy_remote_'+numhosts).prop('checked', prefs.multihosts[i]['mopidy_remote']);
 				numhosts++;
 			}
-			var buttons = $('<div>',{class: "pref clearfix"}).appendTo(mywin);
-			var add = $('<i>',{class: "icon-plus smallicon clickicon tleft"}).appendTo(buttons);
+
+			var add = playerpu.add_button('left', 'button_add');
 			add.on('click', function() {
 				addNewPlayerRow();
 				playerpu.setWindowToContentsSize();
 			});
-			var c = $('<button>',{class: "tright"}).appendTo(buttons);
-			c.html(language.gettext('button_cancel'));
+
+			var c = playerpu.add_button('right', 'button_cancel');
 			playerpu.useAsCloseButton(c, false);
 
-			var d = $('<button>',{class: "tright"}).appendTo(buttons);
-			d.html(language.gettext('button_OK'));
+			var d = playerpu.add_button('right', 'button_OK');
 			playerpu.useAsCloseButton(d, updatePlayerChoices);
 
 			$('.clickremhost').off('click');

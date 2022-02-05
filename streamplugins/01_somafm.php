@@ -16,8 +16,8 @@ class somafmplugin {
 			'class' => 'radio somafmroot',
 		));
 		print '<div id="somafmlist" class="dropmenu notfilled is-albumlist">';
-		print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
-		// print '</div>';
+		print uibits::ui_config_header(['label' => 'label_loading']);
+		print '</div>';
 	}
 
 	public function doStationList() {

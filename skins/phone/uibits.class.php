@@ -94,7 +94,6 @@ class uibits extends ui_elements {
 		print '<i class="icon-folder-open-empty fixed collectionitem"></i>';
 		print '<div class="expand">'.$att['text'].'</div>';
 		print '</div>';
-		// print '<div id="'.$prefix.'_'.$name.'" class="dropmenu notfilled is-albumlist removeable">';
 		if ($closeit) {
 			print '</div>';
 		}

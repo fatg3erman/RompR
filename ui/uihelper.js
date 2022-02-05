@@ -612,6 +612,65 @@ var uiHelper = function() {
 				});
 
 			}
+		},
+
+		ui_config_header: function(options) {
+			var opts = $.extend({
+				lefticon: null,
+				lefticon_name: null,
+				righticon: null,
+				label: null,
+				main_icon: null,
+				class: '',
+				icon_size: 'medicon',
+				label_text: null,
+				title_class: null,
+				id: null
+			}, options);
+
+			var html = '<div class="configtitle';
+			if (opts.title_class)
+				html += ' '+opts.title_class;
+
+			html += '"';
+			if (opts.id)
+				html += ' id="'+opts.id+'"';
+
+			html += '>';
+			html += '<i class="'+opts.icon_size;
+			if (opts.lefticon)
+				html += ' '+opts.lefticon;
+
+			html += '"';
+			if (opts.lefticon_name)
+				html += ' name="'+opts.lefticon_name+'"';
+
+			html += '></i>';
+			if (opts.label) {
+				html += '<div class="textcentre expand';
+				if (opts.class != '')
+					html += ' '.opts.class;
+
+				html += '"><b>'+language.gettext(opts.label)+'</b></div>';
+			} else if (opts.main_icon) {
+				html += '<i class="expand alignmid '+opts.main_icon+'"></i>';
+			} else if (opts.label_text) {
+				html += '<div class="textcentre expand';
+				if (opts.class != '')
+					html += ' '+opts.class;
+
+				html += '"><b>'+opts.label_text+'</b></div>';
+			}
+
+			html += '<i class="right-icon '+opts.icon_size;
+			if (opts.righticon)
+				html += ' '+opts.righticon;
+
+			html += '"></i>';
+
+			html += '</div>';
+			return html;
+
 		}
 	}
 }();

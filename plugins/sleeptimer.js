@@ -109,9 +109,8 @@ var sleepTimer = function() {
 				return false;
 			}
 			var holder = uiHelper.makeDropHolder('sleeppanel', d, false);
-			// var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen', id: 'sleeppanel'}).appendTo(d);
-			var html = '<div class="vertical-centre configtitle"><div class="textcentre expand"><b>'+language.gettext('button_sleep')+'</b></div></div>'+
-				'<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep#sleep-timer" />'+
+			var html = uiHelper.ui_config_header({label: 'button_sleep', icon_size: 'smallicon'});
+			html += '<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep#sleep-timer" />'+
 				'<div class="noselection">'+
 				'<table align="center"><tr>'+
 				'<td align="center"><i class="icon-increase smallicon clickicon" onmousedown="sleepTimer.startInc(1)" onmouseup="sleepTimer.stopInc()" onmouseout="sleepTimer.stopInc()"></i></td>'+
