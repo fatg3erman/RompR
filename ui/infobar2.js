@@ -654,6 +654,12 @@ var infobar = function() {
 				startmax: 0,
 				animate: false
 			});
+			$('#playlist-progress').rangechooser({
+				ends: [],
+				startmax: 0,
+				animate: false,
+				interactive: false
+			});
 		},
 
 		setProgress: function(progress, duration) {
@@ -682,6 +688,7 @@ var infobar = function() {
 				remainString: '-'+formatTimeString(remain)
 			});
 			nowplaying.progressUpdate(percent);
+			playlist.doTimeLeft();
 		},
 
 		addToPlaylist: function(event) {

@@ -22,6 +22,10 @@ var playlist = function() {
 	var popmoveelement = null;
 	var popmovetimeout = 2000;
 
+	var timeleft = 0;
+	var remainingtime = null;
+	var totaltime = 0;
+
 	// Minimal set of information - just what infobar requires to make sure
 	// it blanks everything out
 	// Pos is for radioManager
@@ -342,7 +346,7 @@ var playlist = function() {
 			finaltrack = -1;
 			currentalbum = -1;
 			var new_tracklist = [];
-			var totaltime = 0;
+			totaltime = 0;
 
 			for (let track of list) {
 				track.Time = parseFloat(track.Time);
@@ -461,7 +465,34 @@ var playlist = function() {
 					i++;
 				}
 			}
+			timeleft = 0;
+			remainingtime = null;
+			upcoming.forEach(function(track) {
+				timeleft += track.Time;
+			});
+			$('#playlist-progress').rangechooser('setOptions', {range: totaltime});
 			uiHelper.playlistupdate(upcoming);
+			playlist.doTimeLeft();
+		},
+
+		doTimeLeft: function() {
+			var remain = 0;
+			if (playlist.getCurrent('Time') > 0) {
+				remain = timeleft + (playlist.getCurrent('Time') - parseFloat(player.status.progress));
+				if ($('#playlist-progress-holder').hasClass('invisible')) {
+					$('#playlist-progress-holder').removeClass('invisible');
+				}
+			} else {
+				if (!$('#playlist-progress-holder').hasClass('invisible')) {
+					$('#playlist-progress-holder').addClass('invisible');
+				}
+				return;
+			}
+			if (remain != remainingtime) {
+				remainingtime = remain;
+				$('#playlist-progress').rangechooser('setRange', {min: 0, max: (totaltime - remainingtime)});
+				$('#playlist-time-remaining').html(formatTimeString(remainingtime));
+			}
 		},
 
 		clear: function() {

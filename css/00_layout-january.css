@@ -977,6 +977,24 @@ div.podtitle>div.fixed {
 	height:100%;
 }
 
+#playlist-progress-holder {
+	width: 95%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 2px;
+	margin-bottom: 4px;
+}
+
+#playlist-progress {
+	font-size: 5px;
+}
+
+#playlist-time-remaining {
+	min-width: 5em;
+	font-size: 85%;
+	text-align: right;
+}
+
 /* Bar at top of playlist showing number of tracks and total time etc */
 
 #playlist_top

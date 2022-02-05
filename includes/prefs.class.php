@@ -192,7 +192,9 @@ class prefs {
 	const PREFS_WITHOUT_DEFAULTS = [
 		'interface_language' => null,
 		'collection_type' => null,
-		'mopidy_http_port' => null
+		'mopidy_http_port' => null,
+		'spotify_token' => null,
+		'spotify_token_expires' => null
 	];
 
 	public static function load() {

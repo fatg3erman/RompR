@@ -63,7 +63,7 @@ function formatTimeString(duration) {
 			return parseInt(mins.toString()) + ":" + zeroPad(parseInt(secs.toString()),2);
 		}
 	} else {
-		return "";
+		return "&nbsp;";
 	}
 }
 

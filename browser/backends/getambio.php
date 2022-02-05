@@ -22,6 +22,7 @@ function get_bio_link($url) {
 		'url' => $url,
 		'cache' => 'allmusic'
 	));
+	logger::log('AMBIO', 'Looking for bio link from', $url);
 	if ($d->get_data_to_file()) {
 		$DOM = new DOMDocument;
 		@$DOM->loadHTML($d->get_data());
@@ -31,7 +32,7 @@ function get_bio_link($url) {
 			$links = $e->GetElementsByTagName('a');
 			for ($i = 0; $i < $links->length; $i++) {
 				$link = $links->item($i)->getAttribute('href');
-				logger::trace("AMBIO", "Found Bio Link",$link);
+				logger::log("AMBIO", "Found Bio Link",$link);
 			}
 			return 'http://www.allmusic.com'.$link;
 		} else {
@@ -52,13 +53,10 @@ function get_allmusic_page($url) {
 	if ($d->get_data_to_file()) {
 		$DOM = new DOMDocument;
 		@$DOM->loadHTML($d->get_data());
-		$els = getElementsByClass($DOM, 'div', 'text');
+		$els = getElementsByClass($DOM, 'section', 'biography');
 		foreach ($els as $el) {
-			$a = $el->getAttribute('itemprop');
-			if ($a == 'reviewBody') {
-				logger::log("AMBIO", "Found Review Body");
-				$r = $el->nodeValue;
-			}
+			logger::log("AMBIO", "Found Review Body");
+			$r = $el->nodeValue;
 		}
 		$r = '<p>'.$r.'</p><p>Biography courtesy of AllMusic</p>';
 	}

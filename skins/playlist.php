@@ -17,6 +17,12 @@ print '<i title="'.language::gettext('button_clearplaylist').'" class="icon-tras
 </tr>
 <tr><td colspan="4" align="center"><div id="plmode"></div></td></tr>
 </table>
+
+<div id="playlist-progress-holder" class="containerbox vertical-centre">
+<div id="playlist-progress" class="expand"></div>
+<div id="playlist-time-remaining" class="fixed"></div>
+</div>
+
 </div>
 <div id="playlistbuttons" class="fixed toggledown invisible">
 <?php

@@ -378,13 +378,13 @@ var uiHelper = function() {
 			try {
 				layoutProcessor.setProgressTime(stats);
 			} catch (err) {
-				if (stats.progressString != "" && stats.durationString != "") {
+				if (stats.progressString != "&nbsp;" && stats.durationString != "&nbsp;") {
 					$("#playbackTime").html(stats.progressString + " " + frequentLabels.of + " " + stats.durationString);
-				} else if (stats.progressString != "" && stats.durationString == "") {
+				} else if (stats.progressString != "&nbsp;" && stats.durationString == "&nbsp;") {
 					$("#playbackTime").html(stats.progressString);
-				} else if (stats.progressString == "" && stats.durationString != "") {
+				} else if (stats.progressString == "&nbsp;" && stats.durationString != "&nbsp;") {
 					$("#playbackTime").html("0:00 " + frequentLabels.of + " " + stats.durationString);
-				} else if (stats.progressString == "" && stats.durationString == "") {
+				} else if (stats.progressString == "&nbsp;" && stats.durationString == "&nbsp;") {
 					$("#playbackTime").html("");
 				}
 			}
