@@ -12,6 +12,7 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 'minimum-scale=1.0, user-scalable=0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />';
 print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string."&skin=".$skin.'" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="gettheme.php?version='.$version_string.'" />'."\n";
 print '<link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png" />
 <link rel="shortcut icon" sizes="128x128" href="newimages/favicon-128.png" />
 <link rel="shortcut icon" sizes="64x64" href="newimages/favicon-64.png" />
@@ -24,6 +25,7 @@ print '<link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png
 <style>
 input[type=text] { width: 50% }
 input[type=submit] { width: 40% }
+.styledinputs input[type="radio"] + label { display: inline !important }
 </style>';
 print '<script language="javascript">'."\n";
 print 'var multihosts = '.json_encode(prefs::$prefs['multihosts']).";\n";
@@ -155,6 +157,7 @@ print '<p><input type="text" style="width:90%" name="custom_logfile" value="'.
 print '<p><button style="width:50%" type="submit">OK</button></p>';
 print'    </form>
 	</div>
+	<br />
 </body>
 </html>';
 print "\n";

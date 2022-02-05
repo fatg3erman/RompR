@@ -2241,6 +2241,8 @@ div.plugin_backi_drop-images {
 .setup_screen_options {
 	margin-left:auto;
 	margin-right:auto;
+	margin-top: 1em;
+	margin-bottom: 1em;
 	text-align:center;
 	width:90%;
 	max-width: 60em;

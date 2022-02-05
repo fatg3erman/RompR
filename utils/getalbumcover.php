@@ -42,7 +42,11 @@ if ($player->check_mpd_version('0.22')) {
 	array_unshift($searchfunctions, 'tryMPD');
 }
 
-$result = $albumimage->check_archive_image_exists();
+if (array_key_exists('source', $_REQUEST) || array_key_exists('base64data', $_REQUEST)) {
+	$result = false;
+} else {
+	$result = $albumimage->check_archive_image_exists();
+}
 if ($result === false) {
 	$result = $albumimage->download_image();
 	if (!$albumimage->has_source()) {

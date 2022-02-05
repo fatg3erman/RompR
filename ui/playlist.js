@@ -477,7 +477,7 @@ var playlist = function() {
 
 		doTimeLeft: function() {
 			var remain = 0;
-			if (playlist.getCurrent('Time') > 0) {
+			if (playlist.getCurrent('Time') > 0 && player.status.random == 0) {
 				remain = timeleft + (playlist.getCurrent('Time') - parseFloat(player.status.progress));
 				if ($('#playlist-progress-holder').hasClass('invisible')) {
 					$('#playlist-progress-holder').removeClass('invisible');
