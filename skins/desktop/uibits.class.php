@@ -81,7 +81,7 @@ class uibits extends ui_elements {
 		}
 	}
 
-	public static function directoryControlHeader($prefix, $a, $b) {
+	public static function directoryControlHeader($prefix, $a = null, $b = null) {
 
 	}
 
