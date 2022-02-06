@@ -533,10 +533,6 @@ var layoutProcessor = function() {
 			}
 		},
 
-		setPlaylistHeight: function() {
-			// $('#phacker').fanoogleMenus();
-		},
-
 		playlistControlHotKey: function(button) {
 			if (!$("#playlistbuttons").is(':visible')) {
 				togglePlaylistButtons()

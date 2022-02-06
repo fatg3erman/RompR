@@ -427,7 +427,6 @@ var playlist = function() {
 
 			// Invisible empty div tacked on the end is where we add our 'Incoming' animation
 			$("#sortable").append('<div id="waiter" class="containerbox"></div>');
-			layoutProcessor.setPlaylistHeight();
 			playlist.doUpcomingCrap();
 			player.controller.postLoadActions();
 			uiHelper.postPlaylistLoad();

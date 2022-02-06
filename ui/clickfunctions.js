@@ -81,9 +81,6 @@ var clickRegistry = function() {
 				}
 			}
 			prefs.save_prefs_for_open_menus(menutoopen);
-			if (menutoopen == 'playlistbuttons') {
-				layoutProcessor.setPlaylistHeight();
-			}
 			return false;
 		},
 

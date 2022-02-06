@@ -430,7 +430,9 @@ var layoutProcessor = function() {
 		},
 
 		notifyAddTracks: function() {
-			infobar.notify(language.gettext("label_addingtracks"));
+			var display_mode = get_css_variable('--display-mode');
+			if (display_mode != 2)
+				infobar.notify(language.gettext("label_addingtracks"));
 		},
 
 		hidePanel: function(panel, is_hidden, new_state) { },
@@ -446,14 +448,6 @@ var layoutProcessor = function() {
 				"playlistslist": 'playlistman',
 				"pluginplaylistslist": 'pluginplaylistholder'
 			}
-		},
-
-		setPlaylistHeight: function() {
-			// var newheight = $("#playlistm").height() - $("#playlist_top").outerHeight(true);
-			// if ($("#playlistbuttons").is(":visible")) {
-			// 	newheight = newheight - $("#playlistbuttons").outerHeight(true) - 2;
-			// }
-			// $("#pscroller").css("height", newheight.toString()+"px");
 		},
 
 		scrollPlaylistToCurrentTrack: function() {
