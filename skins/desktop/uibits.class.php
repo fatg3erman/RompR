@@ -1,6 +1,7 @@
 <?php
 
 class uibits extends ui_elements {
+
 	public static function artistHeader($id, $name) {
 		$h = '<div class="clickalbum playable draggable containerbox menuitem" name="'.$id.'">';
 		$h .= '<i class="icon-toggle-closed menu mh openmenu fixed artist" name="'.$id.'"></i>';

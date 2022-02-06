@@ -3,6 +3,9 @@
 class prefspanel extends uibits {
 
 	public static function make_prefs_panel() {
+
+		global $skin;
+
 		// There may appear to be a lot of unnecessary divs wrapping around things here
 		// but it makes it work in Safari. DO NOT CHANGE IT!
 
@@ -47,7 +50,7 @@ class prefspanel extends uibits {
 			'main_icon' => 'icon-snapcast'
 		]);
 		print '<div class="fullwidth">';
-		if (!$snapcast_in_volume) {
+		if (!self::SNAPCAST_IN_VOLUME) {
 			print '<div class="pref" id="snapcastgroups">';
 			print '</div>';
 		}

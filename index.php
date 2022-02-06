@@ -199,9 +199,7 @@ foreach($inc as $i) {
 	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 
-logger::log("LAYOUT", "Including skins/".$skin.'/skinvars.php');
-include('skins/'.$skin.'/skinvars.php');
-include('includes/globals.php');
+javascript_globals::print_globals();
 
 $inc = glob("browser/helpers/*.js");
 foreach($inc as $i) {

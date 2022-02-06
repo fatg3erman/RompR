@@ -30,7 +30,7 @@
 ?>
 </div>
 
-<!-- Now Playing Ares -->
+<!-- Now Playing Area -->
 
 <div id="infobar" class="mainpane invisible containerbox vertical">
 

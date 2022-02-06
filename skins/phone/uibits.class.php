@@ -1,5 +1,9 @@
 <?php
 class uibits extends ui_elements {
+
+	public const ONLY_PLUGINS_ON_MENU = true;
+	public const SNAPCAST_IN_VOLUME = true;
+
 	public static function artistHeader($id, $name) {
 		$h = '<div class="openmenu menu containerbox menuitem artist" name="'.$id.'">';
 		$h .= '<div class="expand">'.$name.'</div>';

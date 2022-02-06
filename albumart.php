@@ -2,7 +2,6 @@
 define('ROMPR_IS_LOADING', true);
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-$only_plugins_on_menu = false;
 prefs::$database = new collection_base();
 set_version_string();
 ?>
@@ -30,7 +29,6 @@ print '<link rel="stylesheet" type="text/css" href="css/albumartmanager/albumart
 <?php
 $scripts = array(
 	"jquery/jquery-3.6.0.min.js",
-	// "jquery/jquery-migrate-3.3.2.js",
 	"jquery/jquery-migrate-3.3.2.min.js",
 	"jshash-2.2/md5-min.js",
 	"ui/functions.js",
@@ -51,7 +49,7 @@ foreach ($scripts as $i) {
 	logger::mark("INIT", "Loading ".$i);
 	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
-include ("includes/globals.php");
+javascript_globals::print_globals();
 ?>
 </head>
 <body class="desktop">
