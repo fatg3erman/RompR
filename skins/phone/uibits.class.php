@@ -46,7 +46,8 @@ class uibits extends ui_elements {
 		$html = '<div class="menu backmenu openmenu" name="'.$why.$what.$who.'">';
 		$html .='</div>';
 		$html .= uibits::ui_config_header([
-			'label_text' => $artist
+			'label_text' => $artist,
+			'lefticon' => self::get_header_icon($why, $what)
 		]);
 		if ($playall) {
 			$html .= '<div class="textcentre clickalbum playable ninesix noselect" name="'.$why.$what.$who.'">'.language::gettext('label_play_all').'</div>';
@@ -54,11 +55,33 @@ class uibits extends ui_elements {
 		return $html;
 	}
 
+	private static function get_header_icon($why, $what) {
+		if ($what == 'artist' || $what == 'album') {
+			switch ($why) {
+				case 'a':
+					return 'icon-music';
+					break;
+
+				case 'b':
+					return 'icon-search';
+					break;
+
+				case 'z':
+					return 'icon-audiobook';
+					break;
+			}
+		}
+		return null;
+	}
+
 	public static function trackControlHeader($why, $what, $who, $when, $dets) {
 		$db_album = ($when === null) ? $who : $who.'_'.$when;
 		$html = '<div class="menu backmenu openmenu" name="'.$why.$what.$db_album.'"></div>';
 		if ($dets['Albumname'])
-			$html .= uibits::ui_config_header(['label_text' => $dets['Albumname']]);
+			$html .= uibits::ui_config_header([
+				'label_text' => $dets['Albumname'],
+				'lefticon' => self::get_header_icon($why, $what)
+			]);
 
 		$albumimage = new baseAlbumImage(array('baseimage' => $dets['Image']));
 		$images = $albumimage->get_images();

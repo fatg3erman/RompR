@@ -12,7 +12,7 @@ if ($player->is_connected()) {
 	if ($path == "") {
 
 	} else {
-		uibits::directoryControlHeader($prefix);
+		uibits::directoryControlHeader($prefix, $path);
 	}
 	$player->doFileBrowse($path, $prefix);
 } else {
