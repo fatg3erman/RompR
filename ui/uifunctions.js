@@ -188,7 +188,10 @@ var imagePopup = function() {
 		show:function() {
 
 			var winsize = getWindowSize();
-			popup_image = $('<img>', {id: 'popup_image', class: 'dropshadow', src: image.src});
+			if (popup_image === null)
+				popup_image = $('<img>', {id: 'popup_image', class: 'dropshadow'});
+
+			popup_image.off('transitionend').attr('src', image.src);
 
 			popup_image.css({
 				left: mousepos.x + 'px',
@@ -246,14 +249,15 @@ var imagePopup = function() {
 		},
 
 		close:function() {
-			if(waiting_spinner != null)
+			if (waiting_spinner !== null)
 				waiting_spinner.remove();
 
-			if(popup_image != null)
-				popup_image.fadeOut('fast');
+			if (popup_image !== null) {
+				popup_image.on('transitionend', () => { $('#popup_image').remove(); popup_image = null });
+				popup_image.css('opacity', 0);
+			}
 
 			waiting_spinner = null;
-			popup_image = null;
 
 		}
 	}
