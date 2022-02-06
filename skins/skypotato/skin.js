@@ -48,14 +48,6 @@ jQuery.fn.menuReveal = async function() {
 			adjustboxes = false;
 			break;
 
-		// case holder.hasClass('radiochannel'):
-		// 	// Radio Stations
-		// 	parent.addClass('masonry_opened dropshadow').insertDummySpacers();
-		// 	self.detach().appendTo(parent);
-		// 	holder.find('div.albumthing').detach().prependTo(self);
-		// 	adjustboxes = false;
-		// 	break;
-
 		case holder.hasClass('radio'):
 			// Radio Browsers
 			// We can't remove the radio plugin panels, but we need to mark which ones are closed
@@ -168,14 +160,6 @@ jQuery.fn.menuHide = async function() {
 			parent.removeClass('masonry_opened dropshadow').removeDummySpacers();
 			self.removeClass('minwidthed2').css({display: 'none'});
 			break;
-
-		// case holder.hasClass('radiochannel'):
-		// 	// Radio Stations
-		// 	var monkey = parent.find('.helpfulalbum.expand');
-		// 	parent.removeClass('masonry_opened dropshadow').removeDummySpacers();
-		// 	parent.find('div.albumthing').detach().appendTo(monkey)
-		// 	self.css({display: 'none'});
-		// 	break;
 
 		case holder.hasClass('radio'):
 			// Radio Browsers
