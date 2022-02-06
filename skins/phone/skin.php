@@ -197,7 +197,7 @@
 
 <div id="prefsm" class="scroller mainpane invisible pright">
 	<?php
-	include("includes/prefspanel.php")
+	prefspanel::make_prefs_panel();
 	?>
 </div>
 
@@ -205,7 +205,7 @@
 
 <div id="playlistm" class="containerbox vertical">
 	<?php
-	include('skins/playlist.php');
+	playlistpanel::make_playlist_panel();
 	?>
 </div>
 

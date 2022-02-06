@@ -141,7 +141,7 @@ print '<i class="icon-cog-alt topimg tooltip topdrop expand choose_prefs" title=
 ?>
 <div class="top_drop_menu dropshadow rightmenu widemenu stayopen" id="configpanel">
 <?php
-include ("includes/prefspanel.php");
+prefspanel::make_prefs_panel();
 ?>
 </div>
 </i>
@@ -287,7 +287,7 @@ print '<button class="fixed iconbutton savebutton"></button></div>';
 
 <div id="playlist" class="column noborder tright containerbox vertical">
 	<?php
-	include("skins/playlist.php");
+	playlistpanel::make_playlist_panel();
 	?>
 </div>
 

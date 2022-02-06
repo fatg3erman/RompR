@@ -57,9 +57,9 @@
 			print '<div class="fixed topdrop"><i class="icon-cog-alt smallpluginicon clickicon tooltip choose_prefs" title="'.language::gettext('button_prefs').'"></i>';
 ?>
 				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen" id="configpanel">
-<?php
-include ("includes/prefspanel.php");
-?>
+				<?php
+				prefspanel::make_prefs_panel();
+				?>
 				</div>
 			</div>
 
@@ -70,7 +70,7 @@ include ("includes/prefspanel.php");
 						'label' => 'label_playqueue',
 						'icon_size' => 'smallicon'
 					]);
-					include("skins/playlist.php");
+					playlistpanel::make_playlist_panel();
 					?>
 				</div>
 			</div>

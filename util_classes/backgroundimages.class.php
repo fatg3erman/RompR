@@ -25,7 +25,7 @@ class backgroundImages extends database {
 						"UPDATE BackgroundImageTable SET Used = 0 WHERE Skin = ? AND BrowserID = ? AND Orientation = ?",
 						$theme,
 						$browser_id,
-						$o,
+						$o
 					);
 				}
 			} else {
@@ -40,7 +40,7 @@ class backgroundImages extends database {
 					$this->sql_prepare_query(true, null, null, null,
 						"UPDATE BackgroundImageTable SET Used = 0 WHERE Skin = ? AND BrowserID IS NULL AND Orientation = ?",
 						$theme,
-						$o,
+						$o
 					);
 				}
 			}

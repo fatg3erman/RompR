@@ -171,11 +171,10 @@ class ui_elements {
 		return self::artistHeader($id, $name);
 	}
 
-	public static function noAlbumsHeader() {
-		print '<div class="playlistrow2" style="padding-left:64px">'.
-			language::gettext("label_noalbums").'</div>';
-	}
-
+	// public static function noAlbumsHeader() {
+	// 	print '<div class="playlistrow2" style="padding-left:64px">'.
+	// 		language::gettext("label_noalbums").'</div>';
+	// }
 
 	//
 	// $why is collection key - eg 'a', 'b' etc
