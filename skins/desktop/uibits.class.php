@@ -107,5 +107,10 @@ class uibits extends ui_elements {
 	public static function albumSizer() {
 		// print '<div class="sizer"></div>';
 	}
+
+	public static function prefs_hide_panels() {
+		self::ui_checkbox(['id' => 'hidebrowser', 'label' => 'config_hidebrowser']);
+	}
+
 }
 ?>

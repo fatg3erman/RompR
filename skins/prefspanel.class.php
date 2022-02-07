@@ -4,8 +4,6 @@ class prefspanel extends uibits {
 
 	public static function make_prefs_panel() {
 
-		global $skin;
-
 		// There may appear to be a lot of unnecessary divs wrapping around things here
 		// but it makes it work in Safari. DO NOT CHANGE IT!
 
@@ -246,8 +244,7 @@ class prefspanel extends uibits {
 		self::ui_checkbox(['id' => 'hide_audiobooklist', 'label' => 'config_hideaudiobooks']);
 		self::ui_checkbox(['id' => 'hide_playlistslist', 'label' => 'config_hideplaylistslist']);
 		self::ui_checkbox(['id' => 'hide_pluginplaylistslist', 'label' => 'config_hidepluginplaylistslist']);
-		if ($skin == "desktop")
-			self::ui_checkbox(['id' => 'hidebrowser', 'label' => 'config_hidebrowser']);
+		self::prefs_hide_panels();
 
 		// =======================================================
 		//
@@ -286,20 +283,7 @@ class prefspanel extends uibits {
 
 		self::ui_checkbox(['id' => 'cdplayermode', 'label' => 'config_cdplayermode']);
 
-		if ($skin != "phone") {
-			self::ui_textentry([
-				'label' => 'config_wheelspeed',
-				'size' => 4,
-				'id' => 'wheelscrollspeed',
-				'type' => 'number'
-			]);
-			self::ui_config_button([
-				'label' => 'config_editshortcuts',
-				'onclick' => 'shortcuts.edit()'
-			]);
-		} else {
-			self::ui_checkbox(['id' => 'playlistswipe', 'label' => 'config_playlistswipe']);
-		}
+		self::prefs_interaction_options();
 
 		// =======================================================
 		//

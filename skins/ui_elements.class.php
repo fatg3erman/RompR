@@ -680,6 +680,23 @@ class ui_elements {
 		print '</div>';
 	}
 
+	public static function prefs_hide_panels() {
+
+	}
+
+	public static function prefs_interaction_options() {
+		self::ui_textentry([
+			'label' => 'config_wheelspeed',
+			'size' => 4,
+			'id' => 'wheelscrollspeed',
+			'type' => 'number'
+		]);
+		self::ui_config_button([
+			'label' => 'config_editshortcuts',
+			'onclick' => 'shortcuts.edit()'
+		]);
+	}
+
 }
 
 ?>

@@ -17,7 +17,7 @@ if (!is_dir('skins/'.$skin)) {
 	big_bad_fail('Skin '.$skin.' does not exist!');
 }
 
-if (file_exists('collection/collection.php')) {
+if (file_exists('collection/collection.php') || is_dir('themes/fruit')) {
 	big_bad_fail('Remains of an earlier installation still exist. To install this version of RompЯ you must
 		delete <b>everything except your albumart and prefs directories</b> and then copy the new version
 		into your rompr directory.');

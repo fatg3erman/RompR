@@ -143,5 +143,9 @@ class uibits extends ui_elements {
 		print '<div class="sizer"></div>';
 	}
 
+	public static function prefs_interaction_options() {
+		self::ui_checkbox(['id' => 'playlistswipe', 'label' => 'config_playlistswipe']);
+	}
+
 }
 ?>
