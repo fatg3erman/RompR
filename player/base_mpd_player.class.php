@@ -361,16 +361,12 @@ class base_mpd_player {
 						break;
 
 					case 'X-AlbumUri':
+					case 'Title':
+					case 'Album':
+					case 'Comment':
 						// Mopidy-beets is using SEMICOLONS in its URI schemes.
 						// Surely a typo, but we need to work around it by not splitting the string
-						// Same applies to file.
 						$filedata[$parts[0]] = $parts[1];
-						break;
-
-					case 'X-AlbumImage':
-						// We can't cope with multiple images, so treat them specially
-						$ims = explode(';',$parts[1]);
-						$filedata[$parts[0]] = $ims[0];
 						break;
 
 					default:
