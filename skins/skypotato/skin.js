@@ -28,7 +28,7 @@ jQuery.fn.menuReveal = async function() {
 			var titlediv = holder.find('div.albumthing').detach().insertBefore(self).find('.title-menu');
 			titlediv.addClass('containerbox vertical-centre');
 			titlediv.find('.inline-icon').removeClass('inline-icon').addClass('svg-square');
-			var newwrapper = $('<div>', {class: 'containerbox vertical expand'}).appendTo(titlediv);
+			var newwrapper = $('<div>', {class: 'containerbox vertical expand open-album-title'}).appendTo(titlediv);
 			titlediv.find('div').not('.vertical').addClass('expand').detach().appendTo(newwrapper);
 
 			holder.find('div.vertical-centre.configtitle').remove();

@@ -1648,6 +1648,7 @@ a.infoclick.clickreleasepage
 
 .artistnamething>span.notbold {
 	font-size: calc(0.9 * var(--font-size));
+	vertical-align: middle;
 }
 
 .albumwidget .artistnamething {

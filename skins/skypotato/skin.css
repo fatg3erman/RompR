@@ -773,7 +773,7 @@ div.helpfulalbum>div.tagh.albumthing {
 	background-image: unset !important;
 }
 
-.collectionitem.masonry_opened.dropshadow .containerbox.vertical:not(.podoptions),
+.collectionitem.masonry_opened.dropshadow .containerbox.vertical:not(.podoptions):not(.open-album-title),
 .collectionitem.masonry_opened.dropshadow .containerbox.openmenu.podcast,
 .collectionitem.masonry_opened.dropshadow .containerbox.radiochannel  {
 	padding-bottom: 4px;
