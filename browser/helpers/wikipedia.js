@@ -12,7 +12,7 @@ var wikipedia = function() {
 
 		search: function(terms, successCallback, failCallback) {
 			terms.lang = wikipedia.getLanguage();
-			terms.layout = skin;
+			terms.layout = prefs.skin;
 			$.ajax({
 				type: "POST",
 				url: "browser/backends/info_wikipedia.php",
@@ -25,7 +25,7 @@ var wikipedia = function() {
 
 		getFullUri: function(terms, successCallback, failCallback) {
 			terms.lang = wikipedia.getLanguage();
-			terms.layout = skin;
+			terms.layout = prefs.skin;
 			$.ajax({
 				type: "POST",
 				url: "browser/backends/info_wikipedia.php",
@@ -62,7 +62,7 @@ var wikipedia = function() {
 			$.ajax({
 				type: "POST",
 				url: "browser/backends/info_wikipedia.php",
-				data: {wiki: link, layout: skin},
+				data: {wiki: link, layout: prefs.skin},
 				dataType: "xml"
 			})
 			.done(successCallback)

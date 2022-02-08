@@ -531,8 +531,8 @@ var prefs = function() {
 					if (a === 'false') { a = false; }
 					if (a === 'true' ) { a = true; }
 					prefs[cookiePrefs[i]] = a;
-					if (prefs.debug_enabled > 7) {
-						console.log("PREFS      : "+cookiePrefs[i]+' = '+prefs[cookiePrefs[i]]);
+					if (prefs.debug_enabled > 5) {
+						console.log("COOKIEPREFS: "+cookiePrefs[i]+' = '+prefs[cookiePrefs[i]]);
 					}
 				}
 			}
@@ -604,17 +604,17 @@ var prefs = function() {
 			}
 		},
 
-		checkSet: function(key) {
-			if (prefsInLocalStorage.indexOf(key) > -1) {
-				if (localStorage.getItem("prefs."+key) != null && localStorage.getItem("prefs."+key) != "") {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		},
+		// checkSet: function(key) {
+		// 	if (prefsInLocalStorage.indexOf(key) > -1) {
+		// 		if (localStorage.getItem("prefs."+key) != null && localStorage.getItem("prefs."+key) != "") {
+		// 			return true;
+		// 		} else {
+		// 			return false;
+		// 		}
+		// 	} else {
+		// 		return false;
+		// 	}
+		// },
 
 		save: async function(options, callback) {
 			var prefsToSave = {};
@@ -781,6 +781,7 @@ var prefs = function() {
 			});
 
 			$.each($('.autoset'), function() {
+				debug.log('SETPREFS','Checkbox',$(this).attr("id"), prefs[$(this).attr("id")]);
 				$(this).prop("checked", prefs[$(this).attr("id")]);
 			});
 
@@ -801,7 +802,10 @@ var prefs = function() {
 			$.each($('.savulon'), function() {
 				var prefname = $(this).attr("name");
 				var prefsave = prefname.replace(/_duplicate\d+/, '');
-				$("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
+				if (!$("[name="+prefname+"][value="+prefs[prefsave]+"]").is(':checked')) {
+					debug.log('SETPREFS','Radio',prefname,prefs[prefsave]);
+					$("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
+				}
 			});
 
 			for (var menu of menus_to_save_state_for) {

@@ -40,6 +40,14 @@ define('ADDED_THIS_WEEK', 2);
 define('ADDED_THIS_MONTH', 3);
 define('ADDED_THIS_YEAR', 4);
 
+const COLLECTION_RANGE_OPTIONS = [
+	ADDED_ALL_TIME => 'label_all_time',
+	ADDED_TODAY => 'label_today',
+	ADDED_THIS_WEEK => 'label_thisweek',
+	ADDED_THIS_MONTH => 'label_thismonth',
+	ADDED_THIS_YEAR => 'label_thisyear'
+];
+
 // Safe definitions for setups that do not have a full set of image support built in,
 // Otherwise we spam the server logs with udefined constant errors.
 // These are the MIME types that make it compatible with imagemagick

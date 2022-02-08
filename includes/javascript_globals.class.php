@@ -8,8 +8,8 @@ class javascript_globals {
 		// There is no default language set in prefs, so that we can try to detect
 		// it from the browser. This we set a global here so we know what it was.
 		print "prefs.interface_language = '".language::get_interface_language()."';\n";
-		print "prefs.skin = '".$skin."';\n";
-		print "const skin = '".$skin."';\n";
+		// print "prefs.skin = '".$skin."';\n";
+		// print "const skin = '".$skin."';\n";
 		print "const only_plugins_on_menu = '".uibits::ONLY_PLUGINS_ON_MENU."';\n";
 		print "const rompr_version = '".$version_string."';\n";
 		print "const browserLanguage = '".language::get_browser_language()."';\n";

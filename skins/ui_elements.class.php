@@ -646,13 +646,7 @@ class ui_elements {
 
 		self::ui_select_box([
 			'id' => 'collectionrange',
-			'options' => [
-				ADDED_ALL_TIME => language::gettext('label_all_time'),
-				ADDED_TODAY => language::gettext('label_today'),
-				ADDED_THIS_WEEK => language::gettext('label_thisweek'),
-				ADDED_THIS_MONTH => language::gettext('label_thismonth'),
-				ADDED_THIS_YEAR => language::gettext('label_thisyear')
-			]
+			'options' => array_map('language::gettext', COLLECTION_RANGE_OPTIONS)
 		]);
 
 		self::ui_checkbox(['id' => 'sortbydate', 'label' => 'config_sortbydate']);

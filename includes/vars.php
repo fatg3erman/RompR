@@ -9,11 +9,6 @@ if (!$dtz) {
 //---------------------------------------------------------------------------------------------
 //
 
-//
-// Using autoloading as part of the code upgrade.
-// Things will be slowly shifted into this form as we go on
-//
-
 CONST CLASS_DIRS = array(
 	'includes',
 	'skins',
