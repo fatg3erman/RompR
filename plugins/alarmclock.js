@@ -40,11 +40,12 @@ var alarmclock = function() {
 		var froggy = $('<td rowspan="2">').appendTo(row1);
 		$('<div>', {class: 'alarmnumbers', id: 'alarm_time_'+index}).appendTo(froggy);
 		var minsup = $('<td>', {class: 'timespinholder'}).appendTo(row1);
-		var onbutton = $('<td rowspan="2" width="99%" align="right">').appendTo(row1);
+		var onbutton = $('<td width="99%" align="right">').appendTo(row1);
 		var ondiv = $('<div>', {class: 'styledinputs'}).appendTo(onbutton);
 		var row2 = $('<tr>').appendTo(lego);
 		var hoursdown = $('<td>', {class: 'timespinholder'}).appendTo(row2);
 		var minsdown = $('<td>', {class: 'timespinholder'}).appendTo(row2);
+		var delbutton = $('<td align="right">').appendTo(row2);
 
 		$('<i>', {class: 'smallicon clickicon icon-increase expand timespinner', id: 'alarmhoursup_'+index}).appendTo(hoursup);
 		$('<i>', {class: 'smallicon clickicon icon-decrease expand timespinner', id: 'alarmhoursdown_'+index}).appendTo(hoursdown);
@@ -53,6 +54,8 @@ var alarmclock = function() {
 
 		$('<input>', {type: 'checkbox', id: 'alarmon_'+index}).appendTo(ondiv);
 		$('<label>', {for: 'alarmon_'+index, class: 'alarmclock', style: 'display:inline'}).appendTo(ondiv);
+
+		$('<i>', {class: "smallicon icon-cancel-circled deletealarm clickicon", id: 'deletealarm_'+index, style: "width: 2.5em"}).appendTo(delbutton);
 
 		$('<div>', {class: 'fixed playlistrow2 menuitem fullwidth alarmdescription', id: 'alarm_desc_'+index}).appendTo(container).css({'font-weight': 'normal'});
 
@@ -99,8 +102,6 @@ var alarmclock = function() {
 		var container = $('<div>', {id: 'alarmpanel_'+index, class: 'toggledown invisible alarmclock_holder alarmdropper'}).insertAfter(holder);
 
 		var twatt = $('<div>', {class: 'containerbox vertical-centre'}).appendTo(container);
-		$('<i>', {class: "mh menu fixed icon-cancel-circled deletealarm", id: 'deletealarm_'+index}).appendTo(twatt);
-		$('<div>', {class: 'expand'}).html(language.gettext('label_delete_alarm')).appendTo(twatt);
 		twatt.css({'margin-left': '4px', 'margin-bottom': '4px'});
 
 		makeACheckbox('alarmramp_'+index, language.gettext('config_alarm_ramp'), container, alarm.alarmramp, false);
