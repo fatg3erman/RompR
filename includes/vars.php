@@ -73,7 +73,7 @@ if (!array_key_exists(prefs::$prefs['currenthost'], prefs::$prefs['multihosts'])
 	foreach (prefs::$prefs['multihosts'] as $key => $obj) {
 		logger::log("INIT", "  Using host ".$key);
 		prefs::$prefs['currenthost'] = $key;
-		setcookie('currenthost',prefs::$prefs['currenthost'],time()+365*24*60*60*10,'/');
+		setcookie('currenthost', prefs::$prefs['currenthost'], ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
 		break;
 	}
 }
@@ -81,7 +81,7 @@ if (!array_key_exists(prefs::$prefs['currenthost'], prefs::$prefs['multihosts'])
 logger::core("INIT", "Using MPD Host ".prefs::$prefs['currenthost']);
 
 if (!array_key_exists('currenthost', $_COOKIE)) {
-	setcookie('currenthost',prefs::$prefs['currenthost'],time()+365*24*60*60*10,'/');
+	setcookie('currenthost', prefs::$prefs['currenthost'], ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
 }
 
 //
@@ -105,11 +105,11 @@ if(array_key_exists('skin', $_REQUEST)) {
 	if ($md->isMobile() || $md->isTablet()) {
 		logger::info('INIT', 'Browser is a mobile browser');
 		$skin = 'phone';
-		setcookie('clickmode','single',time()+365*24*60*60*10,'/');
+		setcookie('clickmode','single', ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
 	} else {
 		logger::info('INIT', 'Browser is a desktop browser or was not detected');
 		$skin = 'desktop';
-		setcookie('clickmode','double',time()+365*24*60*60*10,'/');
+		setcookie('clickmode', 'double', ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
 	}
 }
 $skin = trim($skin);
@@ -121,7 +121,7 @@ if ($skin == 'fruit')
 	$skin = 'skypotato';
 
 if (is_dir('skins/'.$skin)) {
-	setcookie('skin', $skin, time()+365*24*60*60*10,'/');
+	setcookie('skin', $skin, ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
 	logger::core("INIT", "Using skin : ".$skin);
 	set_include_path('skins/'.$skin.PATH_SEPARATOR.get_include_path());
 	// index.php wil take us to the error screen if skin doesn't exist. It's important we don't set the cookie

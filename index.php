@@ -30,8 +30,8 @@ check_php_installation();
 //
 
 if (isset($_GET['currenthost'])) {
-    setcookie('currenthost',$_GET['currenthost'],time()+365*24*60*60*10,'/');
-    setcookie('player_backend','',1,'/');
+    setcookie('currenthost', $_GET['currenthost'], ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
+    setcookie('player_backend', '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
     prefs::$prefs['currenthost'] = $_GET['currenthost'];
     prefs::$prefs['player_backend'] = 'none';
     prefs::save();

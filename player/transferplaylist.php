@@ -51,7 +51,7 @@ $target_player = new base_mpd_player(
 // probe_player_type has now set prefs::$prefs['player_backend']
 if ($target_player->is_connected()) {
 	prefs::$prefs['currenthost'] = $json['currenthost'];
-	setcookie('currenthost',prefs::$prefs['currenthost'], time()+365*24*60*60*10,'/');
+	setcookie('currenthost',prefs::$prefs['currenthost'], ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
 
 	// Transfer the playlist to the new player
 	$cmds = array('stop', 'clear');

@@ -24,6 +24,7 @@ throwing fatal errors all over the place without warning, even in its internal f
 * Change all radio station browsers so you just have to click the station title to play it. Having no
 extra menus makes the UI much easier to handle.
 * Change Soma FM so the stream quality is a global selector.
+* Set SameSite property on all Cookies to stop Firefox moaning
 
 
 ## Version 1.60

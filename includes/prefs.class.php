@@ -363,7 +363,7 @@ class prefs {
 				logger::mark("INIT", "Setting Pref ".$i." to ".$value);
 				self::$prefs[$i] = $value;
 			}
-			setcookie('currenthost',self::$prefs['currenthost'],time()+365*24*60*60*10,'/');
+			setcookie('currenthost', self::$prefs['currenthost'], ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
 
 			$mopidy_remote = false;
 			if (array_key_exists('mopidy_remote', self::$prefs['multihosts'][self::$prefs['currenthost']])) {
