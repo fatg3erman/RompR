@@ -10,7 +10,7 @@ class poDatabase extends database {
 			header('HTTP/1.0 404 Not Found');
 			print "Feed Not Found";
 			logger::warn("PARSE_RSS", "  Failed to Download ".$url);
-			return false;
+			return null;
 		}
 
 		// For debugging
@@ -27,12 +27,12 @@ class poDatabase extends database {
 			libxml_use_internal_errors(true);
 			$feed = @simplexml_load_string($data);
 			if ($feed === false) {
-				logger::warn('PODCASTS', 'Could not parse RSS feed!');
-				return false;
+				logger::warn('PODCASTS', 'Could not parse RSS feed! (XML Load Failed)');
+				return null;
 			}
 		} catch (Exception $e) {
-			logger::warn('PODCASTS', 'Could not parse RSS feed!');
-			return false;
+			logger::warn('PODCASTS', 'Could not parse RSS feed! (Exception Rasied)');
+			return null;
 		}
 		logger::debug("PARSE_RSS", "  Our LastPubDate is ".$lastpubdate);
 
@@ -310,7 +310,7 @@ class poDatabase extends database {
 		logger::mark("PODCASTS", "Getting podcast",$url);
 		$newpodid = null;
 		$podcast = $this->parse_rss_feed($url, false, null, $gettracks);
-		if ($podcast === false) {
+		if ($podcast === false || $podcast === null) {
 			logger::warn("PODCASTS", "  Failed to download RSS feed");
 			header('HTTP/1.0 404 Not Found');
 			print 'Could not download RSS feed '.$url;
@@ -414,6 +414,10 @@ class poDatabase extends database {
 			return $podid;
 		}
 		$podcast = $this->parse_rss_feed($podetails->FeedURL, $podid, $podetails->LastPubDate);
+		if ($podcast === null) {
+			logger::warn('PODCASTS', 'Could not refresh podcast',$podid, $podetails->Title);
+			return $podid;
+		}
 		$this->open_transaction();
 		if ($podetails->Subscribed == 1 && prefs::$prefs['podcast_mark_new_as_unlistened']) {
 			$this->generic_sql_query("UPDATE PodcastTracktable SET New = 0 WHERE PODindex = ".$podetails->PODindex);
