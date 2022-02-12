@@ -37,7 +37,7 @@
 <?php
 			print '<div class="fixed topdrop"><i class="icon-floppy smallpluginicon clickicon"></i>';
 ?>
-				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen" id="plsaver">
+				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen noscroll" id="plsaver">
 <?php
 					print uibits::ui_config_header([
 						'label' => 'button_saveplaylist',

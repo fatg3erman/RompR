@@ -81,7 +81,7 @@ var layoutProcessor = function() {
 		$("#infopanecontrols").animatePanel(widths);
 	}
 
-	var my_scrollers = [ "#sources", "#infopane", "#pscroller", ".top_drop_menu", ".drop-box" ];
+	var my_scrollers = [ "#sources", "#infopane", "#pscroller", ".top_drop_menu:not(.noscroll)", ".drop-box" ];
 
 	return {
 

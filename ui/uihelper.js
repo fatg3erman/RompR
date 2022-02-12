@@ -414,14 +414,17 @@ var uiHelper = function() {
 			}
 		},
 
-		makeDropHolder: function(name, d, dontsteal) {
+		makeDropHolder: function(name, d, dontsteal, withscroll) {
 			try {
 				return layoutProcessor.makeDropHolder(name);
 			} catch (err) {
 				var c = 'top_drop_menu dropshadow rightmenu normalmenu stayopen';
-				if (dontsteal) {
+				if (dontsteal)
 					c += ' dontstealmyclicks';
-				}
+
+				if (!withscroll)
+					c += ' noscroll';
+
 				return $('<div>', {class: c, id: name}).appendTo(d);
 			}
 		},

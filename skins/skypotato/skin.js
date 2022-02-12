@@ -285,7 +285,7 @@ function showHistory() {
 
 var layoutProcessor = function() {
 
-	var my_scrollers = [ "#sources", "#infopane", ".top_drop_menu", ".drop-box" ];
+	var my_scrollers = [ "#sources", "#infopane", ".top_drop_menu:not(.noscroll)", ".drop-box" ];
 	var rtime = '';
 	var ptime = '';
 	var headers = Array();

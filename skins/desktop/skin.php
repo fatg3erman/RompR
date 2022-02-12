@@ -103,7 +103,7 @@ print '<i title="'.language::gettext('label_pluginplaylists').'" class="icon-wif
 <?php
 print '<i class="icon-menu topimg tooltip topdrop expand" title="'.language::gettext('button_plugins').'">';
 ?>
-<div class="top_drop_menu dropshadow leftmenu normalmenu">
+<div class="top_drop_menu dropshadow leftmenu normalmenu noscroll">
 	<div id="specialplugins" class="clearfix"></div>
 </div>
 </i>
@@ -149,7 +149,7 @@ prefspanel::make_prefs_panel();
 <?php
 print '<i class="icon-floppy topimg tooltip topdrop expand" title="'.language::gettext('button_saveplaylist').'">';
 ?>
-<div class="top_drop_menu dropshadow rightmenu widemenu stayopen" id="plsaver">
+<div class="top_drop_menu dropshadow rightmenu widemenu stayopen noscroll" id="plsaver">
 <?php
 print uibits::ui_config_header([
 	'label' => 'button_saveplaylist',

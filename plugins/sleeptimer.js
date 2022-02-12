@@ -108,7 +108,7 @@ var sleepTimer = function() {
 			if (d === false) {
 				return false;
 			}
-			var holder = uiHelper.makeDropHolder('sleeppanel', d, false);
+			var holder = uiHelper.makeDropHolder('sleeppanel', d, false, false);
 			var html = uiHelper.ui_config_header({label: 'button_sleep', icon_size: 'smallicon'});
 			html += '<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep#sleep-timer" />'+
 				'<div class="noselection">'+
