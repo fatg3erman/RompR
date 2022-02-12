@@ -3,6 +3,7 @@
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
 ## Version 1.61
+* Due to a change in the way I have to create cookies, mandated by Firefox, you need PHP 7.3 or later to run this version of RompR.
 * Improve Metadata backup so it now restores all data including Podcasts and Radio Stations.
 * Improve Themes to make them easier to edit. Add two new ones. in the process I decided to delete
 some of the old ones as they were ugly and I couldn't be bothered to update them.

@@ -169,15 +169,25 @@ class baseAlbumImage {
 	}
 
 	private function image_paths_from_base_image($image) {
-		$images = array(
-			'small' => $image,
-			'medium' => preg_replace('#albumart/small/#', 'albumart/medium/', $image),
-			'asdownloaded' => preg_replace('#albumart/small/#', 'albumart/asdownloaded/', $image)
-		);
-		if (substr($image, 0, 14) == 'getRemoteImage') {
-			array_walk($images, function(&$v, $k) {
-				$v .= '&rompr_resize_size='.$k;
-			});
+		if ($image === null) {
+			// PHP 8.1 Van't pass null as third parameter to preg_replace or first parameter to substr any more.
+			// Because that''s just too useful and they're just trying to make my life harder.
+			$images = array(
+				'small' => $image,
+				'medium' => $image,
+				'asdownloaded' => $image
+			);
+		} else {
+			$images = array(
+				'small' => $image,
+				'medium' => preg_replace('#albumart/small/#', 'albumart/medium/', $image),
+				'asdownloaded' => preg_replace('#albumart/small/#', 'albumart/asdownloaded/', $image)
+			);
+			if (substr($image, 0, 14) == 'getRemoteImage') {
+				array_walk($images, function(&$v, $k) {
+					$v .= '&rompr_resize_size='.$k;
+				});
+			}
 		}
 		return $images;
 	}

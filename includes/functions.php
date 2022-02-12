@@ -48,6 +48,9 @@ function format_podcast_text($d) {
 
 function format_time($t, $f = ':') {
 
+	// PHP 8.1 moans about losing precision. I KNOW. I DON'T CARE.
+	$t = (int) round($t);
+
 	if (($t/86400) >= 1)
 		return floor($t/86400).' '.language::gettext('label_days').' '.date('G'.$f.'i'.$f.'s', $t);
 

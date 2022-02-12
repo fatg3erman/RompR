@@ -126,17 +126,6 @@ input[type=text],input[type="number"] {
 	margin-right: 8px;
 }
 
-/*#lastfm {
-	float:left;
-	margin-left:4px;
-	padding-top:1px;
-}
-
-#lastfm img {
-	margin-right:2px;
-	margin-left:2px;
-}
-*/
 #headerbar {
 	padding:0px;
 	margin:0px;
@@ -151,10 +140,7 @@ input[type=text],input[type="number"] {
 #sources {
 	height:100%;
 	overflow:auto;
-}
-
-#pscroller {
-	/*max-height: inherit;*/
+	padding-left: 2px;
 }
 
 #volumecontrol {
