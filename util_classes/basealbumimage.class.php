@@ -246,15 +246,15 @@ class baseAlbumImage {
 
 	public function album_has_no_image() {
 		// return true if the image does not exist
-		if (substr($this->images['small'], 0, 4) == 'http' || substr($this->images['small'], 0, 14) == 'getRemoteImage') {
+		if (!$this->images['small'])
+			return true;
+
+		if (substr($this->images['small'], 0, 4) == 'http' || substr($this->images['small'], 0, 14) == 'getRemoteImage')
 			return false;
-		}
-		if (!$this->images['small']) {
+
+		if (!file_exists($this->images['small']))
 			return true;
-		}
-		if (!file_exists($this->images['small'])) {
-			return true;
-		}
+
 		return false;
 	}
 
