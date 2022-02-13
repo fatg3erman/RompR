@@ -201,7 +201,7 @@ function getArray($a) {
 }
 
 function getYear($date) {
-	if (preg_match('/(\d\d\d\d)/', $date, $matches)) {
+	if ($date && preg_match('/(\d\d\d\d)/', $date, $matches)) {
 		return $matches[1];
 	} else {
 		return null;

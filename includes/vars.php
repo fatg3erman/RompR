@@ -92,7 +92,11 @@ if (!array_key_exists('currenthost', $_COOKIE)) {
 // This is because saving it once as a preference would change the default for ALL new devices
 // and we want to allow devices to intelligently select a default skin using Mobile_Detect
 
-if(array_key_exists('skin', $_REQUEST)) {
+if (defined('IS_ROMONITOR')) {
+	// Don't check for skin if we're romonitor. PHP 8.1 complains about Mobile_Detect
+	// if user agent isnt set
+	$skin = 'desktop';
+} else if(array_key_exists('skin', $_REQUEST)) {
 	$skin = $_REQUEST['skin'];
 	logger::core("INIT", "Request asked for skin: ".$skin);
 } else if (array_key_exists('skin', $_COOKIE)) {

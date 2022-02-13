@@ -1,4 +1,5 @@
 <?php
+const IS_ROMONITOR = true;
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 $opts = getopt('', ['currenthost:', 'player_backend:', 'scrobbling:']);

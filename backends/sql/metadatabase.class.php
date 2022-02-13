@@ -32,7 +32,7 @@ class metaDatabase extends collection_base {
 			logger::warn('METADATA', 'WARNING : Genre is not set!');
 			$data['Genre'] = 'None';
 		}
-		if (substr($data['X-AlbumImage'],0,4) == "http") {
+		if ($data['X-AlbumImage'] && substr($data['X-AlbumImage'],0,4) == "http") {
 			logger::warn('METADATA', 'WARNING : Uncached remote image!');
 			$data['X-AlbumImage'] = "getRemoteImage.php?url=".rawurlencode($data['X-AlbumImage']);
 		}
@@ -66,19 +66,7 @@ class metaDatabase extends collection_base {
 			exit(0);
 		}
 
-		// switch ($data['trackartist']) {
-		// 	case 'geturisfordir':
-		// 		$ttids = $this->geturisfordir($data);
-		// 		break;
-
-		// 	case  'geturis':
-		// 		$ttids = $this->geturis($data);
-		// 		break;
-
-		// 	default:
-				$ttids = $this->find_item($data, $this->forced_uri_only($data['urionly'], $data['domain']));
-		// 		break;
-		// }
+		$ttids = $this->find_item($data, $this->forced_uri_only($data['urionly'], $data['domain']));
 
 		$newttids = array();
 		$dummytributes = false;

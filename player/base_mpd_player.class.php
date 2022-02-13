@@ -181,6 +181,9 @@ class base_mpd_player {
 	}
 
 	protected function send_command($command) {
+		if(!$this->is_connected())
+			return false;
+
 		$retries = 3;
 		$l = strlen($command."\n");
 		do {
