@@ -43,6 +43,14 @@ Also you probably should read [RompЯ And Mopidy](/RompR/Rompr-And-Mopidy)
 
 ## Next, You Need To Install RompЯ Somewhere
 
+**Note**
+
+RompЯ uses Cookies and will store preferences in the local settings of your browser. It will not function without the cookies and if you use a private or incognito session you will
+lose most of your preferences when you close it. If you're not happy with RompЯ using cookies or you do not want it to save data on your device, do not install it.
+
+All of the settings you save in RompЯ are stored in plain text. If you log in to Last.FM RompЯ does not store your Last.FM password
+but it does store a login key that could be used to gain access to your account. Similarly if you give RompЯ a Bing API key for image search that too will be stored in plain text.
+
 Download the latest release from [The Github Releases Page](https://github.com/fatg3erman/RompR/releases)
 
 Let's assume you extracted the zip file into a folder called 'web' in your home directory. So now you have /home/YOU/web/rompr, or on macOS /Users/YOU/web/rompr - where 'YOU' is your login username.
