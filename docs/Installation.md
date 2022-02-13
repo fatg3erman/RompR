@@ -50,6 +50,7 @@ lose most of your preferences when you close it. If you're not happy with RompЯ
 
 All of the settings you save in RompЯ are stored in plain text. If you log in to Last.FM RompЯ does not store your Last.FM password
 but it does store a login key that could be used to gain access to your account. Similarly if you give RompЯ a Bing API key for image search that too will be stored in plain text.
+No sensitive login information is stored in your browser, all of that is saved to the web server backend in the file prefs/prefs.var.
 
 Download the latest release from [The Github Releases Page](https://github.com/fatg3erman/RompR/releases)
 
