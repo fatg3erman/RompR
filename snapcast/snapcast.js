@@ -92,7 +92,12 @@ var snapsocket = function() {
 
 		send: async function(data) {
 			if (await snapsocket.initialise()) {
-				socket.send(JSON.stringify(data));
+				try {
+					socket.send(JSON.stringify(data));
+				} catch (err) {
+					debug.warn('SNAPSOCKET', 'Send Failed');
+					socket_error();
+				}
 			}
 		}
 	}

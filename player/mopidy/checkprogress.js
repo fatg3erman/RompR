@@ -65,7 +65,7 @@ var mopidysocket = function() {
 		var json = JSON.parse(message.data);
 		if (json.event) {
 			if (react || (!react && json.event != 'tracklist_changed')) {
-				// Don;t respond to tracklist changed messages if we're currently doing something
+				// Don't respond to tracklist changed messages if we're currently doing something
 				// because what we're doing might be getting the tracklist.
 				// Look it's complicated OK?
 				clearTimeout(react_timer);
@@ -108,7 +108,12 @@ var mopidysocket = function() {
 
 		send: async function(data) {
 			if (await mopidysocket.initialise()) {
-				socket.send(JSON.stringify(data));
+				try {
+					socket.send(JSON.stringify(data));
+				} catch (err) {
+					debug.warn('MOPIDYSOCKET', 'Send Failed');
+					socket_error();
+				}
 			}
 		},
 
