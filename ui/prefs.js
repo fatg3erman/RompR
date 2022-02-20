@@ -802,9 +802,13 @@ var prefs = function() {
 			$.each($('.savulon'), function() {
 				var prefname = $(this).attr("name");
 				var prefsave = prefname.replace(/_duplicate\d+/, '');
-				if (!$("[name="+prefname+"][value="+prefs[prefsave]+"]").is(':checked')) {
-					debug.log('SETPREFS','Radio',prefname,prefs[prefsave]);
-					$("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
+				if (prefs[prefsave]) {
+					if (!$("[name="+prefname+"][value="+prefs[prefsave]+"]").is(':checked')) {
+						debug.log('SETPREFS','Radio',prefname,prefs[prefsave]);
+						$("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
+					}
+				} else {
+					debug.warn('SETPREFS', 'No Value for',prefsave);
 				}
 			});
 
