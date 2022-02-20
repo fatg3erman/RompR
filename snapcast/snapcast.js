@@ -140,15 +140,8 @@ var snapcast = function() {
 	return {
 
 		initialise: function() {
-			sleepHelper.addWakeHelper(snapcast.afterWake);
-			snapcast.updateStatus();
-		},
-
-		afterWake: function() {
-			// Seems to be an issue in iOS 15 - after being asleep for a long time
-			// when we wake we don't get a socket closed message, so we need to close
-			// and reopen in.
-			snapsocket.close();
+			sleepHelper.addSleepHelper(snapsocket.close);
+			sleepHelper.addWakeHelper(snapcast.updateStatus);
 			snapcast.updateStatus();
 		},
 

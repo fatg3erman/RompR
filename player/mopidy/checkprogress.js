@@ -125,12 +125,8 @@ var mopidysocket = function() {
 
 		ignoreThings: function() {
 			react = false;
-		},
-
-		afterWake: function() {
-			mopidysocket.close();
-			mopidysocket.initialise();
 		}
+
 	}
 
 }();
@@ -141,24 +137,27 @@ async function update_on_wake() {
 
 async function checkProgress() {
 	await mopidysocket.initialise();
-	sleepHelper.addWakeHelper(mopidysocket.afterWake);
+	sleepHelper.addSleepHelper(mopidysocket.close);
+	sleepHelper.addWakeHelper(mopidysocket.initialise);
 	sleepHelper.addWakeHelper(update_on_wake);
 	while (true) {
-		if (AlanPartridge >= 30) {
-			await playlist.is_valid();
-			AlanPartridge = 0;
-			debug.core('MOPIDY', 'Doing poll');
-			await player.controller.do_command_list([]);
-			updateStreamInfo();
+		if (sleepHelper.isVisible()) {
+			if (AlanPartridge >= 30) {
+				await playlist.is_valid();
+				AlanPartridge = 0;
+				debug.core('MOPIDY', 'Doing poll');
+				await player.controller.do_command_list([]);
+				updateStreamInfo();
+			}
+			if (player.status.state == 'play') {
+				player.status.progress = (Date.now()/1000) - player.controller.trackstarttime;
+			} else {
+				player.status.progress = player.status.elapsed;
+			}
+			var duration = playlist.getCurrent('Time') || 0;
+			infobar.setProgress(player.status.progress, duration);
+			AlanPartridge++;
 		}
-		if (player.status.state == 'play') {
-			player.status.progress = (Date.now()/1000) - player.controller.trackstarttime;
-		} else {
-			player.status.progress = player.status.elapsed;
-		}
-		var duration = playlist.getCurrent('Time') || 0;
-		infobar.setProgress(player.status.progress, duration);
-		AlanPartridge++;
 		await new Promise(t => setTimeout(t, 1000));
 	}
 }
