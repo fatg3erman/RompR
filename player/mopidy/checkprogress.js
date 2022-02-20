@@ -83,7 +83,7 @@ var mopidysocket = function() {
 
 	return {
 		initialise: async function() {
-			if (!connected || !socket || socket.readyState > WebSocket.OPEN) {
+			if (!socket || socket.readyState > WebSocket.OPEN) {
 				debug.mark('MOPISOCKET', 'Connecting Socket to',prefs.mopidy_http_port);
 				socket = new WebSocket('ws://'+prefs.mopidy_http_port+'/mopidy/ws');
 				socket.onopen = socket_open;
@@ -101,11 +101,10 @@ var mopidysocket = function() {
 		},
 
 		close: function() {
-			if (connected || socket) {
+			connected = false;
+			if (socket) {
 				socket.close();
 			}
-			connected = false;
-			socket = null;
 		},
 
 		send: async function(data) {

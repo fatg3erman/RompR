@@ -85,11 +85,10 @@ var snapsocket = function() {
 		},
 
 		close: function() {
-			if (connected || socket) {
+			connected = false;
+			if (socket) {
 				socket.close();
 			}
-			connected = false;
-			socket = null;
 		},
 
 		send: async function(data) {
