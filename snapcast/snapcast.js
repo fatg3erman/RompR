@@ -85,14 +85,20 @@ var snapsocket = function() {
 		},
 
 		close: function() {
-			if (connected || socket) {
+			connected = false;
+			if (socket) {
 				socket.close();
 			}
 		},
 
 		send: async function(data) {
 			if (await snapsocket.initialise()) {
-				socket.send(JSON.stringify(data));
+				try {
+					socket.send(JSON.stringify(data));
+				} catch (err) {
+					debug.warn('SNAPSOCKET', 'Send Failed');
+					socket_error();
+				}
 			}
 		}
 	}
@@ -133,6 +139,7 @@ var snapcast = function() {
 	return {
 
 		initialise: function() {
+			sleepHelper.addSleepHelper(snapsocket.close);
 			sleepHelper.addWakeHelper(snapcast.updateStatus);
 			snapcast.updateStatus();
 		},

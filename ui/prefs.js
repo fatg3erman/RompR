@@ -543,6 +543,12 @@ var prefs = function() {
 				debug.log('PREFS', 'Setting clickmode from cookie to',prefs.clickmode);
 				localStorage.setItem("prefs.clickmode", JSON.stringify(prefs.clickmode));
 				setCookie('clickmode', '', 1);
+			} else if (!prefs.clickmode) {
+				if (prefs.skin == 'phone') {
+					prefs.clickmode = 'single';
+				} else {
+					prefs.clickmode = 'double';
+				}
 			}
 
 			// Handle old-style fontsize paramter that was the name of a css script
@@ -802,9 +808,13 @@ var prefs = function() {
 			$.each($('.savulon'), function() {
 				var prefname = $(this).attr("name");
 				var prefsave = prefname.replace(/_duplicate\d+/, '');
-				if (!$("[name="+prefname+"][value="+prefs[prefsave]+"]").is(':checked')) {
-					debug.log('SETPREFS','Radio',prefname,prefs[prefsave]);
-					$("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
+				if (prefs[prefsave]) {
+					if (!$("[name="+prefname+"][value="+prefs[prefsave]+"]").is(':checked')) {
+						debug.log('SETPREFS','Radio',prefname,prefs[prefsave]);
+						$("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
+					}
+				} else {
+					debug.warn('SETPREFS', 'No Value for',prefsave);
 				}
 			});
 

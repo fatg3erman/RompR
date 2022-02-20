@@ -41,12 +41,14 @@ var mopidysocket = function() {
 	}
 
 	function socket_error() {
+		clearTimeout(error_timer);
+		if (connected)
+			error_timer = setTimeout(show_connection_error, 3000);
+
 		connected = false;
 		mopidysocket.close();
 		clearTimeout(reconnect_timer);
 		reconnect_timer = setTimeout(mopidysocket.initialise, 10000);
-		clearTimeout(error_timer);
-		error_timer = setTimeout(show_connection_error, 3000);
 	}
 
 	function socket_open() {
@@ -65,7 +67,7 @@ var mopidysocket = function() {
 		var json = JSON.parse(message.data);
 		if (json.event) {
 			if (react || (!react && json.event != 'tracklist_changed')) {
-				// Don;t respond to tracklist changed messages if we're currently doing something
+				// Don't respond to tracklist changed messages if we're currently doing something
 				// because what we're doing might be getting the tracklist.
 				// Look it's complicated OK?
 				clearTimeout(react_timer);
@@ -83,7 +85,7 @@ var mopidysocket = function() {
 
 	return {
 		initialise: async function() {
-			if (!connected || !socket || socket.readyState > WebSocket.OPEN) {
+			if (!socket || socket.readyState > WebSocket.OPEN) {
 				debug.mark('MOPISOCKET', 'Connecting Socket to',prefs.mopidy_http_port);
 				socket = new WebSocket('ws://'+prefs.mopidy_http_port+'/mopidy/ws');
 				socket.onopen = socket_open;
@@ -101,14 +103,20 @@ var mopidysocket = function() {
 		},
 
 		close: function() {
-			if (connected || socket) {
+			connected = false;
+			if (socket) {
 				socket.close();
 			}
 		},
 
 		send: async function(data) {
 			if (await mopidysocket.initialise()) {
-				socket.send(JSON.stringify(data));
+				try {
+					socket.send(JSON.stringify(data));
+				} catch (err) {
+					debug.warn('MOPIDYSOCKET', 'Send Failed');
+					socket_error();
+				}
 			}
 		},
 
@@ -119,6 +127,7 @@ var mopidysocket = function() {
 		ignoreThings: function() {
 			react = false;
 		}
+
 	}
 
 }();
@@ -129,24 +138,27 @@ async function update_on_wake() {
 
 async function checkProgress() {
 	await mopidysocket.initialise();
+	sleepHelper.addSleepHelper(mopidysocket.close);
 	sleepHelper.addWakeHelper(mopidysocket.initialise);
 	sleepHelper.addWakeHelper(update_on_wake);
 	while (true) {
-		if (AlanPartridge >= 30) {
-			await playlist.is_valid();
-			AlanPartridge = 0;
-			debug.core('MOPIDY', 'Doing poll');
-			await player.controller.do_command_list([]);
-			updateStreamInfo();
+		if (sleepHelper.isVisible()) {
+			if (AlanPartridge >= 30) {
+				await playlist.is_valid();
+				AlanPartridge = 0;
+				debug.core('MOPIDY', 'Doing poll');
+				await player.controller.do_command_list([]);
+				updateStreamInfo();
+			}
+			if (player.status.state == 'play') {
+				player.status.progress = (Date.now()/1000) - player.controller.trackstarttime;
+			} else {
+				player.status.progress = player.status.elapsed;
+			}
+			var duration = playlist.getCurrent('Time') || 0;
+			infobar.setProgress(player.status.progress, duration);
+			AlanPartridge++;
 		}
-		if (player.status.state == 'play') {
-			player.status.progress = (Date.now()/1000) - player.controller.trackstarttime;
-		} else {
-			player.status.progress = player.status.elapsed;
-		}
-		var duration = playlist.getCurrent('Time') || 0;
-		infobar.setProgress(player.status.progress, duration);
-		AlanPartridge++;
 		await new Promise(t => setTimeout(t, 1000));
 	}
 }
