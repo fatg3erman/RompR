@@ -104,6 +104,8 @@ var mopidysocket = function() {
 			if (connected || socket) {
 				socket.close();
 			}
+			connected = false;
+			socket = null;
 		},
 
 		send: async function(data) {
@@ -123,6 +125,11 @@ var mopidysocket = function() {
 
 		ignoreThings: function() {
 			react = false;
+		},
+
+		afterWake: function() {
+			mopidysocket.close();
+			mopidysocket.initialise();
 		}
 	}
 
@@ -134,7 +141,7 @@ async function update_on_wake() {
 
 async function checkProgress() {
 	await mopidysocket.initialise();
-	sleepHelper.addWakeHelper(mopidysocket.initialise);
+	sleepHelper.addWakeHelper(mopidysocket.afterWake);
 	sleepHelper.addWakeHelper(update_on_wake);
 	while (true) {
 		if (AlanPartridge >= 30) {
