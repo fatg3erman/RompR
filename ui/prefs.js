@@ -543,6 +543,12 @@ var prefs = function() {
 				debug.log('PREFS', 'Setting clickmode from cookie to',prefs.clickmode);
 				localStorage.setItem("prefs.clickmode", JSON.stringify(prefs.clickmode));
 				setCookie('clickmode', '', 1);
+			} else if (!prefs.clickmode) {
+				if (prefs.skin == 'phone') {
+					prefs.clickmode = 'single';
+				} else {
+					prefs.clickmode = 'double';
+				}
 			}
 
 			// Handle old-style fontsize paramter that was the name of a css script
