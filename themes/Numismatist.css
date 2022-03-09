@@ -16,7 +16,7 @@
 
 
     --highlight-bg-colour: unset;
-    --highlight-bg-image:  linear-gradient(rgba(0,0,0,0.075), rgba(0,0,0,0.125));
+    --highlight-bg-image:  linear-gradient(rgba(0,0,0,0.03), rgba(0,0,0,0.1));
 
     --text-colour: #111111;
     --placeholder-colour: #707070;
@@ -92,7 +92,7 @@
     --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
     --album1-colour: transparent;
-    --album2-colour: rgba(0,0,0,0.1);
+    --album2-colour: rgba(0,0,0,0.05);
     --drop-shadow: 5px 5px 5px rgba(0, 0, 0, 0.7);
     --top-shadow: 0px -7px 5px rgba(0, 0, 0, 0.7);
 
