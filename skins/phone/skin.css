@@ -1351,6 +1351,8 @@ span.timer-time {
 		height: 26vw;
 		text-align: center;
 		overflow:hidden;
+		display: flex;
+		justify-content: center;
 	}
 
 	#albumpicture {
