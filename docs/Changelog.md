@@ -11,7 +11,7 @@ some of the old ones as they were ugly and I couldn't be bothered to update them
 * 5 skins is too much to maintain. The Tablet and Fruit skins have been removed. If you update from an earlier version
 you should delete them from your installation as they will no longer function.
 * The button bar on the phone skin has been moved to the bottom of the screen because having it at the top
-conflicted with a built-in touch event on Safari for iPhone. Definitely a Safari bug but I can't fix those...
+conflicted with a built-in touch event on Safari for iPhone.
 * On iOS Safari, the Phone skin will try to ensure that the browser hides the address bar because Safari always behaves as though
 it is hidden even when it isn't. Except when it doesn't. It'll try to make Chrome work sensibly too, but that's even harder.
 Adding RompR as an icon to your home screen is the best way to run it.
