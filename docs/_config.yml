@@ -3,3 +3,4 @@ title: RompЯ
 description: A beautiful, feature-rich music player.
 show_downloads: false
 logo: https://raw.githubusercontent.com/fatg3erman/files/master/images/favicon-196.png
+include: Contributing.md
