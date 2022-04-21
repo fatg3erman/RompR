@@ -256,9 +256,16 @@ class base_mpd_player {
 							}
 						}
 						if ($var[0] == 'binary') {
-							logger::log('MPDPLAYER', 'Reading',$retarr['binary'],'bytes of data');
-							$retarr['binarydata'] = fread($this->connection, $retarr['binary']);
-							fgets($this->connection);
+							$toread = $retarr['binary'];
+							logger::log('MPDPLAYER', 'Reading', $toread, 'bytes of binary data');
+							while ($toread > 0) {
+								$data = fread($this->connection, $toread);
+								$datalen = strlen($data);
+								$toread -= $datalen;
+								logger::trace('MPDPLAYER', 'Read', $datalen, 'bytes,', $toread, 'bytes more to go.');
+								$retarr['binarydata'] .= $data;
+							}
+							fgets($this->connection); // for the trailing newline
 						}
 					}
 				}
@@ -772,8 +779,9 @@ class base_mpd_player {
 		$filename = '';
 		$retries = 3;
 		logger::log('READPICTURE', 'Reading image from file',$uri);
-		// This doesn't fucking work because MPD is fucking shit fucker fuck fuck
-		// $this->do_mpd_command('binarylimit 32768');
+		if ($this->check_mpd_version('0.22.4')) {
+			$this->do_mpd_command('binarylimit 1048576');
+		}
 		while (($size === null || $size > 0) && $retries > 0) {
 			logger::log('MPDPLAYER', '  Reading at offset',$offset);
 			$result = $this->do_mpd_command('readpicture "'.$uri.'" '.$offset, true);
@@ -784,10 +792,15 @@ class base_mpd_player {
 					$filename = 'prefs/temp/'.md5($uri);
 					$handle = fopen($filename, 'w');
 				}
-				fwrite($handle, $result['binarydata']);
-				$size -= $result['binary'];
-				$offset += $result['binary'];
-				logger::log('MPDPLAYER', '    Remaining',$size);
+				if ($result['binary'] == strlen($result['binarydata'])) {
+					fwrite($handle, $result['binarydata']);
+					$size -= $result['binary'];
+					$offset += $result['binary'];
+					logger::log('MPDPLAYER', '    Remaining', $size);
+				} else {
+					logger::log('MPDPLAYER', '    Expected', $result['binary'], 'bytes but only got', strlen($result['binarydata']));
+					$retries--;
+				}
 			} else {
 				logger::log('READPICTURE', '    No binary data in response from MPD');
 				$retries--;
