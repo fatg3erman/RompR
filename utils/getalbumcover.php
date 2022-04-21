@@ -38,7 +38,7 @@ $player->probe_http_api();
 if (prefs::$prefs['mopidy_http_port'] !== false) {
 	array_unshift($searchfunctions, 'tryMopidy');
 }
-if ($player->check_mpd_version('0.22')) {
+if ($player->check_mpd_version('0.21')) {
 	array_unshift($searchfunctions, 'tryMPD');
 }
 
@@ -345,9 +345,17 @@ function tryMPD($albumimage) {
 		return '';
 
 	global $player;
-	logger::log('GETALBUMCOVER', 'Trying MPD Images. TrackURI is', $albumimage->trackuri);
 	$player->open_mpd_connection();
-	return $player->readpicture($albumimage->trackuri);
+	$filename = '';
+	if ($player->check_mpd_version('0.22')) {
+		logger::log('GETALBUMCOVER', 'Trying MPD embedded image. TrackURI is', $albumimage->trackuri);
+		$filename = $player->albumart($albumimage->trackuri, true);
+	}
+	if ($filename == '') {
+		logger::log('GETALBUMCOVER', 'Trying MPD folder image. TrackURI is', $albumimage->trackuri);
+		$filename = $player->albumart($albumimage->trackuri, false);
+	}
+	return $filename;
 }
 
 ?>

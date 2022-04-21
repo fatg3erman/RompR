@@ -772,23 +772,25 @@ class base_mpd_player {
 		return $retval;
 	}
 
-	public function readpicture($uri) {
+	public function albumart($uri, $embedded) {
 		$offset = 0;
 		$size = null;
 		$handle = null;
 		$filename = '';
 		$retries = 3;
-		logger::log('READPICTURE', 'Reading image from file',$uri);
+		logger::log('ALBUMART', 'Fetching', $embedded?'embedded':'folder', 'albumart for', $uri);
 		if ($this->check_mpd_version('0.22.4')) {
 			$this->do_mpd_command('binarylimit 1048576');
 		}
 		while (($size === null || $size > 0) && $retries > 0) {
 			logger::log('MPDPLAYER', '  Reading at offset',$offset);
-			$result = $this->do_mpd_command('readpicture "'.$uri.'" '.$offset, true);
+			$command = $embedded ? 'readpicture' : 'albumart';
+			$result = $this->do_mpd_command($command.' "'.$uri.'" '.$offset, true);
 			if (is_array($result) && array_key_exists('binary', $result)) {
 				if ($size === null) {
 					$size = $result['size'];
 					logger::log('MPDPLAYER', '    Size is',$size);
+					
 					$filename = 'prefs/temp/'.md5($uri);
 					$handle = fopen($filename, 'w');
 				}
@@ -802,7 +804,7 @@ class base_mpd_player {
 					$retries--;
 				}
 			} else {
-				logger::log('READPICTURE', '    No binary data in response from MPD');
+				logger::log('ALBUMART', '    No binary data in response from MPD');
 				$retries--;
 			}
 		}
