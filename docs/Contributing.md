@@ -1,4 +1,4 @@
-# Contribution Guiidelines
+# Contribution Guidelines
 
 The code for RompR is a toy to be played with.
 So it changes, frequently and unpredictably according to the whims
