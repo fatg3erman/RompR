@@ -2,6 +2,10 @@
 
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.62
+* Fix bug where album art might be partially downloaded when using MPD (Fix contributed by corubba)
+
+
 ## Version 1.61
 * Due to a change in the way I have to create cookies, mandated by Firefox, you need PHP 7.3 or later to run this version of RompR.
 * Improve Metadata backup so it now restores all data including Podcasts and Radio Stations.
