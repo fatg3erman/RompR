@@ -114,6 +114,7 @@ $arse = $player->get_config();
 if (is_array($arse) && array_key_exists('music_directory', $arse)) {
 	prefs::set_music_directory($arse['music_directory']);
 }
+
 $player->close_mpd_connection();
 $player->probe_http_api();
 

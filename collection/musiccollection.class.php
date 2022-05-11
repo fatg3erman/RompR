@@ -314,8 +314,9 @@ class musicCollection extends collection_base {
 		if ($current_albumartist != $trackobject->tags['albumartist'] ||
 			$current_album != $trackobject->tags['Album'] ||
 			$current_domain != $trackobject->tags['domain']) {
-			if ($albumobj !== true)
+			if ($albumobj !== true) {
 				$albumobj->check_database();
+			}
 
 			$albumobj = new album($trackobject);
 			$current_albumartist = $trackobject->tags['albumartist'];

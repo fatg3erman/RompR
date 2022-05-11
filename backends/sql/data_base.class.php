@@ -195,36 +195,37 @@ class data_base {
 	}
 
 	public function open_transaction() {
-		if (!$this->transaction_open) {
-			if ($this->mysqlc->beginTransaction()) {
-				$this->transaction_open = true;
-				$this->numdone = 0;
-			}
-		}
+		// if (!$this->transaction_open) {
+		// 	if ($this->mysqlc->beginTransaction()) {
+		// 		$this->transaction_open = true;
+		// 		$this->numdone = 0;
+		// 	}
+		// }
 	}
 
 	public function check_transaction() {
-		if ($this->transaction_open) {
-			if ($this->numdone++ >= ROMPR_MAX_TRACKS_PER_TRANSACTION) {
-				$this->close_transaction();
-				$this->open_transaction();
-			}
-		} else {
-			logger::warn("DATABASE", "WARNING! check_transaction called when transaction not open!");
-		}
+		// if ($this->transaction_open) {
+		// 	if ($this->numdone++ >= ROMPR_MAX_TRACKS_PER_TRANSACTION) {
+		// 		logger::trace('DATABASE', 'Need to commit transaction');
+		// 		$this->close_transaction();
+		// 		$this->open_transaction();
+		// 	}
+		// } else {
+		// 	logger::warn("DATABASE", "WARNING! check_transaction called when transaction not open!");
+		// }
 	}
 
 	public function close_transaction() {
-		if ($this->transaction_open) {
-			if ($this->mysqlc->commit()) {
-				$this->transaction_open = false;
-			} else {
-				logger::warn('DATABASE', "WARNING! Transaction commit failed!");
-				$this->show_sql_error();
-			}
-		} else {
-			logger::warn("DATABASE", "WARNING! close_transaction called when transaction not open!");
-		}
+		// if ($this->transaction_open) {
+		// 	if ($this->mysqlc->commit()) {
+		// 		$this->transaction_open = false;
+		// 	} else {
+		// 		logger::warn('DATABASE', "WARNING! Transaction commit failed!");
+		// 		$this->show_sql_error();
+		// 	}
+		// } else {
+		// 	logger::warn("DATABASE", "WARNING! close_transaction called when transaction not open!");
+		// }
 	}
 
 	public function checkCollectionStatus() {

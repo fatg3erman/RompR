@@ -11,8 +11,8 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 <meta name="viewport" content="width=100%, initial-scale=1.0, maximum-scale=1.0, '.
 'minimum-scale=1.0, user-scalable=0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />';
-print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string."&skin=".$skin.'" />'."\n";
-print '<link rel="stylesheet" type="text/css" href="gettheme.php?version='.$version_string.'" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.time()."&skin=".$skin.'" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="gettheme.php?version='.time().'" />'."\n";
 print '<link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png" />
 <link rel="shortcut icon" sizes="128x128" href="newimages/favicon-128.png" />
 <link rel="shortcut icon" sizes="64x64" href="newimages/favicon-64.png" />
