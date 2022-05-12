@@ -912,9 +912,11 @@ div.podtitle>div.fixed {
 
 .resumebar
 {
-	height: 0.4em;
-	margin-right: 0.3em;
-	margin-left: 0.3em;
+	height: 0.15em;
+	margin-right: unset;
+	margin-left: unset;
+	width: 100%;
+	border: none !important;
 }
 
 .resumeinfo {
@@ -923,7 +925,7 @@ div.podtitle>div.fixed {
 }
 
 .resume-bar-holder {
-	/*padding-right: 0.5em;*/
+	padding-right: 0.5em;
 }
 
 .resume-bar-holder>.tracknumber {

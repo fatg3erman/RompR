@@ -469,14 +469,8 @@ var uiHelper = function() {
 
 					var textholder = $('<div>', {class: 'resumeinfo containerbox vertical-centre'}).appendTo(thething);
 					textholder.append('<div class="tracknumber fixed"></div>');
-					if (name != 'Resume') {
-						textholder.append('<i class="icon-bookmark inline-icon"></i>');
-					}
+					textholder.append('<i class="icon-bookmark inline-icon"></i>');
 					textholder.append('<div class="expand playlistrow2">'+name+'</div>');
-
-					// var barholder = $('<div>', {class: 'resume-bar-holder expand'}).appendTo(textholder);
-					// var bar = $('<div>', {class: 'resumebar'}).appendTo(barholder);
-					// bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
 
 					textholder.append('<div class="fixed playlistrow2"> ('+formatTimeString(pos)+')</div>');
 
@@ -488,11 +482,11 @@ var uiHelper = function() {
 						}).appendTo(textholder);
 					}
 
-					// var barholder = $('<div>', {class: 'resume-bar-holder containerbox vertical-centre'}).appendTo(thething);
-					// barholder.append('<div class="tracknumber fixed"></div>');
+					var barholder = $('<div>', {class: 'resume-bar-holder containerbox vertical-centre'}).appendTo(thething);
+					barholder.append('<div class="tracknumber fixed"></div>');
 
-					// var bar = $('<div>', {class: 'resumebar'}).appendTo(barholder);
-					// bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
+					var bar = $('<div>', {class: 'resumebar'}).appendTo(barholder);
+					bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
 
 					// Remove the inputs as we don't need them any more
 					$(this).next().remove();
