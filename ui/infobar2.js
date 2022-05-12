@@ -4,6 +4,7 @@ var infobar = function() {
 	var npinfo = {};
 	var starttime = 0;
 	var scrobbled = false;
+	var playcount_incremented = false;
 	var nowplaying_updated = false;
 	var markedaslistened = false;
 	var fontsize = 8;
@@ -11,6 +12,7 @@ var infobar = function() {
 	var singling = false;
 	var notifycounter = 0;
 	var biggerizing = false;
+	var current_progress = 0;
 
 	function scrobble() {
 		if (!scrobbled) {
@@ -32,8 +34,6 @@ var infobar = function() {
 					lastfm.track.scrobble( options );
 				}
 			}
-			debug.trace("INFOBAR","Track playcount being updated");
-			nowplaying.incPlaycount(null);
 		}
 	}
 
@@ -494,6 +494,7 @@ var infobar = function() {
 			playlistinfo = info;
 			infobar.markCurrentTrack();
 			scrobbled = false;
+			playcount_incremented = false;
 			starttime = Math.floor(Date.now()/1000);
 			nowplaying_updated = false;
 			$("#progress").rangechooser("setOptions", {range: info.Time})
@@ -513,8 +514,10 @@ var infobar = function() {
 			}
 			if (info.type != 'stream') {
 				$("#addtoplaylist").removeClass('invisible');
+				$("#bookmark").removeClass('invisible');
 			} else {
 				$("#addtoplaylist").addClass('invisible');
+				$("#bookmark").addClass('invisible');
 			}
 			if (info.Id === -1) {
 				$("#stars").addClass('invisible');
@@ -558,6 +561,7 @@ var infobar = function() {
 		stopped: function() {
 			scrobbled = false;
 			nowplaying_updated = false;
+			playcount_incremented = false;
 		},
 
 		setLastFMCorrections: function(info) {
@@ -662,16 +666,27 @@ var infobar = function() {
 			});
 		},
 
+		getProgress: function() {
+			return current_progress;
+		},
+
 		setProgress: function(progress, duration) {
+			current_progress = progress;
 			if (progress < 3) {
 				scrobbled = false;
 				nowplaying_updated = false;
 				markedaslistened = false;
+				playcount_incremented = false;
 			}
 			if (progress > 4) { updateNowPlaying() };
 			var percent = (duration == 0) ? 0 : (progress/duration) * 100;
 			if (percent >= prefs.scrobblepercent) {
 				scrobble();
+			}
+			if (!playcount_incremented && percent >= 95) {
+				debug.trace("INFOBAR","Track playcount being updated");
+				nowplaying.incPlaycount(null);
+				playcount_incremented = true;
 			}
 			if (!markedaslistened && percent >= 95 && playlist.getCurrent('type') == 'podcast') {
 				podcasts.checkMarkPodcastAsListened(playlist.getCurrent('file'));

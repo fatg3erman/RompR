@@ -783,10 +783,11 @@ class poDatabase extends database {
 
 		print '<div class="item podcastitem">';
 		if ($item->Downloaded == 1 && $y->Version > 1) {
-			print '<div class="containerbox podcasttrack clicktrack playable draggable vertical-centre" name="'.rawurlencode(dirname(dirname(get_base_url())).$item->Localfilename).'">';
+			$uri_to_use = rawurlencode(dirname(dirname(get_base_url())).$item->Localfilename);
 		} else {
-			print '<div class="containerbox podcasttrack clicktrack playable draggable vertical-centre" name="'.rawurlencode($item->Link).'">';
+			$uri_to_use = rawurlencode($item->Link);
 		}
+		print '<div class="containerbox podcasttrack clicktrack playable draggable vertical-centre" name="'.$uri_to_use.'">';
 		if ($y->Subscribed == 1) {
 			if ($item->New == 1) {
 				print '<i title="'.language::gettext("podcast_tooltip_new").
@@ -797,12 +798,16 @@ class poDatabase extends database {
 			}
 		}
 		print '<div class="podtitle expand">'.htmlspecialchars(html_entity_decode($item->Title)).'</div>';
-		print '<i class="fixed icon-no-response-playbutton inline-icon"></i>';
+		// print '<i class="fixed icon-no-response-playbutton inline-icon"></i>';
 		print '</div>';
 
-		if ($item->Progress > 0) {
-			print '<input type="hidden" class="resumepos" value="'.$item->Progress.'" />';
-			print '<input type="hidden" class="length" value="'.$item->Duration.'" />';
+		$bookmarks = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, array(),
+			"SELECT * FROM PodBookmarktable WHERE PODTrackindex = ? AND Bookmark > 0 ORDER BY
+			CASE WHEN Name = 'Resume' THEN 0 ELSE Bookmark END ASC",
+			$item->PODTrackindex
+		);
+		foreach ($bookmarks as $book) {
+			uibits::resume_bar($book->Bookmark, $item->Duration, $book->Name, $uri_to_use, 'podcast');
 		}
 
 		$pee = date(DATE_RFC2822, $item->PubDate);
@@ -922,7 +927,8 @@ class poDatabase extends database {
 		foreach ($pods as $pod) {
 			$podid = $pod->PODindex;
 			logger::info("PODCASTS", "Marking track",$pod->PODTrackindex,"from podcast",$podid,"as listened");
-			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODTrackindex=?",$pod->PODTrackindex);
+			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex=?",$pod->PODTrackindex);
+			$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex = ? AND Name = ?", $pod->PODTrackindex, 'Resume');
 		}
 		return $podid;
 	}
@@ -938,13 +944,15 @@ class poDatabase extends database {
 
 	public function markKeyAsListened($trackid, $channel) {
 		logger::info("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as listened");
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODTrackindex = ".$trackid, true);
+		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex = ".$trackid, true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex = ? AND Name = ?", $trackid, 'Resume');
 		return $channel;
 	}
 
 	public function markKeyAsUnlistened($trackid, $channel) {
 		logger::info("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as unlistened");
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 0, New = 0, Progress = 0 WHERE PODTrackindex = ".$trackid, true);
+		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 0, New = 0 WHERE PODTrackindex = ".$trackid, true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex = ? AND Name = ?", $trackid, 'Resume');
 		return $channel;
 	}
 
@@ -1001,12 +1009,14 @@ class poDatabase extends database {
 	}
 
 	public function markChannelAsListened($channel) {
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODindex = ".$channel, true);
+		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODindex = ".$channel, true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex IN (SELECT PODTrackindex FROM PodcastTracktable WHERE PODindex = ?) AND Name = ?", $channel, 'Resume');
 		return $channel;
 	}
 
 	public function mark_all_episodes_listened() {
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 1)");
+		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 1)");
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE Name = ?", 'Resume');
 		return false;
 	}
 
@@ -1302,13 +1312,18 @@ class poDatabase extends database {
 		return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null, "SELECT Title FROM Podcasttable WHERE Subscribed = 1 AND (FeedURL = ? OR (Title = ? AND Artist = ?))", $podcast['feedUrl'], $podcast['collectionName'], $podcast['artistName']);
 	}
 
-	public function setPlaybackProgress($progress, $uri) {
+	public function setPlaybackProgress($progress, $uri, $name) {
 		$podid = false;
 		$pod = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR LocalFilename = ?", $uri, $uri);
 		foreach ($pod as $podcast) {
 			$podid = $podcast->PODindex;
-			logger::info("PODCASTS", "Updating Playback Progress for track",$podcast->PODTrackindex,"in podcast",$podid,"to",$progress);
-			$this->generic_sql_query("UPDATE PodcastTracktable SET Progress = ".$progress." WHERE PODTrackindex = ".$podcast->PODTrackindex);
+			logger::info("PODCASTS", "Adding Bookmark",$name,"at",$progress,"for track",$podcast->PODTrackindex,"in podcast",$podid);
+			$this->sql_prepare_query(true, null, null, null,
+				"REPLACE INTO PodBookmarktable (PODTrackindex, Bookmark, Name) VALUES (?, ?, ?)",
+				$podcast->PODTrackindex,
+				$progress,
+				$name
+			);
 		}
 		return $podid;
 	}
@@ -1336,7 +1351,8 @@ class poDatabase extends database {
 		foreach ($pods as $pod) {
 			$podid = $pod->PODindex;
 			logger::log("PODCASTS", "Marking",$pod->PODTrackindex,"from",$podid,"as listened");
-			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODTrackindex=?",$pod->PODTrackindex);
+			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex = ?",$pod->PODTrackindex);
+			$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex = ? AND Name = ?",$pod->PODTrackindex, 'Resume');
 		}
 		return $podid;
 

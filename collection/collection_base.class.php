@@ -934,6 +934,14 @@ class collection_base extends database {
 		return $this->generic_sql_query($qstring);
 	}
 
+	public function get_track_bookmarks($ttid) {
+		return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			"SELECT * FROM Bookmarktable WHERE TTindex = ? AND Bookmark > 0 ORDER BY
+			CASE WHEN Name = 'Resume' THEN 0 ELSE Bookmark END ASC",
+			$ttid
+		);
+	}
+
 }
 
 ?>

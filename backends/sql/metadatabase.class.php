@@ -157,6 +157,11 @@ class metaDatabase extends collection_base {
 
 	private function up_next_hack_for_audiobooks($ttid) {
 		$this->sql_prepare_query(true, null, null, null,
+			"UPDATE Bookmarktable SET Bookmark = 0 WHERE TTindex = ? AND Name = ?",
+			$ttid,
+			'Resume'
+		);
+		$this->sql_prepare_query(true, null, null, null,
 			"UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex IN
 			(SELECT Albumindex FROM Tracktable WHERE TTindex = ? AND isAudiobook = ?)",
 			$ttid, 1
@@ -325,6 +330,7 @@ class metaDatabase extends collection_base {
 	public function cleanup($data) {
 		logger::info("CLEANUP", "Doing Database Cleanup And Stats Update");
 		$this->remove_cruft();
+		$this->generic_sql_query("DELETE FROM Bookmarktable WHERE Bookmark = 0");
 		$this->update_track_stats();
 		$this->doCollectionHeader();
 	}
@@ -592,7 +598,7 @@ class metaDatabase extends collection_base {
 				logger::log('INCREMENT', 'Resetting resume position for TTID',$ttid);
 				// Always do this even if there is no stored progress to reset - it triggers the Progress trigger which makes the UI update
 				// so that the Up Next marker moves
-				$this->sql_prepare_query(true, null, null, null, 'REPLACE INTO Progresstable (TTindex, Progress) VALUES (? ,?)', $ttid, 0);
+				$this->sql_prepare_query(true, null, null, null, 'REPLACE INTO Bookmarktable (TTindex, Progress, Name) VALUES (? ,?, ?)', $ttid, 0, 'Resume');
 			}
 		} else {
 			logger::warn("INCREMENT", "FAILED Setting",$attribute,"to",$value,"for TTID",$ttid);
@@ -607,12 +613,23 @@ class metaDatabase extends collection_base {
 		// set_attribute
 		//		Sets an attribute (Rating, Tag etc) on a TTindex.
 
-		logger::log("ATTRIBUTE", "Setting",$attribute,"to",$value,"on",$ttid);
-		if ($this->sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.") VALUES (?, ?)", $ttid, $value)) {
-			logger::debug("ATTRIBUTE", "  .. success");
+		if (is_array($value)) {
+			logger::log("ATTRIBUTE", "Setting",$attribute,"to",$value[0],$value[1],"on",$ttid);
+			array_unshift($value, $ttid);
+			if ($this->sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", Name) VALUES (?, ?, ?)", $value)) {
+				logger::debug("ATTRIBUTE", "  .. success");
+			} else {
+				logger::warn("ATTRIBUTE", "FAILED Setting",$attribute,"to",print_r($value, true));
+				return false;
+			}
 		} else {
-			logger::warn("ATTRIBUTE", "FAILED Setting",$attribute,"to",$value,"on",$ttid);
-			return false;
+			logger::log("ATTRIBUTE", "Setting",$attribute,"to",$value,"on",$ttid);
+			if ($this->sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.") VALUES (?, ?)", $ttid, $value)) {
+				logger::debug("ATTRIBUTE", "  .. success");
+			} else {
+				logger::warn("ATTRIBUTE", "FAILED Setting",$attribute,"to",$value,"on",$ttid);
+				return false;
+			}
 		}
 		return true;
 	}

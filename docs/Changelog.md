@@ -4,6 +4,9 @@ Note that some versions listed here may be unreleased, I use version number incr
 
 ## Version 1.62
 * Fix bug where album art might be partially downloaded when using MPD (Fix contributed by corubba)
+* Other minor bugfixes.
+* If you are running romonitor, you will need to restart it after installing this version.
+* All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.
 
 
 ## Version 1.61

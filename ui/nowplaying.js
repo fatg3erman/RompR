@@ -269,6 +269,10 @@ var nowplaying = function() {
 			return plugins;
 		},
 
+		findCurrentTrackIndex: function() {
+			return findCurrentTrack();
+		},
+
 		newTrack: function(playlistinfo, force, source) {
 
 			debug.debug("NOWPLAYING","New Info",playlistinfo);
@@ -428,12 +432,12 @@ var nowplaying = function() {
 			}
 		},
 
-		storePlaybackProgress: function(progress, index) {
+		storePlaybackProgress: function(progress, index, name) {
 			if (index === null) {
 				index = findCurrentTrack();
 			}
 			debug.log("NOWPLAYING","Setting Playback Progress on",index,"to", progress);
-			tracks_played[index].setMeta('set', 'Progress', progress);
+			tracks_played[index].setMeta('set', 'Bookmark', [progress, name]);
 		},
 
 		addTrackToCollection: function(evt, index) {

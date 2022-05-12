@@ -264,6 +264,10 @@ function closePopupMenu() {
 	$('#popupmenu').remove();
 }
 
+function removePopupMenuItem(e, element) {
+	$(element).removeClass('backhi').removeClass('clickable').css({display: 'none'});
+}
+
 function bindClickHandlers() {
 
 	// Set up all our click event listeners
@@ -278,6 +282,7 @@ function bindClickHandlers() {
 
 	clickRegistry.addClickHandlers('clickalbummenu', makeAlbumMenu);
 	clickRegistry.addClickHandlers('clicktrackmenu', makeTrackMenu);
+	// clickRegistry.addClickHandlers('clickremovebookmark', removeBookmark);
 	clickRegistry.addClickHandlers('addtollviabrowse', browseAndAddToListenLater);
 	clickRegistry.addClickHandlers('addtocollectionviabrowse', browseAndAddToCollection);
 	clickRegistry.addClickHandlers('amendalbum', amendAlbumDetails);
@@ -287,12 +292,13 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('unusetrackimages', useTrackImages);
 	clickRegistry.addClickHandlers('fakedouble', playPlayable);
 	clickRegistry.addClickHandlers('closepopup', closePopupMenu);
+	clickRegistry.addClickHandlers('removeafter', removePopupMenuItem);
 	clickRegistry.addClickHandlers('clickqueuetracks', playlist.draggedToEmpty);
 	clickRegistry.addClickHandlers('clickplayfromhere', playlist.mimicCDPlayerMode);
 	clickRegistry.addClickHandlers('clickremdb', metaHandlers.fromUiElement.removeTrackFromDb);
 	clickRegistry.addClickHandlers('clickpltrack', metaHandlers.fromUiElement.tracksToPlaylist);
 	clickRegistry.addClickHandlers('removealbum', metaHandlers.fromUiElement.removeAlbumFromDb);
-	clickRegistry.addClickHandlers('resetresume', metaHandlers.fromUiElement.resetResumePosition);
+	// clickRegistry.addClickHandlers('resetresume', metaHandlers.fromUiElement.resetResumePosition);
 	clickRegistry.addClickHandlers('youtubedl', metaHandlers.fromUiElement.downloadYoutubeTrack);
 	clickRegistry.addClickHandlers('clickdeleteplaylisttrack', playlistManager.deletePlaylistTrack);
 	clickRegistry.addClickHandlers('clickdeleteplaylist', playlistManager.deletePlaylist);
@@ -321,6 +327,8 @@ function bindClickHandlers() {
 	$('.close-tagadder').on('click', tagAdder.close);
 	$('#addtoplaylist').on('click', addToPlaylist.show);
 	$('.close-pladd').on('click', addToPlaylist.close);
+	$('#bookmark').on('click', bookmarkAdder.show);
+	$('.close-bookmark').on('click', bookmarkAdder.close);
 	$(document).on('click', ".clickaddtoplaylist", addToPlaylist.close);
 	$(document).on('keyup', ".saveotron", prefs.saveTextBoxes);
 	$(document).on('change', ".saveomatic", prefs.saveSelectBoxes);
@@ -688,6 +696,8 @@ function noActionButtons(i) {
 		$(this).parent().prev().hasClass('clicktrack')) {
 		return false;
 	}
+	if ($(this).hasClass('podcastresume'))
+		return false;
 	return true;
 }
 
@@ -851,9 +861,7 @@ function popupMenu(event, element) {
 		debug.log('POPUPMENU', 'Restoring Selection', selection);
 		holderdiv.find('.spinner').stopSpinner();
 		selection.forEach(function(n) {
-			if (!$('[name="'+n.name+'"]').hasClass('selected')) {
-				$('[name="'+n.name+'"]').addToSelection();
-			}
+			$('[name="'+n.name+'"]').not('.selected').not('.noselect').addToSelection();
 			if (n.menu) {
 				$('[name="'+n.name+'"]').find('.clicktrackmenu').addClass('menu_opened');
 			}
@@ -915,12 +923,6 @@ function makeTrackMenu(e, element) {
 		}).html(language.gettext('label_playfromhere')));
 	}
 
-	if ($(element).hasClass('clickresetresume')) {
-		d.append($('<div>', {
-			class: 'backhi clickable menuitem resetresume closepopup',
-		}).html(language.gettext('label_resetresume')));
-	}
-
 	if ($(element).hasClass('clickyoutubedl')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem youtubedl closepopup',
@@ -970,9 +972,21 @@ function makeTrackMenu(e, element) {
 		});
 	});
 
+	var banana = $(element).parent().next();
+	while (banana.hasClass('podcastresume')) {
+		$('<div>', {
+			class: 'backhi clickable menuitem resetresume removeafter'
+		}).html('Remove Bookmark &quot;'+banana.attr('bookmark')+'&quot;').appendTo(d);
+		$('<input>', {
+			type: 'hidden'
+		}).val(banana.attr('bookmark')).appendTo(d);
+		banana = banana.next();
+	}
+
 	menu.addAction('clickratetrack', metaHandlers.fromUiElement.rateTrack);
 	menu.addAction('clicktagtrack', metaHandlers.fromUiElement.tagTrack);
 	menu.addAction('clickuntagtrack', metaHandlers.fromUiElement.untagTrack);
+	menu.addAction('resetresume', metaHandlers.fromUiElement.resetResumePosition);
 
 	menu.open();
 }

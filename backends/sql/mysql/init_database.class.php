@@ -104,15 +104,17 @@ class init_database extends init_generic {
 			return array(false, "Error While Checking Ratingtable : ".$err);
 		}
 
-		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Progresstable(".
-			"TTindex INT UNSIGNED, ".
-			"PRIMARY KEY(TTindex), ".
-			"Progress INT UNSIGNED) ENGINE=InnoDB", true))
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Bookmarktable(".
+			"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE, ".
+			"Bookmark INT UNSIGNED, ".
+			"Name VARCHAR(128) NOT NULL, ".
+			"PRIMARY KEY (TTindex, Name)".
+			")", true))
 		{
-			logger::log("MYSQL", "  Progresstable OK");
+			logger::log("SQLITE", "  Bookmarktable OK");
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
-			return array(false, "Error While Checking Progresstable : ".$err);
+			return array(false, "Error While Checking Bookmarktable : ".$err);
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Tagtable(".
@@ -1092,6 +1094,48 @@ class init_database extends init_generic {
 					$this->generic_sql_query("UPDATE Statstable SET Value = 80 WHERE Item = 'SchemaVer'", true);
 					break;
 
+				case 80:
+					logger::log("SQL", "Updating FROM Schema version 80 TO Schema version 81");
+					$progs = $this->generic_sql_query("SELECT * FROM Progresstable WHERE Progress > 0");
+					foreach ($progs as $p) {
+						logger::log("SQL", "  Adding Resume bookmark for TTindex",$p['TTindex']);
+						$this->sql_prepare_query(true, null, null, null,
+							"INSERT INTO Bookmarktable (TTindex, Bookmark, Name) VALUES (?, ?, ?)",
+							$p['TTindex'],
+							$p['Progress'],
+							'Resume'
+						);
+					}
+					if (!$this->trigger_not_exists('Progresstable', 'progress_update_trigger')) {
+						$this->generic_sql_query("DROP TRIGGER progress_update_trigger", true);
+					}
+					if (!$this->trigger_not_exists('Progresstable', 'progress_insert_trigger')) {
+						$this->generic_sql_query("DROP TRIGGER progress_insert_trigger", true);
+					}
+					$this->generic_sql_query("DROP TABLE Progresstable");
+					$this->create_progress_triggers();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 81 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 81:
+					logger::log("SQL", "Updating FROM Schema version 81 TO Schema version 82");
+					$progs = $this->generic_sql_query("SELECT * FROM PodcastTracktable WHERE Progress > 0");
+					foreach ($progs as $p) {
+						logger::log("SQL", "  Adding Resume bookmark for PODTrackindex",$p['PODTrackindex']);
+						$this->sql_prepare_query(true, null, null, null,
+							"INSERT INTO PodBookmarktable (PODTrackindex, Bookmark, Name) VALUES (?, ?, ?)",
+							$p['PODTrackindex'],
+							$p['Progress'],
+							'Resume'
+						);
+					}
+
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable DROP Progress");
+
+					$this->generic_sql_query("UPDATE Statstable SET Value = 82 WHERE Item = 'SchemaVer'", true);
+					break;
+
+
 			}
 			$sv++;
 		}
@@ -1206,16 +1250,16 @@ class init_database extends init_generic {
 
 	protected function create_progress_triggers() {
 
-		if ($this->trigger_not_exists('Progresstable', 'progress_update_trigger')) {
-			$this->generic_sql_query("CREATE TRIGGER progress_update_trigger AFTER UPDATE ON Progresstable
+		if ($this->trigger_not_exists('Bookmarktable', 'bookmark_update_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER bookmark_update_trigger AFTER UPDATE ON Bookmarktable
 								FOR EACH ROW
 								BEGIN
 								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
 								END;", true);
 		}
 
-		if ($this->trigger_not_exists('Progresstable', 'progress_insert_trigger')) {
-			return $this->generic_sql_query("CREATE TRIGGER progress_insert_trigger AFTER INSERT ON Progresstable
+		if ($this->trigger_not_exists('Bookmarktable', 'bookmark_insert_trigger')) {
+			return $this->generic_sql_query("CREATE TRIGGER bookmark_insert_trigger AFTER INSERT ON Bookmarktable
 								FOR EACH ROW
 								BEGIN
 								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);

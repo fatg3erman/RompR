@@ -190,9 +190,11 @@ var podcasts = function() {
 		loadPodcast: function(channel) {
 			debug.log("PODCASTS","Loading Podcast",channel);
 			var configvisible = $('#podcast_'+channel).find('.podconfigpanel').is(':visible');
+
 			clickRegistry.loadContentIntoTarget({
 				target: $('#podcast_'+channel),
 				clickedElement: $('.openmenu[name="podcast_'+channel+'"]'),
+				scoot: false,
 				data: {configvisible: configvisible ? 1 : 0}
 			});
 		},
@@ -476,7 +478,12 @@ var podcasts = function() {
 		},
 
 		storePlaybackProgress: function(track) {
-			podcastRequest({setprogress: track.progress, track: encodeURIComponent(track.uri)}, null);
+			podcastRequest({setprogress: track.progress, track: encodeURIComponent(track.uri), name: track.name}, null);
+		},
+
+		removeBookmark: function(event, clickedElement) {
+			var self = $(clickedElement);
+			podcasts.storePlaybackProgress({progress: 0, uri: self.attr('uri'), name: self.attr('name')});
 		},
 
 		globalAction: async function(event, clickedElement) {
@@ -512,4 +519,5 @@ clickRegistry.addClickHandlers('podremdownload', podcasts.undownloadPodcast);
 clickRegistry.addClickHandlers('podgroupload', podcasts.downloadPodcastChannel);
 clickRegistry.addClickHandlers('podmarklistened', podcasts.markEpisodeAsListened);
 clickRegistry.addClickHandlers('podmarkunlistened', podcasts.markEpisodeAsUnlistened);
+clickRegistry.addClickHandlers('clickremovebookmark', podcasts.removeBookmark);
 clickRegistry.addMenuHandlers('podcast', podcasts.getPodcast);

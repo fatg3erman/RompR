@@ -650,7 +650,7 @@ var playlist = function() {
 					} else if ($(element).hasClass('podcastresume')) {
 						tracks.push({
 							type: 'resumepodcast',
-							resumefrom: $(element).next().val(),
+							resumefrom: $(element).attr('resume'),
 							uri: decodeURIComponent(uri)
 						});
 					} else {
@@ -761,9 +761,9 @@ var playlist = function() {
 				var durationfraction = player.status.progress/currentTrack.Time;
 				var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? player.status.progress : 0;
 				if (currentTrack.type == "podcast") {
-					podcasts.storePlaybackProgress({uri: currentTrack.file, progress: Math.round(progresstostore)});
+					podcasts.storePlaybackProgress({uri: currentTrack.file, progress: Math.round(progresstostore), name: 'Resume'});
 				} else if (currentTrack.type == 'audiobook') {
-					nowplaying.storePlaybackProgress(Math.round(progresstostore), null);
+					nowplaying.storePlaybackProgress(Math.round(progresstostore), null, 'Resume');
 				}
 			}
 		},

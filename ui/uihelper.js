@@ -453,17 +453,54 @@ var uiHelper = function() {
 				target.find('input.resumepos').each(function() {
 					var pos = parseInt($(this).val());
 					var duration = parseInt($(this).next().val());
-					debug.trace("UIHELPER", "Episode has a progress bar",pos,duration);
+					var name = $(this).next().next().val();
+					var uri = $(this).next().next().next().val();
+					var type = $(this).next().next().next().next().val()
+					debug.trace("UIHELPER", "Episode has a progress bar",name,pos,duration);
 					var thething = $(
 						'<div>',
 						{
-							class: 'containerbox fullwidth vertical-centre podcastresume playable ',
-							name: $(this).prev().attr('name')
+							class: 'fullwidth podcastresume playable noselect',
+							name: uri,
+							resume: pos,
+							bookmark: name
 						}
 					).insertBefore($(this));
-					thething.append('<div class="tracknumber fixed"></div><div class="fixed playlistrow2">'+language.gettext('label_resume')+' ('+formatTimeString(pos)+')</div>');
-					var bar = $('<div>', {class: 'expand'}).appendTo(thething);
-					bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
+
+					var textholder = $('<div>', {class: 'resumeinfo containerbox vertical-centre'}).appendTo(thething);
+					textholder.append('<div class="tracknumber fixed"></div>');
+					if (name != 'Resume') {
+						textholder.append('<i class="icon-bookmark inline-icon"></i>');
+					}
+					textholder.append('<div class="expand playlistrow2">'+name+'</div>');
+
+					// var barholder = $('<div>', {class: 'resume-bar-holder expand'}).appendTo(textholder);
+					// var bar = $('<div>', {class: 'resumebar'}).appendTo(barholder);
+					// bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
+
+					textholder.append('<div class="fixed playlistrow2"> ('+formatTimeString(pos)+')</div>');
+
+					if (type == 'podcast') {
+						$('<i>', {
+							class: 'icon-cancel-circled inline-icon clickable clickicon clickremovebookmark tright',
+							name: name,
+							uri: decodeURIComponent(uri)
+						}).appendTo(textholder);
+					}
+
+					// var barholder = $('<div>', {class: 'resume-bar-holder containerbox vertical-centre'}).appendTo(thething);
+					// barholder.append('<div class="tracknumber fixed"></div>');
+
+					// var bar = $('<div>', {class: 'resumebar'}).appendTo(barholder);
+					// bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
+
+					// Remove the inputs as we don't need them any more
+					$(this).next().remove();
+					$(this).next().remove();
+					$(this).next().remove();
+					$(this).next().remove();
+					$(this).remove();
+
 				});
 
 			}

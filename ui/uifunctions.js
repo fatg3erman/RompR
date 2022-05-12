@@ -6,6 +6,7 @@ var tagAdder = function() {
 
 	return {
 		show: function(evt, idx, cb) {
+			debug.log('TAGADDER', evt, idx);
 			callback = cb;
 			if (evt.target == lastelement) {
 				tagAdder.close();
@@ -44,6 +45,68 @@ var tagAdder = function() {
 			);
 		}
 	}
+}();
+
+
+var bookmarkAdder = function() {
+
+	var lastelement = null;
+	var npindex = null;
+	var bookmark = null;
+	var type = null;
+	var file = null;
+
+	return {
+		show: function(evt) {
+			if (evt.target == lastelement) {
+				bookmarkAdder.close();
+			} else {
+				npindex = nowplaying.findCurrentTrackIndex();
+				bookmark = infobar.getProgress();
+				type = playlist.getCurrent('type');
+				file = playlist.getCurrent('file');
+				debug.log('BOOKMARK', 'Adding to npindex',npindex,'at',bookmark);
+				if (!bookmark || (!npindex && npindex !== 0))
+					return;
+
+				$('#bookmarkaddinfo').html(
+					'Adding Bookmark to '+playlist.getCurrent('Title')+' at '+formatTimeString(bookmark)
+				);
+
+				var position = getPosition(evt);
+				uiHelper.setFloaterPosition($('#bookmarkadddropdown'), position);
+				$("#bookmarkadddropdown").slideDown('fast');
+				lastelement = evt.target;
+
+			}
+
+		},
+
+		add: function() {
+			var name = $('input[name="bookmarkname"]').val();
+			if (!name)
+				name = 'Untitled Bookmark';
+
+			switch (type) {
+				case 'podcast':
+					podcasts.storePlaybackProgress({progress: bookmark, uri: file, name: name});
+					break;
+
+				default:
+					nowplaying.storePlaybackProgress(bookmark, npindex, name);
+					break;
+
+			}
+			bookmarkAdder.close();
+		},
+
+		close: function() {
+			$("#bookmarkadddropdown").slideUp('fast');
+			npindex = null;
+			lastelement = null;
+		}
+	}
+
 }();
 
 var addToPlaylist = function(evt) {

@@ -641,7 +641,6 @@ img.notexist,img.notfound {
 	z-index:1500;
 	max-height:50vh;
 	position:absolute;
-	overflow-y:scroll;
 }
 
 /* Icons, tags, ratings etc in now playing */
@@ -908,21 +907,27 @@ div.podtitle>div.fixed {
 .podcastresume
 {
 	margin-top: 0.5em;
-	margin-bottom: 0.5em;
+	margin-bottom: 0.75em;
 }
 
-.podcastresume>.fixed:nth-child(2)
+.resumebar
 {
-	margin-right: 1em;
+	height: 0.4em;
+	margin-right: 0.3em;
+	margin-left: 0.3em;
 }
 
-.podcastresume>.progressbar
-{
-	height: 0.75em;
+.resumeinfo {
+	font-size: 92%;
+	padding-right: 0.5em;
 }
 
-.podcastitem .tracknumber {
-	display: none;
+.resume-bar-holder {
+	/*padding-right: 0.5em;*/
+}
+
+.resume-bar-holder>.tracknumber {
+	height: unset;
 }
 
 /*

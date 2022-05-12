@@ -320,3 +320,22 @@ print uibits::ui_config_header([
 ?>
 	<div id="addtoplaylistmenu" class="clearfix"></div>
 </div>
+
+<div id="bookmarkadddropdown" class="dropmenu dropshadow mobmenu widemenu">
+<?php
+print uibits::ui_config_header([
+	'lefticon' => 'icon-bookmark',
+	'label' => 'button_bookmarks',
+	'title_class' => 'moveable',
+	'icon_size' => 'smallicon',
+	'righticon' => 'icon-cancel-circled clickicon close-bookmark'
+])
+?>
+	<div id="bookmarkaddinfo"></div>
+	<div class="containerbox vertical-centre">
+		<div class="expand">
+			<input type="text" autocomplete="off" class="enter" name="bookmarkname" placeholder="Bookmark Name" style="cursor: auto" />
+		</div>
+		<button class="fixed" style="margin-left: 8px" onclick="bookmarkAdder.add()">ADD</button>
+	</div>
+</div>

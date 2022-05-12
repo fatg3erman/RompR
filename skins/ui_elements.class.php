@@ -74,7 +74,7 @@ class ui_elements {
 		'extralines' => []
 	];
 
-	public static function albumTrack($data) {
+	public static function albumTrack($data, $bookmarks) {
 
 		$data = array_merge(self::DEFAULT_TRACK_PARAMS, $data);
 
@@ -151,9 +151,12 @@ class ui_elements {
 			if ($data['lm'] === null) {
 				$button_class .= ' clickremovedb';
 			}
-			if ($data['progress'] > 0) {
-				$button_class .= ' clickresetresume';
-			}
+			// foreach ($bookmarks as $book) {
+			// 	if ($book['Name'] == 'Resume') {
+			// 		$button_class .= ' clickresetresume';
+			// 		break;
+			// 	}
+			// }
 			if ($d == 'youtube' || $d == 'yt') {
 				$button_class .= ' clickyoutubedl';
 			}
@@ -162,9 +165,8 @@ class ui_elements {
 
 		print '</div>';
 
-		if ($data['progress'] > 0) {
-			print '<input type="hidden" class="resumepos" value="'.$data['progress'].'" />';
-			print '<input type="hidden" class="length" value="'.$data['time'].'" />';
+		foreach ($bookmarks as $mark) {
+			uibits::resume_bar($mark['Bookmark'], $data['time'], $mark['Name'], rawurlencode($data['uri']), 'local');
 		}
 
 		return 0;
@@ -661,6 +663,9 @@ class ui_elements {
 		print '<i id="ratingimage" class="icon-0-stars rating-icon-big"></i>';
 		print '<input type="hidden" value="-1" />';
 		print '</div>';
+		print '<div id="bookmark" class="invisible topstats">';
+		print '<i title="'.language::gettext('button_bookmarks').'" class="icon-bookmark npicon clickicon tooltip"></i>';
+		print '</div>';
 		print '<div id="addtoplaylist" class="invisible topstats">';
 		print '<i title="'.language::gettext('button_addtoplaylist').'" class="icon-doc-text npicon clickicon tooltip"></i>';
 		print '</div>';
@@ -689,6 +694,14 @@ class ui_elements {
 			'label' => 'config_editshortcuts',
 			'onclick' => 'shortcuts.edit()'
 		]);
+	}
+
+	public static function resume_bar($pos, $length, $name, $uri, $type) {
+		print '<input type="hidden" class="resumepos" value="'.$pos.'" />';
+		print '<input type="hidden" class="length" value="'.$length.'" />';
+		print '<input type="hidden" class="bookmark" value="'.$name.'" />';
+		print '<input type="hidden" class="bkuri" value="'.$uri.'" />';
+		print '<input type="hidden" class="type" value="'.$type.'" />';
 	}
 
 }

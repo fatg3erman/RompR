@@ -112,6 +112,7 @@
 .icon-www { background-image: var(--icon-www); }
 .icon-allmusic { background-image: var(--icon-allmusic); }
 .icon-updown { background-image: var(--icon-updown); }
+.icon-bookmark { background-image: var(--icon-bookmark); }
 
 .icon-snapcast {
     background-image: var(--icon-snapcast);

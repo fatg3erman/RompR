@@ -339,3 +339,20 @@
 	</div>
 </div>
 
+<div id="bookmarkadddropdown" class="top_drop_menu dropmenu dropshadow">
+<?php
+print uibits::ui_config_header([
+	'lefticon' => 'icon-bookmark',
+	'label' => 'button_bookmarks',
+	'righticon' => 'icon-cancel-circled clickicon close-bookmark'
+])
+?>
+	<div id="bookmarkaddinfo"></div>
+	<div class="containerbox vertical-centre">
+		<div class="expand">
+			<input type="text" autocomplete="off" class="enter" name="bookmarkname" placeholder="Bookmark Name" style="cursor: auto" />
+		</div>
+		<button class="fixed" style="margin-left: 8px" onclick="bookmarkAdder.add()">ADD</button>
+	</div>
+</div>
+

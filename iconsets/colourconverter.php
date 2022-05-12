@@ -54,12 +54,14 @@ $dirs = [
 
 foreach ($dirs as $dir => $function) {
 
-    $files = glob('iconfactory/'.$dir.'/*.svg');
+    if (is_dir('iconfactory/'.$dir)) {
+        $files = glob('iconfactory/'.$dir.'/*.svg');
 
-    foreach ($files as $file) {
-        print $file."\n";
-        $function($file);
-        copy ($file, $dir.'/'.basename($file));
+        foreach ($files as $file) {
+            print $file."\n";
+            $function($file);
+            copy ($file, $dir.'/'.basename($file));
+        }
     }
 }
 

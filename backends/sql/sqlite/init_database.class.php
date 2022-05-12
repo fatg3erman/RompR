@@ -145,14 +145,17 @@ class init_database extends init_generic {
 			return array(false, "Error While Checking Ratingtable : ".$err);
 		}
 
-		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Progresstable(".
-			"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
-			"Progress INTEGER)", true))
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Bookmarktable(".
+			"TTindex INTEGER NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE, ".
+			"Bookmark INTEGER, ".
+			"Name VARCHAR(128) NOT NULL, ".
+			"PRIMARY KEY (TTindex, Name)".
+			")", true))
 		{
-			logger::log("SQLITE", "  Progresstable OK");
+			logger::log("SQLITE", "  Bookmarktable OK");
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
-			return array(false, "Error While Checking Progresstable : ".$err);
+			return array(false, "Error While Checking Bookmarktable : ".$err);
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Tagtable(".
@@ -238,7 +241,6 @@ class init_database extends init_generic {
 			"Downloaded TINYINT(1) DEFAULT 0, ".
 			"Listened TINYINT(1) DEFAULT 0, ".
 			"New TINYINT(1) DEFAULT 1, ".
-			"Progress INTEGER DEFAULT 0, ".
 			"Deleted TINYINT(1) DEFAULT 0)", true))
 		{
 			logger::log("SQLITE", "  PodcastTracktable OK");
@@ -250,6 +252,19 @@ class init_database extends init_generic {
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking PodcastTracktable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS PodBookmarktable(".
+			"PODTrackindex INTEGER NOT NULL REFERENCES PodcastTracktable(PODTrackindex) ON DELETE CASCADE, ".
+			"Bookmark INTEGER, ".
+			"Name VARCHAR(128) NOT NULL, ".
+			"PRIMARY KEY (PODTrackIndex, Name)".
+			")", true))
+		{
+			logger::log("SQLITE", "  PodBookmarktable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking PodBookmarktable : ".$err);
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS RadioStationtable(".
@@ -1019,6 +1034,65 @@ class init_database extends init_generic {
 					$this->generic_sql_query("UPDATE Statstable SET Value = 80 WHERE Item = 'SchemaVer'", true);
 					break;
 
+				case 80:
+					logger::log("SQL", "Updating FROM Schema version 80 TO Schema version 81");
+					$progs = $this->generic_sql_query("SELECT * FROM Progresstable WHERE Progress > 0");
+					foreach ($progs as $p) {
+						logger::log("SQL", "  Adding Resume bookmark for TTindex",$p['TTindex']);
+						$this->sql_prepare_query(true, null, null, null,
+							"INSERT INTO Bookmarktable (TTindex, Bookmark, Name) VALUES (?, ?, ?)",
+							$p['TTindex'],
+							$p['Progress'],
+							'Resume'
+						);
+					}
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS progress_update_trigger", true);
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS progress_insert_trigger", true);
+					$this->generic_sql_query("DROP TABLE Progresstable");
+					$this->create_progress_triggers();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 81 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 81:
+					logger::log("SQL", "Updating FROM Schema version 81 TO Schema version 82");
+					$progs = $this->generic_sql_query("SELECT * FROM PodcastTracktable WHERE Progress > 0");
+					foreach ($progs as $p) {
+						logger::log("SQL", "  Adding Resume bookmark for PODTrackindex",$p['PODTrackindex']);
+						$this->sql_prepare_query(true, null, null, null,
+							"INSERT INTO PodBookmarktable (PODTrackindex, Bookmark, Name) VALUES (?, ?, ?)",
+							$p['PODTrackindex'],
+							$p['Progress'],
+							'Resume'
+						);
+					}
+
+					$this->generic_sql_query("CREATE TABLE IF NOT EXISTS PodcastTracktable_New(".
+						"PODTrackindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+						"JustUpdated TINYINT(1), ".
+						"PODindex INTEGER, ".
+						"Title VARCHAR(255), ".
+						"Artist VARCHAR(255), ".
+						"Duration INTEGER, ".
+						"PubDate INTEGER, ".
+						"FileSize INTEGER, ".
+						"Description TEXT, ".
+						"Link TEXT, ".
+						"Guid TEXT, ".
+						"Localfilename VARCHAR(255), ".
+						"Downloaded TINYINT(1) DEFAULT 0, ".
+						"Listened TINYINT(1) DEFAULT 0, ".
+						"New TINYINT(1) DEFAULT 1, ".
+						"Deleted TINYINT(1) DEFAULT 0)", true);
+					$this->generic_sql_query("INSERT INTO PodcastTracktable_New
+						SELECT PODTrackindex, JustUpdated, PODindex, Title, Artist, Duration,
+						PubDate, FileSize, Description, Link, Guid, Localfilename, Downloaded,
+						Listened, New, Deleted FROM PodcastTracktable", true);
+					$this->generic_sql_query("DROP TABLE PodcastTracktable");
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable_New RENAME TO PodcastTracktable");
+
+					$this->generic_sql_query("UPDATE Statstable SET Value = 82 WHERE Item = 'SchemaVer'", true);
+					break;
+
 			}
 			$sv++;
 		}
@@ -1109,13 +1183,13 @@ class init_database extends init_generic {
 
 	protected function create_progress_triggers() {
 
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS progress_update_trigger AFTER UPDATE ON Progresstable
+		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS progress_update_trigger AFTER UPDATE ON Bookmarktable
 							FOR EACH ROW
 							BEGIN
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
 							END;", true);
 
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS progress_insert_trigger AFTER INSERT ON Progresstable
+		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS progress_insert_trigger AFTER INSERT ON Bookmarktable
 							FOR EACH ROW
 							BEGIN
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);

@@ -304,6 +304,14 @@ var layoutProcessor = function() {
 				handleClass: 'configtitle',
 				handleshow: false
 			});
+			$("#pladddropdown").floatingMenu({
+				handleClass: 'configtitle',
+				handleshow: false
+			});
+			$("#bookmarkadddropdown").floatingMenu({
+				handleClass: 'configtitle',
+				handleshow: false
+			});
 			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
 			$("#sources").find('.mCSB_draggerRail').resizeHandle({
 				adjusticons: ['#sourcescontrols', '#infopanecontrols'],

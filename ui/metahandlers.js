@@ -167,8 +167,8 @@ var metaHandlers = function() {
 				);
 			},
 
-			resetResumePosition: function(event, element) {
-				metaHandlers.fromUiElement.doMeta('set', 'Progress', [{attribute: 'Progress', value: 0}]);
+			resetResumePosition: function(element, callback) {
+				metaHandlers.fromUiElement.doMeta('set', 'Bookmark', [{attribute: 'Bookmark', value: [0, element.next().val()]}], callback);
 			},
 
 			downloadYoutubeTrack: async function(event, element) {

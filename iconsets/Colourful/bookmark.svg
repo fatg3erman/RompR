@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Svg Vector Icons : http://www.onlinewebfonts.com/icon -->
+
+<svg
+   version="1.1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 1000 1000"
+   enable-background="new 0 0 1000 1000"
+   xml:space="preserve"
+   id="svg15"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs19"><linearGradient
+     id="linearGradient6836"><stop
+       style="stop-color:#656565;stop-opacity:1;"
+       offset="0"
+       id="stop6832" /><stop
+       style="stop-color:#00009d;stop-opacity:1"
+       offset="1"
+       id="stop6834" /></linearGradient><linearGradient
+     xlink:href="#linearGradient6836"
+     id="linearGradient8310"
+     x1="-416.00433"
+     y1="999.26605"
+     x2="-418.03369"
+     y2="1036.9539"
+     gradientUnits="userSpaceOnUse" /></defs>
+<metadata
+   id="metadata9"> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata>
+<g
+   id="g13"
+   style="fill:url(#linearGradient8310);fill-opacity:1"><path
+     d="M200.8,10v980l297.1-207.3l301.2,206.7V10H200.8z M735.8,869L497.7,705.6L264.3,868.4v-795h471.5V869L735.8,869z"
+     id="path11"
+     style="fill:#44999d;fill-opacity:1" /></g>
+</svg>

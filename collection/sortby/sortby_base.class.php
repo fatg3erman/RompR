@@ -226,7 +226,6 @@ class sortby_base {
 		$qstring = "SELECT
 				".database::SQL_TAG_CONCAT." AS tags,
 				r.Rating AS rating,
-				pr.Progress AS progress,
 				tr.TTindex AS ttid,
 				tr.Title AS title,
 				tr.TrackNo AS trackno,
@@ -246,7 +245,6 @@ class sortby_base {
 				LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
 				LEFT JOIN Tagtable AS t USING (Tagindex)
 				LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
-				LEFT JOIN Progresstable AS pr ON tr.TTindex = pr.TTindex
 				LEFT JOIN Playcounttable AS pt ON tr.TTindex = pt.TTindex
 				WHERE
 					tr.Albumindex = ".$this->who."
@@ -331,7 +329,8 @@ class sortby_base {
 			} else {
 				$arr['discclass'] = '';
 			}
-			$tracktype = uibits::albumTrack($arr);
+			$tracktype = uibits::albumTrack($arr, prefs::$database->get_track_bookmarks($arr['ttid']));
+
 		}
 		if ($total_time > 0) {
 			print '<input type="hidden" class="albumtime" value="'.format_time($total_time).'" />';

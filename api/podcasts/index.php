@@ -36,7 +36,7 @@ if (array_key_exists('url', $_REQUEST)) {
 } else if (array_key_exists('channelundelete', $_REQUEST)) {
 	$podid = array(prefs::$database->undeleteFromChannel($_REQUEST['channelundelete']));
 } else if (array_key_exists('setprogress', $_REQUEST)) {
-	$podid = array(prefs::$database->setPlaybackProgress($_REQUEST['setprogress'], rawurldecode($_REQUEST['track'])));
+	$podid = array(prefs::$database->setPlaybackProgress($_REQUEST['setprogress'], rawurldecode($_REQUEST['track']), $_REQUEST['name']));
 } else if (array_key_exists('removedownloaded', $_REQUEST)) {
 	$podid = array(prefs::$database->removeDownloaded($_REQUEST['removedownloaded']));
 } else if (array_key_exists('option', $_REQUEST)) {
