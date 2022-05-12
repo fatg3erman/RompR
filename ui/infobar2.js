@@ -506,25 +506,26 @@ var infobar = function() {
 				$("#playcount").removeClass('invisible');
 				showLove(true);
 			} else {
-				$("#stars").addClass('invisible');
-				$("#dbtags").addClass('invisible');
-				$("#ptagadd").addClass('invisible');
-				$("#playcount").addClass('invisible');
+				$("#stars").not('.invisible').addClass('invisible');
+				$("#dbtags").not('.invisible').addClass('invisible');
+				$("#ptagadd").not('.invisible').addClass('invisible');
+				$("#playcount").not('.invisible').addClass('invisible');
 				showLove(false);
 			}
 			if (info.type != 'stream') {
 				$("#addtoplaylist").removeClass('invisible');
 				$("#bookmark").removeClass('invisible');
 			} else {
-				$("#addtoplaylist").addClass('invisible');
-				$("#bookmark").addClass('invisible');
+				$("#addtoplaylist").not('.invisible').addClass('invisible');
+				$("#bookmark").not('.invisible').addClass('invisible');
 			}
 			if (info.Id === -1) {
-				$("#stars").addClass('invisible');
-				$("#dbtags").addClass('invisible');
-				$("#playcount").addClass('invisible');
-				$("#addtoplaylist").addClass('invisible');
-				$("#ptagadd").addClass('invisible');
+				$("#stars").not('.invisible').addClass('invisible');
+				$("#dbtags").not('.invisible').addClass('invisible');
+				$("#playcount").not('.invisible').addClass('invisible');
+				$("#addtoplaylist").not('.invisible').addClass('invisible');
+				$("#ptagadd").not('.invisible').addClass('invisible');
+				$("#bookmark").not('.invisible').addClass('invisible');
 				showLove(false);
 			} else {
 				infobar.albumImage.setKey(info.ImgKey);
