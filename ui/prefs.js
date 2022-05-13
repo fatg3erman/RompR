@@ -852,7 +852,7 @@ var prefs = function() {
 					callback = prefs.postUIChange;
 					break;
 
-				case 'coversize':
+				case 'coversize':prefs/
 					set_cover_size(prefobj.coversize);
 					callback = prefs.postUIChange;
 					break;
@@ -980,6 +980,27 @@ var prefs = function() {
 					landscapeImage.src = url;
 					break;
 			}
+		},
+
+		removeCurrentBackground: async function() {
+			var ws = getWindowSize();
+			var to_remove;
+			if (ws.x > ws.y) {
+				debug.log('PREFS', 'Deleting Landscape Background Image', landscapeImage.src);
+				to_remove = landscapeImage.src;
+			} else {
+				debug.log('PREFS', 'Deleting Portrait Background Image', portraitImage.src);
+				to_remove = portraitImage.src;
+			}
+
+			await $.ajax({
+				method: 'GET',
+				url: 'api/userbackgrounds/?deleteimage='+to_remove.substr(to_remove.indexOf('prefs/')),
+				dataType: 'json',
+				cache: false
+			});
+
+			updateCustomBackground();
 		},
 
 		clickBindType: function() {

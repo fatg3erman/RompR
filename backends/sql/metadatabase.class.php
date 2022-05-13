@@ -593,12 +593,11 @@ class metaDatabase extends collection_base {
 		logger::log("INCREMENT", "Setting",$attribute,"to",$value,"for TTID",$ttid);
 		if ($this->sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", LastPlayed) VALUES (?, ?, ?)", $ttid, $value, $lp)) {
 			logger::debug("INCREMENT", " .. success");
-			$is_audiobook = $this->simple_query('isAudiobook', 'Tracktable', 'TTindex', $ttid, 0);
-			if ($is_audiobook == 1) {
+			if ($attribute == 'Playcount' && $this->simple_query('isAudiobook', 'Tracktable', 'TTindex', $ttid, 0) == 1) {
 				logger::log('INCREMENT', 'Resetting resume position for TTID',$ttid);
 				// Always do this even if there is no stored progress to reset - it triggers the Progress trigger which makes the UI update
 				// so that the Up Next marker moves
-				$this->sql_prepare_query(true, null, null, null, 'REPLACE INTO Bookmarktable (TTindex, Progress, Name) VALUES (? ,?, ?)', $ttid, 0, 'Resume');
+				$this->sql_prepare_query(true, null, null, null, 'REPLACE INTO Bookmarktable (TTindex, Bookmark, Name) VALUES (? ,?, ?)', $ttid, 0, 'Resume');
 			}
 		} else {
 			logger::warn("INCREMENT", "FAILED Setting",$attribute,"to",$value,"for TTID",$ttid);
@@ -611,9 +610,13 @@ class metaDatabase extends collection_base {
 	private function set_attribute($ttid, $attribute, $value) {
 
 		// set_attribute
-		//		Sets an attribute (Rating, Tag etc) on a TTindex.
+		//		Sets an attribute (Rating, Bookmark etc) on a TTindex.
+		//		For this to work, the table must have columns TTindex, $attribute and must be called [$attribute]table, eg $attribute = Rating on Ratingtable
 
 		if (is_array($value)) {
+			// If $value is an array, it's expected to be used in a table with columns TTindex, $attribute, Name (eg $attribute = Bookmark)
+			// The array should contain entries [Value for $attribute, Value for Name]
+			// It's a bit of a hack but it works so far
 			logger::log("ATTRIBUTE", "Setting",$attribute,"to",$value[0],$value[1],"on",$ttid);
 			array_unshift($value, $ttid);
 			if ($this->sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", Name) VALUES (?, ?, ?)", $value)) {

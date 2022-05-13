@@ -203,6 +203,8 @@ class prefspanel extends uibits {
 			]
 		]);
 
+		self::ui_checkbox(['id' => 'cus_bg_random', 'label' => 'label_random_order', 'typeclass' => null]);
+
 		self::ui_select_box([
 			'id' => 'changeevery',
 			'options' => array_flip(BG_IMAGE_TIMEOUTS),
@@ -210,7 +212,10 @@ class prefspanel extends uibits {
 			'typeclass' => null
 		]);
 
-		self::ui_checkbox(['id' => 'cus_bg_random', 'label' => 'label_random_order', 'typeclass' => null]);
+		self::ui_config_button([
+			'label' => 'label_remcur',
+			'onclick' => 'prefs.removeCurrentBackground()'
+		]);
 
 		print '</div>';
 

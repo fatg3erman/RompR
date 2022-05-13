@@ -1,0 +1,112 @@
+/* theme_base/image_theme.css */
+
+:root {
+    --landscape-bg-image: url("themes/field.jpg");
+    --portrait-bg-image: url("themes/field.jpg");
+    --background-position: top center;
+
+    --min-progress-colour: rgba(6, 48, 99, 0.99);
+    --max-progress-colour: rgba(162, 180, 200, 0.99);
+    --progress-bg-colour: rgba(0,0,0,0);
+
+    --document-bg-colour: unset;
+
+
+
+
+
+    --highlight-bg-colour: rgba(255,255,255,0.3);
+    --highlight-bg-image: none;
+
+    --text-colour: black;
+    --placeholder-colour: #909090;
+    --border-colour: #444444;
+    --border-colour-dark: #222222;
+    --link-colour: #ff4800;
+    --highlight-colour: #ff4800;
+
+    --headerbar-bg-colour-mob:  unset;
+
+    --headerbar-bg-colour-desk: unset;
+
+
+    --infobar-bg-colour: unset;
+
+
+    --sources-bg-colour: unset;
+
+    --sources-border-top: none;
+
+    --playlist-bg-colour: unset;
+
+    --playlist-title-bg-colour: unset;
+    --playlist-title-border: none;
+    --playlist-item-top-border: none;
+    --playlist-current-bg-colour: unset;
+    --playlist-current-shadow: unset;
+    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease;
+    --playlist-current-track-font-size: 120%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: unset;
+    --playlist-current-title-font-weight: bold;
+
+    --top_drop_menu-bg-colour: rgba(181, 184, 201, 1);
+
+
+    --configtitle-bg-colour: rgba(0, 0, 0, 0.2);
+
+    --configtitle-border-bottom: none;
+
+    --infopane-border-top: none;
+    --infopane-bg-colour: var(--document-bg-colour);
+    --infopane-bg-image: none;
+
+
+    --infopane-header-bg-colour: var(--highlight-bg-colour);
+    --infopane-header-bg-image: none;
+
+    --selected-bg-colour: var(--max-progress-colour);
+
+    --button-colour:  var(--text-colour);
+    --button-hover-colour:  var(--text-colour);
+    --button-border: 1px solid var(--border-colour);
+    --button-hover-border: 1px solid var(--highlight-colour);;
+    --button-bg-colour: rgba(255,255,255,0.5);
+    --button-bg-hover-colour: rgba(255,255,255,0.6);
+    --button-font-weight: normal;
+    --button-hover-shadow: unset;
+
+
+
+    --text-entry-text-colour: var(--text-colour);
+    --text-entry-border-colour: var(--border-colour);
+    --text-entry-hover-border-colour: var(--highlight-colour);
+    --text-entry-active-border-colour: var(--border-colour-dark);
+    --text-entry-bg-colour: rgba(255,255,255,0.3);
+    --text-entry-hover-bg-colour: rgba(255,255,255,0.4);
+    --text-entry-active-bg-colour: rgba(255,255,255,0.6);
+
+    --select-text-colour: var(--text-colour);
+    --select-bg-colour: var(--text-entry-bg-colour);
+    --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
+
+    --album2-colour: var(--document-bg-colour);
+    --drop-shadow: 7px 7px 5px rgba(50, 50, 50, 0.5);
+    --top-shadow: 0px -7px 5px rgba(50, 50, 50, 0.5);
+
+    --bordered-top: none;
+    --bordered-right: none;
+    --bordered-bottom: none;
+    --bordered-left: none;
+
+    --albumart-artists-bg-colour: var(--sources-bg-colour);
+    --albumart-artists-bg-image: none;
+
+    --open-album-border-highlight: none;
+
+    --waiting-swinger-height: 2px;
+    --waiting-swinger-bg-image: radial-gradient(circle at center, rgba(20, 20, 20, 1), rgba(20, 20, 20, 0));
+
+    --icon-snapcast: url('newimages/snapcast_800.png');
+}

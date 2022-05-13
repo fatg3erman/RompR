@@ -206,11 +206,7 @@ class base_mpd_player {
 
 		$retarr = array();
 		if ($this->is_connected()) {
-			if ($command == 'status' || $command == 'currentsong' || $command == 'replay_gain_status') {
-				logger::core("MPD", "MPD Command",$command);
-			} else {
-				logger::trace("MPD", "MPD Command",$command);
-			}
+			logger::core("MPD", "MPD Command",$command);
 			$success = true;
 			if ($command != '') {
 				$success = $this->send_command($command);
@@ -273,6 +269,8 @@ class base_mpd_player {
 				logger::error("MPD", "Failure to fput command",$command);
 				$retarr['error'] = "There was an error communicating with ".ucfirst($this->player_type)."! (could not write to socket)";
 			}
+		} else {
+			logger::warn('MPD', 'Attempting Command',$command,'while not connected!');
 		}
 		return $retarr;
 	}
@@ -790,7 +788,7 @@ class base_mpd_player {
 				if ($size === null) {
 					$size = $result['size'];
 					logger::log('MPDPLAYER', '    Size is',$size);
-					
+
 					$filename = 'prefs/temp/'.md5($uri);
 					$handle = fopen($filename, 'w');
 				}

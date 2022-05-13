@@ -1093,6 +1093,12 @@ class init_database extends init_generic {
 					$this->generic_sql_query("UPDATE Statstable SET Value = 82 WHERE Item = 'SchemaVer'", true);
 					break;
 
+				case 82:
+					// Fix a probme where Spotify tracks restored from a metadata backup get an album domain of local
+					$this->generic_sql_query("UPDATE Albumtable SET domain = 'spotify' WHERE AlbumUri LIKE 'spotify:%'");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 83 WHERE Item = 'SchemaVer'", true);
+					break;
+
 			}
 			$sv++;
 		}

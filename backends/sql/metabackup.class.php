@@ -44,6 +44,8 @@ class metabackup extends metaDatabase {
 		file_put_contents($dirname.'/podcasts.json',json_encode($tracks));
 		$tracks = $this->get_podcast_tracks();
 		file_put_contents($dirname.'/podcast_tracks.json',json_encode($tracks));
+		$tracks = $this->get_podcast_bookmarks();
+		file_put_contents($dirname.'/podcast_bookmarks.json',json_encode($tracks));
 
 		logger::log("BACKEND", "Backing up Radio Stations");
 		$tracks = $this->get_radio_stations();
@@ -62,6 +64,10 @@ class metabackup extends metaDatabase {
 		logger::log("BACKEND", "Backing up Albums To Listen To");
 		$tracks = $this->get_albumstolistento();
 		file_put_contents($dirname.'/albums_to_listen_to.json',json_encode($tracks));
+
+		logger::log("BACKEND", "Backing up Bookmarks");
+		$tracks = $this->get_bookmarks();
+		file_put_contents($dirname.'/bookmarks.json',json_encode($tracks));
 
 		file_put_contents($dirname.'/newversion', ROMPR_SCHEMA_VERSION);
 
@@ -87,6 +93,7 @@ class metabackup extends metaDatabase {
 					'Playcounts' => file_exists($backup.'/playcounts.json') ? 'OK' : 'Missing!',
 					'Tracks With Ratings' => file_exists($backup.'/ratings.json') ? 'OK' : 'Missing!',
 					'Tracks With Tags' => file_exists($backup.'/tags.json') ? 'OK' : 'Missing!',
+					'Bookmarks' => file_exists($backup.'/bookmarks.json') ? 'OK' : 'Missing!',
 					'Spoken Word' => file_exists($backup.'/audiobooks.json') ? 'OK' : 'Missing!',
 					'Podcasts' => file_exists($backup.'/podcasts.json') ? 'OK' : 'Missing!',
 					'Background Images' => file_exists($backup.'/bg_images.json') ? 'OK' : 'Missing!',
@@ -165,6 +172,23 @@ class metabackup extends metaDatabase {
 				fwrite($monitor, "\n<b>Restoring Playcounts : </b>".$progress."%\n");
 			}
 		}
+
+		if (file_exists('prefs/databackups/'.$backup.'/bookmarks.json')) {
+			logger::mark("BACKUPS", "Restoring Bookmarks");
+			$this->generic_sql_query('DELETE FROM Bookmarktable WHERE Bookmark >= 0');
+			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/bookmarks.json'), true);
+			foreach ($tracks as $i => $trackdata) {
+				if ($translate)
+					$trackdata = $this->translate_data($trackdata);
+				$this->sanitise_data($trackdata);
+				$trackdata['attributes'] = array(array('attribute' => 'Bookmark', 'value' => [$trackdata['bookmark'], $trackdata['bookmarkname']]));
+				$this->set($trackdata);
+				$this->check_transaction();
+				$progress = round(($i/count($tracks))*100);
+				fwrite($monitor, "\n<b>Restoring Bookmarks : </b>".$progress."%\n");
+			}
+		}
+
 		if (file_exists('prefs/databackups/'.$backup.'/audiobooks.json')) {
 			logger::mark("BACKUPS", "Restoring Audiobooks");
 			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/audiobooks.json'), true);
@@ -196,9 +220,22 @@ class metabackup extends metaDatabase {
 					$trackdata['Downloaded'] = 0;
 					$trackdata['Localfilename'] = null;
 				}
+
+				if (array_key_exists('Progress', $trackdata))
+					unset($trackdata['Progress']);
+
 				$this->generic_restore($trackdata, 'PodcastTracktable');
 				$progress = round(($i/count($tracks))*100);
 				fwrite($monitor, "\n<b>Restoring Podcast Tracks : </b>".$progress."%\n");
+			}
+		}
+
+		if (file_exists('prefs/databackups/'.$backup.'/podcast_bookmarks.json')) {
+			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/podcast_bookmarks.json'), true);
+			foreach ($tracks as $i => $trackdata) {
+				$this->generic_restore($trackdata, 'PodBookmarktable');
+				$progress = round(($i/count($tracks))*100);
+				fwrite($monitor, "\n<b>Restoring Podcast Bookmarks : </b>".$progress."%\n");
 			}
 		}
 
@@ -236,7 +273,7 @@ class metabackup extends metaDatabase {
 		}
 
 		if (file_exists('prefs/databackups/'.$backup.'/wl_sources.json')) {
-			logger::mark("BACKUPS", "Restoring Wishlist Sources");
+			logger::mark("BACKUPS", "Restoring W<?phpishlist Sources");
 			$this->generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex IS NOT NULL");
 			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/wl_sources.json'), true);
 			foreach ($tracks as $i => $trackdata) {
@@ -265,6 +302,7 @@ class metabackup extends metaDatabase {
 		} else {
 			$this->generic_sql_query("DELETE FROM Tracktable WHERE Uri LIKE 'local:%' AND LastModified IS NULL AND Hidden = 0", true);
 		}
+		$this->generic_sql_query("UPDATE Albumtable SET domain = 'spotify' WHERE AlbumUri LIKE 'spotify:%'");
 		$this->check_transaction();
 		$this->resetallsyncdata();
 		$this->remove_cruft();
@@ -302,7 +340,7 @@ class metabackup extends metaDatabase {
 			'trackartist' => $trackdata['artist'],
 			'albumartist' => $trackdata['albumartist']
 		];
-		foreach (['isaudiobook', 'playcount', 'rating', 'tag'] as $thing)
+		foreach (['isaudiobook', 'playcount', 'rating', 'tag', 'bookmark', 'bookmarkname'] as $thing)
 		if (array_key_exists($thing, $trackdata)) {
 			$retval[$thing] = $trackdata[$thing];
 		}
@@ -394,6 +432,37 @@ class metabackup extends metaDatabase {
 			ORDER BY rating, albumartist, album, trackno");
 	}
 
+	private function get_bookmarks() {
+
+		// get_bookmarks
+		//		Creates data for backup
+
+		return $this->generic_sql_query(
+			"SELECT
+				b.Bookmark AS bookmark,
+				b.name AS bookmarkname,
+				tr.Title AS Title,
+				tr.TrackNo AS Track,
+				tr.Duration AS Time,
+				tr.Disc AS Disc,
+				tr.Uri AS file,
+				IFNULL(ge.Genre, 'None') AS Genre,
+				al.Albumname AS Album,
+				al.AlbumUri AS `X-AlbumUri`,
+				al.Year AS year,
+				ta.Artistname AS trackartist,
+				aat.Artistname AS albumartist
+			FROM
+				Bookmarktable AS b
+				JOIN Tracktable AS tr USING (TTindex)
+				LEFT JOIN Genretable AS ge USING (Genreindex)
+				JOIN Artisttable AS ta USING (Artistindex)
+				JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
+				JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex
+			WHERE Bookmark > 0 AND tr.Hidden = 0 AND tr.isSearchResult < 2
+			ORDER BY albumartist, album, trackno");
+	}
+
 	private function get_playcounts() {
 
 		// get_playcounts
@@ -462,6 +531,10 @@ class metabackup extends metaDatabase {
 
 	private function get_podcast_tracks() {
 		return $this->generic_sql_query("SELECT * FROM PodcastTracktable");
+	}
+
+	private function get_podcast_bookmarks() {
+		return $this->generic_sql_query("SELECT * FROM PodBookmarktable");
 	}
 
 	private function get_radio_stations() {

@@ -7,6 +7,9 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Other minor bugfixes.
 * If you are running romonitor, you will need to restart it after installing this version.
 * All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.
+* Make Spotify Playlist Collection building work again. For some reason the code worked on PHP7 but PHP8 just disappears into hyperspace
+and doesn't throw any errors.
+* Fix bug where Spotify tracks restored from a backup would wrongly be classed as local.
 
 
 ## Version 1.61

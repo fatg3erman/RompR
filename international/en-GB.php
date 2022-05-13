@@ -90,7 +90,11 @@ language::add_translations([
 	"button_OK" =>							"OK",
 	"button_cancel" =>						"Cancel",
 	"error_playlistname" =>					"Playlist name cannot contain slashes",
-	"label_savedpl" =>						"Playlist saved as %s",
+	"label_savedpl" =>						"Playlist save		self::ui_config_button([
+			'label' => 'manage_bgs',
+			'onclick' => 'prefs.manage_bg_images()'
+		]);
+d as %s",
 
 	// Search Forms
 	"label_searchfor" =>					"Search For",
@@ -735,7 +739,8 @@ language::add_translations([
 	"label_mfe" =>							'Music From Everywhere',
 	"label_playqueue" =>					'Play Queue',
 	"label_numplays" =>						'%s Plays',
-	"button_bookmarks" =>					'Add Bookmark'
+	"button_bookmarks" =>					'Add Bookmark',
+	"label_remcur" =>						'Remove Current Image'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

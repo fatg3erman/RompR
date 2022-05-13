@@ -17,10 +17,29 @@ class player extends base_mpd_player {
 		}
 		$this->monitor = fopen('prefs/monitor','w');
 		$dirs = prefs::$prefs['mopidy_collection_folders'];
+		logger::log('MOPIDY', 'Collection Folders Are', print_r($dirs, true));
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
+			logger::log('MOPIDY', 'Scanning', $dir);
 			if ($dir == "Spotify Playlists") {
-				$this->musicCollectionSpotifyPlaylistHack();
+				$dirs_dummy = array();
+				$playlists = $this->do_mpd_command("listplaylists", true, true);
+				logger::log('MOPIDY', 'Playlists are',print_r($playlists, true));
+				if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
+					foreach ($playlists['playlist'] as $pl) {
+						if (preg_match('/\(by spotify\)/', $pl)) {
+							logger::info("COLLECTION", "Ignoring Playlist ".$pl);
+						} else {
+							logger::log("COLLECTION", "Scanning Playlist ".$pl);
+							fwrite($this->monitor, "\n<b>".language::gettext('label_scanningp', array($pl))."</b>\n");
+							foreach ($this->parse_list_output('listplaylistinfo "'.format_for_mpd($pl).'"', $dirs_dummy, false) as $filedata) {
+								yield $filedata;
+							}
+						}
+					}
+				} else {
+					logger::log('MOPIDY', 'No Spotify Playlists Found');
+				}
 			} else {
 				fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs)))."\n");
 				foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($this->local_media_check($dir)).'"', $dirs, false) as $filedata) {
@@ -29,24 +48,6 @@ class player extends base_mpd_player {
 			}
 		}
 		fwrite($this->monitor, "\nUpdating Database\n");
-	}
-
-	private function musicCollectionSpotifyPlaylistHack() {
-		$dirs = array();
-		$playlists = $this->do_mpd_command("listplaylists", true, true);
-		if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
-			foreach ($playlists['playlist'] as $pl) {
-				if (preg_match('/\(by spotify\)/', $pl)) {
-					logger::info("COLLECTION", "Ignoring Playlist ".$pl);
-				} else {
-					logger::log("COLLECTION", "Scanning Playlist ".$pl);
-					fwrite($this->monitor, "\n<b>".language::gettext('label_scanningp', array($pl))."</b>\n");
-					foreach ($this->parse_list_output('listplaylistinfo "'.format_for_mpd($pl).'"', $dirs, false) as $filedata) {
-						yield $filedata;
-					}
-				}
-			}
-		}
 	}
 
 	public function collectionUpdateDone() {
