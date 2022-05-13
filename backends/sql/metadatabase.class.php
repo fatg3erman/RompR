@@ -1087,133 +1087,128 @@ class metaDatabase extends collection_base {
 		return (count($bollocks) > 0) ? $bollocks : false;
 	}
 
+	private function youtubedl_error($message, $progress_file) {
+		logger::error('YOUTUBEDL', $message);
+		header("HTTP/1.1 404 Not Found");
+		print $message;
+
+		if ($progress_file && file_exists($progress_file))
+			unlink($progress_file);
+
+		exit(0);
+	}
+
 	public function youtubedl($data) {
 		$ytdl_path = find_executable('youtube-dl');
-		if ($ytdl_path === false) {
-			logger::error('YOUTUBEDL', 'youtube-dl binary could not be found');
-			header("HTTP/1.1 404 Not Found");
-			print json_encode(array('error' => 'Could not find youtube-dl'));
-			exit(0);
-		}
+		if ($ytdl_path === false)
+			$this->youtubedl_error('youtube-dl binary could not be found', null);
+
 		logger::log('YOUTUBEDL', 'youtube-dl is at',$ytdl_path);
 		$avconv_path = find_executable('avconv');
 		if ($avconv_path === false) {
 			$avconv_path = find_executable('ffmpeg');
-			if ($avconv_path === false) {
-				logger::error('YOUTUBEDL', 'Could not find avconv or ffmpeg');
-				header("HTTP/1.1 404 Not Found");
-				print json_encode(array('error' => 'Could not find avconv or ffmpeg'));
-				exit(0);
-			}
+			if ($avconv_path === false)
+				$this->youtubedl_error('Could not find avconv or ffmpeg', null);
+
 		}
+
 		$a = preg_match('/:video\/.*\.(.+)$/', $data['file'], $matches);
 		if (!$a)
 			$a = preg_match('/:video:(.+)$/', $data['file'], $matches);
 
-		if ($a) {
+		if (!$a)
+			$this->youtubedl_error('Could not match URI '.$data['file'], null);
 
-			$uri_to_get = 'https://youtu.be/'.$matches[1];
-			logger::log('YOUTUBEDL', 'Downloading',$uri_to_get);
+		$uri_to_get = 'https://youtu.be/'.$matches[1];
+		logger::log('YOUTUBEDL', 'Downloading',$uri_to_get);
 
-			$info = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
-				"SELECT Title, Artistname FROM Tracktable JOIN Artisttable USING (Artistindex) WHERE Uri = ?",
-				$data['file']
-			);
-			if (is_array($info) && count($info) > 0) {
-				logger::log('YOUTUBEDL', '  Title is',$info[0]['Title']);
-				logger::log('YOUTUBEDL', '  Artist is',$info[0]['Artistname']);
-			} else {
-				logger::log('YOUTUBEDL', '  Could not find title and artist from collection');
-			}
-
-			$ttindex = $this->simple_query('TTindex', 'Tracktable', 'Uri', $data['file'], null);
-			if ($ttindex === null) {
-				logger::error('YOUTUBEDL', 'Could not locate that URI in the database!');
-				header("HTTP/1.1 404 Not Found");
-				print json_encode(array('error' => 'Could not locate that track in the database!'));
-				exit(0);
-			}
-			$progress_file = 'prefs/youtubedl/dlprogress_'.md5($data['file']);
-			file_put_contents($progress_file, '    Downloading '.$uri_to_get."\n");
-
-			// At this point, terminate the request so the download can run in the background.
-			// If we don't do this the browser will retry after 3 minutes and there's nothing we
-			// can do about that.
-			prefs::$database->close_browser_connection();
-			logger::log('YOUTUBEDL', 'OK now we start the fun');
-			if (!is_dir('prefs/youtubedl/'.$ttindex)) {
-				mkdir('prefs/youtubedl/'.$ttindex);
-			}
-			file_put_contents('prefs/youtubedl/'.$ttindex.'/original.uri', $uri_to_get);
-			exec($ytdl_path.'youtube-dl -o "prefs/youtubedl/'.$ttindex.'/%(title)s-%(id)s.%(ext)s" --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> '.$progress_file.' 2>&1', $output, $retval);
-			if ($retval != 0 && $retval != 1) {
-				logger::error('YOUTUBEDL', 'youtube-dl returned error code', $retval);
-				header("HTTP/1.1 404 Not Found");
-				print json_encode(array('error' => 'youtube-dl returned error code '.$retval));
-				unlink('../'.$progress_file);
-				exit(0);
-			}
-			$files = glob('prefs/youtubedl/'.$ttindex.'/*.flac');
-			if (count($files) == 0) {
-				logger::error('YOUTUBEDL', 'Could not find downloaded flac file in prefs/youtubedl/'.$ttindex);
-				header("HTTP/1.1 404 Not Found");
-				print json_encode(array('error' => 'Could not locate downloaded flac file!'));
-				unlink($progress_file);
-				exit(0);
-			} else {
-				logger::log('YOUTUBEDL', print_r($files, true));
-			}
-
-			if (is_array($info) && count($info) > 0) {
-				logger::log('YOUTUBEDL', 'Writing ID3 tags to',$files[0]);
-
-				$getID3 = new getID3;
-				$getID3->setOption(array('encoding'=>'UTF-8'));
-
-				getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
-
-				$tagwriter = new getid3_writetags;
-				$tagwriter->filename       = $files[0];
-				$tagwriter->tagformats     = array('metaflac');
-				$tagwriter->overwrite_tags = true;
-				$tagwriter->tag_encoding   = 'UTF-8';
-				$tagwriter->remove_other_tags = true;
-				$tags = array(
-					'artist' => array(html_entity_decode($info[0]['Artistname'])),
-					'albumartist' => array(html_entity_decode($info[0]['Artistname'])),
-					'album' => array(html_entity_decode($info[0]['Title'])),
-					'title' => array(html_entity_decode($info[0]['Title']))
-				);
-				$tagwriter->tag_data = $tags;
-				if ($tagwriter->WriteTags()) {
-					logger::log('YOUTTUBEDL', 'Successfully wrote tags');
-					if (!empty($tagwriter->warnings)) {
-						logger::log('YOUTUBEDL', 'There were some warnings'.implode(' ', $tagwriter->warnings));
-					}
-				} else {
-					logger::error('YOUTUBEDL', 'Failed to write tags!', implode(' ', $tagwriter->errors));
-				}
-			}
-
-			$new_uri = dirname(dirname(get_base_url())).'/'.$files[0];
-			logger::log('YOUTUBEDL', 'New URI is', $new_uri);
-			$this->sql_prepare_query(true, null, null, null,
-				"UPDATE Tracktable SET Uri = ? WHERE Uri = ?",
-				$new_uri,
-				$data['file']
-			);
-			$albumindex = $this->simple_query('Albumindex', 'Tracktable', 'Uri', $new_uri, null);
-			$this->sql_prepare_query(true, null, null, null,
-				"UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = ?",
-				$albumindex
-			);
-			return $progress_file;
+		$info = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			"SELECT Title, Artistname FROM Tracktable JOIN Artisttable USING (Artistindex) WHERE Uri = ?",
+			$data['file']
+		);
+		if (is_array($info) && count($info) > 0) {
+			logger::log('YOUTUBEDL', '  Title is',$info[0]['Title']);
+			logger::log('YOUTUBEDL', '  Artist is',$info[0]['Artistname']);
 		} else {
-			logger::error('YOUTUBEDL', 'Could not match URI',$data['file']);
-			header("HTTP/1.1 404 Not Found");
-			print json_encode(array('error' => 'Could not match URI '.$data['file']));
-			exit(0);
+			logger::log('YOUTUBEDL', '  Could not find title and artist from collection');
 		}
+
+		$ttindex = $this->simple_query('TTindex', 'Tracktable', 'Uri', $data['file'], null);
+		if ($ttindex === null)
+			$this->youtubedl_error('Could not locate that track in the database!', null);
+
+		$progress_file = 'prefs/youtubedl/dlprogress_'.md5($data['file']);
+		if (!file_put_contents($progress_file, '    Downloading '.$uri_to_get."\n")) {
+			$this->youtubedl_error('Could not open progress file. Possible permissions error', null);
+		}
+
+		if (is_dir('prefs/youtubedl/'.$ttindex)) {
+			$this->youtubedl_error('Target Directory prefs/youtubedl/'.$ttindex,'already exists', $progress_file);
+		} else {
+			logger::log('YOUTUBEDL', 'Making Directory prefs/youtubedl/'.$ttindex);
+			mkdir('prefs/youtubedl/'.$ttindex);
+		}
+		// At this point, terminate the request so the download can run in the background.
+		// If we don't do this the browser will retry after 3 minutes and there's nothing we
+		// can do about that.
+		prefs::$database->close_browser_connection();
+		logger::log('YOUTUBEDL', 'OK now we start the fun');
+		file_put_contents('prefs/youtubedl/'.$ttindex.'/original.uri', $uri_to_get);
+		exec($ytdl_path.'youtube-dl -o "prefs/youtubedl/'.$ttindex.'/%(title)s-%(id)s.%(ext)s" --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> '.$progress_file.' 2>&1', $output, $retval);
+		if ($retval != 0 && $retval != 1) {
+			$this->youtubedl_error('youtube-dl returned error code '.$retval, $progress_file);
+		}
+		$files = glob('prefs/youtubedl/'.$ttindex.'/*.flac');
+		if (count($files) == 0) {
+			$this->youtubedl_error('Could not find downloaded flac file in prefs/youtubedl/'.$ttindex, $progress_file);
+		} else {
+			logger::log('YOUTUBEDL', print_r($files, true));
+		}
+
+		if (is_array($info) && count($info) > 0) {
+			logger::log('YOUTUBEDL', 'Writing ID3 tags to',$files[0]);
+
+			$getID3 = new getID3;
+			$getID3->setOption(array('encoding'=>'UTF-8'));
+
+			getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
+
+			$tagwriter = new getid3_writetags;
+			$tagwriter->filename       = $files[0];
+			$tagwriter->tagformats     = array('metaflac');
+			$tagwriter->overwrite_tags = true;
+			$tagwriter->tag_encoding   = 'UTF-8';
+			$tagwriter->remove_other_tags = true;
+			$tags = array(
+				'artist' => array(html_entity_decode($info[0]['Artistname'])),
+				'albumartist' => array(html_entity_decode($info[0]['Artistname'])),
+				'album' => array(html_entity_decode($info[0]['Title'])),
+				'title' => array(html_entity_decode($info[0]['Title']))
+			);
+			$tagwriter->tag_data = $tags;
+			if ($tagwriter->WriteTags()) {
+				logger::log('YOUTTUBEDL', 'Successfully wrote tags');
+				if (!empty($tagwriter->warnings)) {
+					logger::log('YOUTUBEDL', 'There were some warnings'.implode(' ', $tagwriter->warnings));
+				}
+			} else {
+				logger::error('YOUTUBEDL', 'Failed to write tags!', implode(' ', $tagwriter->errors));
+			}
+		}
+
+		$new_uri = dirname(dirname(get_base_url())).'/'.$files[0];
+		logger::log('YOUTUBEDL', 'New URI is', $new_uri);
+		$this->sql_prepare_query(true, null, null, null,
+			"UPDATE Tracktable SET Uri = ? WHERE Uri = ?",
+			$new_uri,
+			$data['file']
+		);
+		$albumindex = $this->simple_query('Albumindex', 'Tracktable', 'Uri', $new_uri, null);
+		$this->sql_prepare_query(true, null, null, null,
+			"UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = ?",
+			$albumindex
+		);
+		return $progress_file;
 	}
 
 }

@@ -59,7 +59,7 @@ var metaHandlers = function() {
 				}
 			})
 			.fail(function() {
-				debug.warn(language.gettext('error_dlpfail'));
+				debug.warn('YOUTUBEDL', language.gettext('error_dlpfail'));
 				self.stop();
 			});
 		}
@@ -195,10 +195,16 @@ var metaHandlers = function() {
 						if (err.status == 200) {
 							debug.log('YOUTUBEDL', 'Error handler caught success code! WTF?');
 						} else {
-							debug.warn("FUCK!", 'Why did that not work?',err);
+							debug.warn("FUCK!", 'Why did that not work?');
+							debug.log('BUMBLETREE', err);
+							if (err.responseText) {
+								debug.error('YOUTUBEDL', err.responseText);
+								infobar.error('Failed to download YouTube track - '+err.responseText);
+							}
 							monitor.stop();
-							if (err.responseJSON && err.responseJSON.error)
-								infobar.error('Failed to download YouTube track - '+err.responseJSON.error);
+							tracks.each(function() {
+								$(this).find('.clicktrackmenu').stopSpinner();
+							});
 						}
 					}
 				});
