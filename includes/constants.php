@@ -345,4 +345,13 @@ define('CHARTS_MUSIC_ONLY', 1);
 define('CHARTS_AUDIOBOOKS_ONLY', 2);
 define('CHARTS_INTERNET_ONLY', 3);
 
+const EXECUTABLES_PATHS = [
+	'/usr/local/bin/',
+	'/opt/local/bin/',
+	'/opt/homebrew/bin/',
+	'/usr/bin/',
+	'./',
+	''
+];
+
 ?>

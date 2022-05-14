@@ -118,22 +118,21 @@ function get_base_url() {
 
 function find_executable($prog) {
 
-	// Test to see if $prog is on the path and then try Homebrew and MacPorts paths until we find it
-	// returns boolean false if the program is not found
-	logger::debug("BITS", "    Looking for executable program ",$prog);
-	$paths_to_try = array( '/usr/local/bin/', '/opt/local/bin/', '/usr/bin/', './', '');
+	// Try to find an executable program by testing various paths until we find it.
+	// EXECUTABLES_PATHS will prioritise Homebrew (on macOS) over builtin utilities.
+	// Returns boolean false if the program is not found, or the path (not including the program name)
+	logger::debug("BITS", "  Looking for executable",$prog);
 	$retval = false;
-	foreach ($paths_to_try as $c) {
-		$r = exec($c.$prog." 2>&1", $o, $a);
-		if ($a != 127) {
+	foreach (EXECUTABLES_PATHS as $c) {
+		if (is_executable($c.$prog)) {
 			$retval = $c;
 			break;
 		}
 	}
 	if ($retval === false) {
-		logger::info("BITS", "      Program ".$prog." Not Found!");
+		logger::warn("BITS", "  Executable",$prog,"Not Found!");
 	} else {
-		logger::debug("BITS", "      program is ".$retval.$prog);
+		logger::debug("BITS", "  ..Found at",$retval.$prog);
 	}
 	return $retval;
 
