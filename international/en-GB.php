@@ -740,7 +740,9 @@ d as %s",
 	"label_playqueue" =>					'Play Queue',
 	"label_numplays" =>						'%s Plays',
 	"button_bookmarks" =>					'Add Bookmark',
-	"label_remcur" =>						'Remove Current Image'
+	"label_remcur" =>						'Remove Current Image',
+	"button_nextbg" => 						'Next Background Image',
+	"button_delbg" => 						'Delete Current Background Image'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

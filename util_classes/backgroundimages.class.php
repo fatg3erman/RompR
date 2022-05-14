@@ -55,6 +55,9 @@ class backgroundImages extends database {
 		if ($portrait_image == null)
 			$portrait_image = $landscape_image;
 
+		logger::trace('BACKIMAGE','Portrait  Is',$portrait_image);
+		logger::trace('BACKIMAGE','Landscape Is',$landscape_image);
+
 		foreach ([$landscape_image, $portrait_image] AS $i) {
 			if ($thisbo > 0) {
 				$this->sql_prepare_query(true, null, null, null,

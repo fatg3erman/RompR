@@ -10,6 +10,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Make Spotify Playlist Collection building work again. For some reason the code worked on PHP7 but PHP8 just disappears into hyperspace
 and doesn't throw any errors.
 * Fix bug where Spotify tracks restored from a backup would wrongly be classed as local.
+* It is stringly suggested that you back up your database before updating to this version, and also make a Metadata Backup.
 
 
 ## Version 1.61

@@ -70,63 +70,73 @@ var shortcuts = function() {
 
 		var modifiers = ['alt', 'ctrl', 'shift'];
 
-		var hotkeys = { button_next: ".",
-										button_previous: ",",
-										button_stop: "Space",
-										button_play: "P",
-										button_volup: "=",
-										button_voldown: "-",
-										button_skipforward: "]",
-										button_skipbackward: "[",
-										button_clearplaylist: "C",
-										button_stopafter: "F",
-										button_random: "S",
-										button_crossfade: "X",
-										button_repeat: "R",
-										button_consume: "E",
-										button_rateone: "1",
-										button_ratetwo: "2",
-										button_ratethree: "3",
-										button_ratefour: "4",
-										button_ratefive: "5",
-										button_togglesources: ",",
-										button_toggleplaylist: ".",
-										config_hidebrowser: "H",
-										button_updatecollection: "U",
-										button_nextsource: "I",
+		var hotkeys = {
+			button_next: ".",
+			button_previous: ",",
+			button_stop: "Space",
+			button_play: "P",
+			button_volup: "=",
+			button_voldown: "-",
+			button_skipforward: "]",
+			button_skipbackward: "[",
+			button_clearplaylist: "C",
+			button_stopafter: "F",
+			button_random: "S",
+			button_crossfade: "X",
+			button_repeat: "R",
+			button_consume: "E",
+			button_rateone: "1",
+			button_ratetwo: "2",
+			button_ratethree: "3",
+			button_ratefour: "4",
+			button_ratefive: "5",
+			button_togglesources: ",",
+			button_toggleplaylist: ".",
+			config_hidebrowser: "H",
+			button_updatecollection: "U",
+			button_nextsource: "I",
+
+			button_nextbg: "*",
+			button_delbg: "7"
+
 		};
 
-		var bindings = { button_next: playlist.next,
-										button_previous: playlist.previous,
-										button_stop: player.controller.stop,
-										button_play: infobar.playbutton.clicked,
-										button_volup: function() { infobar.volumeKey(5) },
-										button_voldown: function() { infobar.volumeKey(-5) },
-										button_skipforward: function() { player.skip(10) },
-										button_skipbackward: function() { player.skip(-10) },
-										button_clearplaylist: playlist.clear,
-										button_stopafter: playlist.stopafter,
-										button_random: function() { layoutProcessor.playlistControlHotKey('random') },
-										button_crossfade: function() { layoutProcessor.playlistControlHotKey('crossfade') },
-										button_repeat: function() { layoutProcessor.playlistControlHotKey('repeat') },
-										button_consume: function() { layoutProcessor.playlistControlHotKey('consume') },
-										button_rateone: function() { nowplaying.setRating(1) },
-										button_ratetwo: function() { nowplaying.setRating(2) },
-										button_ratethree: function() { nowplaying.setRating(3) },
-										button_ratefour: function() { nowplaying.setRating(4) },
-										button_ratefive: function() { nowplaying.setRating(5) },
-										button_togglesources: function() { layoutProcessor.expandInfo('left') },
-										button_toggleplaylist: function() { layoutProcessor.expandInfo('right') },
-										config_hidebrowser: function() {
-											$("#hidebrowser").prop("checked", !$("#hidebrowser").is(':checked'));
-											prefs.save({hidebrowser: $("#hidebrowser").is(':checked')}).then(layoutProcessor.hideBrowser);
-										},
-										button_updatecollection: function() {
-												if (!prefs.mopidy_remote) {
-														collectionHelper.checkCollection(true, false);
-												}
-										},
-										button_nextsource: function() { browser.nextSource(1) }
+		var bindings = {
+			button_next: playlist.next,
+			button_previous: playlist.previous,
+			button_stop: player.controller.stop,
+			button_play: infobar.playbutton.clicked,
+			button_volup: function() { infobar.volumeKey(5) },
+			button_voldown: function() { infobar.volumeKey(-5) },
+			button_skipforward: function() { player.skip(10) },
+			button_skipbackward: function() { player.skip(-10) },
+			button_clearplaylist: playlist.clear,
+			button_stopafter: playlist.stopafter,
+			button_random: function() { layoutProcessor.playlistControlHotKey('random') },
+			button_crossfade: function() { layoutProcessor.playlistControlHotKey('crossfade') },
+			button_repeat: function() { layoutProcessor.playlistControlHotKey('repeat') },
+			button_consume: function() { layoutProcessor.playlistControlHotKey('consume') },
+			button_rateone: function() { nowplaying.setRating(1) },
+			button_ratetwo: function() { nowplaying.setRating(2) },
+			button_ratethree: function() { nowplaying.setRating(3) },
+			button_ratefour: function() { nowplaying.setRating(4) },
+			button_ratefive: function() { nowplaying.setRating(5) },
+			button_togglesources: function() { layoutProcessor.expandInfo('left') },
+			button_toggleplaylist: function() { layoutProcessor.expandInfo('right') },
+			config_hidebrowser: function() {
+				$("#hidebrowser").prop("checked", !$("#hidebrowser").is(':checked'));
+				prefs.save({hidebrowser: $("#hidebrowser").is(':checked')}).then(layoutProcessor.hideBrowser);
+			},
+			button_updatecollection: function() {
+					if (!prefs.mopidy_remote) {
+							collectionHelper.checkCollection(true, false);
+					}
+			},
+			button_nextsource: function() { browser.nextSource(1) },
+
+			button_nextbg: prefs.quickhack,
+			button_delbg: prefs.removeCurrentBackground
+
 		};
 
 		function format_keyinput(inpname, hotkey) {

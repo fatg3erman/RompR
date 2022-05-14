@@ -9,7 +9,7 @@
     --max-progress-colour: rgba(200, 200, 200, 0.99);
     --progress-bg-colour: rgba(0,0,0,0);
 
-    --document-bg-colour: transparent;
+    --document-bg-colour: rgba(0,0,0,0.1);
 
 
 

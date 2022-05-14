@@ -189,6 +189,7 @@ const COLLECTION_SORT_MODES = array(
 );
 
 const BG_IMAGE_TIMEOUTS = [
+	'5 Seconds' => 5000,
 	'10 Seconds' => 10000,
 	'30 Seconds' => 30000,
 	'Minute' => 60000,
@@ -197,6 +198,7 @@ const BG_IMAGE_TIMEOUTS = [
 	'20 Minutes' => 1200000,
 	'30 Minutes' => 1800000,
 	'Hour' => 3600000,
+	'8 Hours' => 28800000,
 	'Day' => 86400000
 ];
 
