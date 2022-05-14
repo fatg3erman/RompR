@@ -447,10 +447,10 @@ class prefspanel extends uibits {
 		print '</div>';
 
 		self::ui_checkbox(['id' => 'lastfm_autocorrect', 'label' => 'config_autocorrect']);
-		self::ui_checkbox(['id' => 'sync_lastfm_playcounts', 'label' => 'config_lastfm_playcounts', 'class' => 'lastmlogin-required']);
-		self::ui_checkbox(['id' => 'sync_lastfm_at_start', 'label' => 'config_sync_lastfm_playcounts', 'class' => 'lastmlogin-required']);
-		self::ui_checkbox(['id' => 'lastfm_scrobbling', 'label' => 'config_scrobbling', 'class' => 'lastmlogin-required']);
-		self::ui_checkbox(['id' => 'synctags', 'label' => 'config_synctags', 'class' => 'lastmlogin-required']);
+		self::ui_checkbox(['id' => 'sync_lastfm_playcounts', 'label' => 'config_lastfm_playcounts', 'class' => 'lastfmlogin-required']);
+		self::ui_checkbox(['id' => 'sync_lastfm_at_start', 'label' => 'config_sync_lastfm_playcounts', 'class' => 'lastfmlogin-required']);
+		self::ui_checkbox(['id' => 'lastfm_scrobbling', 'label' => 'config_scrobbling', 'class' => 'lastfmlogin-required']);
+		self::ui_checkbox(['id' => 'synctags', 'label' => 'config_synctags', 'class' => 'lastfmlogin-required']);
 
 		print '<div class="pref lastfmlogin-required">'.language::gettext('config_scrobblepercent').'<br/>
 		<div id="scrobwrangler"></div>
@@ -465,6 +465,7 @@ class prefspanel extends uibits {
 		self::ui_select_box([
 			'id' => 'synclovevalue',
 			'label' => language::gettext('config_loveis'),
+			'class' => 'lastfmlogin-required',
 			'options' => [
 				0 => 'Nothing',
 				1 => '1 '.language::gettext('star'),
