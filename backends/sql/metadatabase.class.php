@@ -43,7 +43,7 @@ class metaDatabase extends collection_base {
 			));
 			$data['ImgKey'] = $albumimage->get_image_key();
 		}
-		if (!preg_match('/^\d\d\d\d$/', $data['year'])) {
+		if ($data['year'] && !preg_match('/^\d\d\d\d$/', $data['year'])) {
 			// If this has come from something like an 'Add Spotify Album To Collection' the year tag won't
 			// exist but the Date tag might.
 			logger::log('METADATA', 'Year is not a 4 digit year, analyzing Date field instead');

@@ -160,7 +160,8 @@ class ui_elements {
 			if ($d == 'youtube' || $d == 'yt') {
 				$button_class .= ' clickyoutubedl';
 			}
-			print '<div class="'.$button_class.'" rompr_id="'.$data['ttid'].'" rompr_tags="'.rawurlencode($data['tags']).'"></div>';
+			$enc_tags = ($data['tags']) ? rawurlencode($data['tags']) : '';
+			print '<div class="'.$button_class.'" rompr_id="'.$data['ttid'].'" rompr_tags="'.$enc_tags.'"></div>';
 		}
 
 		print '</div>';

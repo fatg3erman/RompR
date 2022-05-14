@@ -1056,6 +1056,12 @@ class init_database extends init_generic {
 
 				case 81:
 					logger::log("SQL", "Updating FROM Schema version 81 TO Schema version 82");
+
+					// Due to a fuckup, I renamed Taglisttable to _taglist_old without first deleting the trigger.
+					// This caused the trigged to be moved with the table, but when I then dropped the table it didn't
+					// drop the trigger so now we have a trigger that applies to a nonexistent table.
+					$this->generic_sql_query('DROP TRIGGER IF EXISTS tag_delete_trigger');
+					$this->create_update_triggers();
 					$progs = $this->generic_sql_query("SELECT * FROM PodcastTracktable WHERE Progress > 0");
 					foreach ($progs as $p) {
 						logger::log("SQL", "  Adding Resume bookmark for PODTrackindex",$p['PODTrackindex']);
@@ -1115,6 +1121,7 @@ class init_database extends init_generic {
 	}
 
 	protected function create_conditional_triggers() {
+		logger::log("SQLITE", "Creating Triggers for Track update operations");
 		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS track_insert_trigger AFTER INSERT ON Tracktable
 							FOR EACH ROW
 							WHEN NEW.Hidden=0
@@ -1132,6 +1139,7 @@ class init_database extends init_generic {
 	}
 
 	protected function create_playcount_triggers() {
+		logger::log("SQLITE", "Creating Triggers for Playcount update operations");
 		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS syncupdatetrigger AFTER UPDATE ON Playcounttable
 							FOR EACH ROW
 							WHEN NEW.Playcount > OLD.Playcount
@@ -1196,6 +1204,8 @@ class init_database extends init_generic {
 	}
 
 	protected function create_progress_triggers() {
+
+		logger::log("SQLITE", "Creating Triggers for Bookmark update operations");
 
 		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS progress_update_trigger AFTER UPDATE ON Bookmarktable
 							FOR EACH ROW
