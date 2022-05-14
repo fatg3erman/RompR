@@ -50,8 +50,12 @@ var podcasts = function() {
 				dataType: "json"
 			})
 			.done(function(data) {
-				progressdiv.rangechooser('setProgress', data.percent);
+				// Sometimes we refesh just before this fires, and the content has been
+				// reloaded, which makes this throw an error
 				debug.debug("PODCAST DOWNLOAD","Download status is",data);
+				if (progressdiv.hasClass('rangechooser')) {
+					progressdiv.rangechooser('setProgress', data.percent);
+				}
 				if (running) {
 					timer = setTimeout(self.checkProgress, 500);
 				}

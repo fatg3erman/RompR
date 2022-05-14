@@ -241,7 +241,8 @@ class init_database extends init_generic {
 			"Downloaded TINYINT(1) DEFAULT 0, ".
 			"Listened TINYINT(1) DEFAULT 0, ".
 			"New TINYINT(1) DEFAULT 1, ".
-			"Deleted TINYINT(1) DEFAULT 0)", true))
+			"Deleted TINYINT(1) DEFAULT 0, ".
+			"Image VARCHAR(255) DEFAULT NULL)", true))
 		{
 			logger::log("SQLITE", "  PodcastTracktable OK");
 			if ($this->generic_sql_query("CREATE INDEX IF NOT EXISTS ptt ON PodcastTracktable (Title)", true)) {
@@ -1098,6 +1099,12 @@ class init_database extends init_generic {
 					logger::log("SQL", "Updating FROM Schema version 82 TO Schema version 83");
 					$this->generic_sql_query("UPDATE Albumtable SET domain = 'spotify' WHERE AlbumUri LIKE 'spotify:%'");
 					$this->generic_sql_query("UPDATE Statstable SET Value = 83 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 83:
+					logger::log("SQL", "Updating FROM Schema version 83 TO Schema version 84");
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable ADD Image VARCHAR(255) DEFAULT NULL", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 84 WHERE Item = 'SchemaVer'", true);
 					break;
 
 			}

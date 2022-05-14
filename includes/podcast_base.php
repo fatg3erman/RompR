@@ -33,11 +33,11 @@ function doPodcastBase() {
 	print '<div class="spacer"></div>';
 
 	print '<div class="containerbox fullwidth bumpad">';
-	print '<i class="icon-refresh smallicon clickable clickicon fixed tooltip podcast podglobal" name="refreshall" title="'.language::gettext('podcast_refresh_all').'"></i>';
-	print '<i class="icon-headphones smallicon clickable clickicon fixed tooltip podcast podglobal" name="markalllistened" title="'.language::gettext('podcast_mark_all').'"></i>';
+	print '<i class="icon-refresh smallicon clickable clickicon fixed tooltip podcast podglobal spinable" name="refreshall" title="'.language::gettext('podcast_refresh_all').'"></i>';
+	print '<i class="icon-headphones smallicon clickable clickicon fixed tooltip podcast podglobal spinable" name="markalllistened" title="'.language::gettext('podcast_mark_all').'"></i>';
 	print '<div class="expand"></div>';
-	print '<i class="icon-trash oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal" name="undeleteall" title="'.language::gettext('podcast_undelete').'"></i>';
-	print '<i class="icon-download oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal" name="removealldownloaded" title="'.language::gettext('podcast_removedownloaded').'"></i>';
+	print '<i class="icon-trash oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal spinable" name="undeleteall" title="'.language::gettext('podcast_undelete').'"></i>';
+	print '<i class="icon-download oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal spinable" name="removealldownloaded" title="'.language::gettext('podcast_removedownloaded').'"></i>';
 	print '</div>';
 
 	print '<div class="spacer"></div>';

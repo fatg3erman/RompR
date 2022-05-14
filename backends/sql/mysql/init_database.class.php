@@ -199,7 +199,7 @@ class init_database extends init_generic {
 			"Listened TINYINT(1) UNSIGNED DEFAULT 0, ".
 			"New TINYINT(1) UNSIGNED DEFAULT 1, ".
 			"Deleted TINYINT(1) UNSIGNED DEFAULT 0, ".
-			"Progress INT UNSIGNED DEFAULT 0, ".
+			"Image VARCHAR(255) DEFAULT NULL, ".
 			"INDEX (PODindex), ".
 			"PRIMARY KEY (PODTrackindex), ".
 			"INDEX (Title)) ENGINE=InnoDB", true))
@@ -1140,6 +1140,12 @@ class init_database extends init_generic {
 					logger::log("SQL", "Updating FROM Schema version 82 TO Schema version 83");
 					$this->generic_sql_query("UPDATE Albumtable SET domain = 'spotify' WHERE AlbumUri LIKE 'spotify:%'");
 					$this->generic_sql_query("UPDATE Statstable SET Value = 83 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 83:
+					logger::log("SQL", "Updating FROM Schema version 83 TO Schema version 84");
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable ADD Image VARCHAR(255) DEFAULT NULL", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 84 WHERE Item = 'SchemaVer'", true);
 					break;
 
 			}

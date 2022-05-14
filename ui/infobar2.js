@@ -546,7 +546,9 @@ var infobar = function() {
 						data: {
 							file: info.file,
 							unmopfile: info.unmopfile,
-							ImgKey: info.ImgKey},
+							ImgKey: info.ImgKey,
+							type: info.type
+						},
 						dataType: 'json'
 					}));
 					if (data.ImgKey) {

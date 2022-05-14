@@ -224,6 +224,9 @@ class metabackup extends metaDatabase {
 				if (array_key_exists('Progress', $trackdata))
 					unset($trackdata['Progress']);
 
+				if (!array_key_exists('Image', $trackdata))
+					$trackdata['Image'] = null;
+
 				$this->generic_restore($trackdata, 'PodcastTracktable');
 				$progress = round(($i/count($tracks))*100);
 				fwrite($monitor, "\n<b>Restoring Podcast Tracks : </b>".$progress."%\n");

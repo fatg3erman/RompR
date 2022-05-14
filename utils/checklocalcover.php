@@ -8,25 +8,42 @@ $image = '';
 $retval = ['ImgKey' => false];
 logger::log('PLONKINGTON', 'Checking file',$_REQUEST['file']);
 
-$filepath = imageFunctions::munge_filepath($_REQUEST['unmopfile']);
-logger::log('PLONKINGTON', 'Checking file',$filepath);
-$image = imageFunctions::check_embedded($filepath, $filepath);
+if ($_REQUEST['type'] == 'podcast') {
+	prefs::$database = new poDatabase();
+	$image = prefs::$database->check_trackimage($_REQUEST['file']);
+	if ($image) {
+		logger::log('PLONKINGTON', 'Found Podcast Track Image', $image);
+		$image = 'getRemoteImage.php?url='.rawurlencode($image);
+	}
+}
 
 if ($image == '') {
-	$player = new base_mpd_player();
-	if ($player->check_mpd_version('0.22')) {
-		$image = $player->readpicture($_REQUEST['file']);
+	$filepath = imageFunctions::munge_filepath($_REQUEST['unmopfile']);
+	logger::log('PLONKINGTON', 'Checking file',$filepath);
+	$image = imageFunctions::check_embedded($filepath, $filepath);
+	if ($image == '') {
+		$player = new base_mpd_player();
+		if ($player->check_mpd_version('0.22')) {
+			$image = $player->readpicture($_REQUEST['file']);
+		}
+		$player->close_mpd_connection();
+		if ($image)
+			logger::log('PLONKINGTON', 'Got Image from MPD Readpicture');
+	} else {
+		logger::log('PLONKINGTON', 'Found Embedded Image');
 	}
-	$player->close_mpd_connection();
+	if ($image) {
+		copy($image, 'prefs/playground/trackimage');
+		unlink($image);
+		$image = 'prefs/playground/trackimage?version='.microtime(true);
+	}
 }
 
 if ($image) {
-	copy($image, 'prefs/playground/trackimage');
-	unlink($image);
 	$retval = [
 		'ImgKey' => $_REQUEST['ImgKey'],
 		'images' => [
-			'asdownloaded' => 'prefs/playground/trackimage?version='.microtime(true)
+			'asdownloaded' => $image
 		]
 	];
 }

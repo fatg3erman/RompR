@@ -235,6 +235,15 @@ class poDatabase extends database {
 				if ($track['Duration'] == 0 && $m && $m->duration) {
 					$track['Duration'] = (string) $m->duration;
 				}
+				$track['Image'] = null;
+				if ($m && $m->image) {
+					try {
+						$track['Image'] = (string) $m->image->attributes()->href;
+						logger::log('PODCASTS', '    Episode has an image', $track['Image']);
+					} catch (Exception $e) {
+						logger::warn('PODCASTS', '    Episode has an image but could not parse the href');
+					}
+				}
 				if (preg_match('/:/', $track['Duration'])) {
 					$timesplit = explode(':', $track['Duration']);
 					$timefactors = array(1, 60, 3600, 86400);
@@ -359,11 +368,11 @@ class poDatabase extends database {
 				foreach ($podcast['tracks'] as $track) {
 					if ($this->sql_prepare_query(true, null, null, null,
 						"INSERT INTO PodcastTracktable
-						(PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New)
+						(PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New, Image)
 						VALUES
-						(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+						(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 						$newpodid, $track['Title'], $track['Artist'], $track['Duration'], $track['PubDate'],
-						$track['FileSize'], $track['Description'], $track['Link'], $track['GUID'], 1))
+						$track['FileSize'], $track['Description'], $track['Link'], $track['GUID'], 1, $track['Image']))
 					{
 						logger::trace("PODCASTS", "  Added Track ".$track['Title']);
 					} else {
@@ -384,10 +393,10 @@ class poDatabase extends database {
 			'album' => $title,
 			'source' => $url
 		));
-		if ($albumimage->get_image_if_exists() === null) {
+		// if ($albumimage->get_image_if_exists() === null) {
 			$albumimage->download_image();
 			$albumimage->update_image_database();
-		}
+		// }
 
 	}
 
@@ -473,15 +482,15 @@ class poDatabase extends database {
 			$trackid = $this->sql_prepare_query(false, null, 'PODTrackindex' , null, "SELECT PODTrackindex FROM PodcastTracktable WHERE Guid=? AND PODindex = ?", $track['GUID'], $podid);
 			if ($trackid !== null) {
 				logger::debug("PODCASTS", "  Found existing track ".$track['Title']);
-				$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET JustUpdated=?, Duration=?, Link=? WHERE PODTrackindex=?",1,$track['Duration'], $track['Link'], $trackid);
+				$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET JustUpdated = ?, Duration = ?, Link = ?, Image = ? WHERE PODTrackindex=?",1,$track['Duration'], $track['Link'], $track['Image'], $trackid);
 			} else {
 				if ($this->sql_prepare_query(true, null, null, null,
 					"INSERT INTO PodcastTracktable
-					(JustUpdated, PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New)
+					(JustUpdated, PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New, Image)
 					VALUES
-					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 					1, $podid, $track['Title'], $track['Artist'], $track['Duration'], $track['PubDate'],
-					$track['FileSize'], $track['Description'], $track['Link'], $track['GUID'], 1))
+					$track['FileSize'], $track['Description'], $track['Link'], $track['GUID'], 1, $track['Image']))
 				{
 					logger::log("PODCASTS", "  Added Track ".$track['Title']);
 				} else {
@@ -1035,7 +1044,7 @@ class poDatabase extends database {
 	public function remove_all_downloaded() {
 		$pods = glob('prefs/podcasts/*');
 		foreach ($pods as $channel) {
-			removeDownloaded(basename($channel));
+			$this->removeDownloaded(basename($channel));
 		}
 		return false;
 	}
@@ -1392,6 +1401,19 @@ class poDatabase extends database {
 			$this->doPodcastHeader($obj, $subscribed);
 		}
 
+	}
+
+	public function check_trackimage($uri) {
+		$retval = null;
+		$thing = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			"SELECT Image FROM PodcastTracktable WHERE Link = ? OR Localfilename = ?",
+			$uri,
+			$uri
+		);
+		if (count($thing) > 0) {
+			$retval = $thing[0]['Image'];
+		}
+		return $retval;
 	}
 
 	private function check_refresh_pid() {
