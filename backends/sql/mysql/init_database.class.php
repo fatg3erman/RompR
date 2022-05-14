@@ -210,6 +210,19 @@ class init_database extends init_generic {
 			return array(false, "Error While Checking PodcastTracktable : ".$err);
 		}
 
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS PodBookmarktable(".
+			"PODTrackindex INT UNSIGNED NOT NULL REFERENCES PodcastTracktable(PODTrackindex) ON DELETE CASCADE, ".
+			"Bookmark INT UNSIGNED, ".
+			"Name VARCHAR(128) NOT NULL, ".
+			"PRIMARY KEY (PODTrackIndex, Name)".
+			")", true))
+		{
+			logger::log("MYSQL", "  PodBookmarktable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking PodBookmarktable : ".$err);
+		}
+
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS RadioStationtable(".
 			"Stationindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
 			"Number SMALLINT UNSIGNED DEFAULT 65535, ".
