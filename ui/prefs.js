@@ -505,7 +505,6 @@ var prefs = function() {
 			updateCustomBackground();
 		},
 
-
 		loadPrefs: async function(callback) {
 
 			var tags = await $.ajax({
