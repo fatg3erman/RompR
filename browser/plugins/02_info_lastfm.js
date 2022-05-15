@@ -345,6 +345,7 @@ var info_lastfm = function() {
 
 					tryForAllmusicImage: async function() {
 						while (retries > 0 && (typeof artistmeta.allmusic == 'undefined' || typeof artistmeta.allmusic.artistlink === 'undefined')) {
+							retries--;
 							await new Promise(t => setTimeout(t, 500));
 						}
 						try {
@@ -367,9 +368,9 @@ var info_lastfm = function() {
 					doBrowserUpdate: function() {
 						var lfmdata = new lfmDataExtractor(artistmeta.lastfm.data.artist);
 						getArtistHTML(artistmeta.lastfm.layout, lfmdata, parent, artistmeta);
+						self.artist.tryForAllmusicImage();
 						if (lastfm.isLoggedIn() && !lfmdata.error()) {
 							self.artist.getUserTags();
-							self.artist.tryForAllmusicImage();
 						}
 					},
 

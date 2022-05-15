@@ -80,17 +80,14 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 	}
 
 	this.get_random_discogs_artist_image = async function(layout) {
-		// The problem with this is it populates the discogs collection which does its masonry layout
-		// while the panel is not visible, which fucks up the masonry layout
-		// Need to mend browser.rePoint before we do this
-		// if (typeof collections['discogs'] == 'undefined') {
-		// 	startSource('discogs');
-		// }
-		// debug.mark('TRACKDATA', "Getting random discogs image");
-		// var image = await collections['discogs'].artist.get_random_image();
-		// debug.mark('TRACKDATA', "Got random discogs image", image);
-		// if (image)
-		// 	layout.add_main_image(image);
+		if (typeof collections['discogs'] == 'undefined') {
+			startSource('discogs');
+		}
+		debug.mark('TRACKDATA', "Getting random discogs image");
+		var image = await collections['discogs'].artist.get_random_image();
+		debug.mark('TRACKDATA', "Got random discogs image", image);
+		if (image)
+			layout.add_main_image(image);
 	}
 
 	this.doArtistChoices = function() {

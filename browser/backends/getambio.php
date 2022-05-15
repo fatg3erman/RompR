@@ -56,7 +56,10 @@ function get_allmusic_page($url) {
 		$els = getElementsByClass($DOM, 'section', 'biography');
 		foreach ($els as $el) {
 			logger::log("AMBIO", "Found Review Body");
-			$r = $el->nodeValue;
+			// NOTE here we are assuming the source is UTF-8 encoded. We have to do this
+			// because DOMDocument seems to ignore the source encoding.
+			// https://stackoverflow.com/questions/5186162/php-domdocument-nodevalue-dumps-literal-utf-8-characters-instead-of-encoded
+			$r = utf8_decode($el->nodeValue);
 		}
 		$r = '<p>'.$r.'</p><p>Biography courtesy of AllMusic</p>';
 	}
