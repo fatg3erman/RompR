@@ -968,10 +968,9 @@ var syncLastFMPlaycounts = function() {
 	return {
 
 		start: function() {
-			if (!lastfm.isLoggedIn()) {
-				debug.log("LASTFMSYNC","Last.FM is not logged in");
+			if (!lastfm.isLoggedIn() || !prefs.sync_lastfm_at_start)
 				return;
-			}
+
 			// make sure another browser hasn't already done this one
 			prefs.loadPrefs(syncLastFMPlaycounts.actuallyDoIt);
 		},

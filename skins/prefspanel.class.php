@@ -441,8 +441,8 @@ class prefspanel extends uibits {
 		]);
 
 		print '<div class="pref">'.language::gettext('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
-			'<input class="enter" name="lfmuser" type="text" size="30" value="'.prefs::$prefs['lastfm_user'].'"/>'.
-			'</div><button id="lastfmloginbutton" class="fixed">'.language::gettext('config_loginbutton').
+			'<input name="lfmuser" type="text" size="30" value="'.prefs::$prefs['lastfm_user'].'"/>'.
+			'</div><button id="lastfmloginbutton" class="fixed notenabled">'.language::gettext('config_loginbutton').
 			'</button></div>';
 		print '</div>';
 

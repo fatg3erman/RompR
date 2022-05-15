@@ -334,6 +334,7 @@ function bindClickHandlers() {
 	$(document).on('change', ".saveomatic", prefs.saveSelectBoxes);
 	$('.clickreplaygain').on('click', player.controller.replayGain);
 	$(document).on('click', '.clearbox.enter', makeClearWork);
+	$(document).on('keydown', 'input[name="lfmuser"]', checkLfmUser);
 	$(document).on('keyup', '.enter', onKeyUp);
 	$(document).on('change', '.inputfile', inputFIleChanged);
 	$(document).on('keyup', 'input.notspecial', filterSpecialChars);
@@ -343,6 +344,14 @@ function bindClickHandlers() {
 	$(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
 	$(document).on('click', '.choosepanel', uiHelper.changePanel);
 	$(document).on('click', '.clickaddtoplaylist', infobar.addToPlaylist);
+}
+
+ function checkLfmUser() {
+	if($('input[name="lfmuser"]').val() == '') {
+		$('#lastfmloginbutton').removeClass('notenabled').addClass('notenabled');
+	} else {
+		$('#lastfmloginbutton').removeClass('notenabled');
+	}
 }
 
 function bindPlaylistClicks() {

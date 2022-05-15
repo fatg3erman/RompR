@@ -19,11 +19,21 @@ function LastFM() {
 	}
 
 	function logout() {
-		prefs.save({lastfm_session_key: '', lastfm_user: '', lastfm_logged_in: false});
+		prefs.save({
+			lastfm_session_key: '',
+			lastfm_user: '',
+			lastfm_logged_in: false,
+			sync_lastfm_playcounts: false,
+			sync_lastfm_at_start: false,
+			lastfm_scrobbling: false,
+			synctags: false
+		});
 		uiLoginBind();
+		prefs.setPrefs();
 	}
 
 	this.login = function (user) {
+		if (user == '') return;
 		// Note we have a 'cache' param because params cannot be empty
 		username = user;
 		api_request(
@@ -93,10 +103,11 @@ function LastFM() {
 	function uiLoginBind() {
 		if (!prefs.lastfm_logged_in) {
 			$('.lastfmlogin-required').removeClass('notenabled').addClass('notenabled');
-			$('#lastfmloginbutton').off('click').on('click', startlogin).html(language.gettext('config_loginbutton'));
+			$('input[name="lfmuser"]').val('');
+			$('#lastfmloginbutton').off('click').on('click', startlogin).html(language.gettext('config_loginbutton')).removeClass('notenabled').addClass('notenabled');
 		} else {
 			$('.lastfmlogin-required').removeClass('notenabled');
-			$('#lastfmloginbutton').off('click').on('click', logout).html(language.gettext('button_logout'));
+			$('#lastfmloginbutton').off('click').on('click', logout).html(language.gettext('button_logout')).removeClass('notenabled');
 		}
 	}
 
