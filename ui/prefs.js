@@ -792,7 +792,7 @@ var prefs = function() {
 			});
 
 			$.each($('.autoset'), function() {
-				debug.log('SETPREFS','Checkbox',$(this).attr("id"), prefs[$(this).attr("id")]);
+				debug.debug('SETPREFS','Checkbox',$(this).attr("id"), prefs[$(this).attr("id")]);
 				$(this).prop("checked", prefs[$(this).attr("id")]);
 			});
 
