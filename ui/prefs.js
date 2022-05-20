@@ -939,7 +939,7 @@ var prefs = function() {
 						themeManager.init();
 					})
 					.fail(function(jqxhr, settings, exception) {
-						debug.debug('PREFS', 'Theme',theme,'does not have a manager script');
+						debug.log('PREFS', 'Theme',theme,'does not have a manager script');
 					});
 			} catch(err) {
 				debug.error('PREFS','Error loading theme script',err);

@@ -15,6 +15,7 @@ if (preg_match('#prefs/userstreams/.*\.jpg#', $request) || preg_match('#prefs/us
 	header("HTTP/1.1 307 Temporary Redirect");
 	header("Location: ".$redirect);
 } else if (preg_match('#themes/.*\.js#', $request)) {
+	logger::log('404', 'Request for nonexistent theme manager script. This is normal');
 } else if (preg_match('#albumart/.*?\.[jpg|png|svg|gif|webp]#', $request)) {
 	$redirect = $base_url.'/newimages/vinyl_record.svg';
 	header("HTTP/1.1 307 Temporary Redirect");

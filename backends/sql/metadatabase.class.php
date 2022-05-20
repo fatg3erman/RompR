@@ -1154,7 +1154,7 @@ class metaDatabase extends collection_base {
 		// At this point, terminate the request so the download can run in the background.
 		// If we don't do this the browser will retry after 3 minutes and there's nothing we
 		// can do about that.
-		prefs::$database->close_browser_connection();
+		close_browser_connection();
 		logger::log('YOUTUBEDL', 'OK now we start the fun');
 		file_put_contents('prefs/youtubedl/'.$ttindex.'/original.uri', $uri_to_get);
 		exec($ytdl_path.'youtube-dl -o "prefs/youtubedl/'.$ttindex.'/%(title)s-%(id)s.%(ext)s" --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> '.$progress_file.' 2>&1', $output, $retval);

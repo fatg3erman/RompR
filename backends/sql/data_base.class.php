@@ -264,39 +264,6 @@ class data_base {
 		return $oa;
 	}
 
-	public function close_browser_connection() {
-		// For requests that take > 3 minutes we need to close the browser
-		// connection without terminating the script, otherwise the browser
-		// will retry the request and this will be catastrophic.
-		$sapi_type = php_sapi_name();
-		logger::log('COLLECTION','SAPI Name is',$sapi_type);
-		if (preg_match('/fpm/', $sapi_type) || preg_match('/fcgi/', $sapi_type)) {
-			logger::mark('COLLECTION', 'Closing Request The FastCGI Way');
-			print('<html></html>');
-			fastcgi_finish_request();
-		} else {
-			logger::mark('COLLECTION', 'Closing Request The Apache Way');
-			ob_end_clean();
-			ignore_user_abort(true); // just to be safe
-			ob_start();
-			print('<html></html>');
-			$size = ob_get_length();
-			header("Content-Length: $size");
-			header("Content-Encoding: none");
-			header("Connection: close");
-			ob_end_flush();
-			ob_flush();
-			flush();
-			if (ob_get_contents()) {
-				ob_end_clean();
-			}
-		}
-
-		if (session_id()) {
-			session_write_close();
-		}
-
-	}
 }
 
 ?>

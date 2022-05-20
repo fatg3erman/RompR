@@ -47,6 +47,7 @@ So, create this file, note I've assumed the default apache root directory of /va
         Order Allow,Deny
         Allow from All
         Require all granted
+        ErrorDocument 404 /404.php
 
         <IfModule mod_php7.c>
             AddType application/x-httpd-php .php

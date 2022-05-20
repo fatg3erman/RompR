@@ -258,7 +258,7 @@ function update_collection() {
 	// Send some dummy data back to the browser, then close the connection
 	// so that the browser doesn't time out and retry
 
-	prefs::$database->close_browser_connection();
+	close_browser_connection();
 
 	global $performance;
 	$timer = microtime(true);

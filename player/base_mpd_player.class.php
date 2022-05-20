@@ -864,6 +864,7 @@ class base_mpd_player {
 			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
 			$http_server = nice_server_address($this->ip);
 			prefs::$prefs['mopidy_http_port'] = $http_server.':'.prefs::$prefs['http_port_for_mopidy'];
+			logger::log('MOPIDYHTTP', 'Using',prefs::$prefs['mopidy_http_port'],'for Mopidy HTTP');
 		} else {
 			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');
 			prefs::$prefs['mopidy_http_port'] = false;

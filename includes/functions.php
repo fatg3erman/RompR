@@ -400,7 +400,7 @@ function get_player_ip() {
 	logger::log("INIT", "Prefs for mpd host is ".prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['host']);
 	$pip = '';
 	if (prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['socket'] != '') {
-		$pip = $_SERVER['HTTP_HOST'];
+		$pip = $_SERVER['SERVER_ADDR'];
 	} else {
 		$pip = nice_server_address(prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['host']).':'.
 			prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['port'];
@@ -414,7 +414,28 @@ function get_player_ip() {
 
 function nice_server_address($host) {
  	if ($host == "localhost" || $host == "127.0.0.1" || $host == '::1') {
-		return $_SERVER['HTTP_HOST'];
+ 		// Turn localhost into something prettier. localhost is only localhost relative to the server, not the
+ 		// browser. We want to use it for mopidy_http_port, which is a websocket and so localhost is useless
+ 		// to us in that context. Also we want to be able to display 'connected to Mopidy at [hostname]' in the browser
+ 		// not Connected to Mopidy at localhost, for similar reasons.
+ 		$ip = $_SERVER['HTTP_HOST'];
+ 		if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) || filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+ 			// We'll get here if a valid IPv4 or IPv6 address was used.
+ 			// We will not get here if that address conatins a port number because filter_var thinks they're invalid
+ 			// We'll not gete here if someone used a hostname either.
+ 			logger::log('SERVER', 'Using valid IP address from HTTP_HOST',$ip);
+ 			return $ip;
+ 		} else if (strpos($ip, ':') === false) {
+ 			// Server address might have a : in it for a port number. We don't want this
+ 			// because it breaks translation of localhost to an IP address we can use.
+ 			// This does mean that if we're using hostname:port then we skip this and just use the IP
+ 			logger::log('SERVER', 'Using address from HTTP_HOST',$ip);
+ 			return $ip;
+ 		} else {
+ 			// In this case just return the IP address.
+ 			logger::log('SERVER', 'HTTP_HOST not useful',$ip,'using SERVER_ADDR instead',$_SERVER['SERVER_ADDR']);
+			return $_SERVER['SERVER_ADDR'];
+		}
 	} else {
 		return $host;
 	}
@@ -821,5 +842,40 @@ function type_to_extension($mime) {
 			break;
 	}
 }
+
+function close_browser_connection() {
+	// For requests that take > 3 minutes we need to close the browser
+	// connection without terminating the script, otherwise the browser
+	// will retry the request and this will be catastrophic.
+	$sapi_type = php_sapi_name();
+	logger::log('COLLECTION','SAPI Name is',$sapi_type);
+	if (preg_match('/fpm/', $sapi_type) || preg_match('/fcgi/', $sapi_type)) {
+		logger::mark('COLLECTION', 'Closing Request The FastCGI Way');
+		print('<html></html>');
+		fastcgi_finish_request();
+	} else {
+		logger::mark('COLLECTION', 'Closing Request The Apache Way');
+		ob_end_clean();
+		ignore_user_abort(true); // just to be safe
+		ob_start();
+		print('<html></html>');
+		$size = ob_get_length();
+		header("Content-Length: $size");
+		header("Content-Encoding: none");
+		header("Connection: close");
+		ob_end_flush();
+		ob_flush();
+		flush();
+		if (ob_get_contents()) {
+			ob_end_clean();
+		}
+	}
+
+	if (session_id()) {
+		session_write_close();
+	}
+
+}
+
 
 ?>
