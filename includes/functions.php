@@ -421,7 +421,7 @@ function nice_server_address($host) {
  		$ip = $_SERVER['HTTP_HOST'];
  		if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) || filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
  			// We'll get here if a valid IPv4 or IPv6 address was used.
- 			// We will not get here if that address conatins a port number because filter_var thinks they're invalid
+ 			// We will not get here if that address contains a port number because filter_var thinks they're invalid
  			// We'll not gete here if someone used a hostname either.
  			logger::log('SERVER', 'Using valid IP address from HTTP_HOST',$ip);
  			return $ip;

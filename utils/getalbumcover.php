@@ -233,7 +233,7 @@ function tryLastFM($albumimage) {
 	$pic = "";
 	$cs = -1;
 
-	$sizeorder = array( 0 => 'small', 1 => 'medium', 2 => 'large', 3=> 'extralarge', 4 => 'mega');
+	$sizeorder = array( 0 => 'small', 1 => 'medium', 2 => 'large', 3  => 'extralarge', 4 => 'mega');
 
 	$options = getLastFMUrl($albumimage);
 	$json = json_decode(lastfm::album_getinfo($options, false), true);
@@ -341,10 +341,10 @@ function tryMopidy($albumimage) {
 }
 
 function tryMPD($albumimage) {
+	global $player, $delaytime;
 	if ($albumimage->trackuri == '')
 		return '';
 
-	global $player;
 	$player->open_mpd_connection();
 	$filename = '';
 	if ($player->check_mpd_version('0.22')) {
@@ -354,6 +354,9 @@ function tryMPD($albumimage) {
 	if ($filename == '') {
 		logger::log('GETALBUMCOVER', 'Trying MPD folder image. TrackURI is', $albumimage->trackuri);
 		$filename = $player->albumart($albumimage->trackuri, false);
+	}
+	if ($filename != '') {
+		$delaytime = 100;
 	}
 	return $filename;
 }
