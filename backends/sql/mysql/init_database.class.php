@@ -155,7 +155,6 @@ class init_database extends init_generic {
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Podcasttable(".
 			"PODindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
 			"FeedURL TEXT, ".
-			"LastUpdate INT UNSIGNED, ".
 			"Image VARCHAR(255), ".
 			"Title VARCHAR(255), ".
 			"Artist VARCHAR(255), ".
@@ -172,8 +171,10 @@ class init_database extends init_generic {
 			"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
 			"Description TEXT, ".
 			"LastPubDate INT UNSIGNED DEFAULT NULL, ".
+			"NextUpdate INT UNSIGNED DEFAULT 0, ".
 			"Category VARCHAR(255) NOT NULL, ".
 			"WriteTags TINYINT(1) DEFAULT 0, ".
+			"UpRetry INT UNSIGNED DEFAULT 0, ".
 			"PRIMARY KEY (PODindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  Podcasttable OK");
@@ -334,6 +335,8 @@ class init_database extends init_generic {
 			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookAlbums', '0')", true);
 			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTracks', '0')", true);
 			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTime', '0')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('LastCache', '10')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('Updating', '0')", true);
 			$sv = ROMPR_SCHEMA_VERSION;
 			logger::log("MYSQL", "Statstable populated");
 		}
@@ -695,8 +698,6 @@ class init_database extends init_generic {
 					logger::log("SQL", "Updating FROM Schema version 38 TO Schema version 39");
 					$this->generic_sql_query("ALTER TABLE Podcasttable ADD LastPubDate INT UNSIGNED DEFAULT NULL", true);
 					$this->generic_sql_query("CREATE INDEX ptt ON PodcastTracktable (Title)", true);
-					require_once('podcasts/podcastfunctions.php');
-					$this->upgrade_podcasts_to_version();
 					$this->generic_sql_query("UPDATE Statstable SET Value = 39 WHERE Item = 'SchemaVer'", true);
 					break;
 
@@ -1159,6 +1160,52 @@ class init_database extends init_generic {
 					logger::log("SQL", "Updating FROM Schema version 83 TO Schema version 84");
 					$this->generic_sql_query("ALTER TABLE PodcastTracktable ADD Image VARCHAR(255) DEFAULT NULL", true);
 					$this->generic_sql_query("UPDATE Statstable SET Value = 84 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 84:
+					logger::log("SQL", "Updating FROM Schema version 84 TO Schema version 85");
+					prefs::upgrade_host_defs(85);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 85 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 85:
+					logger::log("SQL", "Updating FROM Schema version 85 TO Schema version 86");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 86 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 86:
+					logger::log("SQL", "Updating FROM Schema version 86 TO Schema version 87");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 87 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 87:
+					logger::log("SQL", "Updating FROM Schema version 87 TO Schema version 88");
+					$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('LastCache', ".time().")", true);
+					$u = $this->simple_query('Value', 'Statstable', 'Item', 'Updating', null);
+					if ($u === null)
+						$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('Updating', '0')", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 88 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 88:
+					logger::log("SQL", "Updating FROM Schema version 88 TO Schema version 89");
+					$this->generic_sql_query("ALTER TABLE Podcasttable ADD NextUpdate INT UNSIGNED DEFAULT 0");
+					$this->generic_sql_query("ALTER TABLE Podcasttable DROP LastUpdate");
+					$podcasts = $this->generic_sql_query("SELECT * FROM Podcasttable");
+					foreach($podcasts as $podcast) {
+						$this->sql_prepare_query(true, null, null, null,
+							"UPDATE Podcasttable SET NextUpdate = ? WHERE PODindex = ?",
+							calculate_best_update_time($podcast),
+							$podcast['PODindex']
+						);
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 89 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 89:
+					logger::log("SQL", "Updating FROM Schema version 89 TO Schema version 90");
+					$this->generic_sql_query("ALTER TABLE Podcasttable ADD UpRetry INT UNSIGNED DEFAULT 0");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 90 WHERE Item = 'SchemaVer'", true);
 					break;
 
 			}

@@ -76,7 +76,7 @@ class url_downloader {
 		// It sets $this->content to the contents of the file, which can be retrievd by calling $this->get_data()
 		//
 
-		logger::log("URL_DOWNLOADER", "Downloading ".$this->options['url']);
+		logger::log("URL_DOWNLOADER", "Downloading",$this->options['url'],'to string');
 		curl_setopt($this->ch, CURLOPT_HEADER, true);
 		curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, function($curl, $header) {
 			$len = strlen($header);
@@ -110,12 +110,11 @@ class url_downloader {
 		// This function returns a boolean true if the download succeeded, false otherwise
 		//
 
-		logger::log("URL_DOWNLOADER", "Downloading ".$this->options['url']);
 		$this->file = $file;
 		if ($this->file === null && $this->options['cache'] === null) {
-			logger::trace("URL_DOWNLOADER", "  Returning data as string");
 			return $this->get_data_to_string();
 		} else if ($this->options['cache'] !== null) {
+			logger::log("URL_DOWNLOADER", "Downloading",$this->options['url'],'to file');
 			$this->file = $this->get_cache_file($this->options['cache'], $this->options['url']);
 			if (file_exists($this->file)) {
 				logger::debug("URL_DOWNLOADER", "    Returning cached data ".$this->file);

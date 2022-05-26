@@ -38,16 +38,23 @@ class database extends data_base {
 
 	public function sql_recently_played() {
 		return $this->generic_sql_query(
-			"SELECT t.Uri, t.Title, a.Artistname, al.Albumname, al.Image, al.ImgKey, UNIX_TIMESTAMP(p.LastPlayed) AS unixtime
-				FROM Tracktable AS t
-				JOIN Playcounttable AS p USING (TTindex)
-				JOIN Albumtable AS al USING (Albumindex)
-				JOIN Artisttable AS a ON (a.Artistindex = al.AlbumArtistindex)
-				WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= p.LastPlayed
-				AND p.LastPlayed IS NOT NULL
-				ORDER BY p.LastPlayed DESC",
-			false,
-			PDO::FETCH_OBJ
+			"SELECT
+				t.Uri,
+				t.Title,
+				a.Artistname,
+				al.Albumname,
+				al.Image,
+				al.ImgKey,
+				DATE_FORMAT(p.LastPlayed, '%H:%i') AS playtime,
+				DATE_FORMAT(p.LastPlayed, '%W, %D %M %Y') AS playdate
+			FROM Tracktable AS t
+			JOIN Playcounttable AS p USING (TTindex)
+			JOIN Albumtable AS al USING (Albumindex)
+			JOIN Artisttable AS a ON (a.Artistindex = al.AlbumArtistindex)
+			WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= p.LastPlayed
+			AND p.LastPlayed IS NOT NULL
+			ORDER BY p.LastPlayed DESC",
+			false
 		);
 	}
 

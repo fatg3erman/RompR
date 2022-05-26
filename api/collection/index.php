@@ -246,17 +246,19 @@ function update_collection() {
 	prefs::$database = new musicCollection();
 	// Check that an update is not currently in progress
 	// and create the update lock if not
-	if (prefs::$database->collectionUpdateRunning()) {
-		header('HTTP/1.1 500 Internal Server Error');
-		print language::gettext('error_nocol');
-		exit(0);
-	}
 
 	if (file_exists('prefs/monitor')) {
 		unlink('prefs/monitor');
 	}
 	// Send some dummy data back to the browser, then close the connection
 	// so that the browser doesn't time out and retry
+
+    logger::log('COLLECTION', 'Checking Nothing Else Is Running...');
+	if (prefs::$database->collectionUpdateRunning()) {
+		header('HTTP/1.1 500 Internal Server Error');
+		print language::gettext('error_nocol');
+		exit(0);
+	}
 
 	close_browser_connection();
 

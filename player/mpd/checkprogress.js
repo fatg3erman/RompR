@@ -6,7 +6,14 @@ function enable_player_events() {
 
 }
 
+var we_are_going = false;
+
 async function checkProgress() {
+	if (we_are_going) {
+		debug.warn('MPD', 'Re-entrant call to checkProgress!');
+		return;
+	}
+	we_are_going = true;
 	var AlanPartridge = 5;
 	var safetytimer = 250;
 	var waittime = 1000;

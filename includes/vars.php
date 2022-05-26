@@ -1,9 +1,6 @@
 <?php
 
-$dtz = ini_get('date.timezone');
-if (!$dtz) {
-	date_default_timezone_set('UTC');
-}
+check_timezone();
 
 //
 //---------------------------------------------------------------------------------------------
@@ -149,5 +146,24 @@ function multi_implode($array, $glue = ', ') {
 	$ret = substr($ret, 0, 0-strlen($glue));
 	return $ret;
 }
+
+function check_timezone() {
+	if (($dtz = ini_get('date.timezone'))) {
+	    // Yes we probably should rely on this first but most people just set it to UTC
+	    // if they set it at all.
+	} else {
+		$timezone = '';
+	    exec('date +%Z', $timezone, $retval);
+		if (count($timezone) > 0)
+			$timezone = trim(array_shift($timezone));
+	    if ($retval == 0 && $timezone != '') {
+	    	$zone = timezone_name_from_abbr($timezone);
+	        date_default_timezone_set($zone);
+	    } else {
+	        date_default_timezone_set('UTC');
+	    }
+	}
+}
+
 
 ?>

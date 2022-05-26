@@ -13,9 +13,6 @@ class poDatabase extends database {
 			return null;
 		}
 
-		// For debugging
-		// file_put_contents('prefs/temp/feed.xml', $d->get_data());
-
 		if ($id) {
 			if (!is_dir('prefs/podcasts/'.$id)) {
 				mkdir('prefs/podcasts/'.$id, 0755);
@@ -340,11 +337,10 @@ class poDatabase extends database {
 		$this->open_transaction();
 		if ($this->sql_prepare_query(true, null, null, null,
 			"INSERT INTO Podcasttable
-			(FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed, LastPubDate, Category)
+			(FeedURL, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed, LastPubDate, NextUpdate, Category)
 			VALUES
 			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 			$podcast['FeedURL'],
-			calculate_best_update_time($podcast),
 			$podcast['Image'],
 			$podcast['Title'],
 			$podcast['Artist'],
@@ -356,6 +352,7 @@ class poDatabase extends database {
 			ROMPR_PODCAST_TABLE_VERSION,
 			$subbed,
 			$podcast['LastPubDate'],
+			calculate_best_update_time($podcast),
 			$podcast['Category']))
 		{
 			$newpodid = $this->mysqlc->lastInsertId();
@@ -400,20 +397,10 @@ class poDatabase extends database {
 
 	}
 
-	private function check_podcast_upgrade($podetails, $podid, $podcast) {
-		if ($podetails->Version < ROMPR_PODCAST_TABLE_VERSION) {
-			if ($podcast === false) {
-				logger::mark("PODCASTS", "Podcast needs to be upgraded, must re-parse the feed");
-				$podcast = $this->parse_rss_feed($podetails->FeedURL, $podid, null);
-			}
-			$this->upgrade_podcast($podid, $podetails, $podcast);
-		}
-	}
-
 	public function refreshPodcast($podid) {
 		$this->check_refresh_pid();
 		logger::mark("PODCASTS", "---------------------------------------------------");
-		logger::mark("PODCASTS", "Refreshing podcast ",$podid);
+		logger::mark("PODCASTS", "Refreshing podcast",$podid);
 		$result = $this->generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
 		if (count($result) > 0) {
 			$podetails = $result[0];
@@ -428,22 +415,42 @@ class poDatabase extends database {
 			return $podid;
 		}
 		$this->open_transaction();
+
 		if ($podetails->Subscribed == 1 && prefs::$prefs['podcast_mark_new_as_unlistened']) {
+			// Mark New As Unlistened, if required, on all subscribed podcasts - this option makes thi happen
+			// even if no new episodes have been published.
 			$this->generic_sql_query("UPDATE PodcastTracktable SET New = 0 WHERE PODindex = ".$podetails->PODindex);
 		}
 		if ($podcast === false) {
-			$this->check_podcast_upgrade($podetails, $podid, $podcast);
-			// Podcast pubDate has not changed, hence we didn't re-parse the feed.
-			// Still calculate the best next update time
-			$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET LastUpdate = ? WHERE PODindex = ?",
-				calculate_best_update_time(
-					array(
-						'LastPubDate' => $podetails->LastPubDate,
-						'RefreshOption' => $podetails->RefreshOption,
-						'Title' => $podetails->Title
-					)
-				),
-				$podid);
+			// Podcast was not updated. Maybe we jyst need to try again later?
+			if ($podetails->RefreshOption != REFRESHOPTION_HOURLY && $podetails->UpRetry < 2) {
+				switch ($podetails->RefreshOption) {
+					case REFRESHOPTION_DAILY:
+						logger::log('PODCASTS', 'No new tracks found. Daily refresh, trying again in 2 hours');
+						$nextup = $podetails->NextUpdate + 7200;
+						break;
+
+					case REFRESHOPTION_WEEKLY:
+						logger::log('PODCASTS', 'No new tracks found. Weekly refresh, trying again tomorrow');
+						$nextup = $podetails->NextUpdate + 86400;
+						break;
+
+					case REFRESHOPTION_MONTHLY:
+						logger::log('PODCASTS', 'No new tracks found. Monthly refresh, trying again in 2 days');
+						$nextup = $podetails->NextUpdate + 172800;
+						break;
+				}
+			} else {
+				$nextup = calculate_best_update_time(['LastPubDate' => $podetails->LastPubDate, 'RefreshOption' => $podetails->RefreshOption, 'Title' => $podetails->Title]);
+			}
+
+			logger::log('PODCASTS', 'Next Update is', date('c', $nextup));
+
+			$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET NextUpdate = ?, UpRetry = ? WHERE PODindex = ?",
+				$nextup,
+				$podetails->UpRetry + 1,
+				$podid
+			);
 			// Still check to keep (days to keep still needs to be honoured)
 			$this->close_transaction();
 			if ($this->check_tokeep($podetails, $podid) || prefs::$prefs['podcast_mark_new_as_unlistened']) {
@@ -452,34 +459,30 @@ class poDatabase extends database {
 				return false;
 			}
 		}
-		$this->check_podcast_upgrade($podetails, $podid, $podcast);
 		if ($podetails->Subscribed == 0) {
-			$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description = ?, DaysLive = ?, RefreshOption = ?, LastUpdate = ?, LastPubDate = ? WHERE PODindex = ?",
-				$podcast['Description'],
-				$podcast['DaysLive'],
-				$podcast['RefreshOption'],
-				calculate_best_update_time($podcast),
-				$podcast['LastPubDate'],
-				$podid);
-			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New=?, JustUpdated=?, Listened = 0 WHERE PODindex=?", 1, 0, $podid);
+			// For an unsubscribed podcast, we're here if we browsed it. I can't remember why I do this bit.
+			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New = ?, JustUpdated = ?, Listened = ? WHERE PODindex = ?", 1, 0, 0, $podid);
 		} else {
+			// If we're here then the podcast has been updated since the last refresh. Mark All New tracks as not new.
 			// Make sure we use the Refresh Option from the database, otherwise it gets replaced with the value
 			// calculated in parse_rss_feed
 			$podcast['RefreshOption'] = $podetails->RefreshOption;
-			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New=?, JustUpdated=? WHERE PODindex=?", 0, 0, $podid);
-			$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description=?, LastUpdate=?, DaysLive=?, LastPubDate=? WHERE PODindex=?",
-				$podcast['Description'],
-				calculate_best_update_time($podcast),
-				$podcast['DaysLive'],
-				$podcast['LastPubDate'],
-				$podid);
+			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New = ?, JustUpdated = ? WHERE PODindex = ?", 0, 0, $podid);
 		}
+		$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description = ?, DaysLive = ?, RefreshOption = ?, NextUpdate = ?, LastPubDate = ?, UpRetry = ? WHERE PODindex = ?",
+			$podcast['Description'],
+			$podcast['DaysLive'],
+			$podcast['RefreshOption'],
+			calculate_best_update_time($podcast),
+			$podcast['LastPubDate'],
+			0,
+			$podid);
 		$this->download_image($podcast['Image'], $podid, $podetails->Title);
 		//
 		// NB we're doing a lookup and modify / insert because we can't put a UNIQUE KEY on the Guid column because it's a TEXT field
 		//
 		foreach ($podcast['tracks'] as $track) {
-			$trackid = $this->sql_prepare_query(false, null, 'PODTrackindex' , null, "SELECT PODTrackindex FROM PodcastTracktable WHERE Guid=? AND PODindex = ?", $track['GUID'], $podid);
+			$trackid = $this->sql_prepare_query(false, null, 'PODTrackindex' , null, "SELECT PODTrackindex FROM PodcastTracktable WHERE Guid = ? AND PODindex = ?", $track['GUID'], $podid);
 			if ($trackid !== null) {
 				logger::debug("PODCASTS", "  Found existing track ".$track['Title']);
 				$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET JustUpdated = ?, Duration = ?, Link = ?, Image = ? WHERE PODTrackindex=?",1,$track['Duration'], $track['Link'], $track['Image'], $trackid);
@@ -552,44 +555,6 @@ class poDatabase extends database {
 			}
 		}
 		return $retval;
-	}
-
-	private function upgrade_podcast($podid, $podetails, $podcast) {
-		$v = $podetails->Version;
-		while ($v < ROMPR_PODCAST_TABLE_VERSION) {
-			switch ($v) {
-				case 1:
-					logger::mark("PODCASTS", "Updating Podcast ".$podetails->Title." to version 2");
-					foreach ($podcast['tracks'] as $track) {
-						$t = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT * FROM PodcastTracktable WHERE Link=? OR OrigLink=?", $track['Link'], $track['Link']);
-						foreach($t as $result) {
-							logger::log("PODCASTS", "  Updating Track ".$result->Title);
-							logger::trace("PODCASTS", "    GUID is ".$track['GUID']);
-							$dlfilename = null;
-							if ($result->Downloaded == 1) {
-								$dlfilename = basename($result->Link);
-								logger::log("PODCASTS", "    Track has been downloaded to ".$dlfilename);
-							}
-							$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Link = ?, Guid = ?, Localfilename = ?, OrigLink = NULL WHERE PODTrackindex = ?", $track['Link'], $track['GUID'], $dlfilename, $result->PODTrackindex);
-						}
-					}
-					$this->generic_sql_query("UPDATE Podcasttable SET Version = 2 WHERE PODindex = ".$podid, true);
-					$v++;
-					break;
-
-				case 2:
-					// This will have been done by the function below
-					$v++;
-					break;
-
-				case 3:
-					logger::mark("PODCASTS", "Updating Podcast ".$podetails->Title." to version 4");
-					$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Version = ?, Category = ? WHERE PODindex = ?", 4, $podcast['Category'], $podid);
-					$v++;
-					break;
-
-			}
-		}
 	}
 
 	public function outputPodcast($podid, $do_searchbox = true) {
@@ -671,6 +636,9 @@ class poDatabase extends database {
 			print preg_replace('/(<option value="'.$y->RefreshOption.'")/', '$1 selected', $options);
 			print '</select>';
 			print '</div></div>';
+
+			if ($y->RefreshOption != REFRESHOPTION_NEVER)
+				print '<div class="playlistrow2 stumpy bumpad">Next Refresh Will Be On '.date('l jS M Y H:i:s', $y->NextUpdate).'</div>';
 
 			print '<div class="containerbox fixed vertical-centre"><div class="divlabel">'.
 				language::gettext("podcast_expire").'</div>';
@@ -988,31 +956,11 @@ class poDatabase extends database {
 		}
 		if ($option == 'RefreshOption') {
 			$podcast = $this->generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$channel, false, PDO::FETCH_ASSOC);
-			$dt = new DateTime(date('c', $podcast[0]['LastUpdate']));
-			logger::log("PODCASTS", "Changed Refresh Option for podcast ".$channel.". Last Update Was ".$dt->format('c'));
-			switch($podcast[0]['RefreshOption']) {
-				case REFRESHOPTION_HOURLY:
-					$dt->modify('+1 hour');
-					break;
-				case REFRESHOPTION_DAILY:
-					$dt->modify('+24 hours');
-					break;
-				case REFRESHOPTION_WEEKLY:
-					$dt->modify('+1 week');
-					break;
-				case REFRESHOPTION_MONTHLY:
-					$dt->modify('+1 month');
-					break;
-				default:
-					$dt->modify('+10 years');
-					break;
-			}
-			$updatetime = $dt->getTimestamp();
-			if ($updatetime <= time()) {
-				$this->refreshPodcast($channel);
-			} else {
-				$this->generic_sql_query("UPDATE Podcasttable SET LastUpdate = ".calculate_best_update_time($podcast[0])." WHERE PODindex = ".$channel);
-			}
+			$this->sql_prepare_query(true, null, null, null,
+				"UPDATE Podcasttable SET NextUpdate = ? WHERE PODindex = ?",
+				calculate_best_update_time($podcast[0]),
+				$channel
+			);
 		}
 		return $channel;
 	}
@@ -1199,59 +1147,18 @@ class poDatabase extends database {
 
 	public function check_podcast_refresh() {
 		$this->check_refresh_pid();
-		$tocheck = array();
-		$nextupdate_seconds = 2119200;
-		$result = $this->generic_sql_query("SELECT PODindex, LastUpdate, RefreshOption FROM Podcasttable WHERE RefreshOption > 0 AND Subscribed = 1", false, PDO::FETCH_OBJ);
-		foreach ($result as $obj) {
-			$tocheck[] = array('podid' => $obj->PODindex, 'lastupdate' => $obj->LastUpdate, 'refreshoption' => $obj->RefreshOption);
+		// Give it 59 seconds backwards grace, as the backend daemon seems to check them a minute late
+		$result = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, array(),
+			"SELECT PODindex FROM Podcasttable WHERE RefreshOption > 0 AND Subscribed = 1 AND NextUpdate <= ?",
+			time() - 59
+		);
+		$updated = array('updated' => array());
+		foreach ($result as $pod) {
+			$retval = $this->refreshPodcast($pod->PODindex);
+			if ($retval !== false)
+				$updated['updated'][] = $retval;
+
 		}
-		$updated = array('nextupdate' => $nextupdate_seconds, 'updated' => array());
-		$now = time();
-		foreach ($tocheck as $pod) {
-			$dt = new DateTime(date('c', $pod['lastupdate']));
-			logger::log("PODCASTS", "Checking for refresh to podcast",$pod['podid'],'refreshoption is',$pod['refreshoption'],"LastUpdate is",$dt->format('c'));
-			switch($pod['refreshoption']) {
-				case REFRESHOPTION_HOURLY:
-					$dt->modify('+1 hour');
-					$tempnextupdate = 3600;
-					break;
-				case REFRESHOPTION_DAILY:
-					$dt->modify('+24 hours');
-					$tempnextupdate = 86400;
-					break;
-				case REFRESHOPTION_WEEKLY:
-					$dt->modify('+1 week');
-					$tempnextupdate = 604800;
-					break;
-				case REFRESHOPTION_MONTHLY:
-					$dt->modify('+1 month');
-					// Seconds in a month is roughly 2419200, but this value is TOO BIG
-					// for Javascript's setTimeout which is 32 bit signed milliseconds.
-					$tempnextupdate = 2119200;
-					break;
-				default:
-					logger::log("PODCASTS", "Podcast",$pod['podid'],'is set to manual refresh');
-					continue 2;
-			}
-			$updatetime = $dt->getTimestamp();
-			logger::debug("PODCASTS", "  lastupdate is",$pod['lastupdate'],"update time is",$updatetime,"current time is",$now);
-			if ($updatetime <= $now) {
-				$retval = $this->refreshPodcast($pod['podid']);
-				if ($retval !== false) {
-					$updated['updated'][] = $retval;
-				}
-				if ($tempnextupdate < $nextupdate_seconds) {
-					$nextupdate_seconds = $tempnextupdate;
-				}
-			} else {
-				$a = $updatetime - $now;
-				if ($a < $nextupdate_seconds) {
-					$nextupdate_seconds = $a;
-				}
-			}
-		}
-		logger::info("PODCASTS", "Next update is required in",$nextupdate_seconds,"seconds");
-		$updated['nextupdate'] = $nextupdate_seconds;
 		$this->clear_refresh_pid();
 		return $updated;
 	}
@@ -1290,7 +1197,7 @@ class poDatabase extends database {
 
 					$this->sql_prepare_query(true, null, null, null,
 						"INSERT INTO Podcasttable
-						(FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed, Category)
+						(FeedURL, NextUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed, Category)
 						VALUES
 						(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 						$podcast['feedUrl'],
@@ -1347,32 +1254,33 @@ class poDatabase extends database {
 		return false;
 	}
 
-	public function checkListened($title, $album, $artist) {
-		logger::mark("PODCASTS", "Checking Podcast",$album,"for track",$title);
-		$podid = false;
-		$pods = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
-			"SELECT PODindex, PODTrackindex FROM Podcasttable JOIN PodcastTracktable USING (PODindex)
-			WHERE
-			Podcasttable.Title = ? AND
-			PodcastTracktable.Title = ?",
-			$album,
-			$title);
-		foreach ($pods as $pod) {
-			$podid = $pod->PODindex;
-			logger::log("PODCASTS", "Marking",$pod->PODTrackindex,"from",$podid,"as listened");
-			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex = ?",$pod->PODTrackindex);
-			$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex = ? AND Name = ?",$pod->PODTrackindex, 'Resume');
-		}
-		return $podid;
+	// public function checkListened($title, $album, $artist) {
+	// 	logger::mark("PODCASTS", "Checking Podcast",$album,"for track",$title);
+	// 	$podid = false;
+	// 	$pods = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+	// 		"SELECT PODindex, PODTrackindex FROM Podcasttable JOIN PodcastTracktable USING (PODindex)
+	// 		WHERE
+	// 		Podcasttable.Title = ? AND
+	// 		PodcastTracktable.Title = ?",
+	// 		$album,
+	// 		$title);
+	// 	foreach ($pods as $pod) {
+	// 		$podid = $pod->PODindex;
+	// 		logger::log("PODCASTS", "Marking",$pod->PODTrackindex,"from",$podid,"as listened");
+	// 		$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex = ?",$pod->PODTrackindex);
+	// 		$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex = ? AND Name = ?",$pod->PODTrackindex, 'Resume');
+	// 	}
+	// 	return $podid;
 
-	}
+	// }
 
 	public function doPodcastList($subscribed) {
-		if ($subscribed == 1) {
-			$qstring = "SELECT Podcasttable.*, SUM(New = 1) AS new, SUM(Listened = 0) AS unlistened FROM Podcasttable JOIN PodcastTracktable USING(PODindex) WHERE Subscribed = 1 AND Deleted = 0 GROUP BY PODindex ORDER BY";
-		} else {
-			$qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM Podcasttable WHERE Subscribed = 0 ORDER BY";
-		}
+		$qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM Podcasttable WHERE Subscribed = ".$subscribed." ORDER BY";
+		// if ($subscribed == 1) {
+		// 	$qstring = "SELECT Podcasttable.*, SUM(New = 1) AS new, SUM(Listened = 0) AS unlistened FROM Podcasttable JOIN PodcastTracktable USING(PODindex) WHERE Subscribed = 1 AND Deleted = 0 GROUP BY PODindex ORDER BY";
+		// } else {
+		// 	$qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM Podcasttable WHERE Subscribed = 0 ORDER BY";
+		// }
 		$sortarray = array();
 		for ($i = 0; $i < prefs::$prefs['podcast_sort_levels']; $i++) {
 			if (prefs::$prefs['podcast_sort_'.$i] == 'new' || prefs::$prefs['podcast_sort_'.$i] == 'unlistened') {

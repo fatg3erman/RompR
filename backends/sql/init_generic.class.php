@@ -39,36 +39,6 @@ class init_generic extends database {
 		}
 	}
 
-	protected function upgrade_podcasts_to_version() {
-		$pods = $this->generic_sql_query('SELECT * FROM Podcasttable WHERE Subscribed = 1 AND Version < '.ROMPR_PODCAST_TABLE_VERSION);
-		foreach ($pods as $podcast) {
-			$v = $podcast['Version'];
-			while ($v < ROMPR_PODCAST_TABLE_VERSION) {
-				switch ($v) {
-					case 2;
-						logger::mark("PODCASTS", "  Updating Podcast ".$podcast['Title']." to version 3");
-						$newest_track = $this->generic_sql_query("SELECT PubDate FROM PodcastTracktable WHERE PODindex = ".$podcast['PODindex']." ORDER BY PubDate DESC LIMIT 1");
-						$podcast['LastPubDate'] = $newest_track[0]['PubDate'];
-						logger::log("PODCASTS", "    Last episode for this podcast was published on ".date('c', $podcast['LastPubDate']));
-						switch($podcast['RefreshOption']) {
-							case REFRESHOPTION_WEEKLY:
-							case REFRESHOPTION_MONTHLY:
-								$podcast['LastUpdate'] = calculate_best_update_time($podcast);
-								break;
-						}
-						$this->generic_sql_query("UPDATE Podcasttable SET LastUpdate = ".$podcast['LastUpdate'].", LastPubDate = ".$podcast['LastPubDate'].", Version = 3 WHERE PODindex = ".$podcast['PODindex']);
-						$v++;
-						break;
-
-					case 3;
-						// Upgrade to version 4 can only happen after feed has been re-parsed
-						$v++;
-						break;
-				}
-			}
-		}
-	}
-
 	protected function update_stream_images($schemaver) {
 		switch ($schemaver) {
 			case 43:
@@ -155,6 +125,15 @@ class init_generic extends database {
 		mkdir('albumart/small', 0755);
 		mkdir('albumart/asdownloaded', 0755);
 		$this->generic_sql_query("UPDATE Albumtable SET Searched = 0, Image = ''");
+	}
+
+	public function check_setupscreen_actions() {
+		if (prefs::$prefs['spotify_mark_unplayable']) {
+			logger::log('SQLINIT', 'Marking all Spotify tracks as unplayable');
+			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 3 WHERE Uri LIKE 'spotify:%' AND Hidden = 0");
+			prefs::$prefs['spotify_mark_unplayable'] = false;
+			prefs::$prefs['linkchecker_nextrun'] = strtotime('2040-01-01');
+		}
 	}
 
 }

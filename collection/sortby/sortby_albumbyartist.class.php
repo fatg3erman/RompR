@@ -29,13 +29,13 @@ class sortby_albumbyartist extends sortby_base {
 		ORDER BY";
 
 		foreach (prefs::$prefs['artistsatstart'] as $a) {
-			$qstring .= " CASE WHEN LOWER(Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END,";
+			$qstring .= " CASE WHEN Artistname = '".$a."' THEN 1 ELSE 2 END,";
 		}
 		if (count(prefs::$prefs['nosortprefixes']) > 0) {
 			$qstring .= " (CASE ";
 			foreach(prefs::$prefs['nosortprefixes'] AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
-				$qstring .= "WHEN LOWER(Artistname) LIKE '".strtolower($p).
+				$qstring .= "WHEN Artistname LIKE '".$p.
 					" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
 			}
 			$qstring .= "ELSE LOWER(Artistname) END), ";

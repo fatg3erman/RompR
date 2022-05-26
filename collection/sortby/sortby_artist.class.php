@@ -36,14 +36,14 @@ class sortby_artist extends sortby_base {
 
 		$qstring .= "ORDER BY ";
 		foreach (prefs::$prefs['artistsatstart'] as $a) {
-			$qstring .= "CASE WHEN LOWER(a.Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
+			$qstring .= "CASE WHEN a.Artistname = '".$a."' THEN 1 ELSE 2 END, ";
 		}
 		if (count(prefs::$prefs['nosortprefixes']) > 0) {
 			$qstring .= "(CASE ";
 			foreach(prefs::$prefs['nosortprefixes'] AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
-				$qstring .= "WHEN LOWER(a.Artistname) LIKE '".strtolower($p).
-					" %' THEN LOWER(SUBSTR(a.Artistname,".$phpisshitsometimes.")) ";
+				$qstring .= "WHEN a.Artistname LIKE '".$p.
+					" %' THEN LOWer(SUBSTR(a.Artistname,".$phpisshitsometimes.")) ";
 			}
 			$qstring .= "ELSE LOWER(a.Artistname) END)";
 		} else {

@@ -3,9 +3,9 @@ var infobar = function() {
 	var playlistinfo = {};
 	var npinfo = {};
 	var starttime = 0;
-	var scrobbled = false;
+	// var scrobbled = false;
 	var playcount_incremented = false;
-	var nowplaying_updated = false;
+	// var nowplaying_updated = false;
 	var markedaslistened = false;
 	var fontsize = 8;
 	// var ftimer = null;
@@ -14,28 +14,28 @@ var infobar = function() {
 	var biggerizing = false;
 	var current_progress = 0;
 
-	function scrobble() {
-		if (!scrobbled) {
-			debug.info("INFOBAR","Track is not scrobbled");
-			scrobbled = true;
-			if (lastfm.isLoggedIn()) {
-				if (playlistinfo.Title != "" && playlistinfo.trackartist != "") {
-					var options = {
-						timestamp: starttime,
-						track: playlistinfo.Title,
-						artist: playlistinfo.trackartist,
-						album: playlistinfo.Album
-					};
-					options.chosenByUser = (playlistinfo.type != 'stream' && prefs.radiomode == '') ? 1 : 0;
-					if (playlistinfo.albumartist && playlistinfo.albumartist != "" && playlistinfo.albumartist.toLowerCase() != playlistinfo.trackartist.toLowerCase()) {
-						 options.albumArtist = playlistinfo.albumartist;
-					 }
-					debug.trace("INFOBAR","Scrobbling", options);
-					lastfm.track.scrobble( options );
-				}
-			}
-		}
-	}
+	// function scrobble() {
+	// 	if (!scrobbled) {
+	// 		debug.info("INFOBAR","Track is not scrobbled");
+	// 		scrobbled = true;
+	// 		if (lastfm.isLoggedIn()) {
+	// 			if (playlistinfo.Title != "" && playlistinfo.trackartist != "") {
+	// 				var options = {
+	// 					timestamp: starttime,
+	// 					track: playlistinfo.Title,
+	// 					artist: playlistinfo.trackartist,
+	// 					album: playlistinfo.Album
+	// 				};
+	// 				options.chosenByUser = (playlistinfo.type != 'stream' && prefs.radiomode == '') ? 1 : 0;
+	// 				if (playlistinfo.albumartist && playlistinfo.albumartist != "" && playlistinfo.albumartist.toLowerCase() != playlistinfo.trackartist.toLowerCase()) {
+	// 					 options.albumArtist = playlistinfo.albumartist;
+	// 				 }
+	// 				debug.trace("INFOBAR","Scrobbling", options);
+	// 				lastfm.track.scrobble( options );
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	function showLove(flag) {
 		if (lastfm.isLoggedIn() && flag) {
@@ -45,20 +45,20 @@ var infobar = function() {
 		}
 	}
 
-	function updateNowPlaying() {
-		if (!nowplaying_updated && lastfm.isLoggedIn()) {
-			if (playlistinfo.Title != "" && playlistinfo.type && playlistinfo.type != "stream") {
-				var opts = {
-					track: playlistinfo.Title,
-					artist: playlistinfo.trackartist,
-					album: playlistinfo.Album
-				};
-				debug.debug("INFOBAR","is updating nowplaying",opts);
-				lastfm.track.updateNowPlaying(opts);
-				nowplaying_updated = true;
-			}
-		}
-	}
+	// function updateNowPlaying() {
+	// 	if (!nowplaying_updated && lastfm.isLoggedIn()) {
+	// 		if (playlistinfo.Title != "" && playlistinfo.type && playlistinfo.type != "stream") {
+	// 			var opts = {
+	// 				track: playlistinfo.Title,
+	// 				artist: playlistinfo.trackartist,
+	// 				album: playlistinfo.Album
+	// 			};
+	// 			debug.debug("INFOBAR","is updating nowplaying",opts);
+	// 			lastfm.track.updateNowPlaying(opts);
+	// 			nowplaying_updated = true;
+	// 		}
+	// 	}
+	// }
 
 	function setTheText(info) {
 		var stuff = mungeplaylistinfo(info);
@@ -493,10 +493,10 @@ var infobar = function() {
 			}
 			playlistinfo = info;
 			infobar.markCurrentTrack();
-			scrobbled = false;
+			// scrobbled = false;
 			playcount_incremented = false;
 			starttime = Math.floor(Date.now()/1000);
-			nowplaying_updated = false;
+			// nowplaying_updated = false;
 			$("#progress").rangechooser("setOptions", {range: info.Time})
 			setTheText(info);
 			if (info.Title != "" && info.trackartist != "") {
@@ -562,8 +562,8 @@ var infobar = function() {
 		},
 
 		stopped: function() {
-			scrobbled = false;
-			nowplaying_updated = false;
+			// scrobbled = false;
+			// nowplaying_updated = false;
 			playcount_incremented = false;
 		},
 
@@ -676,16 +676,19 @@ var infobar = function() {
 		setProgress: function(progress, duration) {
 			current_progress = progress;
 			if (progress < 3) {
-				scrobbled = false;
-				nowplaying_updated = false;
+				// scrobbled = false;
+				// nowplaying_updated = false;
 				markedaslistened = false;
 				playcount_incremented = false;
 			}
-			if (progress > 4) { updateNowPlaying() };
+			// if (progress > 4) { updateNowPlaying() };
 			var percent = (duration == 0) ? 0 : (progress/duration) * 100;
-			if (percent >= prefs.scrobblepercent) {
-				scrobble();
-			}
+			// if (percent >= prefs.scrobblepercent) {
+			// 	scrobble();
+			// }
+			// Even though the backend daemon does this too, we still do it here
+			// as it makes the UI update the playcount in nowplaying and updates
+			// the Up Next marker for audiobooks.
 			if (!playcount_incremented && percent >= 95) {
 				debug.trace("INFOBAR","Track playcount being updated");
 				nowplaying.incPlaycount(null);

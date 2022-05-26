@@ -25,7 +25,6 @@ function LastFM() {
 			lastfm_logged_in: false,
 			sync_lastfm_playcounts: false,
 			sync_lastfm_at_start: false,
-			lastfm_scrobbling: false,
 			synctags: false
 		});
 		uiLoginBind();
@@ -384,42 +383,42 @@ function LastFM() {
 			);
 		},
 
-		updateNowPlaying : function(options) {
-			if (prefs.lastfm_logged_in && prefs.lastfm_scrobbling) {
-				api_request(
-					{
-						method: 'update_nowplaying',
-						params: options
-					},
-					function() {  },
-					function() { infobar.error(language.gettext("label_scrobblefailed")+" "+options.track) }
-				);
-			}
-		},
+		// updateNowPlaying : function(options) {
+		// 	if (prefs.lastfm_logged_in && prefs.lastfm_scrobbling) {
+		// 		api_request(
+		// 			{
+		// 				method: 'update_nowplaying',
+		// 				params: options
+		// 			},
+		// 			function() {  },
+		// 			function() { infobar.error(language.gettext("label_scrobblefailed")+" "+options.track) }
+		// 		);
+		// 	}
+		// },
 
-		scrobble : function(options) {
+		// scrobble : function(options) {
 
-			//
-			// options:
-			//		timestamp
-			//		track
-			//		artist
-			//		album
-			//		[albumArtist]
-			//
+		// 	//
+		// 	// options:
+		// 	//		timestamp
+		// 	//		track
+		// 	//		artist
+		// 	//		album
+		// 	//		[albumArtist]
+		// 	//
 
-			if (prefs.lastfm_logged_in && prefs.lastfm_scrobbling) {
-				debug.debug("LAST FM","Last.FM is scrobbling");
-				api_request(
-					{
-						method: 'scrobble',
-						params: options
-					},
-					function() {  },
-					function() { infobar.error(language.gettext("label_scrobblefailed")+" "+options.track) }
-				);
-			}
-		},
+		// 	if (prefs.lastfm_logged_in && prefs.lastfm_scrobbling) {
+		// 		debug.debug("LAST FM","Last.FM is scrobbling");
+		// 		api_request(
+		// 			{
+		// 				method: 'scrobble',
+		// 				params: options
+		// 			},
+		// 			function() {  },
+		// 			function() { infobar.error(language.gettext("label_scrobblefailed")+" "+options.track) }
+		// 		);
+		// 	}
+		// },
 
 	}
 

@@ -171,6 +171,26 @@ function connect_fail($t) {
 	exit();
 }
 
+function backend_init_fail() {
+	global $title, $setup_error;
+	logger::warn('INIT', 'Backend Daemon Not Running');
+	$title = 'RompЯ Backend Daemon Not Running';
+	$setup_error = '<h3 align="center">The RompЯ Backend Daemon is not running. This is now a requirement.</h3>'.
+	'<h3 align="center">Please <a href="https://fatg3erman.github.io/RompR/Backend-Dameon" target="_blank">Read The Docs</a></h3>';
+	include("setupscreen.php");
+	exit();
+}
+
+function backend_version_fail() {
+	global $title, $setup_error;
+	logger::warn('INIT', 'Backend Daemon Version Failure');
+	$title = 'RompЯ Backend Daemon Is Out Of Date';
+	$setup_error = '<h3 align="center">The RompЯ Backend Daemon needs to be restarted before you can access RompЯ. RompR has tried to restart it but it did not work.</h3>'.
+	'<h3 align="center">Please <a href="https://fatg3erman.github.io/RompR/Backend-Dameon" target="_blank">Read The Docs</a></h3>';
+	include("setupscreen.php");
+	exit();
+}
+
 function concatenate_artist_names($art) {
 	$art = getArray($art);
 	$f = array_pop($art);
@@ -475,11 +495,15 @@ function set_version_string() {
 			logger::log('INIT', 'Using Live Mode for Version String');
 			$version_string = ROMPR_VERSION.".".time();
 		} else {
+			logger::debug('INIT', 'Dev Mode starting in',getcwd());
+			$gitpath = find_executable('git');
 			// DO NOT USE OUTSIDE A git REPO!
-			$git_ver = exec("git log --pretty=format:'%h' -n 1", $output);
+			$git_ver = exec($gitpath."/git log --pretty=format:'%h' -n 1 2>&1", $output);
+			logger::core('INIT', print_r($output, true));
 			if (count($output) == 1) {
 				$version_string = ROMPR_VERSION.".".$output[0];
 			} else {
+				logger::warn('INIT', 'Could not work out git thing for dev mode!');
 				$version_string = ROMPR_VERSION.".".time();
 			}
 		}
@@ -729,27 +753,28 @@ function saveCollectionPlayer($type) {
 
 function calculate_best_update_time($podcast) {
 
-	// Note: this returns a value for LastUpdate, since that is what refresh is based on.
-	// The purpose of this is try to get the refresh in sync with the podcast's publication date.
+	if ($podcast['RefreshOption'] == REFRESHOPTION_NEVER)
+		return time() + 117600;
 
 	if ($podcast['LastPubDate'] === null) {
-		logger::log("PODCASTS", $podcast['Title'],"last pub date is null");
-		return time();
+		logger::warn("PODCASTS", $podcast['Title'],"last pub date is null");
+		$podcast['LastPubDate'] = time();
 	}
-	switch ($podcast['RefreshOption']) {
-		case REFRESHOPTION_NEVER:
-		case REFRESHOPTION_HOURLY:
-		case REFRESHOPTION_DAILY:
-			return time();
-			break;
 
-	}
 	logger::log("PODCASTS", "Working out best update time for ".$podcast['Title']);
 	$dt = new DateTime(date('c', $podcast['LastPubDate']));
 	logger::debug("PODCASTS", "  Last Pub Date is ".$podcast['LastPubDate'].' ('.$dt->format('c').')');
 	logger::debug("PODCASTS", "  Podcast Refresh interval is ".$podcast['RefreshOption']);
 	while ($dt->getTimestamp() < time()) {
 		switch ($podcast['RefreshOption']) {
+
+			case REFRESHOPTION_HOURLY:
+				$dt->modify('+1 hour');
+				break;
+
+			case REFRESHOPTION_DAILY:
+				$dt->modify('+1 day');
+				break;
 
 			case REFRESHOPTION_WEEKLY:
 				$dt->modify('+1 week');
@@ -760,28 +785,13 @@ function calculate_best_update_time($podcast) {
 				break;
 
 			default:
-				logger::error("PODCASTS", "  Unknown refresh option",$podcast['RefreshOption'],"for podcast ID",$podcast['podid']);
+				logger::error("PODCASTS", "  Unknown refresh option",$podcast['RefreshOption'],"for podcast ID",$podcast['Title']);
 				return time();
 				break;
 		}
 
 	}
 	logger::trace("PODCASTS", "  Worked out update time based on pubDate and RefreshOption: ".$dt->format('r').' ('.$dt->getTImestamp().')');
-	$dt->modify('+1 hour');
-
-	switch ($podcast['RefreshOption']) {
-
-		case REFRESHOPTION_WEEKLY:
-			$dt->modify('-1 week');
-			break;
-
-		case REFRESHOPTION_MONTHLY:
-			$dt->modify('-1 month');
-			break;
-
-	}
-
-	logger::log("PODCASTS", "  Setting lastupdate to: ".$dt->format('r').' ('.$dt->getTImestamp().')');
 
 	return $dt->getTimestamp();
 
@@ -875,6 +885,61 @@ function close_browser_connection() {
 		session_write_close();
 	}
 
+}
+
+function check_backend_daemon() {
+	$pwd = getcwd();
+	$b = $pwd.'/rompr_backend.php';
+	logger::log('INIT', 'Checking for',$b);
+	if (get_pid($b) === false) {
+		logger::mark('INIT', 'Backend Daemon is not running. Trying to start it');
+		start_process($b);
+	    sleep(1);
+		if (get_pid($b) === false) {
+			backend_init_fail();
+		}
+	} else {
+		logger::mark('INIT', 'Backend Daemon is running.');
+		if (version_compare(prefs::$prefs['backend_version'], $version_string, '<')) {
+			logger::mark('INIT', 'Backend Daemon',prefs::$prefs['backend_version'],'is older than',$version_string,'. Restarting it');
+			kill_process(get_pid($b));
+			while (($pid = get_pid('romonitor.php')) !== false) {
+				logger::log('INIT', 'Killing romonitor process', $pid);
+				kill_process($pid);
+			}
+			start_process($b);
+		    sleep(1);
+			if (get_pid($b) === false) {
+				backend_init_fail();
+			}
+			if (version_compare(prefs::$prefs['backend_version'], $version_string, '<')) {
+				backend_version_fail();
+			}
+		}
+	}
+}
+
+function start_process($cmd) {
+    logger::trace('DAEMON', 'Starting Process', $cmd);
+    exec('nohup php '.$cmd.' > /dev/null & > /dev/null');
+    return get_pid($cmd);
+}
+
+function kill_process($pid) {
+	logger::trace('INIT', 'Killing PID',$pid);
+    exec('kill '.$pid);
+}
+
+function get_pid($cmd) {
+    logger::core('INIT', 'Looking for PID for',$cmd);
+    exec('ps aux | grep "'.$cmd.'" | grep -v grep', $processinfo);
+    if (is_array($processinfo) && count($processinfo) > 0) {
+        $processinfo = array_filter(explode(' ', $processinfo[0]));
+        $user = array_shift($processinfo);
+        return array_shift($processinfo);
+    }
+    logger::core('INIT', 'No PID Found');
+    return false;
 }
 
 

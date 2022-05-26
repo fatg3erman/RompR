@@ -749,21 +749,23 @@ class base_mpd_player {
 	private function probe_player_type() {
 		$retval = false;
 		if ($this->is_connected()) {
-			logger::mark("MPDPLAYER", "Probing Player Type....");
 			$r = $this->do_mpd_command('tagtypes', true, true);
 			if (is_array($r) && array_key_exists('tagtype', $r)) {
 				if (in_array('X-AlbumUri', $r['tagtype'])) {
-					logger::mark("MPDPLAYER", "    ....tagtypes test says we're running Mopidy. Setting cookie");
+					logger::mark("MPDPLAYER", "Player Type Probe : tagtypes test says we're running Mopidy");
 					$retval = "mopidy";
 				} else {
-					logger::mark("MPDPLAYER", "    ....tagtypes test says we're running MPD. Setting cookie");
+					logger::mark("MPDPLAYER", "Player Type Probe : tagtypes test says we're running MPD");
 					$retval = "mpd";
 				}
 			} else {
 				logger::warn("MPDPLAYER", "WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly");
 				$retval =  "mopidy";
 			}
-			setcookie('player_backend', $retval, ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
+			if (!defined('IS_ROMONITOR')) {
+				logger::log('MPDPLAYER', 'Setting player_backend Cookie');
+				setcookie('player_backend', $retval, ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
+			}
 			prefs::$prefs['player_backend'] = $retval;
 			set_include_path('player/'.prefs::$prefs['player_backend'].PATH_SEPARATOR.get_include_path());
 		}

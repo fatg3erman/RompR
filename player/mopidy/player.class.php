@@ -347,6 +347,26 @@ class player extends base_mpd_player {
 		return array();
 	}
 
+	public function toggle_consume($value) {
+		if ($value == 0) {
+			logger::log('MOPIDY', 'Disabling local consume');
+			prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['do_consume'] = false;
+		} else {
+			logger::log('POSTCOMMAND', 'Enabling local consume');
+			prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['do_consume'] = true;
+		}
+		prefs::save();
+		return false;
+	}
+
+	public function get_consume($value) {
+		return prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['do_consume'] ? 1 : 0;
+	}
+
+	public function set_consume_state() {
+		$this->do_command_list(['consume 0']);
+	}
+
 	public static function is_personal_playlist($playlist) {
 		if (strpos($playlist, '(by ') !== false) {
 			return false;

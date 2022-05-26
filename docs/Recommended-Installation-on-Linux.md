@@ -128,4 +128,5 @@ You also need to find and enable (remove the ; from the start of the line) the f
     sudo systemctl start php-fpm
     sudo systemctl start nginx
 
-That should be it. Direct your browser to http://hostname.of.your.computer/rompr (or http://ip.address.of.your.computer/rompr) and all should be well.
+Direct your browser to http://hostname.of.your.computer/rompr (or http://ip.address.of.your.computer/rompr).
+

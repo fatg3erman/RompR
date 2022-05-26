@@ -209,6 +209,8 @@ class metabackup extends metaDatabase {
 			$this->generic_sql_query("DELETE FROM Podcasttable WHERE PODindex IS NOT NULL");
 			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/podcasts.json'), true);
 			foreach ($tracks as $i => $trackdata) {
+				if (array_key_exists('LastUpdate', $trackdata))
+					unset($trackdata['LastUpdate']);
 				$this->generic_restore($trackdata, 'Podcasttable');
 				$progress = round(($i/count($tracks))*100);
 				fwrite($monitor, "\n<b>Restoring Podcasts : </b>".$progress."%\n");

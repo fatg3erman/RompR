@@ -894,166 +894,61 @@ function ratingCalc(element, event) {
 	return rating;
 }
 
-var syncLastFMPlaycounts = function() {
+// var spotifyLinkChecker = function() {
 
-	var limit = 100;
-	var page = 1;
-	var totalpages = 0;
-	var currentdata = new Array();
-	var notify = null;
+// 	var timer = null;
+// 	var tracks;
 
-	function failed(data) {
-		debug.warn("LASTFMSYNC","It's all gone horribly wrong", data);
-		removeNotify();
-	}
+// 	function getNextUriToCheck() {
+// 		metaHandlers.genericQuery('getlinktocheck', gotLinkToCheck, goneTitsUp);
+// 	}
 
-	function gotPage(data) {
-		debug.log('LASTFMSYNC', 'Got page', page);
-		debug.log("LASTFMSYNC", "Got Data", data);
-		if (data.recenttracks) {
-			totalpages = parseInt(data.recenttracks["@attr"].totalPages);
-			if (data.recenttracks.track && data.recenttracks.track.length > 0) {
-				if (notify === null) {
-					notify = infobar.permnotify(
-						'<div class="fullwidth">'+language.gettext('label_lfm_syncing')+'</div>'+
-						'<div class="fullwidth" id="lfmsyncprogress" style="height:0.8em"></div>'
-					);
-					$('#lfmsyncprogress').rangechooser({
-						range: (totalpages*2),
-						interactive: false,
-						startmax: 0,
-						animate: true
-					});
-				}
-				$('#lfmsyncprogress').rangechooser('setRange', {min: 0, max: page});
-				let tracks = metaHandlers.fromLastFMData.setMeta(data.recenttracks.track, 'syncinc', [{attribute: 'Playcount', value: 1}], donePage, failed);
-				podcasts.checkScrobbles(tracks);
-			} else {
-				debug.log('LASTFMSYNC', 'No tracks in page', page);
-				removeNotify();
-				prefs.save({
-					last_lastfm_synctime: Date.now(),
-					next_lastfm_synctime: Date.now() + prefs.lastfm_sync_frequency
-				});
-				allDone(page);
-			}
-		} else {
-			removeNotify();
-			allDone(1)
-		}
-	}
+// 	function gotLinkToCheck(data) {
+// 		debug.log('SPOTICHECKER', data);
+// 		if (data.more) {
+// 			spotifyLinkChecker.setTimer();
+// 		} else {
+// 			debug.info("SPOTICHECKER","No more tracks to check");
+// 			prefs.save({linkchecker_isrunning: false});
+// 		}
+// 	}
 
-	function allDone(page) {
-		if (page > 1) {
-			podcasts.doScrobbleCheck();
-		}
-		sleepHelper.addWakeHelper(syncLastFMPlaycounts.start);
-	}
+// 	function goneTitsUp(data) {
+// 		debug.error('SPOTICHECKER',"Nothing", data);
+// 		prefs.save({linkchecker_isrunning: false});
+// 	}
 
-	function donePage() {
-		debug.log("LASTFMSYNC", "Done page", page);
-		$('#lfmsyncprogress').rangechooser('setRange', {min: 0, max: (page*2)});
-		page++;
-		syncLastFMPlaycounts.start();
-	}
+// 	function updateNextRunTime() {
+// 		prefs.save({linkchecker_nextrun: Date.now() + prefs.linkchecker_frequency, linkchecker_isrunning: true});
+// 	}
 
-	function removeNotify() {
-		if (notify !== null) {
-			infobar.removenotify(notify);
-			notify = null;
-		}
-		page = 1;
-	}
+// 	return {
 
-	return {
+// 		setTimer: function() {
+// 			clearTimeout(timer);
+// 			timer = setTimeout(getNextUriToCheck, prefs.linkchecker_polltime);
+// 		},
 
-		start: function() {
-			if (!lastfm.isLoggedIn() || !prefs.sync_lastfm_at_start)
-				return;
+// 		initialise: function() {
+// 			if (prefs.linkchecker_isrunning) {
+// 				debug.info("SPOTICHECKER","Link Checker Continuing");
+// 				updateNextRunTime();
+// 				spotifyLinkChecker.setTimer();
+// 			} else {
+// 				if (Date.now() > prefs.linkchecker_nextrun) {
+// 					debug.info("SPOTICHECKER","Link Checker Restarting",Date.now(),prefs.linkchecker_nextrun);
+// 					updateNextRunTime();
+// 					metaHandlers.genericQuery('resetlinkcheck', spotifyLinkChecker.setTimer, goneTitsUp);
+// 				} else {
+// 					debug.info("SPOTICHECKER","Link Checker Not Starting Yet");
+// 				}
+// 			}
+// 			sleepHelper.addWakeHelper(spotifyLinkChecker.initialise);
+// 		}
 
-			// make sure another browser hasn't already done this one
-			prefs.loadPrefs(syncLastFMPlaycounts.actuallyDoIt);
-		},
+// 	}
 
-		actuallyDoIt: function() {
-			if (Date.now() > prefs.next_lastfm_synctime) {
-				podcasts.resetScrobbleCheck();
-				debug.log("LASTFMSYNC","Getting recent tracks since ",Math.floor(prefs.last_lastfm_synctime/1000));
-				lastfm.user.getRecentTracks(
-					{
-						limit: limit,
-						page: page,
-						from: Math.floor(prefs.last_lastfm_synctime/1000),
-						extended: 1
-					},
-					gotPage,
-					failed
-				)
-			} else {
-				debug.log('LASTFMSYNC', 'Less than 1 hour since last LastFM Sync Check');
-				allDone(1);
-			}
-		}
-
-	}
-
-}();
-
-var spotifyLinkChecker = function() {
-
-	var timer = null;
-	var tracks;
-
-	function getNextUriToCheck() {
-		metaHandlers.genericQuery('getlinktocheck', gotLinkToCheck, goneTitsUp);
-	}
-
-	function gotLinkToCheck(data) {
-		debug.log('SPOTICHECKER', data);
-		if (data.more) {
-			spotifyLinkChecker.setTimer();
-		} else {
-			debug.info("SPOTICHECKER","No more tracks to check");
-			prefs.save({linkchecker_isrunning: false});
-		}
-	}
-
-	function goneTitsUp(data) {
-		debug.error('SPOTICHECKER',"Nothing", data);
-		prefs.save({linkchecker_isrunning: false});
-	}
-
-	function updateNextRunTime() {
-		prefs.save({linkchecker_nextrun: Date.now() + prefs.linkchecker_frequency, linkchecker_isrunning: true});
-	}
-
-	return {
-
-		setTimer: function() {
-			clearTimeout(timer);
-			timer = setTimeout(getNextUriToCheck, prefs.linkchecker_polltime);
-		},
-
-		initialise: function() {
-			if (prefs.linkchecker_isrunning) {
-				debug.info("SPOTICHECKER","Link Checker Continuing");
-				updateNextRunTime();
-				spotifyLinkChecker.setTimer();
-			} else {
-				if (Date.now() > prefs.linkchecker_nextrun) {
-					debug.info("SPOTICHECKER","Link Checker Restarting",Date.now(),prefs.linkchecker_nextrun);
-					updateNextRunTime();
-					metaHandlers.genericQuery('resetlinkcheck', spotifyLinkChecker.setTimer, goneTitsUp);
-				} else {
-					debug.info("SPOTICHECKER","Link Checker Not Starting Yet");
-				}
-			}
-			sleepHelper.addWakeHelper(spotifyLinkChecker.initialise);
-		}
-
-	}
-
-}();
+// }();
 
 function format_remote_api_error(msg, err) {
 	let errormessage = language.gettext(msg);

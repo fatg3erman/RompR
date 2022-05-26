@@ -130,21 +130,6 @@ class musicCollection extends collection_base {
 		$this->generic_sql_query('UPDATE Tracktable SET Albumindex = '.$who.' WHERE Albumindex = '.$new);
 	}
 
-	public function collectionUpdateRunning() {
-		$cur = $this->simple_query('Value', 'Statstable', 'Item', 'Updating', null);
-		switch ($cur) {
-			case null:
-				logger::warn('COLLECTION', 'Got null response to update lock check');
-			case '0':
-				$this->generic_sql_query("UPDATE Statstable SET Value = 1 WHERE Item = 'Updating'", true);
-				return false;
-
-			case '1':
-				logger::error('COLLECTION', 'Multiple collection updates attempted');
-				return true;
-		}
-	}
-
 	public function add_browse_artist($artist) {
 		logger::log('COLLECTION', 'Adding',$artist['Name'],$artist['Uri'],'to browse list');
 		$index = $this->check_artist($artist['Name']);
@@ -270,6 +255,10 @@ class musicCollection extends collection_base {
 
 		logger::trace('BACKEND', "Finding tracks that have been deleted");
 		$this->generic_sql_query("DELETE FROM Tracktable WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0", true);
+
+		logger::trace('BACKEND', "Making Sure Local Tracks Are Not Unplayable");
+		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked > 0 AND Uri LIKE 'local:%'", true);
+
 		$this->remove_cruft();
 		logger::log('COLLECTION', 'Updating collection version to', ROMPR_COLLECTION_VERSION);
 		$this->update_stat('ListVersion',ROMPR_COLLECTION_VERSION);
@@ -277,11 +266,6 @@ class musicCollection extends collection_base {
 		$dur = format_time(time() - $now);
 		logger::info('BACKEND', "Cruft Removal Took ".$dur);
 		logger::info('BACKEND', "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-	}
-
-	public function clearUpdateLock() {
-		logger::log('COLLECTION', 'Clearing update lock');
-		$this->generic_sql_query("UPDATE Statstable SET Value = 0 WHERE Item = 'Updating'", true);
 	}
 
 	public function prepare_findtracks() {

@@ -107,3 +107,6 @@ Point your web browser at
 and choose the Full Database option, entering the username, password, and database name you used above as appropriate. The usual value for port is 3306. The example image below uses a UNIX socket, which is configurable in your mysql config. A UNIX socket is slightly faster but does mean that your webserver must run on the same machine as your mysql server.
 
 ![](images/collectionsetup.png)
+
+Once you have RompR up and running on your new database you need to restart your [Backend Daemon](/RompR/Backend-Daemon)
+

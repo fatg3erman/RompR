@@ -32,7 +32,6 @@ foreach($params as $p) {
 		case 'set':
 		case "add":
 		case 'inc':
-		case 'syncinc':
 		case 'remove':
 		case 'cleanup':
 		case 'amendalbum':

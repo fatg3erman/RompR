@@ -62,6 +62,7 @@ list($result, $message) = prefs::$database->check_sql_tables();
 if ($result == false) {
 	sql_init_fail($message);
 }
+prefs::$database->check_setupscreen_actions();
 
 if (!prefs::$prefs['country_userset']) {
 	// Set the country code from the browser, though this may not be accurate.
@@ -124,6 +125,8 @@ prefs::save();
 // Do some initialisation of the backend directories
 //
 include ("includes/firstrun.php");
+
+check_backend_daemon();
 
 logger::log("INIT", "Initialisation done. Let's Boogie!");
 logger::mark("CREATING PAGE", "******++++++======------******------======++++++******");

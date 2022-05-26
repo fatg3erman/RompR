@@ -180,6 +180,7 @@ class metaDatabase extends collection_base {
 			// Already in datestamp format as it would be eg when restoring a backup
 		} else {
 			$data['lastplayed'] = date('Y-m-d H:i:s');
+			logger::log('INC', 'Setting lastplayed to',$data['lastplayed']);
 		}
 	}
 
@@ -189,16 +190,9 @@ class metaDatabase extends collection_base {
 		// This is for syncing Last.FM playcounts
 		//
 
-		if ($data['trackartist'] === null ||
-			$data['Title'] === null ||
-			$data['attributes'] == null) {
-			logger::error("SYNCINC", "Something is not set", $data);
-			header('HTTP/1.1 400 Bad Request');
-			print json_encode(array('error' => 'Artist or Title or Attributes not set'));
-			exit(0);
-		}
+		$this->sanitise_data($data);
 
-		$ttids = $this->find_item($data, $this->forced_uri_only(false, $data['domain']));
+		$ttids = $this->find_item($data, false);
 		if (count($ttids) == 0) {
 			$ttids = $this->inc($data);
 			$this->resetSyncCounts($ttids);
@@ -208,38 +202,60 @@ class metaDatabase extends collection_base {
 		$this->checkLastPlayed($data);
 		foreach ($ttids as $ttid) {
 			logger::log("SYNCINC", "Doing a SYNC action on TTID ".$ttid,'LastPlayed is',$data['lastplayed']);
-			$rowcount = $this->generic_sql_query("UPDATE Playcounttable SET SyncCount = SyncCount - 1, LastPlayed = '".$data['lastplayed']."' WHERE TTindex = ".$ttid." AND SyncCount > 0",
+			$rowcount = $this->generic_sql_query("UPDATE Playcounttable SET SyncCount = SyncCount - 1 WHERE TTindex = ".$ttid." AND SyncCount > 0",
 				false, null, null, null, true);
 			if ($rowcount > 0) {
 				logger::trace("SYNCINC", "  Decremented sync counter for this track");
 			} else {
-				$rowcount = $this->generic_sql_query("UPDATE Playcounttable SET Playcount = Playcount + 1, LastPlayed = '".$data['lastplayed']."' WHERE TTindex = ".$ttid,
-					false, null, null, null, true);
-				if ($rowcount > 0) {
-					logger::trace("SYNCINC", "  Incremented Playcount for this track");
-					// At this point, SyncCount must have been zero but the update will have incremented it again,
-					// because of the trigger. resetSyncCounts takes care of this;
-				} else {
-					logger::log("SYNCINC", "  Track not found in Playcounttable");
+				$clp = $this->simple_query('LastPlayed', 'Playcounttable', 'TTindex', $ttid, null);
+				if ($clp === null) {
+					logger::trace('SYNCINC', 'Track does not currently have a playcount');
 					$metadata = $this->get_all_data($ttid);
-					$this->increment_value($ttid, 'Playcount', $metadata['Playcount'] + 1, $data['lastplayed']);
-					// At this point, SyncCount must have been zero but the update will have incremented it again,
-					// because of the trigger. resetSyncCounts takes care of this;
+					$this->increment_value($ttid, 'Playcount', 1, $data['lastplayed']);
+				} else {
+					logger::trace('SYNCINC', 'Incrementing Playcount for this track');
+					$this->sql_prepare_query(true, null, null, null,
+						"UPDATE Playcounttable SET Playcount = Playcount + 1 WHERE TTindex = ?",
+						$ttid
+					);
+					if (strtotime($clp) < strtotime($data['lastplayed'])) {
+						logger::trace('SYNCINC', 'Updating LastPlayed for this track');
+						$this->sql_prepare_query(true, null, null, null,
+							"UPDATE Playcounttable SET LastPlayed = ? WHERE TTindex = ?",
+							$data['lastplayed'],
+							$ttid
+						);
+					}
 				}
+				// At this point, SyncCount must have been zero but the update will have incremented it again,
+				// because of the trigger. resetSyncCounts takes care of this;
 				$this->resetSyncCounts(array($ttid));
 			}
 		}
 
 		// Let's just see if it's a podcast track and mark it as listened.
 		// This won't always work, as scrobbles are often not what's in the RSS feed, but we can but do our best
-		$this->sql_prepare_query(true, null, null, null,
-			"UPDATE PodcastTracktable SET Listened = ?, New = ? WHERE Title = ? AND Artist = ?",
-			1,
-			0,
-			$data['Title'],
-			$data['trackartist']
-		);
 
+		$boobly = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			"SELECT PODTrackindex FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
+			WHERE (Podcasttable.Artist LIKE ? OR PodcastTracktable.Artist LIKE ?)
+			AND Podcasttable.Title LIKE ?
+			AND PodcastTracktable.Title LIKE ?",
+			$data['trackartist'],
+			$data['trackartist'],
+			$data['Album'],
+			$data['Title']
+		);
+		$podtrack = (count($boobly) == 0) ? null : $boobly[0]['PODTrackindex'];
+		if ($podtrack !== null) {
+			logger::trace('SYNCINC', 'This track matches a Podcast episode');
+			$this->sql_prepare_query(true, null, null, null,
+				"UPDATE PodcastTracktable SET Listened = ?, New = ? WHERE PODTrackindex = ?",
+				1,
+				0,
+				$podtrack
+			);
+		}
 	}
 
 	public function resetSyncCounts($ttids) {
@@ -488,9 +504,9 @@ class metaDatabase extends collection_base {
 							Tracktable JOIN Albumtable USING (Albumindex)
 							JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
 						WHERE
-							LOWER(Title) = LOWER(?)
-							AND LOWER(Artistname) = LOWER(?)
-							AND LOWER(Albumname) = LOWER(?)
+							Title = ?
+							AND Artistname = ?
+							AND Albumname = ?
 							AND TrackNo = ?",
 						$data['Title'], $data['albumartist'], $data['Album'], $data['Track']);
 					$ttids = array_merge($ttids, $t);
@@ -505,9 +521,9 @@ class metaDatabase extends collection_base {
 							Tracktable JOIN Albumtable USING (Albumindex)
 							JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
 						WHERE
-							LOWER(Title) = LOWER(?)
-							AND LOWER(Artistname) = LOWER(?)
-							AND LOWER(Albumname) = LOWER(?)",
+							Title = ?
+							AND Artistname = ?
+							AND Albumname = ?",
 						$data['Title'], $data['albumartist'], $data['Album']);
 					$ttids = array_merge($ttids, $t);
 				}
@@ -521,9 +537,9 @@ class metaDatabase extends collection_base {
 							Tracktable JOIN Artisttable USING (Artistindex)
 							JOIN Albumtable USING (Albumindex)
 						WHERE
-							LOWER(Title) = LOWER(?)
-							AND LOWER(Artistname) = LOWER(?)
-							AND LOWER(Albumname) = LOWER(?)", $data['Title'], $data['trackartist'], $data['Album']);
+							Title = ?
+							AND Artistname = ?
+							AND Albumname = ?", $data['Title'], $data['trackartist'], $data['Album']);
 					$ttids = array_merge($ttids, $t);
 				}
 
@@ -536,8 +552,8 @@ class metaDatabase extends collection_base {
 						FROM
 							Tracktable JOIN Artisttable USING (Artistindex)
 						WHERE
-							LOWER(Title) = LOWER(?)
-							AND LOWER(Artistname) = LOWER(?)
+							Title = ?
+							AND Artistname = ?
 							AND Uri IS NULL",
 						$data['Title'], $data['trackartist']);
 					$ttids = array_merge($ttids, $t);
@@ -552,8 +568,8 @@ class metaDatabase extends collection_base {
 					FROM
 						Tracktable JOIN Artisttable USING (Artistindex)
 					 WHERE
-						LOWER(Title) = LOWER(?)
-						AND LOWER(Artistname) = LOWER(?)
+						Title = ?
+						AND Artistname = ?
 						AND Uri IS NOT NULL", $data['Title'], $data['trackartist']);
 				$ttids = array_merge($ttids, $t);
 
@@ -565,8 +581,8 @@ class metaDatabase extends collection_base {
 						FROM
 							Tracktable JOIN Artisttable USING (Artistindex)
 						WHERE
-							LOWER(Title) = LOWER(?)
-							AND LOWER(Artistname) = LOWER(?)
+							Title = ?
+							AND Artistname = ?
 							AND Uri IS NULL", $data['Title'], $data['trackartist']);
 					$ttids = array_merge($ttids, $t);
 				}
@@ -590,15 +606,25 @@ class metaDatabase extends collection_base {
 		// unhiding them. It's used for Playcount, which was originally an 'increment' type function but
 		// that changed because multiple rompr instances cause multiple increments
 
-		logger::log("INCREMENT", "Setting",$attribute,"to",$value,"for TTID",$ttid);
+		$current = $this->simple_query($attribute, $attribute.'table', 'TTindex', $ttid, null);
+		if ($current !== null && $current >= $value) {
+			// Don't INC if it has already been INCed, because this changes the LastPlayed time. This happens if romonitor has already updated
+			// it and then we return to a browser, say on a mobile device, and that updates it again. The nowplaying_hack function
+			// still ensures that the album gets marked as modified so that the UI updates. The UI will always update playcount before
+			// romonitor does if the UI is open.
+			logger::log('INCREMENT', 'Not incrementing',$attribute,'for TTindex',$ttid,'because current value',$current,'is >= new value',$value);
+			return true;
+		}
+
+		logger::log("INCREMENT", "Setting",$attribute,"to",$value,'and lastplayed to',$lp,"for TTID",$ttid);
 		if ($this->sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", LastPlayed) VALUES (?, ?, ?)", $ttid, $value, $lp)) {
 			logger::debug("INCREMENT", " .. success");
-			if ($attribute == 'Playcount' && $this->simple_query('isAudiobook', 'Tracktable', 'TTindex', $ttid, 0) == 1) {
-				logger::log('INCREMENT', 'Resetting resume position for TTID',$ttid);
-				// Always do this even if there is no stored progress to reset - it triggers the Progress trigger which makes the UI update
-				// so that the Up Next marker moves
-				$this->sql_prepare_query(true, null, null, null, 'REPLACE INTO Bookmarktable (TTindex, Bookmark, Name) VALUES (? ,?, ?)', $ttid, 0, 'Resume');
-			}
+			// if ($attribute == 'Playcount' && $this->simple_query('isAudiobook', 'Tracktable', 'TTindex', $ttid, 0) == 1) {
+			// 	logger::log('INCREMENT', 'Resetting resume position for TTID',$ttid);
+			// 	// Always do this even if there is no stored progress to reset - it triggers the Progress trigger which makes the UI update
+			// 	// so that the Up Next marker moves
+			// 	$this->sql_prepare_query(true, null, null, null, 'REPLACE INTO Bookmarktable (TTindex, Bookmark, Name) VALUES (? ,?, ?)', $ttid, 0, 'Resume');
+			// }
 		} else {
 			logger::warn("INCREMENT", "FAILED Setting",$attribute,"to",$value,"for TTID",$ttid);
 			return false;

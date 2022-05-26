@@ -2,9 +2,9 @@ var podcasts = function() {
 
 	var downloadQueue = new Array();
 	var downloadRunning = false;
-	var refreshtimer;
 	var newcounts = {};
 	var scrobblesToCheck = [];
+	var refreshtimer;
 
 	async function downloadTrack(track, channel) {
 		downloadQueue.push({track: track, channel: channel});
@@ -84,7 +84,7 @@ var podcasts = function() {
 	}
 
 	function putPodCount(element, num, numl) {
-		debug.trace("PODCASTS","Updating counts",element,num,numl);
+		debug.core("PODCASTS","Updating counts",element,num,numl);
 		var indicator = $(element);
 		if (num == 0) {
 			indicator.removeClass('newpod');
@@ -176,6 +176,7 @@ var podcasts = function() {
 			});
 			podcasts.doNewCount();
 			$('.choosepanel[name="podcastslist"]').stopSpinner();
+			sleepHelper.addWakeHelper(podcasts.checkIfSomeoneElseHasUpdatedStuff);
 		},
 
 		getPodcast: function(clickedElement, menutoopen) {
@@ -276,67 +277,26 @@ var podcasts = function() {
 			podcastRequest({listened: encodeURIComponent(file), populate: 1}, null);
 		},
 
-		checkScrobbles: function(tracks) {
-			for (let track of tracks) {
-				scrobblesToCheck.push({
-					title: encodeURIComponent(track.title),
-					album: encodeURIComponent(track.album),
-					artist: encodeURIComponent(track.srtist),
-					checklistened: 1,
-					populate: 1
-				});
-			}
-		},
-
-		resetScrobbleCheck: function() {
-			scrobblesToCheck = [];
-		},
-
-		doScrobbleCheck: async function() {
-			var updated = [];
-			while (scrobblesToCheck.length > 0) {
-				let track = scrobblesToCheck.shift();
-				// Don't use podcastRequest for this because it checks for updated podcasts after every
-				// request. Ideally we want podcasts.php to accept multiple options the way userRatings dooes,
-				// but that's a lorra lorra work right now
-				debug.info('PODCASTS', 'Checking scrobble',decodeURIComponent(track.title),decodeURIComponent(track.album));
-				try {
-					var data = await $.ajax({
-						type: "GET",
-						url: "api/podcasts/",
-						cache: false,
-						data: track,
-						contentType: 'application/json'
-					});
-					for (let i of data) {
-						if (updated.indexOf(i) == -1) {
-							debug.log('PODCASTS', 'Scrobble check modified podcast',i);
-							updated.push(i);
-						}
-					}
-				} catch (err) {
-					debug.trace("PODCASTS", "Podcast Request",track,'Failed - probably that was not a podcast episode');
-				};
-			}
-			checkForUpdatedPodcasts(updated);
-			podcasts.doNewCount();
-		},
-
 		doNewCount: function() {
 			$.getJSON("api/podcasts/?populate=1&getcounts=1", function(data) {
-				debug.debug('PODCASTS','Got New Counts',data);
-				newcounts = data;
+				debug.core('PODCASTS','Got New Counts',data);
 				$.each(data, function(index, value) {
 					if (index == 'totals') {
 						// element = '#total_unlistened_podcasts';
 					} else {
-						putPodCount('#podnumber_'+index, value.new, value.unlistened)
+						if (newcounts[index] &&
+							(newcounts[index].new != value.new || newcounts[index].unlistened != value.unlistened)) {
+							debug.trace('PODCASTS', 'Podcast',index,'counts have changed to',value);
+							putPodCount('#podnumber_'+index, value.new, value.unlistened);
+						}
 					}
 				});
+				newcounts = data;
 			});
 		},
 
 		checkIfSomeoneElseHasUpdatedStuff: async function() {
+			clearTimeout(refreshtimer);
 			debug.log('PODCASTS', 'Checking if someone else has updated stuff');
 			var isnewpodcast = false;
 			var to_reload = new Array();
@@ -366,7 +326,8 @@ var podcasts = function() {
 				checkForUpdatedPodcasts(to_reload);
 				podcasts.doNewCount();
 			}
-			podcasts.checkRefresh();
+			// Check every 30 minutes for updates to podcasts
+			refreshtimer = setTimeout(podcasts.checkIfSomeoneElseHasUpdatedStuff, 1800000);
 		},
 
 		changeOption: async function(event) {
@@ -396,40 +357,25 @@ var podcasts = function() {
 		},
 
 		checkRefresh: async function() {
-			clearTimeout(refreshtimer);
-			if (prefs.next_podcast_refresh >= Date.now()) {
-				let timeout = (prefs.next_podcast_refresh - Date.now());
-				debug.info('PODCASTS', 'Will refresh podcasts in',timeout/1000,'seconds');
-				refreshtimer = setTimeout(podcasts.checkRefresh, timeout);
-			} else {
-				debug.info('PODCASTS', 'Starting Refresh');
-				try {
-					var data = await $.ajax({
-						type: 'GET',
-						url: "api/podcasts/?populate=1&checkrefresh=1",
-						timeout: prefs.collection_load_timeout,
-						dataType: 'JSON'
-					});
-					if (data.nextupdate) {
-						debug.log("PODCASTS","Setting next podcast refresh for",data.nextupdate,'seconds');
-						wtf = Date.now()+(data.nextupdate*1000);
-						await prefs.save({next_podcast_refresh: wtf});
-						refreshtimer = setTimeout(podcasts.checkRefresh, data.nextupdate*1000);
-					}
-					debug.log('PODCASTS', 'Refresh complete');
-					debug.debug("PODCASTS","Refresh result",data);
-					checkForUpdatedPodcasts(data.updated);
-					podcasts.doNewCount();
-				} catch (err)  {
-					debug.error("PODCASTS","Refresh Failed with status",err.status);
-					if (err.status == 412) {
-						setTimeout(podcasts.checkRefresh, 10000);
-					} else {
-						infobar.error(language.gettext('error_refreshfail'));
-					}
+			debug.info('PODCASTS', 'Starting Refresh');
+			try {
+				var data = await $.ajax({
+					type: 'GET',
+					url: "api/podcasts/?populate=1&checkrefresh=1",
+					timeout: prefs.collection_load_timeout,
+					dataType: 'JSON'
+				});
+				debug.log('PODCASTS', 'Refresh complete');
+				checkForUpdatedPodcasts(data.updated);
+				podcasts.doNewCount();
+			} catch (err)  {
+				debug.error("PODCASTS","Refresh Failed with status",err.status);
+				if (err.status == 412) {
+					setTimeout(podcasts.checkRefresh, 10000);
+				} else {
+					infobar.error(language.gettext('error_refreshfail'));
 				}
 			}
-			sleepHelper.addWakeHelper(podcasts.checkIfSomeoneElseHasUpdatedStuff);
 		},
 
 		removePodcast: async function(event, clickedElement) {

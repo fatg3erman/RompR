@@ -10,6 +10,7 @@ function enable_player_events() {
 // This helps if there's a stream already playing because we might not have
 // retrieved the playlist by this point and os updateStreamInfo won't do anything.
 var AlanPartridge = 29;
+var we_are_going = false;
 
 // This gives us an event-driven response to Mopidy that works fine alongside our polling-driven
 // update methods. Essentially, thi'll pick up any changes that happen that aren't a result of
@@ -137,6 +138,11 @@ async function update_on_wake() {
 }
 
 async function checkProgress() {
+	if (we_are_going) {
+		debug.warn('MOPIDY', 'Re-entrant call to checkProgress!');
+		return;
+	}
+	we_are_going = true;
 	await mopidysocket.initialise();
 	sleepHelper.addSleepHelper(mopidysocket.close);
 	sleepHelper.addWakeHelper(mopidysocket.initialise);
@@ -146,7 +152,7 @@ async function checkProgress() {
 			if (AlanPartridge >= 30) {
 				await playlist.is_valid();
 				AlanPartridge = 0;
-				debug.core('MOPIDY', 'Doing poll');
+				debug.log('MOPIDY', 'Doing poll');
 				await player.controller.do_command_list([]);
 				updateStreamInfo();
 			}

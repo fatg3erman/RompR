@@ -264,6 +264,33 @@ class data_base {
 		return $oa;
 	}
 
+	public function collectionUpdateRunning() {
+		$count = 200;
+		while ($count > 0) {
+			$cur = $this->simple_query('Value', 'Statstable', 'Item', 'Updating', null);
+			switch ($cur) {
+				case null:
+					logger::warn('DATABASE', 'Got null response to update lock check');
+				case '0':
+					$this->generic_sql_query("UPDATE Statstable SET Value = 1 WHERE Item = 'Updating'", true);
+					return false;
+
+				case '1':
+					logger::mark('DATABASE', 'Collection Is Locked. Waiting...');
+					sleep(5);
+					$count--;
+			}
+		}
+		logger::warn('DATABASE', 'Collection Was Not Unlocked After 1000 Seconds. Giving Up.');
+		return true;
+	}
+
+	public function clearUpdateLock() {
+		logger::log('DATABASE', 'Clearing update lock');
+		$this->generic_sql_query("UPDATE Statstable SET Value = 0 WHERE Item = 'Updating'", true);
+	}
+
+
 }
 
 ?>

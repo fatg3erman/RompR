@@ -106,6 +106,32 @@ class lastfm {
 		return self::get_request($params, $print_data);
 	}
 
+	public static function get_recent_tracks($params) {
+
+		//
+		// params:
+		//		limit: int
+		//		from: timestamp to start from (UNIX)
+		//		extended: 1 or 0
+		//		page: page number
+		//
+		$params['method'] = 'user.getRecentTracks';
+		$params['user'] = prefs::$prefs['lastfm_user'];
+		$params['cache'] = false;
+		$data = self::get_request($params, false);
+		$decoded = json_decode($data, true);
+
+		// logger::log('LASTFM', print_r($decoded, true));
+
+		if (array_key_exists('recenttracks', $decoded) &&
+			array_key_exists('track', $decoded['recenttracks']))
+		{
+			return $decoded['recenttracks']['track'];
+		}
+		return [];
+
+	}
+
 	//
 	// Only for use by the UI for logging in
 	//

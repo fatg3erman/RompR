@@ -40,18 +40,29 @@ class database extends data_base {
 	}
 
 	public function sql_recently_played() {
-		return $this->generic_sql_query(
-			"SELECT t.Uri, t.Title, a.Artistname, al.Albumname, al.Image, al.ImgKey, CAST(strftime('%s', p.LastPlayed) AS INT) AS unixtime
-				FROM Tracktable AS t
-				JOIN Playcounttable AS p USING (TTindex)
-				JOIN Albumtable AS al USING (Albumindex)
-				JOIN Artisttable AS a ON (a.Artistindex = al.AlbumArtistindex)
-				WHERE DATETIME('now', '-14 DAYS') <= DATETIME(p.LastPlayed)
-				AND p.LastPlayed IS NOT NULL
-				ORDER BY p.LastPlayed DESC",
-			false,
-			PDO::FETCH_OBJ
+		$tracks = $this->generic_sql_query(
+			"SELECT
+				t.Uri,
+				t.Title,
+				a.Artistname,
+				al.Albumname,
+				al.Image,
+				al.ImgKey,
+				strftime('%H:%M', p.LastPlayed) AS playtime,
+				date(p.LastPlayed) AS playdate
+			FROM Tracktable AS t
+			JOIN Playcounttable AS p USING (TTindex)
+			JOIN Albumtable AS al USING (Albumindex)
+			JOIN Artisttable AS a ON (a.Artistindex = al.AlbumArtistindex)
+			WHERE DATETIME('now', '-14 DAYS') <= DATETIME(p.LastPlayed)
+			AND p.LastPlayed IS NOT NULL
+			ORDER BY p.LastPlayed DESC",
+			false
 		);
+		foreach ($tracks as &$track) {
+			$track['playdate'] = date('l, jS F Y', strtotime($track['playdate']));
+		}
+		return $tracks;
 	}
 
 	protected function recently_played_playlist() {

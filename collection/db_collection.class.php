@@ -144,10 +144,10 @@ class db_collection extends collection_base {
 	private function format_for_search($terms, $s, &$parameters) {
 		$a = array();
 		foreach ($terms as $i => $term) {
-			$a[] = "LOWER(".$s.") LIKE ?";
-			$parameters[] = '% '.strtolower(trim($term)). '%';
-			$a[] = "LOWER(".$s.") LIKE ?";
-			$parameters[] = '%'.strtolower(trim($term)). ' %';
+			$a[] = "".$s." LIKE ?";
+			$parameters[] = '% '.trim($term). '%';
+			$a[] = "".$s." LIKE ?";
+			$parameters[] = '%'.trim($term). ' %';
 		}
 		$ret = implode(' OR ',$a);
 		return $ret;

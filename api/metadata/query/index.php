@@ -19,8 +19,6 @@ switch ($p['action']) {
 	case 'getalbumartists':
 	case 'getfaveartists':
 	case 'getlistenlater':
-	case 'getlinktocheck':
-	case 'resetlinkcheck':
 	case 'resetallsyncdata':
 		$returninfo = prefs::$database->{$p['action']}($p);
 		break;

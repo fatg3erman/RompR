@@ -24,13 +24,13 @@ class metaquery extends collection_base {
 			WHERE (LinkChecked = 0 OR LinkChecked = 2) AND isAudiobook = 0 AND isSearchResult < 2 AND Hidden = 0 AND Uri IS NOT NULL
 			ORDER BY ";
 		foreach (prefs::$prefs['artistsatstart'] as $a) {
-			$qstring .= "CASE WHEN LOWER(Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
+			$qstring .= "CASE WHEN Artistname = '".$a."' THEN 1 ELSE 2 END, ";
 		}
 		if (count(prefs::$prefs['nosortprefixes']) > 0) {
 			$qstring .= "(CASE ";
 			foreach(prefs::$prefs['nosortprefixes'] AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
-				$qstring .= "WHEN LOWER(Artistname) LIKE '".strtolower($p).
+				$qstring .= "WHEN Artistname LIKE '".$p.
 					" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
 			}
 			$qstring .= "ELSE LOWER(Artistname) END)";
@@ -86,7 +86,10 @@ class metaquery extends collection_base {
 		// 1 = Not Checked, Unplayable at last check
 		// 2 = Checked, Playable
 		// 3 = Checked, Unplayable
-		$retval = ['more' => false];
+		// This function returns true when there are no more tracks to check.
+		// The backend daemon polls a chunk of 25 tracks every time it wakes up
+		// until it has done them all, then it waits for link_checker_frequency seconds
+		$retval = false;
 		$ids = [];
 		$tracks = $this->generic_sql_query("SELECT TTindex, Uri, LinkChecked FROM Tracktable WHERE Uri LIKE 'spotify:%' AND Hidden = 0 AND isSearchResult < 2 AND LinkChecked < 2 ORDER BY TTindex ASC LIMIT 25");
 		foreach ($tracks as $track) {
@@ -95,7 +98,7 @@ class metaquery extends collection_base {
 		if (count($ids) > 0) {
 			logger::log('RELINKING', 'Got chunk of',count($ids),'spotify tracks to check');
 			$this->open_transaction();
-			$retval['more'] = true;
+			$retval = true;
 			$trackinfo = spotify::track_checklinking(['id' => $ids, 'cache' => false], false);
 			$spoti_data = json_decode($trackinfo, true);
 			foreach ($tracks as $i => $my_track) {

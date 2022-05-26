@@ -81,7 +81,7 @@ var sleepHelper = function() {
 
 		goToWakeMode: function() {
 			clearTimeout(windowActivationTimer);
-			checkProgress();
+			// checkProgress();
 			for (var f of wakeHelpers) {
 				debug.trace('SLEEPHELPER', 'Calling Wake Mode Helper',f.name);
 				f.call();
@@ -164,8 +164,6 @@ var prefs = function() {
 		"crossfade_duration",
 		"newradiocountry",
 		"search_limit_limitsearch",
-		"scrobblepercent",
-		"lastfm_scrobbling",
 		"lastfm_autocorrect",
 		"updateeverytime",
 		"fullbiobydefault",
@@ -741,15 +739,15 @@ var prefs = function() {
 					callback = playlist.repopulate;
 					break;
 
-				case "consume_workaround":
-					if (player.status.consume == 1 && prefobj[prefname]) {
-						infobar.notify(language.gettext('warn_consumearound'));
-						prefobj[prefname] = false;
-						$('#'+prefname).prop('checked', false);
-					} else if (prefobj['prefname']) {
-						infobar.notify(language.gettext('msg_consumearound'));
-					}
-					break;
+				// case "consume_workaround":
+				// 	if (player.status.consume == 1 && prefobj[prefname]) {
+				// 		infobar.notify(language.gettext('warn_consumearound'));
+				// 		prefobj[prefname] = false;
+				// 		$('#'+prefname).prop('checked', false);
+				// 	} else if (prefobj['prefname']) {
+				// 		infobar.notify(language.gettext('msg_consumearound'));
+				// 	}
+				// 	break;
 
 			}
 			prefs.save(prefobj, callback);

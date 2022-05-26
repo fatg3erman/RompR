@@ -75,49 +75,15 @@ function open_discoverator() {
 	startBackgroundInitTasks.doNextTask();
 }
 
-async function refresh_podcasts() {
-	// We want to wait until podcasts have been refreshed before we sync lastfm playcounts,
-	// because the sync might mark some podcast episodes as listened
-	startBackgroundInitTasks.doNextTask();
-	await new Promise(t => setTimeout(t, 15000));
-	podcasts.checkRefresh().then(syncLastFMPlaycounts.start);
-}
-
-function clean_backend_cache() {
-	debug.log('CACHE', 'last_cache_clean is',prefs.last_cache_clean);
-	if (prefs.last_cache_clean + 86400000 <= Date.now()) {
-		prefs.save({last_cache_clean: Date.now()});
-		debug.mark("INIT","Starting Backend Cache Clean");
-		collectionHelper.disableCollectionUpdates();
-		$.get('utils/cleancache.php', function() {
-			debug.mark("INIT","Cache Has Been Cleaned");
-			collectionHelper.enableCollectionUpdates();
-			setTimeout(clean_backend_cache, 86400000);
-			startBackgroundInitTasks.doNextTask();
-		});
-	} else {
-		startBackgroundInitTasks.doNextTask();
-	}
-	sleepHelper.addWakeHelper(clean_backend_cache);
-}
-
-function check_unplayable_tracks() {
-	spotifyLinkChecker.initialise();
-	startBackgroundInitTasks.doNextTask();
-}
-
 var startBackgroundInitTasks = function() {
 
 	var stufftodo = [
 		connect_to_player,
 		start_userinterface,
 		collectionHelper.checkCollection,
-		load_playlists,
 		load_podcasts,
-		open_discoverator,
-		refresh_podcasts,
-		clean_backend_cache,
-		check_unplayable_tracks
+		load_playlists,
+		open_discoverator
 	];
 
 	return {

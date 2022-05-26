@@ -28,7 +28,7 @@ class prefspanel extends uibits {
 		print '</div>';
 
 		self::ui_checkbox(['id' => 'player_in_titlebar', 'label' => 'config_playerintitlebar']);
-		self::ui_checkbox(['id' => 'consume_workaround', 'label' => 'config_consumeworkaround']);
+		// self::ui_checkbox(['id' => 'consume_workaround', 'label' => 'config_consumeworkaround']);
 		if (prefs::$prefs['player_backend'] == "mpd") {
 			self::ui_textentry([
 				'label' => 'config_crossfade',

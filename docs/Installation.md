@@ -106,8 +106,6 @@ But you may already be running Apache on your system if you have some other web 
 
 [RompЯ With Apache on macOS](/RompR/Installation-on-macOS)
 
-[RompЯ On Windows](/RompR/Installation-on-Windows)
-
 [RompЯ On Android](/RompR/Installation-on-Android)
 
 There is also the option to install everything you need using Docker:

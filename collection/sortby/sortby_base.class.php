@@ -318,7 +318,7 @@ class sortby_base {
 		foreach ($trackarr as $arr) {
 			$arr['numdiscs'] = $numdiscs;
 			$arr['trackno_width'] = ($numtracks == 0) ? 'tracks_0' : 'tracks_'.strlen($numtracks);
-			logger::debug('SORTBY', 'Track', $arr['title']);
+			// logger::debug('SORTBY', 'Track', $arr['title']);
 			$total_time += $arr['time'];
 			if ($arr['numdiscs'] > 1 && $arr['disc'] != $currdisc && $arr['disc'] > 0) {
 				$currdisc = $arr['disc'];

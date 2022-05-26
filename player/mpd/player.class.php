@@ -238,6 +238,18 @@ class player extends base_mpd_player {
 		return $arse;
 	}
 
+	public function toggle_consume($value) {
+		return true;
+	}
+
+	public function get_consume($value) {
+		return $value;
+	}
+
+	public function set_consume_state() {
+
+	}
+
 	public static function is_personal_playlist($pl) {
 		return true;
 	}

@@ -133,11 +133,11 @@ class collection_radio extends database {
 		$tags = array();
 		foreach ($artistlist as $i => $artist) {
 			logger::trace("SMART RADIO", "Getting artist playlist for",$artist);
-			$tags[] = strtolower(trim($artist));
+			$tags[] = trim($artist);
 			if ($i > 0) {
 				$sqlstring .= " OR ";
 			}
-			$sqlstring .=  "LOWER(Artistname) = ?";
+			$sqlstring .=  "Artistname = ?";
 		}
 		$sqlstring .= ")";
 		return array($sqlstring, $tags);

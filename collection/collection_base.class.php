@@ -202,7 +202,7 @@ class collection_base extends database {
 		//		Checks for the existence of an artist by name in the Artisttable and creates it if necessary
 		//		Returns: Artistindex
 
-		$index = $this->sql_prepare_query(false, null, 'Artistindex', null, "SELECT Artistindex FROM Artisttable WHERE LOWER(Artistname) = LOWER(?)", $artist);
+		$index = $this->sql_prepare_query(false, null, 'Artistindex', null, "SELECT Artistindex FROM Artisttable WHERE Artistname = ?", $artist);
 		if ($index === null) {
 			$index = $this->create_new_artist($artist);
 		}
@@ -252,7 +252,7 @@ class collection_base extends database {
 			FROM
 				Albumtable
 			WHERE
-				LOWER(Albumname) = LOWER(?)
+				Albumname = ?
 				AND AlbumArtistindex = ?
 				AND Domain = ?"
 		);
@@ -268,7 +268,7 @@ class collection_base extends database {
 			FROM
 				Albumtable
 			WHERE
-				LOWER(Albumname) = LOWER(?)
+				Albumname = ?
 				AND AlbumArtistindex = ?"
 		);
 

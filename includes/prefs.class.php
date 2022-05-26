@@ -35,9 +35,7 @@ class prefs {
 		'collection_load_timeout' => 3600000,
 		"smartradio_chunksize" => 5,
 		"linkchecker_nextrun" => 0,
-		"linkchecker_isrunning" => false,
-		"linkchecker_frequency" => 604800000,
-		"linkchecker_polltime" => 5000,
+		"link_checker_frequency" => 604800,
 		"audiobook_directory" => '',
 		"collection_player" => null,
 		"snapcast_server" => '',
@@ -51,6 +49,7 @@ class prefs {
 				'password' => '',
 				'socket' => '',
 				'mopidy_remote' => false,
+				'do_consume' => false,
 				'radioparams' => [
 					"radiomode" => "",
 					"radioparam" => "",
@@ -61,6 +60,7 @@ class prefs {
 		],
 		'old_style_sql' => false,
 		'auto_audiobook' => array(),
+		'backend_version' => '0',
 
 		// Things that could be set on a per-user basis but need to be known by the backend
 		"displaycomposer" => true,
@@ -72,7 +72,7 @@ class prefs {
 		"sync_lastfm_playcounts" => false,
 		"sync_lastfm_at_start" => false,
 		"next_lastfm_synctime" => 0,
-		"lastfm_sync_frequency" => 86400000,
+		"lastfm_sync_frequency" => 86400,
 		"lfm_importer_start_offset" => 0,
 		"lfm_importer_last_import" => 0,
 		"bing_api_key" => '',
@@ -163,14 +163,15 @@ class prefs {
 		'collectionbuttons_isopen' => false,
 		'advsearchoptions_isopen' => false,
 		'podcastbuttons_isopen' => false,
-		'last_cache_clean' => 10,
 		'next_podcast_refresh' => 10,
 		'use_original_releasedate' => false,
 		"bgimgparms" => ['dummy' => 'baby'],
 		"chartoption" => 0,
+		// Need these next two so the player defs can be updated
 		"consume_workaround" => false,
 		"we_do_consume" => false,
-		"somafm_quality" => 'highest_available_quality'
+		"somafm_quality" => 'highest_available_quality',
+		"spotify_mark_unplayable" => false
 	);
 
 	// Prefs that should not be exposed to the browser for security reasons
@@ -313,6 +314,15 @@ class prefs {
 					}
 					break;
 
+				case 85:
+					if (self::$prefs['consume_workaround'] && self::$prefs['we_do_consume']) {
+						self::$prefs['multihosts'][$key]['do_consume'] = true;
+					} else {
+						self::$prefs['multihosts'][$key]['do_consume'] = false;
+					}
+					break;
+
+
 			}
 		}
 		self::save();
@@ -342,6 +352,20 @@ class prefs {
 		if (is_object(self::$prefs['bgimgparms'])) {
 			self::$prefs['bgimgparms'] = json_decode(json_encode(self::$prefs['bgimgparms']), true);
 		}
+
+		// Upgrade from old JavaScript Date.now() value to php time() value
+		if (self::$prefs['last_lastfm_synctime'] > 999999999999) {
+			logger::log('INIT', 'Swapping lastfm sync time to backend');
+			self::$prefs['last_lastfm_synctime'] = round(self::$prefs['last_lastfm_synctime'] / 1000);
+			self::$prefs['lastfm_sync_frequency'] = round(self::$prefs['lastfm_sync_frequency'] / 1000);
+			if (self::$prefs['next_lastfm_synctime'] > 1000)
+				self::$prefs['next_lastfm_synctime'] = round(self::$prefs['next_lastfm_synctime'] / 1000);
+		}
+
+		if (self::$prefs['linkchecker_nextrun'] > 999999999999) {
+			self::$prefs['linkchecker_nextrun'] = round(self::$prefs['linkchecker_nextrun'] / 1000);
+		}
+
 		self::save();
 	}
 
@@ -352,7 +376,7 @@ class prefs {
 		//
 
 		if (array_key_exists('currenthost', $_POST)) {
-			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan') as $p) {
+			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable') as $p) {
 				if (array_key_exists($p, $_POST)) {
 					$_POST[$p] = true;
 				} else {
@@ -369,12 +393,17 @@ class prefs {
 			if (array_key_exists('mopidy_remote', self::$prefs['multihosts'][self::$prefs['currenthost']])) {
 				$mopidy_remote = self::$prefs['multihosts'][self::$prefs['currenthost']]['mopidy_remote'];
 			}
+			$do_consume = false;
+			if (array_key_exists('do_consume', self::$prefs['multihosts'][self::$prefs['currenthost']])) {
+				$do_consume = self::$prefs['multihosts'][self::$prefs['currenthost']]['do_consume'];
+			}
 			self::$prefs['multihosts'][self::$prefs['currenthost']] = [
 					'host' => self::$prefs['mpd_host'],
 					'port' => self::$prefs['mpd_port'],
 					'password' => self::$prefs['mpd_password'],
 					'socket' => self::$prefs['unix_socket'],
 					'mopidy_remote' => $mopidy_remote,
+					'do_consume' => $do_consume,
 					'radioparams' => [
 						"radiomode" => "",
 						"radioparam" => "",

@@ -79,13 +79,16 @@ if (prefs::$prefs['use_mopidy_scan']) {
 print '><label for="mopscan">'.language::gettext('setup_mopidy_scan').'</label></div>';
 print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy#scanning-local-files" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
 
+print '<div class="styledinputs"><input id="spotifyunplayable" type="checkbox" name="spotify_mark_unplayable" ';
+print '><label for="spotifyunplayable">Mark All Spotify Tracks as Unplayable</label></div>';
+
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("label_generalsettings").'</h3>';
 print '<div class="styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
 if (prefs::$prefs['cleanalbumimages']) {
 	print " checked";
 }
-print '><label for="cli">Clean ununsed album art on startup</label></div>';
+print '><label for="cli">Clean ununsed album art at regular intervals</label></div>';
 print '<p class="tiny">You almost certainly want to keep this enabled</p>';
 
 print '<div class="styledinputs"><input id="dsp" type="checkbox" name="do_not_show_prefs" ';

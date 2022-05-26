@@ -25,11 +25,11 @@ var unplayabletracks = function() {
 	}
 
 	function getUnplayableTracks() {
-		if (player.canPlay('spotify')) {
+		// if (player.canPlay('spotify')) {
 			holder.load('plugins/code/getunplayable.php');
-		} else {
-			holder.html('<h3>'+language.gettext('label_onlyspotify')+'</h3>');
-		}
+		// } else {
+		// 	holder.html('<h3>'+language.gettext('label_onlyspotify')+'</h3>');
+		// }
 	}
 
 	function searchForTrack(element) {

@@ -3,13 +3,12 @@ chdir('../..');
 include("includes/vars.php");
 include("includes/functions.php");
 require_once ('getid3/getid3.php');
+// Something must be resetting this. Is it getid3?
+check_timezone();
 set_error_handler('handle_error', E_ALL);
 prefs::$database = new poDatabase();
 $subflag = 1;
-$dtz = ini_get('date.timezone');
-if (!$dtz) {
-	date_default_timezone_set('UTC');
-}
+
 $podid = null;
 if (array_key_exists('url', $_REQUEST)) {
 	prefs::$database->getNewPodcast(rawurldecode($_REQUEST['url']));
@@ -19,8 +18,8 @@ if (array_key_exists('url', $_REQUEST)) {
 	prefs::$database->removePodcast($_REQUEST['remove']);
 } else if (array_key_exists('listened', $_REQUEST)) {
 	$podid = array(prefs::$database->markAsListened(rawurldecode($_REQUEST['listened'])));
-} else if (array_key_exists('checklistened', $_REQUEST)) {
-	$podid = array(prefs::$database->checkListened(rawurldecode($_REQUEST['title']), rawurldecode($_REQUEST['album']), rawurldecode($_REQUEST['artist'])));
+// } else if (array_key_exists('checklistened', $_REQUEST)) {
+// 	$podid = array(prefs::$database->checkListened(rawurldecode($_REQUEST['title']), rawurldecode($_REQUEST['album']), rawurldecode($_REQUEST['artist'])));
 } else if (array_key_exists('removetrack', $_REQUEST)) {
 	$podid = array(prefs::$database->deleteTrack($_REQUEST['removetrack'], $_REQUEST['channel']));
 } else if (array_key_exists('downloadtrack', $_REQUEST)) {

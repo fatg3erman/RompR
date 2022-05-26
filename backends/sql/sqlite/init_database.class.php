@@ -12,7 +12,7 @@ class init_database extends init_generic {
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Tracktable(".
 			"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
-			"Title VARCHAR(255), ".
+			"Title VARCHAR(255) COLLATE NOCASE, ".
 			"Albumindex INTEGER, ".
 			"TrackNo SMALLINT, ".
 			"Duration INTEGER, ".
@@ -32,46 +32,9 @@ class init_database extends init_generic {
 			"TYear YEAR)", true))
 		{
 			logger::log("SQLITE", "  Tracktable OK");
-			if (!$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true)) {
-
-				//
-				// If creating the (New in schema 70) unique index fails, it's probably because we have some duplicates. This can happen with YouTube
-				// because, you know, it doesn't really have albums etc. So we try to correct the duplicates and then try to create the index again
-				//
-
-				$err = $this->mysqlc->errorInfo()[2];
-				$duplicates = $this->generic_sql_query(
-					"SELECT GROUP_CONCAT(TTindex, ',') AS ttids, Albumindex, Artistindex, TrackNo, Disc, Title
-					FROM Tracktable
-					GROUP BY Albumindex, Artistindex, TrackNo, Disc, Title
-					HAVING COUNT(*) > 1"
-				);
-				if (count($duplicates) > 0) {
-					logger::warn('SQLITE', 'Duplicates found. Attempting to correct');
-					foreach ($duplicates as $duplicate) {
-						$disc = $duplicate['Disc'];
-						$ttids = explode(',', $duplicate['ttids']);
-						foreach ($ttids as $ttid) {
-							logger::log('SQLITE', 'Setting Disc to',$disc,'on TTindex',$ttid);
-							$this->sql_prepare_query(true, null, null, null,
-								"UPDATE Tracktable SET Disc = ? WHERE TTindex = ?",
-								$disc, $ttid
-							);
-							$disc++;
-						}
-					}
-					if (!$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true)) {
-						$err = $this->mysqlc->errorInfo()[2];
-						return array(false, "Error Creating Tracktable Index : ".$err);
-					}
-				} else {
-					return array(false, "Error Creating Tracktable Index : ".$err);
-				}
-			}
-			if ($this->generic_sql_query("CREATE INDEX IF NOT EXISTS track_finder_index ON Tracktable (Title, Uri)", true)) {
-			} else {
-				$err = $this->mysqlc->errorInfo()[2];
-				return array(false, "Error While Checking Tracktable : ".$err);
+			list($success, $msg) = $this->create_tracktable_indexes();
+			if (!$success) {
+				return array($success, $msg);
 			}
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
@@ -80,7 +43,7 @@ class init_database extends init_generic {
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Albumtable(".
 			"Albumindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
-			"Albumname VARCHAR(255), ".
+			"Albumname VARCHAR(255) COLLATE NOCASE, ".
 			"AlbumArtistindex INTEGER, ".
 			"AlbumUri VARCHAR(255), ".
 			"Year YEAR, ".
@@ -122,7 +85,7 @@ class init_database extends init_generic {
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Artisttable(".
 			"Artistindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
-			"Artistname VARCHAR(255))", true))
+			"Artistname VARCHAR(255) COLLATE NOCASE)", true))
 		{
 			logger::log("SQLITE", "  Artisttable OK");
 			if ($this->generic_sql_query("CREATE INDEX IF NOT EXISTS ni ON Artisttable (Artistname)", true)) {
@@ -199,7 +162,6 @@ class init_database extends init_generic {
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Podcasttable(".
 			"PODindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 			"FeedURL TEXT, ".
-			"LastUpdate INTEGER, ".
 			"Image VARCHAR(255), ".
 			"Title VARCHAR(255), ".
 			"Artist VARCHAR(255), ".
@@ -216,7 +178,9 @@ class init_database extends init_generic {
 			"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
 			"Description TEXT, ".
 			"LastPubDate INTEGER DEFAULT NULL, ".
+			"NextUpdate INTEGER DEFAULT 0, ".
 			"WriteTags TINYINT(1) DEFAULT 0, ".
+			"UpRetry INTEGER DEFAULT 0, ".
 			"Category VARCHAR(255))", true))
 		{
 			logger::log("SQLITE", "  Podcasttable OK");
@@ -381,6 +345,8 @@ class init_database extends init_generic {
 			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookAlbums', '0')", true);
 			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTracks', '0')", true);
 			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTime', '0')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('LastCache', '10')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('Updating', '0')", true);
 			$sv = ROMPR_SCHEMA_VERSION;
 			logger::log("SQLITE", "Statstable populated");
 		}
@@ -678,8 +644,6 @@ class init_database extends init_generic {
 				case 38:
 					logger::log("SQL", "Updating FROM Schema version 38 TO Schema version 39");
 					$this->generic_sql_query("ALTER TABLE Podcasttable ADD LastPubDate INTEGER DEFAULT NULL", true);
-					require_once('podcasts/podcastfunctions.php');
-					$this->upgrade_podcasts_to_version();
 					$this->generic_sql_query("UPDATE Statstable SET Value = 39 WHERE Item = 'SchemaVer'", true);
 					break;
 
@@ -1113,6 +1077,166 @@ class init_database extends init_generic {
 					$this->generic_sql_query("UPDATE Statstable SET Value = 84 WHERE Item = 'SchemaVer'", true);
 					break;
 
+				case 84:
+					logger::log("SQL", "Updating FROM Schema version 84 TO Schema version 85");
+					prefs::upgrade_host_defs(85);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 85 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 85:
+					logger::log("SQL", "Updating FROM Schema version 85 TO Schema version 86");
+					$this->generic_sql_query('DROP TRIGGER track_insert_trigger');
+					$this->generic_sql_query('DROP TRIGGER track_update_trigger');
+					$this->generic_sql_query('DROP TRIGGER rating_update_trigger');
+					$this->generic_sql_query('DROP TRIGGER rating_insert_trigger');
+					$this->generic_sql_query('DROP TRIGGER tag_insert_trigger');
+					$this->generic_sql_query('DROP TRIGGER tag_remove_trigger');
+					$this->generic_sql_query('DROP TRIGGER track_delete_trigger');
+					$this->generic_sql_query('DROP TRIGGER progress_update_trigger');
+					$this->generic_sql_query('DROP TRIGGER progress_insert_trigger');
+					$this->generic_sql_query("CREATE TABLE Albumtable_New(".
+						"Albumindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+						"Albumname VARCHAR(255) COLLATE NOCASE, ".
+						"AlbumArtistindex INTEGER, ".
+						"AlbumUri VARCHAR(255), ".
+						"Year YEAR, ".
+						"Searched TINYINT(1), ".
+						"ImgKey CHAR(32), ".
+						"mbid CHAR(40), ".
+						"ImgVersion INTEGER DEFAULT ".ROMPR_IMAGE_VERSION.", ".
+						"Domain CHAR(32), ".
+						"Image VARCHAR(255), ".
+						"useTrackIms TINYINT(1) DEFAULT 0, ".
+						"randomSort INT DEFAULT 0, ".
+						"justUpdated TINYINT(1) DEFAULT 0)", true);
+					$this->generic_sql_query(
+						"INSERT INTO Albumtable_New
+							SELECT Albumindex, Albumname, AlbumArtistindex, AlbumUri, Year, Searched, ImgKey, mbid,
+							ImgVersion, Domain, Image, useTrackIms, randomSort, justUpdated FROM Albumtable");
+					$this->generic_sql_query("DROP TABLE Albumtable");
+					$this->generic_sql_query("ALTER TABLE Albumtable_New RENAME TO Albumtable");
+					$this->generic_sql_query("CREATE INDEX IF NOT EXISTS ni ON Albumtable (Albumname)", true);
+					$this->generic_sql_query("CREATE INDEX IF NOT EXISTS aai ON Albumtable (AlbumArtistindex)", true);
+					$this->generic_sql_query("CREATE INDEX IF NOT EXISTS di ON Albumtable (Domain)", true);
+					$this->generic_sql_query("CREATE INDEX IF NOT EXISTS ii ON Albumtable (ImgKey)", true);
+					$this->create_conditional_triggers();
+					$this->create_update_triggers();
+					$this->create_progress_triggers();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 86 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 86:
+					logger::log("SQL", "Updating FROM Schema version 86 TO Schema version 87");
+					$this->generic_sql_query("CREATE TABLE IF NOT EXISTS Artisttable_New(".
+						"Artistindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+						"Artistname VARCHAR(255) COLLATE NOCASE)", true);
+					$this->generic_sql_query(
+						"INSERT INTO Artisttable_New SELECT Artistindex, Artistname FROM Artisttable"
+					);
+					$this->generic_sql_query("DROP TABLE Artisttable");
+					$this->generic_sql_query("ALTER TABLE Artisttable_New RENAME TO Artisttable");
+					$this->generic_sql_query("CREATE INDEX IF NOT EXISTS ni ON Artisttable (Artistname)", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 87 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 87:
+					logger::log("SQL", "Updating FROM Schema version 87 TO Schema version 88");
+					$this->generic_sql_query('DROP TRIGGER track_insert_trigger');
+					$this->generic_sql_query('DROP TRIGGER track_update_trigger');
+					$this->generic_sql_query('DROP TRIGGER rating_update_trigger');
+					$this->generic_sql_query('DROP TRIGGER rating_insert_trigger');
+					$this->generic_sql_query('DROP TRIGGER tag_insert_trigger');
+					$this->generic_sql_query('DROP TRIGGER tag_remove_trigger');
+					$this->generic_sql_query('DROP TRIGGER track_delete_trigger');
+					$this->generic_sql_query('DROP TRIGGER progress_update_trigger');
+					$this->generic_sql_query('DROP TRIGGER progress_insert_trigger');
+					$this->generic_sql_query("CREATE TABLE Tracktable_New(".
+						"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+						"Title VARCHAR(255) COLLATE NOCASE, ".
+						"Albumindex INTEGER, ".
+						"TrackNo SMALLINT, ".
+						"Duration INTEGER, ".
+						"Artistindex INTEGER, ".
+						"Disc TINYINT(3), ".
+						"Uri TEXT,".
+						"LastModified CHAR(32), ".
+						"Hidden TINYINT(1) DEFAULT 0, ".
+						"DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ".
+						"isSearchResult TINYINT(1) DEFAULT 0, ".
+						"Sourceindex INTEGER DEFAULT NULL, ".
+						"LinkChecked TINYINT(1) DEFAULT 0, ".
+						"isAudiobook TINYINT(1) DEFAULT 0, ".
+						"justAdded TINYINT(1) DEFAULT 1, ".
+						"usedInPlaylist TINYINT(1) DEFAULT 0, ".
+						"Genreindex INT UNSIGNED DEFAULT 0, ".
+						"TYear YEAR)", true);
+					$this->generic_sql_query(
+						"INSERT INTO Tracktable_New SELECT TTindex, Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri,
+							LastModified, Hidden, DateAdded, isSearchResult, SourceIndex, LinkChecked, isAudioBook,
+							justAdded, usedInPlaylist, Genreindex, TYear
+						FROM Tracktable");
+					$this->generic_sql_query("DROP TABLE Tracktable");
+					$this->generic_sql_query("ALTER TABLE Tracktable_New RENAME TO Tracktable");
+					$this->create_tracktable_indexes();
+					$this->create_conditional_triggers();
+					$this->create_update_triggers();
+					$this->create_progress_triggers();
+					$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('LastCache', ".time().")", true);
+					$u = $this->simple_query('Value', 'Statstable', 'Item', 'Updating', null);
+					if ($u === null)
+						$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('Updating', '0')", true);
+
+					$this->generic_sql_query("UPDATE Statstable SET Value = 88 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 88:
+					logger::log("SQL", "Updating FROM Schema version 88 TO Schema version 89");
+					$this->generic_sql_query("CREATE TABLE IF NOT EXISTS Podcasttable_New(".
+						"PODindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+						"FeedURL TEXT, ".
+						"Image VARCHAR(255), ".
+						"Title VARCHAR(255), ".
+						"Artist VARCHAR(255), ".
+						"RefreshOption TINYINT(2) DEFAULT 0, ".
+						"SortMode TINYINT(2) DEFAULT 0, ".
+						"HideDescriptions TINYINT(1) DEFAULT 0, ".
+						"DisplayMode TINYINT(2) DEFAULT 0, ".
+						"DaysToKeep INTEGER DEFAULT 0, ".
+						"NumToKeep INTEGER DEFAULT 0, ".
+						"KeepDownloaded TINYINT(1) DEFAULT 0, ".
+						"AutoDownload TINYINT(1) DEFAULT 0, ".
+						"DaysLive INTEGER, ".
+						"Version TINYINT(2), ".
+						"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
+						"Description TEXT, ".
+						"LastPubDate INTEGER DEFAULT NULL, ".
+						"NextUpdate INTEGER DEFAULT 0, ".
+						"WriteTags TINYINT(1) DEFAULT 0, ".
+						"Category VARCHAR(255))", true);
+					$this->generic_sql_query(
+						"INSERT INTO Podcasttable_New SELECT PODindex, FeedURL, Image, Title, Artist, RefreshOption, SortMode, HideDescriptions,
+							DisplayMode, DaysToKeep, NumToKeep, KeepDownloaded, AutoDownload, DaysLive, Version, Subscribed, Description,
+							LastPubDate, 0 AS NextUpdate, WriteTags, Category FROM Podcasttable"
+					);
+					$this->generic_sql_query("DROP TABLE Podcasttable");
+					$this->generic_sql_query("ALTER TABLE Podcasttable_New RENAME TO Podcasttable");
+					$podcasts = $this->generic_sql_query("SELECT * FROM Podcasttable");
+					foreach($podcasts as $podcast) {
+						$this->sql_prepare_query(true, null, null, null,
+							"UPDATE Podcasttable SET NextUpdate = ? WHERE PODindex = ?",
+							calculate_best_update_time($podcast),
+							$podcast['PODindex']
+						);
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 89 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 89:
+					logger::log("SQL", "Updating FROM Schema version 89 TO Schema version 90");
+					$this->generic_sql_query("ALTER TABLE Podcasttable ADD UpRetry INTEGER DEFAULT 0");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 90 WHERE Item = 'SchemaVer'", true);
+					break;
+
 			}
 			$sv++;
 		}
@@ -1219,6 +1343,51 @@ class init_database extends init_generic {
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
 							END;", true);
 
+	}
+
+	protected function create_tracktable_indexes() {
+		if (!$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true)) {
+
+			//
+			// If creating the unique index fails, it's probably because we have some duplicates. This can happen with YouTube
+			// because, you know, it doesn't really have albums etc. So we try to correct the duplicates and then try to create the index again
+			//
+
+			$err = $this->mysqlc->errorInfo()[2];
+			$duplicates = $this->generic_sql_query(
+				"SELECT GROUP_CONCAT(TTindex, ',') AS ttids, Albumindex, Artistindex, TrackNo, Disc, Title
+				FROM Tracktable
+				GROUP BY Albumindex, Artistindex, TrackNo, Disc, Title
+				HAVING COUNT(*) > 1"
+			);
+			if (count($duplicates) > 0) {
+				logger::warn('SQLITE', 'Duplicates found. Attempting to correct');
+				foreach ($duplicates as $duplicate) {
+					$disc = $duplicate['Disc'];
+					$ttids = explode(',', $duplicate['ttids']);
+					foreach ($ttids as $ttid) {
+						logger::log('SQLITE', 'Setting Disc to',$disc,'on TTindex',$ttid);
+						$this->sql_prepare_query(true, null, null, null,
+							"UPDATE Tracktable SET Disc = ? WHERE TTindex = ?",
+							$disc, $ttid
+						);
+						$disc++;
+					}
+				}
+				if (!$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true)) {
+					$err = $this->mysqlc->errorInfo()[2];
+					return array(false, "Error Creating Tracktable Index : ".$err);
+				}
+			} else {
+				return array(false, "Error Creating Tracktable Index : ".$err);
+			}
+		}
+		if ($this->generic_sql_query("CREATE INDEX IF NOT EXISTS track_finder_index ON Tracktable (Title, Uri)", true)) {
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Tracktable : ".$err);
+		}
+		return array(true, '');
 	}
 
 }

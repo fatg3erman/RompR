@@ -43,6 +43,7 @@ foreach ($all as $dir) {
 		rrmdir($dir);
 	}
 }
+
 if (file_exists('prefs/monitor.xml')) {
 	unlink('prefs/monitor.xml');
 }
