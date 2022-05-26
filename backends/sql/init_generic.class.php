@@ -133,6 +133,8 @@ class init_generic extends database {
 			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 3 WHERE Uri LIKE 'spotify:%' AND Hidden = 0");
 			prefs::$prefs['spotify_mark_unplayable'] = false;
 			prefs::$prefs['linkchecker_nextrun'] = strtotime('2040-01-01');
+			logger::log('SQLINIT', 'Time is',time(),'Setting nextrun to',prefs::$prefs['linkchecker_nextrun']);
+			prefs::save();
 		}
 	}
 
