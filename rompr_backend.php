@@ -1,6 +1,6 @@
 <?php
 const IS_ROMONITOR = true;
-
+const LASTFM_TRACKS_PER_PAGE = 100;
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 $monitors = [];
@@ -9,12 +9,6 @@ prefs::$prefs['backend_version'] = $version_string;
 prefs::save();
 $pwd = getcwd();
 logger::log('DAEMON', "Running From",$pwd);
-
-// Run at the start of every minute
-// $seconds = date('s');
-// $sleeptime = 60-$seconds;
-// logger::mark('DAEMON', 'Waiting',$seconds,'seconds');
-// sleep($sleeptime);
 
 while (true) {
 
@@ -37,8 +31,8 @@ while (true) {
         } else if (($pid = get_pid($cmd)) !== false) {
             // If it's already running but we didn't start it
             logger::warn('DAEMON', "Monitor for",$player,"already started, but not by this Daemon. This may lead to problems.");
-            $mon_running = true;
-            // kill_process($pid);
+            // $mon_running = true;
+            kill_process($pid);
         }
 
         if (!$mon_running) {
@@ -52,7 +46,7 @@ while (true) {
     foreach ($monitors as $mon => $pid) {
         if (!in_array($mon, $players)) {
             logger::log('DAEMON', "Player $mon no longer exists. Killing PID $pid");
-            exec('kill '.$pid);
+            kill_process($pid);
             unset($monitors[$mon]);
         }
     }
@@ -105,11 +99,10 @@ function check_lastfm_sync() {
         logger::mark('DAEMON', 'Syncing LastFM Playcounts');
         $page = 1;
         $options = [
-            'limit' => 100,
+            'limit' => LASTFM_TRACKS_PER_PAGE,
             'from' => prefs::$prefs['last_lastfm_synctime'],
             'extended' => 1
         ];
-        prefs::$prefs['last_lastfm_synctime'] = time();
         prefs::$database = new metaDatabase();
         while ($page > 0) {
             $options['page'] = $page;
@@ -118,20 +111,40 @@ function check_lastfm_sync() {
                 logger::log('LASTFM-SYNC', 'No Tracks in page',$page);
                 $page = 0;
             } else {
+
+                // logger::log('DAEMON', print_r($tracks, true));
+
+
                 foreach ($tracks as $track) {
-                    prefs::$database->syncinc([
-                        'Title' => $track['name'],
-                        'Album' => $track['album']['#text'],
-                        'trackartist' => $track['artist']['name'],
-                        'albumartist' => $track['artist']['name'],
-                        'lastplayed' => $track['date']['uts'],
-                        'attributes' => [['attribute' => 'Playcount', 'value' => 1]]
-                    ]);
+                    try {
+                        if (array_key_exists('date', $track)) {
+                            $data = [
+                                'Title' => $track['name'],
+                                'Album' => $track['album']['#text'],
+                                'trackartist' => $track['artist']['name'],
+                                'albumartist' => $track['artist']['name'],
+                                'lastplayed' => $track['date']['uts'],
+                                'attributes' => [['attribute' => 'Playcount', 'value' => 1]]
+                            ];
+                            if (array_key_exists('mbid', $track['album']) && $track['album']['mbid'] != '') {
+                                $data['MUSICBRAINZ_ALBUMID'] = $track['album']['mbid'];
+                            }
+                            logger::log('LASTFM-SYNC', 'Syncing', $data['Title']);
+                            prefs::$database->syncinc($data);
+                        }
+                    } catch (Exception $e) {
+
+                    }
                 }
-                $page++;
-                sleep(5);
+                if (count($tracks) < LASTFM_TRACKS_PER_PAGE) {
+                    $page = 0;
+                } else {
+                    $page++;
+                    sleep(5);
+                }
             }
         }
+        prefs::$prefs['last_lastfm_synctime'] = time();
         prefs::$prefs['next_lastfm_synctime'] = time() + prefs::$prefs['lastfm_sync_frequency'];
         prefs::save();
         prefs::$database->close_database();
@@ -140,6 +153,7 @@ function check_lastfm_sync() {
     }
 
 }
+
 function check_unplayable_tracks() {
     if (time() >= prefs::$prefs['linkchecker_nextrun']) {
         prefs::$database = new metaquery();

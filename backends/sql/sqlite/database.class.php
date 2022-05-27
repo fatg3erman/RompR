@@ -156,7 +156,7 @@ class database extends data_base {
 				Genreindex = excluded.Genreindex,
 				TYear = excluded.TYear"
 		)) {
-			logger::log('MYSQL', 'Prepared new-style update query successfully');
+			logger::log('SQLITE', 'Prepared new-style update query successfully');
 		} else {
 			$this->show_sql_error();
 			exit(1);
@@ -186,7 +186,7 @@ class database extends data_base {
 				Genreindex = excluded.Genreindex,
 				TYear = excluded.TYear"
 		)) {
-			logger::log('MYSQL', 'Prepared old-style update query successfully');
+			logger::log('SQLITE', 'Prepared old-style update query successfully');
 		} else {
 			$this->show_sql_error();
 			exit(1);

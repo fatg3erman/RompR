@@ -357,11 +357,13 @@ var info_lastfm = function() {
 							 })
 							 .fail( function() {
 								debug.log(medebug,"Didn't Get Allmusic Image");
-								parent.get_random_discogs_artist_image(artistmeta.lastfm.layout);
+								// Causes too much discogs traffic
+								// parent.get_random_discogs_artist_image(artistmeta.lastfm.layout);
 							 });
 						} catch (err) {
 							debug.log(medebug, 'Unable to find AllMusic image link');
-							parent.get_random_discogs_artist_image(artistmeta.lastfm.layout);
+							// Causes too much discogs traffic
+							// parent.get_random_discogs_artist_image(artistmeta.lastfm.layout);
 						}
 					},
 

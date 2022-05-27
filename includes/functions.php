@@ -477,7 +477,6 @@ function get_user_file($src, $fname, $tmpname) {
 	return $download_file;
 }
 
-
 function format_bytes($size, $precision = 1)
 {
 	$base = log($size, 1024);
@@ -888,6 +887,7 @@ function close_browser_connection() {
 }
 
 function check_backend_daemon() {
+	global $version_string;
 	$pwd = getcwd();
 	$b = $pwd.'/rompr_backend.php';
 	logger::log('INIT', 'Checking for',$b);
@@ -900,8 +900,8 @@ function check_backend_daemon() {
 		}
 	} else {
 		logger::mark('INIT', 'Backend Daemon is running.');
-		if (version_compare(prefs::$prefs['backend_version'], $version_string, '<')) {
-			logger::mark('INIT', 'Backend Daemon',prefs::$prefs['backend_version'],'is older than',$version_string,'. Restarting it');
+		if (prefs::$prefs['backend_version'] != $version_string) {
+			logger::mark('INIT', 'Backend Daemon',prefs::$prefs['backend_version'],'is different from',$version_string,'. Restarting it');
 			kill_process(get_pid($b));
 			while (($pid = get_pid('romonitor.php')) !== false) {
 				logger::log('INIT', 'Killing romonitor process', $pid);
@@ -912,7 +912,7 @@ function check_backend_daemon() {
 			if (get_pid($b) === false) {
 				backend_init_fail();
 			}
-			if (version_compare(prefs::$prefs['backend_version'], $version_string, '<')) {
+			if (prefs::$prefs['backend_version'] != $version_string) {
 				backend_version_fail();
 			}
 		}
@@ -941,6 +941,5 @@ function get_pid($cmd) {
     logger::core('INIT', 'No PID Found');
     return false;
 }
-
 
 ?>

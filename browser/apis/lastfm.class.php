@@ -126,7 +126,12 @@ class lastfm {
 		if (array_key_exists('recenttracks', $decoded) &&
 			array_key_exists('track', $decoded['recenttracks']))
 		{
-			return $decoded['recenttracks']['track'];
+			if (array_key_exists('artist', $decoded['recenttracks']['track'])) {
+				// If theres' only one, Last.FM doesn't return an array.....
+				return [$decoded['recenttracks']['track']];
+			} else {
+				return $decoded['recenttracks']['track'];
+			}
 		}
 		return [];
 

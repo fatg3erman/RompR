@@ -316,6 +316,18 @@ class init_database extends init_generic {
 			return array(false, "Error While Checking Artistbrowse : ".$err);
 		}
 
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Sleeptimers(".
+			"Pid INT UNSIGNED DEFAULT NULL, ".
+			"Player VARCHAR(50) NOT NULL, ".
+			"TimeSet INT UNSIGNED NOT NULL, ".
+			"SleepTime INT UNSIGNED NOT NULL)", true))
+		{
+			logger::log("MYSQL", "  Sleeptimers OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Sleeptimers : ".$err);
+		}
+
 		if (!$this->generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB", true)) {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking Statstable : ".$err);

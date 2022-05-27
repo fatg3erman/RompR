@@ -959,5 +959,36 @@ class base_mpd_player {
 				break;
 		}
 	}
+
+	private function get_status_value($status) {
+		$mpd_status = $this->do_command_list(['status']);
+		return array_key_exists($status, $mpd_status) ? $mpd_status[$status] : null;
+	}
+
+	private function calculate_ramp_time($volume, $seconds) {
+		// MPD/Mopidy will only accept integer values for volume so we can only decrement by 1 each time
+		// But we want it to take 60 seconds.
+		$sleep = $seconds/$volume;
+		// sleep() only accepts integers and usleep() may not work with very large numbers
+		// hence we're going to use both.
+		$sleep_seconds = floor($sleep);
+		$sleep_microseconds = ($sleep - $sleep_seconds) * 1000000;
+		return array($sleep_seconds, $sleep_microseconds);
+	}
+
+	public function ramp_volume($start, $end, $seconds) {
+		$start = intval($start);
+		$end = intval($end);
+		if ($start == $end) return;
+		$inc = ($start > $end) ? -1 : 1;
+		list($sleep_seconds, $sleep_microseconds) = $this->calculate_ramp_time(abs($start - $end), $seconds);
+		$this->do_command_list(['setvol '.$start]);
+		while (($volume = $this->get_status_value('volume')) != $end) {
+			$this->do_command_list(['setvol '.($volume + $inc)]);
+			sleep($sleep_seconds);
+			usleep($sleep_microseconds);
+		}
+	}
+
 }
 ?>

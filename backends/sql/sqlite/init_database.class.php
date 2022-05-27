@@ -330,6 +330,18 @@ class init_database extends init_generic {
 			return array(false, "Error While Checking Artistbrowse : ".$err);
 		}
 
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Sleeptimers(".
+			"Pid INTEGER DEFAULT NULL, ".
+			"Player VARCHAR(50) NOT NULL, ".
+			"TimeSet INTEGER NOT NULL, ".
+			"SleepTime INTEGER NOT NULL)", true))
+		{
+			logger::log("SQLITE", "  Sleeptimers OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Sleeptimers : ".$err);
+		}
+
 		// Check schema version and update tables as necessary
 		$sv = $this->simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
 		if ($sv == 0) {

@@ -296,12 +296,7 @@
 		<i class="choosepanel onlywide icon-audiobook topimg expand" name="audiobooklist"></i>
 		<i class="choosepanel onlywide icon-doc-text topimg expand spinable" name="playlistman"></i>
 		<i class="choosepanel icon-wifi topimg expand" name="pluginplaylistholder"></i>
-		<div class="onlyverywide containerbox expandabit topbarplaycontrols">
-			<i class="prev-button icon-fast-backward topimg expand"></i>
-			<i class="play-button icon-play-circled topimg expand"></i>
-			<i class="stop-button icon-stop-1 topimg expand"></i>
-			<i class="stopafter-button icon-to-end-1 topimg expand"></i>
-			<i class="next-button icon-fast-forward topimg expand"></i>
+		<div id="pluginicons" class="onlyverywide containerbox expandabit">
 		</div>
 		<i class="icon-volume-up topimg expand topbarmenu" name="volumedropper"></i>
 		<i class="icon-doc-text topimg choosepanel expand" name="playlistm"></i>

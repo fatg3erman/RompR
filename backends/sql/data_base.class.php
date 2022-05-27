@@ -264,7 +264,7 @@ class data_base {
 		return $oa;
 	}
 
-	public function collectionUpdateRunning() {
+	public function collectionUpdateRunning($return = false) {
 		$count = 200;
 		while ($count > 0) {
 			$cur = $this->simple_query('Value', 'Statstable', 'Item', 'Updating', null);
@@ -277,6 +277,9 @@ class data_base {
 
 				case '1':
 					logger::mark('DATABASE', 'Collection Is Locked. Waiting...');
+					if ($return)
+						return true;
+
 					sleep(5);
 					$count--;
 			}

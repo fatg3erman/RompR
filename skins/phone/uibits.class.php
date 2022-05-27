@@ -1,7 +1,7 @@
 <?php
 class uibits extends ui_elements {
 
-	public const ONLY_PLUGINS_ON_MENU = true;
+	public const ONLY_PLUGINS_ON_MENU = false;
 	public const SNAPCAST_IN_VOLUME = true;
 
 	public static function artistHeader($id, $name) {

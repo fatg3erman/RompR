@@ -14,7 +14,7 @@ Now you can enable some options to keep your Playcounts in Sync. There are two o
 
 * Enabling 'Use LastFM Playcounts' will mean that, when you play a track in RompR, Rompr will fetch the number of Scrobbles for that track from Last.FM and update the Playcount in your Music Collection. It will only use the Last.FM Scrobble value if it is bigger than the Playcount value in your collection.
 
-* Enabling 'Synchronise Last.FM Playcounts At Start' works as follows: When you open RompR, it will retrieve a list of everything you scrobbled to Last.FM since the last time you opened RompR. For every scrobble, it will incrememnt RompR's playcount for that track by 1 - unless it was RompR that played that track, in which case the Playcount will not be incremented (because RompR will have done that when it played the track).
+* Enabling 'Synchronise Playcounts with last.FM' works as follows: On a daily basis RompR will retrieve a list of everything you scrobbled to Last.FM since the last time RompR checked. For every scrobble, it will incrememnt RompR's playcount for that track by 1 - unless it was RompR that played that track, in which case the Playcount will not be incremented (because RompR will have done that when it played the track).
 
 There's no harm in keeping both of these enabled; the first is of more use to people who have been using Last.FM for a long time and want to bring their Scrobbles into their RompR Collection. But there is also another way to do this.
 

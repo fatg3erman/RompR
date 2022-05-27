@@ -254,7 +254,7 @@ function update_collection() {
 	// so that the browser doesn't time out and retry
 
     logger::log('COLLECTION', 'Checking Nothing Else Is Running...');
-	if (prefs::$database->collectionUpdateRunning()) {
+	if (prefs::$database->collectionUpdateRunning(true)) {
 		header('HTTP/1.1 500 Internal Server Error');
 		print language::gettext('error_nocol');
 		exit(0);

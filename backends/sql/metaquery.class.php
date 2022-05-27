@@ -127,13 +127,20 @@ class metaquery extends collection_base {
 				$this->updateCheckedLink($my_track['TTindex'], $uri, $status);
 			}
 			$this->close_transaction();
+		} else {
+			prefs::$prefs['link_checker_is_running'] = false;
+			prefs::save();
 		}
 		return $retval;
 	}
 
 	public function resetlinkcheck() {
-		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2");
-		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3");
+		if (!prefs::$prefs['link_checker_is_running']) {
+			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2");
+			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3");
+			prefs::$prefs['link_checker_is_running'] = true;
+			prefs::save();
+		}
 	}
 
 	public function getcharts($data) {

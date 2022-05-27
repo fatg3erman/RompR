@@ -16,13 +16,16 @@ Before doing the following you MUST do
 If you were using multiple players before, you need to stop and disable all your romonitor processes. This new Daemon will
 take care of creating romonitor processes for you, enabling them on the fly if you create new players.
 
+If you were previously using romonitor to scrobble to last.FM, then you now need to go to the Prefs Panel and enable scrobbling from there.
+
 ## What It Does
 
-* Updates Playcounts
 * Scrobbles Tracks to Last.FM (1)
-* Tidies the Backend Cache
 * Handles Automatically Refreshing Podcasts. (2)
+* Runs the Sleep Timer and the Alarm Clock (3)
+* Updates Playcounts
 * Syncs Playcounts from Last.FM
+* Tidies the Backend Cache
 * Checks for unplayable/relinked Spotify tracks
 * When you're using Mopidy it takes care of consuming the tracklist, because Mopidy's consume is broken.
 * Runs Personalised Radio Stations:
@@ -46,6 +49,9 @@ The Daemon will honour the setting for Scrobbling in the Prefs panel.
 (2) This is also a breaking change. This used to be done from the browser and was flaky, especially when using mobile devices.
 If you are using a regular cron job or similar that calls Rompr's API to refresh your podcasts this will no longer be necessary.
 
+(3) This is a change from previous versions. You no longer need to keep a browser open for these to work, and they
+are now supported in the Phone skin.
+
 ## How To Run It
 
 It's really very simple.
@@ -57,7 +63,7 @@ error page when you try to open the web page. On those system you will need to c
 
 ### On Systems Where RompR can not start it automatically.
 
-If you're starting with a fresh installation of RompЯ you need to get to the point where you get an error screen
+If you're starting with a fresh installation of RompЯ you need to get to the point where you open your browser and get an error screen
 that tells you the Daemon is not running. This is because, until you get to that point, your database has not been initialised
 and the Daemon will not start. *Do not try to start the Daemon before you have reached that stage*.
 

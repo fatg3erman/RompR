@@ -501,18 +501,6 @@ function getrgbs(percent,min) {
 
 }
 
-// function populateSpotiTagMenu(callback) {
-// 	spotify.recommendations.getGenreSeeds(
-// 		function(data) {
-// 			debug.debug("SPOTIFY","Got Genre Seeds",data);
-// 			callback(data.genres);
-// 		},
-// 		function(data) {
-// 			debug.error("SPOTIFY","Got error requesting genre seeds",data);
-// 		}
-// 	);
-// }
-
 function displayRating(where, what) {
 	$(where).removeClass("icon-0-stars icon-1-stars icon-2-stars icon-3-stars icon-4-stars icon-5-stars");
 	if (what !== false) {
@@ -893,62 +881,6 @@ function ratingCalc(element, event) {
 	}
 	return rating;
 }
-
-// var spotifyLinkChecker = function() {
-
-// 	var timer = null;
-// 	var tracks;
-
-// 	function getNextUriToCheck() {
-// 		metaHandlers.genericQuery('getlinktocheck', gotLinkToCheck, goneTitsUp);
-// 	}
-
-// 	function gotLinkToCheck(data) {
-// 		debug.log('SPOTICHECKER', data);
-// 		if (data.more) {
-// 			spotifyLinkChecker.setTimer();
-// 		} else {
-// 			debug.info("SPOTICHECKER","No more tracks to check");
-// 			prefs.save({linkchecker_isrunning: false});
-// 		}
-// 	}
-
-// 	function goneTitsUp(data) {
-// 		debug.error('SPOTICHECKER',"Nothing", data);
-// 		prefs.save({linkchecker_isrunning: false});
-// 	}
-
-// 	function updateNextRunTime() {
-// 		prefs.save({linkchecker_nextrun: Date.now() + prefs.linkchecker_frequency, linkchecker_isrunning: true});
-// 	}
-
-// 	return {
-
-// 		setTimer: function() {
-// 			clearTimeout(timer);
-// 			timer = setTimeout(getNextUriToCheck, prefs.linkchecker_polltime);
-// 		},
-
-// 		initialise: function() {
-// 			if (prefs.linkchecker_isrunning) {
-// 				debug.info("SPOTICHECKER","Link Checker Continuing");
-// 				updateNextRunTime();
-// 				spotifyLinkChecker.setTimer();
-// 			} else {
-// 				if (Date.now() > prefs.linkchecker_nextrun) {
-// 					debug.info("SPOTICHECKER","Link Checker Restarting",Date.now(),prefs.linkchecker_nextrun);
-// 					updateNextRunTime();
-// 					metaHandlers.genericQuery('resetlinkcheck', spotifyLinkChecker.setTimer, goneTitsUp);
-// 				} else {
-// 					debug.info("SPOTICHECKER","Link Checker Not Starting Yet");
-// 				}
-// 			}
-// 			sleepHelper.addWakeHelper(spotifyLinkChecker.initialise);
-// 		}
-
-// 	}
-
-// }();
 
 function format_remote_api_error(msg, err) {
 	let errormessage = language.gettext(msg);
