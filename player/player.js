@@ -23,6 +23,7 @@ var player = function() {
 				'<td><input type="text" size="30" name="password" value=""/></td>'+
 				'<td><input type="text" size="30" name="socket" value=""/></td>'+
 				'<td align="center"><div class="styledinputs"><input type="checkbox" name="mopidy_remote" id="mopidy_remote_'+numhosts+'" /><label for="mopidy_remote_'+numhosts+'">&nbsp;</label></div></td>'+
+				'<input type="hidden" name="do_consume" value="0" />'+
 				'<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
 				'</tr>'
 			);
@@ -123,6 +124,7 @@ var player = function() {
 					'<td><input type="text" size="30" name="password" value="'+prefs.multihosts[i]['password']+'"/></td>'+
 					'<td><input type="text" size="30" name="socket" value="'+prefs.multihosts[i]['socket']+'"/></td>'+
 					'<td align="center"><div class="styledinputs"><input type="checkbox" name="mopidy_remote" id="mopidy_remote_'+numhosts+'" /><label for="mopidy_remote_'+numhosts+'">&nbsp;</label></div></td>'+
+					'<input type="hidden" name="do_consume" value="'+(prefs.multihosts[i]['do_consume'] ? '1' : '0')+'" />'+
 					'<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
 					'</tr>'
 				);

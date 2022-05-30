@@ -94,14 +94,11 @@ var sleepTimer = function() {
 		},
 
 		set_poll_timer: function() {
-			let timeout = (prefs.sleepon) ? 10000 : 60000;
-			polltimer = setTimeout(sleepTimer.pollState, timeout);
+			polltimer = setTimeout(sleepTimer.pollState, 60000);
 		},
 
 		process_state: function(state) {
-
-			debug.log('SLEEPTIMER', state);
-
+			debug.debug('SLEEPTIMER', state);
 			prefs.save({sleepon: (state.state == 1)});
 			if (state.sleeptime) {
 				prefs.save({sleeptime: parseInt(state.sleeptime)});
@@ -125,8 +122,14 @@ var sleepTimer = function() {
 			if (d === false) {
 				return false;
 			}
-			var holder = uiHelper.makeDropHolder('sleeppanel', d, false, false);
-			var html = uiHelper.ui_config_header({label: 'button_sleep', icon_size: 'smallicon'});
+			var holder = uiHelper.makeDropHolder('sleeppanel', d, false, false, false);
+			if ($('body').hasClass('phone')) {
+				// Give it a close button so it can be closed on small screens when
+				// the opener icon is in the onlyverysmall menu
+				var html = uiHelper.ui_config_header({label: 'button_sleep', icon_size: 'smallicon', righticon: 'topbarmenu icon-cancel-circled'});
+			} else {
+				var html = uiHelper.ui_config_header({label: 'button_sleep', icon_size: 'smallicon'});
+			}
 			html += '<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep#sleep-timer" />'+
 				'<div class="noselection">'+
 				'<table width="90%" align="center">'+
@@ -147,11 +150,6 @@ var sleepTimer = function() {
 				'<td></td>'+
 				'</tr>'+
 				'</table>';
-			// html += '<table align="center" width="95%">';
-			// html += '<tr>';
-			// html += '<td colspan="3"><div class="styledinputs textcentre"><input type="checkbox" class="autoset toggle" id="sleepon"><label for="sleepon">ON</label></div></td>';
-			// html += '</tr>';
-			// html += '</table>';
 			html += '</div>';
 			holder.html(html);
 			sleepTimer.pollState();
@@ -166,4 +164,6 @@ var sleepTimer = function() {
 pluginManager.addPlugin("Sleep Timer", null, sleepTimer.setup, null, false);
 sleepHelper.addWakeHelper(sleepTimer.pollState);
 sleepHelper.addSleepHelper(sleepTimer.browser_sleep);
+player.controller.addStateChangeCallback({state: 'pause', callback: sleepTimer.pollState});
+
 

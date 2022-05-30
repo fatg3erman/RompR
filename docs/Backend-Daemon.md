@@ -83,6 +83,8 @@ On some distros (eg Arch/Manjaro) this file might need to go in /etc/systemd/sys
     After=mariadb.service
     After=mysql.service
     After=nginx.service
+    After=mpd.service
+    After=mopidy.service
 
     [Service]
     User=www-data

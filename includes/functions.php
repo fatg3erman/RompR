@@ -46,11 +46,15 @@ function format_podcast_text($d) {
 	return $d;
 }
 
+// This is for converting a time parameter in seconds into something like 2 Days 12:34:15
+// Using it with actual UNIX timestamps will probably not do what it was intended for
 function format_time($t, $f = ':') {
 
 	// PHP 8.1 moans about losing precision. I KNOW. I DON'T CARE.
 	$t = (int) round($t);
 
+	// NOTE We're using date functions. This makes the calculations timezone-aware
+	// This may or may not be good. TODO check where this is used, and the consequences of that.
 	if (($t/86400) >= 1)
 		return floor($t/86400).' '.language::gettext('label_days').' '.date('G'.$f.'i'.$f.'s', $t);
 
@@ -908,7 +912,7 @@ function check_backend_daemon() {
 				kill_process($pid);
 			}
 			start_process($b);
-		    sleep(1);
+		    sleep(5);
 			if (get_pid($b) === false) {
 				backend_init_fail();
 			}

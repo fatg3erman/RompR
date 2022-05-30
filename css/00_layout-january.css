@@ -77,7 +77,7 @@ div.notification.new {
     background-color: var(--selected-bg-colour);
 	position:absolute;
 	width:300px;
-	z-index:1200;
+	z-index: 20002;
 	padding: 4px;
 }
 
@@ -1918,6 +1918,12 @@ div.selectholder.snapcast_select
 	margin-right: 1em;
 }
 
+.ropeybit {
+	border-left: 1px solid var(--border-colour);
+	margin-left: 1em;
+	padding-left: 1em;
+}
+
 /*select.snapclientgroup {
 	margin-right: 1em;
 }
@@ -1975,6 +1981,8 @@ div.selectholder.snapcast_select
 {
 	font-size:250%;
 	font-weight:bold;
+	padding-left: 2px;
+	padding-right: 8px;
 }
 
 .altablebit {

@@ -539,7 +539,8 @@ var layoutProcessor = function() {
 
 		initialise: function() {
 			$(".dropdown").floatingMenu({ });
-			$('.topbarmenu').on('click', function() {
+			$('.topbarmenu').on('click', function(event) {
+				event.stopPropagation();
 				$('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
 				$('#'+$(this).attr('name')).slideToggle('fast');
 			});
@@ -595,8 +596,8 @@ var layoutProcessor = function() {
 			return i;
 		},
 
-		makeDropHolder: function(name, d, dontsteal, withscroll) {
-			return $('<div>', {class: 'top_drop_menu widemenu rightmenu dropshadow', 'id': name}).appendTo($('#sourcescontrols'));
+		makeDropHolder: function(name, d, dontsteal, withscroll, wide) {
+			return $('<div>', {class: 'top_drop_menu widemenu rightmenu dropshadow autohide', 'id': name}).appendTo($('#sourcescontrols'));
 		}
 
 	}

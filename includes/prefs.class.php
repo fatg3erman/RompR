@@ -157,7 +157,6 @@ class prefs {
 		"podcast_sort_1" => 'Artist',
 		"podcast_sort_2" => 'Category',
 		"podcast_sort_3" => 'new',
-		"alarms" => array( ),
 		"lastversionchecked" => '1.00',
 		"lastversionchecktime" => 0,
 		'playlistbuttons_isopen' => false,

@@ -1,6 +1,10 @@
 <?php
 
 chdir('../..');
+// I *think* the FPM process will keep running until nginx kills it, because we start
+// a process. The process is detached with nohup so it won't die when the FPM process
+// exits, so we want it to exit quickly so it returns to the pool.
+set_time_limit(10);
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 prefs::$database = new timers();

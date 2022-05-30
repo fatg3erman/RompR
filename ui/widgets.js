@@ -29,16 +29,22 @@ jQuery.fn.makeFlasher = function(options) {
 	}, options);
 
 	return this.each(function() {
-		var anistring = "pulseit "+settings.flashtime+"s "+settings.easing+" "+settings.repeats;
-		$(this).css({"animation": "", "opacity": ""});
-		$(this).hide().show();
-		$(this).css({"animation": anistring});
+		if (!$(this).hasClass('flashing')) {
+			var anistring = "pulseit "+settings.flashtime+"s "+settings.easing+" "+settings.repeats;
+			$(this).css({"animation": "", "opacity": ""});
+			$(this).hide().show();
+			$(this).css({"animation": anistring});
+			$(this).addClass('flashing');
+		}
 	});
 }
 
 jQuery.fn.stopFlasher = function() {
 	return this.each(function() {
-		$(this).css({"animation": "","opacity": ""});
+		if ($(this).hasClass('flashing')) {
+			$(this).css({"animation": "","opacity": ""});
+			$(this).removeClass('flashing');
+		}
 	});
 }
 
@@ -1527,12 +1533,15 @@ function popup(opts) {
 	}
 
 	this.close = function(event) {
-		var button = $(event.target).html();
-		debug.log("POPUP","Button",button,"was clicked");
 		var result = true;
-		if (options.closecallbacks.hasOwnProperty(button) && options.closecallbacks[button] !== false) {
-			result = options.closecallbacks[button]();
+		if (event !== null) {
+			var button = $(event.target).html();
+			debug.log("POPUP","Button",button,"was clicked");
+			if (options.closecallbacks.hasOwnProperty(button) && options.closecallbacks[button] !== false) {
+				result = options.closecallbacks[button]();
+			}
 		}
+
 		if (result !== false)
 			win.remove();
 

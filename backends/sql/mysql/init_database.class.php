@@ -328,6 +328,29 @@ class init_database extends init_generic {
 			return array(false, "Error While Checking Sleeptimers : ".$err);
 		}
 
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Alarms(".
+			"Alarmindex INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL, ".
+			// Pid will be NULL if alarm is not enabled
+			"Pid INT UNSIGNED DEFAULT NULL, ".
+			"SnoozePid INT UNSIGNED DEFAULT NULL, ".
+			"Player VARCHAR(50) NOT NULL, ".
+			"Running TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"PlayItem TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"Ramp TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"Stopafter TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"StopMins INT UNSIGNED DEFAULT 60, ".
+			"Time CHAR(5), ".
+			"Repeat TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"Days VARCHAR(100) NOT NULL DEFAULT '', ".
+			"ItemToPlay TEXT NOT NULL DEFAULT '', ".
+			"PlayCommands TEXT NOT NULL DEFAULT '')", true))
+		{
+			logger::log("MYSQL", "  Alarms OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Alarms : ".$err);
+		}
+
 		if (!$this->generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB", true)) {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking Statstable : ".$err);

@@ -11,7 +11,15 @@ if (is_array($opts)) {
 }
 logger::mark("ROMONITOR", "Using Player ".prefs::$prefs['currenthost']);
 
-$player = new base_mpd_player();
+// Probe the player type
+while (prefs::$prefs['player_backend'] != 'mpd' && prefs::$prefs['player_backend'] != 'mopidy') {
+	logger::warn('ROMONITOR', 'Probing Player type for player',prefs::$prefs['currenthost']);
+	$player = new base_mpd_player();
+	if (prefs::$prefs['player_backend'] != 'mpd' && prefs::$prefs['player_backend'] != 'mopidy') {
+		logger::warn('ROMONITOR', 'Could not connect to player',prefs::$prefs['currenthost'],'sleeping for 5 minutes');
+		sleep(300);
+	}
+}
 
 $player = new player();
 define('CURRENTHOST_SAVE', prefs::$prefs['currenthost']);

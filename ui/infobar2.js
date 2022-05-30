@@ -3,39 +3,13 @@ var infobar = function() {
 	var playlistinfo = {};
 	var npinfo = {};
 	var starttime = 0;
-	// var scrobbled = false;
 	var playcount_incremented = false;
-	// var nowplaying_updated = false;
 	var markedaslistened = false;
 	var fontsize = 8;
-	// var ftimer = null;
 	var singling = false;
 	var notifycounter = 0;
 	var biggerizing = false;
 	var current_progress = 0;
-
-	// function scrobble() {
-	// 	if (!scrobbled) {
-	// 		debug.info("INFOBAR","Track is not scrobbled");
-	// 		scrobbled = true;
-	// 		if (lastfm.isLoggedIn()) {
-	// 			if (playlistinfo.Title != "" && playlistinfo.trackartist != "") {
-	// 				var options = {
-	// 					timestamp: starttime,
-	// 					track: playlistinfo.Title,
-	// 					artist: playlistinfo.trackartist,
-	// 					album: playlistinfo.Album
-	// 				};
-	// 				options.chosenByUser = (playlistinfo.type != 'stream' && prefs.radiomode == '') ? 1 : 0;
-	// 				if (playlistinfo.albumartist && playlistinfo.albumartist != "" && playlistinfo.albumartist.toLowerCase() != playlistinfo.trackartist.toLowerCase()) {
-	// 					 options.albumArtist = playlistinfo.albumartist;
-	// 				 }
-	// 				debug.trace("INFOBAR","Scrobbling", options);
-	// 				lastfm.track.scrobble( options );
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	function showLove(flag) {
 		if (lastfm.isLoggedIn() && flag) {
@@ -44,21 +18,6 @@ var infobar = function() {
 			$("#lastfm").addClass('invisible');
 		}
 	}
-
-	// function updateNowPlaying() {
-	// 	if (!nowplaying_updated && lastfm.isLoggedIn()) {
-	// 		if (playlistinfo.Title != "" && playlistinfo.type && playlistinfo.type != "stream") {
-	// 			var opts = {
-	// 				track: playlistinfo.Title,
-	// 				artist: playlistinfo.trackartist,
-	// 				album: playlistinfo.Album
-	// 			};
-	// 			debug.debug("INFOBAR","is updating nowplaying",opts);
-	// 			lastfm.track.updateNowPlaying(opts);
-	// 			nowplaying_updated = true;
-	// 		}
-	// 	}
-	// }
 
 	function setTheText(info) {
 		var stuff = mungeplaylistinfo(info);
@@ -450,6 +409,14 @@ var infobar = function() {
 								break;
 						}
 					}
+				},
+
+				flash: function(state) {
+					if (state) {
+						$("i.play-button").makeFlasher();
+					} else {
+						$("i.play-button").stopFlasher();
+					}
 				}
 			}
 		}(),
@@ -562,8 +529,6 @@ var infobar = function() {
 		},
 
 		stopped: function() {
-			// scrobbled = false;
-			// nowplaying_updated = false;
 			playcount_incremented = false;
 		},
 

@@ -6,7 +6,9 @@
 * This version introduces the [RompR Backend Daemon](/Backend-Daemon) which replaces romonitor and is now a requirement.
 The Daemon performs some tasks that are better not left to the browser. It requires a POSIX operating system
 and therefore RompR is no longer supported on Windows. RompR will, on most systems, start this daemon itself so you
-shouldn't need to do anything *except* if you were previously running romonitor, in which case **must** read the link above.
+shouldn't need to do anything *except* if you were previously running romonitor, in which case you **must** read the link above.
+* Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin.
+As a result of this change though, you will need to recreate any Alarms you had previously configured.
 * Fix bug where album art might be partially downloaded when using MPD (Fix contributed by corubba)
 * The usual collection of undocumented bugfixes.
 * Make the SQLite collection case-insensitive, which makes it work the same way as MySQL and means I can remove a lot of

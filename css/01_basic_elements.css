@@ -247,7 +247,7 @@ option
     color: black;
 }
 
-input[type="text"],input[type="number"]
+input[type="text"],input[type="number"],input[type="time"]
 {
     color: var(--text-entry-text-colour) !important;
     transition: all 0.5s ease;
@@ -255,17 +255,24 @@ input[type="text"],input[type="number"]
     border-bottom: 1px solid  var(--text-entry-border-colour) !important;
 }
 
-input[type="text"]:hover,input[type="number"]:hover
+input[type="text"]:hover,input[type="number"]:hover,input[type="time"]:hover
 {
     transition: all 0.5s ease;
     background-color: var(--text-entry-hover-bg-colour) !important;
     border-bottom: 1px solid var(--text-entry-hover-border-colour) !important;
 }
 
-input[type="text"]:focus,input[type="number"]:focus,input[type="text"]:focus-visible,input[type="number"]:focus-visible
+input[type="text"]:focus,input[type="number"]:focus,input[type="time"]:focus,input[type="text"]:focus-visible,input[type="number"]:focus-visible,input[type="time"]:focus-visible
 {
     transition: all 0.5s ease;
     background-color: var(--text-entry-active-bg-colour) !important;
     border-bottom:1px solid var(--text-entry-active-border-colour) !important;
     outline: none;
+}
+/* Chrome really makes these look awful, but this helps */
+input[type="time"]
+{
+	border-right:  none;
+	border-left:  none;
+	border-top:  none;
 }

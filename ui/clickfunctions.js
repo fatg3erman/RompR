@@ -330,6 +330,7 @@ function bindClickHandlers() {
 	$('#bookmark').on('click', bookmarkAdder.show);
 	$('.close-bookmark').on('click', bookmarkAdder.close);
 	$(document).on('click', ".clickaddtoplaylist", addToPlaylist.close);
+	$(document).on('change', ".saveotron", prefs.saveTextBoxes);
 	$(document).on('keyup', ".saveotron", prefs.saveTextBoxes);
 	$(document).on('change', ".saveomatic", prefs.saveSelectBoxes);
 	$('.clickreplaygain').on('click', player.controller.replayGain);

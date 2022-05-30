@@ -9,6 +9,7 @@ if (is_array($opts)) {
 	}
 }
 logger::mark("SLEEPTIMER", "Using Player",prefs::$prefs['currenthost']);
+logger::log('SLEEPTIMER', 'Sleeping for',format_time(prefs::$prefs['sleeptime']));
 
 sleep((int) prefs::$prefs['sleeptime']);
 
@@ -19,15 +20,19 @@ $player = new player();
 $mpd_status = $player->do_command_list(['status']);
 $volume = $mpd_status['volume'];
 
+prefs::$database = new timers();
 if ($mpd_status['state'] == 'play') {
 	$player->ramp_volume($volume, 0, 60);
+	// Mark the timer as finished. The UI will react to the state change
+	// callback when we pause it, which will mark the timer as not running.
+	prefs::$database->sleep_timer_finished();
 	$player->do_command_list(['pause']);
 	sleep(1);
 	$player->do_command_list(['setvol '.$volume]);
+} else {
+	prefs::$database->sleep_timer_finished();
 }
 
-prefs::$database = new timers();
-prefs::$database->sleep_timer_finished(prefs::$prefs['currenthost']);
 prefs::$database->close_database();
 
 ?>

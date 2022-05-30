@@ -14,6 +14,17 @@ class base_mpd_player {
 	public $to_browse;
 	private $mpd_version = null;
 
+	protected $mpd_status;
+	protected $moveallto;
+	protected $current_playlist_length;
+	protected $do_resume_seek;
+	protected $do_resume_seek_id;
+	protected $playlist_movefrom;
+	protected $playlist_moveto;
+	protected $playlist_moving_within;
+	protected $playlist_tracksadded;
+	protected $expected_state;
+
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_remote = null) {
 		$this->debug_id = microtime();
 		if ($ip !== null) {
@@ -960,33 +971,334 @@ class base_mpd_player {
 		}
 	}
 
-	private function get_status_value($status) {
+	public function get_status_value($status) {
 		$mpd_status = $this->do_command_list(['status']);
 		return array_key_exists($status, $mpd_status) ? $mpd_status[$status] : null;
 	}
 
-	private function calculate_ramp_time($volume, $seconds) {
-		// MPD/Mopidy will only accept integer values for volume so we can only decrement by 1 each time
-		// But we want it to take 60 seconds.
-		$sleep = $seconds/$volume;
+	private function calculate_ramp($volume, $seconds) {
+		// MPD/Mopidy will only accept integer values for volume.
+		// But we want it to take a specific number of seconds so we need to
+		// calculate a delay time between calls to setvol.
+		// We also want to make sure that the sleep time isn't ridiculously short
+		// so this may mean our volume steps are bigger than 1
+		$inc = 1;
+		while (($sleep = $seconds/$volume) < 0.1) {
+			$inc = $inc * 2;
+			$seconds = $seconds * 2;
+		}
 		// sleep() only accepts integers and usleep() may not work with very large numbers
 		// hence we're going to use both.
 		$sleep_seconds = floor($sleep);
 		$sleep_microseconds = ($sleep - $sleep_seconds) * 1000000;
-		return array($sleep_seconds, $sleep_microseconds);
+		return array($sleep_seconds, $sleep_microseconds, $inc);
 	}
 
 	public function ramp_volume($start, $end, $seconds) {
 		$start = intval($start);
 		$end = intval($end);
-		if ($start == $end) return;
-		$inc = ($start > $end) ? -1 : 1;
-		list($sleep_seconds, $sleep_microseconds) = $this->calculate_ramp_time(abs($start - $end), $seconds);
+		if ($seconds == 0 || $start == $end) {
+			$this->do_command_list(['setvol '.$end]);
+			return;
+		}
+		list($seconds, $microseconds, $inc) = $this->calculate_ramp(abs($start - $end), $seconds);
+		$inc = ($start > $end) ? (0 - $inc) : $inc;
 		$this->do_command_list(['setvol '.$start]);
 		while (($volume = $this->get_status_value('volume')) != $end) {
-			$this->do_command_list(['setvol '.($volume + $inc)]);
-			sleep($sleep_seconds);
-			usleep($sleep_microseconds);
+			$newvol = $volume + $inc;
+			if ($inc < 0 && $newvol < $end) {
+				$newvol = $end;
+			} else if ($inc > 0 && $newvol > $end) {
+				$newvol = $end;
+			}
+			$this->do_command_list(['setvol '.$newvol]);
+			sleep($seconds);
+			usleep($microseconds);
+		}
+	}
+
+	public function rompr_commands_to_mpd($json) {
+
+		// For this method, prefs::$database needs to be a music_loader()
+		// This also calls methods from mopidy / mpd player, so it needs to be
+		// called in the context of a new player() not a new base_mpd_player()
+
+		$this->mpd_status = [];
+		$this->moveallto = null;
+		$this->current_playlist_length = 0;
+		$this->do_resume_seek = false;
+		$this->do_resume_seek_id = false;
+		$this->playlist_movefrom = null;
+		$this->playlist_moveto = null;
+		$this->playlist_moving_within = null;
+		$this->playlist_tracksadded = 0;
+		$this->expected_state = null;
+
+		$cmds = $this->translate_rompr_commands($json);
+
+		//
+		// If we added tracks to a STORED playlist, move them into the correct position
+		//
+
+		while ($this->playlist_tracksadded > 0 && $this->playlist_movefrom !== null && $this->playlist_moveto !== null) {
+			$cmds[] = join_command_string(array('playlistmove', $this->playlist_moving_within, $this->playlist_movefrom, $this->playlist_moveto));
+			$this->playlist_moveto++;
+			$this->playlist_movefrom++;
+			$this->playlist_trackadded--;
+		}
+
+		//
+		// Send the command list to mpd
+		//
+
+		$cmd_status = $this->do_command_list($cmds);
+
+		//
+		// If we added tracks to the play queue, move them into position if we need to
+		//
+
+		if ($this->moveallto !== null) {
+			logger::trace("MPD", "Moving Tracks into position");
+			$temp_status = $this->get_status();
+			$new_playlist_length = $temp_status['playlistlength'];
+			$this->do_command_list(array(join_command_string(array('move', $this->current_playlist_length.':'.$new_playlist_length, $this->moveallto))));
+		}
+
+		//
+		// Wait for the player to start playback if that's what it's supposed to be doing
+		//
+
+		$this->wait_for_state($this->expected_state);
+
+		//
+		// Work around mopidy play/seek command list bug
+		//
+
+		if ($this->do_resume_seek !== false) {
+			$this->do_command_list(array(join_command_string(array('seek', $this->do_resume_seek[0], $this->do_resume_seek[1]))));
+		}
+		if ($this->do_resume_seek_id !== false) {
+			$this->do_command_list(array(join_command_string(array('seekid', $this->do_resume_seek_id[0], $this->do_resume_seek_id[1]))));
+		}
+
+		//
+		// Query mpd's status
+		//
+
+		$this->mpd_status = $this->get_status();
+		$this->mpd_status['consume'] = $this->get_consume($this->mpd_status['consume']);
+
+		//
+		// If we got an error from the command list and NOT from 'status',
+		// make sure we report the command list error back
+		//
+
+		if (is_array($cmd_status) && !array_key_exists('error', $this->mpd_status) && array_key_exists('error', $cmd_status)) {
+			logger::warn("POSTCOMMAND", "Command List Error",$cmd_status['error']);
+			$this->mpd_status = array_merge($this->mpd_status, $cmd_status);
+		}
+
+		//
+		// Add current song and replay gain status to mpd_status
+		// We use currentsong for streams. It is NOT merged with database data as the playlist data is
+		// so should not be used for metadata at any other point except for filename.
+		//
+
+		if (array_key_exists('song', $this->mpd_status) && !array_key_exists('error', $this->mpd_status)) {
+			$songinfo = $this->get_current_song();
+			if (is_array($songinfo)) {
+				$this->mpd_status = array_merge($this->mpd_status, $songinfo);
+			}
+		}
+
+		$this->mpd_status = array_merge($this->mpd_status, $this->get_replay_gain_state());
+
+		//
+		// Clear any player error now we've caught it
+		//
+
+		if (array_key_exists('error', $this->mpd_status)) {
+			logger::trace("MPD", "Clearing Player Error ".$this->mpd_status['error']);
+			$this->clear_error();
+		}
+
+		//
+		// Disable 'single' if we're stopped or paused (single is used for 'Stop After Current Track')
+		//
+
+		if (array_key_exists('single', $this->mpd_status) && $this->mpd_status['single'] == 1 && array_key_exists('state', $this->mpd_status) &&
+				($this->mpd_status['state'] == "pause" || $this->mpd_status['state'] == "stop")) {
+			logger::trace("MPD", "Cancelling Single Mode");
+			$this->cancel_single_quietly();
+			$this->mpd_status['single'] = 0;
+		}
+
+		//
+		// Format any error message more nicely
+		//
+
+		if (array_key_exists('error', $this->mpd_status)) {
+			$this->mpd_status['error'] = preg_replace('/ACK \[.*?\]\s*/','',$this->mpd_status['error']);
+		}
+
+		return $this->mpd_status;
+
+	}
+
+	private function translate_rompr_commands($json) {
+
+		$cmds = array();
+
+		if (!$json) return $cmds;
+
+		foreach ($json as $cmd) {
+
+			logger::debug("POSTCOMMAND", "RAW command : ".multi_implode($cmd, " "));
+
+			switch ($cmd[0]) {
+				case "addtoend":
+					logger::log("POSTCOMMAND", "Addtoend ".$cmd[1]);
+					$cmds = array_merge($cmds, prefs::$database->playAlbumFromTrack($cmd[1]));
+					break;
+
+				case 'playlisttoend':
+					logger::log("POSTCOMMAND", "Playing playlist ".$cmd[1]." from position ".$cmd[2]." to end");
+					foreach($this->get_stored_playlist_tracks($cmd[1], $cmd[2]) as list($class, $uri, $filedata)) {
+						if ($class == 'clicktrack') {
+							$cmds[] = 'add "'.$uri.'"';
+						} else {
+							$cmds[] = 'load "'.$uri.'"';
+						}
+					}
+					break;
+
+				case "additem":
+					logger::log("POSTCOMMAND", "Adding Item ".$cmd[1]);
+					$cmds = array_merge($cmds, prefs::$database->getItemsToAdd($cmd[1], null));
+					break;
+
+				case "loadstreamplaylist":
+					require_once ("player/".prefs::$prefs['player_backend']."/streamplaylisthandler.php");
+					$cmds = array_merge($cmds, internetPlaylist::load_internet_playlist($cmd[1], $cmd[2], $cmd[3]));
+					break;
+
+				case "addremoteplaylist":
+					logger::log("POSTCOMMAND", "Remote Playlist URL is",$cmd[1]);
+					// First, see if we can just 'load' the remote playlist. This is better with MPD
+					// as it parses track names from the playlist
+					if ($this->check_track_load_command($cmd[1]) == 'load') {
+						logger::trace("POSTCOMMAND", "Loading remote playlist");
+						$cmds[] = join_command_string(array('load', $cmd[1]));
+					} else {
+						// Always use the MPD version of the stream playlist handler, since that parses
+						// all tracks (Mopidy's version doesn't because we use Mopidy's playlist parser instead).
+						// Perversely, we need to use this because we can't use 'load' on a remote playlist with Mopidy,
+						// and 'add' only adds the first track. As user remtote playlists can have multiple types of
+						// thing in them, including streams, we need to 'add' every track - unless we're using mpd and
+						// the 'track' is a playlist we need to load..... Crikey.
+						logger::trace("POSTCOMMAND", "Adding remote playlist (track by track)");
+						require_once ("player/mpd/streamplaylisthandler.php");
+						$tracks = internetPlaylist::load_internet_playlist($cmd[1], '', '', true);
+						foreach ($tracks as $track) {
+							$cmd = $this->check_track_load_command($track['TrackUri']);
+							$cmds[] = join_command_string(array($cmd, $track['TrackUri']));
+						}
+					}
+					break;
+
+				case "rename":
+					$oldimage = new albumImage(array('artist' => 'PLAYLIST', 'album' => $cmd[1]));
+					$oldimage->change_name($cmd[2]);
+					$cmds[] = join_command_string($cmd);
+					break;
+
+				case "playlistadd":
+					if (preg_match('/^(a|b|r|t|y|u|z)(.*?)(\d+|root)/', $cmd[2])) {
+						// Add a whole album/artist
+						$lengthnow = count($cmds);
+						$cmds = array_merge($cmds, prefs::$database->getItemsToAdd($cmd[2], $cmd[0].' "'.format_for_mpd($cmd[1]).'"'));
+						$this->check_playlist_add_move($cmd, (count($cmds) - $lengthnow));
+					} else {
+						logger::trace('POSTCOMMAND',$cmd[0], $cmd[1], $cmd[2]);
+						$cmds[] = join_command_string(array($cmd[0], $cmd[1], $cmd[2]));
+						$this->check_playlist_add_move($cmd, 1);
+					}
+					break;
+
+				case "playlistmove":
+					// Expects playlistname, then arrays of from and to
+					foreach ($cmd[2] as $i => $v) {
+						$cmds[] = join_command_string(array($cmd[0], $cmd[1], $v, $cmd[3][$i]));
+					}
+					break;
+
+				case "moveallto":
+					$this->moveallto = $cmd[1];
+					$temp_status = $this->get_status();
+					if (array_key_exists('playlistlength', $temp_status)) {
+						$this->current_playlist_length = $temp_status['playlistlength'];
+					}
+					break;
+
+				case "playlistadddir":
+					$thing = array('searchaddpl',$cmd[1],'base',$cmd[2]);
+					$cmds[] = join_command_string($thing);
+					break;
+
+				case "resume":
+					logger::log("POSTCOMMAND", "Adding Track ".$cmd[1]);
+					logger::log("POSTCOMMAND", "  .. and seeking position ".$cmd[3]." to ".$cmd[2]);
+					if ($cmd[4] == 'yes') {
+						logger::log('POSTCOMMAND', "  .. CD player mode was also requested");
+						$cmds = array_merge($cmds, prefs::$database->playAlbumFromTrack($cmd[1]));
+					} else {
+						$cmds[] = join_command_string(array('add', $cmd[1]));
+					}
+					$cmds[] = join_command_string(array('play', $cmd[3]));
+					$this->expected_state = 'play';
+					$this->do_resume_seek = array($cmd[3], $cmd[2]);
+					break;
+
+				case "seekpodcast":
+					$this->expected_state = 'play';
+					$this->do_resume_seek_id = array($cmd[1], $cmd[2]);
+					break;
+
+				case 'save':
+				case 'rm':
+				case "load":
+					$cmds[] = join_command_string($cmd);
+					break;
+
+				case "clear":
+					$cmds[] = join_command_string($cmd);
+					break;
+
+				case "consume":
+					if ($this->toggle_consume($cmd[1])) {
+						$cmds[] = join_command_string($cmd);
+					}
+					break;
+
+				case "play":
+				case "playid":
+					$this->expected_state = 'play';
+					// Fall through
+				default:
+					$cmds[] = join_command_string($cmd);
+					break;
+			}
+		}
+
+		return $cmds;
+	}
+
+	private function check_playlist_add_move($cmd, $incvalue) {
+		if ($cmd[3] == 0 || $cmd[3]) {
+			if ($this->playlist_moving_within === null) $this->playlist_moving_within = $cmd[1];
+			if ($this->playlist_movefrom === null) $this->playlist_movefrom = $cmd[4];
+			if ($this->playlist_moveto === null) $this->playlist_moveto = $cmd[3];
+			$this->playlist_tracksadded += $incvalue;
 		}
 	}
 

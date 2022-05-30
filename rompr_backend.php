@@ -111,10 +111,6 @@ function check_lastfm_sync() {
                 logger::log('LASTFM-SYNC', 'No Tracks in page',$page);
                 $page = 0;
             } else {
-
-                // logger::log('DAEMON', print_r($tracks, true));
-
-
                 foreach ($tracks as $track) {
                     try {
                         if (array_key_exists('date', $track)) {
@@ -136,6 +132,9 @@ function check_lastfm_sync() {
 
                     }
                 }
+                // You'd think we could just loop until we get a page with no results
+                // but it doesn't always work that way - if you have a track that is nowplaying,
+                // incrementing the page counter just keeps returning that track for every page.
                 if (count($tracks) < LASTFM_TRACKS_PER_PAGE) {
                     $page = 0;
                 } else {

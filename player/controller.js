@@ -118,6 +118,7 @@ function playerController() {
 			});
 			// Clone the object so this thread can exit
 			debug.debug('PLAYER', 'Got response for',list,s);
+			let last_state = player.status.state;
 			player.status = cloneObject(s);
 			['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
 				debug.core('PLAYER', e, player.status[e]);
@@ -137,7 +138,8 @@ function playerController() {
 			} else {
 				playlist.validate();
 			}
-			checkStateChange();
+			if (last_state != player.status.state)
+				checkStateChange();
 			infobar.updateWindowValues();
 		} catch (err) {
 			playlist.validate();
@@ -149,26 +151,20 @@ function playerController() {
 	}
 
 	this.addStateChangeCallback = function(sc) {
-		if (player.status.state == sc.state) {
-			sc.callback();
-		} else {
-			stateChangeCallbacks.push(sc);
+		for (var i = 0; i < stateChangeCallbacks.length; i++) {
+			if (stateChangeCallbacks[i].state == sc.state && stateChangeCallbacks[i].callback == sc.callback) {
+				return;
+			}
 		}
+		stateChangeCallbacks.push(sc);
 	}
 
 	function checkStateChange() {
-		for (var i = 0; i < stateChangeCallbacks.length ; i++) {
+		debug.log('PLAYER', 'State Change Check. State is',player.status.state,'Elapsed is',player.status.elapsed);
+		for (var i = 0; i < stateChangeCallbacks.length; i++) {
 			if (stateChangeCallbacks[i].state == player.status.state) {
-				// If we're looking for a state change to play, check that elapsed > 5. This works around Mopidy's
-				// buffering issue where playback can take a long time to start with streams and ends up starting a
-				// long time after we've started ramping the alarm clock volume
-				debug.log('PLAYER', 'State Change Check. State is',player.status.state,'Elapsed is',player.status.elapsed);
-				if (player.status.state != 'play' || player.status.elapsed > 5) {
-					debug.info('PLAYER', 'Calling state change callback for state',player.status.state);
-					stateChangeCallbacks[i].callback();
-					stateChangeCallbacks.splice(i, 1);
-					i--;
-				}
+				debug.info('PLAYER', 'Calling state change callback for state',player.status.state);
+				stateChangeCallbacks[i].callback();
 			}
 		}
 	}
@@ -329,11 +325,13 @@ function playerController() {
 	}
 
 	this.pause = function() {
+		alarmclock.pre_pause_actions();
 		self.do_command_list([['pause']]);
 	}
 
 	this.stop = function() {
 		playlist.checkPodcastProgress();
+		alarmclock.pre_stop_actions();
 		self.do_command_list([["stop"]]);
 	}
 
@@ -415,7 +413,7 @@ function playerController() {
 		await self.do_command_list([["repeat",0],["random", 0],["consume", 1]]);
 	}
 
-	this.addTracks = async function(tracks, playpos, at_pos, queue) {
+	this.addTracks = async function(tracks, playpos, at_pos, queue, return_cmds) {
 		// Call into this to add items to the play queue.
 		// tracks  : list of things to add
 		// playpos : position to start playback from after adding items or null
@@ -490,6 +488,12 @@ function playerController() {
 					break;
 			}
 		});
+
+		// Used by alarm clock. Need to return here as we don't
+		// know what playpos is going to be when the alarm goes off
+		if (return_cmds)
+			return cmdlist;
+
 		if (abitofahack && !queue_track) {
 			cmdlist.push(['play']);
 		} else if (playpos !== null) {

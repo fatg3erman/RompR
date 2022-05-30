@@ -414,16 +414,22 @@ var uiHelper = function() {
 			}
 		},
 
-		makeDropHolder: function(name, d, dontsteal, withscroll) {
+		makeDropHolder: function(name, d, dontsteal, withscroll, wide) {
 			try {
-				return layoutProcessor.makeDropHolder(name);
+				return layoutProcessor.makeDropHolder(name, d, dontsteal, withscroll, wide);
 			} catch (err) {
-				var c = 'top_drop_menu dropshadow rightmenu normalmenu stayopen';
+				var c = 'top_drop_menu dropshadow rightmenu stayopen';
 				if (dontsteal)
 					c += ' dontstealmyclicks';
 
 				if (!withscroll)
 					c += ' noscroll';
+
+				if (wide) {
+					c += ' widemenu';
+				} else {
+					c += ' normalmenu';
+				}
 
 				return $('<div>', {class: c, id: name}).appendTo(d);
 			}
