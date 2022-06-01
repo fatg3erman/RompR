@@ -203,13 +203,13 @@ class timers extends database {
 		$this->sql_prepare_query(true, null, null, null,
 			$command, array_values($alarm)
 		);
-		// This is safe to do here only because we don't allow alarms to be edited
-		// while they're running.
-		if ($current_state['Pid'] !== null) {
+
+		if ($alarm['Alarmindex'] == 'NEW') {
+			$alarm['Alarmindex'] = $this->mysqlc->lastInsertId();
+			$this->toggle_alarm($alarm['Alarmindex'], 1);
+		} else if ($current_state['Pid'] !== null) {
 			$this->toggle_alarm($alarm['Alarmindex'], 0);
 		}
-		// I think if we've just edited it we probably want to enable it as well?
-		$this->toggle_alarm($alarm['Alarmindex'], 1);
 	}
 
 	public function mark_alarm_running($alarmindex, $running) {

@@ -912,10 +912,11 @@ function check_backend_daemon() {
 				kill_process($pid);
 			}
 			start_process($b);
-		    sleep(5);
+		    sleep(3);
 			if (get_pid($b) === false) {
 				backend_init_fail();
 			}
+			prefs::load();
 			if (prefs::$prefs['backend_version'] != $version_string) {
 				backend_version_fail();
 			}

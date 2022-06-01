@@ -544,7 +544,7 @@ var layoutProcessor = function() {
 				$('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
 				$('#'+$(this).attr('name')).slideToggle('fast');
 			});
-			$('.autohide').on('click', function() {
+			$('.autohide').not('.notonclick').on('click', function() {
 				$(this).slideToggle('fast');
 			});
 			$('#choose_history').on('click', showHistory);
@@ -597,7 +597,7 @@ var layoutProcessor = function() {
 		},
 
 		makeDropHolder: function(name, d, dontsteal, withscroll, wide) {
-			return $('<div>', {class: 'top_drop_menu widemenu rightmenu dropshadow autohide', 'id': name}).appendTo($('#sourcescontrols'));
+			return $('<div>', {class: 'top_drop_menu widemenu rightmenu dropshadow autohide notonclick', 'id': name}).appendTo($('#sourcescontrols'));
 		}
 
 	}

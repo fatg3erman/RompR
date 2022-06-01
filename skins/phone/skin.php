@@ -296,7 +296,7 @@
 		<i class="choosepanel onlywide icon-audiobook topimg expand" name="audiobooklist"></i>
 		<i class="choosepanel onlywide icon-doc-text topimg expand spinable" name="playlistman"></i>
 		<i class="choosepanel icon-wifi topimg expand" name="pluginplaylistholder"></i>
-		<div id="pluginicons" class="onlyverywide containerbox expandabit">
+		<div id="pluginicons" class="onlywide containerbox expandabit">
 		</div>
 		<i class="icon-volume-up topimg expand topbarmenu" name="volumedropper"></i>
 		<i class="icon-doc-text topimg choosepanel expand" name="playlistm"></i>
