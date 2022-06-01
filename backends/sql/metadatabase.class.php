@@ -2,7 +2,9 @@
 
 require_once ('getid3/getid3.php');
 
-class metaDatabase extends collection_base {
+// Extend playlistCollection because it makes romonitor much neater.
+
+class metaDatabase extends playlistCollection {
 
 	public $returninfo = [ 'dummy' => 'baby' ];
 
@@ -21,15 +23,15 @@ class metaDatabase extends collection_base {
 
 		$data = array_replace(MPD_FILE_MODEL, ROMPR_FILE_MODEL, $data);
 		if ($data['albumartist'] === null) {
-			logger::warn('METADATA', 'WARNING : albumartist is not set!');
+			logger::core('METADATA', 'WARNING : albumartist is not set!');
 			$data['albumartist'] = $data['trackartist'];
 		}
 		if ($data['Disc'] === null) {
-			logger::warn('METADATA', 'WARNING : Disc is not set!');
+			logger::core('METADATA', 'WARNING : Disc is not set!');
 			$data['Disc'] = 1;
 		}
 		if ($data['Genre'] === null) {
-			logger::warn('METADATA', 'WARNING : Genre is not set!');
+			logger::core('METADATA', 'WARNING : Genre is not set!');
 			$data['Genre'] = 'None';
 		}
 		if ($data['X-AlbumImage'] && substr($data['X-AlbumImage'],0,4) == "http") {
@@ -46,7 +48,7 @@ class metaDatabase extends collection_base {
 		if ($data['year'] && !preg_match('/^\d\d\d\d$/', $data['year'])) {
 			// If this has come from something like an 'Add Spotify Album To Collection' the year tag won't
 			// exist but the Date tag might.
-			logger::log('METADATA', 'Year is not a 4 digit year, analyzing Date field instead');
+			logger::core('METADATA', 'Year is not a 4 digit year, analyzing Date field instead');
 			$data['year'] = getYear($data['Date']);
 		}
 		// Very Important. The default in MPD_FILE_MODEL is 0 because that works for collection building
@@ -301,7 +303,7 @@ class metaDatabase extends collection_base {
 		}
 	}
 
-	public function get($data) {
+	public function get($data, $item = false) {
 
 		//
 		// Get all matadata for a track
@@ -319,6 +321,8 @@ class metaDatabase extends collection_base {
 		} else {
 			$this->returninfo = self::NODATA;
 		}
+		if ($item !== false)
+			return array_key_exists($item, $this->returninfo) ? $this->returninfo[$item] : 0;
 	}
 
 	public function setalbummbid($data) {
@@ -434,14 +438,15 @@ class metaDatabase extends collection_base {
 		return $ttids;
 	}
 
-	private function print_debug_ttids($ttids, $s) {
-		$time = time() - $s;
+	private function print_debug_ttids($ttids) {
 		if (count($ttids) > 0) {
-			logger::info("TIMINGS", "    Found TTindex(es)",$ttids,"in",$time,"seconds");
+			logger::info("TIMINGS", "  Found TTindex",implode(',', $ttids));
+		} else {
+			logger::info("TIMINGS", "  Did not find a match");
 		}
 	}
 
-	private function find_item($data,$urionly) {
+	private function find_item($data, $urionly) {
 
 		// $this->find_item
 		//		Looks for a track in the database based on uri, title, artist, album, and albumartist or
@@ -478,7 +483,7 @@ class metaDatabase extends collection_base {
 		// doesn't fix this because the collection display still doesn't show the rating as that's
 		// looked up by TTindex
 
-		$start_time = time();
+		// $start_time = time();
 		logger::mark("FIND ITEM", "Looking for item ".$data['Title']);
 		$ttids = array();
 
@@ -489,7 +494,7 @@ class metaDatabase extends collection_base {
 		}
 
 		if ($data['trackartist'] == null || $data['Title'] == null || ($urionly && $data['file'])) {
-			$this->print_debug_ttids($ttids, $start_time);
+			$this->print_debug_ttids($ttids);
 			return $ttids;
 		}
 
@@ -596,7 +601,7 @@ class metaDatabase extends collection_base {
 			$ttids = array_merge($ttids, $t);
 		}
 
-		$this->print_debug_ttids($ttids, $start_time);
+		$this->print_debug_ttids($ttids);
 		return $ttids;
 	}
 

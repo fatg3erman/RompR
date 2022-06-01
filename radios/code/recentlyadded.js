@@ -1,43 +1,34 @@
 var recentlyaddedtracks = function() {
 
+	var mode;
 	var param;
-	var whattodo;
-	var tracks;
 
 	return {
 
-		initialise: async function(p) {
+		initialise: async function(m, p) {
+			mode = m;
 			param = p;
-			tracks = new Array();
-			whattodo = 'getplaylist';
+			return true;
 		},
 
 		getURIs: async function(numtracks) {
-			while (tracks.length < numtracks) {
-				try {
-					var t = await $.ajax({
-						url: "radios/api/starRadios.php",
-						type: "POST",
-						contentType: false,
-						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: prefs.smartradio_chunksize}]),
-						dataType: 'json'
-					});
-					tracks = tracks.concat(t);
-				} catch(err) {
-					debug.error('RECENTLYADDED', 'Error getting tracks',err);
-					return false;
-				}
+			try {
+				var t = await $.ajax({
+					url: "radios/api/starRadios.php",
+					type: "POST",
+					contentType: false,
+					data: JSON.stringify({radiomode: mode, radioparam: param}),
+					dataType: 'json'
+				});
+			} catch(err) {
+				debug.error('STARRADIOS', 'Error getting tracks',err);
+				return false;
 			}
-			whattodo = 'repopulate';
-			return tracks.splice(0, numtracks);
+			return true;
 		},
 
 		modeHtml: function() {
 			return '<i class="icon-recentlyplayed modeimg"></i><span class="alignmid bold">'+language.gettext("label_"+param)+'</span>&nbsp;';
-		},
-
-		stop: function() {
-
 		}
 
 	}

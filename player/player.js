@@ -78,8 +78,7 @@ var player = function() {
 					newhosts[i].radioparams = {
 						radiomode: '',
 						radioparam: '',
-						radiomaster: '',
-						radioconsume: 0
+						radioconsume: []
 					}
 				}
 			}

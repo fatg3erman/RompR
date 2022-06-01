@@ -1,43 +1,34 @@
 var mostPlayed = function() {
 
+	var mode;
 	var param;
-	var whattodo;
-	var tracks;
 
 	return {
 
-		initialise: async function(p) {
+		initialise: async function(m, p) {
+			mode = m;
 			param = p;
-			whattodo = 'getplaylist';
-			tracks = new Array();
+			return true;
 		},
 
 		getURIs: async function(numtracks) {
-			while (tracks.length < numtracks) {
-				try {
-					var t = await $.ajax({
-						url: "radios/api/starRadios.php",
-						type: "POST",
-						contentType: false,
-						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: prefs.smartradio_chunksize}]),
-						dataType: 'json'
-					});
-					tracks = tracks.concat(t);
-				} catch(err) {
-					debug.error('STARRADIOS', 'Error getting tracks',err);
-					return false;
-				}
+			try {
+				var t = await $.ajax({
+					url: "radios/api/starRadios.php",
+					type: "POST",
+					contentType: false,
+					data: JSON.stringify({radiomode: mode, radioparam: param}),
+					dataType: 'json'
+				});
+			} catch(err) {
+				debug.error('STARRADIOS', 'Error getting tracks',err);
+				return false;
 			}
-			whattodo = 'repopulate';
-			return tracks.splice(0, numtracks);
+			return true;
 		},
 
 		modeHtml: function(p) {
 			return '<i class="icon-music modeimg"></i><span class="alignmid bold">'+language.gettext("label_mostplayed")+'</span>&nbsp;';
-		},
-
-		stop: function() {
-
 		}
 
 	}

@@ -65,50 +65,7 @@ var playlist = function() {
 		var radios = new Object();
 		var this_radio = '';
 		var this_param = null;
-		var status_check_timer;
-
-		async function runPlaylist(my_radio, my_param) {
-			debug.mark("RADIO MANAGER","Running Playlist", my_radio, my_param);
-			debug.trace("RADIO MANAGER","prefs.radiomode is",prefs.radiomode);
-			debug.trace("RADIO MANAGER","prefs.radioparam is",prefs.radioparam);
-			debug.trace("RADIO MANAGER","prefs.browser_id is",prefs.browser_id);
-			debug.trace("RADIO MANAGER","prefs.radiomaster is",prefs.radiomaster);
-			while (my_radio == this_radio && my_param == this_param) {
-				await playlist.is_valid();
-				var fromend = playlist.getfinaltrack()+1;
-				if (currentTrack.Pos)
-					fromend -= currentTrack.Pos;
-
-				var tracksneeded = prefs.smartradio_chunksize - fromend;
-				debug.core('RADIOMANAGER', 'fromend',fromend);
-				debug.core('RADIOMANAGER', 'tracksneeded',tracksneeded);
-				debug.core('RADIOMANAGER', 'currentTrack',currentTrack);
-				if (tracksneeded > 2 && prefs.radiomaster != prefs.browser_id) {
-					debug.mark("RADIO MANAGER","Looks like master has gone away. Taking over");
-					prefs.save({radiomaster: prefs.browser_id});
-				}
-				var startpos = (tracksneeded == prefs.smartradio_chunksize) ? 0 : null;
-				if (tracksneeded > 0 && prefs.radiomaster == prefs.browser_id) {
-					var uris = await radios[my_radio].func.getURIs(tracksneeded);
-					debug.log('RADIOMANAGER', 'Tracks are',uris);
-					if (uris && uris.length > 0 && uris[0].name != 'NOTRACKS!') {
-						player.controller.addTracks(
-							uris,
-							startpos,
-							null,
-							true
-						);
-						startpos = null;
-					} else {
-						infobar.notify(language.gettext('label_gotnotracks'));
-						playlist.radioManager.stop();
-					}
-				}
-				await new Promise(t => setTimeout(t, 2000));
-			}
-			debug.mark("RADIO MANAGER","Exiting Playlist", my_radio, my_param);
-			radios[my_radio].func.stop();
-		}
+		// var status_check_timer;
 
 		function setHeader() {
 			var html = '';
@@ -154,74 +111,76 @@ var playlist = function() {
 				uiHelper.setupPersonalRadio();
 			},
 
-			load: async function(which, param, from_me) {
-				debug.core('RADIOMANAGER', which, param, from_me, this_radio, this_param);
-				if (which == '' || (which == this_radio && param == this_param)) {
-					return;
-				}
-				if (prefs.debug_enabled > 0) {
-					infobar.longnotify(language.gettext('warning_smart_debug'));
-				}
-				this_radio = which;
-				this_param = param;
-				// Wait for prefs to be saved to the backend otherwise we can get out of sync
-				// and the player resets our internal state to their previous values
-				await prefs.save({radiomode: which, radioparam: param});
-				if (!from_me) {
-					prefs.save({
-						radioconsume: JSON.stringify(
-							[['consume', player.status.consume], ['repeat', player.status.repeat], ['random', player.status.random]]
-						),
-						radiomaster: prefs.browser_id
-					});
-					await player.controller.takeBackControl();
-					player.controller.clearPlaylist();
-				}
-				infobar.smartradio(language.gettext('label_preparing'));
-				playlist.preventControlClicks(false);
-				if (radios[which].script && radios[which].loaded == false) {
-					debug.info("RADIO MANAGER","Loading Script",radios[which].script,"for",which);
-					try {
-						await $.getScript(radios[which].script+'?version='+rompr_version+Date.now());
-						radios[which].loaded = true;
-					} catch (err) {
-						debug.error("RADIO MANAGER","Failed to Load Script",err);
-						playlist.radioManager.stop();
-						infobar.error(language.gettext('label_general_error'));
+			// We call into here either:
+			// When we select a radio to play, in which case from_remote will be undefined
+			// When we pick up that somebody else has started one, in which case from_remote will be true
+			// We need to load and initiliase the manager script, if there is one, because we
+			// need it for moderHtml(), but if from_remote is true that's all we need it to do.
+			load: async function(radiomode, radioparam, from_remote) {
+				this_radio = radiomode;
+				this_param = radioparam;
+				if (radiomode != '') {
+					playlist.preventControlClicks(false);
+					if (radios[radiomode].script && radios[radiomode].loaded == false) {
+						debug.info("RADIO MANAGER","Loading Script",radios[radiomode].script,"for",radiomode);
+						try {
+							await $.getScript(radios[radiomode].script+'?version='+rompr_version+Date.now());
+							radios[radiomode].loaded = true;
+						} catch (err) {
+							debug.error("RADIO MANAGER","Failed to Load Script",err);
+							infobar.error(language.gettext('label_general_error'));
+						}
+					}
+					radios[radiomode].func.initialise(radiomode, radioparam);
+					if (!from_remote) {
+						// This is us, starting it off
+						infobar.smartradio(language.gettext('label_preparing'));
+						if (await radios[radiomode].func.getURIs()) {
+							setHeader();
+						} else {
+							debug.error("RADIO MANAGER","Failed to Initialise Script");
+							playlist.radioManager.stop();
+							infobar.error(language.gettext('label_general_error'));
+
+						}
 					}
 				}
-				var status = await radios[which].func.initialise(param);
-				if (status === false) {
-					debug.error("RADIO MANAGER","Failed to Initialise Script",err);
-					playlist.radioManager.stop();
-					infobar.error(language.gettext('label_general_error'));
-				} else {
+			},
+
+			checkStatus: async function() {
+				// clearTimeout(status_check_timer);
+				// status_check_timer = setTimeout(playlist.radioManager.checkRemoteChanges, 1000);
+				debug.log('RADIOMANAGER', 'Status Check',player.status.smartradio.radiomode, this_radio, player.status.smartradio.radioparam, this_param);
+				if (player.status.smartradio.radiomode != this_radio || player.status.smartradio.radioparam != this_param) {
+					await playlist.radioManager.load(player.status.smartradio.radiomode, player.status.smartradio.radioparam, true);
 					setHeader();
-					runPlaylist(which, param);
+					if (this_radio == '')
+						playlist.radiomanager.was_stopped();
 				}
 			},
 
-			checkStatus: function() {
-				clearTimeout(status_check_timer);
-				status_check_timer = setTimeout(playlist.radioManager.checkRemoteChanges, 1000);
-			},
+			// checkRemoteChanges: function() {
+			// 	if (player.status.smartradio.radiomode != this_radio || player.status.smartradio.radioparam != this_param) {
+			// 		playlist.radioManager.load(player.status.smartradio.radiomode, player.status.smartradio.radioparam, true);
+			// 		setHeader();
+			// 		if (this_radio == '')
+			// 			playlist.radiomanager.was_stopped();
+			// 	}
+			// },
 
-			checkRemoteChanges: function() {
-				if (prefs.radiomode == '' && this_radio != '') {
-					playlist.radioManager.stop();
-				}
-				playlist.radioManager.load(prefs.radiomode, prefs.radioparam, true);
-			},
-
+			// This is a user request to stop the smart radio and return to manual
 			stop: async function() {
 				debug.trace("RADIO MANAGER","Stopping");
-				// Dont' really need to do this here but it makes the UI more responsive
 				this_radio = '';
 				this_param = null;
-				setHeader();
 				await prefs.save({radiomode: '', radioparam: null});
-				await player.controller.do_command_list(JSON.parse(prefs.radioconsume));
+				await player.controller.do_command_list(player.status.smartradio.radioconsume);
+				playlist.radioManager.was_stopped();
+			},
+
+			was_stopped: function() {
 				playlist.preventControlClicks(true);
+				setHeader();
 			},
 
 			loadFromUiElement: function(element) {

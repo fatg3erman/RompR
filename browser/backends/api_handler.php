@@ -18,7 +18,7 @@ if (
 	$module::$method($params['params'], true);
 
 } else {
-	loger::warn('APIHANDLER', 'Bad Request', print_r($params, true));
+	logger::warn('APIHANDLER', 'Bad Request', print_r($params, true));
 	header('HTTP/1.1 400 Bad Request');
 }
 

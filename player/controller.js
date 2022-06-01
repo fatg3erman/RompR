@@ -120,10 +120,10 @@ function playerController() {
 			debug.debug('PLAYER', 'Got response for',list,s);
 			let last_state = player.status.state;
 			player.status = cloneObject(s);
-			['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
-				debug.core('PLAYER', e, player.status[e]);
-				prefs[e] = player.status[e];
-			});
+			// ['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
+			// 	debug.core('PLAYER', e, player.status[e]);
+			// 	prefs[e] = player.status[e];
+			// });
 			$('#radiodomains').makeDomainChooser("setSelection", player.status.mopidy_radio_domains);
 			if (player.status.songid != self.previoussongid) {
 				if (playlist.trackHasChanged(player.status.songid)) {
@@ -299,9 +299,11 @@ function playerController() {
 		);
 	}
 
-	this.clearPlaylist = function() {
+	this.clearPlaylist = async function() {
 		// Mopidy does not like removing tracks while they're playing
-		self.do_command_list([['stop'], ['clear']]);
+		if (player.status.state != 'stop')
+			await self.do_command_list([['stop']]);
+		await self.do_command_list([['clear']]);
 	}
 
 	this.savePlaylist = function() {
@@ -409,9 +411,9 @@ function playerController() {
 		self.do_command_list([["consume",new_value]]);
 	}
 
-	this.takeBackControl = async function(v) {
-		await self.do_command_list([["repeat",0],["random", 0],["consume", 1]]);
-	}
+	// this.takeBackControl = async function(v) {
+	// 	await self.do_command_list([["repeat",0],["random", 0],["consume", 1]]);
+	// }
 
 	this.addTracks = async function(tracks, playpos, at_pos, queue, return_cmds) {
 		// Call into this to add items to the play queue.

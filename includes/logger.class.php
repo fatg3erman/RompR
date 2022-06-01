@@ -38,7 +38,7 @@
 			8 => 'CORE '
 		);
 
-		private const FUNCTION_LENGTH = 25;
+		private const FUNCTION_LENGTH = 26;
 
 		public static function setLevel($level) {
 			self::$loglevel = intval($level);
@@ -55,10 +55,10 @@
 		private static function dothelogging($level, $parms) {
 			if ($level > self::$loglevel || $level < 1) return;
 			$module = array_shift($parms);
-			if (strlen($module) > 18) {
+			if (strlen($module) > 16) {
 				$in = ' ';
 			} else {
-				$in = str_repeat(" ", 18 - strlen($module));
+				$in = str_repeat(" ", 16 - strlen($module));
 			}
 			$pid = getmypid();
 			array_walk($parms, 'logger::un_array');

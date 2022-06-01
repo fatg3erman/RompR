@@ -19,10 +19,7 @@ if ($player->is_connected()) {
 }
 
 $p = prefs::$prefs['currenthost'];
-$mpd_status['radiomode'] = prefs::$prefs['multihosts'][$p]['radioparams']['radiomode'];
-$mpd_status['radioparam'] = prefs::$prefs['multihosts'][$p]['radioparams']['radioparam'];
-$mpd_status['radiomaster'] = prefs::$prefs['multihosts'][$p]['radioparams']['radiomaster'];
-$mpd_status['radioconsume'] = prefs::$prefs['multihosts'][$p]['radioparams']['radioconsume'];
+$mpd_status['smartradio'] = prefs::$prefs['multihosts'][$p]['radioparams'];
 $mpd_status['mopidy_radio_domains'] = prefs::$prefs['mopidy_radio_domains'];
 
 header('Content-Type: application/json');

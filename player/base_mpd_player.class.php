@@ -25,6 +25,9 @@ class base_mpd_player {
 	protected $playlist_tracksadded;
 	protected $expected_state;
 
+	private $current_status = [];
+	public $current_song = [];
+
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_remote = null) {
 		$this->debug_id = microtime();
 		if ($ip !== null) {
@@ -583,7 +586,10 @@ class base_mpd_player {
 	}
 
 	public function get_idle_status() {
-		return $this->do_mpd_command('idle player', true, false);
+		// If there's a smart playlist running we need to respond to playlist changed commands
+		// so we top up the tracklist when something is removed by a human
+		$command = (prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radiomode'] == '') ? 'idle player' : 'idle player playlist';
+		return $this->do_mpd_command($command, true, false);
 	}
 
 	public function dummy_command() {
@@ -595,15 +601,6 @@ class base_mpd_player {
 		foreach ($this->parse_list_output('playlistinfo', $dirs, false) as $filedata) {
 			yield $filedata;
 		}
-	}
-
-	public function get_currentsong_as_playlist() {
-		$dirs = array();
-		$retval = array();
-		foreach ($this->parse_list_output('currentsong', $dirs, false) as $filedata) {
-			$retval = $filedata;
-		}
-		return $retval;
 	}
 
 	public function get_uris_for_directory($path) {
@@ -1302,5 +1299,254 @@ class base_mpd_player {
 		}
 	}
 
+	public function prepare_smartradio() {
+		$status = $this->get_status();
+
+		// This should be in a state where it can be passed direct to do_command_list()
+		// via controller.js - whichever browser is used to stop the radio will set these back
+		prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radioconsume'] = [
+			['consume', $this->get_consume($status['consume'])],
+			['repeat', $status['repeat']],
+			['random', $status['random']]
+		];
+
+		prefs::save();
+
+		$this->do_command_list(['stop']);
+		$this->do_command_list(['clear']);
+		$this->do_command_list(['repeat 0']);
+		$this->do_command_list(['random 0']);
+		$this->toggle_consume(1);
+
+	}
+
+	//
+	// romonitor functions using Idle subsystem
+	//
+
+	public function idle_system_loop() {
+		$this->get_current_song_status();
+		while (true) {
+			while ($this->is_connected()) {
+				if ($this->is_error())
+					break;
+
+				// Sit in this loop until the player state changes
+				$timedout = false;
+				while (true) {
+					if ($timedout) {
+						$idle_status = $this->dummy_command();
+					} else {
+						$idle_status = $this->get_idle_status();
+					}
+					if (array_key_exists('error', $idle_status) && $idle_status['error'] == 'Timed Out') {
+						logger::mark(CURRENTHOST_SAVE, "Idle command timed out, looping back");
+						$timedout = true;
+						continue;
+					} else if (array_key_exists('error', $idle_status)) {
+						// Serious error. Try to reconnect.
+						break 2;
+					} else {
+						// Idle Subsystem has sent us something
+						break;
+					}
+				}
+
+				$this->check_idle_status($idle_status);
+
+			}
+			$this->close_mpd_connection();
+			logger::mark(CURRENTHOST_SAVE, "** Player connection dropped - retrying in 10 seconds **");
+			sleep(10);
+			$this->open_mpd_connection();
+		}
+		logger::error('ROMONITOR', 'How did we get here?');
+	}
+
+	private function get_currentsong_as_playlist() {
+		$dirs = array();
+		prefs::$database = new metaDatabase();
+		foreach ($this->parse_list_output('currentsong', $dirs, false) as $filedata) {
+			$this->current_song = prefs::$database->doNewPlaylistFile($filedata);
+		}
+		// Although doNewPlaylistFile does return a Playcount, it only does so for non-Hidden tracks
+		// and we don't really want to be messing around with get_extra_track_info() because that's
+		// used when doing a search and creating the tracklist and the way we need to widen that query to work here
+		// really doesn't look good. Also remember that the UI is still updating playcounts if it's open,
+		// and because it'll do it earlier than we do (so you gat a nice visual feedback) we MUST use the
+		// same data, processed in the same way.
+		prefs::$database->sanitise_data($this->current_song);
+		$this->current_song['Playcount'] = prefs::$database->get($this->current_song, 'Playcount');
+		prefs::$database->close_database();
+		$this->current_song['readtime'] = time();
+
+	}
+
+	private function is_error() {
+		$status = $this->get_status();
+		return (array_key_exists('error', $status));
+	}
+
+	private function get_current_song_status() {
+		$myid = (array_key_exists('songid', $this->current_status)) ? $this->current_status['songid'] : null;
+		$this->current_status = $this->get_status();
+		$this->current_song = [];
+		// NOTE When Stopped, Mopidy may return a songid but MPD never will. Neither return an elapsed.
+		if (array_key_exists('songid', $this->current_status) &&
+			array_key_exists('elapsed', $this->current_status)
+		) {
+			logger::debug(CURRENTHOST_SAVE, '-----------------------------------------------');
+			logger::log(CURRENTHOST_SAVE, 'Status : Songid is',$this->current_status['songid'],'Elapsed is',$this->current_status['elapsed']);
+
+			$filedata = $this->get_currentsong_as_playlist();
+
+			logger::mark(CURRENTHOST_SAVE, "Status : Duration is",$this->current_song['Time'],"Current Playcount is",$this->current_song['Playcount']);
+
+			// Prevent multiple calls to updatenowplaying in the case where we keep coming
+			// back here during playing the same track.
+			if ($this->current_status['songid'] != $myid && $this->current_status['state'] == 'play')
+				$this->lastfm_update_nowplaying();
+		}
+	}
+
+	private function check_idle_status($idle_status) {
+		logger::log(CURRENTHOST_SAVE, 'Idle Status is',print_r($idle_status, true));
+		$status = $this->get_status();
+		logger::mark(CURRENTHOST_SAVE,"Player State Has Changed from",$this->current_status['state'],"to", $status['state']);
+
+		if (array_key_exists('changed', $idle_status)) {
+			// So we only get here if we were playing a song before we sent the idle command
+
+			if ($status['state'] != 'pause' && array_key_exists('Time', $this->current_song)) {
+				if ($status['state'] == 'stop') {
+					// Ensure, if we go from paused to stop, that we use only the value of 'elapsed' to calculate how much we played.
+					if ($this->current_status['state'] == 'pause')
+						$this->current_song['readtime'] = time();
+
+					$this->check_playcount_increment();
+				} else if ($status['state'] == 'play') {
+					if ($this->current_status['state'] == 'pause' && $this->current_status['songid'] == $status['songid']) {
+						logger::log(CURRENTHOST_SAVE, 'Song is being restarted after being paused');
+					} else if ($this->current_status['songid'] == $status['songid']) {
+						logger::log(CURRENTHOST_SAVE, 'Same track being played. Must have been restarted or seeked');
+						$this->check_playcount_increment();
+					} else {
+						$this->check_playcount_increment();
+					}
+				}
+			}
+
+			$this->reload_prefs();
+			if (prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['do_consume'] && array_key_exists('songid', $this->current_status)) {
+				if (
+					($status['state'] == 'stop' && $this->current_status['state'] !== 'stop') ||
+					($status['songid'] != $this->current_status['songid'])
+				) {
+					logger::log(CURRENTHOST_SAVE, 'Consuming track ID',$this->current_status['songid']);
+					$this->do_command_list(['deleteid "'.$this->current_status['songid'].'"']);
+				}
+			}
+
+			$this->check_radiomode();
+
+		}
+		$this->get_current_song_status();
+	}
+
+	private function check_playcount_increment() {
+		$elapsed = time() - $this->current_song['readtime'] + $this->current_status['elapsed'];
+		$fraction_played = ($this->current_song['Time'] == 0) ? 0 : $elapsed / $this->current_song['Time'];
+		if ($fraction_played > 0.95) {
+			logger::mark(CURRENTHOST_SAVE, "Played more than 95% of song. Incrementing playcount");
+			prefs::$database = new metaDatabase();
+			$this->current_song['attributes'] = [['attribute' => 'Playcount', 'value' => $this->current_song['Playcount']+1]];
+			prefs::$database->inc($this->current_song);
+
+			if ($this->current_song['type'] == 'podcast') {
+				prefs::$database->close_database();
+				logger::mark(CURRENTHOST_SAVE, "Marking podcast episode as listened");
+				prefs::$database = new poDatabase();
+				prefs::$database->markAsListened($this->current_song['file']);
+			}
+			prefs::$database->close_database();
+
+		}
+
+		$this->reload_prefs();
+		if (($fraction_played*100) > prefs::$prefs['scrobblepercent'])
+			$this->scrobble_to_lastfm();
+	}
+
+	private function reload_prefs() {
+		prefs::load();
+		prefs::$prefs['currenthost'] = CURRENTHOST_SAVE;
+		prefs::$prefs['player_backend'] = PLAYER_BACKEND_SAVE;
+	}
+
+	private function lastfm_update_nowplaying() {
+		$this->reload_prefs();
+		if (prefs::$prefs['lastfm_scrobbling'] && prefs::$prefs['lastfm_session_key'] != '') {
+			logger::mark(CURRENTHOST_SAVE, 'Updating Last.FM Nowplaying');
+			$options = array(
+				'track' => $this->current_song['Title'],
+				'artist' => $this->current_song['trackartist'],
+				'album' => $this->current_song['Album']
+			);
+			lastfm::update_nowplaying($options, false);
+		}
+	}
+
+	private function scrobble_to_lastfm() {
+		if (prefs::$prefs['lastfm_scrobbling'] && prefs::$prefs['lastfm_session_key'] != '') {
+			logger::mark(CURRENTHOST_SAVE, 'Scrobbling');
+			$options = array(
+				'timestamp' => time() - $this->current_song['Time'],
+				'track' => $this->current_song['Title'],
+				'artist' => $this->current_song['trackartist'],
+				'album' => $this->current_song['Album']
+			);
+			if ($this->current_song['albumartist'] &&
+				strtolower($this->current_song['albumartist']) != strtolower($this->current_song['trackartist'])) {
+				$options['albumArtist'] = $this->current_song['albumartist'];
+			}
+			lastfm::scrobble($options, false);
+		}
+	}
+
+	public function check_radiomode() {
+		$radiomode = prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radiomode'];
+		$radioparam = prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radioparam'];
+
+		if ($radiomode == '')
+			return;
+
+		// Need to recheck the playlist length, because $this->current_status *might* have the value
+		// from *before* the last track was consumed. Plus, when we initially call in to set the radio
+		// up, $this->current_status isn't initialised anyway.
+		$playlistlength = $this->get_status_value('playlistlength');
+
+		logger::trace(CURRENTHOST_SAVE, 'Radio Params Are',$radiomode, $radioparam,'Playlist Length is',$playlistlength);
+
+		if ($playlistlength >= prefs::$prefs['smartradio_chunksize'])
+			return;
+
+		switch ($radiomode) {
+			case 'starRadios':
+			case 'mostPlayed':
+			case 'faveAlbums':
+			case 'recentlyaddedtracks':
+				$tracksneeded = prefs::$prefs['smartradio_chunksize'] - $playlistlength;
+				logger::trace(CURRENTHOST_SAVE, "Adding",$tracksneeded,"tracks from",$radiomode);
+				prefs::$database = new collection_radio();
+				$tracks = prefs::$database->doPlaylist($radioparam, $tracksneeded);
+				prefs::$database->close_database();
+				$cmds = array();
+				foreach ($tracks as $track) {
+					$cmds[] = join_command_string(array('add', $track['name']));
+				}
+				$this->do_command_list($cmds);
+				break;
+		}
+	}
 }
 ?>

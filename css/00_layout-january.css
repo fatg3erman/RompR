@@ -108,6 +108,10 @@ div.notification.new {
     border: 1px solid var(--border-colour);
 }
 
+#plmode {
+	text-align: center;
+}
+
 /* General Div for use as a Title Banner - eg in the config panel. Vertically aligns its children */
 
 .configtitle

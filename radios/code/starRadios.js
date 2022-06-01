@@ -1,35 +1,29 @@
 var starRadios = function() {
 
+	var mode;
 	var param;
-	var whattodo;
-	var tracks;
 
 	return {
 
-		initialise: async function(p) {
+		initialise: function(m, p) {
+			mode = m;
 			param = p;
-			whattodo = 'getplaylist';
-			tracks = new Array();
 		},
 
-		getURIs: async function(numtracks) {
-			while (tracks.length < numtracks) {
-				try {
-					var t = await $.ajax({
-						url: "radios/api/starRadios.php",
-						type: "POST",
-						contentType: false,
-						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: numtracks}]),
-						dataType: 'json'
-					});
-					tracks = tracks.concat(t);
-				} catch(err) {
-					debug.error('STARRADIOS', 'Error getting tracks',err);
-					return false;
-				}
+		getURIs: async function() {
+			try {
+				var t = await $.ajax({
+					url: "radios/api/starRadios.php",
+					type: "POST",
+					contentType: false,
+					data: JSON.stringify({radiomode: mode, radioparam: param}),
+					dataType: 'json'
+				});
+			} catch (err) {
+				debug.error('STARRADIOS', 'Error getting tracks', err);
+				return false;
 			}
-			whattodo = 'repopulate';
-			return tracks.splice(0, numtracks);
+			return true;
 		},
 
 		modeHtml: function() {
@@ -40,19 +34,16 @@ var starRadios = function() {
 				return '<i class="icon-'+param+' modeimg"/></i><span class="alignmid bold">'+
 					language.gettext('label_'+param)+'</span>';
 			} else if (/^tag\+/.test(param)) {
-				return '<i class="icon-tags modeimg"/><span class="alignmid bold">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+				return '<i class="icon-tags modeimg"></i><span class="alignmid bold">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
 			} else if (/^genre\+/.test(param)) {
-				return '<i class="icon-music modeimg"/><span class="alignmid bold">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+				return '<i class="icon-music modeimg"></i><span class="alignmid bold">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
 			} else if (/^artist\+/.test(param)) {
-				return '<i class="icon-artist modeimg"/><span class="alignmid bold">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+				return '<i class="icon-artist modeimg"></i><span class="alignmid bold">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
 			} else if (/^custom\+/.test(param)) {
-				return '<i class="icon-wifi modeimg"/><span class="alignmid bold">'+param.replace(/^custom\+/, '')+'</span>';
+				return '<i class="icon-wifi modeimg"></i><span class="alignmid bold">'+param.replace(/^custom\+/, '')+'</span>';
 			} else {
-				return '<i class="icon-wifi modeimg"/>';
+				return '<i class="icon-wifi modeimg"></i>';
 			}
-		},
-
-		stop: function() {
 		}
 
 	}

@@ -182,6 +182,17 @@ function carry_on_starting() {
 	$(document).on('focus', 'input[type="number"]', function() {
 		$(this).attr('autocomplete', 'off');
 	});
+
+	//
+	// Hide the Music from Spotify Panels
+	// These are not currently used while we refactor those playlists
+	// And in the absence of SPotify support in Mopidy
+	// I'm not going to work on them
+	//
+	$('#pluginplaylists_spotify').prev().hide();
+	$('#pluginplaylists_everywhere').prev().hide();
+	$('#pluginplaylists_everywhere').prev().prev().hide();
+
 }
 
 function get_geo_country() {

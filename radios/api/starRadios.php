@@ -2,22 +2,24 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
+define('CURRENTHOST_SAVE', prefs::$prefs['currenthost']);
 $params = json_decode(file_get_contents('php://input'), true);
-prefs::$database = new collection_radio();
-foreach($params as $p) {
-	switch ($p['action']) {
-
-		case 'getplaylist':
-			prefs::$database->preparePlaylist();
-		case 'repopulate':
-			print json_encode(prefs::$database->doPlaylist($p['playlist'], $p['numtracks']));
-			break;
-
-		default:
-			logger::warn("USERRATINGS", "Unknown Request",$p['action']);
-			header('HTTP/1.1 400 Bad Request');
-			break;
-
-	}
+foreach ($params as $k => $v) {
+	logger::log('SMARTRADIO', $k,'=',$v);
+	prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams'][$k] = $v;
 }
+// prepare_smartradio will save the prefs, so no need to do it here
+$player = new base_mpd_player();
+$player = new player();
+$player->prepare_smartradio();
+
+prefs::$database = new collection_radio();
+prefs::$database->preparePlaylist();
+prefs::$database->close_database();
+
+$player->check_radiomode();
+$player->do_command_list(['play']);
+
+header('HTTP/1.1 204 No Content');
+
 ?>

@@ -9,8 +9,6 @@ foreach($p as $key => $value) {
 	switch ($key) {
 		case "radiomode":
 		case "radioparam":
-		case "radiomaster":
-		case "radioconsume":
 			prefs::$prefs['multihosts'][$player]['radioparams'][$key] = $value;
 			break;
 

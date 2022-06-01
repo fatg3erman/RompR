@@ -55,7 +55,7 @@ class prefs {
 					"radiomode" => "",
 					"radioparam" => "",
 					"radiomaster" => "",
-					"radioconsume" => 0
+					"radioconsume" => []
 				]
 			]
 		],
@@ -321,6 +321,13 @@ class prefs {
 					}
 					break;
 
+				case 91:
+					self::$prefs['multihosts'][$key]['radioparams']['radioconsume'] = [];
+					break;
+
+				case 92:
+					unset(self::$prefs['multihosts'][$key]['radioparams']['radiomaster']);
+					break;
 
 			}
 		}
@@ -406,8 +413,7 @@ class prefs {
 					'radioparams' => [
 						"radiomode" => "",
 						"radioparam" => "",
-						"radiomaster" => "",
-						"radioconsume" => 0
+						"radioconsume" => []
 					]
 			];
 			self::save();

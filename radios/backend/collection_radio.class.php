@@ -97,11 +97,11 @@ class collection_radio extends database {
 		$tags = array();
 		foreach ($taglist as $i => $tag) {
 			logger::trace("SMART RADIO", "Getting tag playlist for",$tag);
-			$tags[] = strtolower(trim($tag));
+			$tags[] = trim($tag);
 			if ($i > 0) {
 				$sqlstring .= " OR ";
 			}
-			$sqlstring .=  "LOWER(Tagtable.Name) = ?";
+			$sqlstring .=  "LOWER(Tagtable.Name) = LOWER(?)";
 		}
 		$sqlstring .= ")";
 		return array($sqlstring, $tags);
@@ -115,11 +115,11 @@ class collection_radio extends database {
 		$tags = array();
 		foreach ($genrelist as $i => $genre) {
 			logger::trace("SMART RADIO", "Getting genre playlist for",$genre);
-			$tags[] = strtolower(trim($genre));
+			$tags[] = trim($genre);
 			if ($i > 0) {
 				$sqlstring .= " OR ";
 			}
-			$sqlstring .=  "LOWER(Genre) = ?";
+			$sqlstring .=  "LOWER(Genre) = LOWER(?)";
 		}
 		$sqlstring .= ")";
 		return array($sqlstring, $tags);
@@ -128,7 +128,7 @@ class collection_radio extends database {
 	private function smart_radio_artist($param) {
 		$artistlist = explode(',', $param);
 		$sqlstring = 'SELECT DISTINCT Uri FROM Tracktable JOIN Artisttable USING (Artistindex) WHERE ';
-		// Concatenate this bracket here otherwise Atom's syntax colouring goes haywire
+		// Artistname is COLLATE NOCASE in sqlite, and case insensitive by default in mysql
 		$sqlstring .= '(';
 		$tags = array();
 		foreach ($artistlist as $i => $artist) {
@@ -189,13 +189,13 @@ class collection_radio extends database {
 				} else {
 					switch ($rule['option']) {
 						case RADIO_RULE_OPTIONS_STRING_IS:
-							$tags[] = strtolower(trim($value));
-							$sqlstring .= 'LOWER('.$rule['db_key'].') = ?';
+							$tags[] = trim($value);
+							$sqlstring .= 'LOWER('.$rule['db_key'].') = LOWER(?)';
 							break;
 
 						case RADIO_RULE_OPTIONS_STRING_IS_NOT:
-							$tags[] = strtolower(trim($value));
-							$sqlstring .= 'LOWER('.$rule['db_key'].') IS NOT ?';
+							$tags[] = trim($value);
+							$sqlstring .= 'LOWER('.$rule['db_key'].') IS NOT LOWER(?)';
 							break;
 							break;
 
