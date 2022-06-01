@@ -155,7 +155,7 @@ var playlist = function() {
 					await playlist.radioManager.load(player.status.smartradio.radiomode, player.status.smartradio.radioparam, true);
 					setHeader();
 					if (this_radio == '')
-						playlist.radiomanager.was_stopped();
+						playlist.radioManager.was_stopped();
 				}
 			},
 

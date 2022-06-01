@@ -20,7 +20,7 @@ class uibits extends ui_elements {
 		// streamuri is not openable and anything without one is openable
 
 		if ($obj['streamuri']) {
-			$h .= '<div class="containerbox wrap clickstream playable clickicon '.$obj['class'].'" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
+			$h .= '<div class="containerbox wrap clickstream playable draggable clickicon '.$obj['class'].'" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
 		} else {
 			if ($obj['plpath'])
 				$h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';

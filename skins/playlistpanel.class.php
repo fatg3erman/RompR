@@ -14,10 +14,10 @@ class playlistpanel extends uibits {
 		print '<i title="'.language::gettext('button_clearplaylist').'" class="icon-trash smallicon clickicon tooltip spinable clear_playlist"></i>';
 		print '</td>';
 		print '</tr>';
-		// print '<tr><td colspan="4" align="center"><div id="plmode"></div></td></tr>';
+		print '<tr><td colspan="4" align="center"><div id="plmode"></div></td></tr>';
 		print '</table>';
 
-		print '<div id="plmode" class="fullwidth"></div>';
+		// print '<div id="plmode" class="fullwidth"></div>';
 
 		print '<div id="playlist-progress-holder" class="containerbox vertical-centre">';
 		print '<div id="playlist-progress" class="expand"></div>';

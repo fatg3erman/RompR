@@ -299,7 +299,7 @@ jQuery.fn.addCustomScrollBar = function() {
 }
 
 jQuery.fn.doThingsAfterDisplayingListOfAlbums = function() {
-	debug.log('UIHELPER', 'functionwithlongname');
+	// debug.log('UIHELPER', 'functionwithlongname');
 	return this;
 }
 

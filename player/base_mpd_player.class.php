@@ -1410,7 +1410,7 @@ class base_mpd_player {
 	}
 
 	private function check_idle_status($idle_status) {
-		logger::log(CURRENTHOST_SAVE, 'Idle Status is',print_r($idle_status, true));
+		logger::core(CURRENTHOST_SAVE, 'Idle Status is',print_r($idle_status, true));
 		$status = $this->get_status();
 		logger::mark(CURRENTHOST_SAVE,"Player State Has Changed from",$this->current_status['state'],"to", $status['state']);
 

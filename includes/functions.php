@@ -911,6 +911,10 @@ function check_backend_daemon() {
 				logger::log('INIT', 'Killing romonitor process', $pid);
 				kill_process($pid);
 			}
+			while (($pid = get_pid('alarmclock.php')) !== false) {
+				logger::log('INIT', 'Killing alarmclock process', $pid);
+				kill_process($pid);
+			}
 			start_process($b);
 		    sleep(3);
 			if (get_pid($b) === false) {

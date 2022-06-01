@@ -158,6 +158,7 @@ var alarmclock = function() {
 			$('.selected').removeClass('selected');
 			items.find('.menu').remove();
 			items.find('.icon-menu').remove();
+			items.find('.clickable.clickicon').remove();
 			$('input.alarmvalue[name="ItemToPlay"]').val(items.html());
 			// We want a return value but it's an async function
 			// so we have to call it this way otherwise pc is just

@@ -10,6 +10,11 @@ prefs::save();
 $pwd = getcwd();
 logger::log('DAEMON', "Running From",$pwd);
 
+$players = array_keys(prefs::$prefs['multihosts']);
+foreach ($players as $player) {
+    check_alarms($player);
+}
+
 while (true) {
 
     prefs::load();
@@ -25,6 +30,7 @@ while (true) {
                 // If we started it, it's still running, and the definition has changed since we started it
                 logger::trace('DAEMON', "Player",$player,"definition has changed - restarting monitor");
                 kill_process($monitors[$player]);
+                check_alarms($player);
             } else {
                 $mon_running = true;
             }
@@ -72,6 +78,13 @@ function player_def_changed($a, $b) {
         }
     }
     return false;
+}
+
+function check_alarms($player) {
+    prefs::$database = new timers($player);
+    prefs::$database->check_alarms();
+    prefs::$database->close_database();
+    prefs::$database = null;
 }
 
 function check_cache_clean() {

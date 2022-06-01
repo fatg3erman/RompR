@@ -74,6 +74,14 @@ foreach ($php_values as $v) {
 	print '<tr><td>'.$v.'</td><td>'.multi_implode($t).'</td></tr>';
 }
 
+exec('ps aux | grep php | grep -v grep', $output);
+print '<tr><th colspan="2">PHP Processes</th></tr>';
+print'<tr><td></td><td class="code">';
+foreach ($output as $line) {
+	print $line."\n";
+}
+print '</td></tr>';
+
 $player = new player();
 print '<tr><th colspan="2">Player Information</th></tr>';
 if ($player->is_connected()) {

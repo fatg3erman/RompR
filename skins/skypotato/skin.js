@@ -157,7 +157,8 @@ jQuery.fn.menuHide = async function() {
 		case holder.hasClass('podcast'):
 			// Podcasts
 			self.prev('div.albumthing').detach().appendTo(self.prev().children('.helpfulalbum').first());
-			parent.removeClass('masonry_opened dropshadow').removeDummySpacers();
+			parent.removeClass('masonry_opened dropshadow');
+			parent.removeDummySpacers();
 			self.removeClass('minwidthed2').css({display: 'none'});
 			break;
 

@@ -54,6 +54,12 @@ div.notification.new {
 	transition: opacity 0.5s ease;
 }
 
+td.code {
+	font-size: 8pt;
+	white-space:  pre;
+	font-family: monospace;
+}
+
 /* Image popup - when clicking an image to zoom */
 
 #popup_image
@@ -202,7 +208,7 @@ i.phone-dropdown-button {
 .drop-box
 {
 	position:relative;
-	z-index:3000;
+	z-index:999;
 	display:none;
 	max-height:15em;
 	overflow:auto;
@@ -1621,6 +1627,10 @@ a.infoclick.clickreleasepage
 	transition: opacity 0.5s ease;
 	opacity: 1;
 	object-fit: scale-down;
+}
+
+#alarmdropper .helpfulalbum .jalopy {
+	max-width:  120px;
 }
 
 .playdiv

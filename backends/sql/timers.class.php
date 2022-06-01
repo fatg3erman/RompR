@@ -4,8 +4,12 @@ class timers extends database {
 
 	private $player;
 
-	public function __construct() {
-		$this->player = prefs::$prefs['currenthost'];
+	public function __construct($player = null) {
+		if ($player !== null) {
+			$this->player = $player;
+		} else {
+			$this->player = prefs::$prefs['currenthost'];
+		}
 		parent::__construct();
 	}
 
@@ -41,17 +45,15 @@ class timers extends database {
 	}
 
 	private function kill_sleep_timer() {
-		logger::log($this->player, 'Cancelling Sleep Timer');
 		$pid = $this->simple_query('Pid', 'Sleeptimers', 'Player', $this->player, null);
 		if ($pid !== null) {
+			logger::log($this->player, 'Cancelling Sleep Timer');
 			kill_process($pid);
 		}
 		$this->sleep_timer_finished();
 	}
 
 	private function start_sleep_timer($sleeptime) {
-		$pwd = getcwd();
-
 		$t = $this->get_sleep_timer();
 		if ($t['state'] === 1) {
 			logger::log($this->player, 'Timeout was adjusted while sleep timer was running',$t['timeset'], ($sleeptime * 60), time());
@@ -63,8 +65,7 @@ class timers extends database {
 			$timeset = time();
 		}
 
-		$cmd = $pwd.'/sleeptimer.php --currenthost '.$this->player.' --sleeptime '.$timeout;
-		$pid = start_process($cmd);
+		$pid = start_process($this->get_sleep_command($timeout));
 		$this->sql_prepare_query(true, null, null, null,
 			'INSERT INTO Sleeptimers (Pid, Player, TimeSet, SleepTime) VALUES (?, ?, ?, ?)',
 			$pid, $this->player, $timeset, $sleeptime
@@ -119,9 +120,7 @@ class timers extends database {
 			kill_process($alarm['Pid']);
 			$this->update_pid_for_alarm($alarmindex, null);
 		} else {
-			$pwd = getcwd();
-			$cmd = $pwd.'/alarmclock.php --alarmindex '.$alarmindex;
-			$pid = start_process($cmd);
+			$pid = start_process($this->get_alarm_command($alarmindex));
 			// We need to set it here, even though the process will do it too.
 			// The UI will need to know this info as soon as we finish.
 			// having the process do it is a belt-and braces approach so we can
@@ -143,9 +142,7 @@ class timers extends database {
 			// I think this makes sense.
 			$this->mark_alarm_running($alarmindex, false);
 		} else {
-			$pwd = getcwd();
-			$cmd = $pwd.'/snoozer.php --snooze '.$alarmindex;
-			$pid = start_process($cmd);
+			$pid = start_process($this->get_snooze_command($alarmindex));
 			// See note above
 			$this->update_snooze_pid_for_alarm($alarmindex, $pid);
 		}
@@ -209,6 +206,7 @@ class timers extends database {
 			$this->toggle_alarm($alarm['Alarmindex'], 1);
 		} else if ($current_state['Pid'] !== null) {
 			$this->toggle_alarm($alarm['Alarmindex'], 0);
+			$this->toggle_alarm($alarm['Alarmindex'], 1);
 		}
 	}
 
@@ -259,6 +257,56 @@ class timers extends database {
 		foreach ($alarms as $alarm) {
 			$this->toggle_snooze($alarm['Alarmindex'], 1);
 		}
+	}
+
+	public function check_alarms() {
+		// This is for when we're starting up and we need to ensure the alarms are running
+		// We also stop any snooze timers and sleep timers, because bah.
+		// This also gets called if a player definition is changed by the UI,
+		// because alarms and sleep need the player info to be correct
+		$poop = $this->get_all_alarms();
+		foreach ($poop as $alarm) {
+			if ($alarm["Pid"] !== null) {
+				$actual_pid = get_pid($this->get_alarm_command($alarm['Alarmindex']));
+				if ($actual_pid !== false) {
+					logger::log($this->player, 'Alarm',$alarm['Alarmindex'],'is being restarted');
+					kill_process($actual_pid);
+				}
+				$this->mark_alarm_finished($alarm['Alarmindex']);
+				$this->mark_alarm_running($alarm['Alarmindex'], false);
+				// It doesn't make sense to restart a non-repeat alarm. We might have been
+				// shut down when it was supposed to go off, and then it'll go off when
+				// it's not wanted.
+				if ($alarm['Repeat'] == 1)
+					$this->toggle_alarm($alarm['Alarmindex'], 1);
+			}
+			if ($alarm['SnoozePid'] !== null) {
+				$actual_pid = get_pid($this->get_snooze_command($alarm['Alarmindex']));
+				if ($actual_pid !== false) {
+					logger::log($this->player, 'Stopping Snooze for',$alarm['Alarmindex']);
+					kill_process($actual_pid);
+				}
+				$this->update_snooze_pid_for_alarm($alarm['Alarmindex'], null);
+			}
+		}
+
+		$this->kill_sleep_timer();
+
+	}
+
+	private function get_sleep_command($timeout) {
+		$pwd = getcwd();
+		return $pwd.'/sleeptimer.php --currenthost '.$this->player.' --sleeptime '.$timeout;
+	}
+
+	private function get_alarm_command($alarmindex) {
+		$pwd = getcwd();
+		return $pwd.'/alarmclock.php --alarmindex '.$alarmindex;
+	}
+
+	private function get_snooze_command($alarmindex) {
+		$pwd = getcwd();
+		return $pwd.'/snoozer.php --snooze '.$alarmindex;
 	}
 
 }
