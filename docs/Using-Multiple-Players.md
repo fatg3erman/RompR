@@ -102,7 +102,6 @@ There is now some support for mixing Mopidy and MPD. You can have some players a
 * Any MPD players will need to keep their local music database updated. If you use a Mopidy Player to create your Music Collection (and you should), then you will need to use another MPD client for this (for example, Sonata).
 * All players must have their local tracks mounted on the same path, as described above.
 * Adding tracks to stored MPD playlists is not supported in this configuration
-* The Tags and Ratings panel will currently not work correctly if you are using a different type of Player than the one that is used to create your Music Collection
 
 **Supported Features**
 

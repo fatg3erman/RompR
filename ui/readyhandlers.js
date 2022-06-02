@@ -189,10 +189,11 @@ function carry_on_starting() {
 	// And in the absence of SPotify support in Mopidy
 	// I'm not going to work on them
 	//
-	$('#pluginplaylists_spotify').prev().hide();
-	$('#pluginplaylists_everywhere').prev().hide();
-	$('#pluginplaylists_everywhere').prev().prev().hide();
-
+	if (prefs.player_backend == 'mopidy') {
+		$('#pluginplaylists_spotify').prev().hide();
+		$('#pluginplaylists_everywhere').prev().hide();
+		$('#pluginplaylists_everywhere').prev().prev().hide();
+	}
 }
 
 function get_geo_country() {

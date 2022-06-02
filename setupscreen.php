@@ -82,6 +82,9 @@ print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy#scanning-
 print '<div class="styledinputs"><input id="spotifyunplayable" type="checkbox" name="spotify_mark_unplayable" ';
 print '><label for="spotifyunplayable">Mark All Spotify Tracks as Unplayable</label></div>';
 
+print '<div class="styledinputs"><input id="spotifyplayable" type="checkbox" name="spotify_mark_playable" ';
+print '><label for="spotifyplayable">Mark All Spotify Tracks as Playable</label></div>';
+
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("label_generalsettings").'</h3>';
 print '<div class="styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';

@@ -183,6 +183,10 @@ var playlist = function() {
 				setHeader();
 			},
 
+			is_running: function() {
+				return (this_radio != '');
+			},
+
 			loadFromUiElement: function(element) {
 				var params = element.attr('name').split('+');
 				playlist.radioManager.load(params[0], params[1] ? params[1] : null);

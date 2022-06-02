@@ -363,8 +363,14 @@ class player extends base_mpd_player {
 		return prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['do_consume'] ? 1 : 0;
 	}
 
+	// This is here to allow us to force consume to Off when we connect to Mopidy
+	// so that our local consume can take over;
 	public function set_consume_state() {
 		$this->do_command_list(['consume 0']);
+	}
+
+	public function force_consume_state($state) {
+		$this->toggle_consume($state);
 	}
 
 	public static function is_personal_playlist($playlist) {

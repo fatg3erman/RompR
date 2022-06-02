@@ -72,7 +72,22 @@ class music_loader extends musicCollection {
 		return $retarr;
 	}
 
-
+	//Return commands in rompr format, suitable for passing to
+	// rompr_commands_to_mpd()
+	public function select_random_album() {
+		$uri = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			"SELECT Albumindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Hidden = ? AND isAudiobook = ? AND isSearchResult < ?
+			 ORDER BY ".database::SQL_RANDOM_SORT." LIMIT 1",
+			0,
+			0,
+			2
+		);
+		if (count($result) > 0) {
+			return [['additem', 'aalbum'.$result[0]['Albumindex']]];
+		} else {
+			return false;
+		}
+	}
 
 }
 ?>

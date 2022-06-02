@@ -238,12 +238,22 @@ class player extends base_mpd_player {
 		return $arse;
 	}
 
+	// This does NOT toggle consume. For Mopidy it does. For MPD it returns true,
+	// to instruct this class to actually send the consume command instead of
+	// using local consume.
 	public function toggle_consume($value) {
 		return true;
 	}
 
+	// Returns the current state of consume. Which is what you should pass in as $value
+	// Why does it return what we pass to it? Because the Mopidy version doesn't do that,
+	// it returns the current setting of our local consume.
 	public function get_consume($value) {
 		return $value;
+	}
+
+	public function force_consume_state($state) {
+		$this->do_command_list(['consume '.$state]);
 	}
 
 	public function set_consume_state() {

@@ -170,7 +170,8 @@ class prefs {
 		"consume_workaround" => false,
 		"we_do_consume" => false,
 		"somafm_quality" => 'highest_available_quality',
-		"spotify_mark_unplayable" => false
+		"spotify_mark_unplayable" => false,
+		"spotify_mark_playable" => false
 	);
 
 	// Prefs that should not be exposed to the browser for security reasons

@@ -136,6 +136,14 @@ class init_generic extends database {
 			logger::log('SQLINIT', 'Time is',time(),'Setting nextrun to',prefs::$prefs['linkchecker_nextrun']);
 			prefs::save();
 		}
+		if (prefs::$prefs['spotify_mark_playable']) {
+			logger::log('SQLINIT', 'Marking all Spotify tracks as playable');
+			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE Uri LIKE 'spotify:%' AND Hidden = 0");
+			prefs::$prefs['spotify_mark_unplayable'] = false;
+			prefs::$prefs['linkchecker_nextrun'] = time();
+			logger::log('SQLINIT', 'Time is',time(),'Setting nextrun to',prefs::$prefs['linkchecker_nextrun']);
+			prefs::save();
+		}
 	}
 
 }

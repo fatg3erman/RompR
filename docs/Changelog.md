@@ -12,7 +12,7 @@ As a result of this change though, you will need to recreate any Alarms you had 
 * Fix bug where album art might be partially downloaded when using MPD (Fix contributed by corubba)
 * The usual collection of undocumented bugfixes.
 * Make the SQLite collection case-insensitive, which makes it work the same way as MySQL and means I can remove a lot of
-case checking staements, which speeds things up. Note that in SQLite case-sensitivity only works with ASCII characters.
+case checking statements, which speeds things up. Note that in SQLite case-sensitivity only works with ASCII characters.
 I think MySQL is better at this, but I haven't checked.
 * All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.
 * Make Spotify Playlist Collection building work again. For some reason the code worked on PHP7 but PHP8 just disappears into hyperspace
@@ -22,8 +22,8 @@ rendering this fix (and Mopidy-Spotify) useless.
 * Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix,
 the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will still appear in your collection
 but will not be selectable, and will not be selected by Personalised Radio stations. You can use the Unplayable Tracks plugin
-to view all your Spotify tracks, which will give you an easy way to browse them and decide which ones you want to buy digital or physical copies of.
-I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
+to view all your Spotify tracks, which will give you an easy way to browse them and decide which ones you want to buy
+digital or physical copies of. I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
 
 
 ## Version 1.61

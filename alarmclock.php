@@ -19,18 +19,17 @@ prefs::$database = null;
 logger::mark("ALARMCLOCK", "Player is",$alarm['Player']);
 prefs::$prefs['currenthost'] = $alarm['Player'];
 
+define('CURRENTHOST_SAVE', $alarm['Player']);
+
 $player = new base_mpd_player();
 $player = new player();
 $player->close_mpd_connection();
-
-$playcommands = json_decode($alarm['PlayCommands'], true);
-$play_item = ($alarm['PlayItem'] == 1 && is_array($playcommands));
 
 while (true) {
 
 	alarm_sleep_time();
 
-	logger::log($alarm['Player'], 'Running Alarm',$alarm['Alarmindex']);
+	logger::log($alarm['Player'], 'Running Alarm',$alarm['Alarmindex'],$alarm['Name']);
 
 	prefs::$database = new timers();
 	prefs::$database->mark_alarm_running($alarm['Alarmindex'], true);
@@ -39,10 +38,30 @@ while (true) {
 
 	$player->open_mpd_connection();
 	$mpd_status = $player->do_command_list(['status']);
-	$volume = $mpd_status['volume'];
+	// MPD won't report a volume while stopped, so we're just going to have to
+	// ramp up to 100
+	$volume = (array_key_exists('volume', $mpd_status)) ? $mpd_status['volume']  : 100;
+
+	$playcommands = json_decode($alarm['PlayCommands'], true);
+	$play_item = ($alarm['PlayItem'] == 1 && is_array($playcommands));
+
+	if (!$play_item && $mpd_status['playlistlength'] == 0) {
+		// If we haven't been given anything to play, and there's nothing in the queue, start playing all tracks at random
+		prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radiomode'] = 'starRadios';
+		prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radioparam'] = 'allrandom';
+		prefs::save();
+		$player->prepare_smartradio();
+		prefs::$database = new collection_radio();
+		prefs::$database->preparePlaylist();
+		prefs::$database->close_database();
+		$player->check_radiomode();
+		$mpd_status = $player->do_command_list(['status']);
+	}
 
 	if ($mpd_status['state'] == 'play' && ($alarm['Interrupt'] == 0 || $play_item === false)) {
 		logger::log($alarm['Player'], 'Player is already playing. Alarm will not interrupt');
+	} else if ($mpd_status['playlistlength'] == 0 && $play_item === false) {
+		logger::log($alarm['Player'], 'There is nothing to play');
 	} else {
 		$seek_workaround = false;
 		// There's a bug in Mopidy - if you set the volume to 0 while paused it reports
@@ -51,12 +70,12 @@ while (true) {
 		// is to stop playback first (remembering to disable consume first) and then
 		// later on to start playback from where it was before you pressed stop.
 		if ($alarm['Ramp'] == 1) {
-			if ($mpd_status['state'] == 'pause') {
+			if (prefs::$prefs['player_backend'] == 'mopidy' && $mpd_status['state'] == 'pause') {
 				$seek_workaround = [$mpd_status['songid'], $mpd_status['elapsed']];
 				$old_consume = $player->get_consume($mpd_status['consume']);
-				$player->toggle_consume(0);
+				$player->force_consume_state(0);
 				$player->do_command_list(['stop']);
-				$player->toggle_consume($old_consume);
+				$player->force_consume_state($old_consume);
 			}
 			$player->do_command_list(['setvol 0']);
 		}
@@ -72,8 +91,8 @@ while (true) {
 			prefs::$database = null;
 		}
 
-		$mpd_status = $player->do_command_list(['status']);
-		if ($mpd_status['state'] != 'play') {
+		$state = $player->get_status_value('state');
+		if ($state != 'play') {
 			if ($seek_workaround === false || $play_item) {
 				$player->do_command_list(['play']);
 			} else {

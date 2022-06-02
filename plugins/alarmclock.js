@@ -159,6 +159,8 @@ var alarmclock = function() {
 					type: 'GET',
 					url: 'api/alarmclock/?stop=1'
 				});
+				if (playlist.radioManager.is_running())
+					playlist.radioManager.stop();
 			}
 		},
 
@@ -227,6 +229,9 @@ var alarmclock = function() {
 				type: 'GET',
 				url: 'api/alarmclock/?index='+index+'&enable='+enable
 			});
+			if (enable == 0 && playlist.radioManager.is_running())
+				playlist.radioManager.stop();
+
 			alarmclock.populate_alarms();
 		},
 

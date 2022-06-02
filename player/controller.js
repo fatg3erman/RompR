@@ -120,10 +120,6 @@ function playerController() {
 			debug.debug('PLAYER', 'Got response for',list,s);
 			let last_state = player.status.state;
 			player.status = cloneObject(s);
-			// ['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
-			// 	debug.core('PLAYER', e, player.status[e]);
-			// 	prefs[e] = player.status[e];
-			// });
 			$('#radiodomains').makeDomainChooser("setSelection", player.status.mopidy_radio_domains);
 			if (player.status.songid != self.previoussongid) {
 				if (playlist.trackHasChanged(player.status.songid)) {

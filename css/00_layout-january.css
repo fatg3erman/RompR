@@ -2171,7 +2171,8 @@ tr.spacerboogie {
 .plugin_mbb_table th {
 	text-align:center;
     background-color: var(--highlight-bg-colour);
-    border-left: 1px solid var(--border-colour);
+    /*border-left: 1px solid var(--border-colour);*/
+    padding-bottom: 8px;
 }
 
 .plugin_mbb_table tr {

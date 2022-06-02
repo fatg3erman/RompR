@@ -422,7 +422,10 @@ var infobar = function() {
 		}(),
 
 		updateWindowValues: function() {
-			$("#volume").volumeControl("displayVolume", player.status.volume);
+			// MPD doesn't return volume when stopped
+			if (player.status.volume || player.status.volume === 0)
+				$("#volume").volumeControl("displayVolume", player.status.volume);
+
 			infobar.playbutton.setState(player.status.state);
 			playlist.setButtons();
 			if (player.status.single == 0 && singling) {

@@ -69,6 +69,10 @@ class metabackup extends metaDatabase {
 		$tracks = $this->get_bookmarks();
 		file_put_contents($dirname.'/bookmarks.json',json_encode($tracks));
 
+		logger::log("BACKEND", "Backing up Alarms");
+		$tracks = $this->get_alarms();
+		file_put_contents($dirname.'/alarms.json',json_encode($tracks));
+
 		file_put_contents($dirname.'/newversion', ROMPR_SCHEMA_VERSION);
 
 	}
@@ -89,16 +93,17 @@ class metabackup extends metaDatabase {
 				'dir' => basename($backup),
 				'name' => strftime('%c', DateTime::createFromFormat('Y-m-d-H-i', basename($backup))->getTimestamp()),
 				'stats' => array(
-					'Manually Added Tracks' => file_exists($backup.'/tracks.json') ? 'OK' : 'Missing!',
+					'Tracks' => file_exists($backup.'/tracks.json') ? 'OK' : 'Missing!',
 					'Playcounts' => file_exists($backup.'/playcounts.json') ? 'OK' : 'Missing!',
-					'Tracks With Ratings' => file_exists($backup.'/ratings.json') ? 'OK' : 'Missing!',
-					'Tracks With Tags' => file_exists($backup.'/tags.json') ? 'OK' : 'Missing!',
+					'Ratings' => file_exists($backup.'/ratings.json') ? 'OK' : 'Missing!',
+					'Tags' => file_exists($backup.'/tags.json') ? 'OK' : 'Missing!',
 					'Bookmarks' => file_exists($backup.'/bookmarks.json') ? 'OK' : 'Missing!',
 					'Spoken Word' => file_exists($backup.'/audiobooks.json') ? 'OK' : 'Missing!',
 					'Podcasts' => file_exists($backup.'/podcasts.json') ? 'OK' : 'Missing!',
-					'Background Images' => file_exists($backup.'/bg_images.json') ? 'OK' : 'Missing!',
-					'Radio Stations' => file_exists($backup.'/radio_stations.json') ? 'OK' : 'Missing!',
-					'Albums To Listen To' => file_exists($backup.'/albums_to_listen_to.json') ? 'OK' : 'Missing!'
+					'Images' => file_exists($backup.'/bg_images.json') ? 'OK' : 'Missing!',
+					'Radio' => file_exists($backup.'/radio_stations.json') ? 'OK' : 'Missing!',
+					'Albums To Listen To' => file_exists($backup.'/albums_to_listen_to.json') ? 'OK' : 'Missing!',
+					'Alarms' => file_exists($backup.'/alarms.json') ? 'OK' : 'Missing!'
 				)
 			);
 		}
@@ -296,6 +301,17 @@ class metabackup extends metaDatabase {
 				$this->generic_restore($trackdata, 'AlbumsToListenTotable');
 				$progress = round(($i/count($tracks))*100);
 				fwrite($monitor, "\n<b>Restoring Albums To Listen To : </b>".$progress."%\n");
+			}
+		}
+
+		if (file_exists('prefs/databackups/'.$backup.'/alarms.json')) {
+			logger::mark("BACKUPS", "Restoring Alarms");
+			$this->generic_sql_query("DELETE FROM Alarms WHERE Alarmindex IS NOT NULL");
+			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/alarms.json'), true);
+			foreach ($tracks as $i => $trackdata) {
+				$this->generic_restore($trackdata, 'Alarms');
+				$progress = round(($i/count($tracks))*100);
+				fwrite($monitor, "\n<b>Restoring Alarms : </b>".$progress."%\n");
 			}
 		}
 
@@ -560,6 +576,10 @@ class metabackup extends metaDatabase {
 
 	private function get_albumstolistento() {
 		return $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
+	}
+
+	private function get_alarms() {
+		return $this->generic_sql_query("SELECT * FROM Alarms");
 	}
 
 }

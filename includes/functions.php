@@ -755,6 +755,7 @@ function saveCollectionPlayer($type) {
 }
 
 function calculate_best_update_time($podcast) {
+    $os = php_uname();
 
 	if ($podcast['RefreshOption'] == REFRESHOPTION_NEVER)
 		return time() + 117600;
@@ -766,7 +767,11 @@ function calculate_best_update_time($podcast) {
 
 	logger::log("PODCASTS", "Working out best update time for ".$podcast['Title']);
 	$dt = new DateTime(date('c', $podcast['LastPubDate']));
-	logger::debug("PODCASTS", "  Last Pub Date is ".$podcast['LastPubDate'].' ('.$dt->format('c').')');
+
+	// DateTime::format crashes into hyperspace on macOS for reasons unknown
+    if (strpos($os, 'Darwin') === false)
+		logger::debug("PODCASTS", "  Last Pub Date is ".$podcast['LastPubDate'].' ('.$dt->format('c').')');
+
 	logger::debug("PODCASTS", "  Podcast Refresh interval is ".$podcast['RefreshOption']);
 	while ($dt->getTimestamp() < time()) {
 		switch ($podcast['RefreshOption']) {
@@ -794,7 +799,9 @@ function calculate_best_update_time($podcast) {
 		}
 
 	}
-	logger::trace("PODCASTS", "  Worked out update time based on pubDate and RefreshOption: ".$dt->format('r').' ('.$dt->getTImestamp().')');
+
+    if (strpos($os, 'Darwin') === false)
+		logger::trace("PODCASTS", "  Worked out update time based on pubDate and RefreshOption: ".$dt->format('r').' ('.$dt->getTImestamp().')');
 
 	return $dt->getTimestamp();
 

@@ -539,12 +539,13 @@ class base_mpd_player {
 
 	public function wait_for_state($expected_state) {
 		if ($expected_state !== null) {
-			$status = $this->get_status();
+			logger::log('PLAYER', 'Waiting for state', $expected_state);
+			$state = $this->get_status_value('state');
 			$retries = 50;
-			while ($retries > 0 && array_key_exists('state', $status) && $status['state'] != $expected_state) {
+			while ($retries > 0 && ($state === null || $state != $expected_state)) {
 				usleep(100000);
 				$retries--;
-				$status = $this->get_status();
+				$state = $this->get_status_value('state');
 			}
 		}
 	}
@@ -991,16 +992,26 @@ class base_mpd_player {
 		return array($sleep_seconds, $sleep_microseconds, $inc);
 	}
 
+	// Don't call this if the player is stopped or paused, it waits for the play state.
+	// There is a timeout in that function but even so...
 	public function ramp_volume($start, $end, $seconds) {
 		$start = intval($start);
 		$end = intval($end);
+		logger::log('PLAYER', 'Ramping volume from',$start,'to',$end,'over',$seconds,'seconds');
 		if ($seconds == 0 || $start == $end) {
 			$this->do_command_list(['setvol '.$end]);
 			return;
 		}
 		list($seconds, $microseconds, $inc) = $this->calculate_ramp(abs($start - $end), $seconds);
 		$inc = ($start > $end) ? (0 - $inc) : $inc;
+		$this->wait_for_state('play');
+
+		// We seem to have to do this. Very odd.
+		if (prefs::$prefs['player_backend'] == 'mpd')
+			sleep(1);
+
 		$this->do_command_list(['setvol '.$start]);
+
 		while (($volume = $this->get_status_value('volume')) != $end) {
 			$newvol = $volume + $inc;
 			if ($inc < 0 && $newvol < $end) {
@@ -1316,7 +1327,7 @@ class base_mpd_player {
 		$this->do_command_list(['clear']);
 		$this->do_command_list(['repeat 0']);
 		$this->do_command_list(['random 0']);
-		$this->toggle_consume(1);
+		$this->force_consume_state(1);
 
 	}
 
@@ -1437,7 +1448,7 @@ class base_mpd_player {
 			}
 
 			$this->reload_prefs();
-			if (prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['do_consume'] && array_key_exists('songid', $this->current_status)) {
+			if ($this->get_consume(0) && array_key_exists('songid', $this->current_status)) {
 				if (
 					($status['state'] == 'stop' && $this->current_status['state'] !== 'stop') ||
 					($status['songid'] != $this->current_status['songid'])
