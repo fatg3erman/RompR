@@ -1,6 +1,6 @@
 jQuery.fn.setAlarmDays = function(alarm) {
 	return this.each(function() {
-		if (alarm.Repeat == 1) $(this).html(alarm.Days.split(',').join(', '));
+		if (alarm.Rpt == 1) $(this).html(alarm.Days.split(',').join(', '));
 	});
 }
 
@@ -240,7 +240,7 @@ var alarmclock = function() {
 			var repbox = $('<div>', {class: 'fixed'}).appendTo(soapbox);
 
 			// Repeat
-			makeACheckbox(repbox, language.gettext('button_repeat'), alarm.Repeat, 'Repeat', false, true);
+			makeACheckbox(repbox, language.gettext('button_repeat'), alarm.Rpt, 'Rpt', false, true);
 
 			//Days
 			// NOTE Alarm.Days must NOT be NULL
@@ -249,7 +249,7 @@ var alarmclock = function() {
 			['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].forEach(function(v) {
 				makeACheckbox(shepbox, v, (adhd.indexOf(v) > -1), v, true, false);
 			});
-			buttonOpacity(shepbox, (alarm.Repeat == 1 ? true : false));
+			buttonOpacity(shepbox, (alarm.Rpt == 1 ? true : false));
 
 			var ropebox = $('<div>', {class: 'expand ropeybit'}).appendTo(soapbox);
 

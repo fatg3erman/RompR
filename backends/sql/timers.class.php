@@ -104,7 +104,7 @@ class timers extends database {
 		if ($alarm['Running'] == 1) {
 			$this->toggle_snooze($alarmindex, 0);
 			$this->mark_alarm_running($alarmindex, false);
-			if ($alarm['Repeat'] == 0 && $alarm['Pid'] !== null) {
+			if ($alarm['Rpt'] == 0 && $alarm['Pid'] !== null) {
 				// A Non-Repeat alarm might still have a Pid if it has a Stopafter setting
 				kill_process($alarm['Pid']);
 				$this->update_pid_for_alarm($alarmindex, null);
@@ -181,7 +181,7 @@ class timers extends database {
 		logger::core('ALARMS', 'Editing', print_r($alarm, true));
 		// It's possible to enable Repeat but not select any days.
 		if ($alarm['Days'] == '')
-			$alarm['Repeat'] = 0;
+			$alarm['Rpt'] = 0;
 
 		if ($alarm['Alarmindex'] == 'NEW') {
 			$command = 'INSERT ';
@@ -201,7 +201,7 @@ class timers extends database {
 			$command, array_values($alarm)
 		);
 
-		if ($alarm['Alarmindex'] == 'NEW') {
+		if (!array_key_exists('Alarmindex', $alarm)) {
 			$alarm['Alarmindex'] = $this->mysqlc->lastInsertId();
 			$this->toggle_alarm($alarm['Alarmindex'], 1);
 		} else if ($current_state['Pid'] !== null) {
@@ -240,7 +240,7 @@ class timers extends database {
 			// If it's not a Repeat alarm, kill the process. It might have already done that
 			// but not necessarily if it has a Stopafter setting - we want Pid to get NULLed
 			// so the UI knows it isn't set any more.
-			if ($alarm['Pid'] !== null && $alarm['Repeat'] == 0)
+			if ($alarm['Pid'] !== null && $alarm['Rpt'] == 0)
 				$this->toggle_alarm($alarm['Alarmindex'], 0);
 
 			if ($alarm['SnoozePid'] !== null)
@@ -277,7 +277,7 @@ class timers extends database {
 				// It doesn't make sense to restart a non-repeat alarm. We might have been
 				// shut down when it was supposed to go off, and then it'll go off when
 				// it's not wanted.
-				if ($alarm['Repeat'] == 1)
+				if ($alarm['Rpt'] == 1)
 					$this->toggle_alarm($alarm['Alarmindex'], 1);
 			}
 			if ($alarm['SnoozePid'] !== null) {

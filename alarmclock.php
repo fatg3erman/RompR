@@ -111,7 +111,7 @@ while (true) {
 		}
 	}
 
-	if ($alarm['Repeat'] == 0) {
+	if ($alarm['Rpt'] == 0) {
 		logger::mark($alarm['Player'], 'Alarm is not a repeat alarm so this process has done what it came here to do.');
 		prefs::$database = new timers();
 		prefs::$database->mark_alarm_finished($alarm['Alarmindex']);
@@ -144,7 +144,7 @@ function alarm_sleep_time() {
 
 	// If it's not set to repeat, it could either go off today or tomorow
 	// depending on whether the time is earlier or later than now
-	if ($alarm['Repeat'] == 0)
+	if ($alarm['Rpt'] == 0)
 		$alarm['Days'] = date('l').','.date('l', time()+86400);
 
 	logger::log('ALARMCLOCK', 'Alarm Days are',trim($alarm['Days']));
@@ -160,13 +160,13 @@ function alarm_sleep_time() {
 	}
 	// If the timestamp we've set, which is at the set time but to run today, is earlier
 	// than now, then we need to run it on the next available day.
+
 	if ($alarm_run->getTimeStamp() < $now->getTimeStamp() && in_array($today, $alarmdays)) {
 		$alarm_run->modify('+1 day');
 		$t = array_shift($days);
 		$days[] = $t;
 	}
 	logger::debug('ALARMCLOCK', 'Days list is now', implode(',', $days));
-
 	// Go through the days of the week list in order until we arrive at a day the
 	// alarm is set to go off. Increment the alarm time by one day every time a day
 	// doesn't match
@@ -179,7 +179,11 @@ function alarm_sleep_time() {
 
 	// Convert the date/time we just generated into a UNIX timestamp we can pass to time_sleep_until()
 	$sleeptime = $alarm_run->getTimestamp();
-	logger::log('ALARMCLOCK', 'Alarm will run at', $alarm_run->format(DateTimeInterface::COOKIE));
+    $os = php_uname();
+    // This crashes with no error on macOS for reasons I don't understand
+    if (strpos($os, 'Darwin') === false)
+		logger::log('ALARMCLOCK', 'Alarm will run at', $alarm_run->format(DateTimeInterface::COOKIE));
+
 	logger::log('ALARMCLOCK', 'Sleeping Until', $sleeptime);
 	time_sleep_until($sleeptime);
 

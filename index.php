@@ -40,6 +40,8 @@ if (isset($_GET['currenthost'])) {
     exit;
 }
 
+logger::mark('INIT', php_uname());
+
 set_version_string();
 upgrade_old_collections();
 

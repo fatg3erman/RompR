@@ -335,15 +335,16 @@ class init_database extends init_generic {
 			"SnoozePid INT UNSIGNED DEFAULT NULL, ".
 			"Player VARCHAR(50) NOT NULL, ".
 			"Running TINYINT(1) UNSIGNED DEFAULT 0, ".
-			"PlayItem TINYINT(1) UNSIGNED DEFAULT 0, ".
+			// MySQL can't have a column called Repeat!!!!
+			"Rpt TINYINT(1) UNSIGNED DEFAULT 0, ".
 			"Ramp TINYINT(1) UNSIGNED DEFAULT 0, ".
 			"Stopafter TINYINT(1) UNSIGNED DEFAULT 0, ".
 			"StopMins INT UNSIGNED DEFAULT 60, ".
 			"Time CHAR(5), ".
-			"Repeat TINYINT(1) UNSIGNED DEFAULT 0, ".
-			"Days VARCHAR(100) NOT NULL DEFAULT '', ".
-			"ItemToPlay TEXT NOT NULL DEFAULT '', ".
-			"PlayCommands TEXT NOT NULL DEFAULT '')", true))
+			"Days VARCHAR(100) NOT NULL, ".
+			"PlayItem TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"ItemToPlay TEXT NOT NULL, ".
+			"PlayCommands TEXT NOT NULL)", true))
 		{
 			logger::log("MYSQL", "  Alarms OK");
 		} else {

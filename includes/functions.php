@@ -930,7 +930,15 @@ function check_backend_daemon() {
 
 function start_process($cmd) {
     logger::trace('DAEMON', 'Starting Process', $cmd);
-    exec('nohup php '.$cmd.' > /dev/null & > /dev/null');
+    $os = php_uname();
+    if (strpos($os, 'Darwin') === false) {
+    	// On Linux
+    	exec('nohup php '.$cmd.' > /dev/null & > /dev/null');
+   	} else {
+   		// On macOS
+   		logger::log('PROCESS', 'Using macOS form of start command');
+    	exec('php '.$cmd.' < /dev/null > /dev/null 2>&1 &');
+    }
     return get_pid($cmd);
 }
 

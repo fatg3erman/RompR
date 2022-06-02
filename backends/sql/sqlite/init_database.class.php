@@ -353,11 +353,11 @@ class init_database extends init_generic {
 			"Stopafter TINYINT(1) DEFAULT 0, ".
 			"StopMins INTEGER DEFAULT 60, ".
 			"Time CHARACTER(5), ".
-			"Repeat TINYINT(1) DEFAULT 0, ".
-			"Days VARCHAR(100) NOT NULL DEFAULT '', ".
+			"Rpt TINYINT(1) DEFAULT 0, ".
+			"Days VARCHAR(100) NOT NULL, ".
 			"PlayItem TINYINT(1) DEFAULT 0, ".
-			"ItemToPlay TEXT NOT NULL DEFAULT '', ".
-			"PlayCommands TEXT NOT NULL DEFAULT '')", true))
+			"ItemToPlay TEXT NOT NULL, ".
+			"PlayCommands TEXT NOT NULL)", true))
 		{
 			logger::log("SQLITE", "  Alarms OK");
 		} else {
