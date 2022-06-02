@@ -323,6 +323,7 @@ function playerController() {
 	}
 
 	this.play = function() {
+		alarmclock.pre_play_actions();
 		self.do_command_list([['play']]);
 	}
 

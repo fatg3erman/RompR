@@ -742,7 +742,8 @@ d as %s",
 	"button_bookmarks" =>					'Add Bookmark',
 	"label_remcur" =>						'Remove Current Image',
 	"button_nextbg" => 						'Next Background Image',
-	"button_delbg" => 						'Delete Current Background Image'
+	"button_delbg" => 						'Delete Current Background Image',
+	"label_name" =>							'Name'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

@@ -12,6 +12,7 @@ var alarmclock = function() {
 	var newalarms = [];
 	var frug = 0;
 	var alarm_running = false;
+	var notifier = null;
 
 	var alarm_editor = null;
 	var editor_popup = null;
@@ -27,7 +28,7 @@ var alarmclock = function() {
 					alarm_enabled = true;
 
 				if (alarms[a].Running == 1)
-					alarm_running = a;
+					alarm_running = alarms[a].Alarmindex;
 
 				if (alarms[a].SnoozePid)
 					alarm_snoozing = true;
@@ -35,6 +36,24 @@ var alarmclock = function() {
 		}
 		$('#alarmclock_icon').removeClass('icon-alarm').removeClass('icon-alarm-on').addClass(alarm_enabled ? 'icon-alarm-on' : 'icon-alarm');
 		infobar.playbutton.flash(alarm_snoozing);
+		if (alarm_running !== false) {
+			let message = 'Alarm '+alarms[alarm_running].Name;
+			if (notifier == null) {
+				notifier = infobar.permnotify(message, 'icon-alarm-on');
+				$('.notify-icon-'+notifier).attr('name', alarm_running).addClass('clickicon');
+				$('.notify-icon-'+notifier).on('click', function(event) {
+					event.stopPropagation();
+					var element = $(event.target);
+					alarmclock.enableAlarm(event, element);
+				});
+			}
+		} else {
+			if (notifier !== null) {
+				$('.notify-icon-'+notifier).off('click');
+				infobar.removenotify(notifier);
+				notifier = null;
+			}
+		}
 	}
 
 	function createAlarmHeader(alarm, ourindex) {
@@ -45,11 +64,14 @@ var alarmclock = function() {
 		// Note rompr_index - this is OUR array index, whereas Alarmindex is the database table AUTO_INCREMENT index.
 		$('<input>', {type: "time", style: 'width:5em', class: "fixed snapclientname alarmtimeedit alarmnumbers", rompr_index: ourindex, name: "Time"}).val(alarm.Time).appendTo(froggy);
 
-		var toady = $('<td width="99%" rowspan="2">').appendTo(row1);
-		$('<div>', {class: 'playlistrow2'}).setAlarmDays(alarm).appendTo(toady);
+		var namebit = $('<td width="99%">').html(alarm.Name).appendTo(row1);
 
 		var onbutton = $('<td width="99%" align="right">').appendTo(row1);
 		var row2 = $('<tr>').appendTo(lego);
+
+		var toady = $('<td width="99%">').appendTo(row2);
+		$('<div>', {class: 'playlistrow2'}).setAlarmDays(alarm).appendTo(toady);
+
 		var delbutton = $('<td align="right">').appendTo(row2);
 
 		if (alarm.Running == 0) {
@@ -148,6 +170,16 @@ var alarmclock = function() {
 			}
 		},
 
+
+		pre_play_actions: function() {
+			if (alarm_running !== false) {
+				$.get({
+					type: 'GET',
+					url: 'api/alarmclock/?snooze=0'
+				});
+			}
+		},
+
 		dropped: async function(event, element) {
 			if (event) {
 				event.stopImmediatePropagation();
@@ -219,6 +251,11 @@ var alarmclock = function() {
 
 			editor_popup.append($('<input>', {type: 'hidden', class: 'alarmvalue', name: 'Player', value: prefs.currenthost}));
 			editor_popup.append($('<input>', {type: 'hidden', class: 'alarmvalue', name: 'Alarmindex', value: alarm.Alarmindex}));
+
+			// Name
+			var nd = $('<div>', {class: 'containerbox vertical-centre'}).appendTo(editor_popup);
+			$('<div>', {class: 'fixed brianblessed'}).html(language.gettext('label_name')).appendTo(nd);
+			$('<input>', {type: "text", class: "expand alarmvalue", name: "Name"}).val(alarm.Name).appendTo(nd);
 
 			// Time
 			var td = $('<div>', {class: 'containerbox snapgrouptitle vertical-centre'}).appendTo(editor_popup);

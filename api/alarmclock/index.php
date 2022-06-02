@@ -20,7 +20,7 @@ if (array_key_exists('enable', $_REQUEST)) {
 	prefs::$database->stop_alarms_for_player();
 	header('HTTP/1.1 204 No Content');
 } else if (array_key_exists('snooze', $_REQUEST)) {
-	prefs::$database->snooze_alarms_for_player();
+	prefs::$database->snooze_alarms_for_player($_REQUEST['snooze']);
 	header('HTTP/1.1 204 No Content');
 } else if (array_key_exists('populate', $_REQUEST)) {
 	$state = prefs::$database->get_all_alarms();

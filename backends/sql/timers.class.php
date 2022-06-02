@@ -203,11 +203,10 @@ class timers extends database {
 
 		if (!array_key_exists('Alarmindex', $alarm)) {
 			$alarm['Alarmindex'] = $this->mysqlc->lastInsertId();
-			$this->toggle_alarm($alarm['Alarmindex'], 1);
 		} else if ($current_state['Pid'] !== null) {
 			$this->toggle_alarm($alarm['Alarmindex'], 0);
-			$this->toggle_alarm($alarm['Alarmindex'], 1);
 		}
+		$this->toggle_alarm($alarm['Alarmindex'], 1);
 	}
 
 	public function mark_alarm_running($alarmindex, $running) {
@@ -249,13 +248,20 @@ class timers extends database {
 		}
 	}
 
-	public function snooze_alarms_for_player() {
-		$alarms = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
-			"SELECT * FROM Alarms WHERE Player = ? AND Running = 1 AND SnoozePid IS NULL",
-			$this->player
-		);
+	public function snooze_alarms_for_player($snooze) {
+		if ($snooze == 1) {
+			$alarms = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
+				"SELECT * FROM Alarms WHERE Player = ? AND Running = 1 AND SnoozePid IS NULL",
+				$this->player
+			);
+		} else {
+			$alarms = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
+				"SELECT * FROM Alarms WHERE Player = ? AND Running = 1 AND SnoozePid IS NOT NULL",
+				$this->player
+			);
+		}
 		foreach ($alarms as $alarm) {
-			$this->toggle_snooze($alarm['Alarmindex'], 1);
+			$this->toggle_snooze($alarm['Alarmindex'], $snooze);
 		}
 	}
 

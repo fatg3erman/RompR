@@ -349,12 +349,14 @@ class init_database extends init_generic {
 			"SnoozePid INTEGER DEFAULT NULL, ".
 			"Player VARCHAR(50) NOT NULL, ".
 			"Running TINYINT(1) DEFAULT 0, ".
+			"Interrupt TINYINT(1) DEFAULT 0, ".
 			"Ramp TINYINT(1) DEFAULT 0, ".
 			"Stopafter TINYINT(1) DEFAULT 0, ".
 			"StopMins INTEGER DEFAULT 60, ".
 			"Time CHARACTER(5), ".
 			"Rpt TINYINT(1) DEFAULT 0, ".
 			"Days VARCHAR(100) NOT NULL, ".
+			"Name VARCHAR(255), ".
 			"PlayItem TINYINT(1) DEFAULT 0, ".
 			"ItemToPlay TEXT NOT NULL, ".
 			"PlayCommands TEXT NOT NULL)", true))

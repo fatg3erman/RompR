@@ -151,7 +151,7 @@ var infobar = function() {
 		}).appendTo('#notifications');
 		var icon = $('<div>', {class: 'fixed'}).appendTo(div);
 		icon.append($('<i>', {
-			class: icontype+' svg-square'
+			class: icontype+' svg-square notify-icon-'+notifycounter
 		}));
 		div.append($('<div>', {
 			class: 'expand indent'
@@ -586,8 +586,11 @@ var infobar = function() {
 			return notifycounter;
 		},
 
-		permnotify: function(message) {
-			doNotification(message, 'icon-info-circled');
+		permnotify: function(message, icon) {
+			if (!icon)
+				icon = 'icon-info-circled';
+
+			doNotification(message, icon);
 			return notifycounter;
 		},
 
