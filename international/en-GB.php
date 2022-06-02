@@ -743,7 +743,8 @@ d as %s",
 	"label_remcur" =>						'Remove Current Image',
 	"button_nextbg" => 						'Next Background Image',
 	"button_delbg" => 						'Delete Current Background Image',
-	"label_name" =>							'Name'
+	"label_name" =>							'Name',
+	"play_even_if_playing" =>				'Even If Already Playing'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

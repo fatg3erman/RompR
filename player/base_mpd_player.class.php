@@ -1404,7 +1404,7 @@ class base_mpd_player {
 
 			// Prevent multiple calls to updatenowplaying in the case where we keep coming
 			// back here during playing the same track.
-			if ($this->current_status['songid'] != $myid && $this->current_status['state'] == 'play')
+			if ($this->current_status['songid'] != $myid && $this->current_status['state'] == 'play' && $this->current_song['Time'] > 0)
 				$this->lastfm_update_nowplaying();
 		}
 	}

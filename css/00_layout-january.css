@@ -1630,7 +1630,7 @@ a.infoclick.clickreleasepage
 }
 
 #alarmdropper .helpfulalbum .jalopy {
-	max-width:  120px;
+	max-width:  100px;
 }
 
 .playdiv
@@ -2010,7 +2010,7 @@ div.selectholder.snapcast_select
 }
 
 .alarmdropempty {
-	height: 100px;
+	height: 140px;
 }
 
 .toomanyclasses {
@@ -2025,8 +2025,9 @@ div.selectholder.snapcast_select
 	line-height: 1.2em;
 }
 
-.alarmdropper {
-	padding-left:24px;
+#alarmdropper {
+	padding-left: 4px;
+	margin-top: 8px;
 }
 
 td.dan, th.dan{

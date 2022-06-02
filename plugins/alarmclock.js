@@ -28,7 +28,7 @@ var alarmclock = function() {
 					alarm_enabled = true;
 
 				if (alarms[a].Running == 1)
-					alarm_running = alarms[a].Alarmindex;
+					alarm_running = a;
 
 				if (alarms[a].SnoozePid)
 					alarm_snoozing = true;
@@ -40,7 +40,7 @@ var alarmclock = function() {
 			let message = 'Alarm '+alarms[alarm_running].Name;
 			if (notifier == null) {
 				notifier = infobar.permnotify(message, 'icon-alarm-on');
-				$('.notify-icon-'+notifier).attr('name', alarm_running).addClass('clickicon');
+				$('.notify-icon-'+notifier).attr('name', alarms[alarm_running].Alarmindex).addClass('clickicon');
 				$('.notify-icon-'+notifier).on('click', function(event) {
 					event.stopPropagation();
 					var element = $(event.target);
@@ -107,6 +107,7 @@ var alarmclock = function() {
 		var l = $('<label>', {for: id}).appendTo(pd);
 		l.html(label);
 		c.prop('checked', (value == 1 ? true: false));
+		return pd;
 	}
 
 	function buttonOpacity(div, full) {
@@ -191,6 +192,7 @@ var alarmclock = function() {
 			items.find('.menu').remove();
 			items.find('.icon-menu').remove();
 			items.find('.clickable.clickicon').remove();
+			items.find('.tagh.albumthing').remove();
 			$('input.alarmvalue[name="ItemToPlay"]').val(items.html());
 			// We want a return value but it's an async function
 			// so we have to call it this way otherwise pc is just
@@ -252,11 +254,6 @@ var alarmclock = function() {
 			editor_popup.append($('<input>', {type: 'hidden', class: 'alarmvalue', name: 'Player', value: prefs.currenthost}));
 			editor_popup.append($('<input>', {type: 'hidden', class: 'alarmvalue', name: 'Alarmindex', value: alarm.Alarmindex}));
 
-			// Name
-			var nd = $('<div>', {class: 'containerbox vertical-centre'}).appendTo(editor_popup);
-			$('<div>', {class: 'fixed brianblessed'}).html(language.gettext('label_name')).appendTo(nd);
-			$('<input>', {type: "text", class: "expand alarmvalue", name: "Name"}).val(alarm.Name).appendTo(nd);
-
 			// Time
 			var td = $('<div>', {class: 'containerbox snapgrouptitle vertical-centre'}).appendTo(editor_popup);
 			$('<input>', {type: "time", style: 'width:5em', class: "fixed snapclientname alarmnumbers alarmvalue", name: "Time"}).val(alarm.Time).appendTo(td);
@@ -272,6 +269,11 @@ var alarmclock = function() {
 			makeACheckbox(twitt, language.gettext('config_alarm_stopafter'), alarm.Stopafter, 'Stopafter', true, true);
 			// StopMins
 			$('<input>', {type: 'number', class: 'expand alarmvalue', name: 'StopMins', style: 'margin-left:1em;width:5em'}).val(alarm.StopMins).appendTo(twott);
+
+			// Name
+			var nd = $('<div>', {class: 'containerbox vertical-centre', style: 'margin-bottom:8px'}).appendTo(editor_popup);
+			$('<div>', {class: 'fixed brianblessed'}).html(language.gettext('label_name')).appendTo(nd);
+			$('<input>', {type: "text", class: "expand alarmvalue", name: "Name"}).val(alarm.Name).appendTo(nd);
 
 			var soapbox = $('<div>', {class: 'containerbox'}).appendTo(editor_popup);
 			var repbox = $('<div>', {class: 'fixed'}).appendTo(soapbox);
@@ -293,14 +295,18 @@ var alarmclock = function() {
 			// PlayItem
 			makeACheckbox(ropebox, language.gettext('label_alarm_play_specific'), alarm.PlayItem, 'PlayItem', false, true);
 
+			// Interrupt
+			let interrupt = makeACheckbox(ropebox, language.gettext('play_even_if_playing'), alarm.Interrupt, 'Interrupt', false, true);
+
 			// ItemToPlay
-			var alarmdropper = $('<div>', {id: 'alarmdropper', rompr_index: ourindex, style: 'margin-left:4px', class: 'alarmdropempty canbefaded containerbox menuitem'}).appendTo(ropebox);
+			var alarmdropper = $('<div>', {id: 'alarmdropper', rompr_index: ourindex, class: 'alarmdropempty canbefaded containerbox vertical-centre'}).appendTo(ropebox);
 
 			if (alarm.ItemToPlay == '') {
 				alarmdropper.html('<div class="containerbox menuitem fullwidth" style="height:100%"><div class="expand textcentre">'+language.gettext('label_alarm_to_play')+'</div></div>');
 			} else {
 				putAlarmDropPlayItem(alarm.ItemToPlay, alarmdropper);
 			}
+			buttonOpacity(interrupt, (alarm.PlayItem == 1 ? true : false));
 			buttonOpacity(alarmdropper, (alarm.PlayItem == 1 ? true : false));
 			alarmdropper.acceptDroppedTracks({ ondrop: alarmclock.dropped });
 
@@ -362,8 +368,11 @@ var alarmclock = function() {
 
 		labelclick: function(event) {
 			var element = $(event.target).prev();
-			if (element.attr('name') == 'Repeat' || element.attr('name') == 'PlayItem') {
+			if (element.attr('name') == 'Rpt' || element.attr('name') == 'PlayItem') {
 				buttonOpacity(element.parent().next(), !element.prop('checked'));
+			}
+			if (element.attr('name') == 'PlayItem') {
+				buttonOpacity(element.parent().next().next(), !element.prop('checked'));
 			}
 		},
 

@@ -41,7 +41,7 @@ while (true) {
 	$mpd_status = $player->do_command_list(['status']);
 	$volume = $mpd_status['volume'];
 
-	if ($mpd_status['state'] == 'play') {
+	if ($mpd_status['state'] == 'play' && ($alarm['Interrupt'] == 0 || $play_item === false)) {
 		logger::log($alarm['Player'], 'Player is already playing. Alarm will not interrupt');
 	} else {
 		$seek_workaround = false;
