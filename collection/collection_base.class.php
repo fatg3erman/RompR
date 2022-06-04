@@ -36,8 +36,50 @@ class collection_base extends database {
 		'dbterms' => ['tag' => null, 'rating' => null]
 	];
 
+	// protected $collection_lastmodified = 0;
+	// protected $thisrun_lastmodified = 0;
+
 	private $find_album = true;
 	private $find_album2;
+
+	// public function check_lastmodified($lm) {
+	// 	if ($this->options['doing_search'])
+	// 		return true;
+
+	// 	$time = strtotime($lm);
+
+	// 	if ($time > $this->collection_lastmodified) {
+	// 		if ($time > $this->thisrun_lastmodified)
+	// 			$this->thisrun_lastmodified = $time;
+
+	// 		return true;
+	// 	}
+
+	// 	return false;
+	// }
+
+	// public function read_collection_lastmodified() {
+	// 	$this->collection_lastmodified = $this->simple_query('Value', 'Statstable', 'Item', 'ColLastMod', 0);
+	// 	logger::log('COLLECTION', 'Collection LastMod is',$this->collection_lastmodified);
+	// }
+
+	// public function save_collection_lastmodified() {
+	// 	logger::log('COLLECTION', 'Setting Collection LastMod to',$this->thisrun_lastmodified);
+	// 	$cheese = $this->simple_query('Value', 'Statstable', 'Item', 'ColLastMod', 'NOTHING');
+	// 	if ($cheese === 'NOTHING') {
+	// 		$this->sql_prepare_query(true, null, null, null,
+	// 			"INSERT INTO Statstable (Item, Value) VALUES (?, ?)",
+	// 			'ColLastMod',
+	// 			$this->thisrun_lastmodified
+	// 		);
+	// 	} else {
+	// 		$this->sql_prepare_query(true, null, null, null,
+	// 			"UPDATE Statstable SET Value = ? WHERE Item = ?",
+	// 			$this->thisrun_lastmodified,
+	// 			'ColLastMod'
+	// 		);
+	// 	}
+	// }
 
 	public function get_option($option) {
 		return $this->options[$option];

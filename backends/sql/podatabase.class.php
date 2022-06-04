@@ -423,7 +423,7 @@ class poDatabase extends database {
 		}
 		if ($podcast === false) {
 			// Podcast was not updated. Maybe we jyst need to try again later?
-			if ($podetails->RefreshOption != REFRESHOPTION_HOURLY && $podetails->UpRetry < 2) {
+			if ($podetails->UpRetry < 2) {
 				switch ($podetails->RefreshOption) {
 					case REFRESHOPTION_DAILY:
 						logger::log('PODCASTS', 'No new tracks found. Daily refresh, trying again in 2 hours');
@@ -439,6 +439,11 @@ class poDatabase extends database {
 						logger::log('PODCASTS', 'No new tracks found. Monthly refresh, trying again in 2 days');
 						$nextup = $podetails->NextUpdate + 172800;
 						break;
+
+					default:
+						$nextup = calculate_best_update_time(['LastPubDate' => $podetails->LastPubDate, 'RefreshOption' => $podetails->RefreshOption, 'Title' => $podetails->Title]);
+						break;
+
 				}
 			} else {
 				$nextup = calculate_best_update_time(['LastPubDate' => $podetails->LastPubDate, 'RefreshOption' => $podetails->RefreshOption, 'Title' => $podetails->Title]);

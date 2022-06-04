@@ -40,7 +40,7 @@ var collectionHelper = function() {
 			debug.error('GENERAL','Collection Rebuild Did Not Work!',err);
 			var msg = language.gettext('error_collectionupdate');
 			if (err.responseText) {
-				msg += ' - '+data.responseText;
+				msg += ' - '+err.responseText;
 			}
 			infobar.error(msg);
 		}

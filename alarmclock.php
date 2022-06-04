@@ -130,7 +130,7 @@ while (true) {
 	}
 
 	if ($alarm['Rpt'] == 0) {
-		logger::mark($alarm['Player'], 'Alarm is not a repeat alarm so this process has done what it came here to do.');
+		logger::info($alarm['Player'], 'Alarm is not a repeat alarm so this process has done what it came here to do.');
 		prefs::$database = new timers();
 		prefs::$database->mark_alarm_finished($alarm['Alarmindex']);
 		exit(0);
@@ -165,7 +165,7 @@ function alarm_sleep_time() {
 	if ($alarm['Rpt'] == 0)
 		$alarm['Days'] = date('l').','.date('l', time()+86400);
 
-	logger::log('ALARMCLOCK', 'Alarm Days are',trim($alarm['Days']));
+	logger::trace('ALARMCLOCK', 'Alarm Days are',trim($alarm['Days']));
 	$alarmdays = array_map('trim', explode(',', $alarm['Days']));
 
 	$today = date('l');
@@ -200,7 +200,7 @@ function alarm_sleep_time() {
     $os = php_uname();
     // This crashes with no error on macOS for reasons I don't understand
     if (strpos($os, 'Darwin') === false)
-		logger::log('ALARMCLOCK', 'Alarm will run at', $alarm_run->format(DateTimeInterface::COOKIE));
+		logger::info('ALARMCLOCK', 'Alarm will run at', $alarm_run->format(DateTimeInterface::COOKIE));
 
 	logger::log('ALARMCLOCK', 'Sleeping Until', $sleeptime);
 	time_sleep_until($sleeptime);

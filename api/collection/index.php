@@ -263,6 +263,8 @@ function update_collection() {
 	global $performance;
 	$timer = microtime(true);
 
+	// prefs::$database->read_collection_lastmodified();
+
 	// Browser is now happy. Now we can do our work in peace.
     logger::log('COLLECTION', 'Now were on our own');
 	prefs::$database->open_transaction();
@@ -295,6 +297,8 @@ function update_collection() {
 	prefs::$database->clearUpdateLock();
 
 	$performance['total'] = microtime(true) - $timer;
+
+	// prefs::$database->save_collection_lastmodified();
 
 	print_performance_measurements();
 

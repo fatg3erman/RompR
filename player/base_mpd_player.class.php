@@ -28,6 +28,8 @@ class base_mpd_player {
 	private $current_status = [];
 	public $current_song = [];
 
+	private $has_dir_lastmod = false;
+
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_remote = null) {
 		$this->debug_id = microtime();
 		$pdef = prefs::get_player_def();
@@ -72,6 +74,10 @@ class base_mpd_player {
 				$this->player_type = $this->probe_player_type();
 			}
 		}
+		// Checking for true is faster than doing a string comparison, and that
+		// will be important when updating the collection/
+		if ($this->player_type == 'mpd')
+			$this->has_dir_lastmod = true;
 	}
 
 	public function __destruct() {
@@ -202,7 +208,7 @@ class base_mpd_player {
 		$retries = 3;
 		$l = strlen($command."\n");
 		do {
-			$b = fputs($this->connection, $command."\n");
+			$b = @fputs($this->connection, $command."\n");
 			if ((!$b || $b < $l) && $command != 'close') {
 				logger::warn("MPD", "Socket Write Error for",$command,"- Wrote",$b,"bytes of",$l,"- Retrying");
 				stream_socket_shutdown($this->connection, STREAM_SHUT_RDWR);
@@ -274,7 +280,11 @@ class base_mpd_player {
 								$datalen = strlen($data);
 								$toread -= $datalen;
 								logger::trace('MPDPLAYER', 'Read', $datalen, 'bytes,', $toread, 'bytes more to go.');
-								$retarr['binarydata'] .= $data;
+								if (array_key_exists('binarydata', $retarr)) {
+									$retarr['binarydata'] .= $data;
+								} else {
+									$retarr['binarydata'] = $data;
+								}
 							}
 							fgets($this->connection); // for the trailing newline
 						}
@@ -349,17 +359,22 @@ class base_mpd_player {
 
 		$success = $this->send_command($command);
 		$filedata = MPD_FILE_MODEL;
+		// $directory = null;
 		$parts = true;
 		if (is_array($domains) && count($domains) == 0) {
 			$domains = false;
 		}
 
-		while(  $this->is_connected() && !feof($this->connection) && $parts) {
+		while($this->is_connected() && !feof($this->connection) && $parts) {
 			$parts = $this->getline();
 			if (is_array($parts)) {
 				switch ($parts[0]) {
 					case "directory":
-						$dirs[] = trim($parts[1]);
+						// if ($this->has_dir_lastmod) {
+						// 	$directory = trim($parts[1]);
+						// } else {
+							$dirs[] = trim($parts[1]);
+						// }
 						break;
 
 					case "Last-Modified":
@@ -367,10 +382,17 @@ class base_mpd_player {
 							// We don't want the Last-Modified stamps of the directories
 							// to be used for the files.
 							$filedata[$parts[0]] = $parts[1];
+						// } else if ($directory !== null) {
+						// 	if (prefs::$database->check_lastmodified(trim($parts[1]))) {
+						// 		logger::trace('MPD', $directory,'has been modified since last update');
+						// 		$dirs[] = $directory;
+						// 	}
+						// 	$directory = null;
 						}
 						break;
 
 					case 'file':
+					case 'playlist':
 						if ($filedata['file'] !== null) {
 							$filedata['domain'] = getDomain($filedata['file']);
 							if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
@@ -379,16 +401,16 @@ class base_mpd_player {
 								}
 							}
 						}
+						// $directory = null;
 						$filedata = MPD_FILE_MODEL;
-						$filedata[$parts[0]] = $parts[1];
+						if ($parts[0] == 'file')
+							$filedata[$parts[0]] = $parts[1];
 						break;
 
 					case 'X-AlbumUri':
 					case 'Title':
 					case 'Album':
 					case 'Comment':
-						// Mopidy-beets is using SEMICOLONS in its URI schemes.
-						// Surely a typo, but we need to work around it by not splitting the string
 						$filedata[$parts[0]] = $parts[1];
 						break;
 
@@ -758,7 +780,7 @@ class base_mpd_player {
 	}
 
 	private function probe_player_type() {
-		$retval = false;
+		$retval = null;
 		if ($this->is_connected()) {
 			$r = $this->do_mpd_command('tagtypes', true, true);
 			if (is_array($r) && array_key_exists('tagtype', $r)) {

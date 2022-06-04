@@ -10,6 +10,9 @@ shouldn't need to do anything *except* if you were previously running romonitor,
 * Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin.
 As a result of this change though, you will need to recreate any Alarms you had previously configured.
 * Fix bug where album art might be partially downloaded when using MPD (Fix contributed by corubba)
+* Try to make RompR properly timezone aware, so the alarm clock works when Daylight Saving Time is enabled, for example.
+RompR will try to work out your timezone, but if you notice the alarm clock isn't going off at the right time you
+should set date.timezone in your php.ini.
 * The usual collection of undocumented bugfixes.
 * Make the SQLite collection case-insensitive, which makes it work the same way as MySQL and means I can remove a lot of
 case checking statements, which speeds things up. Note that in SQLite case-sensitivity only works with ASCII characters.
