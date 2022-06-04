@@ -1,6 +1,6 @@
 <?php
-setcookie('player_backend', '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
-$skin = 'desktop';
+prefs::set_static_pref(['player_backend' => null]);
+prefs::$pref['skin'] = 'desktop';
 logger::log("SETUP", "Displaying Setup Screen");
 print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -11,7 +11,7 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 <meta name="viewport" content="width=100%, initial-scale=1.0, maximum-scale=1.0, '.
 'minimum-scale=1.0, user-scalable=0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />';
-print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.time()."&skin=".$skin.'" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.time()."&skin=".prefs::skin().'" />'."\n";
 print '<link rel="stylesheet" type="text/css" href="gettheme.php?version='.time().'" />'."\n";
 print '<link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png" />
 <link rel="shortcut icon" sizes="128x128" href="newimages/favicon-128.png" />
@@ -49,21 +49,22 @@ $c = 0;
 foreach (prefs::$prefs['multihosts'] as $host => $def) {
 	print '<div class="styledinputs">';
 	print '<input id="host'.$c.'" type="radio" name="currenthost" value="'.$host.'" onclick="displaySettings(event)"';
-	if ($host == prefs::$prefs['currenthost']) {
+	if ($host == prefs::currenthost()) {
 		print ' checked';
 	}
 	print '><label for="host'.$c.'">'.$host.'</label></div>';
 	$c++;
 }
 
+$pdef = prefs::get_player_def();
 print '<p>'.language::gettext("setup_ipaddress").'<br>';
-print '<input type="text" name="mpd_host" value="'.prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['host'].'" /></p>';
+print '<input type="text" name="mpd_host" value="'.$pdef['host'].'" /></p>';
 print '<p>'.language::gettext("setup_port").'<br>';
-print '<input type="text" name="mpd_port" value="'.prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['port'].'" /></p>';
+print '<input type="text" name="mpd_port" value="'.$pdef['port'].'" /></p>';
 print '<p>'.language::gettext("setup_password").'<br>';
-print '<input type="text" name="mpd_password" value="'.prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['password'].'" /></p>';
+print '<input type="text" name="mpd_password" value="'.$pdef['password'].'" /></p>';
 print '<p>'.language::gettext("setup_unixsocket").'<br>';
-print '<input type="text" name="unix_socket" value="'.prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['socket'].'" /></p>';
+print '<input type="text" name="unix_socket" value="'.$pdef['socket'].'" /></p>';
 
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("label_mopidy_http").'</h3>';

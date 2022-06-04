@@ -29,7 +29,7 @@ function loadOldPrefs() {
 								$a[0] != "use_mopidy_tagcache" &&
 								$a[0] != "music_directory" &&
 								$a[0] != "mopidy_minversion" &&
-								$a[0] != "roxy_host" &&
+								$a[0] != "proxy_host" &&
 								$a[0] != "historylength" &&
 								$a[0] != "keep_search_open" &&
 								$a[0] != "hide_lastfmlist" &&

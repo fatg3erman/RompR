@@ -350,17 +350,17 @@ class player extends base_mpd_player {
 	public function toggle_consume($value) {
 		if ($value == 0) {
 			logger::log('MOPIDY', 'Disabling local consume');
-			prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['do_consume'] = false;
+			prefs::set_player_param(['do_consume' => false]);
 		} else {
 			logger::log('POSTCOMMAND', 'Enabling local consume');
-			prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['do_consume'] = true;
+			prefs::set_player_param(['do_consume' => true]);
 		}
-		prefs::save();
 		return false;
 	}
 
 	public function get_consume($value) {
-		return prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['do_consume'] ? 1 : 0;
+		$pd = prefs::get_player_def();
+		return $pd['do_consume'] ? 1 : 0;
 	}
 
 	// This is here to allow us to force consume to Off when we connect to Mopidy

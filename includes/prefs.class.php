@@ -4,6 +4,30 @@ class prefs {
 
 	public static $database = null;
 
+	const DEFAULT_PLAYER = [
+		'host' => 'localhost',
+		'port' => '6600',
+		'password' => '',
+		'socket' => '',
+		'mopidy_remote' => false,
+		'do_consume' => false,
+		'radioparams' => [
+			"radiomode" => "",
+			"radioparam" => "",
+			"radioconsume" => []
+		]
+	];
+
+	// These are the keys from the above array that we check
+	// to see if a player definition has changed
+	const PLAYER_CONNECTION_PARAMS = [
+		'HOST' => 'host',
+		'PORT' => 'port',
+		'PASSWORD' => 'password',
+		'SOCKET' => 'socket',
+		'REMOTE' => 'mopidy_remote'
+	];
+
 	public static $prefs = array(
 		// Things that only make sense as backend options, not per-user options
 		"music_directory_albumart" => "",
@@ -44,20 +68,7 @@ class prefs {
 		"snapcast_http" => '1780',
 		"http_port_for_mopidy" => "6680",
 		"multihosts" => [
-			'Default' => [
-				'host' => 'localhost',
-				'port' => '6600',
-				'password' => '',
-				'socket' => '',
-				'mopidy_remote' => false,
-				'do_consume' => false,
-				'radioparams' => [
-					"radiomode" => "",
-					"radioparam" => "",
-					"radiomaster" => "",
-					"radioconsume" => []
-				]
-			]
+			'Default' => self::DEFAULT_PLAYER
 		],
 		'old_style_sql' => false,
 		'auto_audiobook' => array(),
@@ -82,8 +93,6 @@ class prefs {
 		// Things that are set as Cookies
 		"sortbydate" => false,
 		"notvabydate" => false,
-		"currenthost" => 'Default',
-		"player_backend" => "none",
 		"collectionrange" => ADDED_ALL_TIME,
 
 		// These are currently saved in the backend, as the most likely scenario is one user
@@ -198,11 +207,24 @@ class prefs {
 		'spotify_token_expires' => null
 	];
 
+	private static $prefs_to_never_save = [
+		'currenthost' => 'Default',
+		'player_backend' => null,
+		'skin' => null,
+	];
+
+	const COOKIEPREFS = [
+		'currenthost',
+		'player_backend',
+		'clickmode',
+		'skin'
+	];
+
 	public static function load() {
 
 		// This cannot be declared above because PHP reasons. It seems to want to use the rules
 		// for declaring CONST when declaring a static variable.
-		self::$prefs["last_lastfm_synctime"] = time()*1000;
+		self::$prefs["last_lastfm_synctime"] = time();
 
 		if (file_exists('prefs/prefs.var')) {
 			$fp = fopen('prefs/prefs.var', 'r');
@@ -218,14 +240,22 @@ class prefs {
 					}
 					// Old prefs files might have values we've removed. This removes those values
 					$sp = array_intersect_key($sp, array_merge(self::$prefs, self::PREFS_WITHOUT_DEFAULTS));
-
 					self::$prefs = array_replace(self::$prefs, $sp);
-					self::$prefs['player_backend'] = 'none';
+					// This ensures that $prefs never contains anything other than the default values
+					// for these items when we load it. This is important. The default values can be
+					// changed for the session by calling set_static_pref() so that they don't get
+					// overwritten if you reload the prefs during the session.
+					self::$prefs = array_merge(self::$prefs, self::$prefs_to_never_save);
+
 					logger::setLevel(self::$prefs['debug_enabled']);
 					logger::setOutfile(self::$prefs['custom_logfile']);
 
+					// Set any prefs that are supplied as cookies.
 					foreach ($_COOKIE as $a => $v) {
-						if (array_key_exists($a, self::$prefs)) {
+						// The UI can st a cookie to '' but doesn't seem able to make it expire
+						if ($v == '') {
+							setcookie($a, $v, ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
+						} else if (array_key_exists($a, self::$prefs)) {
 							if ($v === 'false') { $v = false; }
 							if ($v === 'true') { $v = true; }
 							self::$prefs[$a] = $v;
@@ -234,7 +264,7 @@ class prefs {
 					}
 			  } else {
 				  print '<h1>Fatal Error - Could not open the preferences file</h1>';
-				  error_log("ERROR!              : COULD NOT GET READ FILE LOCK ON PREFS FILE");
+				  error_log("ERROR!              : COULD NOT GET READ LOCK ON PREFS FILE");
 				  exit(1);
 			  }
 		  } else {
@@ -245,8 +275,28 @@ class prefs {
 	   }
 	}
 
+	// Pass an array of key => value pairs
+	public static function set_static_pref($pref) {
+		foreach ($pref as $k => $v) {
+			self::$prefs[$k] = $v;
+			self::$prefs_to_never_save[$k] = $v;
+			if (!defined('IS_ROMONITOR') && in_array($k, self::COOKIEPREFS)) {
+				if ($v == '') {
+					logger::trace('PREFS', 'Expiring Cookie',$k);
+					setcookie($k, $v, ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
+				} else {
+					logger::trace('PREFS', 'Setting Cookie',$k,'to',$v);
+					setcookie($k, $v, ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
+				}
+			}
+		}
+	}
+
 	public static function save() {
 		$sp = self::$prefs;
+		foreach (self::$prefs_to_never_save as $pref => $val) {
+			unset($sp[$pref]);
+		}
 		$ps = serialize($sp);
 		$r = file_put_contents('prefs/prefs.var', $ps, LOCK_EX);
 		if ($r === false) {
@@ -282,6 +332,14 @@ class prefs {
 		if ($dir) {
 			system ('ln -s "'.$dir.'" prefs/MusicFolders');
 		}
+	}
+
+	public static function currenthost() {
+		return self::$prefs['currenthost'];
+	}
+
+	public static function skin() {
+		return self::$prefs['skin'];
 	}
 
 	public static function upgrade_host_defs($ver) {
@@ -376,6 +434,30 @@ class prefs {
 		self::save();
 	}
 
+	public static function get_player_def() {
+		return self::$prefs['multihosts'][self::$prefs['currenthost']];
+	}
+
+	public static function get_radio_params() {
+		return self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'];
+	}
+
+	public static function set_radio_params($params) {
+		self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'] = array_merge(
+			self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'],
+			$params
+		);
+		self::save();
+	}
+
+	public static function set_player_param($param) {
+		self::$prefs['multihosts'][self::$prefs['currenthost']] = array_merge(
+			self::$prefs['multihosts'][self::$prefs['currenthost']],
+			$param
+		);
+		self::save();
+	}
+
 	public static function check_setup_values() {
 
 		//
@@ -383,7 +465,7 @@ class prefs {
 		//
 
 		if (array_key_exists('currenthost', $_POST)) {
-			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable') as $p) {
+			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable', 'spotify_mark_playable') as $p) {
 				if (array_key_exists($p, $_POST)) {
 					$_POST[$p] = true;
 				} else {
@@ -394,29 +476,26 @@ class prefs {
 				logger::mark("INIT", "Setting Pref ".$i." to ".$value);
 				self::$prefs[$i] = $value;
 			}
-			setcookie('currenthost', self::$prefs['currenthost'], ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
+			self::set_static_pref(['currenthost' => self::$prefs['currenthost']]);
 
-			$mopidy_remote = false;
-			if (array_key_exists('mopidy_remote', self::$prefs['multihosts'][self::$prefs['currenthost']])) {
-				$mopidy_remote = self::$prefs['multihosts'][self::$prefs['currenthost']]['mopidy_remote'];
-			}
-			$do_consume = false;
-			if (array_key_exists('do_consume', self::$prefs['multihosts'][self::$prefs['currenthost']])) {
-				$do_consume = self::$prefs['multihosts'][self::$prefs['currenthost']]['do_consume'];
-			}
-			self::$prefs['multihosts'][self::$prefs['currenthost']] = [
-					'host' => self::$prefs['mpd_host'],
-					'port' => self::$prefs['mpd_port'],
-					'password' => self::$prefs['mpd_password'],
-					'socket' => self::$prefs['unix_socket'],
-					'mopidy_remote' => $mopidy_remote,
-					'do_consume' => $do_consume,
-					'radioparams' => [
-						"radiomode" => "",
-						"radioparam" => "",
-						"radioconsume" => []
-					]
+			// Setup screen passes currenthost, mpd_host, mpd_port, mpd_password, and unix_socket
+			// Alter the hosts setting for that host, but pull in mopidy_remote and do_consume
+			// from the existing settings if they exist.
+
+			$newhost = [
+				'host' => self::$prefs['mpd_host'],
+				'port' => self::$prefs['mpd_port'],
+				'password' => self::$prefs['mpd_password'],
+				'socket' => self::$prefs['unix_socket']
 			];
+			$current_player = self::get_player_def();
+			if (array_key_exists('mopidy_remote', $current_player))
+				$newhost['mopidy_remote'] = $current_player['mopidy_remote'];
+
+			if (array_key_exists('do_consume', $current_player))
+				$newhost['do_consume'] = $current_player['do_consume'];
+
+			self::$prefs['multihosts'][self::$prefs['currenthost']] = array_merge(self::DEFAULT_PLAYER, $newhost);
 			self::save();
 		}
 

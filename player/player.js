@@ -1,5 +1,13 @@
 var player = function() {
 
+    var jsonNode = document.querySelector("script[name='default_player']");
+    var jsonText = jsonNode.textContent;
+    const default_player = JSON.parse(jsonText);
+
+    jsonNode = document.querySelector("script[name='player_connection_params']");
+    jsonText = jsonNode.textContent;
+    const player_connection_params = JSON.parse(jsonText);
+
 	function playerEditor() {
 
 		var self = this;
@@ -15,20 +23,24 @@ var player = function() {
 			}
 		}
 
-		function addNewPlayerRow() {
-			$("#playertable").append('<tr class="hostdef" name="New">'+
-				'<td><input type="text" size="30" name="name" class="notspecial" value="New"/></td>'+
-				'<td><input type="text" size="30" name="host" value=""/></td>'+
-				'<td><input type="text" size="30" name="port" value=""/></td>'+
-				'<td><input type="text" size="30" name="password" value=""/></td>'+
-				'<td><input type="text" size="30" name="socket" value=""/></td>'+
-				'<td align="center"><div class="styledinputs"><input type="checkbox" name="mopidy_remote" id="mopidy_remote_'+numhosts+'" /><label for="mopidy_remote_'+numhosts+'">&nbsp;</label></div></td>'+
-				'<input type="hidden" name="do_consume" value="0" />'+
-				'<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
-				'</tr>'
-			);
+		function addNewPlayerRow(name, def) {
+			let row = $('<tr>', {class: 'hostdef'}).appendTo($('#playertable'));
+			let td = $('<td>').appendTo(row);
+			$('<input>', {type: 'text', size: '30', name: 'name', class: 'notspecial'}).val(name).appendTo(td);
+			$.each(player_connection_params, function(i,v) {
+				td = $('<td>').appendTo(row);
+				if (typeof(default_player[v]) == 'string') {
+					$('<input>', {type: 'text', size: '30', name: v}).val(def[v]).appendTo(td);
+				} else {
+					td.addClass('styledinputs textcentre');
+					$('<input>', {type: 'checkbox', name: v, id: v+'_'+numhosts}).appendTo(td);
+					$('<label>', {for: v+'_'+numhosts}).html('&nbsp;').appendTo(td);
+					$('#'+v+'_'+numhosts).prop('checked', def[v]);
+				}
+			});
+			td = $('<td>').appendTo(row);
+			$('<i>', {class: 'icon-cancel-circled smallicon clickicon clickremhost'}).on('click', removePlayerDef).appendTo(td);
 			numhosts++;
-			$('.clickremhost').off('click').on('click', removePlayerDef);
 		}
 
 		function updatePlayerChoices() {
@@ -59,27 +71,25 @@ var player = function() {
 				newhosts[newname] = temp;
 				if (currentname == prefs.currenthost) {
 					if (newname != currentname) {
-						debug.mark("Current Player renamed to "+newname,"PLAYERS");
+						debug.mark('PLAYERS', "Current Player renamed to "+newname);
 						reloadNeeded = newname;
 					}
-					if (temp.host != prefs.multihosts[prefs.currenthost].host ||
-						temp.port != prefs.multihosts[prefs.currenthost].port||
-						temp.socket != prefs.multihosts[prefs.currenthost].socket ||
-						temp.password != prefs.multihosts[prefs.currenthost].password) {
-						debug.mark("Current Player connection details changed","PLAYERS");
-						reloadNeeded = newname;
-					}
+					$.each(player_connection_params, function(i, val) {
+						if (temp[val] != prefs.multihosts[prefs.currenthost][val]) {
+							debug.mark('PLAYERS', "Current Player connection details changed");
+							reloadNeeded = newname;
+						}
+					});
 				}
 			});
+			// If we've updated an existing one, overwrite the properties we've changed
+			// but keep the ones we don't reference in the table. Don't modify the existing
+			// definition, prefs will do that.
 			for (var i in newhosts) {
-				if (prefs.multihosts.hasOwnProperty(i) && prefs.multihosts[i].hasOwnProperty('radioparams')) {
-					newhosts[i].radioparams = prefs.multihosts[i].radioparams;
+				if (prefs.multihosts.hasOwnProperty(i)) {
+					newhosts[i] = $.extend({}, prefs.multihosts[i], newhosts[i]);
 				} else {
-					newhosts[i].radioparams = {
-						radiomode: '',
-						radioparam: '',
-						radioconsume: []
-					}
+					newhosts[i] = $.extend({}, default_player, newhosts[i]);
 				}
 			}
 			if (error) {
@@ -87,7 +97,7 @@ var player = function() {
 			}
 			debug.log("PLAYERS",newhosts);
 			if (reloadNeeded !== false) {
-				setCookie('player_backend', '', 0);
+				setCookie('player_backend', '', 1);
 				prefs.save({multihosts: newhosts}).then(function() {
 					prefs.save({currenthost: reloadNeeded}).then(function() {
 						reloadWindow();
@@ -101,7 +111,10 @@ var player = function() {
 			return true;
 		}
 
-		this.edit = function() {
+		this.edit = async function() {
+			// Need to make sure we refresh any values that the backed has changed (eg do_consume
+			// and radioparams)
+			await prefs.loadPrefs();
 			$("#configpanel").slideToggle('fast');
 			playerpu = new popup({
 				css: {
@@ -114,26 +127,18 @@ var player = function() {
 			var mywin = playerpu.create();
 			numhosts = 0;
 			mywin.append('<table align="center" cellpadding="2" id="playertable" width="100%"></table>');
-			$("#playertable").append('<tr><th>NAME</th><th>HOST</th><th>PORT</th><th>PASSWORD</th><th>UNIX SOCKET</th><th>REMOTE</th></tr>');
+			let titlerow = $('<tr>').appendTo($('#playertable'));
+			$('<th>').html('NAME').appendTo(titlerow);
+			$.each(player_connection_params, function(i, v) {
+				$('<th>').html(i).appendTo(titlerow);
+			})
 			for (var i in prefs.multihosts) {
-				$("#playertable").append('<tr class="hostdef" name="'+escape(i)+'">'+
-					'<td><input type="text" size="30" name="name" class="notspecial" value="'+i+'"/></td>'+
-					'<td><input type="text" size="30" name="host" value="'+prefs.multihosts[i]['host']+'"/></td>'+
-					'<td><input type="text" size="30" name="port" value="'+prefs.multihosts[i]['port']+'"/></td>'+
-					'<td><input type="text" size="30" name="password" value="'+prefs.multihosts[i]['password']+'"/></td>'+
-					'<td><input type="text" size="30" name="socket" value="'+prefs.multihosts[i]['socket']+'"/></td>'+
-					'<td align="center"><div class="styledinputs"><input type="checkbox" name="mopidy_remote" id="mopidy_remote_'+numhosts+'" /><label for="mopidy_remote_'+numhosts+'">&nbsp;</label></div></td>'+
-					'<input type="hidden" name="do_consume" value="'+(prefs.multihosts[i]['do_consume'] ? '1' : '0')+'" />'+
-					'<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
-					'</tr>'
-				);
-				$('#mopidy_remote_'+numhosts).prop('checked', prefs.multihosts[i]['mopidy_remote']);
-				numhosts++;
+				addNewPlayerRow(i, prefs.multihosts[i]);
 			}
 
 			var add = playerpu.add_button('left', 'button_add');
 			add.on('click', function() {
-				addNewPlayerRow();
+				addNewPlayerRow('New', default_player);
 				playerpu.setWindowToContentsSize();
 			});
 

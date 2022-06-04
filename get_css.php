@@ -16,27 +16,26 @@ relative to the root of the website, by reading it all in using php.
 
 require_once ("includes/vars.php");
 header('Content-Type: text/css');
-$skin = $_REQUEST['skin'];
 $css = glob('css/*.css');
 foreach ($css as $file) {
 	logger::log('GET-CSS', $file);
 	readfile($file);
 	print "\n";
 }
-if (file_exists('skins/'.$skin.'/skin.css')) {
-	logger::log('GET-CSS', 'skins/'.$skin.'/skin.css');
-	readfile('skins/'.$skin.'/skin.css');
+if (file_exists('skins/'.prefs::skin().'/skin.css')) {
+	logger::log('GET-CSS', 'skins/'.prefs::skin().'/skin.css');
+	readfile('skins/'.prefs::skin().'/skin.css');
 	print "\n";
 }
-if (file_exists('skins/'.$skin.'/controlbuttons.css')) {
-	logger::log('GET-CSS', 'skins/'.$skin.'/controlbuttons.css');
-	readfile('skins/'.$skin.'/controlbuttons.css');
+if (file_exists('skins/'.prefs::skin().'/controlbuttons.css')) {
+	logger::log('GET-CSS', 'skins/'.prefs::skin().'/controlbuttons.css');
+	readfile('skins/'.prefs::skin().'/controlbuttons.css');
 	print "\n";
 }
 
-if (file_exists('skins/'.$skin.'/skin.requires')) {
+if (file_exists('skins/'.prefs::skin().'/skin.requires')) {
 	logger::log('GET-CSS', 'Reading Skin Requirements File');
-	$requires = file('skins/'.$skin.'/skin.requires');
+	$requires = file('skins/'.prefs::skin().'/skin.requires');
 	foreach ($requires as $s) {
 		$s = trim($s);
 		if (substr($s,0,1) != '#') {

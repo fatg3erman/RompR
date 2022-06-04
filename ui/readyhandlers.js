@@ -182,7 +182,6 @@ function carry_on_starting() {
 	$(document).on('focus', 'input[type="number"]', function() {
 		$(this).attr('autocomplete', 'off');
 	});
-
 	//
 	// Hide the Music from Spotify Panels
 	// These are not currently used while we refactor those playlists

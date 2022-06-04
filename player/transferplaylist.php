@@ -30,7 +30,7 @@ class transferCollection {
 }
 
 $json = json_decode(file_get_contents("php://input"), true);
-logger::mark("TRANSFER", "Transferring Playlist From",prefs::$prefs['currenthost'],"to",$json['currenthost']);
+logger::mark("TRANSFER", "Transferring Playlist From",prefs::currenthost(),"to",$json['currenthost']);
 // Read the playlist from the current player
 $player = new base_mpd_player();
 $mpd_status = $player->get_status();
@@ -44,14 +44,13 @@ $player->close_mpd_connection();
 
 // Probe the type of the new player
 $target = prefs::$prefs['multihosts'][$json['currenthost']];
-prefs::$prefs['player_backend'] = 'none';
+prefs::set_static_pref(['player_backend' => null]);
 $target_player = new base_mpd_player(
 	$target['host'], $target['port'], $target['socket'], $target['password'], null, $target['mopidy_remote']
 );
 // probe_player_type has now set prefs::$prefs['player_backend']
 if ($target_player->is_connected()) {
-	prefs::$prefs['currenthost'] = $json['currenthost'];
-	setcookie('currenthost',prefs::$prefs['currenthost'], ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
+	prefs::set_static_pref(['currenthost' => $json['currenthost']]);
 
 	// Transfer the playlist to the new player
 	$cmds = array('stop', 'clear');

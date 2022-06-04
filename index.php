@@ -13,8 +13,8 @@ require_once ("includes/functions.php");
 // Do some important pre-load checks
 //
 
-if (!is_dir('skins/'.$skin)) {
-	big_bad_fail('Skin '.$skin.' does not exist!');
+if (!is_dir('skins/'.prefs::skin())) {
+	big_bad_fail('Skin '.prefs::skin().' does not exist!');
 }
 
 if (file_exists('collection/collection.php') || is_dir('themes/fruit')) {
@@ -30,11 +30,10 @@ check_php_installation();
 //
 
 if (isset($_GET['currenthost'])) {
-    setcookie('currenthost', $_GET['currenthost'], ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
-    setcookie('player_backend', '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
-    prefs::$prefs['currenthost'] = $_GET['currenthost'];
-    prefs::$prefs['player_backend'] = 'none';
-    prefs::save();
+	prefs::set_static_pref([
+		'currenthost' => $_GET['currenthost'],
+		'player_backend' => null
+	]);
 	header("HTTP/1.1 307 Temporary Redirect");
    	header("Location: ".get_base_url());
     exit;
@@ -89,7 +88,7 @@ if (array_key_exists('setup', $_REQUEST)) {
 // Attempt a player connection. This will set player_backend if it is not already set
 //
 
-logger::mark('INIT','Attempting to connect to player',prefs::$prefs['currenthost']);
+logger::mark('INIT','Attempting to connect to player',prefs::currenthost());
 if (array_key_exists('player_backend', $_COOKIE) && $_COOKIE['player_backend'] != '') {
 	logger::mark('INIT','Player backend cookie is',$_COOKIE['player_backend']);
 } else {
@@ -128,6 +127,10 @@ prefs::save();
 //
 include ("includes/firstrun.php");
 
+//
+// Check that the Backend Daemon is running and (re)start if it necessary.
+// Add ?force_restart=1 to the URL to force the Daemon to Restart
+//
 check_backend_daemon();
 
 logger::log("INIT", "Initialisation done. Let's Boogie!");
@@ -152,7 +155,9 @@ print '<script type="application/json" name="custom_radio_items">'."\n".json_enc
 print '<script type="application/json" name="radio_combine_options">'."\n".json_encode(RADIO_COMBINE_OPTIONS)."\n</script>\n";
 print '<script type="application/json" name="font_sizes">'."\n".json_encode(FONT_SIZES)."\n</script>\n";
 print '<script type="application/json" name="cover_sizes">'."\n".json_encode(COVER_SIZES)."\n</script>\n";
-print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string."&skin=".$skin.'" />'."\n";
+print '<script type="application/json" name="default_player">'."\n".json_encode(prefs::DEFAULT_PLAYER)."\n</script>\n";
+print '<script type="application/json" name="player_connection_params">'."\n".json_encode(prefs::PLAYER_CONNECTION_PARAMS)."\n</script>\n";
+print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string."&skin=".prefs::skin().'" />'."\n";
 
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />
@@ -172,7 +177,7 @@ $scripts = array(
 	"includes/globals.js",
 	"ui/widgets.js",
 	"ui/uihelper.js",
-	"skins/".$skin."/skin.js",
+	"skins/".prefs::skin()."/skin.js",
 	"player/controller.js",
 	"ui/collectionhelper.js",
 	"player/player.js",
@@ -239,8 +244,8 @@ if (prefs::$prefs['load_plugins_at_loadtime']) {
 
 // Load any Javascript from the skin requirements file
 $skinrequires = [];
-if (file_exists('skins/'.$skin.'/skin.requires')) {
-	$skinrequires = file('skins/'.$skin.'/skin.requires');
+if (file_exists('skins/'.prefs::skin().'/skin.requires')) {
+	$skinrequires = file('skins/'.prefs::skin().'/skin.requires');
 }
 foreach ($skinrequires as $s) {
 	$s = trim($s);
@@ -255,8 +260,8 @@ foreach ($skinrequires as $s) {
 </head>
 
 <?php
-logger::log("LAYOUT", "Including skins/".$skin.'/skin.php');
-include('skins/'.$skin.'/skin.php');
+logger::log("LAYOUT", "Including skins/".prefs::skin().'/skin.php');
+include('skins/'.prefs::skin().'/skin.php');
 foreach (['post_max_size', 'max_file_uploads', 'upload_max_filesize'] as $i) {
  	print '<input type="hidden" name="'.$i.'" value="'.ini_get($i).'" />'."\n";
 }

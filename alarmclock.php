@@ -17,9 +17,7 @@ prefs::$database->update_pid_for_alarm(prefs::$prefs['alarmindex'], getmypid());
 prefs::$database->close_database();
 prefs::$database = null;
 logger::mark("ALARMCLOCK", "Player is",$alarm['Player']);
-prefs::$prefs['currenthost'] = $alarm['Player'];
-
-define('CURRENTHOST_SAVE', $alarm['Player']);
+prefs::set_static_pref(['currenthost' => $alarm['Player']]);
 
 $player = new base_mpd_player();
 $player = new player();
@@ -47,9 +45,10 @@ while (true) {
 
 	if (!$play_item && $mpd_status['playlistlength'] == 0) {
 		// If we haven't been given anything to play, and there's nothing in the queue, start playing all tracks at random
-		prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radiomode'] = 'starRadios';
-		prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radioparam'] = 'allrandom';
-		prefs::save();
+		prefs::set_radio_params([
+			'radiomode' => 'starRadios',
+			'radioparam' => 'allrandom'
+		]);
 		$player->prepare_smartradio();
 		prefs::$database = new collection_radio();
 		prefs::$database->preparePlaylist();

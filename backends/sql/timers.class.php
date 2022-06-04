@@ -8,8 +8,9 @@ class timers extends database {
 		if ($player !== null) {
 			$this->player = $player;
 		} else {
-			$this->player = prefs::$prefs['currenthost'];
+			$this->player = prefs::currenthost();
 		}
+		prefs::set_static_pref(['currenthost', $this->player]);
 		parent::__construct();
 	}
 

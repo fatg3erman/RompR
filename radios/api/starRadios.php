@@ -2,12 +2,12 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-define('CURRENTHOST_SAVE', prefs::$prefs['currenthost']);
+prefs::set_static_pref(['currenthost' => prefs::currenthost()]);
 $params = json_decode(file_get_contents('php://input'), true);
 foreach ($params as $k => $v) {
 	logger::log('SMARTRADIO', $k,'=',$v);
-	prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams'][$k] = $v;
 }
+prefs::set_radio_params($params);
 // prepare_smartradio will save the prefs, so no need to do it here
 $player = new base_mpd_player();
 $player = new player();

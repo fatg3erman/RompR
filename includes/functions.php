@@ -421,13 +421,14 @@ function get_player_ip() {
 	logger::log("INIT", "Server Address is ".$_SERVER['SERVER_ADDR']);
 	// REMOTE_ADDR is the address of the machine running the browser
 	logger::log("INIT", "Remote Address is ".$_SERVER['REMOTE_ADDR']);
-	logger::log("INIT", "Prefs for mpd host is ".prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['host']);
+	$pdef = prefs::get_player_def();
+	logger::log("INIT", "Prefs for mpd host is ".$pdef['host']);
 	$pip = '';
-	if (prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['socket'] != '') {
+	if ($pdef['socket'] != '') {
 		$pip = $_SERVER['SERVER_ADDR'];
 	} else {
-		$pip = nice_server_address(prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['host']).':'.
-			prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['port'];
+		$pip = nice_server_address($pdef['host']).':'.
+			$pdef['port'];
 	}
 	if (prefs::$prefs['mopidy_http_port'] !== false) {
 		$pip .= '/'.explode(':', prefs::$prefs['mopidy_http_port'])[1];
@@ -911,7 +912,7 @@ function check_backend_daemon() {
 		}
 	} else {
 		logger::mark('INIT', 'Backend Daemon is running.');
-		if (prefs::$prefs['backend_version'] != $version_string) {
+		if (prefs::$prefs['backend_version'] != $version_string || array_key_exists('force_restart', $_REQUEST)) {
 			logger::mark('INIT', 'Backend Daemon',prefs::$prefs['backend_version'],'is different from',$version_string,'. Restarting it');
 			kill_process(get_pid($b));
 			while (($pid = get_pid('romonitor.php')) !== false) {

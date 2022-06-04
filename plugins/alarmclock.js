@@ -12,6 +12,7 @@ var alarmclock = function() {
 	var newalarms = [];
 	var frug = 0;
 	var alarm_running = false;
+	var running_alarm_index = false;
 	var notifier = null;
 
 	var alarm_editor = null;
@@ -21,14 +22,17 @@ var alarmclock = function() {
 		var alarm_enabled = false;
 		var alarm_snoozing = false;
 		alarm_running = false;
+		running_alarm_index = false;
 		for (var a in alarms) {
 			createAlarmHeader(alarms[a], a);
 			if (alarms[a].Alarmindex != 'NEW') {
 				if (alarms[a].Pid)
 					alarm_enabled = true;
 
-				if (alarms[a].Running == 1)
+				if (alarms[a].Running == 1) {
 					alarm_running = a;
+					running_alarm_index = alarms[a].Alarmindex;
+				}
 
 				if (alarms[a].SnoozePid)
 					alarm_snoozing = true;
@@ -37,7 +41,7 @@ var alarmclock = function() {
 		$('#alarmclock_icon').removeClass('icon-alarm').removeClass('icon-alarm-on').addClass(alarm_enabled ? 'icon-alarm-on' : 'icon-alarm');
 		infobar.playbutton.flash(alarm_snoozing);
 		if (alarm_running !== false) {
-			let message = 'Alarm '+alarms[alarm_running].Name;
+			let message = 'Alarm '+alarms[alarm_running].Name+' ('+alarms[alarm_running].Time+')';
 			if (notifier == null) {
 				notifier = infobar.permnotify(message, 'icon-alarm-on');
 				$('.notify-icon-'+notifier).attr('name', alarms[alarm_running].Alarmindex).addClass('clickicon');
@@ -229,7 +233,7 @@ var alarmclock = function() {
 				type: 'GET',
 				url: 'api/alarmclock/?index='+index+'&enable='+enable
 			});
-			if (enable == 0 && playlist.radioManager.is_running())
+			if (index === running_alarm_index && playlist.radioManager.is_running())
 				playlist.radioManager.stop();
 
 			alarmclock.populate_alarms();

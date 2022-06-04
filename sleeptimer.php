@@ -3,17 +3,14 @@ const IS_ROMONITOR = true;
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 $opts = getopt('', ['currenthost:', 'sleeptime:']);
-if (is_array($opts)) {
-	foreach($opts as $key => $value) {
-		prefs::$prefs[$key] = $value;
-	}
-}
-logger::mark("SLEEPTIMER", "Using Player",prefs::$prefs['currenthost']);
+prefs::set_static_pref($opts);
+
+logger::mark("SLEEPTIMER", "Using Player",prefs::currenthost());
 logger::log('SLEEPTIMER', 'Sleeping for',format_time(prefs::$prefs['sleeptime']));
 
 sleep((int) prefs::$prefs['sleeptime']);
 
-logger::mark(prefs::$prefs['currenthost'], 'Starting Sleep Timer Volume Ramp');
+logger::mark(prefs::currenthost(), 'Starting Sleep Timer Volume Ramp');
 
 $player = new base_mpd_player();
 $player = new player();

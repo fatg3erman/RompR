@@ -36,9 +36,10 @@ if (array_key_exists('playlist', $_REQUEST)) {
 		add_playlist(rawurlencode(file_get_contents($file)), htmlentities(basename($file)), 'icon-doc-text', 'clickloaduserplaylist', true, $c, true, null);
 		$c++;
 	}
+	$pd = prefs::get_player_def();
 	if (!$player->playlist_error &&
 		(prefs::$prefs['player_backend'] == prefs::$prefs['collection_player']) &&
-		(prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['mopidy_remote'] == false)
+		($pd['mopidy_remote'] == false)
 	) {
 		sort($used_images);
 		$imgs = glob('prefs/plimages/*');

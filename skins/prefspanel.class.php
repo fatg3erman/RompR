@@ -514,7 +514,8 @@ class prefspanel extends uibits {
 			'is_array' => true
 		]);
 
-		if (prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['mopidy_remote'] == false) {
+		$pd = prefs::get_player_def();
+		if ($pd['mopidy_remote'] == false) {
 
 			if (prefs::$prefs['collection_player'] == prefs::$prefs['player_backend'] || prefs::$prefs['collection_player'] == null) {
 				self::ui_checkbox(['id' => 'use_original_releasedate', 'label' => 'config_use_original_releasedate']);

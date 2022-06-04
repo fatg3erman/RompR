@@ -30,31 +30,32 @@ class base_mpd_player {
 
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_remote = null) {
 		$this->debug_id = microtime();
+		$pdef = prefs::get_player_def();
 		if ($ip !== null) {
 			$this->ip = $ip;
 		} else {
-			$this->ip = prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['host'];
+			$this->ip = $pdef['host'];
 		}
 		if ($port !== null) {
 			$this->port = $port;
 		} else {
-			$this->port = prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['port'];
+			$this->port = $pdef['port'];
 		}
 		if ($socket !== null) {
 			$this->socket = $socket;
 		} else {
-			$this->socket = prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['socket'];
+			$this->socket = $pdef['socket'];
 		}
 		if ($password !== null) {
 			$this->password = $password;
 		} else {
-			$this->password = prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['password'];
+			$this->password = $pdef['password'];
 		}
 		if ($is_remote !== null) {
 			$this->is_remote = $is_remote;
 		} else {
-			if (array_key_exists('mopidy_remote', prefs::$prefs['multihosts'][prefs::$prefs['currenthost']])) {
-				$this->is_remote = prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['mopidy_remote'];
+			if (array_key_exists('mopidy_remote', $pdef)) {
+				$this->is_remote = $pdef['mopidy_remote'];
 			} else {
 				// Catch the case where we haven't yet upgraded the player defs
 				$this->is_remote = false;
@@ -65,7 +66,7 @@ class base_mpd_player {
 		if ($player_type !== null) {
 			$this->player_type = $player_type;
 		} else {
-			if (array_key_exists('player_backend', prefs::$prefs) && (prefs::$prefs['player_backend'] == 'mpd' || prefs::$prefs['player_backend'] == 'mopidy')) {
+			if (prefs::$prefs['player_backend'] != null) {
 				$this->player_type = prefs::$prefs['player_backend'];
 			} else {
 				$this->player_type = $this->probe_player_type();
@@ -589,7 +590,8 @@ class base_mpd_player {
 	public function get_idle_status() {
 		// If there's a smart playlist running we need to respond to playlist changed commands
 		// so we top up the tracklist when something is removed by a human
-		$command = (prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radiomode'] == '') ? 'idle player' : 'idle player playlist';
+		$rp = prefs::get_radio_params();
+		$command = ($rp['radiomode'] == '') ? 'idle player' : 'idle player playlist';
 		return $this->do_mpd_command($command, true, false);
 	}
 
@@ -771,11 +773,7 @@ class base_mpd_player {
 				logger::warn("MPDPLAYER", "WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly");
 				$retval =  "mopidy";
 			}
-			if (!defined('IS_ROMONITOR')) {
-				logger::log('MPDPLAYER', 'Setting player_backend Cookie');
-				setcookie('player_backend', $retval, ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
-			}
-			prefs::$prefs['player_backend'] = $retval;
+			prefs::set_static_pref(['player_backend' => $retval]);
 			set_include_path('player/'.prefs::$prefs['player_backend'].PATH_SEPARATOR.get_include_path());
 		}
 		return $retval;
@@ -1315,14 +1313,11 @@ class base_mpd_player {
 
 		// This should be in a state where it can be passed direct to do_command_list()
 		// via controller.js - whichever browser is used to stop the radio will set these back
-		prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radioconsume'] = [
+		prefs::set_radio_params(['radioconsume' => [
 			['consume', $this->get_consume($status['consume'])],
 			['repeat', $status['repeat']],
 			['random', $status['random']]
-		];
-
-		prefs::save();
-
+		]]);
 		$this->do_command_list(['stop']);
 		$this->do_command_list(['clear']);
 		$this->do_command_list(['repeat 0']);
@@ -1351,7 +1346,7 @@ class base_mpd_player {
 						$idle_status = $this->get_idle_status();
 					}
 					if (array_key_exists('error', $idle_status) && $idle_status['error'] == 'Timed Out') {
-						logger::mark(CURRENTHOST_SAVE, "Idle command timed out, looping back");
+						logger::mark(prefs::currenthost(), "Idle command timed out, looping back");
 						$timedout = true;
 						continue;
 					} else if (array_key_exists('error', $idle_status)) {
@@ -1367,7 +1362,7 @@ class base_mpd_player {
 
 			}
 			$this->close_mpd_connection();
-			logger::mark(CURRENTHOST_SAVE, "** Player connection dropped - retrying in 10 seconds **");
+			logger::mark(prefs::currenthost(), "** Player connection dropped - retrying in 10 seconds **");
 			sleep(10);
 			$this->open_mpd_connection();
 		}
@@ -1406,12 +1401,12 @@ class base_mpd_player {
 		if (array_key_exists('songid', $this->current_status) &&
 			array_key_exists('elapsed', $this->current_status)
 		) {
-			logger::debug(CURRENTHOST_SAVE, '-----------------------------------------------');
-			logger::log(CURRENTHOST_SAVE, 'Status : Songid is',$this->current_status['songid'],'Elapsed is',$this->current_status['elapsed']);
+			logger::debug(prefs::currenthost(), '-----------------------------------------------');
+			logger::log(prefs::currenthost(), 'Status : Songid is',$this->current_status['songid'],'Elapsed is',$this->current_status['elapsed']);
 
 			$filedata = $this->get_currentsong_as_playlist();
 
-			logger::mark(CURRENTHOST_SAVE, "Status : Duration is",$this->current_song['Time'],"Current Playcount is",$this->current_song['Playcount']);
+			logger::mark(prefs::currenthost(), "Status : Duration is",$this->current_song['Time'],"Current Playcount is",$this->current_song['Playcount']);
 
 			// Prevent multiple calls to updatenowplaying in the case where we keep coming
 			// back here during playing the same track.
@@ -1421,9 +1416,9 @@ class base_mpd_player {
 	}
 
 	private function check_idle_status($idle_status) {
-		logger::core(CURRENTHOST_SAVE, 'Idle Status is',print_r($idle_status, true));
+		logger::core(prefs::currenthost(), 'Idle Status is',print_r($idle_status, true));
 		$status = $this->get_status();
-		logger::mark(CURRENTHOST_SAVE,"Player State Has Changed from",$this->current_status['state'],"to", $status['state']);
+		logger::mark(prefs::currenthost(),"Player State Has Changed from",$this->current_status['state'],"to", $status['state']);
 
 		if (array_key_exists('changed', $idle_status)) {
 			// So we only get here if we were playing a song before we sent the idle command
@@ -1437,9 +1432,9 @@ class base_mpd_player {
 					$this->check_playcount_increment();
 				} else if ($status['state'] == 'play') {
 					if ($this->current_status['state'] == 'pause' && $this->current_status['songid'] == $status['songid']) {
-						logger::log(CURRENTHOST_SAVE, 'Song is being restarted after being paused');
+						logger::log(prefs::currenthost(), 'Song is being restarted after being paused');
 					} else if ($this->current_status['songid'] == $status['songid']) {
-						logger::log(CURRENTHOST_SAVE, 'Same track being played. Must have been restarted or seeked');
+						logger::log(prefs::currenthost(), 'Same track being played. Must have been restarted or seeked');
 						$this->check_playcount_increment();
 					} else {
 						$this->check_playcount_increment();
@@ -1447,13 +1442,13 @@ class base_mpd_player {
 				}
 			}
 
-			$this->reload_prefs();
+			prefs::load();
 			if ($this->get_consume(0) && array_key_exists('songid', $this->current_status)) {
 				if (
 					($status['state'] == 'stop' && $this->current_status['state'] !== 'stop') ||
 					($status['songid'] != $this->current_status['songid'])
 				) {
-					logger::log(CURRENTHOST_SAVE, 'Consuming track ID',$this->current_status['songid']);
+					logger::log(prefs::currenthost(), 'Consuming track ID',$this->current_status['songid']);
 					$this->do_command_list(['deleteid "'.$this->current_status['songid'].'"']);
 				}
 			}
@@ -1468,14 +1463,14 @@ class base_mpd_player {
 		$elapsed = time() - $this->current_song['readtime'] + $this->current_status['elapsed'];
 		$fraction_played = ($this->current_song['Time'] == 0) ? 0 : $elapsed / $this->current_song['Time'];
 		if ($fraction_played > 0.95) {
-			logger::mark(CURRENTHOST_SAVE, "Played more than 95% of song. Incrementing playcount");
+			logger::mark(prefs::currenthost(), "Played more than 95% of song. Incrementing playcount");
 			prefs::$database = new metaDatabase();
 			$this->current_song['attributes'] = [['attribute' => 'Playcount', 'value' => $this->current_song['Playcount']+1]];
 			prefs::$database->inc($this->current_song);
 
 			if ($this->current_song['type'] == 'podcast') {
 				prefs::$database->close_database();
-				logger::mark(CURRENTHOST_SAVE, "Marking podcast episode as listened");
+				logger::mark(prefs::currenthost(), "Marking podcast episode as listened");
 				prefs::$database = new poDatabase();
 				prefs::$database->markAsListened($this->current_song['file']);
 			}
@@ -1483,21 +1478,15 @@ class base_mpd_player {
 
 		}
 
-		$this->reload_prefs();
+		prefs::load();
 		if (($fraction_played*100) > prefs::$prefs['scrobblepercent'])
 			$this->scrobble_to_lastfm();
 	}
 
-	private function reload_prefs() {
-		prefs::load();
-		prefs::$prefs['currenthost'] = CURRENTHOST_SAVE;
-		prefs::$prefs['player_backend'] = PLAYER_BACKEND_SAVE;
-	}
-
 	private function lastfm_update_nowplaying() {
-		$this->reload_prefs();
+		prefs::load();
 		if (prefs::$prefs['lastfm_scrobbling'] && prefs::$prefs['lastfm_session_key'] != '') {
-			logger::mark(CURRENTHOST_SAVE, 'Updating Last.FM Nowplaying');
+			logger::mark(prefs::currenthost(), 'Updating Last.FM Nowplaying');
 			$options = array(
 				'track' => $this->current_song['Title'],
 				'artist' => $this->current_song['trackartist'],
@@ -1509,7 +1498,7 @@ class base_mpd_player {
 
 	private function scrobble_to_lastfm() {
 		if (prefs::$prefs['lastfm_scrobbling'] && prefs::$prefs['lastfm_session_key'] != '') {
-			logger::mark(CURRENTHOST_SAVE, 'Scrobbling');
+			logger::mark(prefs::currenthost(), 'Scrobbling');
 			$options = array(
 				'timestamp' => time() - $this->current_song['Time'],
 				'track' => $this->current_song['Title'],
@@ -1525,10 +1514,9 @@ class base_mpd_player {
 	}
 
 	public function check_radiomode() {
-		$radiomode = prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radiomode'];
-		$radioparam = prefs::$prefs['multihosts'][CURRENTHOST_SAVE]['radioparams']['radioparam'];
+		$rp = prefs::get_radio_params();
 
-		if ($radiomode == '')
+		if ($rp['radiomode'] == '')
 			return;
 
 		// Need to recheck the playlist length, because $this->current_status *might* have the value
@@ -1536,20 +1524,20 @@ class base_mpd_player {
 		// up, $this->current_status isn't initialised anyway.
 		$playlistlength = $this->get_status_value('playlistlength');
 
-		logger::trace(CURRENTHOST_SAVE, 'Radio Params Are',$radiomode, $radioparam,'Playlist Length is',$playlistlength);
+		logger::trace(prefs::currenthost(), 'Radio Params Are',$rp['radiomode'], $rp['radioparam'],'Playlist Length is',$playlistlength);
 
 		if ($playlistlength >= prefs::$prefs['smartradio_chunksize'])
 			return;
 
-		switch ($radiomode) {
+		switch ($rp['radiomode']) {
 			case 'starRadios':
 			case 'mostPlayed':
 			case 'faveAlbums':
 			case 'recentlyaddedtracks':
 				$tracksneeded = prefs::$prefs['smartradio_chunksize'] - $playlistlength;
-				logger::trace(CURRENTHOST_SAVE, "Adding",$tracksneeded,"tracks from",$radiomode);
+				logger::trace(prefs::currenthost(), "Adding",$tracksneeded,"tracks from",$rp['radiomode'],$rp['radioparam']);
 				prefs::$database = new collection_radio();
-				$tracks = prefs::$database->doPlaylist($radioparam, $tracksneeded);
+				$tracks = prefs::$database->doPlaylist($rp['radioparam'], $tracksneeded);
 				prefs::$database->close_database();
 				$cmds = array();
 				foreach ($tracks as $track) {

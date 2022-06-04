@@ -116,7 +116,6 @@ function check_dbterms($cmd) {
 }
 
 function mpd_file_search($cmd, $domains, $dbterms) {
-	// global $skin;
 	prefs::$database= new collection_base();
 	$player = new fileCollector($dbterms);
 	$player->doFileSearch($cmd, $domains);
@@ -142,7 +141,6 @@ function mpd_search($cmd, $domains, $dbterms) {
 }
 
 function browse_album() {
-	// global $skin;
 	$a = preg_match('/^(a|b)(.*?)(\d+|root)/', $_REQUEST['browsealbum'], $matches);
 	if (!$a) {
 		print '<h3>'.language::gettext("label_general_error").'</h3>';

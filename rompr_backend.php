@@ -72,7 +72,7 @@ while (true) {
 }
 
 function player_def_changed($a, $b) {
-    foreach (['host', 'mopidy_remote', 'password', 'port', 'socket'] as $p) {
+    foreach (prefs::PLAYER_CONNECTION_PARAMS as $p) {
         if ($a[$p] != $b[$p]) {
             return true;
         }

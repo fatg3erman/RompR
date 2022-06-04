@@ -242,7 +242,7 @@ var prefs = function() {
 	}
 
 	function dontTransferPlaylist() {
-		setCookie('player_backend', 'none', 0);
+		setCookie('player_backend', '', 1);
 		prefs.save(deferredPrefs).then(reloadWindow);
 	}
 

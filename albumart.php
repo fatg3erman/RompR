@@ -21,7 +21,7 @@ set_version_string();
 <?php
 print '<script type="application/json" name="font_sizes">'."\n".json_encode(FONT_SIZES)."\n</script>\n";
 print '<script type="application/json" name="cover_sizes">'."\n".json_encode(COVER_SIZES)."\n</script>\n";
-print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string.'&skin='.$skin.'" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string.'&skin='.prefs::skin().'" />'."\n";
 print '<link rel="stylesheet" type="text/css" href="css/albumartmanager/albumart.css?version=?'.$version_string.'" />'."\n";
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />
