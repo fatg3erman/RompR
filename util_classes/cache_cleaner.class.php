@@ -160,7 +160,7 @@ class cache_cleaner extends database {
 		$this->open_transaction();
 		$result = $this->generic_sql_query("SELECT DISTINCT Albumindex, Albumname, Image, Domain FROM
 			Tracktable JOIN Albumtable USING (Albumindex) JOIN Playcounttable USING (TTindex)
-			WHERE Hidden = 1
+			WHERE Hidden = 1 AND LinkChecked < 4
 			AND ".$this->sql_two_weeks()."
 			AND
 				Albumindex NOT IN (SELECT Albumindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Hidden = 0)
@@ -181,9 +181,11 @@ class cache_cleaner extends database {
 		return $this->sql_prepare_query(false, null, 'acount', 0,
 			"SELECT COUNT(Albumindex) AS acount FROM Albumtable
 			JOIN Tracktable USING (Albumindex)
-			WHERE Image = ?
-			AND Hidden = 0
-			AND isSearchResult < 2
+			WHERE
+			Image = ?
+			AND ((Hidden = 0
+			AND isSearchResult < 2)
+			OR LinkChecked = 4)
 			AND URI IS NOT NULL",
 		$image);
 	}
