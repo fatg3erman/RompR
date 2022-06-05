@@ -1177,25 +1177,29 @@ class metaDatabase extends playlistCollection {
 			$this->youtubedl_error('Could not open progress file. Possible permissions error', null);
 		}
 
-		if (is_dir('prefs/youtubedl/'.$ttindex)) {
-			$this->youtubedl_error('Target Directory prefs/youtubedl/'.$ttindex,'already exists', $progress_file);
-		} else {
-			logger::log('YOUTUBEDL', 'Making Directory prefs/youtubedl/'.$ttindex);
-			mkdir('prefs/youtubedl/'.$ttindex);
-		}
+		$target_dir = 'prefs/youtubedl/'.$ttindex;
+		while (is_dir($target_dir))
+			$target_dir .= '1';
+
+		// if (is_dir('prefs/youtubedl/'.$ttindex)) {
+		// 	$this->youtubedl_error('Target Directory prefs/youtubedl/'.$ttindex,'already exists', $progress_file);
+		// } else {
+		logger::log('YOUTUBEDL', 'Making Directory ',$target_dir);
+		mkdir($target_dir);
+		// }
 		// At this point, terminate the request so the download can run in the background.
 		// If we don't do this the browser will retry after 3 minutes and there's nothing we
 		// can do about that.
 		close_browser_connection();
 		logger::log('YOUTUBEDL', 'OK now we start the fun');
-		file_put_contents('prefs/youtubedl/'.$ttindex.'/original.uri', $uri_to_get);
-		exec($ytdl_path.'youtube-dl -o "prefs/youtubedl/'.$ttindex.'/%(title)s-%(id)s.%(ext)s" --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> '.$progress_file.' 2>&1', $output, $retval);
+		file_put_contents($target_dir.'/original.uri', $uri_to_get);
+		exec($ytdl_path.'youtube-dl -o "'.$target_dir.'/%(title)s-%(id)s.%(ext)s" --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> '.$progress_file.' 2>&1', $output, $retval);
 		if ($retval != 0 && $retval != 1) {
 			$this->youtubedl_error('youtube-dl returned error code '.$retval, $progress_file);
 		}
-		$files = glob('prefs/youtubedl/'.$ttindex.'/*.flac');
+		$files = glob($target_dir.'/*.flac');
 		if (count($files) == 0) {
-			$this->youtubedl_error('Could not find downloaded flac file in prefs/youtubedl/'.$ttindex, $progress_file);
+			$this->youtubedl_error('Could not find downloaded flac file in '.$target_dir, $progress_file);
 		} else {
 			logger::log('YOUTUBEDL', print_r($files, true));
 		}
