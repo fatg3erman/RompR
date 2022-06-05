@@ -1124,6 +1124,7 @@ class metaDatabase extends playlistCollection {
 	private function youtubedl_error($message, $progress_file) {
 		logger::error('YOUTUBEDL', $message);
 		header("HTTP/1.1 404 Not Found");
+		file_put_contents($progress_file.'_error', $message);
 		print $message;
 
 		if ($progress_file && file_exists($progress_file))

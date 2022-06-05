@@ -841,6 +841,12 @@ var layoutProcessor = function() {
 				command: player.controller.volume
 			});
 			setupCollectionDisplay();
+			sleepHelper.addSleepHelper(layoutProcessor.stopHeaderTimer);
+			sleepHelper.addWakeHelper(layoutProcessor.doFancyHeaderStuff);
+		},
+
+		stopHeaderTimer: function() {
+ 			clearTimeout(headertimer);
 		},
 
 		// Optional Additions

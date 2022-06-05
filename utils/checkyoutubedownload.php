@@ -18,6 +18,10 @@ if (file_exists('prefs/youtubedl/dlprogress_'.$_REQUEST['key'])) {
 	$result = json_decode(file_get_contents('prefs/youtubedl/dlprogress_'.$_REQUEST['key'].'_result'), true);
 	$retval = ['result' => $result];
 	unlink('prefs/youtubedl/dlprogress_'.$_REQUEST['key'].'_result');
+} else if (file_exists('prefs/youtubedl/dlprogress_'.$_REQUEST['key'].'_error')) {
+	$result = file_get_contents('prefs/youtubedl/dlprogress_'.$_REQUEST['key'].'_error');
+	$retval = ['result' => $result];
+	unlink('prefs/youtubedl/dlprogress_'.$_REQUEST['key'].'_error');
 }
 print json_encode($retval);
 ?>
