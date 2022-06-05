@@ -10,3 +10,5 @@ logs
 MusicFolders
 .kdev4
 *.kdev4
+player/mpd/telnet.py
+player/mpd/websocket.py

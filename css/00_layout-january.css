@@ -1451,7 +1451,7 @@ div.info-box-expand .underline:nth-child(1) {
 }
 
 .notloved {
-	opacity: 0.3;
+	opacity: 0.3 !important;
 }
 
 .infowiki div.tright {
