@@ -42,20 +42,28 @@ class collection_base extends database {
 	private $find_album = true;
 	private $find_album2;
 
-	// public function check_lastmodified($lm) {
+	// public function check_lastmodified(&$filedata) {
 	// 	if ($this->options['doing_search'])
 	// 		return true;
 
-	// 	$time = strtotime($lm);
+	// 	if ($filedata['Last-Modified'] == null)
+	// 		return true;
+
+	// 	$time = strtotime($filedata['Last-Modified']);
 
 	// 	if ($time > $this->collection_lastmodified) {
 	// 		if ($time > $this->thisrun_lastmodified)
 	// 			$this->thisrun_lastmodified = $time;
 
-	// 		return true;
+	// 		$this->sql_prepare_query(true, null, null, null,
+	// 			"UPDATE Tracktable SET justAdded = 1, Hidden = 0 WHERE Uri = ?",
+	// 			$filedata['file']
+	// 		);
+
+	// 		return false;
 	// 	}
 
-	// 	return false;
+	// 	return true;
 	// }
 
 	// public function read_collection_lastmodified() {
@@ -136,51 +144,6 @@ class collection_base extends database {
 				break;
 			}
 		}
-
-		// Spotify. Fucking Spotify will CHANGE THE TITLE OF A TRACK. So I've added an index to the Uri
-		// field, which I really didn't want to ever have to do. But we must follow down whatever shit-filled
-		// drainpipe Spotify lead us into.
-		// if (count($data) == 0) {
-		// 	$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-		// 		'SELECT
-		// 			Title,
-		// 			Uri,
-		// 			TTindex,
-		// 			Disc,
-		// 			Artistname AS AlbumArtist,
-		// 			Albumtable.Image AS "X-AlbumImage",
-		// 			mbid AS MUSICBRAINZ_ALBUMID,
-		// 			Searched,
-		// 			IFNULL(Playcount, 0) AS Playcount,
-		// 			isAudiobook,
-		// 			useTrackIms AS usetrackimages,
-		// 			Albumindex AS album_index,
-		// 			AlbumArtistindex AS albumartist_index,
-		// 			Tracktable.Artistindex AS trackartist_index
-		// 		FROM
-		// 			Tracktable
-		// 			JOIN Albumtable USING (Albumindex)
-		// 			JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-		// 			LEFT JOIN Playcounttable USING (TTindex)
-		// 		WHERE
-		// 		Hidden = 0
-		// 		AND Uri = ?',
-		// 		$filedata['file']
-		// 	);
-		// 	foreach ($result as $tinfo) {
-		// 		if ($tinfo['isAudiobook'] > 0) {
-		// 			$tinfo['type'] = 'audiobook';
-		// 		}
-		// 		$tinfo['isAudiobook'] = null;
-		// 		$data = array_filter($tinfo, function($v) {
-		// 			if ($v === null || $v == '') {
-		// 				return false;
-		// 			}
-		// 			return true;
-		// 		});
-		// 		break;
-		// 	}
-		// }
 
 		if (count($data) == 0) {
 			$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
@@ -398,6 +361,8 @@ class collection_base extends database {
 		// create_new_album
 		//		Creates an album
 		//		Returns: Albumindex
+
+		logger::log('COLLECTION', 'Creating Album',$data['Album'],'with year',$data['year']);
 
 		$retval = null;
 		if ($this->sql_prepare_query(true, null, null, null,

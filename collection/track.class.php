@@ -13,6 +13,16 @@ class track {
 		// sort it out later.
 		$this->tags['albumartist'] = format_sortartist($this->tags);
 		$this->tags['trackartist'] = format_artist($this->tags['Artist'], '');
+		if (is_numeric($this->tags['year']) && $this->tags['year'] > 2155)
+			$this->tags['year'] = null;
+
+	}
+
+	// MySQL YEAR must be < 2155. I have one where the year is 2810. Obvs a typo
+	// but it causes an Exception, and it fucks things up.
+	public function set_year($year) {
+		if (is_numeric($year) && $year < 2156)
+			$this->tags['year'] = $year;
 	}
 
 	public function get_sort_artist() {

@@ -16,8 +16,8 @@ class album {
 		if ($this->tracks[0]->tags['X-AlbumImage'] === null) {
 			$this->tracks[0]->tags['X-AlbumImage'] = $track->tags['X-AlbumImage'];
 		}
-		if ($this->tracks[0]->tags['year'] === null) {
-			$this->tracks[0]->tags['year'] = $track->tags['year'];
+		if ($this->tracks[0]->tags['year'] === null && $track->tags['year'] !== null) {
+			$this->tracks[0]->set_year($track->tags['year']);
 		}
 		if ($this->tracks[0]->tags['Date'] === null) {
 			$this->tracks[0]->tags['Date'] = $track->tags['Date'];

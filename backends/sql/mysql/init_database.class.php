@@ -45,7 +45,6 @@ class init_database extends init_generic {
 			"usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0, ".
 			"Genreindex INT UNSIGNED DEFAULT 0, ".
 			"TYear YEAR, ".
-			"INDEX (Uri(768)), ".
 			"UNIQUE INDEX(Albumindex, Artistindex, TrackNo, Disc, Title)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  Tracktable OK");
@@ -1256,6 +1255,22 @@ class init_database extends init_generic {
 					logger::log("SQL", "Updating FROM Schema version 91 TO Schema version 92");
 					prefs::upgrade_host_defs(92);
 					$this->generic_sql_query("UPDATE Statstable SET Value = 92 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 92:
+					logger::log("SQL", "Updating FROM Schema version 92 TO Schema version 93");
+					// The Uri index, which we no longer want, might have been added at creation time
+					// or it might have been added retrospectively. It'll have a different name in each case.
+					$indices = $this->generic_sql_query("SHOW INDEX FROM Tracktable");
+					foreach ($indices as $index) {
+						if ($index['Column_name'] == 'Uri') {
+							$this->sql_prepare_query(true, null, null, null,
+								"DROP INDEX ? FROM Tracktable",
+								$index['Key_name']
+							);
+						}
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 93 WHERE Item = 'SchemaVer'", true);
 					break;
 
 			}

@@ -359,7 +359,6 @@ class base_mpd_player {
 
 		$success = $this->send_command($command);
 		$filedata = MPD_FILE_MODEL;
-		// $directory = null;
 		$parts = true;
 		if (is_array($domains) && count($domains) == 0) {
 			$domains = false;
@@ -370,11 +369,7 @@ class base_mpd_player {
 			if (is_array($parts)) {
 				switch ($parts[0]) {
 					case "directory":
-						// if ($this->has_dir_lastmod) {
-						// 	$directory = trim($parts[1]);
-						// } else {
-							$dirs[] = trim($parts[1]);
-						// }
+						$dirs[] = trim($parts[1]);
 						break;
 
 					case "Last-Modified":
@@ -382,12 +377,6 @@ class base_mpd_player {
 							// We don't want the Last-Modified stamps of the directories
 							// to be used for the files.
 							$filedata[$parts[0]] = $parts[1];
-						// } else if ($directory !== null) {
-						// 	if (prefs::$database->check_lastmodified(trim($parts[1]))) {
-						// 		logger::trace('MPD', $directory,'has been modified since last update');
-						// 		$dirs[] = $directory;
-						// 	}
-						// 	$directory = null;
 						}
 						break;
 
@@ -401,7 +390,6 @@ class base_mpd_player {
 								}
 							}
 						}
-						// $directory = null;
 						$filedata = MPD_FILE_MODEL;
 						if ($parts[0] == 'file')
 							$filedata[$parts[0]] = $parts[1];

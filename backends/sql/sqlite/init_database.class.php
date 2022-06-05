@@ -1286,6 +1286,12 @@ class init_database extends init_generic {
 					$this->generic_sql_query("UPDATE Statstable SET Value = 92 WHERE Item = 'SchemaVer'", true);
 					break;
 
+				case 92:
+					logger::log("SQL", "Updating FROM Schema version 92 TO Schema version 93");
+					$this->generic_sql_query("DROP INDEX IF EXISTS track_finder_index");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 93 WHERE Item = 'SchemaVer'", true);
+					break;
+
 			}
 			$sv++;
 		}
@@ -1431,11 +1437,7 @@ class init_database extends init_generic {
 				return array(false, "Error Creating Tracktable Index : ".$err);
 			}
 		}
-		if ($this->generic_sql_query("CREATE INDEX IF NOT EXISTS track_finder_index ON Tracktable (Title, Uri)", true)) {
-		} else {
-			$err = $this->mysqlc->errorInfo()[2];
-			return array(false, "Error While Checking Tracktable : ".$err);
-		}
+
 		return array(true, '');
 	}
 

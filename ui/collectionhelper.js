@@ -43,6 +43,8 @@ var collectionHelper = function() {
 				msg += ' - '+err.responseText;
 			}
 			infobar.error(msg);
+			doneUpdate();
+			return false;
 		}
 		var data = {current: 'Preparing'};
 		while (data.current != 'RompR Is Done') {
@@ -61,6 +63,10 @@ var collectionHelper = function() {
 		}
 		debug.info('GENERAL', 'Collection Update Finished');
 		infobar.notify(language.gettext('label_updatedone'));
+		doneUpdate();
+	}
+
+	function doneUpdate() {
 		infobar.removenotify(notify);
 		loadCollection();
 		collectionHelper.enableCollectionUpdates();
