@@ -32,8 +32,8 @@ class cache_cleaner extends database {
 		$this->clean_cache_dir('prefs/jsoncache/musicbrainz/', 2592000);
 		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/allmusic/', 2592000);
-		// One Week
-		$this->clean_cache_dir('prefs/jsoncache/discogs/', 604800);
+		// One Month
+		$this->clean_cache_dir('prefs/jsoncache/discogs/', 2592000);
 		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/wikipedia/', 2592000);
 		// One Month
@@ -63,6 +63,7 @@ class cache_cleaner extends database {
 		$this->remove_hidden_images();
 		logger::info("CACHE CLEANER", "== Check For Hidden Album Art took ".format_time(time() - $now));
 
+		prefs::load();
 		if (prefs::$prefs['cleanalbumimages']) {
 			$now = time();
 			// TODO: This is too slow
