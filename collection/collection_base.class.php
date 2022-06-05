@@ -362,7 +362,7 @@ class collection_base extends database {
 		//		Creates an album
 		//		Returns: Albumindex
 
-		logger::log('COLLECTION', 'Creating Album',$data['Album'],'with year',$data['year']);
+		logger::trace('COLLECTION', 'Creating Album',$data['Album'],'with year',$data['year']);
 
 		$retval = null;
 		if ($this->sql_prepare_query(true, null, null, null,
