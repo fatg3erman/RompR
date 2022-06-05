@@ -392,7 +392,9 @@ class metabackup extends metaDatabase {
 				JOIN Artisttable AS ta USING (Artistindex)
 				JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
 				JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
-			WHERE Tracktable.LastModified IS NULL AND Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2 AND uri IS NOT NULL");
+			WHERE Tracktable.LastModified IS NULL AND
+				((Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2) OR (Tracktable.Hidden = 1 AND Tracktable.LinkChecked = 4))
+				AND Uri IS NOT NULL");
 	}
 
 	private function get_audiobooks() {
@@ -420,7 +422,8 @@ class metabackup extends metaDatabase {
 				JOIN Artisttable AS ta USING (Artistindex)
 				JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
 				JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
-			WHERE Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2 AND uri IS NOT NULL AND Tracktable.isAudiobook > 0");
+			WHERE ((Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2) OR (Tracktable.Hidden = 1 AND Tracktable.LinkChecked = 4))
+			AND Uri IS NOT NULL AND Tracktable.isAudiobook > 0");
 	}
 
 	private function get_ratings() {

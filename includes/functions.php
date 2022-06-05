@@ -47,22 +47,39 @@ function format_podcast_text($d) {
 }
 
 // This is for converting a time parameter in seconds into something like 2 Days 12:34:15
-// Using it with actual UNIX timestamps will probably not do what it was intended for
+// Pass it a value in seconds. It does not use date functions since they're timezone aware
+// and will add one to the hours value during BST.
 function format_time($t, $f = ':') {
 
 	// PHP 8.1 moans about losing precision. I KNOW. I DON'T CARE.
 	$t = (int) round($t);
 
-	// NOTE We're using date functions. This makes the calculations timezone-aware
-	// This may or may not be good. TODO check where this is used, and the consequences of that.
-	if (($t/86400) >= 1)
-		return floor($t/86400).' '.language::gettext('label_days').' '.date('G'.$f.'i'.$f.'s', $t);
+	$retval = '';
+	$hours = 0;
+	$days = 0;
 
-	if (($t/3600) >= 1)
-		return date('G'.$f.'i'.$f.'s', $t);
+	if (($t/86400) >= 1) {
+		$days = floor($t/86400);
+		$retval = $days . ' ' . language::gettext('label_days') . ' ';
+		$t -= ($days*86400);
+	}
 
-	return date('i'.$f.'s', $t);
+	if ($t == 0)
+		return $retval;
 
+	if (($t/3600) >= 1 || $days > 0) {
+		$hours = floor($t/3600);
+		$retval .= $hours.$f;
+		$t -= ($hours*3600);
+	}
+
+	$mins = floor($t/60);
+	if ($hours > 0 || $days > 0)
+		$mins = sprintf('%02d', $mins);
+
+	$retval .= $mins.$f.sprintf('%02d', ($t%60));
+
+	return $retval;
 }
 
 function munge_album_name($name) {

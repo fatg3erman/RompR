@@ -427,7 +427,7 @@ var imageEditor = function() {
 
 			imageEditor.search();
 			if (path && path != '.') {
-				$.getJSON("utils/findLocalImages.php?path="+path, imageEditor.gotLocalImages)
+				$.getJSON("utils/findLocalImages.php?path="+encodeURIComponent(path), imageEditor.gotLocalImages)
 			}
 
 			var searchparams = coverscraper.getImageSearchParams(imgobj);
