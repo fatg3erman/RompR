@@ -97,7 +97,7 @@ class ui_elements {
 			$class .= ' mostrecent';
 
 		// Outer container
-		if ($data['playable'] == 1 or $data['playable'] == 3) {
+		if ($data['playable'] == 1 || $data['playable'] == 3 || $data['playable'] == 4) {
 			// Note - needs clicktrack and name in case it is a removeable track
 			print '<div class="unplayable clicktrack ninesix indent containerbox" name="'.rawurlencode($data['uri']).'">';
 		} else if ($data['uri'] == null) {

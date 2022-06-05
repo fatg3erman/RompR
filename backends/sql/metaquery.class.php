@@ -86,6 +86,7 @@ class metaquery extends collection_base {
 		// 1 = Not Checked, Unplayable at last check
 		// 2 = Checked, Playable
 		// 3 = Checked, Unplayable
+		// 4 = marked unplayable by setup screen
 		// This function returns true when there are no more tracks to check.
 		// The backend daemon polls a chunk of 25 tracks every time it wakes up
 		// until it has done them all, then it waits for link_checker_frequency seconds
@@ -136,7 +137,7 @@ class metaquery extends collection_base {
 
 	public function resetlinkcheck() {
 		if (!prefs::$prefs['link_checker_is_running']) {
-			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2");
+			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2 OR LinkChecked = 4");
 			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3");
 			prefs::$prefs['link_checker_is_running'] = true;
 			prefs::save();

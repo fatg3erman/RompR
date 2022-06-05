@@ -152,7 +152,7 @@ async function checkProgress() {
 			if (AlanPartridge >= 30) {
 				await playlist.is_valid();
 				AlanPartridge = 0;
-				debug.log('MOPIDY', 'Doing poll');
+				debug.core('MOPIDY', 'Doing poll');
 				await player.controller.do_command_list([]);
 				updateStreamInfo();
 			}

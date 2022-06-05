@@ -130,18 +130,20 @@ class init_generic extends database {
 	public function check_setupscreen_actions() {
 		if (prefs::$prefs['spotify_mark_unplayable']) {
 			logger::log('SQLINIT', 'Marking all Spotify tracks as unplayable');
-			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 3 WHERE Uri LIKE 'spotify:%' AND Hidden = 0");
+			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 4, Hidden = 1 WHERE Uri LIKE 'spotify:%' AND Hidden = 0");
 			prefs::$prefs['spotify_mark_unplayable'] = false;
 			prefs::$prefs['linkchecker_nextrun'] = strtotime('2030-01-01 00:00:00');
 			logger::log('SQLINIT', 'Time is',time(),'Setting nextrun to',prefs::$prefs['linkchecker_nextrun']);
+			$this->generic_sql_query("UPDATE Statstable SET Value = 1 WHERE Item = 'ListVersion'");
 			prefs::save();
 		}
 		if (prefs::$prefs['spotify_mark_playable']) {
 			logger::log('SQLINIT', 'Marking all Spotify tracks as playable');
-			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE Uri LIKE 'spotify:%' AND Hidden = 0");
+			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0, Hidden = 0 WHERE LinkChecked = 4");
 			prefs::$prefs['spotify_mark_unplayable'] = false;
 			prefs::$prefs['linkchecker_nextrun'] = time();
 			logger::log('SQLINIT', 'Time is',time(),'Setting nextrun to',prefs::$prefs['linkchecker_nextrun']);
+			$this->generic_sql_query("UPDATE Statstable SET Value = 1 WHERE Item = 'ListVersion'");
 			prefs::save();
 		}
 	}

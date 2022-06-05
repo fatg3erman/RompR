@@ -20,7 +20,7 @@ class unplayable_tracks extends database {
 			JOIN Artisttable AS ta USING (Artistindex)
 			JOIN Albumtable USING (Albumindex)
 			JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
-			WHERE LinkChecked = 1 OR LinkChecked = 3
+			WHERE LinkChecked = 1 OR LinkChecked = 3 OR LinkChecked = 4
 			GROUP BY tr.TTindex
 			ORDER BY aa.Artistname, Albumname, TrackNo";
 
