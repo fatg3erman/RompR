@@ -18,10 +18,8 @@ $params = json_decode(file_get_contents('php://input'), true);
 foreach($params as $p) {
 
 	logger::log("METADATA", "  Doing action",strtoupper($p['action']));
-	if (prefs::$prefs['debug_enabled'] > 5) {
-		foreach ($p as $i => $v) {
-			logger::trace("Parameter", "    ",$i,':',$v);
-		}
+	foreach ($p as $i => $v) {
+		logger::trace("Parameter", "    ",$i,':',$v);
 	}
 
 	prefs::$database->sanitise_data($p);

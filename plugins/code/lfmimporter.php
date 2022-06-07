@@ -11,7 +11,7 @@ switch ($_REQUEST['action']) {
 		logger::trace("LFMIMPORTER", "Got ".count($arse)." rows");
 		if (count($arse) == 0) {
 			logger::log("LFMIMPORTER", "Updating LastFM Import time");
-			prefs::$prefs['lfm_importer_last_import'] = time();
+			prefs::set_pref(['lfm_importer_last_import' => time()]);
 			prefs::save();
 		}
 

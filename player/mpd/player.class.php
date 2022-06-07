@@ -48,9 +48,9 @@ class player extends base_mpd_player {
 			case 'local':
 				$this->check_undefined_tags($filedata);
 				$filedata['folder'] = dirname($filedata['unmopfile']);
-				if (prefs::$prefs['audiobook_directory'] != '') {
+				if (prefs::get_pref('audiobook_directory') != '') {
 					$f = rawurldecode($filedata['folder']);
-					if (strpos($f, prefs::$prefs['audiobook_directory']) === 0) {
+					if (strpos($f, prefs::get_pref('audiobook_directory')) === 0) {
 						$filedata['type'] = 'audiobook';
 					}
 				}
@@ -266,8 +266,8 @@ class player extends base_mpd_player {
 
 	private function websocket_command() {
 		$retval = 	'/player/mpd/mpd_websocket.py'
-					.' --currenthost='.prefs::$prefs['currenthost']
-					.' --wsport='.prefs::$prefs['mpd_websocket_port'];
+					.' --currenthost='.prefs::currenthost()
+					.' --wsport='.prefs::get_pref('mpd_websocket_port');
 
 		if ($this->socket) {
 			$retval .= ' --unix='.$this->socket;
@@ -283,9 +283,9 @@ class player extends base_mpd_player {
 	}
 
 	public function probe_websocket() {
-		if (prefs::$prefs['mpd_websocket_port'] !== '') {
+		if (prefs::get_pref('mpd_websocket_port') !== '') {
 			if (get_pid($this->websocket_command()) === false) {
-				if (($pid = get_pid('mpd_websocket.py --currenthost='.prefs::$prefs['currenthost'])) !== false) {
+				if (($pid = get_pid('mpd_websocket.py --currenthost='.prefs::currenthost())) !== false) {
 					logger::log('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config');
 					kill_process($pid);
 				}
@@ -301,11 +301,11 @@ class player extends base_mpd_player {
 				logger::log('MPDSOCKET', 'MPD Websocket Server already running');
 			}
 			$http_server = nice_server_address($this->ip);
-			prefs::set_player_param(['websocket' => $http_server.':'.prefs::$prefs['mpd_websocket_port'].'/']);
+			prefs::set_player_param(['websocket' => $http_server.':'.prefs::get_pref('mpd_websocket_port').'/']);
 			logger::log('MPDSOCKET', 'Using',prefs::get_player_param('websocket'),'for MPD websocket');
 		} else {
 			logger::log('MPDSOCKET', 'MPD websocket Not Configured');
-			if (($pid = get_pid('mpd_websocket.py --currenthost='.prefs::$prefs['currenthost'])) !== false) {
+			if (($pid = get_pid('mpd_websocket.py --currenthost='.prefs::currenthost())) !== false) {
 				logger::log('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config');
 				kill_process($pid);
 			}

@@ -20,14 +20,14 @@ class spotify {
 			'url' => $url,
 			'cache' => $use_cache ? 'spotify' : null,
 			'return_value' => !$print_data,
-			'header' => array('Authorization: Bearer '.prefs::$prefs['spotify_token'])
+			'header' => array('Authorization: Bearer '.prefs::get_pref('spotify_token'))
 		]);
 		return $cache->get_cache_data();
 	}
 
 	private static function check_spotify_token() {
-		if (!array_key_exists('spotify_token', prefs::$prefs) ||
-			(array_key_exists('spotify_token_expires', prefs::$prefs)) && time() > prefs::$prefs['spotify_token_expires']) {
+		// Note for when you're confused by this. time() is always > null
+		if (prefs::get_pref('spotify_token') == null || time() > prefs::get_pref('spotify_token_expires')) {
 			logger::trace("SPOTIFY", "Getting Spotify Credentials");
 			$d = new url_downloader(array(
 				'url' => 'https://accounts.spotify.com/api/token',
@@ -37,8 +37,10 @@ class spotify {
 			if ($d->get_data_to_string()) {
 				$stuff = json_decode($d->get_data());
 				logger::debug("SPOTIFY", "Token is ".$stuff->{'access_token'}." expires in ".$stuff->{'expires_in'});
-				prefs::$prefs['spotify_token'] = $stuff->{'access_token'};
-				prefs::$prefs['spotify_token_expires'] = time() + $stuff->{'expires_in'};
+				prefs::set_pref([
+					'spotify_token' => $stuff->{'access_token'},
+					'spotify_token_expires' => time() + $stuff->{'expires_in'}
+				]);
 				prefs::save();
 			} else {
 				logger::warn("SPOTIFY", "Getting credentials FAILED!" );
@@ -82,9 +84,9 @@ class spotify {
 		//
 
 		if (is_array($params['id'])) {
-			$url = self::BASE_URL.'v1/tracks?ids='.implode(',', $params['id']).'&market='.prefs::$prefs['lastfm_country_code'];
+			$url = self::BASE_URL.'v1/tracks?ids='.implode(',', $params['id']).'&market='.prefs::get_pref('lastfm_country_code');
 		} else {
-			$url = self::BASE_URL.'v1/tracks/'.$params['id'].'?market='.prefs::$prefs['lastfm_country_code'];
+			$url = self::BASE_URL.'v1/tracks/'.$params['id'].'?market='.prefs::get_pref('lastfm_country_code');
 		}
 		return self::request($url, $print_data, $params['cache']);
 	}
@@ -155,7 +157,7 @@ class spotify {
 		unset($params['cache']);
 		$url = self::BASE_URL.'v1/artists/'.$params['id'].'/albums?';
 		unset($params['id']);
-		$params['country'] = prefs::$prefs['lastfm_country_code'];
+		$params['country'] = prefs::get_pref('lastfm_country_code');
 		$url .= http_build_query($params);
 		return self::request($url, $print_data, $use_cache);
 	}
@@ -200,7 +202,7 @@ class spotify {
 		//
 
 		$url = self::BASE_URL.'v1/recommendations?';
-		$params['param']['market'] = prefs::$prefs['lastfm_country_code'];
+		$params['param']['market'] = prefs::get_pref('lastfm_country_code');
 		$url .= http_build_query($params['param']);
 		return self::request($url, $print_data, $params['cache']);
 	}

@@ -95,7 +95,7 @@
 		'label' => 'label_searchfor',
 		'icon_size' => 'smallicon'
 	]);
-	include("player/".prefs::$prefs['player_backend']."/search.php");
+	include("player/".prefs::get_pref('player_backend')."/search.php");
 	?>
 	</div>
 	<div id="searchresultholder" class="selecotron is-albumlist"></div>
@@ -218,7 +218,7 @@
 		<div id="volumedropper" class="top_drop_menu rightmenu widemenu topshadow">
 <?php
 	include('player/utils/outputs.php');
-	if (prefs::$prefs['hide_master_volume']) {
+	if (prefs::get_pref('hide_master_volume')) {
 
 		print uibits::ui_config_header([
 			'label' => 'button_volume',
@@ -266,7 +266,7 @@
 		'title_class' => 'nohelp player-title'
 	]);
 	print '<div class="pref styledinputs" name="playerdefs"></div>';
-	if (!prefs::$prefs['hide_master_volume']) {
+	if (!prefs::get_pref('hide_master_volume')) {
 			print uibits::ui_config_header([
 				'main_icon' => 'icon-snapcast',
 				'title_class' => 'nohelp invisible',

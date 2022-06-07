@@ -78,7 +78,7 @@ class collection_radio extends database {
 				break;
 		}
 		$sqlstring .= ' AND (LinkChecked = 0 OR LinkChecked = 2) AND isAudiobook = 0 AND usedInPlaylist = 0 AND isSearchResult < 2 AND Hidden = 0 AND Uri IS NOT NULL';
-		if (prefs::$prefs['collection_player'] == 'mopidy' && prefs::$prefs['player_backend'] == 'mpd') {
+		if (prefs::get_pref('collection_player') == 'mopidy' && prefs::get_pref('player_backend') == 'mpd') {
 			$sqlstring .= ' AND Uri LIKE "local:%"';
 		}
 		$uris = $this->get_tracks($sqlstring, $limit, $tags, $random);

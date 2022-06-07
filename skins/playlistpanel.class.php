@@ -29,14 +29,14 @@ class playlistpanel extends uibits {
 
 		print '<div id="flowcontrols" class="noborder containerbox">';
 		print '<i id="random" class="icon-random tooltip inline-icon clickicon expand flow-off" title="'.language::gettext('button_random').'"></i>';
-		if (prefs::$prefs['player_backend'] == "mpd") {
+		if (prefs::get_pref('player_backend') == "mpd") {
 			print '<i id="crossfade" class="icon-crossfade tooltip inline-icon clickicon expand flow-off" title="'.language::gettext('button_crossfade').'"></i>';
 		}
 		print '<i id="repeat" class="icon-repeat tooltip inline-icon clickicon expand flow-off" title="'.language::gettext('button_repeat').'"></i>';
 		print '<i id="consume" class="icon-consume tooltip inline-icon clickicon expand flow-off" title="'.language::gettext('button_consume').'"></i>';
 		print '</div>';
 
-		if (prefs::$prefs['player_backend'] == "mpd") {
+		if (prefs::get_pref('player_backend') == "mpd") {
 			print '<table width="90%" align="center">';
 				print '<tr>';
 					print '<td rowspan="2">';

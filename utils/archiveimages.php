@@ -24,7 +24,7 @@ foreach ($r as $obj) {
 		$retval = dirname($obj->Uri);
 		$retval = preg_replace('#^local:track:#', '', $retval);
 		$retval = preg_replace('#^file://#', '', $retval);
-		$retval = preg_replace('#^beetslocal:\d+:'.prefs::$prefs['music_directory_albumart'].'/#', '', $retval);
+		$retval = preg_replace('#^beetslocal:\d+:'.prefs::get_pref('music_directory_albumart').'/#', '', $retval);
 
 		if (is_dir('prefs/MusicFolders') && $retval != '.') {
 			$albumpath = imageFunctions::munge_filepath($retval);

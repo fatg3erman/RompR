@@ -3,17 +3,13 @@ const IS_ROMONITOR = true;
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 $opts = getopt('', ['alarmindex:']);
-if (is_array($opts)) {
-	foreach($opts as $key => $value) {
-		prefs::$prefs[$key] = $value;
-	}
-}
+prefs::set_session_pref($opts);
 
-logger::mark("ALARMCLOCK", "Initialising Alarm Clock For Index", prefs::$prefs['alarmindex']);
+logger::mark("ALARMCLOCK", "Initialising Alarm Clock For Index", prefs::get_pref('alarmindex'));
 
 prefs::$database = new timers();
-$alarm = prefs::$database->get_alarm(prefs::$prefs['alarmindex']);
-prefs::$database->update_pid_for_alarm(prefs::$prefs['alarmindex'], getmypid());
+$alarm = prefs::$database->get_alarm(prefs::get_pref('alarmindex'));
+prefs::$database->update_pid_for_alarm(prefs::get_pref('alarmindex'), getmypid());
 prefs::$database->close_database();
 prefs::$database = null;
 logger::mark("ALARMCLOCK", "Player is",$alarm['Player']);
@@ -70,7 +66,7 @@ while (true) {
 		// is to stop playback first (remembering to disable consume first) and then
 		// later on to start playback from where it was before you pressed stop.
 		if ($alarm['Ramp'] == 1) {
-			if (prefs::$prefs['player_backend'] == 'mopidy' && $mpd_status['state'] == 'pause') {
+			if (prefs::get_pref('player_backend') == 'mopidy' && $mpd_status['state'] == 'pause') {
 				$seek_workaround = [$mpd_status['songid'], $mpd_status['elapsed']];
 				$old_consume = $player->get_consume($mpd_status['consume']);
 				$player->force_consume_state(0);
@@ -103,7 +99,7 @@ while (true) {
 		}
 
 		if ($alarm['Ramp'] == 1)
-			$player->ramp_volume(0, $volume, prefs::$prefs['alarm_ramptime']);
+			$player->ramp_volume(0, $volume, prefs::get_pref('alarm_ramptime'));
 
 		$player->close_mpd_connection();
 

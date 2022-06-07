@@ -6,9 +6,9 @@ $opts = getopt('', ['currenthost:', 'sleeptime:']);
 prefs::set_session_pref($opts);
 
 logger::mark("SLEEPTIMER", "Using Player",prefs::currenthost());
-logger::log('SLEEPTIMER', 'Sleeping for',format_time(prefs::$prefs['sleeptime']));
+logger::log('SLEEPTIMER', 'Sleeping for',format_time(prefs::get_pref('sleeptime')));
 
-sleep((int) prefs::$prefs['sleeptime']);
+sleep((int) prefs::get_pref('sleeptime'));
 
 logger::mark(prefs::currenthost(), 'Starting Sleep Timer Volume Ramp');
 

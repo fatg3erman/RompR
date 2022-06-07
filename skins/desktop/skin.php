@@ -22,7 +22,7 @@
 
 <?php
 	include('player/utils/outputs.php');
-	if (prefs::$prefs['hide_master_volume']) {
+	if (prefs::get_pref('hide_master_volume')) {
 		print '<div id="snapcast-secondary" class="fixed containerbox bordered infobarlayout"></div>';
 	} else {
 		print '<div id="volumebox" class="fixed">';
@@ -46,7 +46,7 @@
 	}
 
 	if (count($outputdata) > 1) {
-		if (prefs::$prefs['hide_master_volume']) {
+		if (prefs::get_pref('hide_master_volume')) {
 			print '<div id="outputbox" class="fixed">';
 		} else {
 			print '<div id="outputbox" class="fixed" style="display:none">';
@@ -196,7 +196,7 @@ print '<button class="fixed iconbutton savebutton"></button></div>';
 			'label' => 'label_searchfor',
 			'icon_size' => 'smallicon'
 		]);
-		include("player/".prefs::$prefs['player_backend']."/search.php");
+		include("player/".prefs::get_pref('player_backend')."/search.php");
 		?>
 		<div id="searchresultholder" class="noborder selecotron is-albumlist"></div>
 	</div>

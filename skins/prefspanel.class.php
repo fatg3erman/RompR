@@ -29,7 +29,7 @@ class prefspanel extends uibits {
 
 		self::ui_checkbox(['id' => 'player_in_titlebar', 'label' => 'config_playerintitlebar']);
 		// self::ui_checkbox(['id' => 'consume_workaround', 'label' => 'config_consumeworkaround']);
-		if (prefs::$prefs['player_backend'] == "mpd") {
+		if (prefs::get_pref('player_backend') == "mpd") {
 			self::ui_textentry([
 				'label' => 'config_crossfade',
 				'size' => 3,
@@ -441,7 +441,7 @@ class prefspanel extends uibits {
 		]);
 
 		print '<div class="pref">'.language::gettext('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
-			'<input name="lfmuser" type="text" size="30" value="'.prefs::$prefs['lastfm_user'].'"/>'.
+			'<input name="lfmuser" type="text" size="30" value="'.prefs::get_pref('lastfm_user').'"/>'.
 			'</div><button id="lastfmloginbutton" class="fixed notenabled">'.language::gettext('config_loginbutton').
 			'</button></div>';
 		print '</div>';
@@ -492,7 +492,7 @@ class prefspanel extends uibits {
 				'name' => 'donkeykong'
 			]
 		];
-		if (prefs::$prefs['player_backend'] == "mpd" && prefs::$prefs['collection_player'] !== null) {
+		if (prefs::get_pref('player_backend') == "mpd" && prefs::get_pref('collection_player') !== null) {
 			$update_buttons[] = [
 				'label' => 'config_rescan',
 				'name' => 'dinkeyking'
@@ -517,15 +517,14 @@ class prefspanel extends uibits {
 		$pd = prefs::get_player_def();
 		if ($pd['mopidy_remote'] == false) {
 
-			if (prefs::$prefs['collection_player'] == prefs::$prefs['player_backend'] || prefs::$prefs['collection_player'] == null) {
+			if (prefs::get_pref('collection_player') == prefs::get_pref('player_backend') || prefs::get_pref('collection_player') == null) {
 				self::ui_checkbox(['id' => 'use_original_releasedate', 'label' => 'config_use_original_releasedate']);
 				self::ui_checkbox(['id' => 'updateeverytime', 'label' => 'config_updateonstart']);
 			}
 
-			logger::info('PREFSPANEL', 'Collection Player is', prefs::$prefs['collection_player']);
-			logger::info('PREFSPANEL', 'Player Backend is', prefs::$prefs['player_backend']);
-
-			if ((prefs::$prefs['collection_player'] == "mopidy" || prefs::$prefs['collection_player'] == null) && prefs::$prefs['player_backend'] == 'mopidy') {
+			if ((prefs::get_pref('collection_player') == "mopidy" || prefs::get_pref('collection_player') == null)
+				&& prefs::get_pref('player_backend') == 'mopidy')
+			{
 				print '<div class="pref" id="mopidycollectionoptions">'.
 				'<b>'.language::gettext('config_collectionfolders').'</b></div>';
 
@@ -536,7 +535,7 @@ class prefspanel extends uibits {
 				self::ui_checkbox(['id' => 'preferlocalfiles', 'label' => 'config_preferlocal']);
 			}
 
-			if (prefs::$prefs['collection_player'] == prefs::$prefs['player_backend'] || prefs::$prefs['collection_player'] == null) {
+			if (prefs::get_pref('collection_player') == prefs::get_pref('player_backend') || prefs::get_pref('collection_player') == null) {
 				self::ui_checkbox(['id' => 'sortbycomposer', 'label' => 'config_sortbycomposer']);
 				self::ui_checkbox(['id' => 'composergenre', 'label' => 'config_composergenre', 'class' => 'indent']);
 				self::ui_textentry([

@@ -1,6 +1,6 @@
 <?php
 prefs::set_session_pref(['player_backend' => null]);
-prefs::$prefs['skin'] = 'desktop';
+prefs::set_pref(['skin' => 'desktop']);
 logger::log("SETUP", "Displaying Setup Screen");
 print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -28,7 +28,7 @@ input[type=submit] { width: 40% }
 .styledinputs input[type="radio"] + label { display: inline !important }
 </style>';
 print '<script language="javascript">'."\n";
-print 'var multihosts = '.json_encode(prefs::$prefs['multihosts']).";\n";
+print 'var multihosts = '.json_encode(prefs::get_pref('multihosts')).";\n";
 print '</script>';
 print '</head>
 <body class="setup" style="overflow-y:scroll">';
@@ -46,7 +46,7 @@ print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("setup_mpd").'</h3>';
 print '<p>Choose or edit a player</p>';
 $c = 0;
-foreach (prefs::$prefs['multihosts'] as $host => $def) {
+foreach (prefs::get_pref('multihosts') as $host => $def) {
 	print '<div class="styledinputs">';
 	print '<input id="host'.$c.'" type="radio" name="currenthost" value="'.$host.'" onclick="displaySettings(event)"';
 	if ($host == prefs::currenthost()) {
@@ -71,10 +71,10 @@ print '<h3>'.language::gettext("setup_mopidy_scan_title").'</h3>';
 
 print '<p>'.language::gettext("label_mopidy_http").'</p>';
 print '<p class="tiny">'.language::gettext("info_mopidy_http").'</p>';
-print '<input type="text" name="http_port_for_mopidy" value="'.prefs::$prefs['http_port_for_mopidy'].'" /></p>';
+print '<input type="text" name="http_port_for_mopidy" value="'.prefs::get_pref('http_port_for_mopidy').'" /></p>';
 
 print '<div class="styledinputs"><input id="mopscan" type="checkbox" name="use_mopidy_scan" ';
-if (prefs::$prefs['use_mopidy_scan']) {
+if (prefs::get_pref('use_mopidy_scan')) {
 	print " checked";
 }
 print '><label for="mopscan">'.language::gettext('setup_mopidy_scan').'</label></div>';
@@ -92,21 +92,21 @@ print '<h3>'.language::gettext("setup_mpd_special").'</h3>';
 
 print '<p>'.language::gettext("label_mpd_websocket").'</p>';
 print '<p class="tiny">'.language::gettext("info_mpd_websocket").'</p>';
-print '<input type="text" name="mpd_websocket_port" value="'.prefs::$prefs['mpd_websocket_port'].'" /></p>';
+print '<input type="text" name="mpd_websocket_port" value="'.prefs::get_pref('mpd_websocket_port').'" /></p>';
 print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-MPD" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
 
 
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("label_generalsettings").'</h3>';
 print '<div class="styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
-if (prefs::$prefs['cleanalbumimages']) {
+if (prefs::get_pref('cleanalbumimages')) {
 	print " checked";
 }
 print '><label for="cli">Clean ununsed album art at regular intervals</label></div>';
 print '<p class="tiny">You almost certainly want to keep this enabled</p>';
 
 print '<div class="styledinputs"><input id="dsp" type="checkbox" name="do_not_show_prefs" ';
-if (prefs::$prefs['do_not_show_prefs']) {
+if (prefs::get_pref('do_not_show_prefs')) {
 	print " checked";
 }
 print '><label for="dsp">Do not show preferences panel on the interface</label></div>';
@@ -117,39 +117,39 @@ print '<h3>'.language::gettext('config_google_credentials').'</h3>';
 print '<p class="tiny">To use Bing Image Search you need to create an API key</p>';
 print '<p><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
 print '<p>Bing API Key<br/>';
-print '<input type="text" name="bing_api_key" value="'.prefs::$prefs['bing_api_key'].'" /></p>'."\n";
+print '<input type="text" name="bing_api_key" value="'.prefs::get_pref('bing_api_key').'" /></p>'."\n";
 
 print '<hr class="setup_screen_options" />';
 print '<h3>Collection Settings</h3>';
 print '<div class="styledinputs"><input id="dblite" type="radio" name="collection_type" value="sqlite"';
-if (array_key_exists('collection_type', prefs::$prefs) && prefs::$prefs['collection_type'] == "sqlite") {
+if (prefs::get_pref('collection_type') == "sqlite") {
 	print " checked";
 }
 print '><label for="dblite">Lite Database Collection</label></div>';
 print '<div class="styledinputs"><input id="dbsql" type="radio" name="collection_type" value="mysql"';
-if (array_key_exists('collection_type', prefs::$prefs) && prefs::$prefs['collection_type'] == "mysql") {
+if (prefs::get_pref('collection_type') == "mysql") {
 	print " checked";
 }
 print '><label for="dbsql">Full Database Collection</input></label>';
 print '<p class="tiny">Requires MySQL Server:</p>';
 print '<p>Server<br><input type="text" name="mysql_host" value="'.
-	prefs::$prefs['mysql_host'].'" /></p>'."\n";
+	prefs::get_pref('mysql_host').'" /></p>'."\n";
 print '<p>Port or UNIX Socket<br><input type="text" name="mysql_port" value="'.
-	prefs::$prefs['mysql_port'].'" /></p>'."\n";
+	prefs::get_pref('mysql_port').'" /></p>'."\n";
 print '<p>Database<br><input type="text" name="mysql_database" value="'.
-	prefs::$prefs['mysql_database'].'" /></p>'."\n";
+	prefs::get_pref('mysql_database').'" /></p>'."\n";
 print '<p>Username<br><input type="text" name="mysql_user" value="'.
-	prefs::$prefs['mysql_user'].'" /></p>'."\n";
+	prefs::get_pref('mysql_user').'" /></p>'."\n";
 print '<p>Password<br><input type="text" name="mysql_password" value="'.
-	prefs::$prefs['mysql_password'].'" /></p>'."\n";
+	prefs::get_pref('mysql_password').'" /></p>'."\n";
 print '<hr class="setup_screen_options" />';
 print '<h3>Proxy Settings</h3>';
 print '<p>Proxy Server (eg 192.168.3.4:8800)<br><input type="text" name="proxy_host" value="'.
-	prefs::$prefs['proxy_host'].'" /></p>'."\n";
+	prefs::get_pref('proxy_host').'" /></p>'."\n";
 print '<p>Proxy Username<br><input type="text" name="proxy_user" value="'.
-	prefs::$prefs['proxy_user'].'" /></p>'."\n";
+	prefs::get_pref('proxy_user').'" /></p>'."\n";
 print '<p>Proxy Password<br><input type="text" name="proxy_password" value="'.
-	prefs::$prefs['proxy_password'].'" /></p>'."\n";
+	prefs::get_pref('proxy_password').'" /></p>'."\n";
 print '<hr class="setup_screen_options" />';
 print '<h3>Debug Logging</h3>';
 
@@ -157,7 +157,7 @@ print '<div class="pref containerbox drodown-container">';
 print '<div class="selectholder" style="margin:auto"><select name="debug_enabled">';
 foreach(array(0,1,2,3,4,5,6,7,8) as $level) {
 	print '<option value="'.$level.'"';
-	if ($level == prefs::$prefs['debug_enabled']) {
+	if ($level == prefs::get_pref('debug_enabled')) {
 		print ' selected="selected"';
 	}
 	print '>Level '.$level.' ('.trim(logger::getLevelName($level)).')</option>';
@@ -170,7 +170,7 @@ print '<p class=tiny>Rompr debug output will be sent to this file, but PHP error
  already exist, and you should ensure it gets rotated as it will get large</p>';
 print '<p><b>Development Use Only. Do not use this option when submitting bug reports</b></p>';
 print '<p><input type="text" style="width:90%" name="custom_logfile" value="'.
-	prefs::$prefs['custom_logfile'].'" /></p>';
+	prefs::get_pref('custom_logfile').'" /></p>';
 print '<p><button style="width:50%" type="submit">OK</button></p>';
 print'    </form>
 	</div>

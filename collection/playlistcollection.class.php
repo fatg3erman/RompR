@@ -57,16 +57,16 @@ class playlistCollection extends collection_base {
 		// This creates the metadata array used by the info panel and nowplaying -
 		// Metadata such as scrobbles and ratings will still use the Album Artist
 
-		if (prefs::$prefs['displaycomposer']) {
+		if (prefs::get_pref('displaycomposer')) {
 			// The user has chosen to display Composer/Perfomer information
 			// Here check:
 			// a) There is composer/performer information AND
 			// bi) Specific Genre Selected, Track Has Genre, Genre Matches Specific Genre OR
 			// bii) No Specific Genre Selected, Track Has Genre
 			if (($track->tags['Composer'] !== null || $track->tags['Performer'] !== null) &&
-				((prefs::$prefs['composergenre'] && $track->tags['Genre'] &&
-					checkComposerGenre($track->tags['Genre'], prefs::$prefs['composergenrename'])) ||
-				(!prefs::$prefs['composergenre'] && $track->tags['Genre'])))
+				((prefs::get_pref('composergenre') && $track->tags['Genre'] &&
+					checkComposerGenre($track->tags['Genre'], prefs::get_pref('composergenrename'))) ||
+				(!prefs::get_pref('composergenre') && $track->tags['Genre'])))
 			{
 				// Track Genre matches selected 'Sort By Composer' Genre
 				// Display Compoer - Performer - AlbumArtist

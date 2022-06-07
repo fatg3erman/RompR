@@ -163,7 +163,7 @@ function sql_init_fail($message) {
 	global $title, $setup_error;
 	header("HTTP/1.1 500 Internal Server Error");
 	$setup_error = error_message($message);
-	$title = 'RompЯ encountered an error while checking your '.ucfirst(prefs::$prefs['collection_type']).' database';
+	$title = 'RompЯ encountered an error while checking your '.ucfirst(prefs::get_pref('collection_type')).' database';
 	include('setupscreen.php');
 	exit(0);
 }
@@ -409,7 +409,7 @@ function domainHtml($uri) {
 
 function artistNameHtml($obj) {
 	$h = '<div class="artistnamething">'.$obj['Albumname'];
-	if ($obj['Year'] && prefs::$prefs['sortbydate'])
+	if ($obj['Year'] && prefs::get_pref('sortbydate'))
 		$h .= ' <span class="notbold">('.$obj['Year'].')</span>';
 
 	if ($obj['Artistname'])
@@ -511,11 +511,11 @@ function format_bytes($size, $precision = 1)
 
 function set_version_string() {
 	global $version_string;
-	if (prefs::$prefs['dev_mode']) {
+	if (prefs::get_pref('dev_mode')) {
 		// This adds an extra parameter to the version number - the short
 		// hash of the most recent git commit, or a timestamp. It's for use in testing,
 		// to make sure the browser pulls in the latest version of all the files.
-		if (prefs::$prefs['live_mode']) {
+		if (prefs::get_pref('live_mode')) {
 			logger::log('INIT', 'Using Live Mode for Version String');
 			$version_string = ROMPR_VERSION.".".time();
 		} else {
@@ -676,11 +676,11 @@ function format_artist($artist, $empty = null) {
 
 function format_sortartist($tags) {
 	$sortartist = null;
-	if (prefs::$prefs['sortbycomposer'] && $tags['Composer'] !== null) {
-		if (prefs::$prefs['composergenre'] && $tags['Genre'] &&
-				checkComposerGenre($tags['Genre'], prefs::$prefs['composergenrename'])) {
+	if (prefs::get_pref('sortbycomposer') && $tags['Composer'] !== null) {
+		if (prefs::get_pref('composergenre') && $tags['Genre'] &&
+				checkComposerGenre($tags['Genre'], prefs::get_pref('composergenrename'))) {
 			$sortartist = $tags['Composer'];
-		} else if (!prefs::$prefs['composergenre']) {
+		} else if (!prefs::get_pref('composergenre')) {
 			$sortartist = $tags['Composer'];
 		}
 	}
@@ -734,15 +734,15 @@ function choose_sorter_by_key($which) {
 				if (prefs::$database->check_artist_browse($matches[3]))
 					return 'sortby_artist';
 			}
-			if (prefs::$prefs['actuallysortresultsby'] == 'results_as_tree') {
+			if (prefs::get_pref('actuallysortresultsby') == 'results_as_tree') {
 				return false;
 			} else {
-				return 'sortby_'.prefs::$prefs['actuallysortresultsby'];
+				return 'sortby_'.prefs::get_pref('actuallysortresultsby');
 			}
 			break;
 
 		default:
-			return 'sortby_'.prefs::$prefs['sortcollectionby'];
+			return 'sortby_'.prefs::get_pref('sortcollectionby');
 			break;
 	}
 }
@@ -771,7 +771,7 @@ function upgrade_old_collections() {
 
 function saveCollectionPlayer($type) {
 	logger::mark("DATABASE", "Setting Collection Type to",$type);
-	prefs::$prefs['collection_player'] = $type;
+	prefs::set_pref(['collection_player' => $type]);
 	prefs::save();
 }
 
@@ -932,8 +932,8 @@ function check_backend_daemon() {
 		}
 	} else {
 		logger::mark('INIT', 'Backend Daemon is running.');
-		if (prefs::$prefs['backend_version'] != $version_string || array_key_exists('force_restart', $_REQUEST)) {
-			logger::mark('INIT', 'Backend Daemon',prefs::$prefs['backend_version'],'is different from',$version_string,'. Restarting it');
+		if (prefs::get_pref('backend_version') != $version_string || array_key_exists('force_restart', $_REQUEST)) {
+			logger::mark('INIT', 'Backend Daemon',prefs::get_pref('backend_version'),'is different from',$version_string,'. Restarting it');
 			kill_process(get_pid($b));
 			while (($pid = get_pid('romonitor.php')) !== false) {
 				logger::log('INIT', 'Killing romonitor process', $pid);
@@ -949,7 +949,7 @@ function check_backend_daemon() {
 				backend_init_fail();
 			}
 			prefs::load();
-			if (prefs::$prefs['backend_version'] != $version_string) {
+			if (prefs::get_pref('backend_version') != $version_string) {
 				backend_version_fail();
 			}
 		}

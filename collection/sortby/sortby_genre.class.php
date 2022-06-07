@@ -16,7 +16,7 @@ class sortby_genre extends sortby_base {
 				(SELECT Genreindex FROM Tracktable
 				WHERE Uri IS NOT NULL
 				AND Hidden = 0
-				".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+				".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
 				".$sflag."
 				)
 			ORDER BY Genre ASC";
@@ -38,9 +38,9 @@ class sortby_genre extends sortby_base {
 				Tracktable.Albumindex = Albumtable.Albumindex AND
 			    Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0
 			    AND Tracktable.Genreindex = ".$this->who." ".
-			prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
+			prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)." ".
 			$sflag.") ORDER BY";
-		if (prefs::$prefs['sortbydate']) {
+		if (prefs::get_pref('sortbydate')) {
 			$qstring .= ' Year,';
 		}
 		$qstring .= ' LOWER(Albumname)';

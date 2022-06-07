@@ -12,7 +12,7 @@ class sortby_rating extends sortby_base {
 			Uri IS NOT NULL
 			AND Hidden = 0
 			AND Rating > 0
-			".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+			".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
 			".$sflag."
 		ORDER BY Rating ASC";
 		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
@@ -32,11 +32,11 @@ class sortby_rating extends sortby_base {
 				Tracktable JOIN Ratingtable USING (TTindex)
 				WHERE Rating = ".$this->who." AND ";
 		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
-		prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
+		prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";
-		if (prefs::$prefs['sortbydate']) {
-			if (prefs::$prefs['notvabydate']) {
+		if (prefs::get_pref('sortbydate')) {
+			if (prefs::get_pref('notvabydate')) {
 				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
 			} else {
 				$qstring .= ' Year,';

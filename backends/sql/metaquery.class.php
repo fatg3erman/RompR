@@ -23,12 +23,12 @@ class metaquery extends collection_base {
 		$qstring = "SELECT DISTINCT Artistname FROM Tracktable JOIN Artisttable USING (Artistindex)
 			WHERE (LinkChecked = 0 OR LinkChecked = 2) AND isAudiobook = 0 AND isSearchResult < 2 AND Hidden = 0 AND Uri IS NOT NULL
 			ORDER BY ";
-		foreach (prefs::$prefs['artistsatstart'] as $a) {
+		foreach (prefs::get_pref('artistsatstart') as $a) {
 			$qstring .= "CASE WHEN Artistname = '".$a."' THEN 1 ELSE 2 END, ";
 		}
-		if (count(prefs::$prefs['nosortprefixes']) > 0) {
+		if (count(prefs::get_pref('nosortprefixes')) > 0) {
 			$qstring .= "(CASE ";
-			foreach(prefs::$prefs['nosortprefixes'] AS $p) {
+			foreach(prefs::get_pref('nosortprefixes') AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
 				$qstring .= "WHEN Artistname LIKE '".$p.
 					" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
@@ -129,17 +129,17 @@ class metaquery extends collection_base {
 			}
 			$this->close_transaction();
 		} else {
-			prefs::$prefs['link_checker_is_running'] = false;
+			prefs::set_pref(['link_checker_is_running' => false]);
 			prefs::save();
 		}
 		return $retval;
 	}
 
 	public function resetlinkcheck() {
-		if (!prefs::$prefs['link_checker_is_running']) {
+		if (!prefs::get_pref('link_checker_is_running')) {
 			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2 OR LinkChecked = 4");
 			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3");
-			prefs::$prefs['link_checker_is_running'] = true;
+			prefs::set_pref(['link_checker_is_running' => true]);
 			prefs::save();
 		}
 	}
@@ -267,7 +267,7 @@ class metaquery extends collection_base {
 	}
 
 	private function charts_include_option() {
-		switch (prefs::$prefs['chartoption']) {
+		switch (prefs::get_pref('chartoption')) {
 			case CHARTS_INCLUDE_ALL:
 				return '';
 				break;

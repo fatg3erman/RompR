@@ -64,7 +64,7 @@ class cache_cleaner extends database {
 		logger::info("CACHE CLEANER", "== Check For Hidden Album Art took ".format_time(time() - $now));
 
 		prefs::load();
-		if (prefs::$prefs['cleanalbumimages']) {
+		if (prefs::get_pref('cleanalbumimages')) {
 			$now = time();
 			// TODO: This is too slow
 			logger::info("CACHE CLEANER", "Checking albumart folder for unneeded images");

@@ -19,7 +19,7 @@ if ($player->is_connected()) {
 }
 
 $mpd_status['smartradio'] = prefs::get_radio_params();
-$mpd_status['mopidy_radio_domains'] = prefs::$prefs['mopidy_radio_domains'];
+$mpd_status['mopidy_radio_domains'] = prefs::get_pref('mopidy_radio_domains');
 
 header('Content-Type: application/json');
 echo json_encode($mpd_status);

@@ -9,10 +9,10 @@ if (is_array($opts)) {
 logger::mark("ROMONITOR", "Using Player ".prefs::currenthost());
 
 // Probe the player type
-while (prefs::$prefs['player_backend'] == null) {
+while (prefs::get_pref('player_backend') == null) {
 	logger::warn('ROMONITOR', 'Probing Player type for player',prefs::currenthost());
 	$player = new base_mpd_player();
-	if (prefs::$prefs['player_backend'] == null) {
+	if (prefs::get_pref('player_backend') == null) {
 		logger::warn('ROMONITOR', 'Could not connect to player',prefs::currenthost(),'sleeping for 5 minutes');
 		sleep(300);
 	}

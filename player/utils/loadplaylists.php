@@ -38,7 +38,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
 	}
 	$pd = prefs::get_player_def();
 	if (!$player->playlist_error &&
-		(prefs::$prefs['player_backend'] == prefs::$prefs['collection_player']) &&
+		(prefs::get_pref('player_backend') == prefs::get_pref('collection_player')) &&
 		($pd['mopidy_remote'] == false)
 	) {
 		sort($used_images);

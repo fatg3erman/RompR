@@ -319,7 +319,7 @@ function checkStationAgain($currenttitle, $tracktitle) {
 	// For MPD, we can get a station name from the pls file
 	// For Mopidy, we'll let mopidy's scanner find one for us. This is more accurate
 	$currenttitle = (string)$currenttitle;
-	if (preg_match('/'.ROMPR_UNKNOWN_STREAM.'/', $currenttitle) && prefs::$prefs['player_backend'] == "mpd") {
+	if (preg_match('/'.ROMPR_UNKNOWN_STREAM.'/', $currenttitle) && prefs::get_pref('player_backend') == "mpd") {
 		$a = preg_replace('/\(.*?\)/', '', $tracktitle);
 		if ($a != '') {
 			$currenttitle = $a;

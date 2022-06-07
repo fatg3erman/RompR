@@ -29,14 +29,14 @@ class prefs {
 		'REMOTE' => 'mopidy_remote'
 	];
 
-	public static $prefs = array(
+	private static $prefs = array(
 		// Things that only make sense as backend options, not per-user options
-		"music_directory_albumart" => "",
 		"mysql_host" => "localhost",
 		"mysql_database" => "romprdb",
 		"mysql_user" => "rompr",
 		"mysql_password" => "romprdbpass",
 		"mysql_port" => "3306",
+		"music_directory_albumart" => "",
 		"proxy_host" => "",
 		"proxy_user" => "",
 		"proxy_password" => "",
@@ -75,6 +75,11 @@ class prefs {
 		'old_style_sql' => false,
 		'auto_audiobook' => array(),
 		'backend_version' => '0',
+		"spotify_mark_unplayable" => false,
+		"spotify_mark_playable" => false,
+		// Need these next two so the player defs can be updated
+		"consume_workaround" => false,
+		"we_do_consume" => false,
 
 		// Things that could be set on a per-user basis but need to be known by the backend
 		"displaycomposer" => true,
@@ -177,12 +182,7 @@ class prefs {
 		'use_original_releasedate' => false,
 		"bgimgparms" => ['dummy' => 'baby'],
 		"chartoption" => 0,
-		// Need these next two so the player defs can be updated
-		"consume_workaround" => false,
-		"we_do_consume" => false,
-		"somafm_quality" => 'highest_available_quality',
-		"spotify_mark_unplayable" => false,
-		"spotify_mark_playable" => false
+		"somafm_quality" => 'highest_available_quality'
 	);
 
 	// Prefs that should not be exposed to the browser for security reasons
@@ -208,10 +208,14 @@ class prefs {
 		'spotify_token_expires' => null
 	];
 
+	// NOTE anything defined in this list MUST be set using set_session_pref()
 	private static $prefs_to_never_save = [
 		'currenthost' => 'Default',
 		'player_backend' => null,
-		'skin' => null
+		'skin' => null,
+		'alarmindex' => null,
+		'sleeptime' => null,
+		'snooze' => null
 	];
 
 	const COOKIEPREFS = [
@@ -276,29 +280,6 @@ class prefs {
 	   }
 	}
 
-	// Pass an array of key => value pairs
-	public static function set_session_pref($pref) {
-		foreach ($pref as $k => $v) {
-			self::$prefs[$k] = $v;
-			self::$prefs_to_never_save[$k] = $v;
-			if (!defined('IS_ROMONITOR') && in_array($k, self::COOKIEPREFS)) {
-				if ($v == '') {
-					logger::trace('PREFS', 'Expiring Cookie',$k);
-					setcookie($k, $v, ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
-				} else {
-					logger::trace('PREFS', 'Setting Cookie',$k,'to',$v);
-					setcookie($k, $v, ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
-				}
-			}
-		}
-	}
-
-	public static function set_pref($pref) {
-		foreach ($pref as $k => $v) {
-			self::$prefs[$k] = $v;
-		}
-	}
-
 	public static function save() {
 		$sp = self::$prefs;
 		foreach (self::$prefs_to_never_save as $pref => $val) {
@@ -316,16 +297,16 @@ class prefs {
 					error_log("ERROR!              : COULD NOT SAVE PREFS");
 					exit(1);
 				}
-			  } else {
+			} else {
 				  print '<h1>Fatal Error - Could not write to the preferences file</h1>';
 				  error_log("ERROR!              : COULD NOT GET WRITE LOCK ON PREFS FILE");
 				  exit(1);
-			  }
-		  } else {
+			}
+		} else {
 			  print '<h1>Fatal Error - Could not open the preferences file</h1>';
 			  error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
 			  exit(1);
-		  }
+		}
 	}
 
 	public static function get_safe_prefs() {
@@ -364,6 +345,63 @@ class prefs {
 
 	public static function skin() {
 		return self::$prefs['skin'];
+	}
+
+	// Pass an array of key => value pairs
+	public static function set_session_pref($pref) {
+		foreach ($pref as $k => $v) {
+			self::$prefs[$k] = $v;
+			self::$prefs_to_never_save[$k] = $v;
+			if (!defined('IS_ROMONITOR') && in_array($k, self::COOKIEPREFS)) {
+				if ($v == '') {
+					logger::trace('PREFS', 'Expiring Cookie',$k);
+					setcookie($k, $v, ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
+				} else {
+					logger::trace('PREFS', 'Setting Cookie',$k,'to',$v);
+					setcookie($k, $v, ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
+				}
+			}
+		}
+	}
+
+	public static function set_pref($pref) {
+		self::$prefs = array_merge(self::$prefs, $pref);
+	}
+
+	public static function get_pref($pref) {
+		return (array_key_exists($pref, self::$prefs)) ? self::$prefs[$pref] : null;
+	}
+
+	public static function get_player_def() {
+		return self::$prefs['multihosts'][self::$prefs['currenthost']];
+	}
+
+	public static function get_def_for_player($player) {
+		return self::$prefs['multihosts'][$player];
+	}
+
+	public static function get_player_param($param) {
+		return self::$prefs['multihosts'][self::$prefs['currenthost']][$param];
+	}
+
+	public static function set_player_param($param) {
+		self::$prefs['multihosts'][self::$prefs['currenthost']] = array_merge(
+			self::$prefs['multihosts'][self::$prefs['currenthost']],
+			$param
+		);
+		self::save();
+	}
+
+	public static function get_radio_params() {
+		return self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'];
+	}
+
+	public static function set_radio_params($params) {
+		self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'] = array_merge(
+			self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'],
+			$params
+		);
+		self::save();
 	}
 
 	public static function upgrade_host_defs($ver) {
@@ -462,34 +500,6 @@ class prefs {
 			self::$prefs['linkchecker_nextrun'] = round(self::$prefs['linkchecker_nextrun'] / 1000);
 		}
 
-		self::save();
-	}
-
-	public static function get_player_def() {
-		return self::$prefs['multihosts'][self::$prefs['currenthost']];
-	}
-
-	public static function get_player_param($param) {
-		return self::$prefs['multihosts'][self::$prefs['currenthost']][$param];
-	}
-
-	public static function set_player_param($param) {
-		self::$prefs['multihosts'][self::$prefs['currenthost']] = array_merge(
-			self::$prefs['multihosts'][self::$prefs['currenthost']],
-			$param
-		);
-		self::save();
-	}
-
-	public static function get_radio_params() {
-		return self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'];
-	}
-
-	public static function set_radio_params($params) {
-		self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'] = array_merge(
-			self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'],
-			$params
-		);
 		self::save();
 	}
 

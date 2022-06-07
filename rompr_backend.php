@@ -5,12 +5,12 @@ require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 $monitors = [];
 set_version_string();
-prefs::$prefs['backend_version'] = $version_string;
+prefs::set_pref(['backend_version' => $version_string]);
 prefs::save();
 $pwd = getcwd();
 logger::log('DAEMON', "Running From",$pwd);
 
-$players = array_keys(prefs::$prefs['multihosts']);
+$players = array_keys(prefs::get_pref('multihosts'));
 foreach ($players as $player) {
     check_alarms($player);
 }
@@ -18,7 +18,7 @@ foreach ($players as $player) {
 while (true) {
 
     prefs::load();
-    $players = array_keys(prefs::$prefs['multihosts']);
+    $players = array_keys(prefs::get_pref('multihosts'));
 
     foreach ($players as $player) {
         $cmd = $pwd.'/romonitor.php --currenthost '.$player;
@@ -26,7 +26,8 @@ while (true) {
         if (array_key_exists($player, $monitors) && posix_getpgid($monitors[$player]) !== false) {
             // If we started it and it's still running
             logger::core('DAEMON', "Monitor for",$player,"already running");
-            if (array_key_exists($player, $players_now) && player_def_changed(prefs::$prefs['multihosts'][$player], $players_now[$player])) {
+            $def_now = prefs::get_def_for_player($player);
+            if (array_key_exists($player, $players_now) && player_def_changed($def_now, $players_now[$player])) {
                 // If we started it, it's still running, and the definition has changed since we started it
                 logger::trace('DAEMON', "Player",$player,"definition has changed - restarting monitor");
                 kill_process($monitors[$player]);
@@ -57,7 +58,7 @@ while (true) {
         }
     }
 
-    $players_now = prefs::$prefs['multihosts'];
+    $players_now = prefs::get_pref('multihosts');
 
     check_cache_clean();
 
@@ -105,15 +106,15 @@ function check_podcast_refresh() {
 
 function check_lastfm_sync() {
 
-    if (prefs::$prefs['sync_lastfm_at_start'] &&
-        prefs::$prefs['lastfm_session_key'] != '' &&
-        time() >= prefs::$prefs['next_lastfm_synctime']
+    if (prefs::get_pref('sync_lastfm_at_start') &&
+        prefs::get_pref('lastfm_session_key') != '' &&
+        time() >= prefs::get_pref('next_lastfm_synctime')
     ) {
         logger::mark('DAEMON', 'Syncing LastFM Playcounts');
         $page = 1;
         $options = [
             'limit' => LASTFM_TRACKS_PER_PAGE,
-            'from' => prefs::$prefs['last_lastfm_synctime'],
+            'from' => prefs::get_pref('last_lastfm_synctime'),
             'extended' => 1
         ];
         prefs::$database = new metaDatabase();
@@ -156,8 +157,10 @@ function check_lastfm_sync() {
                 }
             }
         }
-        prefs::$prefs['last_lastfm_synctime'] = time();
-        prefs::$prefs['next_lastfm_synctime'] = time() + prefs::$prefs['lastfm_sync_frequency'];
+        prefs::set_pref([
+            'last_lastfm_synctime' => time(),
+            'next_lastfm_synctime' => time() + prefs::get_pref('lastfm_sync_frequency')
+        ]);
         prefs::save();
         prefs::$database->close_database();
         prefs::$database = null;
@@ -167,11 +170,13 @@ function check_lastfm_sync() {
 }
 
 function check_unplayable_tracks() {
-    if (time() >= prefs::$prefs['linkchecker_nextrun']) {
+    if (time() >= prefs::get_pref('linkchecker_nextrun')) {
         prefs::$database = new metaquery();
         prefs::$database->resetlinkcheck();
-        if (prefs::$database->getlinktocheck())
-            prefs::$prefs['linkchecker_nextrun'] = time() + prefs::$prefs['link_checker_frequency'];
+        if (prefs::$database->getlinktocheck()) {
+            prefs::set_pref(['linkchecker_nextrun' => time() + prefs::get_pref('link_checker_frequency')]);
+            prefs::save();
+        }
 
         prefs::$database->close_database();
         prefs::$database = null;

@@ -16,16 +16,16 @@ class data_base {
 		$retval = false;
 		$mysqlc = null;
 		try {
-			if (is_numeric(prefs::$prefs['mysql_port'])) {
+			if (is_numeric(prefs::get_pref('mysql_port'))) {
 				logger::trace("SQL_CONNECT", "Connecting using hostname and port");
-				$dsn = "mysql:host=".prefs::$prefs['mysql_host'].";port=".prefs::$prefs['mysql_port'].";dbname=".prefs::$prefs['mysql_database'];
+				$dsn = "mysql:host=".prefs::get_pref('mysql_host').";port=".prefs::get_pref('mysql_port').";dbname=".prefs::get_pref('mysql_database');
 			} else {
 				logger::trace("SQL_CONNECT", "Connecting using unix socket");
-				$dsn = "mysql:unix_socket=".prefs::$prefs['mysql_port'].";dbname=".prefs::$prefs['mysql_database'];
+				$dsn = "mysql:unix_socket=".prefs::get_pref('mysql_port').";dbname=".prefs::get_pref('mysql_database');
 			}
-			$mysqlc = new PDO($dsn, prefs::$prefs['mysql_user'], prefs::$prefs['mysql_password']);
+			$mysqlc = new PDO($dsn, prefs::get_pref('mysql_user'), prefs::get_pref('mysql_password'));
 			logger::mark("SQL_CONNECT", "Connected to MySQL");
-			prefs::$prefs['collection_type'] = 'mysql';
+			prefs::set_pref(['collection_type' => 'mysql']);
 			$retval = true;
 			$mysqlc = null;
 		} catch (Exception $e) {
@@ -38,7 +38,7 @@ class data_base {
 				$dsn = "sqlite:prefs/collection.sq3";
 				$mysqlc = new PDO($dsn);
 				logger::log("SQL_CONNECT", "Connected to SQLite");
-				prefs::$prefs['collection_type'] = 'sqlite';
+				prefs::set_pref(['collection_type' => 'sqlite']);
 				$retval = true;
 				$mysqlc = null;
 			} catch (Exception $e) {
@@ -205,7 +205,7 @@ class data_base {
 	//
 
 	public function open_transaction() {
-		if (prefs::$prefs['collection_type'] == 'sqlite' && !$this->transaction_open) {
+		if (prefs::get_pref('collection_type') == 'sqlite' && !$this->transaction_open) {
 			if ($this->mysqlc->beginTransaction()) {
 				$this->transaction_open = true;
 				$this->numdone = 0;
@@ -214,7 +214,7 @@ class data_base {
 	}
 
 	public function check_transaction() {
-		if (prefs::$prefs['collection_type'] == 'sqlite') {
+		if (prefs::get_pref('collection_type') == 'sqlite') {
 			if ($this->transaction_open) {
 				if ($this->numdone++ >= ROMPR_MAX_TRACKS_PER_TRANSACTION) {
 					logger::trace('DATABASE', 'Need to commit transaction');
@@ -228,7 +228,7 @@ class data_base {
 	}
 
 	public function close_transaction() {
-		if (prefs::$prefs['collection_type'] == 'sqlite') {
+		if (prefs::get_pref('collection_type') == 'sqlite') {
 			if ($this->transaction_open) {
 				if ($this->mysqlc->commit()) {
 					$this->transaction_open = false;

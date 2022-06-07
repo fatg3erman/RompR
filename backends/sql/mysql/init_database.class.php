@@ -7,20 +7,20 @@ class init_database extends init_generic {
 		$vsn = $this->generic_sql_query("SELECT VERSION() AS v");
 		$mysql_version = $vsn[0]['v'];
 		logger::log('INIT', 'MySQL Version is',$mysql_version);
-		prefs::$prefs['mysql_version'] = $mysql_version;
+		prefs::set_pref(['mysql_version' => $mysql_version]);
 		if (strpos($mysql_version, 'MariaDB') !== false) {
 			if (version_compare($mysql_version, ROMPR_MIN_MARIADB_VERSION, '<')) {
 				logger::warn('MYSQL', 'Running old version of MariaDB, will have to use old style update query');
-				prefs::$prefs['old_style_sql'] = true;
+				prefs::set_pref(['old_style_sql' => true]);
 			} else {
-				prefs::$prefs['old_style_sql'] = false;
+				prefs::set_pref(['old_style_sql' => false]);
 			}
 		} else {
 			if (version_compare($mysql_version, ROMPR_MIN_MYSQL_VERSION, '<')) {
 				logger::warn('MYSQL', 'Running old version of MySQL, will have to use old style update query');
-				prefs::$prefs['old_style_sql'] = true;
+				prefs::set_pref(['old_style_sql' => true]);
 			} else {
-				prefs::$prefs['old_style_sql'] = false;
+				prefs::set_pref(['old_style_sql' => false]);
 			}
 		}
 

@@ -86,7 +86,7 @@ class ui_elements {
 
 		$d = getDomain($data['uri']);
 
-		if (prefs::$prefs['player_backend'] == "mpd" && $d == "soundcloud") {
+		if (prefs::get_pref('player_backend') == "mpd" && $d == "soundcloud") {
 			$class = 'clickcue';
 		} else {
 			$class = 'clicktrack';
@@ -597,7 +597,7 @@ class ui_elements {
 			'label' => 'label_pluginplaylists',
 			'icon_size' => 'smallicon'
 		]);
-		if (prefs::$prefs['player_backend'] == "mopidy") {
+		if (prefs::get_pref('player_backend') == "mopidy") {
 			print self::ui_config_header([
 				'label' => 'label_mfyc'
 			]);
@@ -605,7 +605,7 @@ class ui_elements {
 		/* Main Holder */
 		print '<div class="'.$opts['class'].'" id="pluginplaylists"></div>';
 
-		if (prefs::$prefs['player_backend'] == "mopidy") {
+		if (prefs::get_pref('player_backend') == "mopidy") {
 			print uibits::ui_config_header([
 				'label' => 'label_mfsp'
 			]);
@@ -613,7 +613,7 @@ class ui_elements {
 		/* Music From Spotify */
 		print '<div class="'.$opts['class'].'" id="pluginplaylists_spotify"></div>';
 
-		if (prefs::$prefs['player_backend'] == "mopidy") {
+		if (prefs::get_pref('player_backend') == "mopidy") {
 			print self::ui_config_header([
 				'label' => 'label_mfe'
 			]);

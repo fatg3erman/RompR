@@ -9,14 +9,14 @@ class database extends data_base {
 
 	public function __construct() {
 		try {
-			if (is_numeric(prefs::$prefs['mysql_port'])) {
+			if (is_numeric(prefs::get_pref('mysql_port'))) {
 				logger::core("MYSQL", "Connecting using hostname and port");
-				$dsn = "mysql:host=".prefs::$prefs['mysql_host'].";port=".prefs::$prefs['mysql_port'].";dbname=".prefs::$prefs['mysql_database'].";charset=utf8mb4";
+				$dsn = "mysql:host=".prefs::get_pref('mysql_host').";port=".prefs::get_pref('mysql_port').";dbname=".prefs::get_pref('mysql_database').";charset=utf8mb4";
 			} else {
 				logger::core("MYSQL", "Connecting using unix socket");
-				$dsn = "mysql:unix_socket=".prefs::$prefs['mysql_port'].";dbname=".prefs::$prefs['mysql_database'].";charset=utf8mb4";
+				$dsn = "mysql:unix_socket=".prefs::get_pref('mysql_port').";dbname=".prefs::get_pref('mysql_database').";charset=utf8mb4";
 			}
-			$this->mysqlc = new PDO($dsn, prefs::$prefs['mysql_user'], prefs::$prefs['mysql_password']);
+			$this->mysqlc = new PDO($dsn, prefs::get_pref('mysql_user'), prefs::get_pref('mysql_password'));
 			logger::core("MYSQL", "Connected to MySQL");
 			$this->generic_sql_query('SET SESSION sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"', true);
 		} catch (Exception $e) {
@@ -142,7 +142,7 @@ class database extends data_base {
 	}
 
 	protected function prepare_findtrack_for_update() {
-		if (prefs::$prefs['old_style_sql']) {
+		if (prefs::get_pref('old_style_sql')) {
 			$this->prepare_update_findtrack_old();
 		} else {
 			$this->prepare_update_findtrack_new();
@@ -196,7 +196,7 @@ class database extends data_base {
 	}
 
 	protected function prepare_findtrack_for_search() {
-		if (prefs::$prefs['old_style_sql']) {
+		if (prefs::get_pref('old_style_sql')) {
 			$this->prepare_search_findtrack_old();
 		} else {
 			$this->prepare_search_findtrack_new();

@@ -63,7 +63,7 @@ class music_loader extends musicCollection {
 
 	private function get_artist_tracks_from_database($which, $cmd) {
 		$retarr = array();
-		logger::log('BACKEND', "Getting Tracks for Root Item",prefs::$prefs['sortcollectionby'],$which);
+		logger::log('BACKEND', "Getting Tracks for Root Item",prefs::get_pref('sortcollectionby'),$which);
 		$sorter = choose_sorter_by_key($which);
 		$lister = new $sorter($which);
 		foreach ($lister->albums_for_artist() as $a) {

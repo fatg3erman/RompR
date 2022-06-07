@@ -18,7 +18,7 @@ class lastfm {
 			'api_key' => self::LOCK,
 		];
 		if ($auth) {
-			$opts['sk'] = prefs::$prefs['lastfm_session_key'];
+			$opts['sk'] = prefs::get_pref('lastfm_session_key');
 		}
 
 		foreach ($params as $k => $v) {
@@ -116,7 +116,7 @@ class lastfm {
 		//		page: page number
 		//
 		$params['method'] = 'user.getRecentTracks';
-		$params['user'] = prefs::$prefs['lastfm_user'];
+		$params['user'] = prefs::get_pref('lastfm_user');
 		$params['cache'] = false;
 		$data = self::get_request($params, false);
 		$decoded = json_decode($data, true);

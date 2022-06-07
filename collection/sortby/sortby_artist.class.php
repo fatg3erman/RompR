@@ -27,7 +27,7 @@ class sortby_artist extends sortby_base {
 			JOIN Tracktable USING (Albumindex)
 			WHERE Uri IS NOT NULL
 			AND Hidden = 0
-			".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+			".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
 			".$sflag."
 			GROUP BY AlbumArtistindex) ";
 
@@ -35,12 +35,12 @@ class sortby_artist extends sortby_base {
 			$qstring .= "OR Uri IS NOT NULL ";
 
 		$qstring .= "ORDER BY ";
-		foreach (prefs::$prefs['artistsatstart'] as $a) {
+		foreach (prefs::get_pref('artistsatstart') as $a) {
 			$qstring .= "CASE WHEN a.Artistname = '".$a."' THEN 1 ELSE 2 END, ";
 		}
-		if (count(prefs::$prefs['nosortprefixes']) > 0) {
+		if (count(prefs::get_pref('nosortprefixes')) > 0) {
 			$qstring .= "(CASE ";
-			foreach(prefs::$prefs['nosortprefixes'] AS $p) {
+			foreach(prefs::get_pref('nosortprefixes') AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
 				$qstring .= "WHEN a.Artistname LIKE '".$p.
 					" %' THEN LOWer(SUBSTR(a.Artistname,".$phpisshitsometimes.")) ";
@@ -66,11 +66,11 @@ class sortby_artist extends sortby_base {
 		$qstring .= "Albumindex IN (SELECT Albumindex FROM Tracktable WHERE
 				Tracktable.Albumindex = Albumtable.Albumindex AND ";
 		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
-		prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
+		prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";
-		if (prefs::$prefs['sortbydate']) {
-			if (prefs::$prefs['notvabydate']) {
+		if (prefs::get_pref('sortbydate')) {
+			if (prefs::get_pref('notvabydate')) {
 				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
 			} else {
 				$qstring .= ' Year,';

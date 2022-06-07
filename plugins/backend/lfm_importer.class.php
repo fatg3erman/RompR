@@ -16,7 +16,7 @@ class lfm_importer extends database {
 			JOIN Artisttable AS ta ON (Tracktable.Artistindex = ta.Artistindex)
 			LEFT JOIN Playcounttable USING (TTindex)
 			WHERE isSearchResult != 2 AND ".
-			$this->sql_to_unixtime('DateAdded')." > ".prefs::$prefs['lfm_importer_last_import'].
+			$this->sql_to_unixtime('DateAdded')." > ".prefs::get_pref('lfm_importer_last_import').
 			" ORDER BY aa.Artistname, Albumname, Disc ASC, TrackNo ASC LIMIT ".$offset.", ".$limit);
 	}
 
@@ -29,7 +29,7 @@ class lfm_importer extends database {
 			JOIN Artisttable AS ta ON (Tracktable.Artistindex = ta.Artistindex)
 			LEFT JOIN Playcounttable USING (TTindex)
 			WHERE isSearchResult != 2 AND ".
-			$this->sql_to_unixtime('DateAdded')." > ".prefs::$prefs['lfm_importer_last_import']
+			$this->sql_to_unixtime('DateAdded')." > ".prefs::get_pref('lfm_importer_last_import')
 		);
 	}
 

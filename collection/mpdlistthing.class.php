@@ -88,7 +88,7 @@ class mpdlistthing {
 			}
 
 		} else {
-			if (prefs::$prefs['player_backend'] == "mopidy") {
+			if (prefs::get_pref('player_backend') == "mopidy") {
 				$filedata['file_display_name'] = (array_key_exists('Title', $filedata)) ?
 					$filedata['Title'] : basename($decodedpath);
 			} else {

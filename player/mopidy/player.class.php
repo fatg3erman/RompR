@@ -11,14 +11,14 @@ class player extends base_mpd_player {
 
 	public function musicCollectionUpdate() {
 		logger::mark("MOPIDY", "Starting Music Collection Update");
-		if (prefs::$prefs['use_mopidy_scan']) {
+		if (prefs::get_pref('use_mopidy_scan')) {
 			logger::mark('MOPIDY', 'Using mopidy local scan');
 			$dir = getcwd();
 			exec('sudo mopidyctl local scan >> '.$dir.'/prefs/monitor 2>&1');
 			logger::mark('MOPIDY', 'Mopidy local scan finished');
 		}
 		$this->monitor = fopen('prefs/monitor','w');
-		$dirs = prefs::$prefs['mopidy_collection_folders'];
+		$dirs = prefs::get_pref('mopidy_collection_folders');
 		logger::log('MOPIDY', 'Collection Folders Are', print_r($dirs, true));
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
@@ -96,9 +96,9 @@ class player extends base_mpd_player {
 				$filedata['X-AlbumUri'] = null;
 				$this->check_undefined_tags($filedata);
 				$filedata['folder'] = dirname($filedata['unmopfile']);
-				if (prefs::$prefs['audiobook_directory'] != '') {
+				if (prefs::get_pref('audiobook_directory') != '') {
 					$f = rawurldecode($filedata['folder']);
-					if (strpos($f, prefs::$prefs['audiobook_directory']) === 0) {
+					if (strpos($f, prefs::get_pref('audiobook_directory')) === 0) {
 						$filedata['type'] = 'audiobook';
 					}
 				}
@@ -385,7 +385,7 @@ class player extends base_mpd_player {
 	public function probe_websocket() {
 		logger::log('MOPIDYHTTP', 'Probing HTTP API');
 		$result = $this->mopidy_http_request(
-			$this->ip.':'.prefs::$prefs['http_port_for_mopidy'],
+			$this->ip.':'.prefs::get_pref('http_port_for_mopidy'),
 			array(
 				'method' => 'core.get_version'
 			)
@@ -393,7 +393,7 @@ class player extends base_mpd_player {
 		if ($result !== false) {
 			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
 			$http_server = nice_server_address($this->ip);
-			prefs::set_player_param(['websocket' => $http_server.':'.prefs::$prefs['http_port_for_mopidy'].self::WEBSOCKET_SUFFIX]);
+			prefs::set_player_param(['websocket' => $http_server.':'.prefs::get_pref('http_port_for_mopidy').self::WEBSOCKET_SUFFIX]);
 			logger::log('MOPIDYHTTP', 'Using',prefs::get_player_param('websocket'),'for Mopidy HTTP');
 		} else {
 			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');

@@ -49,11 +49,11 @@ class url_downloader {
 		curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->options['timeout']);
 		curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $this->options['connection_timeout']);
-		if (prefs::$prefs['proxy_host'] != "") {
-			curl_setopt($this->ch, CURLOPT_PROXY, prefs::$prefs['proxy_host']);
+		if (prefs::get_pref('proxy_host') != "") {
+			curl_setopt($this->ch, CURLOPT_PROXY, prefs::get_pref('proxy_host'));
 		}
-		if (prefs::$prefs['proxy_user'] != "" && prefs::$prefs['proxy_password'] != "") {
-			curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, prefs::$prefs['proxy_user'].':'.prefs::$prefs['proxy_password']);
+		if (prefs::get_pref('proxy_user') != "" && prefs::get_pref('proxy_password') != "") {
+			curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, prefs::get_pref('proxy_user').':'.prefs::get_pref('proxy_password'));
 		}
 		curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
 		if ($this->options['header']) {

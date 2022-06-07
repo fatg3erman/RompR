@@ -205,16 +205,16 @@ class sortby_base {
 
 			case 'b':
 				print '<div class="textcentre fullwidth">';
-				if (prefs::$prefs['actuallysortresultsby'] == 'tag' || prefs::$prefs['actuallysortresultsby'] == 'rating') {
-					print '<p>You are sorting results by '.ucfirst(language::gettext(COLLECTION_SORT_MODES[prefs::$prefs['actuallysortresultsby']])).' which may mean some results are not displayed</p>';
+				if (prefs::get_pref('actuallysortresultsby') == 'tag' || prefs::get_pref('actuallysortresultsby') == 'rating') {
+					print '<p>You are sorting results by '.ucfirst(language::gettext(COLLECTION_SORT_MODES[prefs::get_pref('actuallysortresultsby')])).' which may mean some results are not displayed</p>';
 				}
 				print '</div>';
 				break;
 
 			case 'z':
 				print '<div class="textcentre fullwidth">';
-				if (prefs::$prefs['actuallysortresultsby'] == 'tag' || prefs::$prefs['actuallysortresultsby'] == 'rating') {
-					print '<p>There are no Spoken Word tracks in your Collection that can be displayed when sorting by '.ucfirst(language::gettext(COLLECTION_SORT_MODES[prefs::$prefs['actuallysortresultsby']])).'</p>';
+				if (prefs::get_pref('actuallysortresultsby') == 'tag' || prefs::get_pref('actuallysortresultsby') == 'rating') {
+					print '<p>There are no Spoken Word tracks in your Collection that can be displayed when sorting by '.ucfirst(language::gettext(COLLECTION_SORT_MODES[prefs::get_pref('actuallysortresultsby')])).'</p>';
 				}
 				print '</div>';
 				break;
@@ -250,7 +250,7 @@ class sortby_base {
 					tr.Albumindex = ".$this->who."
 					AND uri IS NOT NULL
 					AND tr.Hidden = 0
-					".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+					".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
 					".$this->filter_track_on_why()."
 					AND tr.Artistindex = ta.Artistindex
 					AND al.Albumindex = tr.Albumindex

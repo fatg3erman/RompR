@@ -50,10 +50,10 @@ upgrade_old_collections();
 
 logger::log('INIT', 'Checking Database Connection');
 
-if (!array_key_exists('collection_type', prefs::$prefs)) {
+if (prefs::get_pref('collection_type') === null) {
 	$success = data_base::probe_database();
 	if ($success) {
-		set_include_path('backends/sql/'.prefs::$prefs['collection_type'].PATH_SEPARATOR.get_include_path());
+		set_include_path('backends/sql/'.prefs::get_pref('collection_type').PATH_SEPARATOR.get_include_path());
 	} else {
 		sql_init_fail("No Database Connection Was Possible");
 	}
@@ -65,10 +65,10 @@ if ($result == false) {
 }
 prefs::$database->check_setupscreen_actions();
 
-if (!prefs::$prefs['country_userset']) {
+if (!prefs::get_pref('country_userset')) {
 	// Set the country code from the browser, though this may not be accurate.
 	// Later on we set it using geoip.
-	prefs::$prefs['lastfm_country_code'] = language::get_browser_country();
+	prefs::set_pref(['lastfm_country_code' => language::get_browser_country()]);
 }
 
 logger::debug("INIT", $_SERVER['SCRIPT_FILENAME']);
@@ -240,7 +240,7 @@ foreach($inc as $i) {
 	logger::log("INIT", "Including Plugin ".$i);
 	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
-if (prefs::$prefs['load_plugins_at_loadtime']) {
+if (prefs::get_pref('load_plugins_at_loadtime')) {
 	$inc = glob("plugins/code/*.js");
 	foreach($inc as $i) {
 		logger::log("INIT", "DEVELOPMENT MODE : Including Plugin ".$i);

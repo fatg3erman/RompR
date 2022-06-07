@@ -9,17 +9,17 @@ foreach($p as $key => $value) {
 		case "radiomode":
 		case "radioparam":
 			prefs::set_radio_params([$key => $value]);
+			unset($p[$key]);
 			break;
 
 		case 'music_directory_albumart':
 			prefs::set_music_directory($value);
-
-		default:
-			prefs::$prefs[$key] = $value;
 			break;
+
 	}
 
 }
+prefs::set_pref($p);
 prefs::save();
 header('HTTP/1.1 204 No Content');
 ?>

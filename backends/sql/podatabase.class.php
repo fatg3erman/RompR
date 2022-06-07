@@ -58,7 +58,7 @@ class poDatabase extends database {
 					$podcast['RefreshOption'] = REFRESHOPTION_MONTHLY;
 					break;
 				default:
-					$podcast['RefreshOption'] = prefs::$prefs['default_podcast_refresh_mode'];
+					$podcast['RefreshOption'] = prefs::get_pref('default_podcast_refresh_mode');
 					break;
 			}
 		} else if ($sy && $sy->updatePeriod) {
@@ -76,11 +76,11 @@ class poDatabase extends database {
 					$podcast['RefreshOption'] = REFRESHOPTION_MONTHLY;
 					break;
 				default:
-					$podcast['RefreshOption'] = prefs::$prefs['default_podcast_refresh_mode'];
+					$podcast['RefreshOption'] = prefs::get_pref('default_podcast_refresh_mode');
 					break;
 			}
 		} else {
-			$podcast['RefreshOption'] = prefs::$prefs['default_podcast_refresh_mode'];
+			$podcast['RefreshOption'] = prefs::get_pref('default_podcast_refresh_mode');
 		}
 
 		// Episode Expiry
@@ -345,8 +345,8 @@ class poDatabase extends database {
 			$podcast['Title'],
 			$podcast['Artist'],
 			$podcast['RefreshOption'],
-			prefs::$prefs['default_podcast_sort_mode'],
-			prefs::$prefs['default_podcast_display_mode'],
+			prefs::get_pref('default_podcast_sort_mode'),
+			prefs::get_pref('default_podcast_display_mode'),
 			$podcast['DaysLive'],
 			$podcast['Description'],
 			ROMPR_PODCAST_TABLE_VERSION,
@@ -416,7 +416,7 @@ class poDatabase extends database {
 		}
 		$this->open_transaction();
 
-		if ($podetails->Subscribed == 1 && prefs::$prefs['podcast_mark_new_as_unlistened']) {
+		if ($podetails->Subscribed == 1 && prefs::get_pref('podcast_mark_new_as_unlistened')) {
 			// Mark New As Unlistened, if required, on all subscribed podcasts - this option makes thi happen
 			// even if no new episodes have been published.
 			$this->generic_sql_query("UPDATE PodcastTracktable SET New = 0 WHERE PODindex = ".$podetails->PODindex);
@@ -458,7 +458,7 @@ class poDatabase extends database {
 			);
 			// Still check to keep (days to keep still needs to be honoured)
 			$this->close_transaction();
-			if ($this->check_tokeep($podetails, $podid) || prefs::$prefs['podcast_mark_new_as_unlistened']) {
+			if ($this->check_tokeep($podetails, $podid) || prefs::get_pref('podcast_mark_new_as_unlistened')) {
 				return $podid;
 			} else {
 				return false;
@@ -1210,9 +1210,9 @@ class poDatabase extends database {
 						$img,
 						$podcast['collectionName'],
 						$podcast['artistName'],
-						prefs::$prefs['default_podcast_refresh_mode'],
-						prefs::$prefs['default_podcast_sort_mode'],
-						prefs::$prefs['default_podcast_display_mode'],
+						prefs::get_pref('default_podcast_refresh_mode'),
+						prefs::get_pref('default_podcast_sort_mode'),
+						prefs::get_pref('default_podcast_display_mode'),
 						0,
 						'',
 						ROMPR_PODCAST_TABLE_VERSION,
@@ -1287,21 +1287,21 @@ class poDatabase extends database {
 		// 	$qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM Podcasttable WHERE Subscribed = 0 ORDER BY";
 		// }
 		$sortarray = array();
-		for ($i = 0; $i < prefs::$prefs['podcast_sort_levels']; $i++) {
-			if (prefs::$prefs['podcast_sort_'.$i] == 'new' || prefs::$prefs['podcast_sort_'.$i] == 'unlistened') {
-				$sortarray[] = ' '.prefs::$prefs['podcast_sort_'.$i].' DESC';
+		for ($i = 0; $i < prefs::get_pref('podcast_sort_levels'); $i++) {
+			if (prefs::get_pref('podcast_sort_'.$i) == 'new' || prefs::get_pref('podcast_sort_'.$i) == 'unlistened') {
+				$sortarray[] = ' '.prefs::get_pref('podcast_sort_'.$i).' DESC';
 			} else {
-				if (count(prefs::$prefs['nosortprefixes']) > 0) {
+				if (count(prefs::get_pref('nosortprefixes')) > 0) {
 					$qqstring = "(CASE ";
-					foreach(prefs::$prefs['nosortprefixes'] AS $p) {
+					foreach(prefs::get_pref('nosortprefixes') AS $p) {
 						$phpisshitsometimes = strlen($p)+2;
-						$qqstring .= "WHEN LOWER(Podcasttable.".prefs::$prefs['podcast_sort_'.$i].") LIKE '".strtolower($p).
-							" %' THEN LOWER(SUBSTR(Podcasttable.".prefs::$prefs['podcast_sort_'.$i].",".$phpisshitsometimes.")) ";
+						$qqstring .= "WHEN LOWER(Podcasttable.".prefs::get_pref('podcast_sort_'.$i).") LIKE '".strtolower($p).
+							" %' THEN LOWER(SUBSTR(Podcasttable.".prefs::get_pref('podcast_sort_'.$i).",".$phpisshitsometimes.")) ";
 					}
-					$qqstring .= "ELSE LOWER(Podcasttable.".prefs::$prefs['podcast_sort_'.$i].") END) ASC";
+					$qqstring .= "ELSE LOWER(Podcasttable.".prefs::get_pref('podcast_sort_'.$i).") END) ASC";
 					$sortarray[] = $qqstring;
 				} else {
-					$sortarray[] = ' Podcasttable.'.prefs::$prefs['podcast_sort_'.$i].' ASC';
+					$sortarray[] = ' Podcasttable.'.prefs::get_pref('podcast_sort_'.$i).' ASC';
 				}
 			}
 		}

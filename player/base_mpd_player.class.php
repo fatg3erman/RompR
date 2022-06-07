@@ -58,11 +58,12 @@ class base_mpd_player {
 		}
 		logger::core("MPDPLAYER", "Creating Player for",$this->ip.':'.$this->port);
 		$this->open_mpd_connection();
+
 		if ($player_type !== null) {
 			$this->player_type = $player_type;
 		} else {
-			if (prefs::$prefs['player_backend'] != null) {
-				$this->player_type = prefs::$prefs['player_backend'];
+			if (prefs::get_pref('player_backend') != null) {
+				$this->player_type = prefs::get_pref('player_backend');
 			} else {
 				$this->player_type = $this->probe_player_type();
 			}
@@ -298,7 +299,7 @@ class base_mpd_player {
 		$done = 0;
 		$cmd_status = null;
 
-		if ($this->player_type != prefs::$prefs['collection_player']) {
+		if ($this->player_type != prefs::get_pref('collection_player')) {
 			$this->translate_player_types($cmds);
 		}
 		if ($this->is_remote) {
@@ -445,7 +446,7 @@ class base_mpd_player {
 			$filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
 
 
-		if (prefs::$prefs['use_original_releasedate'] && $filedata['OriginalDate'])
+		if (prefs::get_pref('use_original_releasedate') && $filedata['OriginalDate'])
 			$filedata['Date'] = $filedata['OriginalDate'];
 
 
@@ -497,10 +498,10 @@ class base_mpd_player {
 				$filedata['file'] = $this->swap_file_for_local($filedata['file']);
 				$filedata['domain'] = 'local';
 			}
-			if (prefs::$prefs['collection_player'] == 'mopidy' && $this->player_type == 'mpd') {
+			if (prefs::get_pref('collection_player') == 'mopidy' && $this->player_type == 'mpd') {
 				$filedata['file'] = $this->mpd_to_mopidy($filedata['file']);
 			}
-			if (prefs::$prefs['collection_player'] == 'mpd' && $this->player_type == 'mopidy') {
+			if (prefs::get_pref('collection_player') == 'mpd' && $this->player_type == 'mopidy') {
 				$filedata['file'] = $this->mopidy_to_mpd($filedata['file']);
 			}
 		}
@@ -720,10 +721,10 @@ class base_mpd_player {
 		//
 		foreach ($cmds as $key => $cmd) {
 			if (substr($cmd, 0, 4) == 'add ') {
-				logger::mark("PLAYER", "Translating Track Uris from",prefs::$prefs['collection_player'],'to',$this->player_type);
-				if (prefs::$prefs['collection_player']== 'mopidy') {
+				logger::mark("PLAYER", "Translating Track Uris from",prefs::get_pref('collection_player'),'to',$this->player_type);
+				if (prefs::get_pref('collection_player') == 'mopidy') {
 					$cmds[$key] = $this->mopidy_to_mpd($cmd);
-				} else if (prefs::$prefs['collection_player']== 'mpd'){
+				} else if (prefs::get_pref('collection_player') == 'mpd'){
 					$file = trim(substr($cmd, 4), '" ');
 					$cmds[$key] = 'add '.$this->mpd_to_mopidy($file);
 				}
@@ -751,13 +752,13 @@ class base_mpd_player {
 
 	private function swap_local_for_file($string) {
 		// url encode the album art directory
-		$path = implode("/", array_map("rawurlencode", explode("/", prefs::$prefs['music_directory_albumart'])));
+		$path = implode("/", array_map("rawurlencode", explode("/", prefs::get_pref('music_directory_albumart'))));
 		logger::debug("MOPIDYREMOTE", "Replacing with",$path);
 		return preg_replace('#local:track:#', 'file://'.$path.'/', $string);
 	}
 
 	private function swap_file_for_local($string) {
-		$path = 'file://'.implode("/", array_map("rawurlencode", explode("/", prefs::$prefs['music_directory_albumart']))).'/';
+		$path = 'file://'.implode("/", array_map("rawurlencode", explode("/", prefs::get_pref('music_directory_albumart')))).'/';
 		return preg_replace('#'.$path.'#', 'local:track:', $string);
 	}
 
@@ -778,7 +779,7 @@ class base_mpd_player {
 				$retval =  "mopidy";
 			}
 			prefs::set_session_pref(['player_backend' => $retval]);
-			set_include_path('player/'.prefs::$prefs['player_backend'].PATH_SEPARATOR.get_include_path());
+			set_include_path('player/'.prefs::get_pref('player_backend').PATH_SEPARATOR.get_include_path());
 		}
 		return $retval;
 	}
@@ -851,7 +852,7 @@ class base_mpd_player {
 		$this->wait_for_state('play');
 
 		// We seem to have to do this. Very odd.
-		if (prefs::$prefs['player_backend'] == 'mpd')
+		if ($this->player_type == 'mpd')
 			sleep(1);
 
 		$this->do_command_list(['setvol '.$start]);
@@ -1030,7 +1031,7 @@ class base_mpd_player {
 					break;
 
 				case "loadstreamplaylist":
-					require_once ("player/".prefs::$prefs['player_backend']."/streamplaylisthandler.php");
+					require_once ("player/".$this->player_type."/streamplaylisthandler.php");
 					$cmds = array_merge($cmds, internetPlaylist::load_internet_playlist($cmd[1], $cmd[2], $cmd[3]));
 					break;
 
@@ -1325,13 +1326,13 @@ class base_mpd_player {
 		}
 
 		prefs::load();
-		if (($fraction_played*100) > prefs::$prefs['scrobblepercent'])
+		if (($fraction_played*100) > prefs::get_pref('scrobblepercent'))
 			$this->scrobble_to_lastfm();
 	}
 
 	private function lastfm_update_nowplaying() {
 		prefs::load();
-		if (prefs::$prefs['lastfm_scrobbling'] && prefs::$prefs['lastfm_session_key'] != '') {
+		if (prefs::get_pref('lastfm_scrobbling') && prefs::get_pref('lastfm_session_key') != '') {
 			logger::mark(prefs::currenthost(), 'Updating Last.FM Nowplaying');
 			$options = array(
 				'track' => $this->current_song['Title'],
@@ -1343,7 +1344,7 @@ class base_mpd_player {
 	}
 
 	private function scrobble_to_lastfm() {
-		if (prefs::$prefs['lastfm_scrobbling'] && prefs::$prefs['lastfm_session_key'] != '') {
+		if (prefs::get_pref('lastfm_scrobbling') && prefs::get_pref('lastfm_session_key') != '') {
 			logger::mark(prefs::currenthost(), 'Scrobbling');
 			$options = array(
 				'timestamp' => time() - $this->current_song['Time'],
@@ -1372,7 +1373,7 @@ class base_mpd_player {
 
 		logger::trace(prefs::currenthost(), 'Radio Params Are',$rp['radiomode'], $rp['radioparam'],'Playlist Length is',$playlistlength);
 
-		if ($playlistlength >= prefs::$prefs['smartradio_chunksize'])
+		if ($playlistlength >= prefs::get_pref('smartradio_chunksize'))
 			return;
 
 		switch ($rp['radiomode']) {
@@ -1380,7 +1381,7 @@ class base_mpd_player {
 			case 'mostPlayed':
 			case 'faveAlbums':
 			case 'recentlyaddedtracks':
-				$tracksneeded = prefs::$prefs['smartradio_chunksize'] - $playlistlength;
+				$tracksneeded = prefs::get_pref('smartradio_chunksize') - $playlistlength;
 				logger::trace(prefs::currenthost(), "Adding",$tracksneeded,"tracks from",$rp['radiomode'],$rp['radioparam']);
 				prefs::$database = new collection_radio();
 				$tracks = prefs::$database->doPlaylist($rp['radioparam'], $tracksneeded);

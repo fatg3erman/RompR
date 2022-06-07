@@ -84,7 +84,7 @@ class commradioplugin {
 		uibits::ui_select_box([
 			'id' => 'communityradioorderby',
 			'options' => array_combine($terms, $labels),
-			'selected' => prefs::$prefs['communityradioorderby']
+			'selected' => prefs::get_pref('communityradioorderby')
 		]);
 
 		print '<div class="fullwidth cleargroupparent">';

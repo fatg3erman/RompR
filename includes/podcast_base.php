@@ -52,14 +52,14 @@ function doPodcastBase() {
 
 	print '<div class="containerbox"><b>'.language::gettext('label_sortby').'</b></div>';
 
-	for ($count = 0; $count < prefs::$prefs['podcast_sort_levels']; $count++) {
+	for ($count = 0; $count < prefs::get_pref('podcast_sort_levels'); $count++) {
 		uibits::ui_select_box([
 			'id' => 'podcast_sort_'.$count,
 			'options' => $sortoptions,
-			'selected' => prefs::$prefs['podcast_sort_'.$count]
+			'selected' => prefs::get_pref('podcast_sort_'.$count)
 		]);
 
-		if ($count < prefs::$prefs['podcast_sort_levels']-1)
+		if ($count < prefs::get_pref('podcast_sort_levels')-1)
 			print '<div class="playlistrow2">'.language::gettext('label_then').'</div>';
 
 	}

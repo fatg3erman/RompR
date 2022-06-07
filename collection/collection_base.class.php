@@ -298,7 +298,7 @@ class collection_base extends database {
 		$result = $this->find_album->fetchAll(PDO::FETCH_OBJ);
 		$obj = array_shift($result);
 
-		if (prefs::$prefs['preferlocalfiles'] && $this->options['trackbytrack'] && !$this->options['doing_search'] && $data['domain'] == 'local' && !$obj) {
+		if (prefs::get_pref('preferlocalfiles') && $this->options['trackbytrack'] && !$this->options['doing_search'] && $data['domain'] == 'local' && !$obj) {
 			// Does the album exist on a different, non-local, domain? The checks above ensure we only do this
 			// during a collection update
 			$this->find_album2->execute([$data['Album'], $data['albumartist_index']]);
@@ -327,7 +327,7 @@ class collection_base extends database {
 			if ($changed) {
 
 				logger::mark('BACKEND', "Updating Details For Album ".$data['Album']." (index ".$index.")" );
-				if (prefs::$prefs['debug_enabled'] > 6) {
+				if (prefs::get_pref('debug_enabled') > 6) {
 					logger::trace('BACKEND', "  Date  :",$obj->Year,'->',$year);
 					logger::trace('BACKEND', "  Image :",$obj->Image,'->',$img);
 					logger::trace('BACKEND', "  Uri  :",$obj->AlbumUri,'->',$uri);
@@ -480,17 +480,20 @@ class collection_base extends database {
 
 	public function collectionStats() {
 		$html = '<div id="fothergill" class="fullwidth">';
-		if (prefs::$prefs['collectionrange'] == ADDED_ALL_TIME) {
-			$html .= $this->alistheader($this->get_stat('ArtistCount'),
-								$this->get_stat('AlbumCount'),
-								$this->get_stat('TrackCount'),
-								format_time($this->get_stat('TotalTime'))
-							);
+		if (prefs::get_pref('collectionrange') == ADDED_ALL_TIME) {
+			$html .= $this->alistheader(
+				$this->get_stat('ArtistCount'),
+				$this->get_stat('AlbumCount'),
+				$this->get_stat('TrackCount'),
+				format_time($this->get_stat('TotalTime'))
+			);
 		} else {
-			$html .= $this->alistheader($this->get_artist_count(prefs::$prefs['collectionrange'], 0),
-								$this->get_album_count(prefs::$prefs['collectionrange'], 0),
-								$this->get_track_count(prefs::$prefs['collectionrange'], 0),
-								format_time($this->get_duration_count(prefs::$prefs['collectionrange'], 0)));
+			$html .= $this->alistheader(
+				$this->get_artist_count(prefs::get_pref('collectionrange'), 0),
+				$this->get_album_count(prefs::get_pref('collectionrange'), 0),
+				$this->get_track_count(prefs::get_pref('collectionrange'), 0),
+				format_time($this->get_duration_count(prefs::get_pref('collectionrange'), 0))
+			);
 		}
 		$html .= '</div>';
 		return $html;
@@ -499,17 +502,20 @@ class collection_base extends database {
 	public function audiobookStats() {
 		$html = '<div id="mingus" class="fullwidth">';
 
-		if (prefs::$prefs['collectionrange'] == ADDED_ALL_TIME) {
-			$html .= $this->alistheader($this->get_stat('BookArtists'),
-								$this->get_stat('BookAlbums'),
-								$this->get_stat('BookTracks'),
-								format_time($this->get_stat('BookTime'))
-							);
+		if (prefs::get_pref('collectionrange') == ADDED_ALL_TIME) {
+			$html .= $this->alistheader(
+				$this->get_stat('BookArtists'),
+					$this->get_stat('BookAlbums'),
+					$this->get_stat('BookTracks'),
+					format_time($this->get_stat('BookTime'))
+				);
 		} else {
-			$html .= $this->alistheader($this->get_artist_count(prefs::$prefs['collectionrange'], 1),
-								$this->get_album_count(prefs::$prefs['collectionrange'], 1),
-								$this->get_track_count(prefs::$prefs['collectionrange'], 1),
-								format_time($this->get_duration_count(prefs::$prefs['collectionrange'], 1)));
+			$html .= $this->alistheader(
+				$this->get_artist_count(prefs::get_pref('collectionrange'), 1),
+				$this->get_album_count(prefs::get_pref('collectionrange'), 1),
+				$this->get_track_count(prefs::get_pref('collectionrange'), 1),
+				format_time($this->get_duration_count(prefs::get_pref('collectionrange'), 1))
+			);
 		}
 		$html .= "</div>";
 		return $html;
@@ -822,7 +828,7 @@ class collection_base extends database {
 					$retval = dirname($obj2['Uri']);
 					$retval = preg_replace('#^local:track:#', '', $retval);
 					$retval = preg_replace('#^file://#', '', $retval);
-					$retval = preg_replace('#^beetslocal:\d+:'.prefs::$prefs['music_directory_albumart'].'/#', '', $retval);
+					$retval = preg_replace('#^beetslocal:\d+:'.prefs::get_pref('music_directory_albumart').'/#', '', $retval);
 					logger::log('BACKEND', "Got album directory using track Uri :",$retval);
 				}
 			}
@@ -908,12 +914,12 @@ class collection_base extends database {
 
 		switch ($sortby) {
 			case 'artist':
-				foreach (prefs::$prefs['artistsatstart'] as $a) {
+				foreach (prefs::get_pref('artistsatstart') as $a) {
 					$qstring .= "CASE WHEN LOWER(albumartist) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
 				}
-				if (count(prefs::$prefs['nosortprefixes']) > 0) {
+				if (count(prefs::get_pref('nosortprefixes')) > 0) {
 					$qstring .= "(CASE ";
-					foreach(prefs::$prefs['nosortprefixes'] AS $p) {
+					foreach(prefs::get_pref('nosortprefixes') AS $p) {
 						$phpisshitsometimes = strlen($p)+2;
 						$qstring .= "WHEN LOWER(albumartist) LIKE '".strtolower($p)." %' THEN LOWER(SUBSTR(albumartist,".
 							$phpisshitsometimes.")) ";

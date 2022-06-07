@@ -730,7 +730,7 @@ class metaDatabase extends playlistCollection {
 					)
 				) {
 				logger::debug("ADD TAGS", "Success");
-				if (in_array($t, prefs::$prefs['auto_audiobook'])) {
+				if (in_array($t, prefs::get_pref('auto_audiobook'))) {
 					logger::log('ADD TAGS', 'Setting TTindex',$ttid,'as audiobook due to tag',$t);
 					$albumindex = $this->simple_query('Albumindex', 'Tracktable', 'TTindex', $ttid, null);
 					$this->set_as_audiobook($albumindex, 2);

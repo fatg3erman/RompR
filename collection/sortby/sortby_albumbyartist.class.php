@@ -24,16 +24,16 @@ class sortby_albumbyartist extends sortby_base {
 				// For browse album 'All Artists Featuring'
 				$qstring .= "AND Albumtable.AlbumArtistindex = ".$this->who;
 			}
-			$qstring .= " ".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+			$qstring .= " ".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
 			".$sflag.")
 		ORDER BY";
 
-		foreach (prefs::$prefs['artistsatstart'] as $a) {
+		foreach (prefs::get_pref('artistsatstart') as $a) {
 			$qstring .= " CASE WHEN Artistname = '".$a."' THEN 1 ELSE 2 END,";
 		}
-		if (count(prefs::$prefs['nosortprefixes']) > 0) {
+		if (count(prefs::get_pref('nosortprefixes')) > 0) {
 			$qstring .= " (CASE ";
-			foreach(prefs::$prefs['nosortprefixes'] AS $p) {
+			foreach(prefs::get_pref('nosortprefixes') AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
 				$qstring .= "WHEN Artistname LIKE '".$p.
 					" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
@@ -43,8 +43,8 @@ class sortby_albumbyartist extends sortby_base {
 			$qstring .= ", LOWER(Artistname), ";
 		}
 
-		if (prefs::$prefs['sortbydate']) {
-			if (prefs::$prefs['notvabydate']) {
+		if (prefs::get_pref('sortbydate')) {
+			if (prefs::get_pref('notvabydate')) {
 				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
 			} else {
 				$qstring .= ' Year,';

@@ -21,7 +21,7 @@ if (count($result) == 0) {
 
 		print '<div class="expand containerbox vertical">';
 		print '<div class="fixed tracktitle"><b>'.$track['Title'].'</b></div>';
-		if (in_array($track['AlbumArtist'], prefs::$prefs['artistsatstart'])) {
+		if (in_array($track['AlbumArtist'], prefs::get_pref('artistsatstart'))) {
 			print '<div class="fixed playlistrow2 trackartist">'.$track['Artistname'].'</div>';
 		} else {
 			print '<div class="fixed playlistrow2 trackartist">'.$track['AlbumArtist'].'</div>';
@@ -37,7 +37,7 @@ if (count($result) == 0) {
 
 		print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip spinable" title="'.language::gettext('label_searchtrack').'"></i>';
 		print '<input type="hidden" value="'.$track['Title'].'" />';
-		if (in_array($track['AlbumArtist'], prefs::$prefs['artistsatstart'])) {
+		if (in_array($track['AlbumArtist'], prefs::get_pref('artistsatstart'))) {
 			print '<input type="hidden" value="'.$track['Artistname'].'" />';
 		} else {
 			print '<input type="hidden" value="'.$track['AlbumArtist'].'" />';

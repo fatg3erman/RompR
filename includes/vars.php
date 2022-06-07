@@ -37,12 +37,12 @@ include('includes/constants.php');
 prefs::load();
 prefs::check_setup_values();
 
-if (array_key_exists('collection_type', prefs::$prefs)) {
-	set_include_path('backends/sql/'.prefs::$prefs['collection_type'].PATH_SEPARATOR.get_include_path());
+if (prefs::get_pref('collection_type') != null) {
+	set_include_path('backends/sql/'.prefs::get_pref('collection_type').PATH_SEPARATOR.get_include_path());
 }
 
-if (prefs::$prefs['player_backend'] != null) {
-	set_include_path('player/'.prefs::$prefs['player_backend'].PATH_SEPARATOR.get_include_path());
+if (prefs::get_pref('player_backend') != null) {
+	set_include_path('player/'.prefs::get_pref('player_backend').PATH_SEPARATOR.get_include_path());
 }
 
 if (defined('ROMPR_IS_LOADING')) {
@@ -63,9 +63,9 @@ if (array_key_exists('REQUEST_URI', $_SERVER)) {
 // Check that the player we've been asked to talk to actually exists
 //
 
-if (!array_key_exists(prefs::currenthost(), prefs::$prefs['multihosts'])) {
+if (!array_key_exists(prefs::currenthost(), prefs::get_pref('multihosts'))) {
 	logger::warn("INIT", prefs::currenthost(),"is not defined in the hosts defs");
-	foreach (prefs::$prefs['multihosts'] as $key => $obj) {
+	foreach (prefs::get_pref('multihosts') as $key => $obj) {
 		logger::log("INIT", "  Using host ".$key);
 		prefs::set_session_pref(['currenthost' => $key]);
 		break;

@@ -6,11 +6,10 @@ $p = json_decode(file_get_contents('php://input'), true);
 $returninfo = false;
 prefs::$database = new metaquery();
 logger::log("METADATA", "  Doing action",strtoupper($p['action']));
-if (prefs::$prefs['debug_enabled'] > 5) {
-	foreach ($p as $i => $v) {
-		logger::trace("Parameter", "    ",$i,':',$v);
-	}
+foreach ($p as $i => $v) {
+	logger::trace("Parameter", "    ",$i,':',$v);
 }
+
 switch ($p['action']) {
 	case 'gettags':
 	case 'getgenres':
