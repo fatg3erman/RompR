@@ -267,9 +267,15 @@ class player extends base_mpd_player {
 	private function websocket_command() {
 		$retval = 	'/player/mpd/mpd_websocket.py'
 					.' --currenthost='.prefs::$prefs['currenthost']
-					.' --mpdhost='.$this->ip
-					.' --mpdport='.$this->port
 					.' --wsport='.prefs::$prefs['mpd_websocket_port'];
+
+		if ($this->socket) {
+			$retval .= ' --unix='.$this->socket;
+		} else {
+			$retval	.= ' --mpdhost='.$this->ip
+					.  ' --mpdport='.$this->port;
+		}
+
 		if ($this->password != '')
 			$retval .= ' --mpdpassword='.$this->password;
 

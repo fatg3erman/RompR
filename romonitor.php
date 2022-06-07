@@ -4,7 +4,7 @@ require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 $opts = getopt('', ['currenthost:']);
 if (is_array($opts)) {
-	prefs::set_static_pref($opts);
+	prefs::set_session_pref($opts);
 }
 logger::mark("ROMONITOR", "Using Player ".prefs::currenthost());
 

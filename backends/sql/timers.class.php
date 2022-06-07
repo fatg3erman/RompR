@@ -10,7 +10,7 @@ class timers extends database {
 		} else {
 			$this->player = prefs::currenthost();
 		}
-		prefs::set_static_pref(['currenthost', $this->player]);
+		prefs::set_session_pref(['currenthost', $this->player]);
 		parent::__construct();
 	}
 

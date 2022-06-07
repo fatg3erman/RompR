@@ -30,7 +30,7 @@ check_php_installation();
 //
 
 if (isset($_GET['currenthost'])) {
-	prefs::set_static_pref([
+	prefs::set_session_pref([
 		'currenthost' => $_GET['currenthost'],
 		'player_backend' => null
 	]);

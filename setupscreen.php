@@ -1,5 +1,5 @@
 <?php
-prefs::set_static_pref(['player_backend' => null]);
+prefs::set_session_pref(['player_backend' => null]);
 prefs::$prefs['skin'] = 'desktop';
 logger::log("SETUP", "Displaying Setup Screen");
 print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.

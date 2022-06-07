@@ -24,7 +24,7 @@ var player = function() {
 		}
 
 		function addNewPlayerRow(name, def) {
-			let row = $('<tr>', {class: 'hostdef'}).appendTo($('#playertable'));
+			let row = $('<tr>', {class: 'hostdef', name: name}).appendTo($('#playertable'));
 			let td = $('<td>').appendTo(row);
 			$('<input>', {type: 'text', size: '30', name: 'name', class: 'notspecial'}).val(name).appendTo(td);
 			$.each(player_connection_params, function(i,v) {
@@ -75,6 +75,7 @@ var player = function() {
 						reloadNeeded = newname;
 					}
 					$.each(player_connection_params, function(i, val) {
+						debug.log('PLAYERS', 'Checking Player', i, val, temp[val], prefs.multihosts[prefs.currenthost][val]);
 						if (temp[val] != prefs.multihosts[prefs.currenthost][val]) {
 							debug.mark('PLAYERS', "Current Player connection details changed");
 							reloadNeeded = newname;

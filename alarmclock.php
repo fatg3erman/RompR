@@ -17,7 +17,7 @@ prefs::$database->update_pid_for_alarm(prefs::$prefs['alarmindex'], getmypid());
 prefs::$database->close_database();
 prefs::$database = null;
 logger::mark("ALARMCLOCK", "Player is",$alarm['Player']);
-prefs::set_static_pref(['currenthost' => $alarm['Player']]);
+prefs::set_session_pref(['currenthost' => $alarm['Player']]);
 
 $player = new base_mpd_player();
 $player->close_mpd_connection();

@@ -44,13 +44,13 @@ $player->close_mpd_connection();
 
 // Probe the type of the new player
 $target = prefs::$prefs['multihosts'][$json['currenthost']];
-prefs::set_static_pref(['player_backend' => null]);
+prefs::set_session_pref(['player_backend' => null]);
 $target_player = new base_mpd_player(
 	$target['host'], $target['port'], $target['socket'], $target['password'], null, $target['mopidy_remote']
 );
 // probe_player_type has now set prefs::$prefs['player_backend']
 if ($target_player->is_connected()) {
-	prefs::set_static_pref(['currenthost' => $json['currenthost']]);
+	prefs::set_session_pref(['currenthost' => $json['currenthost']]);
 
 	// Transfer the playlist to the new player
 	$cmds = array('stop', 'clear');

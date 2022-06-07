@@ -43,8 +43,6 @@ if (array_key_exists('collection_type', prefs::$prefs)) {
 
 if (prefs::$prefs['player_backend'] != null) {
 	set_include_path('player/'.prefs::$prefs['player_backend'].PATH_SEPARATOR.get_include_path());
-} else {
-	logger::log('INIT', 'Player backend pref is not set at load time');
 }
 
 if (defined('ROMPR_IS_LOADING')) {
@@ -69,7 +67,7 @@ if (!array_key_exists(prefs::currenthost(), prefs::$prefs['multihosts'])) {
 	logger::warn("INIT", prefs::currenthost(),"is not defined in the hosts defs");
 	foreach (prefs::$prefs['multihosts'] as $key => $obj) {
 		logger::log("INIT", "  Using host ".$key);
-		prefs::set_static_pref(['currenthost' => $key]);
+		prefs::set_session_pref(['currenthost' => $key]);
 		break;
 	}
 }
@@ -77,7 +75,7 @@ if (!array_key_exists(prefs::currenthost(), prefs::$prefs['multihosts'])) {
 logger::core("INIT", "Using MPD Host ".prefs::currenthost());
 
 if (!array_key_exists('currenthost', $_COOKIE)) {
-	prefs::set_static_pref(['currenthost' => prefs::currenthost()]);
+	prefs::set_session_pref(['currenthost' => prefs::currenthost()]);
 }
 
 //
@@ -87,28 +85,28 @@ if (!array_key_exists('currenthost', $_COOKIE)) {
 if(array_key_exists('skin', $_REQUEST)) {
 	if (is_dir('skins/'.$_REQUEST['skin'])) {
 		logger::log("INIT", "Request asked for skin: ".$_REQUEST['skin']);
-		prefs::set_static_pref(['skin' => trim($_REQUEST['skin'])]);
+		prefs::set_session_pref(['skin' => trim($_REQUEST['skin'])]);
 	}
 } else if (prefs::skin() === null && defined('IS_ROMONITOR')) {
-	prefs::set_static_pref(['skin' => 'desktop']);
+	prefs::set_session_pref(['skin' => 'desktop']);
 } else if (prefs::skin() === null) {
 	logger::mark("INIT", "Detecting browser...");
 	require_once('includes/Mobile_Detect.php');
 	$md = new Mobile_Detect;
 	if ($md->isMobile() || $md->isTablet()) {
 		logger::info('INIT', 'Browser is a mobile browser');
-		prefs::set_static_pref(['skin' => 'phone', 'clickmode' => 'single']);
+		prefs::set_session_pref(['skin' => 'phone', 'clickmode' => 'single']);
 	} else {
 		logger::info('INIT', 'Browser is a desktop browser or was not detected');
-		prefs::set_static_pref(['skin' => 'desktop', 'clickmode' => 'double']);
+		prefs::set_session_pref(['skin' => 'desktop', 'clickmode' => 'double']);
 	}
 }
 
 if (prefs::skin() == 'tablet')
-	prefs::set_static_pref(['skin' => 'phone']);
+	prefs::set_session_pref(['skin' => 'phone']);
 
 if (prefs::skin() == 'fruit')
-	prefs::set_static_pref(['skin' => 'skypotato']);
+	prefs::set_session_pref(['skin' => 'skypotato']);
 
 set_include_path('skins/'.prefs::skin().PATH_SEPARATOR.get_include_path());
 

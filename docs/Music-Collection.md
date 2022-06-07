@@ -18,7 +18,7 @@ You can choose not to apply Date Sorting to 'Various Artists' - where sorting al
 
 You can choose also to only display tracks and albums that were added within a specific time period (today, this week, this month, or this year)
 
-## Tagging And Rating
+## Tagging and Rating
 
 Tracks in the collection can be given a rating (from 1 to 5 stars) and arbitrary text tags. The tags and ratings will be shown in the Music Collection.
 
@@ -35,6 +35,12 @@ You can also add tags and ratings from the File [information panel](/RompR/The-I
 You can search for tags or ratings using the [Search Panel](/RompR/Searching-For-Music).
 
 Tags and ratings can also be used to generate [Personalised Radio](/RompR/Personalised-Radio).
+
+## Bookmarks
+
+Any track in the Collection or Spoken Word, and any Podcast epsisode can have any number of named bookmarks added to it. Just click the bookmark
+icon in the Nowplaying area when the track is playing, at the point where you want to set the bookmark. You can then type the name you want the
+bookmark to have. It'll appear under the track title and can be clicked to add it to the Play Queue, just like a track.
 
 ## Selecting tracks
 

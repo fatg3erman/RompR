@@ -244,7 +244,7 @@ class prefs {
 					self::$prefs = array_replace(self::$prefs, $sp);
 					// This ensures that $prefs never contains anything other than the default values
 					// for these items when we load it. This is important. The default values can be
-					// changed for the session by calling set_static_pref() so that they don't get
+					// changed for the session by calling set_session_pref() so that they don't get
 					// overwritten if you reload the prefs during the session.
 					self::$prefs = array_merge(self::$prefs, self::$prefs_to_never_save);
 
@@ -277,7 +277,7 @@ class prefs {
 	}
 
 	// Pass an array of key => value pairs
-	public static function set_static_pref($pref) {
+	public static function set_session_pref($pref) {
 		foreach ($pref as $k => $v) {
 			self::$prefs[$k] = $v;
 			self::$prefs_to_never_save[$k] = $v;
@@ -305,10 +305,27 @@ class prefs {
 			unset($sp[$pref]);
 		}
 		$ps = serialize($sp);
-		$r = file_put_contents('prefs/prefs.var', $ps, LOCK_EX);
-		if ($r === false) {
-			error_log("ERROR!              : COULD NOT SAVE PREFS");
-		}
+
+		$fp = fopen('prefs/prefs.var', 'w');
+		if($fp) {
+			if (flock($fp, LOCK_EX)) {
+				$success = fwrite($fp, $ps);
+				flock($fp, LOCK_UN);
+				fclose($fp);
+				if ($success === false) {
+					error_log("ERROR!              : COULD NOT SAVE PREFS");
+					exit(1);
+				}
+			  } else {
+				  print '<h1>Fatal Error - Could not write to the preferences file</h1>';
+				  error_log("ERROR!              : COULD NOT GET WRITE LOCK ON PREFS FILE");
+				  exit(1);
+			  }
+		  } else {
+			  print '<h1>Fatal Error - Could not open the preferences file</h1>';
+			  error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
+			  exit(1);
+		  }
 	}
 
 	public static function get_safe_prefs() {
@@ -456,6 +473,14 @@ class prefs {
 		return self::$prefs['multihosts'][self::$prefs['currenthost']][$param];
 	}
 
+	public static function set_player_param($param) {
+		self::$prefs['multihosts'][self::$prefs['currenthost']] = array_merge(
+			self::$prefs['multihosts'][self::$prefs['currenthost']],
+			$param
+		);
+		self::save();
+	}
+
 	public static function get_radio_params() {
 		return self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'];
 	}
@@ -464,14 +489,6 @@ class prefs {
 		self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'] = array_merge(
 			self::$prefs['multihosts'][self::$prefs['currenthost']]['radioparams'],
 			$params
-		);
-		self::save();
-	}
-
-	public static function set_player_param($param) {
-		self::$prefs['multihosts'][self::$prefs['currenthost']] = array_merge(
-			self::$prefs['multihosts'][self::$prefs['currenthost']],
-			$param
 		);
 		self::save();
 	}
@@ -494,7 +511,7 @@ class prefs {
 				logger::mark("INIT", "Setting Pref ".$i." to ".$value);
 				self::$prefs[$i] = $value;
 			}
-			self::set_static_pref(['currenthost' => self::$prefs['currenthost']]);
+			self::set_session_pref(['currenthost' => self::$prefs['currenthost']]);
 
 			// Setup screen passes currenthost, mpd_host, mpd_port, mpd_password, and unix_socket
 			// Alter the hosts setting for that host, but pull in mopidy_remote and do_consume
@@ -507,13 +524,8 @@ class prefs {
 				'socket' => self::$prefs['unix_socket']
 			];
 			$current_player = self::get_player_def();
-			if (array_key_exists('mopidy_remote', $current_player))
-				$newhost['mopidy_remote'] = $current_player['mopidy_remote'];
 
-			if (array_key_exists('do_consume', $current_player))
-				$newhost['do_consume'] = $current_player['do_consume'];
-
-			self::$prefs['multihosts'][self::$prefs['currenthost']] = array_merge(self::DEFAULT_PLAYER, $newhost);
+			self::$prefs['multihosts'][self::$prefs['currenthost']] = array_merge(self::DEFAULT_PLAYER, $current_player, $newhost);
 			self::save();
 		}
 

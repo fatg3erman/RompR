@@ -39,7 +39,7 @@ or
 
 If RompR is able to connect to Mopidy in this way, you will see a connection message that displays two port numbers when you first open RompR.
 
-If you get a permanent message saying 'Mopidy has stopped responding' this means the backend (web server) is able to connect to the MPD interface  but your browser is not able to connect to the HTTP interface.
+If you get a permanent message saying 'Player has stopped responding' this means the backend (web server) is able to connect to the MPD interface  but your browser is not able to connect to the HTTP interface.
 Try not using 'localhost' in your player definition. If that doesn't work then Mopidy is blocking the connection from the browser and you need to check
 the settings above. If you're having problems and you just can't get rid of that message then either disable Mopidy's HTTP frontend, or change the port from the setup page
 in RompR so that RompR is using the 'wrong' port.
@@ -82,6 +82,7 @@ If you don't want to build a collection this way, tracks from anywhere can be ad
 
 Tagging or rating a track that is playing on a radio station will make RompЯ search for it on Spotify (if you have Spotify) and add it to your collection if it can find it, or to your [wishlist](/RompR/The-Wishlist) if it can't.
 
+
 ## If you use Mopidy-Beets
 
 You can create your Music Collection from your Beets Library by selecting the option in the Configuration Panel. There is also a box to enter the address of your Beets server. This is not required for building the Music Collection, but if you set this value then you will be able to retrieve additional file information and lyrics from your Beets server.
@@ -97,25 +98,31 @@ Otherwise beets will not allow RompЯ to talk to it. Your configuration for beet
 
 ## Scanning Local Files
 
-Where MPD provides an 'update' command that RompЯ can use to update MPD's music database, Mopidy does not and so RompЯ can not easily make Mopidy scan local files - this has to be done with the 'mopidy local scan' command, which cannot be run directly by RompЯ .
+Where MPD provides an 'update' command that RompЯ can use to update MPD's music database, Mopidy does not and so RompЯ can not easily make
+Mopidy scan local files - this has to be done with the 'mopidy local scan' command, which cannot be run directly by RompЯ .
 
 One solution is to run mopidy local scan yourself first, but this isn't so convenient and there is an alternative.
 
-I've tested this on Ubuntu and Raspbian. I cannot test it on other distributions. It will not work on macOS.
+I've tested this on Ubuntu and Raspberry Pi OS. I cannot test it on other distributions. It will not work on macOS.
 
 * Firstly, mopidy must be running on the same machine as your webserver. This will not work otherwise.
 * Secondly you need to set up Mopidy so it is running as a service. See the Mopidy documentation for how to do that.
 * Thirdly, you need to give your webserver permission to run the 'mopidyctl local scan' command as sudo *without needing a password*. To do this, you do the following:
 
 
-    sudo visudo -f /etc/sudoers.d/mopidyscan
+	sudo visudo -f /etc/sudoers.d/mopidyscan
 
-This will open an empty file. Note. TAKE GREAT CARE when doing this. Messing up your sudoers file will be unrecoverable. In this example I am assuming that your webserver runs as the user www-data and the hostname of your machine is raspberry. Also the path to mopidyctl is /usr/sbin/mopidyctl. Make sure you know the correct values for these parameters before starting. In the suoders file you need to add a line
+
+This will open an empty file. Take great care to get the following right, as it might be difficult to undo if you get it wrong.
+In this example I am assuming that your webserver runs as the user www-data, the hostname of your machine is raspberry,
+and the path to mopidyctl is /usr/sbin/mopidyctl. Make sure you know the correct values for these parameters before starting.
+In the suoders file you need to add a line
 
 
     www-data raspberry = (root) NOPASSWD: /usr/sbin/mopidyctl
 
-Save the new file (in the default vi editor you need to press I to get into Insert mode, then add the line, then do the very obvious and not at all ridiculous Esc:wq (Escape-colon-w-q) to save.
+Save the new file (in the default vi editor you need to press I to get into Insert mode, then add the line, then do the very obvious and not at all
+ridiculous Esc:wq (Escape-colon-w-q) to save.
 Then go to /rompr/?setup and enable the option for "Allow RompR to run mopidy local scan when creating the Music Collection"
 
 If you haven't done this right, then your music collection update will just hang. You'll probably have to reboot to clear it.
@@ -147,11 +154,12 @@ Assuming it works, the YoutTube video will be downloaded and the audio will be e
 using Mopidy's Stream backend the next time you add the track to the play queue.
 
 If you have the flac packages installed (sudo apt install flac) then the downloaded file will be tagged with the artist and track name.
-Tagged tracks can be moved into your 'normal' music collection. Provided you have the option to 'Prefer Local Music to Internet Sources' enabled, the collection will simply update
-with the new location. Moving the files to your music collection means they can be played using the 'local' backend which support seeking and pausing much better than the stream backend.
+Tagged tracks can be moved into your 'normal' music collection. Provided you have the option to 'Prefer Local Music to Internet Sources' enabled,
+the collection will simply update with the new location. Moving the files to your music collection means they can be played using the 'local' backend
+which support seeking and pausing much better than the stream backend.
 
 One way is to move the downloaded files from rompr/prefs/youtubedl into an appropriate folder, do 'mopidy local scan' and rescan your collection.
 
-Another approach is to symlink rompr/prefs/youtubedl into your Music Directory and make sure the webserver has write permissions. When you download a track you simply need to 'mopidy local scan'
-and then Update your Music Collection.
+Another approach is to symlink rompr/prefs/youtubedl into your Music Directory and make sure the webserver has write permissions.
+When you download a track you simply need to 'mopidy local scan' and then Update your Music Collection.
 
