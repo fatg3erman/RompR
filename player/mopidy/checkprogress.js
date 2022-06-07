@@ -28,7 +28,7 @@ var mopidysocket = function() {
 	var error_timer;
 
 	function socket_closed() {
-		debug.warn('MOPISOCKET', 'Socket was closed');
+		debug.warn('PLAYERWEB', 'Socket was closed');
 		if (connected) {
 			socket_error();
 		}
@@ -37,7 +37,7 @@ var mopidysocket = function() {
 
 	function show_connection_error() {
 		if (error_win == null) {
-			error_win = infobar.permerror(language.gettext('error_playergone'));
+			error_win = infobar.permerror(language.gettext('error_playergone', prefs.currenthost));
 		}
 	}
 
@@ -53,7 +53,7 @@ var mopidysocket = function() {
 	}
 
 	function socket_open() {
-		debug.mark('MOPISOCKET', 'Socket is open');
+		debug.mark('PLAYERWEB', 'Socket is open');
 		clearTimeout(reconnect_timer);
 		clearTimeout(error_timer);
 		connected = true;
@@ -64,7 +64,7 @@ var mopidysocket = function() {
 	}
 
 	function socket_message(message) {
-		debug.log('MOPISOCKET', message);
+		debug.log('PLAYERWEB', message);
 		var json = JSON.parse(message.data);
 		if (json.event) {
 			if (react || (!react && json.event != 'tracklist_changed')) {
@@ -78,7 +78,7 @@ var mopidysocket = function() {
 	}
 
 	async function update_player() {
-		debug.log('MOPISOCKET', 'Reacting to message');
+		debug.log('PLAYERWEB', 'Reacting to message');
 		await playlist.is_valid();
 		await player.controller.do_command_list([]);
 		updateStreamInfo();
@@ -87,8 +87,8 @@ var mopidysocket = function() {
 	return {
 		initialise: async function() {
 			if (!socket || socket.readyState > WebSocket.OPEN) {
-				debug.mark('MOPISOCKET', 'Connecting Socket to',prefs.mopidy_http_port);
-				socket = new WebSocket('ws://'+prefs.mopidy_http_port+'/mopidy/ws');
+				debug.mark('PLAYERWEB', 'Connecting Socket to',prefs.get_player_param('websocket'));
+				socket = new WebSocket('ws://'+prefs.get_player_param('websocket'));
 				socket.onopen = socket_open;
 				socket.onerror = socket_error;
 				socket.onclose = socket_closed;

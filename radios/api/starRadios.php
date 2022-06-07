@@ -10,7 +10,6 @@ foreach ($params as $k => $v) {
 prefs::set_radio_params($params);
 // prepare_smartradio will save the prefs, so no need to do it here
 $player = new base_mpd_player();
-$player = new player();
 $player->prepare_smartradio();
 
 prefs::$database = new collection_radio();

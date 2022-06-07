@@ -530,7 +530,7 @@ var prefs = function() {
 				if (a != '') {
 					if (a === 'false') { a = false; }
 					if (a === 'true' ) { a = true; }
-					prefs[cookiePrefs[i]] = a;
+					prefs[cookiePrefs[i]] = decodeURIComponent(a);
 					if (prefs.debug_enabled > 5) {
 						console.log("COOKIEPREFS: "+cookiePrefs[i]+' = '+prefs[cookiePrefs[i]]);
 					}
@@ -601,6 +601,10 @@ var prefs = function() {
 			if (callback)
 				callback();
 
+		},
+
+		get_player_param: function(param) {
+			return prefs.multihosts[prefs.currenthost][param];
 		},
 
 		doClickCss: function() {

@@ -9,6 +9,9 @@ and therefore RompR is no longer supported on Windows. RompR will, on most syste
 shouldn't need to do anything *except* if you were previously running romonitor, in which case you **must** read the link above.
 * Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin.
 As a result of this change though, you will need to recreate any Alarms you had previously configured.
+* There is now a [Websocket Server](/RompR-And-MPD) that makes the UI more responsive when you're using MPD - essentially it
+mimics the part of Mopidy's HTTP interface that RompR uses. There are some pre-requisistes you need for this to work, please
+read the link.
 * Fix bug where album art might be partially downloaded when using MPD (Fix contributed by corubba)
 * Try to make RompR properly timezone aware, so the alarm clock works when Daylight Saving Time is enabled, for example.
 RompR will try to work out your timezone, but if you notice the alarm clock isn't going off at the right time you

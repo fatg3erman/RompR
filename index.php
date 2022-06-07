@@ -118,7 +118,14 @@ if (is_array($arse) && array_key_exists('music_directory', $arse)) {
 }
 
 $player->close_mpd_connection();
-$player->probe_http_api();
+
+// player_backend has now been worked out, so we can now probe the websocket
+$player = new player();
+// Always probe the websocket every time we load. This is a saved preference
+// and it might have changed since last time we opened the page
+$player->probe_websocket();
+
+check_backend_daemon();
 
 prefs::save();
 
@@ -131,7 +138,6 @@ include ("includes/firstrun.php");
 // Check that the Backend Daemon is running and (re)start if it necessary.
 // Add ?force_restart=1 to the URL to force the Daemon to Restart
 //
-check_backend_daemon();
 
 logger::log("INIT", "Initialisation done. Let's Boogie!");
 logger::mark("CREATING PAGE", "******++++++======------******------======++++++******");
@@ -199,7 +205,7 @@ foreach ($scripts as $i) {
 	logger::log("INIT", "Loading ".$i);
 	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
-if (prefs::$prefs['mopidy_http_port'] === false) {
+if (prefs::get_player_param('websocket') === false) {
 	print '<script type="text/javascript" src="player/mpd/checkprogress.js?version='.$version_string.'"></script>'."\n";
 } else {
 	print '<script type="text/javascript" src="player/mopidy/checkprogress.js?version='.$version_string.'"></script>'."\n";

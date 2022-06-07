@@ -24,6 +24,7 @@ $ignore_local = (array_key_exists('ignorelocal', $_REQUEST) && $_REQUEST['ignore
 // The requests are cached locally so it's only one request to Last.FM
 
 $searchfunctions = array(
+	'tryPlayer',
 	'trySoundcloud',
 	'tryLastFMForMBID',
 	'tryLocal',
@@ -32,15 +33,8 @@ $searchfunctions = array(
 	'tryLastFM',
 	'tryBing'
 );
-$player = new base_mpd_player();
-$player->close_mpd_connection();
-$player->probe_http_api();
-if (prefs::$prefs['mopidy_http_port'] !== false) {
-	array_unshift($searchfunctions, 'tryMopidy');
-}
-if ($player->check_mpd_version('0.21')) {
-	array_unshift($searchfunctions, 'tryMPD');
-}
+
+$player = new player();
 
 if (array_key_exists('source', $_REQUEST) || array_key_exists('base64data', $_REQUEST)) {
 	$result = false;
@@ -325,40 +319,13 @@ function tryBing($albumimage) {
 	return $retval;
 }
 
-function tryMopidy($albumimage) {
+function tryPlayer($albumimage) {
 	global $player, $delaytime;
-	$retval = '';
-	logger::log('GETALBUMCOVER', 'Trying Mopidy-Images. AlbumURI is', $albumimage->albumuri);
-	if ($albumimage->albumuri) {
-		$retval = $player->find_album_image($albumimage->albumuri);
-	} else if ($albumimage->trackuri) {
-		$retval = $player->find_album_image($albumimage->trackuri);
-	}
+	$retval = $player->search_for_album_image($albumimage);
 	if ($retval != '') {
 		$delaytime = 100;
 	}
 	return $retval;
-}
-
-function tryMPD($albumimage) {
-	global $player, $delaytime;
-	if ($albumimage->trackuri == '')
-		return '';
-
-	$player->open_mpd_connection();
-	$filename = '';
-	if ($player->check_mpd_version('0.22')) {
-		logger::log('GETALBUMCOVER', 'Trying MPD embedded image. TrackURI is', $albumimage->trackuri);
-		$filename = $player->albumart($albumimage->trackuri, true);
-	}
-	if ($filename == '') {
-		logger::log('GETALBUMCOVER', 'Trying MPD folder image. TrackURI is', $albumimage->trackuri);
-		$filename = $player->albumart($albumimage->trackuri, false);
-	}
-	if ($filename != '') {
-		$delaytime = 100;
-	}
-	return $filename;
 }
 
 ?>

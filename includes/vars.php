@@ -141,6 +141,7 @@ function check_timezone() {
 	    exec('date +%Z', $timezone, $retval);
 		if (count($timezone) > 0)
 			$timezone = trim(array_shift($timezone));
+
 	    if ($retval == 0 && $timezone != '') {
 	    	$zone = timezone_name_from_abbr($timezone);
 	        date_default_timezone_set($zone);

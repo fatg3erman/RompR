@@ -20,6 +20,7 @@ logger::mark("ALARMCLOCK", "Player is",$alarm['Player']);
 prefs::set_static_pref(['currenthost' => $alarm['Player']]);
 
 $player = new base_mpd_player();
+$player->close_mpd_connection();
 $player = new player();
 $player->close_mpd_connection();
 

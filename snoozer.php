@@ -30,7 +30,6 @@ prefs::$database->update_snooze_pid_for_alarm(prefs::$prefs['snooze'], null);
 prefs::$database->close_database();
 
 $player = new base_mpd_player();
-$player = new player();
 $player->do_command_list(['play']);
 $player->close_mpd_connection();
 

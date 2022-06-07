@@ -11,6 +11,7 @@ class prefs {
 		'socket' => '',
 		'mopidy_remote' => false,
 		'do_consume' => false,
+		'websocket' => false,
 		'radioparams' => [
 			"radiomode" => "",
 			"radioparam" => "",
@@ -67,6 +68,7 @@ class prefs {
 		"snapcast_port" => '1705',
 		"snapcast_http" => '1780',
 		"http_port_for_mopidy" => "6680",
+		"mpd_websocket_port" => "",
 		"multihosts" => [
 			'Default' => self::DEFAULT_PLAYER
 		],
@@ -202,7 +204,6 @@ class prefs {
 	const PREFS_WITHOUT_DEFAULTS = [
 		'interface_language' => null,
 		'collection_type' => null,
-		'mopidy_http_port' => null,
 		'spotify_token' => null,
 		'spotify_token_expires' => null
 	];
@@ -210,7 +211,7 @@ class prefs {
 	private static $prefs_to_never_save = [
 		'currenthost' => 'Default',
 		'player_backend' => null,
-		'skin' => null,
+		'skin' => null
 	];
 
 	const COOKIEPREFS = [
@@ -289,6 +290,12 @@ class prefs {
 					setcookie($k, $v, ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
 				}
 			}
+		}
+	}
+
+	public static function set_pref($pref) {
+		foreach ($pref as $k => $v) {
+			self::$prefs[$k] = $v;
 		}
 	}
 
@@ -388,6 +395,13 @@ class prefs {
 					unset(self::$prefs['multihosts'][$key]['radioparams']['radiomaster']);
 					break;
 
+				case 94:
+					if (!array_key_exists('mopidy_remote', self::$prefs['multihosts'][$key]))
+						self::$prefs['multihosts'][$key]['mopidy_remote'] = false;
+
+					self::$prefs['multihosts'][$key]['websocket'] = false;
+					break;
+
 			}
 		}
 		self::save();
@@ -436,6 +450,10 @@ class prefs {
 
 	public static function get_player_def() {
 		return self::$prefs['multihosts'][self::$prefs['currenthost']];
+	}
+
+	public static function get_player_param($param) {
+		return self::$prefs['multihosts'][self::$prefs['currenthost']][$param];
 	}
 
 	public static function get_radio_params() {

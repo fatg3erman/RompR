@@ -18,6 +18,7 @@ while (prefs::$prefs['player_backend'] == null) {
 	}
 }
 
+$player->close_mpd_connection();
 $player = new player();
 register_shutdown_function('close_mpd');
 $player->set_consume_state();

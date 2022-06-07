@@ -13,7 +13,6 @@ sleep((int) prefs::$prefs['sleeptime']);
 logger::mark(prefs::currenthost(), 'Starting Sleep Timer Volume Ramp');
 
 $player = new base_mpd_player();
-$player = new player();
 $mpd_status = $player->do_command_list(['status']);
 $volume = $mpd_status['volume'];
 

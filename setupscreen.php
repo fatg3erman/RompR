@@ -67,12 +67,12 @@ print '<p>'.language::gettext("setup_unixsocket").'<br>';
 print '<input type="text" name="unix_socket" value="'.$pdef['socket'].'" /></p>';
 
 print '<hr class="setup_screen_options" />';
-print '<h3>'.language::gettext("label_mopidy_http").'</h3>';
+print '<h3>'.language::gettext("setup_mopidy_scan_title").'</h3>';
+
+print '<p>'.language::gettext("label_mopidy_http").'</p>';
 print '<p class="tiny">'.language::gettext("info_mopidy_http").'</p>';
 print '<input type="text" name="http_port_for_mopidy" value="'.prefs::$prefs['http_port_for_mopidy'].'" /></p>';
 
-print '<hr class="setup_screen_options" />';
-print '<h3>'.language::gettext("setup_mopidy_scan_title").'</h3>';
 print '<div class="styledinputs"><input id="mopscan" type="checkbox" name="use_mopidy_scan" ';
 if (prefs::$prefs['use_mopidy_scan']) {
 	print " checked";
@@ -85,6 +85,16 @@ print '><label for="spotifyunplayable">Mark All Spotify Tracks as Unplayable</la
 
 print '<div class="styledinputs"><input id="spotifyplayable" type="checkbox" name="spotify_mark_playable" ';
 print '><label for="spotifyplayable">Mark All Spotify Tracks as Playable</label></div>';
+
+
+print '<hr class="setup_screen_options" />';
+print '<h3>'.language::gettext("setup_mpd_special").'</h3>';
+
+print '<p>'.language::gettext("label_mpd_websocket").'</p>';
+print '<p class="tiny">'.language::gettext("info_mpd_websocket").'</p>';
+print '<input type="text" name="mpd_websocket_port" value="'.prefs::$prefs['mpd_websocket_port'].'" /></p>';
+print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-MPD" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
+
 
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("label_generalsettings").'</h3>';

@@ -708,7 +708,7 @@ d as %s",
 	"label_cantataimporter" =>				"Import Ratings from Cantata",
 	"podcast_writetags" =>					"Write ID3 Tags to Downloaded Files",
 	"label_youtubedl" =>					"Download Audio",
-	"error_playergone" =>					"Mopidy has stopped resonding!",
+	"error_playergone" =>					"Player '%s' has stopped resonding!",
 	"label_mopidy_http" =>					"Mopidy HTTP Interface Port",
 	"info_mopidy_http" =>					"Optional, provides extra functionality with Mopidy",
 	"label_collinfo" =>						"Collection Information",
@@ -744,7 +744,10 @@ d as %s",
 	"button_nextbg" => 						'Next Background Image',
 	"button_delbg" => 						'Delete Current Background Image',
 	"label_name" =>							'Name',
-	"play_even_if_playing" =>				'Even If Already Playing'
+	"play_even_if_playing" =>				'Even If Already Playing',
+	"setup_mpd_special"	=>					'MPD Special Options',
+	"info_mpd_websocket" =>					"Optional, provides extra functionality with MPD",
+	"label_mpd_websocket" =>				'Port for MPD Websocket Server'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

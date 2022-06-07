@@ -264,6 +264,114 @@ class player extends base_mpd_player {
 		return true;
 	}
 
+	private function websocket_command() {
+		$retval = 	'/player/mpd/mpd_websocket.py'
+					.' --currenthost='.prefs::$prefs['currenthost']
+					.' --mpdhost='.$this->ip
+					.' --mpdport='.$this->port
+					.' --wsport='.prefs::$prefs['mpd_websocket_port'];
+		if ($this->password != '')
+			$retval .= ' --mpdpassword='.$this->password;
+
+		return $retval;
+	}
+
+	public function probe_websocket() {
+		if (prefs::$prefs['mpd_websocket_port'] !== '') {
+			if (get_pid($this->websocket_command()) === false) {
+				if (($pid = get_pid('mpd_websocket.py --currenthost='.prefs::$prefs['currenthost'])) !== false) {
+					logger::log('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config');
+					kill_process($pid);
+				}
+				logger::log('MPDSOCKET', 'Starting MPD Websocket Server');
+				$pwd = getcwd();
+				$pid = start_process($pwd.$this->websocket_command(), 'python3');
+				if (get_pid($this->websocket_command()) === false) {
+					logger::warn('MPDSOCKET', 'Failed to start MPD Websocket Server');
+					prefs::set_player_param(['websocket' => false]);
+					return false;
+				}
+			} else {
+				logger::log('MPDSOCKET', 'MPD Websocket Server already running');
+			}
+			$http_server = nice_server_address($this->ip);
+			prefs::set_player_param(['websocket' => $http_server.':'.prefs::$prefs['mpd_websocket_port'].'/']);
+			logger::log('MPDSOCKET', 'Using',prefs::get_player_param('websocket'),'for MPD websocket');
+		} else {
+			logger::log('MPDSOCKET', 'MPD websocket Not Configured');
+			if (($pid = get_pid('mpd_websocket.py --currenthost='.prefs::$prefs['currenthost'])) !== false) {
+				logger::log('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config');
+				kill_process($pid);
+			}
+			prefs::set_player_param(['websocket' => false]);
+		}
+
+	}
+
+	public function search_for_album_image($albumimage) {
+		if ($albumimage->trackuri == '')
+			return '';
+
+		$filename = '';
+		if ($this->check_mpd_version('0.22')) {
+			logger::log('GETALBUMCOVER', 'Trying MPD embedded image. TrackURI is', $albumimage->trackuri);
+			$filename = $this->albumart($albumimage->trackuri, true);
+		}
+		if ($filename == '' && $this->check_mpd_version('0.21')) {
+			logger::log('GETALBUMCOVER', 'Trying MPD folder image. TrackURI is', $albumimage->trackuri);
+			$filename = $this->albumart($albumimage->trackuri, false);
+		}
+		return $filename;
+
+	}
+
+	public function albumart($uri, $embedded) {
+		$offset = 0;
+		$size = null;
+		$handle = null;
+		$filename = '';
+		$retries = 3;
+		logger::log('ALBUMART', 'Fetching', $embedded?'embedded':'folder', 'albumart for', $uri);
+		if ($this->check_mpd_version('0.22.4')) {
+			$this->do_mpd_command('binarylimit 1048576');
+		}
+		while (($size === null || $size > 0) && $retries > 0) {
+			logger::log('MPDPLAYER', '  Reading at offset',$offset);
+			$command = $embedded ? 'readpicture' : 'albumart';
+			$result = $this->do_mpd_command($command.' "'.$uri.'" '.$offset, true);
+			if (is_array($result) && array_key_exists('binary', $result)) {
+				if ($size === null) {
+					$size = $result['size'];
+					logger::log('MPDPLAYER', '    Size is',$size);
+
+					$filename = 'prefs/temp/'.md5($uri);
+					$handle = fopen($filename, 'w');
+				}
+				if ($result['binary'] == strlen($result['binarydata'])) {
+					fwrite($handle, $result['binarydata']);
+					$size -= $result['binary'];
+					$offset += $result['binary'];
+					logger::log('MPDPLAYER', '    Remaining', $size);
+				} else {
+					logger::log('MPDPLAYER', '    Expected', $result['binary'], 'bytes but only got', strlen($result['binarydata']));
+					$retries--;
+				}
+			} else {
+				logger::log('ALBUMART', '    No binary data in response from MPD');
+				$retries--;
+			}
+		}
+		if ($handle)
+			fclose($handle);
+
+		if ($retries == 0 && $filename != '') {
+			unlink($filename);
+			$filename = '';
+		}
+
+		return $filename;
+	}
+
 
 }
 

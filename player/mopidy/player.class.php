@@ -3,6 +3,8 @@ class player extends base_mpd_player {
 
 	private $monitor;
 
+	private const WEBSOCKET_SUFFIX = '/mopidy/ws';
+
 	public function check_track_load_command($uri) {
 		return 'add';
 	}
@@ -379,6 +381,130 @@ class player extends base_mpd_player {
 		}
 		return true;
 	}
+
+	public function probe_websocket() {
+		logger::log('MOPIDYHTTP', 'Probing HTTP API');
+		$result = $this->mopidy_http_request(
+			$this->ip.':'.prefs::$prefs['http_port_for_mopidy'],
+			array(
+				'method' => 'core.get_version'
+			)
+		);
+		if ($result !== false) {
+			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
+			$http_server = nice_server_address($this->ip);
+			prefs::set_player_param(['websocket' => $http_server.':'.prefs::$prefs['http_port_for_mopidy'].self::WEBSOCKET_SUFFIX]);
+			logger::log('MOPIDYHTTP', 'Using',prefs::get_player_param('websocket'),'for Mopidy HTTP');
+		} else {
+			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');
+			prefs::set_player_param(['websocket' => false]);
+		}
+
+	}
+
+	private function mopidy_http_request($port, $data) {
+		$url = 'http://'.$port.'/mopidy/rpc';
+
+		$data['jsonrpc'] = '2.0';
+		$data['id'] = 1;
+
+		$options = array(
+		    'http' => array(
+		        'header'  => "Content-Type: application/json\r\n",
+		        'method'  => 'POST',
+		        'content' => json_encode($data)
+		    )
+		);
+		$context  = stream_context_create($options);
+		// Disable reporting of warnings for this call otherwise it spaffs into the error log
+		// if the connection doesn't work.
+		error_reporting(E_ERROR);
+		$cheese = file_get_contents($url, false, $context);
+		error_reporting();
+		return $cheese;
+	}
+
+	public function search_for_album_image($albumimage) {
+		$retval = '';
+		if ($albumimage->albumuri) {
+			logger::log('GETALBUMCOVER', 'Trying Mopidy-Images. AlbumURI is', $albumimage->albumuri);
+			$retval = $this->find_album_image($albumimage->albumuri);
+		} else if ($albumimage->trackuri) {
+			logger::log('GETALBUMCOVER', 'Trying Mopidy-Images. TrackURI is', $albumimage->trackuri);
+			$retval = $this->find_album_image($albumimage->trackuri);
+		}
+		return $retval;
+	}
+
+	// So that checklocalcover.php doesn't crash when we're using Mopidy
+	public function albumart($uri, $embedded) {
+		return '';
+	}
+
+	private function strip_http_port() {
+		return str_replace(self::WEBSOCKET_SUFFIX, '', prefs::get_player_param('websocket'));
+	}
+
+	public function find_album_image($uri) {
+		if (prefs::get_player_param('websocket') === false)
+			return '';
+
+		$retval = '';
+		$result = $this->mopidy_http_request(
+			$this->strip_http_port(),
+			array(
+				'method' => 'core.library.get_images',
+				"params" => array(
+					"uris" => array($uri)
+				)
+			)
+		);
+		if ($result !== false) {
+			$biggest = 0;
+			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
+			logger::log('MOPIDYHTTP', $result);
+			$json = json_decode($result, true);
+			if (array_key_exists('error', $json)) {
+				logger::warn('MOPIDYHTTP', 'Summit went awry');
+			} else if (array_key_exists($uri, $json['result']) && is_array($json['result'][$uri])) {
+				foreach ($json['result'][$uri] as $image) {
+					if (!array_key_exists('width', $image)) {
+						$retval = ($retval == '') ? $image['uri'] : $this->compare_images($retval, $image['uri']);
+					} else if ($image['width'] > $biggest) {
+						$retval = $image['uri'];
+						$biggest = $image['width'];
+					}
+				}
+			}
+		}
+		if (strpos($retval, '/local/') === 0) {
+			$retval = 'http://'.$this->strip_http_port().$retval;
+		}
+		if (basename($retval) == 'default.jpg' && strpos($retval, 'ytimg.com') !== false) {
+			logger::log('MOPIDYHTTP', 'Mopidy-Youtube only returned youtube default image. Checking for hqdefault');
+			$new_url = dirname($retval).'/hqdefault.jpg';
+			$mrchunks = new url_downloader(['url' => $new_url]);
+			if ($mrchunks->get_data_to_string()) {
+				$retval = $new_url;
+			}
+		}
+		logger::log('MOPIDYHTTP', 'Returning', $retval);
+		return $retval;
+	}
+
+	private function compare_images($current, $candidate) {
+		$retval = $current;
+		$ours = strtolower(pathinfo($current, PATHINFO_FILENAME));
+		$theirs = strtolower(pathinfo($candidate, PATHINFO_FILENAME));
+		if ($ours == 'default' && ($theirs == 'mqdefault' || $theirs == 'hqdefault')) {
+			$retval = $candidate;
+		}
+		if ($ours == 'mqdefault' && $theirs == 'hqdefault') {
+			$retval = $candidate;
+		}
+		return $retval;
+	}
+
 }
 
 ?>

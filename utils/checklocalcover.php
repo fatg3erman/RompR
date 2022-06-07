@@ -23,12 +23,12 @@ if ($image == '') {
 	$image = imageFunctions::check_embedded($filepath, $filepath);
 	if ($image == '') {
 		$player = new base_mpd_player();
-		if ($player->check_mpd_version('0.22')) {
-			$image = $player->readpicture($_REQUEST['file']);
-		}
+		$player->close_mpd_connection();
+		$player = new player();
+		$image = $player->albumart($_REQUEST['file'], true);
 		$player->close_mpd_connection();
 		if ($image)
-			logger::log('PLONKINGTON', 'Got Image from MPD Readpicture');
+			logger::log('PLONKINGTON', 'Got Image from MPD readpicture');
 	} else {
 		logger::log('PLONKINGTON', 'Found Embedded Image');
 	}

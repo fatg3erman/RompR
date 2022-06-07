@@ -3,10 +3,10 @@
 class base_mpd_player {
 
 	protected $connection;
-	private $ip;
-	private $port;
-	private $socket;
-	private $password;
+	protected $ip;
+	protected $port;
+	protected $socket;
+	protected $password;
 	protected $player_type;
 	private $is_remote;
 	public $playlist_error;
@@ -27,8 +27,6 @@ class base_mpd_player {
 
 	private $current_status = [];
 	public $current_song = [];
-
-	private $has_dir_lastmod = false;
 
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_remote = null) {
 		$this->debug_id = microtime();
@@ -56,12 +54,7 @@ class base_mpd_player {
 		if ($is_remote !== null) {
 			$this->is_remote = $is_remote;
 		} else {
-			if (array_key_exists('mopidy_remote', $pdef)) {
-				$this->is_remote = $pdef['mopidy_remote'];
-			} else {
-				// Catch the case where we haven't yet upgraded the player defs
-				$this->is_remote = false;
-			}
+			$this->is_remote = $pdef['mopidy_remote'];
 		}
 		logger::core("MPDPLAYER", "Creating Player for",$this->ip.':'.$this->port);
 		$this->open_mpd_connection();
@@ -74,10 +67,6 @@ class base_mpd_player {
 				$this->player_type = $this->probe_player_type();
 			}
 		}
-		// Checking for true is faster than doing a string comparison, and that
-		// will be important when updating the collection/
-		if ($this->player_type == 'mpd')
-			$this->has_dir_lastmod = true;
 	}
 
 	public function __destruct() {
@@ -92,12 +81,17 @@ class base_mpd_player {
 				logger::log('MPDPLAYER', 'Version number',$version,'is <= MPD version',$matches[1]);
 				return true;
 			}
+		} else {
+			logger::warn('MPD', 'Could not compare version numbers',$this->mpd_version,'and',$version);
 		}
 		logger::log('MPDPLAYER', 'Version number',$version,'is > MPD version',$matches[1]);
 		return false;
 	}
 
 	public function open_mpd_connection() {
+
+		if ($this->is_connected())
+			return true;
 
 		$retries = 10;
 		$errno = null;
@@ -785,164 +779,6 @@ class base_mpd_player {
 			}
 			prefs::set_static_pref(['player_backend' => $retval]);
 			set_include_path('player/'.prefs::$prefs['player_backend'].PATH_SEPARATOR.get_include_path());
-		}
-		return $retval;
-	}
-
-	public function albumart($uri, $embedded) {
-		$offset = 0;
-		$size = null;
-		$handle = null;
-		$filename = '';
-		$retries = 3;
-		logger::log('ALBUMART', 'Fetching', $embedded?'embedded':'folder', 'albumart for', $uri);
-		if ($this->check_mpd_version('0.22.4')) {
-			$this->do_mpd_command('binarylimit 1048576');
-		}
-		while (($size === null || $size > 0) && $retries > 0) {
-			logger::log('MPDPLAYER', '  Reading at offset',$offset);
-			$command = $embedded ? 'readpicture' : 'albumart';
-			$result = $this->do_mpd_command($command.' "'.$uri.'" '.$offset, true);
-			if (is_array($result) && array_key_exists('binary', $result)) {
-				if ($size === null) {
-					$size = $result['size'];
-					logger::log('MPDPLAYER', '    Size is',$size);
-
-					$filename = 'prefs/temp/'.md5($uri);
-					$handle = fopen($filename, 'w');
-				}
-				if ($result['binary'] == strlen($result['binarydata'])) {
-					fwrite($handle, $result['binarydata']);
-					$size -= $result['binary'];
-					$offset += $result['binary'];
-					logger::log('MPDPLAYER', '    Remaining', $size);
-				} else {
-					logger::log('MPDPLAYER', '    Expected', $result['binary'], 'bytes but only got', strlen($result['binarydata']));
-					$retries--;
-				}
-			} else {
-				logger::log('ALBUMART', '    No binary data in response from MPD');
-				$retries--;
-			}
-		}
-		if ($handle)
-			fclose($handle);
-
-		if ($retries == 0 && $filename != '') {
-			unlink($filename);
-			$filename = '';
-		}
-
-		return $filename;
-	}
-
-	//
-	// Mopidy-HTTP functions
-	//
-
-	// Strictly speaking these belong in mopidy/player.php
-	// But at places where they're needed that would entain sometimes creating two players
-	// (one of these and one mopidy) which is inefficient and slow, so they're here
-	// If we're really playing the pedantic game, just rename this class so these functions fit.
-
-	private function mopidy_http_request($port, $data) {
-		if (prefs::$prefs['player_backend'] == 'mopidy') {
-			$url = 'http://'.$port.'/mopidy/rpc';
-
-			$data['jsonrpc'] = '2.0';
-			$data['id'] = 1;
-
-			$options = array(
-			    'http' => array(
-			        'header'  => "Content-Type: application/json\r\n",
-			        'method'  => 'POST',
-			        'content' => json_encode($data)
-			    )
-			);
-			$context  = stream_context_create($options);
-			// Disable reporting of warnings for this call otherwise it spaffs into the error log
-			// if the connection doesn't work.
-			error_reporting(E_ERROR);
-			$cheese = file_get_contents($url, false, $context);
-			error_reporting();
-			return $cheese;
-		} else {
-			return false;
-		}
-	}
-
-	public function probe_http_api() {
-		logger::log('MOPIDYHTTP', 'Probing HTTP API');
-		$result = $this->mopidy_http_request(
-			$this->ip.':'.prefs::$prefs['http_port_for_mopidy'],
-			array(
-				'method' => 'core.get_version'
-			)
-		);
-		if ($result !== false) {
-			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
-			$http_server = nice_server_address($this->ip);
-			prefs::$prefs['mopidy_http_port'] = $http_server.':'.prefs::$prefs['http_port_for_mopidy'];
-			logger::log('MOPIDYHTTP', 'Using',prefs::$prefs['mopidy_http_port'],'for Mopidy HTTP');
-		} else {
-			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');
-			prefs::$prefs['mopidy_http_port'] = false;
-		}
-	}
-
-	public function find_album_image($uri) {
-		$retval = '';
-		$result = $this->mopidy_http_request(
-			prefs::$prefs['mopidy_http_port'],
-			array(
-				'method' => 'core.library.get_images',
-				"params" => array(
-					"uris" => array($uri)
-				)
-			)
-		);
-		if ($result !== false) {
-			$biggest = 0;
-			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
-			logger::log('MOPIDYHTTP', $result);
-			$json = json_decode($result, true);
-			if (array_key_exists('error', $json)) {
-				logger::warn('MOPIDYHTTP', 'Summit went awry');
-			} else if (array_key_exists($uri, $json['result']) && is_array($json['result'][$uri])) {
-				foreach ($json['result'][$uri] as $image) {
-					if (!array_key_exists('width', $image)) {
-						$retval = ($retval == '') ? $image['uri'] : $this->compare_images($retval, $image['uri']);
-					} else if ($image['width'] > $biggest) {
-						$retval = $image['uri'];
-						$biggest = $image['width'];
-					}
-				}
-			}
-		}
-		if (strpos($retval, '/local/') === 0) {
-			$retval = 'http://'.prefs::$prefs['mopidy_http_port'].$retval;
-		}
-		if (basename($retval) == 'default.jpg' && strpos($retval, 'ytimg.com') !== false) {
-			logger::log('MOPIDYHTTP', 'Mopidy-Youtube only returned youtube default image. Checking for hqdefault');
-			$new_url = dirname($retval).'/hqdefault.jpg';
-			$mrchunks = new url_downloader(['url' => $new_url]);
-			if ($mrchunks->get_data_to_string()) {
-				$retval = $new_url;
-			}
-		}
-		logger::log('MOPIDYHTTP', 'Returning', $retval);
-		return $retval;
-	}
-
-	private function compare_images($current, $candidate) {
-		$retval = $current;
-		$ours = strtolower(pathinfo($current, PATHINFO_FILENAME));
-		$theirs = strtolower(pathinfo($candidate, PATHINFO_FILENAME));
-		if ($ours == 'default' && ($theirs == 'mqdefault' || $theirs == 'hqdefault')) {
-			$retval = $candidate;
-		}
-		if ($ours == 'mqdefault' && $theirs == 'hqdefault') {
-			$retval = $candidate;
 		}
 		return $retval;
 	}

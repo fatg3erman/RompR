@@ -444,11 +444,14 @@ function get_player_ip() {
 	if ($pdef['socket'] != '') {
 		$pip = $_SERVER['SERVER_ADDR'];
 	} else {
-		$pip = nice_server_address($pdef['host']).':'.
-			$pdef['port'];
+		$pip = nice_server_address($pdef['host']).':'.$pdef['port'];
 	}
-	if (prefs::$prefs['mopidy_http_port'] !== false) {
-		$pip .= '/'.explode(':', prefs::$prefs['mopidy_http_port'])[1];
+	if (prefs::get_player_param('websocket') !== false) {
+		// Get the number off the end
+		$poop = explode(':', prefs::get_player_param('websocket'))[1];
+		// Remove anything like /mopidy/ws after the number
+		$poop = explode('/', $poop)[0];
+		$pip .= '/'.$poop;
 	}
 	logger::log("INIT", "Displaying Player IP as: ".$pip);
 	return $pip;
@@ -457,7 +460,7 @@ function get_player_ip() {
 function nice_server_address($host) {
  	if ($host == "localhost" || $host == "127.0.0.1" || $host == '::1') {
  		// Turn localhost into something prettier. localhost is only localhost relative to the server, not the
- 		// browser. We want to use it for mopidy_http_port, which is a websocket and so localhost is useless
+ 		// browser. We want to use it for websocket, which is a websocket and so localhost is useless
  		// to us in that context. Also we want to be able to display 'connected to Mopidy at [hostname]' in the browser
  		// not Connected to Mopidy at localhost, for similar reasons.
  		$ip = $_SERVER['HTTP_HOST'];
@@ -953,16 +956,16 @@ function check_backend_daemon() {
 	}
 }
 
-function start_process($cmd) {
+function start_process($cmd, $exe='php') {
     logger::trace('DAEMON', 'Starting Process', $cmd);
     $os = php_uname();
     if (strpos($os, 'Darwin') === false) {
     	// On Linux
-    	exec('nohup php '.$cmd.' > /dev/null & > /dev/null');
+    	exec('nohup '.$exe.' '.$cmd.' > /dev/null & > /dev/null');
    	} else {
    		// On macOS
    		logger::log('PROCESS', 'Using macOS form of start command');
-    	exec('php '.$cmd.' < /dev/null > /dev/null 2>&1 &');
+    	exec($exe.' '.$cmd.' < /dev/null > /dev/null 2>&1 &');
     }
     return get_pid($cmd);
 }
