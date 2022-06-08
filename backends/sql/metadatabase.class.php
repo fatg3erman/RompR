@@ -158,6 +158,7 @@ class metaDatabase extends playlistCollection {
 	}
 
 	private function up_next_hack_for_audiobooks($ttid) {
+		logger::log('METADATA', 'Doing Audiobook Up Next Hack for TTID',$ttid);
 		$this->sql_prepare_query(true, null, null, null,
 			"UPDATE Bookmarktable SET Bookmark = 0 WHERE TTindex = ? AND Name = ?",
 			$ttid,

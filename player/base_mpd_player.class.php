@@ -778,7 +778,7 @@ class base_mpd_player {
 				logger::warn("MPDPLAYER", "WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly");
 				$retval =  "mopidy";
 			}
-			prefs::set_session_pref(['player_backend' => $retval]);
+			prefs::set_pref(['player_backend' => $retval]);
 			set_include_path('player/'.prefs::get_pref('player_backend').PATH_SEPARATOR.get_include_path());
 		}
 		return $retval;

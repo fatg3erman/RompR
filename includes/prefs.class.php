@@ -2,6 +2,8 @@
 
 class prefs {
 
+	private const LOCKFILE = 'prefs/prefs.lock';
+
 	public static $database = null;
 
 	const DEFAULT_PLAYER = [
@@ -29,7 +31,9 @@ class prefs {
 		'REMOTE' => 'mopidy_remote'
 	];
 
-	private static $prefs = array(
+	private static $prefs = [];
+
+	const BACKEND_PREFS = [
 		// Things that only make sense as backend options, not per-user options
 		"mysql_host" => "localhost",
 		"mysql_database" => "romprdb",
@@ -81,13 +85,15 @@ class prefs {
 		"consume_workaround" => false,
 		"we_do_consume" => false,
 
+		'interface_language' => null,
+		'collection_type' => null,
+		'spotify_token' => null,
+		'spotify_token_expires' => null,
+
 		// Things that could be set on a per-user basis but need to be known by the backend
 		"displaycomposer" => true,
 		"artistsatstart" => array("Various Artists","Soundtracks"),
 		"nosortprefixes" => array("The"),
-		"sortcollectionby" => "artist",
-		"sortresultsby" => "sameas",
-		"actuallysortresultsby" => 'artist',
 		"sync_lastfm_playcounts" => false,
 		"sync_lastfm_at_start" => false,
 		"next_lastfm_synctime" => 0,
@@ -96,11 +102,23 @@ class prefs {
 		"lfm_importer_last_import" => 0,
 		"bing_api_key" => '',
 		"hide_master_volume" => false,
+		"alarm_ramptime" => 30,
+		"alarm_snoozetime" => 8,
+		"communityradioorderby" => 'name',
 
-		// Things that are set as Cookies
-		"sortbydate" => false,
-		"notvabydate" => false,
-		"collectionrange" => ADDED_ALL_TIME,
+		"default_podcast_display_mode" => DISPLAYMODE_ALL,
+		"default_podcast_refresh_mode" => REFRESHOPTION_MONTHLY,
+		"default_podcast_sort_mode" => SORTMODE_NEWESTFIRST,
+		"podcast_mark_new_as_unlistened" => false,
+		"podcast_sort_levels" => 4,
+		"podcast_sort_0" => 'Title',
+		"podcast_sort_1" => 'Artist',
+		"podcast_sort_2" => 'Category',
+		"podcast_sort_3" => 'new',
+		"lastversionchecked" => '1.00',
+		"lastversionchecktime" => 0,
+		'use_original_releasedate' => false,
+		"chartoption" => 0,
 
 		// These are currently saved in the backend, as the most likely scenario is one user
 		// with multiple browsers. But what if it's multiple users?
@@ -108,10 +126,14 @@ class prefs {
 		"lastfm_session_key" => "",
 		"autotagname" => "",
 		"lastfm_logged_in" => false,
+		"lastfm_scrobbling" => false,
+		"scrobblepercent" => 50
+	];
+
+	public const BROWSER_PREFS = [
 
 		// All of these are saved in the browser, so these are only defaults
 		"tradsearch" => false,
-		"lastfm_scrobbling" => false,
 		"lastfm_autocorrect" => false,
 		"sourceshidden" => false,
 		"playlisthidden" => false,
@@ -119,7 +141,6 @@ class prefs {
 		"sourceswidthpercent" => 25,
 		"playlistwidthpercent" => 25,
 		"downloadart" => true,
-		"clickmode" => "double",
 		"chooser" => "albumlist",
 		"hide_albumlist" => false,
 		"hide_filelist" => false,
@@ -131,8 +152,6 @@ class prefs {
 		"hidebrowser" => false,
 		"shownupdatewindow" => '',
 		"scrolltocurrent" => false,
-		"alarm_ramptime" => 30,
-		"alarm_snoozetime" => 8,
 		"lastfmlang" => "interface",
 		"synctags" => false,
 		"synclovevalue" => "0",
@@ -143,9 +162,9 @@ class prefs {
 		"fontfamily" => "Nunito.css",
 		"displayresultsas" => "collection",
 		'crossfade_duration' => 5,
+
 		"newradiocountry" => "countries/GB",
 		"search_limit_limitsearch" => false,
-		"scrobblepercent" => 50,
 		"updateeverytime" => false,
 		"fullbiobydefault" => true,
 		"mopidy_search_domains" => array("local", "spotify"),
@@ -156,37 +175,25 @@ class prefs {
 		"displayremainingtime" => true,
 		"cdplayermode" => false,
 		"auto_discovembobulate" => false,
+
 		"sleeptime" => 30,
 		"sleepon" => false,
 		"sortwishlistby" => 'artist',
 		"player_in_titlebar" => false,
-		"communityradioorderby" => 'name',
-		"browser_id" => null,
+
 		"playlistswipe" => true,
-		"default_podcast_display_mode" => DISPLAYMODE_ALL,
-		"default_podcast_refresh_mode" => REFRESHOPTION_MONTHLY,
-		"default_podcast_sort_mode" => SORTMODE_NEWESTFIRST,
-		"podcast_mark_new_as_unlistened" => false,
 		"use_albumart_in_playlist" => true,
-		"podcast_sort_levels" => 4,
-		"podcast_sort_0" => 'Title',
-		"podcast_sort_1" => 'Artist',
-		"podcast_sort_2" => 'Category',
-		"podcast_sort_3" => 'new',
-		"lastversionchecked" => '1.00',
-		"lastversionchecktime" => 0,
+		"bgimgparms" => ['dummy' => 'baby'],
 		'playlistbuttons_isopen' => false,
 		'collectionbuttons_isopen' => false,
 		'advsearchoptions_isopen' => false,
 		'podcastbuttons_isopen' => false,
-		'use_original_releasedate' => false,
-		"bgimgparms" => ['dummy' => 'baby'],
-		"chartoption" => 0,
 		"somafm_quality" => 'highest_available_quality'
-	);
+
+	];
 
 	// Prefs that should not be exposed to the browser for security reasons
-	private static $private_prefs = array(
+	private const PRIVATE_PREFS = [
 		'mysql_database',
 		'mysql_host',
 		'mysql_password',
@@ -199,129 +206,217 @@ class prefs {
 		'spotify_token',
 		'spotify_token_expires',
 		'bing_api_key'
-	);
-
-	const PREFS_WITHOUT_DEFAULTS = [
-		'interface_language' => null,
-		'collection_type' => null,
-		'spotify_token' => null,
-		'spotify_token_expires' => null
 	];
 
-	// NOTE anything defined in this list MUST be set using set_session_pref()
-	private static $prefs_to_never_save = [
+	private const COOKIEPREFS = [
 		'currenthost' => 'Default',
 		'player_backend' => null,
+		'clickmode' => 'double',
 		'skin' => null,
+		"sortbydate" => false,
+		"notvabydate" => false,
+		"collectionrange" => ADDED_ALL_TIME,
+		"sortcollectionby" => 'artist',
+		"sortresultsby" => 'sameas',
+		"actuallysortresultsby" => 'artist',
+		"browser_id" => null,
+
+		// These are prefs that are set by daemon processes and are only of interest to those processes.
+		// We don't want to save them or set them as Cookies but we do want them restored after a load().
+		// set_pref will add them to session_prefs because they're in ths array but it won't set a Cookie
+		// so long as IS_ROMINTOR is defined.
 		'alarmindex' => null,
 		'sleeptime' => null,
 		'snooze' => null
 	];
 
-	const COOKIEPREFS = [
-		'currenthost',
-		'player_backend',
-		'clickmode',
-		'skin'
-	];
+	// Anything that is set via set_pref that is a cookie will be added to this array.
+	// This makes load() restore their values when we're running from a daemon process
+	// the does not support cookies.
+	private static $session_prefs = [ ];
 
+
+	// Load the prefs. This function ONLY loads the prefs that are required by the backend.
+	// It starts with BACKEND_PREFS,
+	// then replaces those values with anything read in from prefs.var
+	// then adds in all the values from Cookies, using the defaults if not set
+	// then replaces those values with anything stored in session_prefs
 	public static function load() {
 
-		// This cannot be declared above because PHP reasons. It seems to want to use the rules
-		// for declaring CONST when declaring a static variable.
-		self::$prefs["last_lastfm_synctime"] = time();
+		// Can't set a value in a constant using a function, so it has to be done here.
+		$cannot_init = ["last_lastfm_synctime" => time()];
+		$sp = [];
+
+		self::wait_for_unlock();
 
 		if (file_exists('prefs/prefs.var')) {
 			$fp = fopen('prefs/prefs.var', 'r');
 			if($fp) {
-				if (flock($fp, LOCK_SH)) {
-					$sp = unserialize(fread($fp, 32768));
-					flock($fp, LOCK_UN);
-					fclose($fp);
-					if ($sp === false) {
-						print '<h1>Fatal Error - Could not open the preferences file</h1>';
+				if (flock($fp, LOCK_EX)) {
+					$file = fread($fp, 32768);
+					if ($file === false) {
+						fclose($fp);
+						print '<h1>Fatal Error - Could not read the preferences file</h1>';
 						error_log("ERROR!              : COULD NOT LOAD PREFS");
 						exit(1);
 					}
+					flock($fp, LOCK_UN);
+					fclose($fp);
+
+					$sp = unserialize($file);
 					// Old prefs files might have values we've removed. This removes those values
-					$sp = array_intersect_key($sp, array_merge(self::$prefs, self::PREFS_WITHOUT_DEFAULTS));
-					self::$prefs = array_replace(self::$prefs, $sp);
-					// This ensures that $prefs never contains anything other than the default values
-					// for these items when we load it. This is important. The default values can be
-					// changed for the session by calling set_session_pref() so that they don't get
-					// overwritten if you reload the prefs during the session.
-					self::$prefs = array_merge(self::$prefs, self::$prefs_to_never_save);
+					$sp = array_intersect_key($sp, self::BACKEND_PREFS);
 
-					logger::setLevel(self::$prefs['debug_enabled']);
-					logger::setOutfile(self::$prefs['custom_logfile']);
+				} else {
+					fclose($fp);
+					print '<h1>Fatal Error - Could not open the preferences file</h1>';
+					error_log("ERROR!              : COULD NOT GET READ LOCK ON PREFS FILE");
+					exit(1);
+				}
+			} else {
+				print '<h1>Fatal Error - Could not open the preferences file</h1>';
+				error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
+				exit(1);
+			}
+		}
 
-					// Set any prefs that are supplied as cookies.
-					foreach ($_COOKIE as $a => $v) {
-						// The UI can st a cookie to '' but doesn't seem able to make it expire
-						if ($v == '') {
-							setcookie($a, $v, ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
-						} else if (array_key_exists($a, self::$prefs)) {
-							if ($v === 'false') { $v = false; }
-							if ($v === 'true') { $v = true; }
-							self::$prefs[$a] = $v;
-							logger::core('COOKIEPREFS',"Pref",$a,"is set by Cookie - Value :",$v);
-						}
+		// Do this here rather than after building $prefs so we can use it right away.
+		// Slightly messy but I want the logging in the Cookie part
+		$loglevel = array_key_exists('debug_enabled', $sp) ? $sp['debug_enabled'] : self::BACKEND_PREFS['debug_enabled'];
+		$log_file = array_key_exists('custom_logfile', $sp) ? $sp['custom_logfile'] : self::BACKEND_PREFS['custom_logfile'];
+		logger::setLevel($loglevel);
+		logger::setOutfile($log_file);
+
+		$cp = [];
+		foreach (self::COOKIEPREFS as $cookie => $default) {
+			if (array_key_exists($cookie, $_COOKIE)) {
+				$cookie_val = $_COOKIE[$cookie];
+				if ($cookie_val == '') {
+					// The frontend sesms to be able to set cookies to '' but not expire them
+					setcookie($cookie, '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
+					$cp[$cookie] = $default;
+					logger::core('COOKIEPREFS',"Pref",$cookie,"is expired and set to default of",$default);
+				} else {
+					if ($cookie_val === 'false') { $cookie_val = false; }
+					if ($cookie_val === 'true') { $cookie_val = true; }
+					$cp[$cookie] = $cookie_val;
+					logger::core('COOKIEPREFS',"Pref",$cookie,"is set by Cookie - Value :",$cookie_val);
+				}
+			} else {
+				$cp[$cookie] = self::COOKIEPREFS[$cookie];
+			}
+		}
+
+		self::$prefs = array_replace(self::BACKEND_PREFS, $cannot_init, $sp, $cp, self::$session_prefs);
+
+	}
+
+	// Belt and braces locking approach. We've had issues with prefs being corrupted, despite
+	// trying to get an exclusinve lock on the file, There can be issues with locks not being
+	// exclusive across different processes.
+	// So we create an additional lock file and we don't read or write to prefs while it exists.
+	private static function wait_for_unlock() {
+		while (file_exists(self::LOCKFILE)) {
+			usleep(200000);
+		}
+	}
+
+	private static function lock_prefs() {
+		$lockfile = fopen(self::LOCKFILE, 'w');
+		fclose($lockfile);
+	}
+
+	private static function unlock() {
+		unlink(self::LOCKFILE);
+	}
+
+	// A lot of browsers are now expiring cookies after 6 months. We don't want that to happen.
+	// Every time we load the page we refesh the expiry date of all the cookie prefs that
+	// are currently set.
+	public static function refresh_cookies() {
+		foreach (self::COOKIEPREFS as $cookie => $default) {
+			if (array_key_exists($cookie, $_COOKIE))
+				setcookie($cookie, $_COOKIE[$cookie], ['expires' => 2147483647, 'path' => '/', 'SameSite' => 'Lax']);
+		}
+	}
+
+	// Pass an array of key => value pairs
+	// This sets the current value of a pref. If a pref is defined as a COOKIEPREF
+	// it also sets its value in session_prefs, and sets the Cookie if IS_ROMINITOR is not defined
+	public static function set_pref($pref) {
+		foreach ($pref as $k => $v) {
+			$value = $v;
+			if (array_key_exists($k, self::COOKIEPREFS) && ($value == '' || $value == null)) {
+				// We tend to pass '' or null to clear a cookie. Rather than have to keep all that in sync,
+				// just make sure we set the local pref back to its default value
+				$value = self::COOKIEPREFS[$k];
+			}
+			self::$prefs[$k] = $value;
+			if (array_key_exists($k, self::COOKIEPREFS)) {
+				self::$session_prefs[$k] = $value;
+				if (!defined('IS_ROMONITOR')) {
+					if ($v == '' || $v == null) {
+						logger::trace('PREFS', 'Expiring Cookie',$k);
+						setcookie($k, '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
+					} else {
+						logger::trace('PREFS', 'Setting Cookie',$k,'to',$value);
+						// This is the maximum value a 32-Bit system can handle. It's January 2038
+						// Brave won't store it more than 6 months anyway
+						setcookie($k, $value, ['expires' => 2147483647, 'path' => '/', 'SameSite' => 'Lax']);
 					}
-			  } else {
-				  print '<h1>Fatal Error - Could not open the preferences file</h1>';
-				  error_log("ERROR!              : COULD NOT GET READ LOCK ON PREFS FILE");
-				  exit(1);
-			  }
-		  } else {
-			  print '<h1>Fatal Error - Could not open the preferences file</h1>';
-			  error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
-			  exit(1);
-		  }
-	   }
+				}
+			}
+		}
 	}
 
 	public static function save() {
-		$sp = self::$prefs;
-		foreach (self::$prefs_to_never_save as $pref => $val) {
-			unset($sp[$pref]);
-		}
+		$sp = array_diff_key(self::$prefs, self::COOKIEPREFS);
 		$ps = serialize($sp);
+
+		self::wait_for_unlock();
+
+		self::lock_prefs();
 
 		$fp = fopen('prefs/prefs.var', 'w');
 		if($fp) {
 			if (flock($fp, LOCK_EX)) {
+				ftruncate($fp, 0);
 				$success = fwrite($fp, $ps);
-				flock($fp, LOCK_UN);
+				fflush($fp);
 				fclose($fp);
+				self::unlock();
 				if ($success === false) {
 					error_log("ERROR!              : COULD NOT SAVE PREFS");
 					exit(1);
 				}
 			} else {
-				  print '<h1>Fatal Error - Could not write to the preferences file</h1>';
-				  error_log("ERROR!              : COULD NOT GET WRITE LOCK ON PREFS FILE");
-				  exit(1);
+				fclose($fp);
+				print '<h1>Fatal Error - Could not write to the preferences file</h1>';
+				error_log("ERROR!              : COULD NOT GET WRITE LOCK ON PREFS FILE");
+				self::unlock();
+				exit(1);
 			}
 		} else {
-			  print '<h1>Fatal Error - Could not open the preferences file</h1>';
-			  error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
-			  exit(1);
+			print '<h1>Fatal Error - Could not open the preferences file</h1>';
+			error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
+			self::unlock();
+			exit(1);
 		}
 	}
 
-	public static function get_safe_prefs() {
-		$safeprefs = array();
-		foreach (self::$prefs as $p => $v) {
-			if (!in_array($p, self::$private_prefs)) {
-				$safeprefs[$p] = $v;
-			}
-		}
-		return $safeprefs;
+	// Get the prefs required for the UI.
+	// Take the already loaded prefs, remove PRIVATE_PREFS and merge the defaults from BROWSER_PREFS
+	// The browser will replace those values with anything it has in local storage
+	public static function get_browser_prefs() {
+		$private_prefs = array_combine(self::PRIVATE_PREFS, array_fill(0, count(self::PRIVATE_PREFS), null));
+		$browser_prefs = array_diff_key(self::$prefs, $private_prefs);
+		$browser_prefs = array_merge($browser_prefs, self::BROWSER_PREFS);
+		return $browser_prefs;
 	}
 
 	public static function redact_private() {
 		$redacted = array();
-		foreach (self::$private_prefs as $p) {
+		foreach (self::PRIVATE_PREFS as $p) {
 			if (array_key_exists($p, self::$prefs) && self::$prefs[$p] != '') {
 				$redacted[$p] = '[Redacted]';
 			}
@@ -345,27 +440,6 @@ class prefs {
 
 	public static function skin() {
 		return self::$prefs['skin'];
-	}
-
-	// Pass an array of key => value pairs
-	public static function set_session_pref($pref) {
-		foreach ($pref as $k => $v) {
-			self::$prefs[$k] = $v;
-			self::$prefs_to_never_save[$k] = $v;
-			if (!defined('IS_ROMONITOR') && in_array($k, self::COOKIEPREFS)) {
-				if ($v == '') {
-					logger::trace('PREFS', 'Expiring Cookie',$k);
-					setcookie($k, $v, ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
-				} else {
-					logger::trace('PREFS', 'Setting Cookie',$k,'to',$v);
-					setcookie($k, $v, ['expires' => time()+365*24*60*60*10, 'path' => '/', 'SameSite' => 'Lax']);
-				}
-			}
-		}
-	}
-
-	public static function set_pref($pref) {
-		self::$prefs = array_merge(self::$prefs, $pref);
 	}
 
 	public static function get_pref($pref) {
@@ -483,10 +557,6 @@ class prefs {
 			self::$prefs['multihosts'] = json_decode(json_encode(self::$prefs['multihosts']), true);
 		}
 
-		if (is_object(self::$prefs['bgimgparms'])) {
-			self::$prefs['bgimgparms'] = json_decode(json_encode(self::$prefs['bgimgparms']), true);
-		}
-
 		// Upgrade from old JavaScript Date.now() value to php time() value
 		if (self::$prefs['last_lastfm_synctime'] > 999999999999) {
 			logger::log('INIT', 'Swapping lastfm sync time to backend');
@@ -521,7 +591,7 @@ class prefs {
 				logger::mark("INIT", "Setting Pref ".$i." to ".$value);
 				self::$prefs[$i] = $value;
 			}
-			self::set_session_pref(['currenthost' => self::$prefs['currenthost']]);
+			self::set_pref(['currenthost' => self::$prefs['currenthost']]);
 
 			// Setup screen passes currenthost, mpd_host, mpd_port, mpd_password, and unix_socket
 			// Alter the hosts setting for that host, but pull in mopidy_remote and do_consume

@@ -91,7 +91,7 @@ function playerController() {
 			self.do_command_list([]);
 			debug.info("MPD","Player is ready");
 			infobar.notify(
-				"Connected to "+getCookie('currenthost')+" ("
+				"Connected to "+prefs.currenthost+" ("
 				+prefs.player_backend.capitalize()
 				+" at " + player_ip + ")"
 			);

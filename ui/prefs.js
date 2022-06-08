@@ -133,75 +133,22 @@ var prefs = function() {
 	var deferredPrefs = null;
 	var uichangetimer = null;
 
-	const prefsInLocalStorage = [
-		"sourceshidden",
-		"playlisthidden",
-		"infosource",
-		"sourceswidthpercent",
-		"playlistwidthpercent",
-		"downloadart",
-		"chooser",
-		"hide_albumlist",
-		"hide_filelist",
-		"hide_radiolist",
-		"hide_playlistslist",
-		"hide_audiobooklist",
-		"hide_searcher",
-		"hidebrowser",
-		"shownupdatewindow",
-		"scrolltocurrent",
-		"lastfmlang",
-		"synctags",
-		"synclovevalue",
-		"theme",
-		'clickmode',
-		"icontheme",
-		"coversize",
-		"fontsize",
-		"fontfamily",
-		"crossfade_duration",
-		"newradiocountry",
-		"search_limit_limitsearch",
-		"lastfm_autocorrect",
-		"updateeverytime",
-		"fullbiobydefault",
-		"mopidy_search_domains",
-		"skin",
-		"outputsvisible",
-		"wheelscrollspeed",
-		"searchcollectiononly",
-		"displayremainingtime",
-		"cdplayermode",
-		"auto_discovembobulate",
-		"ratman_sortby",
-		"sleeptime",
-		"sleepon",
-		"tradsearch",
-		"sortwishlistby",
-		"player_in_titlebar",
-		"browser_id",
-		"playlistswipe",
-		"use_albumart_in_playlist",
-		"bgimgparms",
-		"collectionrange",
-		'playlistbuttons_isopen',
-		'collectionbuttons_isopen',
-		'advsearchoptions_isopen',
-		'podcastbuttons_isopen',
-		"somafm_quality"
-	];
+    jsonNode = document.querySelector("script[name='browser_prefs']");
+    jsonText = jsonNode.textContent;
+    const prefsInLocalStorage = JSON.parse(jsonText);
 
-	const cookiePrefs = [
-		'skin',
-		'currenthost',
-		'player_backend',
-		"sortbydate",
-		"notvabydate",
-		"collectionrange",
-		"sortcollectionby",
-		"sortresultsby",
-		"actuallysortresultsby"
-	];
+	// const cookiePrefs = [
+	// 	'skin',
+	// 	'clickmode',
+	// 	'currenthost',
+	// 	'player_backend',
+	// 	"sortbydate",
+	// 	"notvabydate",
+	// 	"collectionrange",
+	// 	"sortcollectionby",
+	// 	"sortresultsby",
+	// 	"actuallysortresultsby"
+	// ];
 
 	const menus_to_save_state_for = [
 		'podcastbuttons',
@@ -242,7 +189,6 @@ var prefs = function() {
 	}
 
 	function dontTransferPlaylist() {
-		setCookie('player_backend', '', 1);
 		prefs.save(deferredPrefs).then(reloadWindow);
 	}
 
@@ -344,7 +290,7 @@ var prefs = function() {
 		}
 		backgroundImages = false;
 		make_background_selector(prefs.theme);
-		$.getJSON('api/userbackgrounds/?get_next_background='+prefs.theme+'&browser_id='+prefs.browser_id+'&random='+prefs.bgimgparms[prefs.theme].random, function(data) {
+		$.getJSON('api/userbackgrounds/?get_next_background='+prefs.theme+'&random='+prefs.bgimgparms[prefs.theme].random, function(data) {
 			debug.debug("PREFS","Custom Background Image",data);
 			if (data.landscape) {
 				portraitImage.onload = bgImageLoaded;
@@ -453,7 +399,7 @@ var prefs = function() {
 
 		var images = await $.ajax({
 			method: 'GET',
-			url: 'api/userbackgrounds/?get_next_background='+prefs.theme+'&browser_id='+prefs.browser_id+'&random='+prefs.bgimgparms[prefs.theme].random,
+			url: 'api/userbackgrounds/?get_next_background='+prefs.theme+'&random='+prefs.bgimgparms[prefs.theme].random,
 			dataType: 'json',
 			cache: false
 		});
@@ -494,6 +440,54 @@ var prefs = function() {
 		set_css_variable('--cover-size', pixels.toString()+'px');
 	}
 
+	function update_old_style_prefs() {
+		// Handle old-style fontsize paramter that was the name of a css script
+		try {
+			var test = prefs.fontsize.match(/\d\d-(.+)\.css/);
+			if (test !== null) {
+				var jsonNode = document.querySelector("script[name='font_sizes']");
+	    		var jsonText = jsonNode.textContent;
+	    		var font_sizes = JSON.parse(jsonText);
+	    		if (font_sizes.hasOwnProperty(test[1])) {
+		    		debug.log('PREFS', 'Updating old font size from',prefs.fontsize,'to',font_sizes[test[1]]);
+	    			prefs.fontsize = font_sizes[test[1]];
+	    		} else {
+	    			debug.warn('PREFS', 'Could not locate value',prefs.fontsize,'in',font_sizes);
+	    			prefs.fontsize = 11;
+	    		}
+	    	}
+	    } catch (err) {
+	    	prefs.fontsize = 11;
+	    }
+
+		// Handle old-style coversize paramter that was the name of a css script
+		try {
+			var test = prefs.coversize.match(/\d\d-(.+)\.css/);
+			if (test !== null) {
+				var jsonNode = document.querySelector("script[name='cover_sizes']");
+	    		var jsonText = jsonNode.textContent;
+	    		var cover_sizes = JSON.parse(jsonText);
+	    		if (cover_sizes.hasOwnProperty(test[1])) {
+		    		debug.log('PREFS', 'Updating old cover size from',prefs.coversize,'to',cover_sizes[test[1]]);
+	    			prefs.coversize = cover_sizes[test[1]];
+	    		} else {
+	    			debug.warn('PREFS', 'Could not locate value',prefs.coversize,'in',cover_sizes);
+	    			prefs.coversize = 48;
+	    		}
+	    	}
+	    } catch (err) {
+	    	prefs.coversize = 48;
+	    }
+
+	    // Swap browser_id from local storage to cookie
+		if (localStorage.getItem('prefs.browser_id') != null && localStorage.getItem('prefs.browser_id') != '') {
+			let bid = JSON.parse(localStorage.getItem('prefs.browser_id'));
+			localStorage.removeItem('prefs.browser_id');
+			prefs.save({browser_id: bid});
+		}
+
+	}
+
 	return {
 
 		quickhack: function() {
@@ -525,76 +519,9 @@ var prefs = function() {
 				}
 			}
 
-			for (var i in cookiePrefs) {
-				var a = getCookie(cookiePrefs[i]);
-				if (a != '') {
-					if (a === 'false') { a = false; }
-					if (a === 'true' ) { a = true; }
-					prefs[cookiePrefs[i]] = decodeURIComponent(a);
-					if (prefs.debug_enabled > 5) {
-						console.log("COOKIEPREFS: "+cookiePrefs[i]+' = '+prefs[cookiePrefs[i]]);
-					}
-				}
-			}
-
-			// When we auto-choose a skin, we set clickmode as a cookie. Set our local value, save it, then clear the cookie
-			if (getCookie('clickmode') != '') {
-				prefs.clickmode = getCookie('clickmode');
-				debug.log('PREFS', 'Setting clickmode from cookie to',prefs.clickmode);
-				localStorage.setItem("prefs.clickmode", JSON.stringify(prefs.clickmode));
-				setCookie('clickmode', '', 1);
-			} else if (!prefs.clickmode) {
-				if (prefs.skin == 'phone') {
-					prefs.clickmode = 'single';
-				} else {
-					prefs.clickmode = 'double';
-				}
-			}
-
-			// Handle old-style fontsize paramter that was the name of a css script
-			try {
-				var test = prefs.fontsize.match(/\d\d-(.+)\.css/);
-				if (test !== null) {
-					var jsonNode = document.querySelector("script[name='font_sizes']");
-		    		var jsonText = jsonNode.textContent;
-		    		var font_sizes = JSON.parse(jsonText);
-		    		if (font_sizes.hasOwnProperty(test[1])) {
-			    		debug.log('PREFS', 'Updating old font size from',prefs.fontsize,'to',font_sizes[test[1]]);
-		    			prefs.fontsize = font_sizes[test[1]];
-		    		} else {
-		    			debug.warn('PREFS', 'Could not locate value',prefs.fontsize,'in',font_sizes);
-		    			prefs.fontsize = 11;
-		    		}
-		    	}
-		    } catch (err) {
-		    	prefs.fontsize = 11;
-		    }
-
-			try {
-				var test = prefs.coversize.match(/\d\d-(.+)\.css/);
-				if (test !== null) {
-					var jsonNode = document.querySelector("script[name='cover_sizes']");
-		    		var jsonText = jsonNode.textContent;
-		    		var cover_sizes = JSON.parse(jsonText);
-		    		if (cover_sizes.hasOwnProperty(test[1])) {
-			    		debug.log('PREFS', 'Updating old cover size from',prefs.coversize,'to',cover_sizes[test[1]]);
-		    			prefs.coversize = cover_sizes[test[1]];
-		    		} else {
-		    			debug.warn('PREFS', 'Could not locate value',prefs.coversize,'in',cover_sizes);
-		    			prefs.coversize = 48;
-		    		}
-		    	}
-		    } catch (err) {
-		    	prefs.coversize = 48;
-		    }
+			update_old_style_prefs();
 
 			prefs.fontfamily = prefs.fontfamily.replace('_', ' ');
-
-			// Update old synclove pref
-			if (localStorage.getItem("prefs.synclove") === false) {
-				localStorage.setItem("prefs.synclovevalue", JSON.stringify(0));
-				localStorage.removeItem("prefs.synclove");
-			}
 
 			prefs.doClickCss();
 
@@ -614,27 +541,16 @@ var prefs = function() {
 			}
 		},
 
-		// checkSet: function(key) {
-		// 	if (prefsInLocalStorage.indexOf(key) > -1) {
-		// 		if (localStorage.getItem("prefs."+key) != null && localStorage.getItem("prefs."+key) != "") {
-		// 			return true;
-		// 		} else {
-		// 			return false;
-		// 		}
-		// 	} else {
-		// 		return false;
-		// 	}
-		// },
-
 		save: async function(options, callback) {
 			var prefsToSave = {};
 			for (var i in options) {
 				prefs[i] = options[i];
-				if (cookiePrefs.indexOf(i) > -1) {
-					debug.trace("PREFS", "Setting",i,"to",options[i],"as a cookie");
-					var val = options[i];
-					setCookie(i, val, 3650);
-				}
+				// No need to set cookies as the backend will do it
+				// if (cookiePrefs.indexOf(i) > -1) {
+				// 	debug.trace("PREFS", "Setting",i,"to",options[i],"as a cookie");
+				// 	var val = options[i];
+				// 	setCookie(i, val, 3650);
+				// }
 				if (prefsInLocalStorage.indexOf(i) > -1) {
 					debug.trace("PREFS", "Setting",i,"to",options[i],"in local storage");
 					localStorage.setItem("prefs."+i, JSON.stringify(options[i]));
@@ -769,6 +685,7 @@ var prefs = function() {
 
 				case 'currenthost':
 					defer = true;
+					prefobj.player_backend = '';
 					offerToTransferPlaylist();
 					break;
 

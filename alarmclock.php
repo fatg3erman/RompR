@@ -3,7 +3,7 @@ const IS_ROMONITOR = true;
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 $opts = getopt('', ['alarmindex:']);
-prefs::set_session_pref($opts);
+prefs::set_pref($opts);
 
 logger::mark("ALARMCLOCK", "Initialising Alarm Clock For Index", prefs::get_pref('alarmindex'));
 
@@ -13,7 +13,7 @@ prefs::$database->update_pid_for_alarm(prefs::get_pref('alarmindex'), getmypid()
 prefs::$database->close_database();
 prefs::$database = null;
 logger::mark("ALARMCLOCK", "Player is",$alarm['Player']);
-prefs::set_session_pref(['currenthost' => $alarm['Player']]);
+prefs::set_pref(['currenthost' => $alarm['Player']]);
 
 $player = new base_mpd_player();
 $player->close_mpd_connection();

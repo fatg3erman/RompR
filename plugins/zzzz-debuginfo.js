@@ -19,15 +19,8 @@ var debugInfo = function() {
         if (typeof(ar) != 'object' || ar === null) {
             return ar;
         }
-        $.each(ar, function(i, v) {
-            if (typeof(v) == 'object' && v !== null) {
-                ret += i+'=['+multi_implode(v)+'], ';
-            } else {
-                ret += i+'='+v+', ';
-            }
-        });
-        ret = ret.substr(0, ret.length-2);
-        return ret;
+        // Need to add some spaces into it or it doesn't wrap
+        return JSON.stringify(ar).replace(/,/g, ", ");
     }
 
     function getLocalInfo() {
@@ -53,16 +46,15 @@ var debugInfo = function() {
         open: function() {
             if (dbg == null) {
                 dbg = browser.registerExtraPlugin("debug", language.gettext('button_debuginfo'), debugInfo);
-                // randomly change the url to avoid the cache
                 $('#debugfoldup').load('utils/debuginfo.php', function() {
                     $('#debugfoldup').prepend('<div class="containerbox noselection"><button class="fixed infoclick plugclickable clickcopy">Copy To Clipboard</button></div>');
                     $('#debugfoldup').prepend('<p>For information about how to report bugs, <a href="https://fatg3erman.github.io/RompR/Troubleshooting" target="_blank">'+language.gettext('config_read_the_docs')+'</a></p>');
                     $('#debugfoldup').prepend('<h3>If you are reporting a bug, appending this information to your report will be helpful</h3>');
-                        getLocalInfo();
-                        dbg.slideToggle('fast', function() {
-                        browser.goToPlugin('debug');
-                        });
+                    getLocalInfo();
+                    dbg.slideToggle('fast', function() {
+                    browser.goToPlugin('debug');
                     });
+                });
             } else {
                   browser.goToPlugin("debug");
             }
@@ -84,10 +76,14 @@ var debugInfo = function() {
                 if (header) { return true }
                 markdown += '  * ';
                 $(this).find('td').each(function(i,v) {
-                    if (i == 0) {
-                        markdown += '**'+$(this).html()+'**';
+                    if ($(this).hasClass('code')) {
+                        markdown += "\n```\n"+$(this).html()+"\n```\n";
                     } else {
-                        markdown += ' '+$(this).html();
+                        if (i == 0) {
+                            markdown += '**'+$(this).html()+'**';
+                        } else {
+                            markdown += ' '+$(this).html();
+                        }
                     }
                 });
                 markdown += '\n';

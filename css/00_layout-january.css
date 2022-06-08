@@ -54,9 +54,18 @@ div.notification.new {
 	transition: opacity 0.5s ease;
 }
 
-td.code {
+table#debuginfotable tr {
+	border-top: 1px solid var(--border-colour);
+}
+
+table#debuginfotable tr td:nth-child(1) {
+	vertical-align: top;
+	font-weight: bold;
+}
+
+table#debuginfotable tr td:nth-child(2) {
 	font-size: 8pt;
-	white-space:  pre;
+	white-space:  pre-wrap;
 	font-family: monospace;
 }
 

@@ -31,9 +31,9 @@ var metaHandlers = function() {
 		return {...playlistinfo, ...data};
 	}
 
-	function youtubeDownloadMonitor(uri) {
+	function youtubeDownloadMonitor(uri, track_name) {
 		var self = this;
-		var notify = infobar.permnotify('Downloading Youtube Track');
+		var notify = infobar.permnotify('Downloading Youtube Track '+track_name);
 		var timer;
 		var running = true;
 		var key = hex_md5(uri);
@@ -48,7 +48,7 @@ var metaHandlers = function() {
 			.done(function(data) {
 				// debug.log("YOUTUBE DOWNLOAD","Download status is",data);
 				if (data.info) {
-					infobar.updatenotify(notify, 'Youtube Download : '+data.info);
+					infobar.updatenotify(notify, 'Youtube Download : '+track_name+'<br />'+data.info);
 				} else if (data.result) {
 					debug.log('YOUTUBE DOWNLOAD', 'Result is',data.result);
 					collectionHelper.updateCollectionDisplay(data.result);
@@ -180,8 +180,9 @@ var metaHandlers = function() {
 				});
 				tracks.each(async function() {
 					var uri = decodeURIComponent($(this).attr('name'));
-					debug.log('YOUTUBEDL', uri);
-					var monitor = new youtubeDownloadMonitor(uri);
+					var track_name = $(this).find('div.tracktitle').html();
+					debug.log('YOUTUBEDL', uri, name);
+					var monitor = new youtubeDownloadMonitor(uri, track_name);
 					try {
 						var data = await $.ajax({
 							url: "api/metadata/",

@@ -233,8 +233,8 @@ class backgroundImages extends database {
 		$base = $theme;
 		$browserid = null;
 		if (array_key_exists('thisbrowseronly', $_REQUEST)) {
-			$base .= '/'.$_REQUEST['browser_id'];
-			$browserid = $_REQUEST['browser_id'];
+			$base .= '/'.prefs::get_pref('browser_id');
+			$browserid = prefs::get_pref('browser_id');
 		}
 
 		$files = $this->make_files_useful($_FILES['imagefile']);

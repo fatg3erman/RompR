@@ -89,7 +89,7 @@ var collectionHelper = function() {
 				$("#collection").html(data);
 				if ($('#emptycollection').length > 0) {
 					$('#collectionbuttons').show();
-					prefs.save({ collectioncontrolsvisible: true });
+					prefs.save({ collectionconbuttons_isopen: true });
 					$('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
 				}
 				data = null;

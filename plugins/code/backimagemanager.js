@@ -83,7 +83,6 @@ var backimagemanager = function() {
 			offset++;
 			if (offset == max_files || offset == evt.dataTransfer.files.length) {
 				formData.append('currbackground', prefs.theme);
-				formData.append('browser_id', $('#browser_id').val());
 				uploadFiles(formData);
 				formData = new FormData();
 			}
@@ -153,7 +152,6 @@ var backimagemanager = function() {
 
 					'<form id="backimageform" enctype="multipart/form-data">' +
 					'<input type="hidden" name="currbackground" />' +
-					'<input type="hidden" name="browser_id" />' +
 
 					'<div class="filebutton textcentre" style="width:auto">'+
 					'<input type="file" name="imagefile[]" id="imagefile" class="inputfile" multiple="multiple" />' +
@@ -184,15 +182,8 @@ var backimagemanager = function() {
 
 					'</div>' +
 
-					'<input type="hidden" id="browser_id" value="' + prefs.browser_id + '" />' +
-
 					'</div>'
 				);
-
-				// Hidden feature. To edit the images for the current theme on another browser, do
-				// $('browser_id').val('browser id to edit')
-				// backimagemanager.populate()
-				// and then select 'this browser only' if it isn't already selected.
 
 				$('#backimunger').append(
 					'<div class="infobanner containerbox infosection">' +
@@ -260,7 +251,6 @@ var backimagemanager = function() {
 
 		uploadImages: function() {
 			$('input[name="currbackground"]').val(prefs.theme);
-			$('input[name="browser_id"]').val($('#browser_id').val());
 			var formElement = document.getElementById('backimageform');
 			var formData = new FormData(formElement);
 			uploadFiles(formData);
@@ -284,7 +274,7 @@ var backimagemanager = function() {
 				$('#bguploader').show();
 				var images = await $.ajax({
 					method: 'GET',
-					url: 'api/userbackgrounds/?get_all_backgrounds='+prefs.theme+'&browser_id='+$('#browser_id').val(),
+					url: 'api/userbackgrounds/?get_all_backgrounds='+prefs.theme,
 					dataType: 'json',
 					cache: false
 				});
@@ -309,14 +299,14 @@ var backimagemanager = function() {
 		},
 
 		remove_all: function() {
-			$.getJSON('api/userbackgrounds/?clearallbackgrounds='+prefs.theme+'&browser_id='+$('#browser_id').val(), function(data) {
+			$.getJSON('api/userbackgrounds/?clearallbackgrounds='+prefs.theme+'&browser_id=', function(data) {
 				prefs.setTheme();
 			});
 		},
 
 		switch_browser_mode: function() {
 			if (portCount > 0 || landCount > 0) {
-				$.getJSON('api/userbackgrounds/?switchbrowseronly='+prefs.theme+'&browser_id='+$('#browser_id').val()+'&thisbrowseronly='+$('#thisbrowseronly').val(), function(data) {
+				$.getJSON('api/userbackgrounds/?switchbrowseronly='+prefs.theme+'&thisbrowseronly='+$('#thisbrowseronly').val(), function(data) {
 					prefs.setTheme();
 				});
 			}

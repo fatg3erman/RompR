@@ -157,7 +157,7 @@ var infobar = function() {
 			class: 'expand indent'
 		}).html(message));
 		if ($('#notifications').is(':hidden')) {
-			$('#notifications').slideToggle('slow');
+			$('#notifications').slideToggle('fast');
 		}
 		div.removeClass('new');
 		return div;
@@ -213,10 +213,7 @@ var infobar = function() {
 
 			var increment = final_fontsize / 4;
 			// debug.log('BIGGER-UP', 'Increment is',increment);
-			while (
-					increment > 1
-					// && (nptext.outerHeight(true) < maxheight || nptext.outerWidth(true) < maxwidth)
-			) {
+			while (increment > 1) {
 				fontsize = Math.floor(fontsize + increment);
 				increment = increment / 2;
 				// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
@@ -501,8 +498,8 @@ var infobar = function() {
 				infobar.albumImage.setKey(info.ImgKey);
 			}
 			infobar.albumImage.setSource(info);
-			await infobar.checkForTrackSpecificImage(info);
-			await infobar.rejigTheText();
+			infobar.checkForTrackSpecificImage(info);
+			infobar.rejigTheText();
 			// uiHelper.adjustLayout();
 		},
 
@@ -611,7 +608,7 @@ var infobar = function() {
 			if ($('#notifications>div').length == 1) {
 				debug.debug("INFOBAR","Removing single notification");
 				if ($('#notifications').is(':visible')) {
-					$('#notifications').slideToggle('slow', function() {
+					$('#notifications').slideToggle('fast', function() {
 						$('#notifications').empty();
 					});
 				} else {
@@ -619,7 +616,7 @@ var infobar = function() {
 				}
 			} else {
 				debug.debug("INFOBAR","Removing notification", data);
-				$('#notify_'+data).fadeOut('slow', function() {
+				$('#notify_'+data).fadeOut('fast', function() {
 					$('#notify_'+data).remove();
 				});
 			}
@@ -647,16 +644,10 @@ var infobar = function() {
 		setProgress: function(progress, duration) {
 			current_progress = progress;
 			if (progress < 3) {
-				// scrobbled = false;
-				// nowplaying_updated = false;
 				markedaslistened = false;
 				playcount_incremented = false;
 			}
-			// if (progress > 4) { updateNowPlaying() };
 			var percent = (duration == 0) ? 0 : (progress/duration) * 100;
-			// if (percent >= prefs.scrobblepercent) {
-			// 	scrobble();
-			// }
 			// Even though the backend daemon does this too, we still do it here
 			// as it makes the UI update the playcount in nowplaying and updates
 			// the Up Next marker for audiobooks.

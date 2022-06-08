@@ -64,6 +64,7 @@ $php_values = array(
 	'session.use_cookies',
 	'upload_tmp_dir'
 );
+
 $pi = ini_get_all();
 
 foreach ($php_values as $v) {
@@ -74,8 +75,10 @@ foreach ($php_values as $v) {
 	print '<tr><td>'.$v.'</td><td>'.multi_implode($t).'</td></tr>';
 }
 
-exec('ps aux | grep php | grep -v grep', $output);
-print '<tr><th colspan="2">PHP Processes</th></tr>';
+// exec('ps aux | grep php | grep -v grep', $output);
+$pwd = getcwd();
+exec('ps aux | grep '.$pwd.' | grep -v grep', $output);
+print '<tr><th colspan="2">Relevant Running Processes</th></tr>';
 print'<tr><td></td><td class="code">';
 foreach ($output as $line) {
 	print $line."\n";
@@ -90,51 +93,32 @@ if ($player->is_connected()) {
 	print '<tr><td>MPD Interface Version</td><td>'.$player->get_mpd_version().'</td></tr>';
 
 	$config = $player->get_config();
-	foreach ($config as $c => $v) {
-		print '<tr><td>'.$c.'</td><td>'.multi_implode($v).'</td></tr>';
-	}
+	print '<tr><td>config</td><td>'.prepare_info($config).'</td></tr>';
 
 	$tagtypes = $player->get_tagtypes();
-	if (is_array($tagtypes)) {
-		foreach ($tagtypes as $c => $v) {
-			print '<tr><td>'.$c.'</td><td>'.implode(', ', $v).'</td></tr>';
-		}
-	}
+	print '<tr><td>tagtypes</td><td>'.prepare_info($tagtypes).'</td></tr>';
 
 	$commands = $player->get_commands();
-	if (is_array($commands)) {
-		foreach ($commands as $c => $v) {
-			print '<tr><td>Commands</td><td>'.implode(', ', $v).'</td></tr>';
-		}
-	}
+	print '<tr><td>commands</td><td>'.prepare_info($commands).'</td></tr>';
 
 	$commands = $player->get_notcommands();
-	if (is_array($commands)) {
-		foreach ($commands as $c => $v) {
-			print '<tr><td>Not Commands</td><td>'.implode(', ', $v).'</td></tr>';
-		}
-	}
+	print '<tr><td>notcommands</td><td>'.prepare_info($commands).'</td></tr>';
 
 	$commands = $player->get_uri_handlers();
-	if (count($commands) > 0) {
-		foreach ($commands as $c => $v) {
-			if (is_array($v)) {
-				print '<tr><td>URL Handlers</td><td>'.implode(', ', $v).'</td></tr>';
-			} else {
-				print '<tr><td>URL Handlers</td><td>'.$v.'</td></tr>';
-			}
-		}
-	}
+	print '<tr><td>urlhandlers</td><td>'.prepare_info($commands).'</td></tr>';
 
 	$commands = $player->get_decoders();
-	if (is_array($commands)) {
-		foreach ($commands as $c => $v) {
-			print '<tr><td>'.$c.'</td><td>'.implode(', ', $v).'</td></tr>';
-		}
-	}
+	print '<tr><td>decoders</td><td>'.prepare_info($commands).'</td></tr>';
 } else {
 	print '<tr><td>Connection Status</td><td>Connection Failed</td></tr>';
 }
 
 print '</table>';
+
+function prepare_info($info) {
+	$a = json_encode($info);
+	return preg_replace('/,/', ', ', $a);
+}
+
 ?>
+

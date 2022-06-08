@@ -177,6 +177,7 @@ var podcasts = function() {
 			podcasts.doNewCount();
 			$('.choosepanel[name="podcastslist"]').stopSpinner();
 			sleepHelper.addWakeHelper(podcasts.checkIfSomeoneElseHasUpdatedStuff);
+			sleepHelper.addSleepHelper(podcasts.stopPolling);
 		},
 
 		getPodcast: function(clickedElement, menutoopen) {
@@ -328,6 +329,10 @@ var podcasts = function() {
 			}
 			// Check every 30 minutes for updates to podcasts
 			refreshtimer = setTimeout(podcasts.checkIfSomeoneElseHasUpdatedStuff, 1800000);
+		},
+
+		stopPolling: function() {
+			clearTimeout(refreshtimer);
 		},
 
 		changeOption: async function(event) {

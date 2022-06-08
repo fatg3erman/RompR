@@ -98,9 +98,13 @@ var player = function() {
 			}
 			debug.log("PLAYERS",newhosts);
 			if (reloadNeeded !== false) {
-				setCookie('player_backend', '', 1);
-				prefs.save({multihosts: newhosts}).then(function() {
-					prefs.save({currenthost: reloadNeeded}).then(function() {
+				prefs.save({
+					multihosts: newhosts
+				}).then(function() {
+					prefs.save({
+						currenthost: reloadNeeded,
+						player_backend: ''
+					}).then(function() {
 						reloadWindow();
 					});
 				});

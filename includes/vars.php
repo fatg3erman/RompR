@@ -41,6 +41,8 @@ if (prefs::get_pref('collection_type') != null) {
 	set_include_path('backends/sql/'.prefs::get_pref('collection_type').PATH_SEPARATOR.get_include_path());
 }
 
+// If we know what the player backend is, set the include path.
+// This will be known if it's set as a Cookie.
 if (prefs::get_pref('player_backend') != null) {
 	set_include_path('player/'.prefs::get_pref('player_backend').PATH_SEPARATOR.get_include_path());
 }
@@ -62,51 +64,51 @@ if (array_key_exists('REQUEST_URI', $_SERVER)) {
 //
 // Check that the player we've been asked to talk to actually exists
 //
+if (!defined('IS_ROMONITOR')) {
+	if (!array_key_exists(prefs::currenthost(), prefs::get_pref('multihosts'))) {
+		logger::warn("INIT", prefs::currenthost(),"is not defined in the hosts defs");
+		foreach (prefs::get_pref('multihosts') as $key => $obj) {
+			logger::log("INIT", "  Using host ".$key);
+			prefs::set_pref(['currenthost' => $key]);
+			break;
+		}
+	}
 
-if (!array_key_exists(prefs::currenthost(), prefs::get_pref('multihosts'))) {
-	logger::warn("INIT", prefs::currenthost(),"is not defined in the hosts defs");
-	foreach (prefs::get_pref('multihosts') as $key => $obj) {
-		logger::log("INIT", "  Using host ".$key);
-		prefs::set_session_pref(['currenthost' => $key]);
-		break;
+	logger::core("INIT", "Using MPD Host ".prefs::currenthost());
+
+	if (!array_key_exists('currenthost', $_COOKIE)) {
+		prefs::set_pref(['currenthost' => prefs::currenthost()]);
 	}
 }
-
-logger::core("INIT", "Using MPD Host ".prefs::currenthost());
-
-if (!array_key_exists('currenthost', $_COOKIE)) {
-	prefs::set_session_pref(['currenthost' => prefs::currenthost()]);
-}
-
 //
 // Work out which skin we're using
 //
 
-if(array_key_exists('skin', $_REQUEST)) {
+if (defined('IS_ROMONITOR')) {
+	prefs::set_pref(['skin' => 'desktop']);
+} else if(array_key_exists('skin', $_REQUEST)) {
 	if (is_dir('skins/'.$_REQUEST['skin'])) {
 		logger::log("INIT", "Request asked for skin: ".$_REQUEST['skin']);
-		prefs::set_session_pref(['skin' => trim($_REQUEST['skin'])]);
+		prefs::set_pref(['skin' => trim($_REQUEST['skin'])]);
 	}
-} else if (prefs::skin() === null && defined('IS_ROMONITOR')) {
-	prefs::set_session_pref(['skin' => 'desktop']);
 } else if (prefs::skin() === null) {
 	logger::mark("INIT", "Detecting browser...");
 	require_once('includes/Mobile_Detect.php');
 	$md = new Mobile_Detect;
 	if ($md->isMobile() || $md->isTablet()) {
-		logger::info('INIT', 'Browser is a mobile browser');
-		prefs::set_session_pref(['skin' => 'phone', 'clickmode' => 'single']);
+		logger::info('INIT', 'Browser is a Mobile browser');
+		prefs::set_pref(['skin' => 'phone', 'clickmode' => 'single']);
 	} else {
 		logger::info('INIT', 'Browser is a desktop browser or was not detected');
-		prefs::set_session_pref(['skin' => 'desktop', 'clickmode' => 'double']);
+		prefs::set_pref(['skin' => 'desktop', 'clickmode' => 'double']);
 	}
 }
 
 if (prefs::skin() == 'tablet')
-	prefs::set_session_pref(['skin' => 'phone']);
+	prefs::set_pref(['skin' => 'phone']);
 
 if (prefs::skin() == 'fruit')
-	prefs::set_session_pref(['skin' => 'skypotato']);
+	prefs::set_pref(['skin' => 'skypotato']);
 
 set_include_path('skins/'.prefs::skin().PATH_SEPARATOR.get_include_path());
 

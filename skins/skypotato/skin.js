@@ -711,7 +711,7 @@ var layoutProcessor = function() {
 					lines.push(headers[i]);
 				}
 			}
-			debug.debug('DOFANCYHEADERS', 'Lines is',lines);
+			debug.core('DOFANCYHEADERS', 'Lines is',lines);
 			if (lines.length == 0 && $('#plmode').html() != '') {
 				currheader = 0;
 				$('#plmode').fadeOut(500, function() {

@@ -30,7 +30,7 @@ check_php_installation();
 //
 
 if (isset($_GET['currenthost'])) {
-	prefs::set_session_pref([
+	prefs::set_pref([
 		'currenthost' => $_GET['currenthost'],
 		'player_backend' => null
 	]);
@@ -129,6 +129,8 @@ check_backend_daemon();
 
 prefs::save();
 
+prefs::refresh_cookies();
+
 //
 // Do some initialisation of the backend directories
 //
@@ -163,6 +165,7 @@ print '<script type="application/json" name="font_sizes">'."\n".json_encode(FONT
 print '<script type="application/json" name="cover_sizes">'."\n".json_encode(COVER_SIZES)."\n</script>\n";
 print '<script type="application/json" name="default_player">'."\n".json_encode(prefs::DEFAULT_PLAYER)."\n</script>\n";
 print '<script type="application/json" name="player_connection_params">'."\n".json_encode(prefs::PLAYER_CONNECTION_PARAMS)."\n</script>\n";
+print '<script type="application/json" name="browser_prefs">'."\n".json_encode(array_keys(prefs::BROWSER_PREFS))."\n</script>\n";
 print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string."&skin=".prefs::skin().'" />'."\n";
 
 ?>

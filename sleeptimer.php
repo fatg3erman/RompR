@@ -3,7 +3,7 @@ const IS_ROMONITOR = true;
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 $opts = getopt('', ['currenthost:', 'sleeptime:']);
-prefs::set_session_pref($opts);
+prefs::set_pref($opts);
 
 logger::mark("SLEEPTIMER", "Using Player",prefs::currenthost());
 logger::log('SLEEPTIMER', 'Sleeping for',format_time(prefs::get_pref('sleeptime')));

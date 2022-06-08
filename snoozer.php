@@ -13,7 +13,7 @@ prefs::$database->update_snooze_pid_for_alarm(prefs::get_pref('snooze'), getmypi
 prefs::$database->close_database();
 prefs::$database = null;
 logger::mark("SNOOZE", "Player is",$alarm['Player']);
-prefs::set_session_pref(['currenthost' => $alarm['Player']]);
+prefs::set_pref(['currenthost' => $alarm['Player']]);
 
 logger::log('SNOOZE', 'Sleeping For',prefs::get_pref('alarm_snoozetime'),'minutes');
 
