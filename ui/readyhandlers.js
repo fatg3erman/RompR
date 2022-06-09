@@ -158,14 +158,9 @@ function carry_on_starting() {
 	pluginManager.setupPlugins();
 	setAvailableSearchOptions();
 	setChooserButtons();
-	// Some debugging info, saved to the backend so we can see it
-	// prefs.save({test_width: $(window).width(), test_height: $(window).height()});
 	coverscraper = new coverScraper(0, false, false, prefs.downloadart);
 	lastfm = new LastFM();
 	uiHelper.sourceControl(prefs.chooser);
-	if (prefs.browser_id == null) {
-		prefs.save({browser_id: Date.now()});
-	}
 	if (prefs.mopidy_remote || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
 		$('[name="donkeykong"]').remove();
 		$('[name="dinkeyking"]').remove();

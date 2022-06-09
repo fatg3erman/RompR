@@ -81,7 +81,6 @@ var sleepHelper = function() {
 
 		goToWakeMode: function() {
 			clearTimeout(windowActivationTimer);
-			// checkProgress();
 			for (var f of wakeHelpers) {
 				debug.trace('SLEEPHELPER', 'Calling Wake Mode Helper',f.name);
 				f.call();
@@ -136,19 +135,6 @@ var prefs = function() {
     jsonNode = document.querySelector("script[name='browser_prefs']");
     jsonText = jsonNode.textContent;
     const prefsInLocalStorage = JSON.parse(jsonText);
-
-	// const cookiePrefs = [
-	// 	'skin',
-	// 	'clickmode',
-	// 	'currenthost',
-	// 	'player_backend',
-	// 	"sortbydate",
-	// 	"notvabydate",
-	// 	"collectionrange",
-	// 	"sortcollectionby",
-	// 	"sortresultsby",
-	// 	"actuallysortresultsby"
-	// ];
 
 	const menus_to_save_state_for = [
 		'podcastbuttons',
@@ -486,6 +472,24 @@ var prefs = function() {
 			prefs.save({browser_id: bid});
 		}
 
+		try {
+			var to_remove = [];
+			for (var i in localStorage) {
+				if (i.indexOf('prefs') == 0) {
+					let bits = i.split('.');
+					if (bits.length == 2 && prefsInLocalStorage.indexOf(bits[1]) == -1) {
+						to_remove.push(i);
+					}
+				}
+			}
+			for (let pref of to_remove) {
+				debug.log('PREFS', 'Removing old pref',pref);
+				localStorage.removeItem(pref);
+			}
+		} catch (err) {
+			// Doesn't really matter if this fails, just nice to do it to keep things tidy
+		}
+
 	}
 
 	return {
@@ -525,6 +529,9 @@ var prefs = function() {
 
 			prefs.doClickCss();
 
+			if (prefs.browser_id == null)
+				prefs.save({browser_id: Date.now()});
+
 			if (callback)
 				callback();
 
@@ -545,12 +552,6 @@ var prefs = function() {
 			var prefsToSave = {};
 			for (var i in options) {
 				prefs[i] = options[i];
-				// No need to set cookies as the backend will do it
-				// if (cookiePrefs.indexOf(i) > -1) {
-				// 	debug.trace("PREFS", "Setting",i,"to",options[i],"as a cookie");
-				// 	var val = options[i];
-				// 	setCookie(i, val, 3650);
-				// }
 				if (prefsInLocalStorage.indexOf(i) > -1) {
 					debug.trace("PREFS", "Setting",i,"to",options[i],"in local storage");
 					localStorage.setItem("prefs."+i, JSON.stringify(options[i]));
@@ -655,16 +656,6 @@ var prefs = function() {
 				case "use_albumart_in_playlist":
 					callback = playlist.repopulate;
 					break;
-
-				// case "consume_workaround":
-				// 	if (player.status.consume == 1 && prefobj[prefname]) {
-				// 		infobar.notify(language.gettext('warn_consumearound'));
-				// 		prefobj[prefname] = false;
-				// 		$('#'+prefname).prop('checked', false);
-				// 	} else if (prefobj['prefname']) {
-				// 		infobar.notify(language.gettext('msg_consumearound'));
-				// 	}
-				// 	break;
 
 			}
 			prefs.save(prefobj, callback);

@@ -6,6 +6,7 @@ set_version_string();
 print '<table id="debuginfotable" width="100%">';
 print '<tr><th colspan="2">Backend Info</th></tr>';
 print '<tr><td>Version</td><td>'.$version_string.'</td></tr>';
+print '<tr><td>System</td><td>'.php_uname().'</td></tr>';
 $confidential = prefs::redact_private();
 foreach ($confidential as $k => $v) {
 	print '<tr><td>'.$k.'</td><td>'.$v.'</td></tr>';

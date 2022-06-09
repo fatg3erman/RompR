@@ -10,11 +10,6 @@ prefs::save();
 $pwd = getcwd();
 logger::log('DAEMON', "Running From",$pwd);
 
-$players = array_keys(prefs::get_pref('multihosts'));
-foreach ($players as $player) {
-    check_alarms($player);
-}
-
 while (true) {
 
     prefs::load();
@@ -31,21 +26,22 @@ while (true) {
                 // If we started it, it's still running, and the definition has changed since we started it
                 logger::trace('DAEMON', "Player",$player,"definition has changed - restarting monitor");
                 kill_process($monitors[$player]);
-                check_alarms($player);
             } else {
                 $mon_running = true;
             }
         } else if (($pid = get_pid($cmd)) !== false) {
             // If it's already running but we didn't start it
             logger::warn('DAEMON', "Monitor for",$player,"already started, but not by this Daemon. This may lead to problems.");
-            // $mon_running = true;
-            kill_process($pid);
+            $mon_running = true;
+            $monitors[$player] = $pid;
+            // kill_process($pid);
         }
 
         if (!$mon_running) {
             logger::log('DAEMON', "Starting Monitor For",$player);
             $monitors[$player] = start_process($cmd);
             logger::debug('DAEMON', "Started PID", $monitors[$player]);
+            check_alarms($player, true);
         }
 
     }
@@ -55,6 +51,7 @@ while (true) {
             logger::log('DAEMON', "Player $mon no longer exists. Killing PID $pid");
             kill_process($pid);
             unset($monitors[$mon]);
+            check_alarms($player, false);
         }
     }
 
@@ -81,9 +78,9 @@ function player_def_changed($a, $b) {
     return false;
 }
 
-function check_alarms($player) {
+function check_alarms($player, $restart) {
     prefs::$database = new timers($player);
-    prefs::$database->check_alarms();
+    prefs::$database->check_alarms($restart);
     prefs::$database->close_database();
     prefs::$database = null;
 }

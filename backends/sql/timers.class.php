@@ -266,7 +266,7 @@ class timers extends database {
 		}
 	}
 
-	public function check_alarms() {
+	public function check_alarms($restart) {
 		// This is for when we're starting up and we need to ensure the alarms are running
 		// We also stop any snooze timers and sleep timers, because bah.
 		// This also gets called if a player definition is changed by the UI,
@@ -276,7 +276,7 @@ class timers extends database {
 			if ($alarm["Pid"] !== null) {
 				$actual_pid = get_pid($this->get_alarm_command($alarm['Alarmindex']));
 				if ($actual_pid !== false) {
-					logger::log($this->player, 'Alarm',$alarm['Alarmindex'],'is being restarted');
+					logger::log($this->player, 'Alarm',$alarm['Alarmindex'],'is being killed');
 					kill_process($actual_pid);
 				}
 				$this->mark_alarm_finished($alarm['Alarmindex']);
@@ -284,7 +284,7 @@ class timers extends database {
 				// It doesn't make sense to restart a non-repeat alarm. We might have been
 				// shut down when it was supposed to go off, and then it'll go off when
 				// it's not wanted.
-				if ($alarm['Rpt'] == 1)
+				if ($alarm['Rpt'] == 1 && $restart)
 					$this->toggle_alarm($alarm['Alarmindex'], 1);
 			}
 			if ($alarm['SnoozePid'] !== null) {

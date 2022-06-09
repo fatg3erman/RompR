@@ -303,7 +303,7 @@ class prefs {
 					logger::core('COOKIEPREFS',"Pref",$cookie,"is set by Cookie - Value :",$cookie_val);
 				}
 			} else {
-				$cp[$cookie] = self::COOKIEPREFS[$cookie];
+				$cp[$cookie] = $default;
 			}
 		}
 
@@ -342,7 +342,8 @@ class prefs {
 
 	// Pass an array of key => value pairs
 	// This sets the current value of a pref. If a pref is defined as a COOKIEPREF
-	// it also sets its value in session_prefs, and sets the Cookie if IS_ROMINITOR is not defined
+	// it also sets its value in session_prefs, and sets the Cookie if IS_ROMINITOR is not defined.
+	// For non-cookie prefs, this DOES NOT save them. Call save() afterwards if you need to do this.
 	public static function set_pref($pref) {
 		foreach ($pref as $k => $v) {
 			$value = $v;
@@ -354,18 +355,23 @@ class prefs {
 			self::$prefs[$k] = $value;
 			if (array_key_exists($k, self::COOKIEPREFS)) {
 				self::$session_prefs[$k] = $value;
-				if (!defined('IS_ROMONITOR')) {
-					if ($v == '' || $v == null) {
-						logger::trace('PREFS', 'Expiring Cookie',$k);
-						setcookie($k, '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
-					} else {
-						logger::trace('PREFS', 'Setting Cookie',$k,'to',$value);
-						// This is the maximum value a 32-Bit system can handle. It's January 2038
-						// Brave won't store it more than 6 months anyway
-						setcookie($k, $value, ['expires' => 2147483647, 'path' => '/', 'SameSite' => 'Lax']);
-					}
-				}
+				self::set_cookie_pref($k, $value);
 			}
+		}
+	}
+
+	private static function set_cookie_pref($cookie, $value) {
+		if (defined('IS_ROMONITOR'))
+			return;
+
+		if ($value == '' || $value == null) {
+			logger::trace('PREFS', 'Expiring Cookie',$cookie);
+			setcookie($cookie, '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
+		} else {
+			logger::trace('PREFS', 'Setting Cookie',$cookie,'to',$value);
+			// This is the maximum value a 32-Bit system can handle. It's January 2038
+			// Brave won't store it more than 6 months anyway
+			setcookie($cookie, $value, ['expires' => 2147483647, 'path' => '/', 'SameSite' => 'Lax']);
 		}
 	}
 
