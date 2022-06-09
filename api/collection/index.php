@@ -116,7 +116,7 @@ function check_dbterms($cmd) {
 }
 
 function mpd_file_search($cmd, $domains, $dbterms) {
-	prefs::$database= new collection_base();
+	prefs::$database = new collection_base();
 	$player = new fileCollector($dbterms);
 	$player->doFileSearch($cmd, $domains);
 }

@@ -65,9 +65,14 @@ if ($result == false) {
 }
 prefs::$database->check_setupscreen_actions();
 
+//
+// Set the country code from the browser (though this may not be accurate)
+// - unless the user has already set it. Note, this is the lastfm country
+// code, not the interface language.
+// Later on we set it using geoip.
+//
+
 if (!prefs::get_pref('country_userset')) {
-	// Set the country code from the browser, though this may not be accurate.
-	// Later on we set it using geoip.
 	prefs::set_pref(['lastfm_country_code' => language::get_browser_country()]);
 }
 

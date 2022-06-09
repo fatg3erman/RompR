@@ -1,5 +1,13 @@
 <?php
 
+//
+//---------------------------------------------------------------------------------------------
+//
+// Pretty much everything needs to include this file as the first thing it does
+//
+//---------------------------------------------------------------------------------------------
+//
+
 check_timezone();
 
 //
@@ -113,6 +121,7 @@ if (prefs::skin() == 'fruit')
 set_include_path('skins/'.prefs::skin().PATH_SEPARATOR.get_include_path());
 
 $setup_error = null;
+
 // ====================================================================
 
 function multi_implode($array, $glue = ', ') {
