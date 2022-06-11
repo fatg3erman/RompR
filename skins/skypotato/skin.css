@@ -769,6 +769,7 @@ div.helpfulalbum>div.tagh.albumthing {
 	-webkit-box-flex:0;
 	flex-grow: 0;
 	flex-shrink:0;
+	max-width: 35%;
 	background-color: unset !important;
 	background-image: unset !important;
 }
