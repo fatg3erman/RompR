@@ -769,11 +769,23 @@ div.helpfulalbum>div.tagh.albumthing {
 	-webkit-box-flex:0;
 	flex-grow: 0;
 	flex-shrink:0;
-	max-width: 35%;
 	background-color: unset !important;
 	background-image: unset !important;
 }
 
+.collectionitem.masonry_opened.dropshadow .openmenu:not(.podcast) .helpfulalbum {
+	max-width: 35%;
+}
+
+.collectionitem.masonry_opened.dropshadow .openmenu.menu.podcast {
+	max-width: 50%;
+}
+
+@media screen and (max-width: 800px) {
+	.collectionitem.masonry_opened.dropshadow .openmenu.menu.podcast {
+		max-width: 40%;
+	}
+}
 .collectionitem.masonry_opened.dropshadow .containerbox.vertical:not(.podoptions):not(.open-album-title),
 .collectionitem.masonry_opened.dropshadow .containerbox.openmenu.podcast,
 .collectionitem.masonry_opened.dropshadow .containerbox.radiochannel  {
