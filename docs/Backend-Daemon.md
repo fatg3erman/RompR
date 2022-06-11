@@ -5,7 +5,7 @@
 The RompЯ Backend Daemon is a small program that needs to be running on the same computer as your webserver. It takes care of some operations
 that can't be done if the browser is closed while music is playing, or if you are running RompЯ on a Phone or Tablet and the device goes to sleep.
 
-## Important Note If Uphgrading From Pre-1.62
+## Important Note If Uphgrading From Version 1.61 or earlier
 
 If you are upgrading from an earlier version of RompЯ and you were running the program called romonitor, this Daemon replaces it.
 Before doing the following you MUST do
@@ -58,14 +58,16 @@ It's really very simple.
 
 On most systems, RompR will take care of running the backend Daemon by itself. You do not need to do anything.
 
-On some systems though, for whatever reason, RompR may not be able to start it by itself and will show you an
-error page when you try to open the web page. On those system you will need to create a systemd service.
-
 ### On Systems Where RompR can not start it automatically.
 
-If you're starting with a fresh installation of RompЯ you need to get to the point where you open your browser and get an error screen
-that tells you the Daemon is not running. This is because, until you get to that point, your database has not been initialised
-and the Daemon will not start. *Do not try to start the Daemon before you have reached that stage*.
+On some systems though, for whatever reason, RompR may not be able to start it by itself and will show you an
+error page when you try to open RompR. On those system you will need to create a systemd service.
+
+![](images/nodaemon.png)
+
+If you get an error screen that tells you the Daemon is not running then you need to create a service.
+*Do not try to start the Daemon before you have seen the error screen*
+This is because, until you get to that point, your database has not been initialised and the Daemon will not start.
 
 Once you're there you just need to create a systemd service to run the process, as follows:
 
@@ -110,10 +112,14 @@ And start it with
 
     sudo systemctl start rombackend
 
-** NOTE if you run the Daemon in this way, it is *essential* that you restart it after you install a new version of
-RompR. First you must open your browser and navigate to rompr, which will ensure the database gets upgraded, and
-then you can restart the Daemon. Doing this in the opposite order might have catastrophic effects. **
+** NOTE: if you run the Daemon in this way, the next time you upgrade to a new version of RompR, RompR will attempt to restart the Daemon.
+As this will fail (or why are you running it as a service?) you will see the error that it is not running again.
+Systemd should restart it after 5 seconds and then you'll be able to load RompR**
 
 ## Troubleshooting
 
-If it's not working, first enable [debug logging](/RompR/Troubleshooting) to at least level 7 then restart rombackend. You'll see some output from it in the web server's error log (and your custom logifle if you're using one).
+If it's not working, first enable [debug logging](/RompR/Troubleshooting) to level 7 then restart rombackend.
+You'll see some output from it in the web server's error log (and your custom logifle if you're using one).
+
+You can also try to run it from the command-line with php /PATH/TO/ROMPR/rompr_backend.php, but if you do this it will need write access to your webserver's error log.
+This might, however, be useful if it's crashing out really early.

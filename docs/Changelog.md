@@ -1,8 +1,15 @@
 # Changelog
 
 
-## Version 1.62
-* **It is strongly suggested that you back up your database before updating to this version, and also make a Metadata Backup.**
+## Version 2.00
+
+### Big Changes In This Version. Please Read The Following Before Updating
+
+* This bump in version number reflects a big change in how RompR works internally. This has allowed me to improve
+a lot of the functionality, but I cannot possibly test it on every system.
+* **It is strongly reccommended that you [back up your entire database](/Backing-Up-Your-Metadata#Backing-Up-Your-Entire_database) before updating to this version,
+as if it does not work for you then rolling back will be impossible without a database backup.**
+* If you do have problems after upgrading, please [raise a bug on the issue tracker](https://github.com/fatg3erman/RompR/issues) and I will attempt to fix it or assist you.
 * This version introduces the [RompR Backend Daemon](/Backend-Daemon) which replaces romonitor and is now a requirement.
 The Daemon performs some tasks that are better not left to the browser. It requires a POSIX operating system
 and therefore RompR is no longer supported on Windows. RompR will, on most systems, start this daemon itself so you
@@ -21,9 +28,6 @@ should set date.timezone in your php.ini.
 case checking statements, which speeds things up. Note that in SQLite case-sensitivity only works with ASCII characters.
 I think MySQL is better at this, but I haven't checked.
 * All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.
-* Make Spotify Playlist Collection building work again. For some reason the code worked on PHP7 but PHP8 just disappears into hyperspace
-and doesn't throw any errors. I note that I did this the week before Spotify switched off libspotify support,
-rendering this fix (and Mopidy-Spotify) useless.
 * Fix bug where Spotify tracks restored from a metadata backup would wrongly be classed as local.
 * Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix,
 the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection
@@ -31,6 +35,8 @@ the rompr/?setup screen has an option to mark all your Spotify tracks as unplaya
  You can use the Unplayable Tracks plugin to view all your Spotify tracks, which will give you an easy way to browse them and decide
  which ones you want to buy digital or physical copies of.
  I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
+ * For Mopidy users, all Personalised Radio stations that relied on Spotify support have been disabled. I hope this is temporary, but with
+ Mopidy's Spotify support being broken they serve no purpose and are impossible to test.
 
 
 ## Version 1.61

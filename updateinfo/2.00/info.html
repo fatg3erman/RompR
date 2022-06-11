@@ -1,0 +1,25 @@
+<h2 align="center">Version 2.00 Information</h2>
+
+<h3>Big Changes In This Version. Please Read The Following:</h3>
+
+<ul>
+<li>This bump in version number reflects a big change in how RompR works internally. This has allowed me to improve
+a lot of the functionality, but I cannot possibly test it on every system.</li>
+<li>This version introduces the <a href="https://fatg3erman.github.io/Backend-Daemon/">RompR Backend Daemon</a> which replaces romonitor and is now a requirement.
+The Daemon performs some tasks that are better not left to the browser. It requires a POSIX operating system
+and therefore RompR is no longer supported on Windows. RompR will, on most systems, start this daemon itself so you
+shouldn't need to do anything *except* if you were previously running romonitor, in which case you **must** read the link above.</li>
+<li>Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin.
+As a result of this change though, you will need to recreate any Alarms you had previously configured.</li>
+<li>There is now a <a href="https://fatg3erman.github.io/RompR-And-MPD/">Websocket Server</a> that makes the UI more responsive when you're using MPD - essentially it
+mimics the part of Mopidy's HTTP interface that RompR uses. There are some pre-requisistes you need for this to work, please
+read the link.</li>
+<li>Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix,
+the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection
+ and will not be selected by Personalised Radio stations. Note that selecting this option will force a rescan of your Music Collection.
+ You can use the Unplayable Tracks plugin to view all your Spotify tracks, which will give you an easy way to browse them and decide
+ which ones you want to buy digital or physical copies of.
+ I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.</li>
+ <li>For Mopidy users, all Personalised Radio stations that relied on Spotify support have been disabled. I hope this is temporary, but with
+ Mopidy's Spotify support being broken they serve no purpose and are impossible to test.</li>
+</ul>
