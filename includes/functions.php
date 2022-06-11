@@ -54,6 +54,9 @@ function format_time($t, $f = ':') {
 	// PHP 8.1 moans about losing precision. I KNOW. I DON'T CARE.
 	$t = (int) round($t);
 
+	if ($t == 0)
+		return '0:00';
+
 	$retval = '';
 	$hours = 0;
 	$days = 0;

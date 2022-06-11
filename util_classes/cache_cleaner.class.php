@@ -120,17 +120,15 @@ class cache_cleaner extends database {
 		$now = time();
 		$yts = glob('prefs/youtubedl/*');
 		foreach ($yts as $dir) {
-			$numfiles = $this->check_ttindex_exists(basename($dir));
-			if ($numfiles == 0) {
-				logger::log('CACHE CLEANER', $dir,'does not have an associated track');
-				exec('rm -fR '.$dir, $output, $retval);
-			} else {
-				$files = glob($dir.'/*.*');
-				if (count($files) == 0) {
-					logger::log('CACHE CLEANER', $dir,'is empty');
-					exec('rm -fR '.$dir, $output, $retval);
-				}
+			$flacs = glob($dir.'/*.flac');
+			foreach ($flacs as $flac) {
+				$numfiles = $this->check_youtube_uri_exists($flac);
+				if ($numfiles > 0)
+					continue 2;
+
 			}
+			logger::log('CACHE CLEANER', $flac,'does not have an associated track');
+			rrmdir($dir);
 		}
 		logger::info("CACHE CLEANER", "== Check For Orphaned youtube downloads took ".format_time(time() - $now));
 
@@ -224,10 +222,10 @@ class cache_cleaner extends database {
 		$this->generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex NOT IN (SELECT DISTINCT Sourceindex FROM Tracktable WHERE Sourceindex IS NOT NULL)");
 	}
 
-	private function check_ttindex_exists($ttindex) {
+	private function check_youtube_uri_exists($uri) {
 		$bacon = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
-			'SELECT * FROM Tracktable WHERE TTindex = ? AND Hidden = ?',
-			$ttindex,
+			"SELECT TTindex FROM Tracktable WHERE Uri LIKE CONCAT('%', ?) AND Hidden = ?",
+			$uri,
 			0
 		);
 		return count($bacon);
