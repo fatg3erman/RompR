@@ -1,4 +1,6 @@
-<body class="mobile phone">
+<?php
+create_body_tag('phone');
+?>
 
 <!-- Flowing Notifications Div -->
 <div id="notifications"></div>

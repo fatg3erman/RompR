@@ -9,10 +9,6 @@
 :root {
 	--display-mode: 0;
 	--playlist-right-icon: inline-block;
-	--inline-track-icon-size: 20px;
-	--inline-clickable-icon-size: 28px;
-	--inline-clickable-icon-border-width: 6px;
-	--inline-clickable-icon-border-style: solid;
 
 	--mainpane-left-padding: 4px;
 	--mainpane-right-padding: 4px;

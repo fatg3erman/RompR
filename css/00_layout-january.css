@@ -12,10 +12,6 @@
 :root {
 	--config-panel-pad-left: 4px;
 	--config-panel-pad-right: 4px;
-	--inline-track-icon-size: 16px;
-	--inline-clickable-icon-size: 16px;
-	--inline-clickable-icon-border-width: none;
-	--inline-clickable-icon-border-style: none;
 	--menu-toggle-icon-size: 14px;
 
 	--small-icon-size: 20px;
@@ -24,7 +20,23 @@
 	--track-control-icon-size: var(--inline-clickable-icon-size);
 }
 
-body.mobile #headerbar
+body.mouseclick {
+	--inline-track-icon-size: 16px;
+	--inline-clickable-icon-size: 16px;
+	--inline-clickable-icon-border-width: none;
+	--inline-clickable-icon-border-style: none;
+}
+
+/* use body.phone here as well as touchclick, in case Mobile_Detect thinks
+it's a desktop browser. */
+body.touchclick, body.phone {
+	--inline-track-icon-size: 20px;
+	--inline-clickable-icon-size: 28px;
+	--inline-clickable-icon-border-width: 6px;
+	--inline-clickable-icon-border-style: solid;
+}
+
+body.phone #headerbar
 {
     background-color: var(--headerbar-bg-colour-mob);
     background-image: var(--headerbar-bg-image-mob);
@@ -153,7 +165,7 @@ table#debuginfotable tr td:nth-child(2) {
 	margin-top: 0.75em;
 }
 
-body.mobile .configtitle
+body.phone .configtitle
 {
     width:100%;
     margin-left:auto;
@@ -645,7 +657,7 @@ img.notexist,img.notfound {
 =====================================================================
 */
 
-#infobar.coloured, body.mobile #infobar, #thetopbit
+#infobar.coloured, body.phone #infobar, #thetopbit
 {
     background-color: var(--infobar-bg-colour);
     background-image: var(--infobar-bg-image);

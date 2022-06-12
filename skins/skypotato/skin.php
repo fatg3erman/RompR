@@ -1,4 +1,6 @@
-<body class="desktop">
+<?php
+create_body_tag('desktop');
+?>
 <div id="notifications"></div>
 
 <div class="fullwidth containerbox" id="thetopbit">

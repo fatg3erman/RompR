@@ -5,10 +5,6 @@
 */
 
 :root {
-	--inline-track-icon-size: 16px;
-	--inline-clickable-icon-size: 16px;
-	--inline-clickable-icon-border-width: none;
-	--inline-clickable-icon-border-style: none;
 
 	--track-control-icon-size: var(--small-icon-size);
 }

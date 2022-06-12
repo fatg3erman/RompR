@@ -95,10 +95,8 @@ if (!defined('IS_ROMONITOR')) {
 if (defined('IS_ROMONITOR')) {
 	prefs::set_pref(['skin' => 'desktop']);
 } else if(array_key_exists('skin', $_REQUEST)) {
-	if (is_dir('skins/'.$_REQUEST['skin'])) {
-		logger::log("INIT", "Request asked for skin: ".$_REQUEST['skin']);
-		prefs::set_pref(['skin' => trim($_REQUEST['skin'])]);
-	}
+	logger::log("INIT", "Request asked for skin: ".$_REQUEST['skin']);
+	prefs::set_pref(['skin' => trim($_REQUEST['skin'])]);
 } else if (prefs::skin() === null) {
 	logger::mark("INIT", "Detecting browser...");
 	require_once('includes/Mobile_Detect.php');
@@ -112,11 +110,16 @@ if (defined('IS_ROMONITOR')) {
 	}
 }
 
+// Detect these because they might be there from an older install, but they won't work
 if (prefs::skin() == 'tablet')
 	prefs::set_pref(['skin' => 'phone']);
 
 if (prefs::skin() == 'fruit')
 	prefs::set_pref(['skin' => 'skypotato']);
+
+if (!is_dir('skins/'.prefs::skin())) {
+	prefs::set_pref(['skin' => 'desktop']);
+}
 
 set_include_path('skins/'.prefs::skin().PATH_SEPARATOR.get_include_path());
 

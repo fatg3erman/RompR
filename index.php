@@ -13,10 +13,6 @@ require_once ("includes/functions.php");
 // Do some important pre-load checks
 //
 
-if (!is_dir('skins/'.prefs::skin())) {
-	big_bad_fail('Skin '.prefs::skin().' does not exist!');
-}
-
 if (file_exists('collection/collection.php') || is_dir('themes/fruit')) {
 	big_bad_fail('Remains of an earlier installation still exist. To install this version of RompЯ you must
 		delete <b>everything except your albumart and prefs directories</b> and then copy the new version
@@ -130,6 +126,11 @@ $player = new player();
 // and it might have changed since last time we opened the page
 $player->probe_websocket();
 
+//
+// Check that the Backend Daemon is running and (re)start if it necessary.
+// Add ?force_restart=1 to the URL to force the Daemon to Restart
+//
+
 check_backend_daemon();
 
 prefs::save();
@@ -140,11 +141,6 @@ prefs::refresh_cookies();
 // Do some initialisation of the backend directories
 //
 include ("includes/firstrun.php");
-
-//
-// Check that the Backend Daemon is running and (re)start if it necessary.
-// Add ?force_restart=1 to the URL to force the Daemon to Restart
-//
 
 logger::log("INIT", "Initialisation done. Let's Boogie!");
 logger::mark("CREATING PAGE", "******++++++======------******------======++++++******");

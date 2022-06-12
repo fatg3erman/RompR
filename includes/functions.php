@@ -990,4 +990,16 @@ function get_pid($cmd) {
     return false;
 }
 
+function create_body_tag($base_class) {
+	require_once('includes/Mobile_Detect.php');
+	print '<body class="'.$base_class;
+	$md = new Mobile_Detect;
+	if ($md->isMobile() || $md->isTablet()) {
+		print ' touchclick';
+	} else {
+		print ' mouseclick';
+	}
+	print '">'."\n";
+}
+
 ?>
