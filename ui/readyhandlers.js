@@ -132,8 +132,16 @@ if (typeof(IntersectionObserver) == 'function') {
 
 $(document).ready(function(){
 	debug.mark("INIT","Document Ready Event has fired");
+	ipados_is_stoopid();
 	prefs.loadPrefs(carry_on_starting);
 });
+
+function ipados_is_stoopid() {
+	// Work around iPadOS announcing itself as a desktop browser
+	if (navigator.userAgent.includes("Mac") && "ontouchend" in document && $('body').hasClass('mouseclick')) {
+		$('body').removeClass('mouseclick').addClass('touchclick');
+	}
+}
 
 function carry_on_starting() {
 	debug.mark("INIT","Prefs Have Been Loaded");

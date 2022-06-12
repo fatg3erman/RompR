@@ -994,9 +994,11 @@ function create_body_tag($base_class) {
 	require_once('includes/Mobile_Detect.php');
 	print '<body class="'.$base_class;
 	$md = new Mobile_Detect;
-	if ($md->isMobile() || $md->isTablet()) {
+	if ($md->isMobile() || $md->isTablet() || $md->isiOS()) {
+		logger::log('INIT', 'Mobile_Detect detected Mobile Browser');
 		print ' touchclick';
 	} else {
+		logger::log('INIT', 'Mobile_Detect detected Desktop Browser');
 		print ' mouseclick';
 	}
 	print '">'."\n";

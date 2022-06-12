@@ -939,9 +939,9 @@ var playlist = function() {
 
 		getCurrentTrackElement: function() {
 			var scrollto = $('#sortable .playlistcurrentitem');
-			if (!scrollto.is(':visible')) {
-				scrollto = scrollto.parent().prev();
-			}
+			// if (!scrollto.is(':visible')) {
+			// 	scrollto = scrollto.parent().prev();
+			// }
 			return scrollto;
 		}
 

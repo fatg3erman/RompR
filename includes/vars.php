@@ -98,10 +98,12 @@ if (defined('IS_ROMONITOR')) {
 	logger::log("INIT", "Request asked for skin: ".$_REQUEST['skin']);
 	prefs::set_pref(['skin' => trim($_REQUEST['skin'])]);
 } else if (prefs::skin() === null) {
+	// This will be run the first time you open RompR. After that, skin will
+	// be set as a Cookie, so also set the clickmode here.
 	logger::mark("INIT", "Detecting browser...");
 	require_once('includes/Mobile_Detect.php');
 	$md = new Mobile_Detect;
-	if ($md->isMobile() || $md->isTablet()) {
+	if ($md->isMobile() || $md->isTablet() || $md->isiOS()) {
 		logger::info('INIT', 'Browser is a Mobile browser');
 		prefs::set_pref(['skin' => 'phone', 'clickmode' => 'single']);
 	} else {

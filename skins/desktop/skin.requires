@@ -2,3 +2,4 @@ jquery/jquery.hotkeys.js
 jquery/jquery.mCustomScrollbar.concat.min-3.1.5.js
 ui/hotkeys.js
 css/scrollbars/jquery.mCustomScrollbar.css
+jquery/jquery.scrollTo.min.js

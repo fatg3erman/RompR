@@ -86,7 +86,6 @@ var layoutProcessor = function() {
 	return {
 
 		supportsDragDrop: true,
-		hasCustomScrollbars: true,
 		usesKeyboard: true,
 		sortFaveRadios: true,
 		openOnImage: false,
@@ -97,7 +96,11 @@ var layoutProcessor = function() {
 
 		afterHistory: function() {
 			browser.rePoint();
-			setTimeout(function() { $("#infopane").mCustomScrollbar("scrollTo",0) }, 500);
+			if (has_custom_scrollbars) {
+				setTimeout(function() { $("#infopane").mCustomScrollbar("scrollTo",0) }, 500);
+			} else {
+				$("#infopane").scrollTo(0, 250);
+			}
 		},
 
 		addInfoSource: function(name, obj) {
@@ -114,8 +117,12 @@ var layoutProcessor = function() {
 		},
 
 		goToBrowserPanel: function(panel) {
-			$("#infopane").mCustomScrollbar('update');
-			$("#infopane").mCustomScrollbar("scrollTo","#"+panel+"information");
+			if (has_custom_scrollbars) {
+				$("#infopane").mCustomScrollbar('update');
+				$("#infopane").mCustomScrollbar("scrollTo","#"+panel+"information");
+			} else {
+				$('#infopane').scrollTo('#'+panel+'information', 250);
+			}
 		},
 
 		goToBrowserPlugin: function(panel) {
@@ -123,7 +130,11 @@ var layoutProcessor = function() {
 		},
 
 		goToBrowserSection: function(section) {
-			$("#infopane").mCustomScrollbar("scrollTo",section);
+			if (has_custom_scrollbars) {
+				$("#infopane").mCustomScrollbar("scrollTo",section);
+			} else {
+				$('#infopane').scrollTo(section, 250);
+			}
 		},
 
 		notifyAddTracks: function() { },
@@ -136,7 +147,9 @@ var layoutProcessor = function() {
 		},
 
 		updateInfopaneScrollbars: function() {
-			$('#infopane').mCustomScrollbar('update');
+			if (has_custom_scrollbars) {
+				$('#infopane').mCustomScrollbar('update');
+			}
 		},
 
 		hidePanel: function(panel, is_hidden, new_state) {
@@ -162,15 +175,21 @@ var layoutProcessor = function() {
 				var scrollto = playlist.getCurrentTrackElement();;
 				if (scrollto.length > 0) {
 					debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
-					$('#pscroller').mCustomScrollbar("stop");
-					$('#pscroller').mCustomScrollbar("update");
+					if (has_custom_scrollbars) {
+						$('#pscroller').mCustomScrollbar("stop");
+						$('#pscroller').mCustomScrollbar("update");
+					}
 					var pospixels = Math.round(scrollto.position().top - ($("#sortable").parent().parent().height()/2));
 					pospixels = Math.min($("#sortable").parent().height(), Math.max(pospixels, 0));
-					$('#pscroller').mCustomScrollbar(
-						"scrollTo",
-						pospixels,
-						{ scrollInertia: 0 }
-					);
+					if (has_custom_scrollbars) {
+						$('#pscroller').mCustomScrollbar(
+							"scrollTo",
+							pospixels,
+							{ scrollInertia: 0 }
+						);
+					} else {
+						$('#pscroller').scrollTo(scrollto, 250);
+					}
 				}
 			}
 		},
@@ -209,10 +228,14 @@ var layoutProcessor = function() {
 		scrollCollectionTo: function(jq) {
 			if (jq.length > 0) {
 				debug.trace('UI', 'Scrolling Collection To',jq);
-				$("#sources").mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
-					{ scrollInertia: 10,
-					  scrollEasing: 'easeOut' }
-				);
+				if (has_custom_scrollbars) {
+					$("#sources").mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
+						{ scrollInertia: 10,
+						  scrollEasing: 'easeOut' }
+					);
+				} else {
+					$('#sources').scrollTo(jq, 250);
+				}
 			} else {
 				debug.warn("LAYOUT","Was asked to scroll collection to something non-existent",2);
 			}

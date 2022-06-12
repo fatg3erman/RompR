@@ -14,6 +14,8 @@ As a result of this change though, you will need to recreate any Alarms you had 
 <li>There is now a <a href="https://fatg3erman.github.io/RompR-And-MPD/">Websocket Server</a> that makes the UI more responsive when you're using MPD - essentially it
 mimics the part of Mopidy's HTTP interface that RompR uses. There are some pre-requisistes you need for this to work, please
 read the link.</li>
+<li>Note, in version 13 and later of iPadOS, Safari will identify as a desktop browser and so RompR's optimisations
+for touch will not work. You can turn this behaviour off for your iPad in Settings->Safari->Request Desktop Website</li>
 <li>Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix,
 the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection
  and will not be selected by Personalised Radio stations. Note that selecting this option will force a rescan of your Music Collection.

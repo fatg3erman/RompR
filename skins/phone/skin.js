@@ -391,7 +391,6 @@ var layoutProcessor = function() {
 	return {
 
 		supportsDragDrop: false,
-		hasCustomScrollbars: false,
 		usesKeyboard: false,
 		sortFaveRadios: false,
 		openOnImage: true,

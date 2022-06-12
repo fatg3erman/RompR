@@ -277,24 +277,27 @@ jQuery.fn.insertArtistAfter = function(html) {
 
 jQuery.fn.addCustomScrollBar = function() {
 	return this.each(function() {
-		$(this).mCustomScrollbar({
-			theme: "light-thick",
-			scrollInertia: 300,
-			contentTouchScroll: 25,
-			mouseWheel: {
-				scrollAmount: parseInt(prefs.wheelscrollspeed),
-			},
-			alwaysShowScrollbar: 1,
-			advanced: {
-				updateOnContentResize: true,
-				updateOnImageLoad: false,
-				autoScrollOnFocus: false,
-				autoUpdateTimeout: 500,
-			}
-		});
-		// 4 pixel high fudge div to prevent mCustomScrollbar putting scroll bars
-		// on divs that don't need them
-		$(this).find('.mCustomScrollBox').append('<div style="height:4px"></div>');
+		if ($('body').hasClass('mouseclick')) {
+			has_custom_scrollbars = true;
+			$(this).mCustomScrollbar({
+				theme: "light-thick",
+				scrollInertia: 300,
+				contentTouchScroll: 25,
+				mouseWheel: {
+					scrollAmount: parseInt(prefs.wheelscrollspeed),
+				},
+				alwaysShowScrollbar: 1,
+				advanced: {
+					updateOnContentResize: true,
+					updateOnImageLoad: false,
+					autoScrollOnFocus: false,
+					autoUpdateTimeout: 500,
+				}
+			});
+			// 4 pixel high fudge div to prevent mCustomScrollbar putting scroll bars
+			// on divs that don't need them
+			$(this).find('.mCustomScrollBox').append('<div style="height:4px"></div>');
+		}
 	});
 }
 

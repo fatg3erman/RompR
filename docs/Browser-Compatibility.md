@@ -13,8 +13,11 @@ RompR makes use of some emerging standards to increase performance. These are no
 * Chrome for Android : Should be same as Chrome but I have not tested it.
 * Android WebView : Might work but I've no way to test it.
 * Safari : Tested in version 13 on macOS. Lazy loading is supported from version 12.1. Dropdown menu resizing is not currently supported.
-* Safari for iPadOS : Tested in version 13. Lazy loading is an experimental feature which is enabled by default. Resizing is disabled by default but is not required in the phone skin.
+* Safari for iPadOS : Tested in version 13. Lazy loading is an experimental feature which is enabled by default.
+Resizing is disabled by default but is not required in the phone skin.
 * Safari for iOS : Should be the same as iPadOS.
+* ** Note, in iPadOS 13 or later Safari will identify as a desktop browser instead of a mobile browser, and so some of RompR's optimisations
+for touch will not work. You can turn this behaviour off in Settings->Safari->Request Desktop Website **
 * Opera : Not tested. Lazy loading is supported though there are no details of which version. Dropdown menu resizing is supported from version 51. Opera is now based on Chrome anyway so should work the same way.
 * Edge : Not tested. Lazy loading is supported from version 15. Dropdown menu resizing is not currently supported. Future versions of Edge will be based on Chrome, so should work.
 * Internet Explorer: Ha. Hahahahahahaha. Hahahahahaha. Are you from the 1990s?

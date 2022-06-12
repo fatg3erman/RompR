@@ -302,7 +302,11 @@ var layoutProcessor = function() {
 			switch (source) {
 				case 'podcastslist':
 					fanooglePodcasts();
-					$('#infopane').mCustomScrollbar('scrollTo', '#podholder');
+					if (has_custom_scrollbars) {
+						$('#infopane').mCustomScrollbar('scrollTo', '#podholder');
+					} else {
+						$('#infopane').scrollTo('#podholder');
+					}
 					break;
 
 				case 'historyholder':
@@ -374,7 +378,7 @@ var layoutProcessor = function() {
 
 	function findParentScroller(jq) {
 		var p = jq.parent();
-		while (!p.is('body') && !p.hasClass('mCustomScrollbar')) {
+		while (!p.is('body') && !p.hasClass('mCustomScrollbar') && !p.hasClass('collectionpanel')) {
 			p = p.parent();
 		}
 		if (p.is('body')) {
@@ -444,7 +448,6 @@ var layoutProcessor = function() {
 	return {
 
 		supportsDragDrop: true,
-		hasCustomScrollbars: true,
 		usesKeyboard: true,
 		sortFaveRadios: false,
 		openOnImage: true,
@@ -460,7 +463,11 @@ var layoutProcessor = function() {
 		},
 
 		afterHistory: function() {
-			setTimeout(function() { $("#infoholder").mCustomScrollbar("scrollTo",0) }, 500);
+			if (has_custom_scrollbars) {
+				setTimeout(function() { $("#infoholder").mCustomScrollbar("scrollTo",0) }, 500);
+			} else {
+				$('#infoholder').scrollTo(0, 250);
+			}
 		},
 
 		addInfoSource: function(name, obj) {
@@ -477,8 +484,12 @@ var layoutProcessor = function() {
 		},
 
 		goToBrowserPanel: function(panel) {
-			$("#infopane").mCustomScrollbar('update');
-			$("#infopane").mCustomScrollbar("scrollTo","#"+panel+"information");
+			if (has_custom_scrollbars) {
+				$("#infopane").mCustomScrollbar('update');
+				$("#infopane").mCustomScrollbar("scrollTo","#"+panel+"information");
+			} else {
+				$('#infopane').scrollTo('#'+panel+'information', 250);
+			}
 		},
 
 		goToBrowserPlugin: function(panel) {
@@ -490,7 +501,11 @@ var layoutProcessor = function() {
 
 		goToBrowserSection: function(section) {
 			uiHelper.sourceControl('pluginholder');
-			$("#infopane").mCustomScrollbar("scrollTo",section);
+			if (has_custom_scrollbars) {
+				$("#infopane").mCustomScrollbar("scrollTo",section);
+			} else {
+				$('#infopane').scrollTo(section, 250);
+			}
 		},
 
 		toggleAudioOutpts: function() {
@@ -526,7 +541,9 @@ var layoutProcessor = function() {
 		},
 
 		updateInfopaneScrollbars: function() {
-			$('#infopane').mCustomScrollbar('update');
+			if (has_custom_scrollbars) {
+				$('#infopane').mCustomScrollbar('update');
+			}
 		},
 
 		scrollPlaylistToCurrentTrack: function() {
@@ -534,15 +551,20 @@ var layoutProcessor = function() {
 				var scrollto = playlist.getCurrentTrackElement();;
 				if (scrollto.length > 0) {
 					debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
-					$('#phacker').mCustomScrollbar("stop");
-					$('#phacker').mCustomScrollbar("update");
-					var pospixels = Math.round(scrollto.position().top - ($("#sortable").parent().parent().height()/2));
-					pospixels = Math.min($("#sortable").parent().height(), Math.max(pospixels, 0));
-					$('#phacker').mCustomScrollbar(
-						"scrollTo",
-						pospixels,
-						{ scrollInertia: 0 }
-					);
+					if (has_custom_scrollbars) {
+						$('#phacker').mCustomScrollbar("stop");
+						$('#phacker').mCustomScrollbar("update");
+					}
+					var pospixels = scrollto.position().top;
+					if (has_custom_scrollbars) {
+						$('#phacker').mCustomScrollbar(
+							"scrollTo",
+							pospixels,
+							{ scrollInertia: 250 }
+						);
+					} else {
+						$('#phacker').scrollTo(scrollto, 250);
+					}
 				}
 			}
 		},
@@ -556,10 +578,14 @@ var layoutProcessor = function() {
 				debug.trace("LAYOUT","Scrolling Collection To",jq);
 				scroller = findParentScroller(jq);
 				if (scroller !== false) {
-					scroller.mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
-						{ scrollInertia: 10,
-						  scrollEasing: 'easeOut' }
-					);
+					if (has_custom_scrollbars) {
+						scroller.mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
+							{ scrollInertia: 10,
+							  scrollEasing: 'easeOut' }
+						);
+					} else {
+						scroller.scrollTo(jq, 250);
+					}
 				} else {
 					debug.warn('LAYOUT', 'Was asked to scroll to something without a parent scroller');
 				}
@@ -569,10 +595,14 @@ var layoutProcessor = function() {
 		},
 
 		scrollSourcesTo: function(jq) {
-			$("#infopane").mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
-				{ scrollInertia: 500,
-				  scrollEasing: 'easeOut' }
-			);
+			if (has_custom_scrollbars) {
+				$("#infopane").mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
+					{ scrollInertia: 500,
+					  scrollEasing: 'easeOut' }
+				);
+			} else {
+				$('#infopane').scrollTo(jq, 250);
+			}
 		},
 
 		expandInfo: function(side) {

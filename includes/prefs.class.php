@@ -157,7 +157,7 @@ class prefs {
 		"synclovevalue" => "0",
 		"theme" => "Numismatist.css",
 		"icontheme" => "Bobalophagus-Dark",
-		"coversize" => 48,
+		"coversize" => 64,
 		"fontsize" => 11,
 		"fontfamily" => "Nunito.css",
 		"displayresultsas" => "collection",
