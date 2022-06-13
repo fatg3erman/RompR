@@ -69,8 +69,9 @@ ie it will no longer snooze the alarm.
 
 ## Important Points
 
-* The alarm will play on whichever [Player](/RompR/Using-Multiple-Players) the browser is currently connected to. You will only
-be able to view Alarms that are created on the Player you are connected to. Each Player has its own set of Alarms.
+* When you create an Alarm, you are creating it to run *only* on whichever [Player](/RompR/Using-Multiple-Players) the browser
+is currently connected to. You will only be able to view Alarms that are created on the Player you are connected to.
+Each Player has its own set of Alarms.
 
 # Sleep Timer
 

@@ -293,17 +293,6 @@ i.topdrop
 	cursor:move;
 }
 
-.menuitem {
-	font-weight:bold;
-	margin:0px;
-	padding-left:0px;
-	padding-right:0px;
-	padding-top:2px;
-	padding-bottom:2px;
-	-webkit-box-align:center;
-	align-items: center;
-}
-
 .playlistitem.menuitem {
 	align-items: inherit !important;
 }

@@ -138,7 +138,7 @@ print '<i class="icon-angle-double-right tooltip topimg expandslightly backgroun
 <div class="expand" id="rightspacer"></div>
 
 <?php
-print '<i title="'.language::gettext('button_albumart').'" class="icon-cd tooltip topimg open_albumart expand"></i>';
+print '<i title="'.language::gettext('button_albumart').'" class="icon-cd tooltip topimg open_albumart expand albumart-holder"></i>';
 print '<i class="icon-cog-alt topimg tooltip topdrop expand choose_prefs" title="'.language::gettext('button_prefs').'">';
 ?>
 <div class="top_drop_menu dropshadow rightmenu widemenu stayopen" id="configpanel">

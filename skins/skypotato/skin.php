@@ -34,10 +34,10 @@ create_body_tag('desktop');
 
 		<!-- Vertical small icons -->
 
-		<div id="gronky" class="containerbox vertical">
-			<div class="containerbox vertical fixed" id="righthandtop"></div>
+		<div id="gronky" class="containerbox vertical fixed">
+			<!-- <div class="containerbox vertical fixed" id="righthandtop"></div> -->
 <?php
-			print '<div class="fixed topdrop"><i class="icon-floppy smallpluginicon clickicon"></i>';
+			print '<div class="expand topdrop"><i class="icon-floppy smallpluginicon clickicon"></i>';
 ?>
 				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen noscroll" id="plsaver">
 <?php
@@ -55,8 +55,8 @@ create_body_tag('desktop');
 				</div>
 			</div>
 <?php
-			print '<div class="fixed topdrop"><i title="'.language::gettext('button_albumart').'" class="icon-cd tooltip smallpluginicon clickicon open_albumart"></i></div>';
-			print '<div class="fixed topdrop"><i class="icon-cog-alt smallpluginicon clickicon tooltip choose_prefs" title="'.language::gettext('button_prefs').'"></i>';
+			print '<div class="expand topdrop albumart-holder"><i title="'.language::gettext('button_albumart').'" class="icon-cd tooltip smallpluginicon clickicon open_albumart"></i></div>';
+			print '<div class="expand topdrop"><i class="icon-cog-alt smallpluginicon clickicon tooltip choose_prefs" title="'.language::gettext('button_prefs').'"></i>';
 ?>
 				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen" id="configpanel">
 				<?php
@@ -65,7 +65,7 @@ create_body_tag('desktop');
 				</div>
 			</div>
 
-			<div class="fixed topdrop"><i class="icon-menu smallpluginicon clickicon"></i>
+			<div class="expand topdrop"><i class="icon-menu smallpluginicon clickicon"></i>
 				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen containerbox vertical" id="phacker">
 					<?php
 					print uibits::ui_config_header([
@@ -135,9 +135,9 @@ create_body_tag('desktop');
 
 </div>
 
-<div id="bottompage" class="clearfix">
+<div id="bottompage" class="containerbox">
 
-<div id="headerbar" class="noborder tleft">
+<div id="headerbar" class="noborder fixed">
 	<div id="sourcescontrols">
 <?php
 print '<i title="'.language::gettext('button_local_music').'" class="icon-music tooltip topimg choosepanel" name="albumlist"></i>';
@@ -155,7 +155,7 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 	</div>
 </div>
 
-<div id="sources" class="column noborder tleft">
+<div id="sources" class="column noborder fixed">
 
 	<!-- Music Collection -->
 
@@ -260,7 +260,7 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 
 <!-- Info Panel -->
 
-<div id="infopane" class="cmiddle noborder infowiki tleft">
+<div id="infopane" class="cmiddle noborder infowiki expand">
 
 	<!-- Saved Playlists -->
 

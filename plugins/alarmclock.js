@@ -317,7 +317,8 @@ var alarmclock = function() {
 			}
 			buttonOpacity(interrupt, (alarm.PlayItem == 1 ? true : false));
 			buttonOpacity(alarmdropper, (alarm.PlayItem == 1 ? true : false));
-			alarmdropper.acceptDroppedTracks({ ondrop: alarmclock.dropped });
+			if (!uiHelper.is_touch_ui)
+				alarmdropper.acceptDroppedTracks({ ondrop: alarmclock.dropped });
 
 			editor_popup.append($('<input>', {type: 'hidden', class: 'alarmvalue', name: 'ItemToPlay', value: alarm.ItemToPlay}));
 			editor_popup.append($('<input>', {type: 'hidden', class: 'alarmvalue', name: 'PlayCommands', value: alarm.PlayCommands}));

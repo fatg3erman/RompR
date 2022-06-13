@@ -747,7 +747,9 @@ d as %s",
 	"play_even_if_playing" =>				'Even If Already Playing',
 	"setup_mpd_special"	=>					'MPD Special Options',
 	"info_mpd_websocket" =>					"Optional, provides extra functionality with MPD",
-	"label_mpd_websocket" =>				'Port for MPD Websocket Server'
+	"label_mpd_websocket" =>				'Port for MPD Websocket Server',
+	"label_ui_defaults" =>					'Defaults',
+	"button_save_defaults" =>				'Save As Default For All Browsers'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

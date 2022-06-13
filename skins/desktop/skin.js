@@ -85,22 +85,12 @@ var layoutProcessor = function() {
 
 	return {
 
-		supportsDragDrop: true,
-		usesKeyboard: true,
 		sortFaveRadios: true,
 		openOnImage: false,
+		playlist_scroll_parent: '#pscroller',
 
 		changeCollectionSortMode: function() {
 			collectionHelper.forceCollectionReload();
-		},
-
-		afterHistory: function() {
-			browser.rePoint();
-			if (has_custom_scrollbars) {
-				setTimeout(function() { $("#infopane").mCustomScrollbar("scrollTo",0) }, 500);
-			} else {
-				$("#infopane").scrollTo(0, 250);
-			}
 		},
 
 		addInfoSource: function(name, obj) {
@@ -116,27 +106,6 @@ var layoutProcessor = function() {
 			$("#button_source"+prefs.infosource).addClass("currentbun");
 		},
 
-		goToBrowserPanel: function(panel) {
-			if (has_custom_scrollbars) {
-				$("#infopane").mCustomScrollbar('update');
-				$("#infopane").mCustomScrollbar("scrollTo","#"+panel+"information");
-			} else {
-				$('#infopane').scrollTo('#'+panel+'information', 250);
-			}
-		},
-
-		goToBrowserPlugin: function(panel) {
-			setTimeout( function() { layoutProcessor.goToBrowserPanel(panel) }, 1000);
-		},
-
-		goToBrowserSection: function(section) {
-			if (has_custom_scrollbars) {
-				$("#infopane").mCustomScrollbar("scrollTo",section);
-			} else {
-				$('#infopane').scrollTo(section, 250);
-			}
-		},
-
 		notifyAddTracks: function() { },
 
 		playlistControlHotKey: function(button) {
@@ -144,12 +113,6 @@ var layoutProcessor = function() {
 				togglePlaylistButtons()
 			}
 			$("#"+button).trigger('click');
-		},
-
-		updateInfopaneScrollbars: function() {
-			if (has_custom_scrollbars) {
-				$('#infopane').mCustomScrollbar('update');
-			}
 		},
 
 		hidePanel: function(panel, is_hidden, new_state) {
@@ -166,30 +129,6 @@ var layoutProcessor = function() {
 				}
 				if (!new_state && prefs.chooser == panel) {
 					$("#"+panel).fadeIn('fast');
-				}
-			}
-		},
-
-		scrollPlaylistToCurrentTrack: function() {
-			if (prefs.scrolltocurrent) {
-				var scrollto = playlist.getCurrentTrackElement();;
-				if (scrollto.length > 0) {
-					debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
-					if (has_custom_scrollbars) {
-						$('#pscroller').mCustomScrollbar("stop");
-						$('#pscroller').mCustomScrollbar("update");
-					}
-					var pospixels = Math.round(scrollto.position().top - ($("#sortable").parent().parent().height()/2));
-					pospixels = Math.min($("#sortable").parent().height(), Math.max(pospixels, 0));
-					if (has_custom_scrollbars) {
-						$('#pscroller').mCustomScrollbar(
-							"scrollTo",
-							pospixels,
-							{ scrollInertia: 0 }
-						);
-					} else {
-						$('#pscroller').scrollTo(scrollto, 250);
-					}
 				}
 			}
 		},
@@ -226,19 +165,7 @@ var layoutProcessor = function() {
 		},
 
 		scrollCollectionTo: function(jq) {
-			if (jq.length > 0) {
-				debug.trace('UI', 'Scrolling Collection To',jq);
-				if (has_custom_scrollbars) {
-					$("#sources").mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
-						{ scrollInertia: 10,
-						  scrollEasing: 'easeOut' }
-					);
-				} else {
-					$('#sources').scrollTo(jq, 250);
-				}
-			} else {
-				debug.warn("LAYOUT","Was asked to scroll collection to something non-existent",2);
-			}
+			$("#sources").romprScrollTo(jq);
 		},
 
 		sourceControl: function(source) {
@@ -283,7 +210,7 @@ var layoutProcessor = function() {
 			if ($(albummenu).isClosed()) {
 				await $.proxy(clickRegistry.doMenu, $(albummenu)).call();
 			}
-			layoutProcessor.scrollCollectionTo($(albummenu).parent());
+			layoutProcessor.scrollCollectionTo(albummenu.parent());
 		},
 
 		setRadioModeHeader: function(html) {
@@ -295,27 +222,28 @@ var layoutProcessor = function() {
 				layoutProcessor.toggleAudioOutpts();
 			}
 			$("#sortable").disableSelection();
-            $("#sortable").acceptDroppedTracks({
-                scroll: true,
-                scrollparent: '#pscroller'
-            });
-            $("#sortable").sortableTrackList({
-                items: '.sortable',
-                outsidedrop: playlist.dragstopped,
-                insidedrop: playlist.dragstopped,
-                allowdragout: true,
-                scroll: true,
-                scrollparent: '#pscroller',
-                scrollspeed: 80,
-                scrollzone: 120
-            });
-            $("#pscroller").acceptDroppedTracks({
-                ondrop: playlist.draggedToEmpty,
-                coveredby: '#sortable'
-            });
+			if (!uiHelper.is_touch_ui) {
+	            $("#sortable").acceptDroppedTracks({
+	                scroll: true,
+	                scrollparent: '#pscroller'
+	            });
+	            $("#sortable").sortableTrackList({
+	                items: '.sortable',
+	                outsidedrop: playlist.dragstopped,
+	                insidedrop: playlist.dragstopped,
+	                allowdragout: true,
+	                scroll: true,
+	                scrollparent: '#pscroller',
+	                scrollspeed: 80,
+	                scrollzone: 120
+	            });
+	            $("#pscroller").acceptDroppedTracks({
+	                ondrop: playlist.draggedToEmpty,
+	                coveredby: '#sortable'
+	            });
+	        }
 			animatePanels();
 			for (let value of my_scrollers) {
-				debug.log('INIT', 'Adding custom scroll bar to',value);
 				$(value).addCustomScrollBar();
 			};
 			$(".top_drop_menu").floatingMenu({

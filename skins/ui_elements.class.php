@@ -99,11 +99,11 @@ class ui_elements {
 		// Outer container
 		if ($data['playable'] == 1 || $data['playable'] == 3 || $data['playable'] == 4) {
 			// Note - needs clicktrack and name in case it is a removeable track
-			print '<div class="unplayable clicktrack ninesix indent containerbox" name="'.rawurlencode($data['uri']).'">';
+			print '<div class="unplayable clicktrack ninesix indent containerbox vertical-centre" name="'.rawurlencode($data['uri']).'">';
 		} else if ($data['uri'] == null) {
-			print '<div class="playable '.$class.' ninesix draggable indent containerbox" name="'.$data['ttid'].'">';
+			print '<div class="playable '.$class.' ninesix draggable indent containerbox vertical-centre" name="'.$data['ttid'].'">';
 		} else {
-			print '<div class="playable '.$class.' ninesix draggable indent containerbox" name="'.rawurlencode($data['uri']).'">';
+			print '<div class="playable '.$class.' ninesix draggable indent containerbox vertical-centre" name="'.rawurlencode($data['uri']).'">';
 		}
 
 		print domainIcon($d, 'inline-icon');
@@ -127,7 +127,7 @@ class ui_elements {
 			print '<div class="fixed playlistrow2 trackartist">'.$data['artist'].'</div>';
 		}
 		if ($data['rating']) {
-			print '<div class="fixed playlistrow2 trackrating">';
+			print '<div class="fixed trackrating">';
 			print '<i class="icon-'.trim($data['rating']).'-stars rating-icon-small"></i>';
 			print '</div>';
 		}
@@ -684,7 +684,8 @@ class ui_elements {
 
 	}
 
-	public static function prefs_interaction_options() {
+	public static function prefs_mouse_options() {
+		print '<div class="kbdbits">';
 		self::ui_textentry([
 			'label' => 'config_wheelspeed',
 			'size' => 4,
@@ -695,7 +696,15 @@ class ui_elements {
 			'label' => 'config_editshortcuts',
 			'onclick' => 'shortcuts.edit()'
 		]);
+		print '</div>';
 	}
+
+	public static function prefs_touch_options() {
+		print '<div class="touchbits">';
+		self::ui_checkbox(['id' => 'playlistswipe', 'label' => 'config_playlistswipe']);
+		print '</div>';
+	}
+
 
 	public static function resume_bar($pos, $length, $name, $uri, $type) {
 		print '<input type="hidden" class="resumepos" value="'.$pos.'" />';

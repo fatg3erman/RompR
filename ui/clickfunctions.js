@@ -576,7 +576,7 @@ var playlistManager = function() {
 }();
 
 function setDraggable(selector) {
-	if (layoutProcessor.supportsDragDrop) {
+	if (!uiHelper.is_touch_ui) {
 		$(selector).trackdragger();
 	}
 }

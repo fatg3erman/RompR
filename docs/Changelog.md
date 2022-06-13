@@ -23,6 +23,13 @@ read the link.
 * Try to make RompR properly timezone aware, so the alarm clock works when Daylight Saving Time is enabled, for example.
 RompR will try to work out your timezone, but if you notice the alarm clock isn't going off at the right time you
 should set date.timezone in your php.ini.
+* Done some work to make the Desktop and Skypotato skins work better on touch-enabled devices like tablets:
+	* It should auto-detect a touch interface and enable swiping and long press on the Play Queue.
+	* On a touch device, you can pinch to shrink or enlarge the left-hand list (ie the list of artists) in Skypotato
+* A new button in the preferences panel allows you to save the current settings as defaults for all browsers. This will assist
+people who prefer to run in private sessions - your UI settings will be saved to the backend when you push this button.
+This includes the skin and single/double click mode but some prefs that are stored as Cookies are not saved - this includes the
+current Player as well some of the collection sort options.
 * The usual collection of undocumented bugfixes.
 * Make the SQLite collection case-insensitive, which makes it work the same way as MySQL and means I can remove a lot of
 case checking statements, which speeds things up. Note that in SQLite case-sensitivity only works with ASCII characters.

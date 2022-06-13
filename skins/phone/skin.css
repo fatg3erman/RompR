@@ -8,7 +8,6 @@
 
 :root {
 	--display-mode: 0;
-	--playlist-right-icon: inline-block;
 
 	--mainpane-left-padding: 4px;
 	--mainpane-right-padding: 4px;
@@ -419,17 +418,6 @@ div.albumbitsmenu {
 	margin-left:0.5em;
 }
 
-.menuitem {
-	font-weight:bold;
-	margin:0px;
-	padding-left:0px;
-	padding-right:0px;
-	padding-top:6px;
-	padding-bottom:6px;
-	-webkit-box-align:center;
-	align-items: center;
-}
-
 .playlistalbum {
 	font-weight:bold;
 	margin:0px;
@@ -624,48 +612,6 @@ i.phone-dropdown-button {
 
 div.playable.clicktrack {
 	align-items: center;
-}
-
-#sortable {
-	position: relative;
-	top: 0;
-	left: 0;
-}
-
-#sortable .trackgroup {
-	position: relative;
-	top: 0;
-	left: 0;
-}
-
-#sortable .item {
-	position: relative;
-	top: 0;
-	left: 0;
-}
-
-#sortable .trackgroup .track {
-	position: relative;
-	top: 0;
-	left: 0;
-	min-height: 3em;
-	display: flex;
-}
-
-#sortable .trackgroup .track>div {
-	width: 100%;
-}
-
-#sortable .inline-icon.icon-cancel-circled {
-	 display: var(--playlist-right-icon);
-}
-
-.prearranger {
-	display:none;
-}
-
-#sortable .track>div>div.clickable {
-	margin-right: 8px;
 }
 
 .npicon {

@@ -138,7 +138,7 @@ var info_wikipedia = function() {
 				} else if (element.hasClass('clickwikicontents')) {
 					var section = element.attr('name');
 					debug.debug("WIKI PLUGIN",parent.nowplayingindex,source,"clicked a contents link",section);
-					layoutProcessor.goToBrowserSection(section);
+					uihelper.goToBrowserSection(section);
 				}
 			}
 

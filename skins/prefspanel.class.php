@@ -288,7 +288,9 @@ class prefspanel extends uibits {
 
 		self::ui_checkbox(['id' => 'cdplayermode', 'label' => 'config_cdplayermode']);
 
-		self::prefs_interaction_options();
+		self::prefs_mouse_options();
+
+		self::prefs_touch_options();
 
 		// =======================================================
 		//
@@ -362,74 +364,6 @@ class prefspanel extends uibits {
 			'size' => 4,
 			'type' => 'number'
 		]);
-
-		// =======================================================
-		//
-		// Audiobooks
-		//
-		// =======================================================
-		print self::ui_config_header([
-			'label' => 'label_audiobooks',
-			'lefticon' => 'icon-audiobook'
-		]);
-
-		self::ui_textentry([
-			'label' => 'config_audiobook_directory',
-			'id' => 'audiobook_directory'
-		]);
-
-		self::ui_textentry([
-			'label' => 'config_audiobook_tags',
-			'id' => 'auto_audiobook',
-			'is_array' => true
-		]);
-
-		// =======================================================
-		//
-		// Podcasts
-		//
-		// =======================================================
-		print self::ui_config_header([
-			'label' => 'label_podcasts',
-			'lefticon' => 'icon-podcast-circled'
-		]);
-
-		print '<div class="pref"><b>'.language::gettext('config_podcast_defaults').'</b></div>';
-		self::ui_select_box([
-			'id' => 'default_podcast_display_mode',
-			'label' => language::gettext('podcast_display'),
-			'options' => [
-				DISPLAYMODE_ALL => language::gettext("podcast_display_all"),
-				DISPLAYMODE_NEW => language::gettext("podcast_display_onlynew"),
-				DISPLAYMODE_UNLISTENED => language::gettext("podcast_display_unlistened"),
-				DISPLAYMODE_DOWNLOADEDNEW => language::gettext("podcast_display_downloadnew"),
-				DISPLAYMODE_DOWNLOADED => language::gettext("podcast_display_downloaded"),
-				DISPLAYMODE_NUD => language::gettext("podcast_display_nud")
-			]
-		]);
-
-		self::ui_select_box([
-			'id' => 'default_podcast_refresh_mode',
-			'label' => language::gettext('podcast_refresh'),
-			'options' => [
-		  		REFRESHOPTION_NEVER => language::gettext("podcast_refresh_never"),
-				REFRESHOPTION_HOURLY => language::gettext("podcast_refresh_hourly"),
-				REFRESHOPTION_DAILY => language::gettext("podcast_refresh_daily"),
-				REFRESHOPTION_WEEKLY => language::gettext("podcast_refresh_weekly"),
-				REFRESHOPTION_MONTHLY => language::gettext("podcast_refresh_monthly")
-			]
-		]);
-
-		self::ui_select_box([
-			'id' => 'default_podcast_sort_mode',
-			'label' => language::gettext('podcast_sortmode'),
-			'options' => [
-				SORTMODE_NEWESTFIRST => language::gettext("podcast_newestfirst"),
-				SORTMODE_OLDESTFIRST => language::gettext("podcast_oldestfirst")
-			]
-		]);
-
-		self::ui_checkbox(['id' => 'podcast_mark_new_as_unlistened', 'label' => 'config_marknewasunlistened']);
 
 		// =======================================================
 		//
@@ -545,6 +479,91 @@ class prefspanel extends uibits {
 				]);
 			}
 		}
+
+		// =======================================================
+		//
+		// Audiobooks
+		//
+		// =======================================================
+		print self::ui_config_header([
+			'label' => 'label_audiobooks',
+			'lefticon' => 'icon-audiobook'
+		]);
+
+		self::ui_textentry([
+			'label' => 'config_audiobook_directory',
+			'id' => 'audiobook_directory'
+		]);
+
+		self::ui_textentry([
+			'label' => 'config_audiobook_tags',
+			'id' => 'auto_audiobook',
+			'is_array' => true
+		]);
+
+		// =======================================================
+		//
+		// Podcasts
+		//
+		// =======================================================
+		print self::ui_config_header([
+			'label' => 'label_podcasts',
+			'lefticon' => 'icon-podcast-circled'
+		]);
+
+		print '<div class="pref"><b>'.language::gettext('config_podcast_defaults').'</b></div>';
+		self::ui_select_box([
+			'id' => 'default_podcast_display_mode',
+			'label' => language::gettext('podcast_display'),
+			'options' => [
+				DISPLAYMODE_ALL => language::gettext("podcast_display_all"),
+				DISPLAYMODE_NEW => language::gettext("podcast_display_onlynew"),
+				DISPLAYMODE_UNLISTENED => language::gettext("podcast_display_unlistened"),
+				DISPLAYMODE_DOWNLOADEDNEW => language::gettext("podcast_display_downloadnew"),
+				DISPLAYMODE_DOWNLOADED => language::gettext("podcast_display_downloaded"),
+				DISPLAYMODE_NUD => language::gettext("podcast_display_nud")
+			]
+		]);
+
+		self::ui_select_box([
+			'id' => 'default_podcast_refresh_mode',
+			'label' => language::gettext('podcast_refresh'),
+			'options' => [
+		  		REFRESHOPTION_NEVER => language::gettext("podcast_refresh_never"),
+				REFRESHOPTION_HOURLY => language::gettext("podcast_refresh_hourly"),
+				REFRESHOPTION_DAILY => language::gettext("podcast_refresh_daily"),
+				REFRESHOPTION_WEEKLY => language::gettext("podcast_refresh_weekly"),
+				REFRESHOPTION_MONTHLY => language::gettext("podcast_refresh_monthly")
+			]
+		]);
+
+		self::ui_select_box([
+			'id' => 'default_podcast_sort_mode',
+			'label' => language::gettext('podcast_sortmode'),
+			'options' => [
+				SORTMODE_NEWESTFIRST => language::gettext("podcast_newestfirst"),
+				SORTMODE_OLDESTFIRST => language::gettext("podcast_oldestfirst")
+			]
+		]);
+
+		self::ui_checkbox(['id' => 'podcast_mark_new_as_unlistened', 'label' => 'config_marknewasunlistened']);
+
+		// =======================================================
+		//
+		// Defaults
+		//
+		// =======================================================
+		print self::ui_config_header([
+			'label' => 'label_ui_defaults'
+		]);
+
+		self::ui_config_button([[
+			'label' => 'button_save_defaults',
+			'name' => 'save-defaults',
+			'onclick' => 'prefs.save_defaults()'
+		]]);
+
+
 	}
 
 }

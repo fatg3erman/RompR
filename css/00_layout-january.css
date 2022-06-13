@@ -13,6 +13,7 @@
 	--config-panel-pad-left: 4px;
 	--config-panel-pad-right: 4px;
 	--menu-toggle-icon-size: 14px;
+	--playlist-right-icon: inline-block;
 
 	--small-icon-size: 20px;
 	--medium-icon-size: 30px;
@@ -25,6 +26,10 @@ body.mouseclick {
 	--inline-clickable-icon-size: 16px;
 	--inline-clickable-icon-border-width: none;
 	--inline-clickable-icon-border-style: none;
+	--menuitem-padding: 2px;
+	--playlist-item-positioning: unset;
+	--playlist-track-display: block;
+	--playlist-track-min-height: unset;
 }
 
 /* use body.phone here as well as touchclick, in case Mobile_Detect thinks
@@ -34,6 +39,10 @@ body.touchclick, body.phone {
 	--inline-clickable-icon-size: 28px;
 	--inline-clickable-icon-border-width: 6px;
 	--inline-clickable-icon-border-style: solid;
+	--menuitem-padding: 6px;
+	--playlist-item-positioning: relative;
+	--playlist-track-display: flex;
+	--playlist-track-min-height: 3em;
 }
 
 body.phone #headerbar
@@ -239,6 +248,10 @@ i.phone-dropdown-button {
     background-color: var(--highlight-bg-colour);
     background-image: var(--highlight-bg-image);
     color: var(--text-colour);
+}
+
+#sortable .inline-icon.icon-cancel-circled {
+	 display: var(--playlist-right-icon);
 }
 
 /* General purpose label to be used inside a containerbox next to eg a select box*/
@@ -570,7 +583,7 @@ img.notexist,img.notfound {
 
 .tracknumber
 {
-	height:1.3em;
+	/*height:1.3em;*/
 	width:2em;
 	font-weight:bold;
 }
@@ -811,7 +824,7 @@ div.unplayable {
 }
 
 .tracks_1 {
-	width: 1em;
+	width: 1.3em;
 }
 
 .tracks_2 {
@@ -819,11 +832,11 @@ div.unplayable {
 }
 
 .tracks_3 {
-	width: 2.8em;
+	width: 2.9em;
 }
 
 .tracks_4 {
-	width: 3.8em;
+	width: 3.9em;
 }
 
 /*
@@ -962,6 +975,61 @@ div.podtitle>div.fixed {
 .resume-bar-holder>.tracknumber {
 	height: unset;
 }
+
+.menuitem {
+	font-weight:bold;
+	margin:0px;
+	padding-left:0px;
+	padding-right:0px;
+	padding-top: var(--menuitem-padding) !important;
+	padding-bottom: var(--menuitem-padding) !important;
+	-webkit-box-align:center;
+	align-items: center;
+}
+
+/*
+=====================================================================
+=
+= Play Queue - changes for mouse or touch UI
+=
+=====================================================================
+*/
+
+#sortable {
+	position: var(--playlist-item-positioning);
+	top: 0;
+	left: 0;
+}
+
+#sortable .trackgroup {
+	position: var(--playlist-item-positioning);
+	top: 0;
+	left: 0;
+}
+
+#sortable .item {
+	position: var(--playlist-item-positioning);
+	top: 0;
+	left: 0;
+}
+
+#sortable .trackgroup .track {
+	position: var(--playlist-item-positioning);
+	top: 0;
+	left: 0;
+	min-height: var(--playlist-track-min-height);
+	display: var(--playlist-track-display);
+}
+
+#sortable .trackgroup .track>div {
+	width: 100%;
+}
+
+#sortable .track>div>div.clickable {
+	margin-right: 8px;
+}
+
+
 
 /*
 =====================================================================

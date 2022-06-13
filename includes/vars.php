@@ -102,13 +102,17 @@ if (defined('IS_ROMONITOR')) {
 	// be set as a Cookie, so also set the clickmode here.
 	logger::mark("INIT", "Detecting browser...");
 	require_once('includes/Mobile_Detect.php');
+	$user_defaults = prefs::load_prefs_file('prefs/ui_defaults.var');
+	// Create a defaults aray that only contains skin and clickmode and
+	// only if they exist in the defaults file.
+	$user_defaults = array_intersect_key($user_defaults, ['skin' => null, 'clickmode' => 'double']);
 	$md = new Mobile_Detect;
 	if ($md->isMobile() || $md->isTablet() || $md->isiOS()) {
 		logger::info('INIT', 'Browser is a Mobile browser');
-		prefs::set_pref(['skin' => 'phone', 'clickmode' => 'single']);
+		prefs::set_pref(array_merge(['skin' => 'phone', 'clickmode' => 'single'], $user_defaults));
 	} else {
 		logger::info('INIT', 'Browser is a desktop browser or was not detected');
-		prefs::set_pref(['skin' => 'desktop', 'clickmode' => 'double']);
+		prefs::set_pref(array_merge(['skin' => 'desktop', 'clickmode' => 'double'], $user_defaults));
 	}
 }
 

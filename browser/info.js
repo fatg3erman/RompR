@@ -171,7 +171,7 @@ var browser = function() {
 					$("#button_source"+prefs.infosource).addClass("currentbun");
 				}
 				if (scrollto)
-					layoutProcessor.goToBrowserPanel(scrollto);
+					uihelper.goToBrowserPanel(scrollto);
 
 			} else {
 				history.push(cloneObject(hist));
@@ -225,7 +225,7 @@ var browser = function() {
 				},
 				true, {artist: true, album: true, track: true}, false, false
 			);
-			layoutProcessor.afterHistory();
+			uihelper.afterHistory();
 			browser.update_forward_back_buttons();
 		},
 
@@ -268,7 +268,7 @@ var browser = function() {
 		},
 
 		goToPlugin: function(id) {
-			layoutProcessor.goToBrowserPlugin(id);
+			uihelper.goToBrowserPlugin(id);
 		},
 
 		info_banner: function(data, source, close) {
@@ -305,7 +305,7 @@ var browser = function() {
 			var iw = main_pane.width();
 			if (prefs.hidebrowser || iw == 0) { return }
 
-			layoutProcessor.updateInfopaneScrollbars();
+			uiHelper.updateInfopaneScrollbars();
 
 			if (iw > 1280) {
 				main_pane.addClass('width_5').removeClass('width_1 width_2 width_3 width_4');

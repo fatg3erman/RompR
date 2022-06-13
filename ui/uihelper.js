@@ -277,8 +277,7 @@ jQuery.fn.insertArtistAfter = function(html) {
 
 jQuery.fn.addCustomScrollBar = function() {
 	return this.each(function() {
-		if ($('body').hasClass('mouseclick')) {
-			has_custom_scrollbars = true;
+		if (!uiHelper.is_touch_ui) {
 			$(this).mCustomScrollbar({
 				theme: "light-thick",
 				scrollInertia: 300,
@@ -319,12 +318,40 @@ jQuery.fn.doSomethingUseful = function(text) {
 	});
 }
 
+jQuery.fn.romprScrollTo = function(target) {
+	return this.each(function() {
+		if (uiHelper.is_touch_ui) {
+			$(this).scrollTo(target, 250, {easing: 'swing'});
+		} else {
+			$(this).mCustomScrollbar('update');
+			$(this).mCustomScrollbar(
+				'scrollTo',
+				target,
+				{
+					scrollInertia: 250,
+					easing: 'swing'
+				}
+			);
+		}
+	});
+}
+
 // Functions that could just be in layoutProcessor, but it makes maintenance easier
 // if we have a proxy like this so we don't have to add new stuff to every single skin.
 
 var uiHelper = function() {
 
+	function doSwipeCss() {
+		if (prefs.playlistswipe) {
+			set_css_variable('--playlist-right-icon', 'none');
+		} else {
+			set_css_variable('--playlist-right-icon', 'inline-block');
+		}
+	}
+
 	return {
+
+		is_touch_ui: false,
 
 		adjustLayout: async function() {
 			if (startBackgroundInitTasks.readytogo) {
@@ -394,19 +421,27 @@ var uiHelper = function() {
 		},
 
 		postPlaylistLoad: function() {
-			try {
-				return layoutProcessor.postPlaylistLoad();
-			} catch (err) {
-
+			if (uiHelper.is_touch_ui) {
+				if (prefs.playlistswipe) {
+					$('#sortable .track').playlistTouchWipe({});
+					$('#sortable .item').playlistTouchWipe({});
+				} else {
+					$('.trackgroup .icon-cancel-circled').each(function() {
+						var d = $('<i>', {class: 'icon-updown inline-icon fixed clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
+					});
+					$('.playlistalbum .icon-cancel-circled').each(function() {
+						var d = $('<i>', {class: 'icon-updown inline-icon expand clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
+					});
+				}
 			}
 		},
 
 		getElementPlaylistOffset: function(element) {
-			try {
-				return layoutProcessor.getElementPlaylistOffset(element);
-			} catch (err) {
-
+			var top = element.position().top;
+			if (element.parent().hasClass('trackgroup')) {
+				top += element.parent().position().top;
 			}
+			return top;
 		},
 
 		createPluginHolder: function(icon, title, id, panel) {
@@ -557,6 +592,56 @@ var uiHelper = function() {
 			}
 		},
 
+		updateInfopaneScrollbars: function() {
+			if (!uiHelper.is_touch_ui)
+				$('#infopane').mCustomScrollbar('update');
+		},
+
+		goToBrowserPanel: function(panel) {
+			$('#infopane').romprScrollTo('#'+panel+'information');
+		},
+
+		goToBrowserSection: function(section) {
+			try {
+				layoutProcessor.goToBrowserSection(section);
+			} catch (err) {
+				$('#infopane').romprScrollTo(section);
+			}
+		},
+
+		goToBrowserPlugin: function(panel) {
+			try {
+				layoutProcessor.goToBrowserPlugin(panel);
+			} catch (err) {
+				setTimeout( function() { uihelper.goToBrowserPanel(panel) }, 500);
+			}
+		},
+
+		afterHistory: function() {
+			try {
+				layoutProcessor.afterHistory();
+			} catch (err) {
+				browser.rePoint();
+				$('#infopane').romprScrollTo(0);
+			}
+		},
+
+		scrollPlaylistToCurrentTrack: function(scrollto, flag) {
+			if (flag && scrollto.length > 0) {
+				debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
+				if (uiHelper.is_touch_ui) {
+					var offset = 0 - ($(layoutProcessor.playlist_scroll_parent).outerHeight(true) / 2);
+					$(layoutProcessor.playlist_scroll_parent).scrollTo(scrollto, 250, {offset: {top: offset}, easing: 'swing'});
+				} else {
+					$(layoutProcessor.playlist_scroll_parent).mCustomScrollbar("stop");
+					$(layoutProcessor.playlist_scroll_parent).mCustomScrollbar("update");
+					var pospixels = Math.round(scrollto.position().top - ($(layoutProcessor.playlist_scroll_parent).height()/2));
+					pospixels = Math.min($("#sortable").parent().height(), Math.max(pospixels, 0));
+					$(layoutProcessor.playlist_scroll_parent).romprScrollTo(pospixels);
+				}
+			}
+		},
+
 		initialise: function() {
 			if (prefs.outputsvisible) {
 				try {
@@ -565,7 +650,13 @@ var uiHelper = function() {
 
 				}
 			}
-			if (layoutProcessor.supportsDragDrop) {
+			if (uiHelper.is_touch_ui) {
+				// Remove the mouse/keyboard related options from Prefs
+				$('.kbdbits').remove();
+				$('.albumart-holder').remove();
+				doSwipeCss();
+			} else {
+				$('.touchbits').remove();
 				setDraggable('#collection');
 				setDraggable('#filecollection');
 				setDraggable('#searchresultholder');
@@ -585,19 +676,15 @@ var uiHelper = function() {
 				$('#albumcover').on('dragover', infobar.albumImage.dragOver);
 				$('#albumcover').on('dragleave', infobar.albumImage.dragLeave);
 				$("#albumcover").on('drop', infobar.albumImage.handleDrop);
-				$("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
 				$(document).on('mouseenter', '.clearbox', makeHoverWork);
 				$(document).on('mouseleave', '.clearbox', makeHoverWork);
 				$(document).on('mousemove', '.clearbox', makeHoverWork);
 				$(document).on('mouseenter', '.combobox-entry', makeHoverWork);
 				$(document).on('mouseleave', '.combobox-entry', makeHoverWork);
 				$(document).on('mousemove', '.combobox-entry', makeHoverWork);
-				// $(document).on('mouseenter', '.tooltip', makeToolTip);
-				// $(document).on('mouseleave', '.tooltip', stopToolTip);
-			}
-			if (layoutProcessor.usesKeyboard) {
 				shortcuts.load();
 			}
+			$("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
 			$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
 			$('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add, placeholder: language.gettext('lastfm_addtagslabel')});
 			$(window).on('resize', uiHelper.adjustLayout);

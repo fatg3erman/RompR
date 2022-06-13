@@ -132,14 +132,22 @@ if (typeof(IntersectionObserver) == 'function') {
 
 $(document).ready(function(){
 	debug.mark("INIT","Document Ready Event has fired");
-	ipados_is_stoopid();
 	prefs.loadPrefs(carry_on_starting);
 });
 
-function ipados_is_stoopid() {
+function set_mouse_touch_flags() {
 	// Work around iPadOS announcing itself as a desktop browser
 	if (navigator.userAgent.includes("Mac") && "ontouchend" in document && $('body').hasClass('mouseclick')) {
 		$('body').removeClass('mouseclick').addClass('touchclick');
+	}
+	// Through a combination of the above hack (to catch the iPadOS stupidity case)
+	// and the initial setting done by Mobile_Detect when the body tag was created,
+	// If we have a touch-UI the body should have a class of touchclick.
+	// (If it doesn't then it should have mouseclick)
+	// Note that the historical reasons the Phone skin uses a caless of phone as well as touchclick
+	if ($('body').hasClass('touchclick') || $('body').hasClass('phone')) {
+		// Adjust desktop-oriented skins to run on touch devices
+		uiHelper.is_touch_ui = true;
 	}
 }
 
@@ -148,6 +156,7 @@ function carry_on_starting() {
 	if (typeof(IntersectionObserver) == 'function') {
 		debug.info('UI', 'IntersectionObserver is present and being used');
 	}
+	set_mouse_touch_flags();
 	sleepHelper.init();
 	$('#albumpicture').on('load', albumImageLoaded);
 	get_geo_country();

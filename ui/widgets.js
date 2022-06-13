@@ -249,9 +249,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 		var vbox = (this.options.scroll) ? $(this.options.scrollparent) : this.element;
 		this.bbox = {
 			left:   this.element.offset().left,
-			// top:    Math.max(vbox.offset().top, this.element.offset().top),
 			right:  this.element.offset().left + this.element.width(),
-			// bottom: Math.min(vbox.offset().top + vbox.height(), this.element.offset().top + this.element.height())
 			top:    vbox.offset().top,
 			bottom: vbox.offset().top + vbox.height()
 		}
@@ -1673,3 +1671,253 @@ $.widget('rompr.volumeControl', {
 	}
 
 });
+
+/* Touchwipe for playlist only, based on the more general jquery touchwipe */
+/*! jquery.touchwipe - v1.3.0 - 2015-01-08
+* Copyright (c) 2015 Josh Stafford; Licensed MIT */
+
+/* This version ignores all vertical swipes but adds a long press function
+   and uses the touchend event instead of a timer to make the action happen */
+
+jQuery.fn.playlistTouchWipe = function(settings) {
+
+	var config = {
+		min_move_x: 20,
+		min_move_y: 20,
+		swipeSpeed: 300,
+		swipeDistance: 120,
+		longPressTime: 1000,
+		preventDefaultEvents: false, // prevent default on swipe
+		preventDefaultEventsX: true, // prevent default is touchwipe is triggered on horizontal movement
+		preventDefaultEventsY: true // prevent default is touchwipe is triggered on vertical movement
+	};
+
+	if (settings) {
+		$.extend(config, settings);
+	}
+
+	this.each(function() {
+		var startX;
+		var startY;
+		var isMoving = false;
+		var touchesX = [];
+		var touchesY = [];
+		var self = this;
+		var starttime = 0;
+		var longpresstimer = null;
+		var pressing = false;
+
+		function cancelTouch() {
+			clearTimeout(longpresstimer);
+			this.removeEventListener('touchmove', onTouchMove);
+			this.removeEventListener('touchend', onTouchEnd);
+			startX = null;
+			startY = null;
+			isMoving = false;
+			pressing = false;
+		}
+
+		function onTouchEnd(e) {
+			var time = Date.now();
+			clearTimeout(longpresstimer);
+			if (pressing) {
+				e.stopImmediatePropagation();
+				e.stopPropagation();
+				e.preventDefault();
+				pressing = false;
+				setTimeout(bindPlaylistClicks, 500);
+			} else if (isMoving) {
+				var dx = touchesX.pop();
+				touchesX.push(dx);
+				if (time - starttime < config.swipeSpeed && dx > config.swipeDistance) {
+					touchesX.push($(self).outerWidth(true));
+					if ($(self).hasClass('item')) {
+						$(self).next().animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing');
+					}
+					$(self).animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing', doAction);
+				} else {
+					doAction();
+				}
+			}
+		}
+
+		function doAction() {
+			var dxFinal, dyFinal;
+			cancelTouch();
+			dxFinal = touchesX.pop();
+			touchesX = [];
+			if (dxFinal > ($(self).outerWidth(true)*0.75)) {
+				if ($(self).hasClass('track')) {
+					playlist.delete($(self).attr('romprid'));
+				} else if ($(self).hasClass('item')) {
+					playlist.deleteGroup($(self).attr('name'));
+				}
+			} else {
+				$(self).animate({left: 0}, 'fast', 'swing');
+				if ($(self).hasClass('item')) {
+					$(self).next().animate({left: 0}, 'fast', 'swing');
+				} else {
+					$(self).removeClass('highlighted');
+				}
+			}
+		}
+
+		function onTouchMove(e) {
+			clearTimeout(longpresstimer);
+			if(config.preventDefaultEvents) {
+				e.preventDefault();
+			}
+
+			if (isMoving) {
+				var x = e.touches[0].pageX;
+				var y = e.touches[0].pageY;
+				var dx = startX - x;
+				var dy = startY - y;
+
+				if (Math.abs(dx) >= config.min_move_x) {
+					if (config.preventDefaultEventsX) {
+						e.preventDefault();
+					}
+					var newpos = 0 - dx;
+					if (newpos < 0) {
+						$(self).css('left', newpos.toString()+'px');
+						if ($(self).hasClass('item')) {
+							$(self).next().css('left', newpos.toString()+'px');
+						} else {
+							$(self).addClass('highlighted');
+						}
+						touchesX.push(dx);
+					}
+				}
+			}
+		}
+
+		function longPress() {
+			debug.info("TOUCHWIPE","Long Press");
+			pressing = true;
+			// Unbind click handler from playlist, otherwise the touchend
+			// event makes it start playing the clicked track.
+			// Don't seem to be able to prevent the event propagating.
+			$(self).addBunnyEars();
+			unbindPlaylistClicks();
+		}
+
+		function onTouchStart(e) {
+			starttime = Date.now();
+			if (e.touches.length === 1) {
+				startX = e.touches[0].pageX;
+				startY = e.touches[0].pageY;
+				isMoving = true;
+				this.addEventListener('touchmove', onTouchMove, false);
+				this.addEventListener('touchend', onTouchEnd, false);
+				longpresstimer = setTimeout(longPress, config.longPressTime);
+			}
+		}
+
+		this.addEventListener('touchstart', onTouchStart, false);
+
+	});
+
+	return this;
+};
+
+jQuery.fn.touchStretch = function(settings) {
+
+	var config = {
+		min_move_x: 20,
+		min_move_y: 20,
+		preventDefaultEvents: false, // prevent default on swipe
+		preventDefaultEventsX: true, // prevent default is touchwipe is triggered on horizontal movement
+		preventDefaultEventsY: true, // prevent default is touchwipe is triggered on vertical movement
+		prefsitempercent: null
+	};
+
+	if (settings) {
+		$.extend(config, settings);
+	}
+
+	this.each(function() {
+		var start_touch_width;
+		var start_width;
+		var percentage;
+		var me = this;
+		var self = $('#sources');
+		var handlingtouch = [null, null];
+
+		function onStretchTouchEnd(e) {
+			debug.debug('TOUCHEND', e);
+			if (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].identifier == handlingtouch[0]) {
+				debug.trace('TOUCHEND', 'Touch 0 finixhed by 0');
+				e.preventDefault();
+				handlingtouch[0] = null;
+			}
+			if (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].identifier == handlingtouch[1]) {
+				debug.trace('TOUCHEND', 'Touch 1 finixhed by 1');
+				e.preventDefault();
+				handlingtouch[1] = null;
+			}
+			if (e.changedTouches && e.changedTouches[1] && e.changedTouches[1].identifier == handlingtouch[0]) {
+				debug.trace('TOUCHEND', 'Touch 0 finixhed by 1');
+				e.preventDefault();
+				handlingtouch[0] = null;
+			}
+			if (e.changedTouches && e.changedTouches[1] && e.changedTouches[1].identifier == handlingtouch[1]) {
+				debug.trace('TOUCHEND', 'Touch 1 finixhed by 1');
+				e.preventDefault();
+				handlingtouch[1] = null;
+			}
+			if (handlingtouch[0] == null && handlingtouch[1] == null) {
+				let pts = {};
+				pts[config.prefsitempercent] = percentage;
+				prefs.save(pts);
+			}
+		}
+
+		function onStretchTouchMove(e) {
+			if (e.touches.length == 1)
+				return;
+			if (e.touches[0].identifier == handlingtouch[0]
+				|| e.touches[0].identifier == handlingtouch[1]
+				|| e.touches[1].identifier == handlingtouch[0]
+				|| e.touches[1].identifier == handlingtouch[1]
+			) {
+				e.preventDefault();
+				var touch_width = Math.abs(e.touches[0].clientX - e.touches[1].clientX);
+				var width_change = touch_width - start_touch_width;
+				var new_panel_width = start_width + width_change;
+				var ws = getWindowSize();
+				percentage = ((new_panel_width/ws.x) * 100).toFixed(2);
+				self.css({width: percentage.toString()+'%'});
+				// debug.log('TOUCH',touch_width,width_change,new_panel_width,percentage);
+			}
+		}
+
+		function onStretchTouchStart(e) {
+			if (e.touches.length == 2 && handlingtouch[0] == null && handlingtouch[1] == null) {
+				var is_sources = false;
+				var target = $(event.target);
+				while (target.prop('id') != 'sources' && !target.is('body')) {
+					debug.log('POOP', target);
+					target = target.parent();
+				}
+				if (target.prop('id') == 'sources') {
+					e.preventDefault();
+					start_width = self.width();
+					start_touch_width = Math.abs(e.touches[0].clientX - e.touches[1].clientX);
+					handlingtouch[0] = e.touches[0].identifier;
+					handlingtouch[1] = e.touches[1].identifier;
+					// debug.log('TOUCH',start_width,start_touch_width);
+				}
+			}
+		}
+
+		this.ontouchstart = onStretchTouchStart;
+		this.ontouchmove = onStretchTouchMove;
+		this.ontouchend = onStretchTouchEnd;
+		this.ontouchcancel = onStretchTouchEnd;
+
+	});
+
+	return this;
+
+}

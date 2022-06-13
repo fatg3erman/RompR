@@ -363,10 +363,6 @@ button.spinable.icon-spin6 {
 	vertical-align:middle;
 }
 
-.prearranger {
-	display:none;
-}
-
 .invisibleicon {
 	display: block !important;
 	opacity: 0;
@@ -403,17 +399,6 @@ button.spinable.icon-spin6 {
 
 .dragmenu {
 	cursor:move;
-}
-
-.menuitem {
-	font-weight:bold;
-	margin:0px;
-	padding-left:0px;
-	padding-right:0px;
-	padding-top:2px;
-	padding-bottom:2px;
-	-webkit-box-align:center;
-	align-items: center;
 }
 
 .playlistitem.menuitem {

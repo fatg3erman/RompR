@@ -567,6 +567,18 @@ var prefs = function() {
 			if (callback) callback();
 		},
 
+		save_defaults: async function() {
+			debug.trace('PREFS', 'Saving default frontend prefs');
+			var to_send = {};
+			$.each(prefs, function(i, v) {
+				if (typeof(prefs[i]) != 'function') {
+					to_send[i] = v;
+				}
+			})
+			await $.post('api/saveprefs/ui_defaults.php', {prefs: JSON.stringify(to_send)});
+			infobar.notify('Defaults Have Been Saved');
+		},
+
 		togglePref: function(event) {
 			debug.debug("PREFS","Toggling",event);
 			var prefobj = new Object;

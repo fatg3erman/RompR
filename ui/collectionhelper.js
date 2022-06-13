@@ -338,7 +338,7 @@ var collectionHelper = function() {
 			// Otherwise we would have to reload the entire collection panel every time,
 			// which would cause any opened dropdowns to be mysteriously closed,
 			// which would just look shit.
-			debug.debug("COLLECTION","Update Display",rdata);
+			debug.debug("COLLECTION","Update Display",cloneObject(rdata));
 			if (rdata) {
 				clearTimeout(update_timer);
 				returned_data.push(rdata);

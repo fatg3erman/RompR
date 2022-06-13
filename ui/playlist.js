@@ -768,12 +768,8 @@ var playlist = function() {
 				nowplaying.newTrack(playlist.getCurrentTrack(), force);
 			}
 			playlist.doUpcomingCrap();
-			playlist.scrollToCurrentTrack();
+			uiHelper.scrollPlaylistToCurrentTrack(playlist.getCurrentTrackElement(), prefs.scrolltocurrent);
 			return $retval;
-		},
-
-		scrollToCurrentTrack: function() {
-			layoutProcessor.scrollPlaylistToCurrentTrack();
 		},
 
 		stopafter: function() {
@@ -900,9 +896,7 @@ var playlist = function() {
 			if (tracks !== null) {
 				tracks.detach().insertAfter(element);
 			}
-			var offsetnow = uiHelper.getElementPlaylistOffset(element);
-			var scrollnow = $('#pscroller').scrollTop();
-			$('#pscroller').scrollTop(scrollnow+offsetnow-startoffset);
+			uiHelper.scrollPlaylistToCurrentTrack(element, true);
 			popmovetimer = setTimeout(playlist.doPopMove, popmovetimeout);
 		},
 
@@ -921,9 +915,7 @@ var playlist = function() {
 			if (tracks !== null) {
 				tracks.detach().insertAfter(element);
 			}
-			var offsetnow = uiHelper.getElementPlaylistOffset(element);
-			var scrollnow = $('#pscroller').scrollTop();
-			$('#pscroller').scrollTop(scrollnow+offsetnow-startoffset);
+			uiHelper.scrollPlaylistToCurrentTrack(element, true);
 			popmovetimer = setTimeout(playlist.doPopMove, popmovetimeout);
 		},
 

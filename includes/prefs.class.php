@@ -211,6 +211,8 @@ class prefs {
 	private const COOKIEPREFS = [
 		'currenthost' => 'Default',
 		'player_backend' => null,
+		"browser_id" => null,
+
 		'clickmode' => 'double',
 		'skin' => null,
 		"sortbydate" => false,
@@ -219,7 +221,6 @@ class prefs {
 		"sortcollectionby" => 'artist',
 		"sortresultsby" => 'sameas',
 		"actuallysortresultsby" => 'artist',
-		"browser_id" => null,
 
 		// These are prefs that are set by daemon processes and are only of interest to those processes.
 		// We don't want to save them or set them as Cookies but we do want them restored after a load().
@@ -245,40 +246,9 @@ class prefs {
 
 		// Can't set a value in a constant using a function, so it has to be done here.
 		$cannot_init = ["last_lastfm_synctime" => time()];
-		$sp = [];
-
-		self::wait_for_unlock();
-
-		if (file_exists('prefs/prefs.var')) {
-			$fp = fopen('prefs/prefs.var', 'r');
-			if($fp) {
-				if (flock($fp, LOCK_EX)) {
-					$file = fread($fp, 32768);
-					if ($file === false) {
-						fclose($fp);
-						print '<h1>Fatal Error - Could not read the preferences file</h1>';
-						error_log("ERROR!              : COULD NOT LOAD PREFS");
-						exit(1);
-					}
-					flock($fp, LOCK_UN);
-					fclose($fp);
-
-					$sp = unserialize($file);
-					// Old prefs files might have values we've removed. This removes those values
-					$sp = array_intersect_key($sp, self::BACKEND_PREFS);
-
-				} else {
-					fclose($fp);
-					print '<h1>Fatal Error - Could not open the preferences file</h1>';
-					error_log("ERROR!              : COULD NOT GET READ LOCK ON PREFS FILE");
-					exit(1);
-				}
-			} else {
-				print '<h1>Fatal Error - Could not open the preferences file</h1>';
-				error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
-				exit(1);
-			}
-		}
+		$sp = self::load_prefs_file('prefs/prefs.var');
+		// Old prefs files might have values we've removed. This removes those values
+		$sp = array_intersect_key($sp, self::BACKEND_PREFS);
 
 		// Do this here rather than after building $prefs so we can use it right away.
 		// Slightly messy but I want the logging in the Cookie part
@@ -309,6 +279,42 @@ class prefs {
 
 		self::$prefs = array_replace(self::BACKEND_PREFS, $cannot_init, $sp, $cp, self::$session_prefs);
 
+	}
+
+	public static function load_prefs_file($filename) {
+		$sp = [];
+
+		self::wait_for_unlock();
+
+		if (file_exists($filename)) {
+			$fp = fopen($filename, 'r');
+			if($fp) {
+				if (flock($fp, LOCK_EX)) {
+					$file = fread($fp, 32768);
+					if ($file === false) {
+						fclose($fp);
+						print '<h1>Fatal Error - Could not read the preferences file</h1>';
+						error_log("ERROR!              : COULD NOT LOAD PREFS");
+						exit(1);
+					}
+					flock($fp, LOCK_UN);
+					fclose($fp);
+
+					$sp = unserialize($file);
+
+				} else {
+					fclose($fp);
+					print '<h1>Fatal Error - Could not open the preferences file</h1>';
+					error_log("ERROR!              : COULD NOT GET READ LOCK ON PREFS FILE");
+					exit(1);
+				}
+			} else {
+				print '<h1>Fatal Error - Could not open the preferences file</h1>';
+				error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
+				exit(1);
+			}
+		}
+		return $sp;
 	}
 
 	// Belt and braces locking approach. We've had issues with prefs being corrupted, despite
@@ -375,15 +381,14 @@ class prefs {
 		}
 	}
 
-	public static function save() {
-		$sp = array_diff_key(self::$prefs, self::COOKIEPREFS);
-		$ps = serialize($sp);
+	private static function save_prefs_file($to_save, $file) {
+		$ps = serialize($to_save);
 
 		self::wait_for_unlock();
 
 		self::lock_prefs();
 
-		$fp = fopen('prefs/prefs.var', 'w');
+		$fp = fopen($file, 'w');
 		if($fp) {
 			if (flock($fp, LOCK_EX)) {
 				ftruncate($fp, 0);
@@ -392,22 +397,35 @@ class prefs {
 				fclose($fp);
 				self::unlock();
 				if ($success === false) {
-					error_log("ERROR!              : COULD NOT SAVE PREFS");
+					error_log("ERROR!              : COULD NOT SAVE PREFS TO",$file);
 					exit(1);
 				}
 			} else {
 				fclose($fp);
 				print '<h1>Fatal Error - Could not write to the preferences file</h1>';
-				error_log("ERROR!              : COULD NOT GET WRITE LOCK ON PREFS FILE");
+				error_log("ERROR!              : COULD NOT GET WRITE LOCK ON PREFS FILE",$file);
 				self::unlock();
 				exit(1);
 			}
 		} else {
 			print '<h1>Fatal Error - Could not open the preferences file</h1>';
-			error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
+			error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE",$file);
 			self::unlock();
 			exit(1);
 		}
+	}
+
+	public static function save() {
+		$sp = array_diff_key(self::$prefs, self::COOKIEPREFS);
+		self::save_prefs_file($sp, 'prefs/prefs.var');
+	}
+
+	public static function save_ui_defaults($p) {
+		// We're sainvg cookie prefs so vars.php can initialise skin and clickmode
+		// We do NOT use cookieprefs values when loading the UI prefs
+		$valid = array_merge(self::BROWSER_PREFS, self::COOKIEPREFS);
+		$to_save = array_intersect_key($p, $valid);
+		self::save_prefs_file($to_save, 'prefs/ui_defaults.var');
 	}
 
 	// Get the prefs required for the UI.
@@ -416,7 +434,9 @@ class prefs {
 	public static function get_browser_prefs() {
 		$private_prefs = array_combine(self::PRIVATE_PREFS, array_fill(0, count(self::PRIVATE_PREFS), null));
 		$browser_prefs = array_diff_key(self::$prefs, $private_prefs);
-		$browser_prefs = array_merge($browser_prefs, self::BROWSER_PREFS);
+		$user_defaults = self::load_prefs_file('prefs/ui_defaults.var');
+		$user_defaults = array_intersect_key($user_defaults, self::BROWSER_PREFS);
+		$browser_prefs = array_merge($browser_prefs, self::BROWSER_PREFS, $user_defaults);
 		return $browser_prefs;
 	}
 
