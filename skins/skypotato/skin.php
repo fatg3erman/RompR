@@ -37,24 +37,6 @@ create_body_tag('desktop');
 		<div id="gronky" class="containerbox vertical fixed">
 			<!-- <div class="containerbox vertical fixed" id="righthandtop"></div> -->
 <?php
-			print '<div class="expand topdrop"><i class="icon-floppy smallpluginicon clickicon"></i>';
-?>
-				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen noscroll" id="plsaver">
-<?php
-					print uibits::ui_config_header([
-						'label' => 'button_saveplaylist',
-						'icon_size' => 'smallicon'
-					]);
-					print '<div class="containerbox vertical-centre">
-						<div class="expand">
-							<input class="enter clearbox" id="playlistname" type="text" size="200"/>
-						</div>';
-						print '<button class="fixed iconbutton savebutton"></button>
-					</div>';
-?>
-				</div>
-			</div>
-<?php
 			print '<div class="expand topdrop albumart-holder"><i title="'.language::gettext('button_albumart').'" class="icon-cd tooltip smallpluginicon clickicon open_albumart"></i></div>';
 			print '<div class="expand topdrop"><i class="icon-cog-alt smallpluginicon clickicon tooltip choose_prefs" title="'.language::gettext('button_prefs').'"></i>';
 ?>
@@ -265,6 +247,19 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 	<!-- Saved Playlists -->
 
 	<div id="playlistslist" class="invisible">
+		<?php
+		print uibits::ui_config_header([
+			'label' => 'button_saveplaylist',
+			'icon_size' => 'smallicon',
+			'title_class' => 'is-coverable'
+		]);
+		?>
+		<div class="containerbox vertical-centre" style="margin-bottom:4px;"><div class="fixed">
+		</div><div class="expand"><input class="enter clearbox" id="playlistname" type="text" size="200"/></div>
+		<?php
+		print '<button class="fixed iconbutton savebutton"></button>';
+		?>
+		</div>
 		<?php
 		print uibits::ui_config_header([
 			'label' => 'button_loadplaylist',

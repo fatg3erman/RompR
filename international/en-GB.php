@@ -90,11 +90,7 @@ language::add_translations([
 	"button_OK" =>							"OK",
 	"button_cancel" =>						"Cancel",
 	"error_playlistname" =>					"Playlist name cannot contain slashes",
-	"label_savedpl" =>						"Playlist save		self::ui_config_button([
-			'label' => 'manage_bgs',
-			'onclick' => 'prefs.manage_bg_images()'
-		]);
-d as %s",
+	"label_savedpl" =>						"Playlist saved as %s",
 
 	// Search Forms
 	"label_searchfor" =>					"Search For",

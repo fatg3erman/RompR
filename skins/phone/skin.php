@@ -177,7 +177,7 @@ create_body_tag('phone');
 		'title_class' => 'is-coverable'
 	]);
 	?>
-	<div class="containerbox vertical-centre is-coverable" ><div class="fixed">
+	<div class="containerbox vertical-centre is-coverable" style="margin-bottom:4px;"><div class="fixed">
 	</div><div class="expand"><input class="enter clearbox" id="playlistname" type="text" size="200"/></div>
 	<?php
 	print '<button class="fixed iconbutton savebutton"></button>';

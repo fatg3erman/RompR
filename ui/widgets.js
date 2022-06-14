@@ -1836,7 +1836,7 @@ jQuery.fn.touchStretch = function(settings) {
 	this.each(function() {
 		var start_touch_width;
 		var start_width;
-		var percentage;
+		var percentage= null;
 		var self;
 		var handlingtouch = [null, null];
 
@@ -1856,9 +1856,9 @@ jQuery.fn.touchStretch = function(settings) {
 					}
 				}
 			}
-			if (handlingtouch[0] == null && handlingtouch[1] == null && typeof(percentage) == 'number') {
+			if (handlingtouch[0] == null && handlingtouch[1] == null && percentage != null) {
 				let pts = {};
-				pts[self.prop('id')+'widthpercent'] = percentage;
+				pts[self.prop('id')+'widthpercent'] = parseFloat(percentage);
 				prefs.save(pts);
 			}
 		}
@@ -1895,6 +1895,7 @@ jQuery.fn.touchStretch = function(settings) {
 
 				e.preventDefault();
 				self = target;
+				percentage = null;
 				start_width = self.width();
 				start_touch_width = Math.abs(e.touches[0].clientX - e.touches[1].clientX);
 				handlingtouch[0] = e.touches[0].identifier;
