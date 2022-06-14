@@ -21,6 +21,8 @@ var playlist = function() {
 	var popmovetimer = null;
 	var popmoveelement = null;
 	var popmovetimeout = 2000;
+	var bunnytimeout = null;
+	var bunnyelement = null;
 
 	var timeleft = 0;
 	var remainingtime = null;
@@ -881,6 +883,7 @@ var playlist = function() {
 
 		moveTrackUp: function(element, event) {
 			clearTimeout(popmovetimer);
+			bunnyelement = null;
 			popmoveelement = element;
 			var startoffset = uiHelper.getElementPlaylistOffset(element);
 			var tracks = null;
@@ -900,6 +903,7 @@ var playlist = function() {
 
 		moveTrackDown: function(element, event) {
 			clearTimeout(popmovetimer);
+			bunnyelement = null;
 			popmoveelement = element;
 			var startoffset = uiHelper.getElementPlaylistOffset(element);
 			var tracks = null;
@@ -928,11 +932,27 @@ var playlist = function() {
 		},
 
 		getCurrentTrackElement: function() {
-			var scrollto = $('#sortable .playlistcurrentitem');
-			// if (!scrollto.is(':visible')) {
-			// 	scrollto = scrollto.parent().prev();
-			// }
-			return scrollto;
+			return $('#sortable .playlistcurrentitem');
+		},
+
+		// This is just here to remove the bunny ears if someone does a long press
+		// and then changes their mind.
+		startBunnyTimeout: function(element) {
+			clearTimeout(bunnytimeout);
+			bunnyelement = element;
+			bunnytimeout = setTimeout(playlist.cancelBunnyEars, popmovetimeout*2);
+		},
+
+		cancelBunnyEars: function() {
+			if (bunnyelement != null) {
+				bunnyelement.removeBunnyEars();
+				// Removebunnyears doesn't unhide the trackgroup
+				// I'm not sure why and I don't want to find out.
+				if (bunnyelement.hasClass('item'))
+					bunnyelement.next().slideDown('fast');
+
+				bunnyelement = null;
+			}
 		}
 
 	}

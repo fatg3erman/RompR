@@ -1799,6 +1799,7 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 			// event makes it start playing the clicked track.
 			// Don't seem to be able to prevent the event propagating.
 			$(self).addBunnyEars();
+			playlist.startBunnyTimeout($(self));
 			unbindPlaylistClicks();
 		}
 

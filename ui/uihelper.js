@@ -186,10 +186,14 @@ jQuery.fn.addBunnyEars = function() {
 			$(this).removeBunnyEars();
 		} else {
 			var w = $(this).outerWidth(true);
-			var up = $('<div>', { class: 'playlistup containerbox clickplaylist'}).prependTo($(this));
-			up.html('<i class="icon-increase medicon expand"></i>').css('width', w+'px');
-			var down = $('<div>', { class: 'playlistdown containerbox clickplaylist'}).appendTo($(this));
-			down.html('<i class="icon-decrease medicon expand"></i>').css('width', w+'px');
+			var prepto = $(this);
+			if ($(this).hasClass('item'))
+				prepto = prepto.children().first();
+
+			var up = $('<div>', { class: 'playlistup containerbox clickplaylist vertical-centre'}).prependTo(prepto);
+			up.html('<i class="icon-increase medicon expand"></i>').css('width', Math.round(w/3)+'px');
+			var down = $('<div>', { class: 'playlistdown containerbox clickplaylist vertical-centre'}).appendTo(prepto);
+			down.html('<i class="icon-decrease medicon expand"></i>').css('width', Math.round(w/3)+'px');
 			$(this).addClass('highlighted');
 			if ($(this).hasClass('item')) {
 				$(this).next().addClass('highlighted').slideUp('fast');
