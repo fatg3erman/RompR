@@ -194,7 +194,7 @@ jQuery.fn.addBunnyEars = function() {
 			up.html('<i class="icon-increase medicon expand"></i>').css('width', Math.round(w/3)+'px');
 			var down = $('<div>', { class: 'playlistdown containerbox clickplaylist vertical-centre'}).appendTo(prepto);
 			down.html('<i class="icon-decrease medicon expand"></i>').css('width', Math.round(w/3)+'px');
-			$(this).addClass('highlighted');
+			$(this).addClass('highlighted bunnyears');
 			if ($(this).hasClass('item')) {
 				$(this).next().addClass('highlighted').slideUp('fast');
 			}
@@ -203,18 +203,14 @@ jQuery.fn.addBunnyEars = function() {
 }
 
 jQuery.fn.hasBunnyEars = function() {
-	if ($(this).find('.playlistup').length > 0) {
-		return true;
-	} else {
-		return false;
-	}
+	return ($(this).hasClass('bunnyears'));
 }
 
 jQuery.fn.removeBunnyEars = function() {
 	this.each(function() {
 		$(this).find('.playlistup').remove();
 		$(this).find('.playlistdown').remove();
-		$(this).removeClass('highlighted');
+		$(this).removeClass('highlighted bunnyears');
 		if ($(this).hasClass('item')) {
 			$(this).next().removeClass('highlighted');
 		}

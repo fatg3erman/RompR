@@ -284,8 +284,14 @@ class collection_radio extends database {
 	}
 
 	private function getAveragePlays() {
-		$avgplays = $this->simple_query('AVG(Playcount)', 'Playcounttable', null, null, 0);
-		return round($avgplays, 0, PHP_ROUND_HALF_DOWN);
+		$avgplays = $this->generic_sql_query('SELECT AVG(Playcount) AS average FROM Playcounttable');
+		if (count($avgplays) > 0) {
+			$poo = round($avgplays[0]['average'], 0, PHP_ROUND_HALF_DOWN);
+			logger::log('AVERAGE', 'Average Playcount is', $poo);
+			return $poo;
+		} else {
+			return 0;
+		}
 	}
 
 }

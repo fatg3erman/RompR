@@ -620,9 +620,6 @@ var layoutProcessor = function() {
 			infobar.rejigTheText();
 			browser.rePoint();
 			$('.top_drop_menu').fanoogleMenus();
-			if (prefs.sourceswidthpercent < 27 && $('body').hasClass('touchclick'))
-				prefs.save({sourceswidthpercent: 27});
-			setBottomPanelWidths();
 		},
 
 		displayCollectionInsert: function(details) {
@@ -845,16 +842,18 @@ var layoutProcessor = function() {
 					// Do it on a timer so (a) We don't spam last.fm with requests if we're clcking rapidly through artists
 					// (b) When we get here the div we're looking for isn't visible and so it can't be found
 					// (I'm not even sure it's been created by this point, I've forgotten how this works)
-					debug.log('POSTALBUMMENU', 'Artist', found[1], found[2]);
-					var name = $('#'+element.attr('name')).children('.configtitle').first().find('b').first().html();
-					debug.log('POSTALBUMMENU', 'Artist name',htmlspecialchars_decode(name));
-					var divname = 'potato_'+found[1]+'artist_'+found[2];
-					var destdiv = $('<div>',
-						{   class: 'collectionitem fixed masonry_opened dropshadow invisible',
-							style: 'width: 98%',
-							id: divname
-						}).appendTo($('#'+element.attr('name')));
+					// debug.log('POSTALBUMMENU', 'Artist', found[1], found[2]);
+					var name = htmlspecialchars_decode($('#'+element.attr('name')).children('.configtitle').first().find('b').first().html());
+					debug.log('POSTALBUMMENU', 'Artist name',name);
 					if (prefs.artistsatstart.indexOf(name) == -1) {
+						var divname = 'potato_'+found[1]+'artist_'+found[2];
+						var destdiv = $('<div>',
+							{   class: 'collectionitem fixed masonry_opened dropshadow invisible',
+								style: 'width: 98%',
+								id: divname
+							}
+						).appendTo($('#'+element.attr('name')));
+
 						lastfm.artist.getInfo({artist: name},
 							layoutProcessor.artistInfo,
 							layoutProcessor.artistInfoError,
@@ -865,7 +864,7 @@ var layoutProcessor = function() {
 			}
 		},
 
-		artistInfo: function(data, reqid) {
+		artistInfo: async function(data, reqid) {
 			if (data && !data.error) {
 				var lfmdata = new lfmDataExtractor(data.artist);
 				$('#'+reqid).html(lastfm.formatBio(lfmdata.bio(), lfmdata.url())).fadeIn('fast');
