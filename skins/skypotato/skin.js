@@ -203,6 +203,7 @@ jQuery.fn.isClosed = function() {
 jQuery.fn.animatePanel = function(options) {
 	var settings = $.extend({},options);
 	var panel = this.attr("id");
+	debug.log('UI', 'Animating Panel',panel,settings);
 	this.css('width', settings[panel]+'%');
 }
 
@@ -473,7 +474,7 @@ var layoutProcessor = function() {
 		goToBrowserPlugin: function(panel) {
 			uiHelper.sourceControl('pluginholder');
 			setTimeout(function() {
-				layoutProcessor.goToBrowserPanel(panel);
+				uiHelper.goToBrowserPanel(panel);
 			}, 500);
 		},
 
@@ -754,9 +755,7 @@ var layoutProcessor = function() {
 			$("#sortable").disableSelection();
 			if (uiHelper.is_touch_ui) {
 
-				$(document).touchStretch({
-					prefsitempercent: 'sourceswidthpercent'
-				});
+				$(document).touchStretch({});
 
 			} else {
 	            $("#sortable").acceptDroppedTracks({

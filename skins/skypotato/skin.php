@@ -108,15 +108,15 @@ create_body_tag('desktop');
 				'" id="volumecontrol" class="tooltip expand containerbox vertical"><div id="volume" class="expand"></div></div>';
 			if (count($outputdata) == 1) {
 				// There's only one output so we'll treat it like a Mute button
-				print '<div class="tooltip fixed" title="'.$outputdata[0]['outputname'].'" style="height:18px">';
+				// print '<div class="tooltip fixed" title="'.$outputdata[0]['outputname'].'" style="height:18px">';
 				$f = ($outputdata[0]['outputname'] == "Mute") ? 0 : 1;
 				$c = ($outputdata[0]['outputenabled'] == $f) ? 'icon-output' : 'icon-output-mute';
-				print '<i id="mutebutton" onclick="player.controller.doMute()" class="'.$c.' outhack clickicon"></i>';
-				print '</div>';
+				print '<i id="mutebutton" onclick="player.controller.doMute()" class="'.$c.' outhack clickicon fixed"></i>';
+				// print '</div>';
 			} else {
-				print '<div class="tooltip fixed" title="'.language::gettext('config_audiooutputs').'" style="height:18px">';
-				print '<i id="mutebutton" onclick="layoutProcessor.toggleAudioOutpts()" class="icon-sliders outhack clickicon"></i>';
-				print '</div>';
+				// print '<div class="tooltip fixed" title="'.language::gettext('config_audiooutputs').'" style="height:18px">';
+				print '<i id="mutebutton" onclick="layoutProcessor.toggleAudioOutpts()" class="icon-sliders outhack clickicon fixed"></i>';
+				// print '</div>';
 			}
 		print '</div>';
 		print '</div>';
@@ -155,7 +155,7 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 	</div>
 </div>
 
-<div id="sources" class="column noborder fixed">
+<div id="sources" class="column noborder fixed resizable">
 
 	<!-- Music Collection -->
 

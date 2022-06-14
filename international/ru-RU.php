@@ -531,7 +531,6 @@ language::add_translations([
 	"config_playerintitlebar" =>			"Паказывать имя плеера в Titlebar",
 	"label_communityradio" =>				"Community Radio Browser",
 	"label_volume" =>						"Громкость",
-	"config_playlistswipe" =>				"Проведите по экрану для удаления дорожек из текущего списка воспроизведения",
 	"button_debuginfo" =>					"Отладочная информация",
 	"config_podcast_defaults" =>			"Параметры по умолчанию для новых подкастов",
 	"config_marknewasunlistened" =>			"Отметить новые эпизоды как незарегистрированные перед обновлением",

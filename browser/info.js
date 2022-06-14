@@ -268,7 +268,7 @@ var browser = function() {
 		},
 
 		goToPlugin: function(id) {
-			uihelper.goToBrowserPlugin(id);
+			uiHelper.goToBrowserPlugin(id);
 		},
 
 		info_banner: function(data, source, close) {

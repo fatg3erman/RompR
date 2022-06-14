@@ -342,11 +342,7 @@ jQuery.fn.romprScrollTo = function(target) {
 var uiHelper = function() {
 
 	function doSwipeCss() {
-		if (prefs.playlistswipe) {
-			set_css_variable('--playlist-right-icon', 'none');
-		} else {
-			set_css_variable('--playlist-right-icon', 'inline-block');
-		}
+		set_css_variable('--playlist-right-icon', 'none');
 	}
 
 	return {
@@ -422,17 +418,8 @@ var uiHelper = function() {
 
 		postPlaylistLoad: function() {
 			if (uiHelper.is_touch_ui) {
-				if (prefs.playlistswipe) {
-					$('#sortable .track').playlistTouchWipe({});
-					$('#sortable .item').playlistTouchWipe({});
-				} else {
-					$('.trackgroup .icon-cancel-circled').each(function() {
-						var d = $('<i>', {class: 'icon-updown inline-icon fixed clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
-					});
-					$('.playlistalbum .icon-cancel-circled').each(function() {
-						var d = $('<i>', {class: 'icon-updown inline-icon expand clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
-					});
-				}
+				$('#sortable .track').playlistTouchWipe({});
+				$('#sortable .item').playlistTouchWipe({});
 			}
 		},
 

@@ -480,8 +480,6 @@ var playlist = function() {
 				playlist.moveTrackUp(clickedElement.findPlParent(), event);
 			} else if (clickedElement.hasClass("playlistdown")) {
 				playlist.moveTrackDown(clickedElement.findPlParent(), event);
-			} else if (clickedElement.hasClass('rearrange_playlist')) {
-				clickedElement.findPlParent().addBunnyEars();
 			}
 		},
 

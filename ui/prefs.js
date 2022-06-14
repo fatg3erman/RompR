@@ -660,7 +660,6 @@ var prefs = function() {
 					callback = infobar.forceTitleUpdate;
 					break;
 
-				case "playlistswipe":
 				case "hide_master_volume":
 					callback = reloadWindow;
 					break;

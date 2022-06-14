@@ -451,9 +451,36 @@ button.spinable.icon-spin6 {
 }
 
 .outhack {
-	width:14px;
-	height:14px;
+	width:16px;
+	height:16px;
 	margin-top:2px;
+}
+
+body.touchclick .outhack {
+	width:18px;
+	height:18px;
+	margin-top:2px;
+}
+
+body.touchclick #volumecontrol {
+	width: 18px;
+}
+
+body.touchclick .progressbar_v {
+	width: 16px;
+}
+
+#snapcast-secondary {
+	padding-right: 0px;
+	margin-right: 0px;
+}
+
+body.touchclick .snap_vert_holder {
+	margin-right: 4px;
+}
+
+body.touchclick .snap_vert_holder:last-child {
+	margin-right: 0px;
 }
 
 .cshrinker {
@@ -685,7 +712,7 @@ div[id^=dirholder]>div.clicktrack.line {
 	width: 100%;
 }
 
-.collectionitem {
+.collectionitem:not(.collection_spacer) {
 	box-sizing:border-box;
 	border: 4px solid transparent;
 	/*transition: width 0.5s ease;*/

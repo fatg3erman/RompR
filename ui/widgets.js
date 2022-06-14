@@ -1826,10 +1826,6 @@ jQuery.fn.touchStretch = function(settings) {
 	var config = {
 		min_move_x: 20,
 		min_move_y: 20,
-		preventDefaultEvents: false, // prevent default on swipe
-		preventDefaultEventsX: true, // prevent default is touchwipe is triggered on horizontal movement
-		preventDefaultEventsY: true, // prevent default is touchwipe is triggered on vertical movement
-		prefsitempercent: null
 	};
 
 	if (settings) {
@@ -1840,47 +1836,42 @@ jQuery.fn.touchStretch = function(settings) {
 		var start_touch_width;
 		var start_width;
 		var percentage;
-		var me = this;
-		var self = $('#sources');
+		var self;
 		var handlingtouch = [null, null];
 
 		function onStretchTouchEnd(e) {
 			debug.debug('TOUCHEND', e);
-			if (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].identifier == handlingtouch[0]) {
-				debug.trace('TOUCHEND', 'Touch 0 finixhed by 0');
-				e.preventDefault();
-				handlingtouch[0] = null;
+			if (e.changedTouches && typeof(e.changedTouches) == 'object') {
+				for (let ct of e.changedTouches) {
+					if (ct.identifier == handlingtouch[0]) {
+						debug.trace('TOUCHEND', 'Touch 0 finixhed');
+						e.preventDefault();
+						handlingtouch[0] = null;
+					}
+					if (ct.identifier == handlingtouch[1]) {
+						debug.trace('TOUCHEND', 'Touch 1 finixhed');
+						e.preventDefault();
+						handlingtouch[1] = null;
+					}
+				}
 			}
-			if (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].identifier == handlingtouch[1]) {
-				debug.trace('TOUCHEND', 'Touch 1 finixhed by 1');
-				e.preventDefault();
-				handlingtouch[1] = null;
-			}
-			if (e.changedTouches && e.changedTouches[1] && e.changedTouches[1].identifier == handlingtouch[0]) {
-				debug.trace('TOUCHEND', 'Touch 0 finixhed by 1');
-				e.preventDefault();
-				handlingtouch[0] = null;
-			}
-			if (e.changedTouches && e.changedTouches[1] && e.changedTouches[1].identifier == handlingtouch[1]) {
-				debug.trace('TOUCHEND', 'Touch 1 finixhed by 1');
-				e.preventDefault();
-				handlingtouch[1] = null;
-			}
-			if (handlingtouch[0] == null && handlingtouch[1] == null) {
+			if (handlingtouch[0] == null && handlingtouch[1] == null && typeof(percentage) == 'number') {
 				let pts = {};
-				pts[config.prefsitempercent] = percentage;
+				pts[self.prop('id')+'widthpercent'] = percentage;
 				prefs.save(pts);
 			}
 		}
 
 		function onStretchTouchMove(e) {
-			if (e.touches.length == 1)
+			if (e.touches.length != 2)
 				return;
-			if (e.touches[0].identifier == handlingtouch[0]
-				|| e.touches[0].identifier == handlingtouch[1]
-				|| e.touches[1].identifier == handlingtouch[0]
-				|| e.touches[1].identifier == handlingtouch[1]
-			) {
+			var ids = [];
+			for (let t of e.touches) {
+				ids.push(t.identifier);
+			}
+			// This checks to see if either of the arrays have any elements in common
+			// No, I don't know how it works.
+			if (handlingtouch.some(item => ids.includes(item))) {
 				e.preventDefault();
 				var touch_width = Math.abs(e.touches[0].clientX - e.touches[1].clientX);
 				var width_change = touch_width - start_touch_width;
@@ -1894,20 +1885,19 @@ jQuery.fn.touchStretch = function(settings) {
 
 		function onStretchTouchStart(e) {
 			if (e.touches.length == 2 && handlingtouch[0] == null && handlingtouch[1] == null) {
-				var is_sources = false;
 				var target = $(event.target);
-				while (target.prop('id') != 'sources' && !target.is('body')) {
-					debug.log('POOP', target);
+				while (!target.hasClass('resizable') && !target.is('body')) {
 					target = target.parent();
 				}
-				if (target.prop('id') == 'sources') {
-					e.preventDefault();
-					start_width = self.width();
-					start_touch_width = Math.abs(e.touches[0].clientX - e.touches[1].clientX);
-					handlingtouch[0] = e.touches[0].identifier;
-					handlingtouch[1] = e.touches[1].identifier;
-					// debug.log('TOUCH',start_width,start_touch_width);
-				}
+				if (target.is('body'))
+					return;
+
+				e.preventDefault();
+				self = target;
+				start_width = self.width();
+				start_touch_width = Math.abs(e.touches[0].clientX - e.touches[1].clientX);
+				handlingtouch[0] = e.touches[0].identifier;
+				handlingtouch[1] = e.touches[1].identifier;
 			}
 		}
 

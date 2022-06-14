@@ -61,8 +61,6 @@ class prefspanel extends uibits {
 		print '</div>';
 
 		// =======================================================
-
-		// =======================================================
 		//
 		// Skin
 		//
@@ -351,67 +349,6 @@ class prefspanel extends uibits {
 
 		// =======================================================
 		//
-		// Smart Radio
-		//
-		// =======================================================
-		print self::ui_config_header([
-			'label' => 'label_pluginplaylists',
-			'lefticon' => 'icon-wifi'
-		]);
-		self::ui_textentry([
-			'label' => 'config_smart_chunksize',
-			'id' => 'smartradio_chunksize',
-			'size' => 4,
-			'type' => 'number'
-		]);
-
-		// =======================================================
-		//
-		// Last.FM
-		//
-		// =======================================================
-		print self::ui_config_header([
-			'main_icon' => 'icon-lastfm-logo'
-		]);
-
-		print '<div class="pref">'.language::gettext('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
-			'<input name="lfmuser" type="text" size="30" value="'.prefs::get_pref('lastfm_user').'"/>'.
-			'</div><button id="lastfmloginbutton" class="fixed notenabled">'.language::gettext('config_loginbutton').
-			'</button></div>';
-		print '</div>';
-
-		self::ui_checkbox(['id' => 'lastfm_autocorrect', 'label' => 'config_autocorrect']);
-		self::ui_checkbox(['id' => 'sync_lastfm_playcounts', 'label' => 'config_lastfm_playcounts', 'class' => 'lastfmlogin-required']);
-		self::ui_checkbox(['id' => 'sync_lastfm_at_start', 'label' => 'config_sync_lastfm_playcounts', 'class' => 'lastfmlogin-required']);
-		self::ui_checkbox(['id' => 'lastfm_scrobbling', 'label' => 'config_scrobbling', 'class' => 'lastfmlogin-required']);
-		self::ui_checkbox(['id' => 'synctags', 'label' => 'config_synctags', 'class' => 'lastfmlogin-required']);
-
-		print '<div class="pref lastfmlogin-required">'.language::gettext('config_scrobblepercent').'<br/>
-		<div id="scrobwrangler"></div>
-		</div>';
-
-		self::ui_textentry([
-			'label' => 'config_tagloved',
-			'id' => 'autotagname',
-			'class' => 'lastfmlogin-required'
-		]);
-
-		self::ui_select_box([
-			'id' => 'synclovevalue',
-			'label' => language::gettext('config_loveis'),
-			'class' => 'lastfmlogin-required',
-			'options' => [
-				0 => 'Nothing',
-				1 => '1 '.language::gettext('star'),
-				2 => '2 '.language::gettext('stars'),
-				3 => '3 '.language::gettext('stars'),
-				4 => '4 '.language::gettext('stars'),
-				5 => '5 '.language::gettext('stars')
-			]
-		]);
-
-		// =======================================================
-		//
 		// Collection Options
 		//
 		// =======================================================
@@ -547,6 +484,67 @@ class prefspanel extends uibits {
 		]);
 
 		self::ui_checkbox(['id' => 'podcast_mark_new_as_unlistened', 'label' => 'config_marknewasunlistened']);
+
+		// =======================================================
+		//
+		// Smart Radio
+		//
+		// =======================================================
+		print self::ui_config_header([
+			'label' => 'label_pluginplaylists',
+			'lefticon' => 'icon-wifi'
+		]);
+		self::ui_textentry([
+			'label' => 'config_smart_chunksize',
+			'id' => 'smartradio_chunksize',
+			'size' => 4,
+			'type' => 'number'
+		]);
+
+		// =======================================================
+		//
+		// Last.FM
+		//
+		// =======================================================
+		print self::ui_config_header([
+			'main_icon' => 'icon-lastfm-logo'
+		]);
+
+		print '<div class="pref">'.language::gettext('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
+			'<input name="lfmuser" type="text" size="30" value="'.prefs::get_pref('lastfm_user').'"/>'.
+			'</div><button id="lastfmloginbutton" class="fixed notenabled">'.language::gettext('config_loginbutton').
+			'</button></div>';
+		print '</div>';
+
+		self::ui_checkbox(['id' => 'lastfm_autocorrect', 'label' => 'config_autocorrect']);
+		self::ui_checkbox(['id' => 'sync_lastfm_playcounts', 'label' => 'config_lastfm_playcounts', 'class' => 'lastfmlogin-required']);
+		self::ui_checkbox(['id' => 'sync_lastfm_at_start', 'label' => 'config_sync_lastfm_playcounts', 'class' => 'lastfmlogin-required']);
+		self::ui_checkbox(['id' => 'lastfm_scrobbling', 'label' => 'config_scrobbling', 'class' => 'lastfmlogin-required']);
+		self::ui_checkbox(['id' => 'synctags', 'label' => 'config_synctags', 'class' => 'lastfmlogin-required']);
+
+		print '<div class="pref lastfmlogin-required">'.language::gettext('config_scrobblepercent').'<br/>
+		<div id="scrobwrangler"></div>
+		</div>';
+
+		self::ui_textentry([
+			'label' => 'config_tagloved',
+			'id' => 'autotagname',
+			'class' => 'lastfmlogin-required'
+		]);
+
+		self::ui_select_box([
+			'id' => 'synclovevalue',
+			'label' => language::gettext('config_loveis'),
+			'class' => 'lastfmlogin-required',
+			'options' => [
+				0 => 'Nothing',
+				1 => '1 '.language::gettext('star'),
+				2 => '2 '.language::gettext('stars'),
+				3 => '3 '.language::gettext('stars'),
+				4 => '4 '.language::gettext('stars'),
+				5 => '5 '.language::gettext('stars')
+			]
+		]);
 
 		// =======================================================
 		//

@@ -532,7 +532,6 @@ language::add_translations([
 	//"config_playerintitlebar" =>			"Show Player Name in Titlebar",
 	//"label_communityradio" =>				"Community Radio Browser",
 	//"label_volume" =>						"Volume",
-	//"config_playlistswipe" =>				"Swipe to remove tracks from Current Playlist",
 	//"button_debuginfo" =>					"Debug Information",
 	//"config_podcast_defaults" =>			"Default Options For New Podcasts",
 	//"config_marknewasunlistened" =>		"Mark New Episodes as Unlistened Before Refresh",

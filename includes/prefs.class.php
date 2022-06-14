@@ -181,7 +181,6 @@ class prefs {
 		"sortwishlistby" => 'artist',
 		"player_in_titlebar" => false,
 
-		"playlistswipe" => true,
 		"use_albumart_in_playlist" => true,
 		"bgimgparms" => ['dummy' => 'baby'],
 		'playlistbuttons_isopen' => false,

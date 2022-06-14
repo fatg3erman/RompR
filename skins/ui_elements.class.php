@@ -700,11 +700,8 @@ class ui_elements {
 	}
 
 	public static function prefs_touch_options() {
-		print '<div class="touchbits">';
-		self::ui_checkbox(['id' => 'playlistswipe', 'label' => 'config_playlistswipe']);
-		print '</div>';
-	}
 
+	}
 
 	public static function resume_bar($pos, $length, $name, $uri, $type) {
 		print '<input type="hidden" class="resumepos" value="'.$pos.'" />';

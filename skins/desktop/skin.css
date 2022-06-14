@@ -336,9 +336,36 @@ i.topdrop
 }
 
 .outhack {
-	width:14px;
-	height:14px;
+	width:16px;
+	height:16px;
 	margin-top:2px;
+}
+
+body.touchclick .outhack {
+	width:18px;
+	height:18px;
+	margin-top:2px;
+}
+
+body.touchclick #volumecontrol {
+	width: 18px;
+}
+
+body.touchclick .progressbar_v {
+	width: 16px;
+}
+
+#snapcast-secondary {
+	padding-right: 0px;
+	margin-right: 0px;
+}
+
+body.touchclick .snap_vert_holder {
+	margin-right: 4px;
+}
+
+body.touchclick .snap_vert_holder:last-child {
+	margin-right: 0px;
 }
 
 .cshrinker {

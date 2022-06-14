@@ -230,7 +230,6 @@ var layoutProcessor = function() {
 
 		sortFaveRadios: false,
 		openOnImage: true,
-		swipewason: prefs.playlistswipe,
 		playlist_scroll_parent: '#pscroller',
 
 		changeCollectionSortMode: function() {
