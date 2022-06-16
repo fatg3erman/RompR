@@ -4,7 +4,9 @@ jQuery.fn.animatePanel = function(options) {
 	var panel = this.attr("id");
 	var opanel = panel;
 	panel = panel.replace(/controls/,'');
-	if (settings[panel] > 0 && this.is(':hidden')) {
+	// MUST use hide() and show() because I think mCustomScrollbar is adding a display: none
+	// when width is 0%. Something is, anyway. And it's adding it to the OTHER panel
+	if (settings[panel] > 0 && !this.is(':visible')) {
 		this.show();
 	}
 	this.animate({width: settings[panel]+"%"},
@@ -13,14 +15,13 @@ jQuery.fn.animatePanel = function(options) {
 			always: function() {
 				if (settings[panel] == 0) {
 					$(this).hide();
-				} else {
-					if (opanel == "infopane") browser.rePoint();
-					if (opanel.match(/controls/)) {
-						var i = (prefs.sourceshidden) ? "icon-angle-double-right" : "icon-angle-double-left";
-						$("#expandleft").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
-						i = (prefs.playlisthidden) ? "icon-angle-double-left" : "icon-angle-double-right";
-						$("#expandright").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
-					}
+				}
+				// if (opanel == "infopane") browser.rePoint();
+				if (opanel.match(/controls/)) {
+					var i = (prefs.sourceshidden) ? "icon-angle-double-right" : "icon-angle-double-left";
+					$("#expandleft").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
+					i = (prefs.playlisthidden) ? "icon-angle-double-left" : "icon-angle-double-right";
+					$("#expandright").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
 				}
 			}
 		}
@@ -38,47 +39,31 @@ var layoutProcessor = function() {
 	}
 
 	function setBottomPanelWidths() {
-		var widths = getPanelWidths();
-		$("#sources").css("width", widths.sources+"%");
-		$("#sourcescontrols").css("width", widths.sources+"%");
-		$("#infopane").css("width", widths.infopane+"%");
-		$("#infopanecontrols").css("width", widths.infopane+"%");
-		$("#playlist").css("width", widths.playlist+"%");
-		$("#playlistcontrols").css("width", widths.playlist+"%");
+		layoutProcessor.setPanelCss(getPanelWidths());
 	}
 
 	function getPanelWidths() {
 		var sourcesweight = (prefs.sourceshidden) ? 0 : 1;
 		var playlistweight = (prefs.playlisthidden) ? 0 : 1;
-		var browserweight = (prefs.hidebrowser) ? 0 : 1;
 		var sourceswidth = prefs.sourceswidthpercent*sourcesweight;
 		var playlistwidth = prefs.playlistwidthpercent*playlistweight;
-		var browserwidth = (100 - sourceswidth - playlistwidth)*browserweight;
-		if (browserwidth < 0) browserwidth = 0;
-		return ({infopane: browserwidth, sources: sourceswidth, playlist: playlistwidth});
+		return ({sources: sourceswidth, playlist: playlistwidth});
 	}
 
 	function animatePanels() {
 		var widths = getPanelWidths();
-		widths.speed = { sources: 400, playlist: 400, infopane: 400 };
-		// Ensure that the playlist and playlistcontrols don't get pushed off the edge
-		if ($("#playlist").is(':hidden')) {
-			var w = $("#infopane").width();
-			w -= 12;
-			$("#infopane").css({width: w+"px"});
-			$("#infopanecontrols").css({width: w+"px"});
+		widths.speed = { sources: 400, playlist: 400 };
+		if (prefs.hidebrowser) {
+			$('#infopane').not('.invisible').addClass('invisible');
+			$('#infopanecontrols').not('.invisible').addClass('invisible');
 		} else {
-			var w = $("#playlist").width();
-			w -= 12;
-			$("#playlist").css({width: w+"px"});
-			$("#playlistcontrols").css({width: w+"px"});
+			$('#infopane').removeClass('invisible');
+			$('#infopanecontrols').removeClass('invisible');
 		}
 		$("#sources").animatePanel(widths);
 		$("#sourcescontrols").animatePanel(widths);
 		$("#playlist").animatePanel(widths);
 		$("#playlistcontrols").animatePanel(widths);
-		$("#infopane").animatePanel(widths);
-		$("#infopanecontrols").animatePanel(widths);
 	}
 
 	var my_scrollers = [ "#sources", "#infopane", "#pscroller", ".top_drop_menu:not(.noscroll)", ".drop-box" ];
@@ -88,6 +73,17 @@ var layoutProcessor = function() {
 		sortFaveRadios: true,
 		openOnImage: false,
 		playlist_scroll_parent: '#pscroller',
+
+		setPanelCss: function(widths) {
+			if (widths.sources) {
+				$("#sources").css("width", widths.sources+"%");
+				$("#sourcescontrols").css("width", widths.sources+"%");
+			}
+			if (widths.playlist) {
+				$("#playlist").css("width", widths.playlist+"%");
+				$("#playlistcontrols").css("width", widths.playlist+"%");
+			}
+		},
 
 		changeCollectionSortMode: function() {
 			collectionHelper.forceCollectionReload();
@@ -222,7 +218,13 @@ var layoutProcessor = function() {
 				layoutProcessor.toggleAudioOutpts();
 			}
 			$("#sortable").disableSelection();
-			if (!uiHelper.is_touch_ui) {
+			if (uiHelper.is_touch_ui) {
+
+				$(document).touchStretch({
+					is_double_panel_skin: true
+				});
+
+			} else {
 	            $("#sortable").acceptDroppedTracks({
 	                scroll: true,
 	                scrollparent: '#pscroller'
@@ -265,12 +267,10 @@ var layoutProcessor = function() {
 			});
 			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
 			$("#sources").find('.mCSB_draggerRail').resizeHandle({
-				adjusticons: ['#sourcescontrols', '#infopanecontrols'],
 				side: 'left',
 				donefunc: setBottomPanelWidths
 			});
 			$("#infopane").find('.mCSB_draggerRail').resizeHandle({
-				adjusticons: ['#playlistcontrols', '#infopanecontrols'],
 				side: 'right',
 				donefunc: setBottomPanelWidths
 			});

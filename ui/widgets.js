@@ -517,7 +517,6 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 $.widget("rompr.resizeHandle", $.ui.mouse, {
 	widgetEventPrefix: "resize",
 	options: {
-		adjusticons: [],
 		side: 'left',
 		offset: 0
 	},
@@ -1825,8 +1824,7 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 jQuery.fn.touchStretch = function(settings) {
 
 	var config = {
-		min_move_x: 20,
-		min_move_y: 20,
+		is_double_panel_skin: false
 	};
 
 	if (settings) {
@@ -1837,8 +1835,11 @@ jQuery.fn.touchStretch = function(settings) {
 		var start_touch_width;
 		var start_width;
 		var percentage= null;
+		var otherpcercentage = null;
 		var self;
 		var handlingtouch = [null, null];
+		var panel;
+		var otherpanel;
 
 		function onStretchTouchEnd(e) {
 			debug.debug('TOUCHEND', e);
@@ -1858,7 +1859,9 @@ jQuery.fn.touchStretch = function(settings) {
 			}
 			if (handlingtouch[0] == null && handlingtouch[1] == null && percentage != null) {
 				let pts = {};
-				pts[self.prop('id')+'widthpercent'] = parseFloat(percentage);
+				pts[panel+'widthpercent'] = parseFloat(percentage);
+				if (config.is_double_panel_skin)
+					pts[otherpanel+'widthpercent'] = parseFloat(otherpercentage);
 				prefs.save(pts);
 			}
 		}
@@ -1879,7 +1882,15 @@ jQuery.fn.touchStretch = function(settings) {
 				var new_panel_width = start_width + width_change;
 				var ws = getWindowSize();
 				percentage = ((new_panel_width/ws.x) * 100).toFixed(2);
-				self.css({width: percentage.toString()+'%'});
+				let widths = {};
+				widths[panel] = percentage;
+				if (config.is_double_panel_skin) {
+					if (percentage + otherpcercentage > 100 || prefs.hidebrowser) {
+						otherpercentage = 100 - percentage;
+						widths[otherpanel] = otherpercentage;
+					}
+				}
+				layoutProcessor.setPanelCss(widths);
 				// debug.log('TOUCH',touch_width,width_change,new_panel_width,percentage);
 			}
 		}
@@ -1895,7 +1906,10 @@ jQuery.fn.touchStretch = function(settings) {
 
 				e.preventDefault();
 				self = target;
+				panel = self.prop('id');
+				otherpanel = (panel == 'sources') ? 'playlist' : 'sources';
 				percentage = null;
+				otherpercentage = prefs[otherpanel+'widthpercent'];
 				start_width = self.width();
 				start_touch_width = Math.abs(e.touches[0].clientX - e.touches[1].clientX);
 				handlingtouch[0] = e.touches[0].identifier;

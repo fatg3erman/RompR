@@ -332,27 +332,18 @@ var layoutProcessor = function() {
 	}
 
 	function setBottomPanelWidths() {
-		var widths = getPanelWidths();
-		$("#sources").css("width", widths.sources+"%");
-		// $("#infopane").css("width", widths.infopane+"%");
+		layoutProcessor.setPanelCss(getPanelWidths());
 	}
 
 	function getPanelWidths() {
 		var sourcesweight = (prefs.sourceshidden) ? 0 : 1;
-		// var browserweight = (prefs.hidebrowser) ? 0 : 1;
 		var sourceswidth = prefs.sourceswidthpercent*sourcesweight;
-		// var ws = getWindowSize();
-		// var percenttofill = (ws.x - $('#headerbar').outerWidth(true))/ws.x;
-		// var browserwidth = ((100*percenttofill) - sourceswidth)*browserweight;
-		// if (browserwidth < 0) browserwidth = 0;
 		return ({sources: sourceswidth});
 	}
 
 	function animatePanels() {
 		var widths = getPanelWidths();
-		// widths.speed = { sources: 400 };
 		$("#sources").animatePanel(widths);
-		// $("#infopane").animatePanel(widths);
 	}
 
 	function makeNewPanel(element, name) {
@@ -447,6 +438,10 @@ var layoutProcessor = function() {
 		sortFaveRadios: false,
 		openOnImage: true,
 		playlist_scroll_parent: '#phacker',
+
+		setPanelCss: function(widths) {
+			$("#sources").css("width", widths.sources+"%");
+		},
 
 		changeCollectionSortMode: function() {
 			setupCollectionDisplay();

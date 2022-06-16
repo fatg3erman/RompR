@@ -80,9 +80,9 @@ create_body_tag('desktop');
 	</div>
 </div>
 
-<div id="headerbar" class="noborder fullwidth">
+<div id="headerbar" class="noborder fullwidth containerbox">
 
-<div id="sourcescontrols" class="noborder tleft containerbox headercontainer topbox">
+<div id="sourcescontrols" class="noborder fixed containerbox headercontainer topbox">
 <?php
 print '<i title="'.language::gettext('button_local_music').'" class="icon-music tooltip topimg choosepanel expand" name="albumlist"></i>';
 print '<i title="'.language::gettext('button_searchmusic').'" class="icon-search topimg tooltip choosepanel expand" name="searcher"></i>';
@@ -96,7 +96,7 @@ print '<i title="'.language::gettext('label_pluginplaylists').'" class="icon-wif
 <div class="expand"></div>
 </div>
 
-<div id="infopanecontrols" class="noborder tleft containerbox headercontainer topbox">
+<div id="infopanecontrols" class="noborder expand containerbox headercontainer topbox">
 <?php
  print '<i title="'.language::gettext('button_togglesources').'" class="icon-angle-double-left tooltip topimg expandslightly background-left" id="expandleft"></i>';
  ?>
@@ -134,7 +134,7 @@ print '<i class="icon-angle-double-right tooltip topimg expandslightly backgroun
 ?>
 </div>
 
-<div id="playlistcontrols" class="noborder tleft containerbox headercontainer topbox righthandtop">
+<div id="playlistcontrols" class="noborder fixed containerbox headercontainer topbox righthandtop">
 <div class="expand" id="rightspacer"></div>
 
 <?php
@@ -169,9 +169,9 @@ print '<button class="fixed iconbutton savebutton"></button></div>';
 
 <!-- Bottom Half of the Page  -->
 
-<div id="bottompage" class="clearfix">
+<div id="bottompage" class="containerbox">
 
-<div id="sources" class="column noborder tleft">
+<div id="sources" class="column noborder fixed resizable">
 
 	<!-- Music Collection -->
 
@@ -279,7 +279,7 @@ print '<button class="fixed iconbutton savebutton"></button></div>';
 
 <!-- Info Panel -->
 
-<div id="infopane" class="cmiddle noborder infowiki tleft">
+<div id="infopane" class="cmiddle noborder infowiki expand">
 	<?php
 	uibits::infopane_default_contents();
 	?>
@@ -287,7 +287,7 @@ print '<button class="fixed iconbutton savebutton"></button></div>';
 
 <!-- Play Queue -->
 
-<div id="playlist" class="column noborder tright containerbox vertical">
+<div id="playlist" class="column noborder fixed containerbox vertical resizable">
 	<?php
 	playlistpanel::make_playlist_panel();
 	?>

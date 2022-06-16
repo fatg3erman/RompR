@@ -1,16 +1,20 @@
 # The Play Queue
 
-This panel appears on the right-hand-side of the window in the default Desktop skin. It shows tracks that are currently playing and tracks queued to play next, in the order in which they will play.
+This panel appears on the right-hand-side of the window in the default Desktop skin.
+It shows tracks that are currently playing and tracks queued to play next, in the order in which they will play.
 
 ![](images/playlist.png)
 
 To add a track or album (or all tracks by an artist) to the end of the Play Queue, double-click it in the collection (single-click on the Phone skin).
 
-On the Desktop skins you can also drag tracks to any position in the playlist. You can re-order tracks or albums by dragging them within the playlist, and remove them by clickng the x.
+On the Desktop skins you can also drag tracks to any position in the playlist.
+You can re-order tracks or albums by dragging them within the playlist, and remove them by clickng the x.
 
-On the Phone skin you can remove items by swiping left, and move items with a long press - this is described under [The Phone Skin](/RompR/Phone-Skin).
+On a touch device it works slightly differently. Firstly, to remove tracks or albums you swipe left.
+To re-order tracks on a touch device use a long press on the track and and up/down arrows will appear.
+Tap the arrows to move the track up and down the playlist.
 
-On the Tablet skin you can re-order tracks by using the re-order buttons as described under [The Tablet Skin](/RompR/Tablet-Skin).
+![](images/iphonemove1.png)
 
 To clear the entire playlist use the wastebasket icon at the top right.
 
@@ -34,4 +38,11 @@ The 'Musical Notes' icon will appear next to Spotify albums. Clicking this will 
 
 ## Non-Queueing Mode
 
-Although the default option (and the way mpd works) is to add tracks to the Play Queue when you click them, you can also enable a more 'Media Centre-like' mode. In the Configuration panel is an option for 'CD Player Mode'. When this is enabled, when you double-click a track it will play immediately, removing any existing tracks from the Play Queue. The album the track is from will be played from that track to the end. In this mode you can add tracks to the end of the Play Queue by using the dropdown menu next to the tracks.
+Although the default option (and the way mpd works) is to add tracks to the Play Queue when you click them,
+you can also enable a more 'Media Centre-like' mode. In the Configuration panel is an option for 'CD Player Mode'.
+When this is enabled, when you double-click a track it will play immediately, removing any existing tracks from the Play Queue.
+The album the track is from will be played from that track to the end.
+In this mode you can add tracks to the end of the Play Queue by using the dropdown menu next to the tracks.
+
+If CD-Player mode is not selected, the drop-down menu next to the tracks will have a 'Play From here' option, which will play the
+album in the same way as if CD Player mode was enabled.

@@ -47,3 +47,4 @@ On the right-hand side is the Play Queue. Above that are various tools. These ar
 * Save Play Queue as a Playlist
 
 The lower panels can be resized by dragging their edges, or hidden using the 'double arrow' icons.
+On a touch device you can resize the panels by pinching inside them with 2 fingers.
