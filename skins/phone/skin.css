@@ -1258,7 +1258,6 @@ span.timer-time {
 
 }
 
-
 @media screen and (min-width:800px) and (min-height: 400px) and (orientation: landscape) {
 	.mainpane {
 		width: 65%;
