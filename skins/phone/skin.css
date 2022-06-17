@@ -153,17 +153,33 @@ button.spinable.icon-spin6 {
 }
 
 #playbackTime {
-	font-size:8px;
-	height:11px;
-	line-height:11px;
+	font-size: 12px;
+	height: 12px;
+	line-height: 14px;
+	margin-bottom: 6px;
 }
 
-#buttons {
-	padding-left:0px !important;
-	padding-right:0px !important;
-	padding-top:2px !important;
-	padding-bottom:0px !important;
-	text-align:center;
+#progress {
+	margin-top: 8px;
+	margin-bottom: 8px;
+	height: 14px;
+}
+
+@media screen and (max-height: 450px) {
+
+	#playbackTime {
+		font-size: 8px;
+		height: 8px;
+		line-height: 9px;
+		margin-bottom: 1px;
+	}
+
+	#progress {
+		margin-top: 4px;
+		margin-bottom: 4px;
+		height: 8px;
+	}
+
 }
 
 /*#nowplaying {
@@ -173,6 +189,12 @@ button.spinable.icon-spin6 {
 */
 /* min-content is important in the case where nowplaying
 	is taller than it is wide */
+
+#buttons {
+	text-align: center;
+    padding-top:4px;
+    padding-bottom:4px;
+}
 
 #nptext {
 	text-align:center;
@@ -902,7 +924,7 @@ span.timer-time {
 	}
 
 	#infobar {
-		height: 20%;
+		height: 25%;
 		width: 100%;
 		top: 0;
 		display: flex;
@@ -922,7 +944,7 @@ span.timer-time {
 
 	#albumcover {
 		height: 100%;
-		width: 20vh;
+		width: 40vw;
 		text-align: center;
 	}
 
@@ -946,13 +968,15 @@ span.timer-time {
 	}
 
 	#progress {
-		height:  6px;
+		height:  8px;
+		margin-top: 2px;
+		margin-bottom: 2px;
 	}
 
 	#playbackTime {
-		font-size: 9px !important;
-		line-height: 9px !important;
-		height: 10px !important;
+		font-size: 9px;
+		line-height: 9px;
+		height: 10px;
 	}
 
 	#stars {
@@ -1018,7 +1042,7 @@ span.timer-time {
 
 	#albumcover {
 		height: 100%;
-		width: 20vh;
+		width: 24vw;
 		text-align: center;
 	}
 
@@ -1038,18 +1062,8 @@ span.timer-time {
 	}
 
 	#nowplaying_icons {
-		width: 20vh;
+		width: 24vw;
 		order: 2;
-	}
-
-	#progress {
-		height:  6px;
-	}
-
-	#playbackTime {
-		font-size: 9px !important;
-		line-height: 9px !important;
-		height: 10px !important;
 	}
 
 	#stars {
@@ -1074,7 +1088,7 @@ span.timer-time {
 =====================================================================
 */
 
-@media screen and (max-width:639px) and (orientation: landscape) {
+@media screen and (max-width: 699px) and (orientation: landscape) {
 
 	#infobar {
 		display: flex;
@@ -1119,17 +1133,13 @@ span.timer-time {
 
 	#dbtags, #playcount {
 		text-align: center;
-	}
-
-	#progress {
-		height:  6px;
 	}
 
 }
 
-/* This is the same as the above, it's here for when width > 640 but height < 320 */
+/* This is the same as the above, it's here for when width > 640 but height < 400 */
 
-@media screen and (min-width: 640px) and (max-height: 319px) and (orientation: landscape) {
+@media screen and (min-width: 700px) and (max-height: 399px) and (orientation: landscape) {
 
 	#infobar {
 		display: flex;
@@ -1174,10 +1184,6 @@ span.timer-time {
 
 	#dbtags, #playcount {
 		text-align: center;
-	}
-
-	#progress {
-		height:  6px;
 	}
 
 }
@@ -1188,7 +1194,7 @@ span.timer-time {
 =====================================================================
 */
 
-@media screen and (min-width:640px) and (min-height: 320px) and (orientation: landscape) {
+@media screen and (min-width:700px) and (min-height: 400px) and (orientation: landscape) {
 	.mainpane {
 		width: 55%;
 		float:left;
@@ -1246,10 +1252,6 @@ span.timer-time {
 		display: inline-block;
 	}
 
-	#progress {
-		height:  6px;
-	}
-
 	:root {
 		--display-mode: 1;
 	}
@@ -1257,21 +1259,21 @@ span.timer-time {
 }
 
 
-@media screen and (min-width:800px) and (min-height: 320px) and (orientation: landscape) {
+@media screen and (min-width:800px) and (min-height: 400px) and (orientation: landscape) {
 	.mainpane {
-		width: 60%;
+		width: 65%;
 	}
 
 	#infobar {
-		width: 40%;
+		width: 35%;
 	}
 
 	#playlistm {
-		width: 60%;
+		width: 65%;
 	}
 }
 
-@media screen and (min-width:1024px) and (min-height: 320px) and (orientation: landscape) {
+@media screen and (min-width:1024px) and (min-height: 400px) and (orientation: landscape) {
 	/* Big screens - 3 columns */
 	#infobar {
 		width: 26%;
@@ -1348,21 +1350,10 @@ span.timer-time {
 		padding-left: 2px;
 	}
 
-	#playbackTime {
-		font-size: 12px;
-		height: 16px;
-		line-height: 16px;
-		margin-top: 4px;
-		margin-bottom: 4px;
-	}
-
-	#progress {
-		margin-top: 8px;
-	}
 
 }
 
-@media screen and (min-width:1160px) and (min-height: 320px) and (orientation: landscape) {
+@media screen and (min-width:1160px) and (min-height: 400px) and (orientation: landscape) {
 	/* Big screens - 3 columns */
 	#infobar {
 		width: 26%;

@@ -1,26 +1,24 @@
-#buttons
-{
-    padding-left:12px;
-    padding-right:12px;
-    padding-top:4px;
-    padding-bottom:6px;
-}
-
 .controlbutton {
     margin:0px;
     padding:0px;
     vertical-align:middle;
     display:inline-block;
-    width:72px;
-    height:72px;
 }
 
 .controlbutton-small {
     margin:0px;
     vertical-align:middle;
     display:inline-block;
-    width:58px;
-    height:58px;
+}
+
+.controlbutton {
+    width: 22vw;
+    height: 22vw;
+}
+
+.controlbutton-small {
+    width: 18vw;
+    height: 18vw;
 }
 
 .shiftleft
@@ -48,305 +46,28 @@
     position:relative;
     left:-32px;
     z-index:1;
-    margin-right:-48px;
+    margin-right: -32px;
 }
 
-@media screen and (max-height: 699px) and (orientation:  portrait) {
+/*
+=====================================================================
+= Responsive Layout - Portrait, nowplaying at top
+= Changes at 700px high
+=====================================================================
+*/
+
+@media screen and (min-height: 700px) and (min-width: 400px) and (max-width: 699px) and (orientation: portrait) {
 
     .controlbutton
     {
-        width:90px;
-        height:90px;
+        width: 9vw;
+        height: 9vw;
     }
 
     .controlbutton-small
     {
-        width:70px;
-        height:70px;
-    }
-
-    .shiftleft
-    {
-        left:-10px;
-        position:relative;
-        z-index:250;
-    }
-
-    .shiftleft2
-    {
-        left:-20px;
-        position:relative;
-    }
-
-    .shiftleft3
-    {
-        position:relative;
-        left:-30px;
-        z-index:5;
-    }
-
-    .shiftleft4
-    {
-        position:relative;
-        left:-40px;
-        z-index:1;
-        margin-right:-40px;
-    }
-
-}
-
-@media screen and (max-width: 330px) {
-    .controlbutton
-    {
-        margin:0px;
-        padding:0px;
-        vertical-align:middle;
-        display:inline-block;
-        width:56px;
-        height:56px;
-    }
-
-    .controlbutton-small
-    {
-        margin:0px;
-        vertical-align:middle;
-        display:inline-block;
-        width:48px;
-        height:48px;
-    }
-
-    .shiftleft
-    {
-        left:-8px;
-        position:relative;
-        z-index:250;
-    }
-
-    .shiftleft2
-    {
-        left:-16px;
-        position:relative;
-    }
-
-    .shiftleft3
-    {
-        position:relative;
-        left:-24px;
-        z-index:5;
-    }
-
-    .shiftleft4
-    {
-        position:relative;
-        left:-32px;
-        z-index:1;
-        margin-right:-30px;
-    }
-}
-
-@media screen and (min-height: 800px) and (max-height: 939px) {
-    .controlbutton {
-        width:64px;
-        height:64px;
-    }
-    #buttons {
-        padding-top:12px;
-    }
-    #playbackTime {
-        margin-top:2px;
-        font-size:12px;
-        line-height:14px;
-        height:14px;
-    }
-}
-
-@media screen and (min-height: 940px) and (max-height: 1099px) and (min-width: 650px) {
-    .controlbutton {
-        width:72px;
-        height:72px;
-    }
-
-    .controlbutton-small {
-        width:58px;
-        height:58px;
-    }
-
-    .shiftleft
-    {
-        left:-8px;
-        position:relative;
-        z-index:250;
-    }
-
-    .shiftleft2
-    {
-        left:-16px;
-        position:relative;
-    }
-
-    .shiftleft3
-    {
-        position:relative;
-        left:-24px;
-        z-index:5;
-    }
-
-    .shiftleft4
-    {
-        position:relative;
-        left:-32px;
-        z-index:1;
-        margin-right:-48px;
-    }
-
-    #buttons {
-        padding-top:16px;
-        padding-left:24px;
-    }
-
-    #playbackTime {
-        margin-top:4px;
-        font-size:14px;
-        line-height:16px;
-        height:16px;
-    }
-}
-
-@media screen and (min-height: 1120px) and (min-width: 840px) {
-    .controlbutton {
-        width:90px;
-        height:90px;
-    }
-    .controlbutton-small {
-        width:70px;
-        height:70px;
-    }
-    #buttons {
-        padding-top:12px;
-        padding-left:20px;
-    }
-    #progress {
-        margin-top:8px;
-    }
-    #playbackTime {
-        margin-top:12px;
-        font-size:16px;
-        line-height:18px;
-        height:18px;
-    }
-    .shiftleft
-    {
-        left:-10px;
-        position:relative;
-        z-index:250;
-    }
-
-    .shiftleft2
-    {
-        left:-20px;
-        position:relative;
-    }
-
-    .shiftleft3
-    {
-        position:relative;
-        left:-30px;
-        z-index:5;
-    }
-
-    .shiftleft4
-    {
-        position:relative;
-        left:-40px;
-        z-index:1;
-        margin-right:-40px;
-    }
-}
-
-@media screen and (min-height: 740px) and (min-width: 1024px) and (orientation: landscape) {
-    #buttons
-    {
-        padding-left:12px;
-        padding-right:12px;
-        padding-top:4px;
-        padding-bottom:6px;
-    }
-
-    .controlbutton
-    {
-        margin:0px;
-        padding:0px;
-        vertical-align:middle;
-        display:inline-block;
-        width:56px;
-        height:56px;
-    }
-
-    .controlbutton-small
-    {
-        margin:0px;
-        vertical-align:middle;
-        display:inline-block;
-        width:48px;
-        height:48px;
-    }
-
-    .shiftleft
-    {
-        left:-8px;
-        position:relative;
-        z-index:250;
-    }
-
-    .shiftleft2
-    {
-        left:-16px;
-        position:relative;
-    }
-
-    .shiftleft3
-    {
-        position:relative;
-        left:-24px;
-        z-index:5;
-    }
-
-    .shiftleft4
-    {
-        position:relative;
-        left:-32px;
-        z-index:1;
-        margin-right:-30px;
-    }
-}
-
-@media screen and (min-height: 700px) and (max-width: 699px) and (orientation: portrait) {
-
-    #buttons
-    {
-        padding-left:12px;
-        padding-right:12px;
-        padding-top:4px;
-        padding-bottom:6px;
-    }
-
-    .controlbutton
-    {
-        margin:0px;
-        padding:0px;
-        vertical-align:middle;
-        display:inline-block;
-        width:36px;
-        height:36px;
-    }
-
-    .controlbutton-small
-    {
-        margin:0px;
-        vertical-align:middle;
-        display:inline-block;
-        width:30px;
-        height:30px;
+        width: 8vw;
+        height: 8vw;
     }
 
     .shiftleft
@@ -374,176 +95,90 @@
         position:relative;
         left: 0px;
         z-index:1;
+        margin-right: 0px;
     }
 
 }
 
-@media screen and (min-height: 700px) and (max-width: 399px) and (orientation: portrait) {
-
-    .controlbutton {
-        width:90px;
-        height:90px;
-    }
-    .controlbutton-small {
-        width:70px;
-        height:70px;
-    }
-
-    .shiftleft
-    {
-        left:-10px;
-        position:relative;
-        z-index:250;
-    }
-
-    .shiftleft2
-    {
-        left:-20px;
-        position:relative;
-    }
-
-    .shiftleft3
-    {
-        position:relative;
-        left:-30px;
-        z-index:5;
-    }
-
-    .shiftleft4
-    {
-        position:relative;
-        left:-40px;
-        z-index:1;
-        margin-right:-40px;
-    }
-
-}
-
-@media screen and (min-height: 900px) and (min-width: 400px) and (max-width: 800px) and (orientation: portrait) {
-
-    .controlbutton
-    {
-        margin:0px;
-        padding:0px;
-        vertical-align:middle;
-        display:inline-block;
-        width:56px;
-        height:56px;
-    }
-
-    .controlbutton-small
-    {
-        margin:0px;
-        vertical-align:middle;
-        display:inline-block;
-        width:48px;
-        height:48px;
-    }
-
-    .shiftleft
-    {
-        left:-8px;
-        position:relative;
-        z-index:250;
-    }
-
-    .shiftleft2
-    {
-        left:-16px;
-        position:relative;
-    }
-
-    .shiftleft3
-    {
-        position:relative;
-        left:-24px;
-        z-index:5;
-    }
-
-    .shiftleft4
-    {
-        position:relative;
-        left:-32px;
-        z-index:1;
-        margin-right:-30px;
-    }
-
-}
-
-@media screen and (min-width:1024px) and (max-width: 1100px) and (min-height: 320px) and (orientation: landscape) {
-
-    .controlbutton
-    {
-        margin:0px;
-        padding:0px;
-        vertical-align:middle;
-        display:inline-block;
-        width:56px;
-        height:56px;
-    }
-
-    .controlbutton-small
-    {
-        margin:0px;
-        vertical-align:middle;
-        display:inline-block;
-        width:48px;
-        height:48px;
-    }
-
-    .shiftleft
-    {
-        left:-8px;
-        position:relative;
-        z-index:250;
-    }
-
-    .shiftleft2
-    {
-        left:-16px;
-        position:relative;
-    }
-
-    .shiftleft3
-    {
-        position:relative;
-        left:-24px;
-        z-index:5;
-    }
-
-    .shiftleft4
-    {
-        position:relative;
-        left:-32px;
-        z-index:1;
-        margin-right:-30px;
-    }
-
-}
 
 @media screen and (min-height: 700px) and (min-width: 700px) and (orientation: portrait) {
-    #progress {
-        height: 8px;
-        margin-top: 4px;
+
+    .controlbutton {
+        width: 10vw;
+        height: 10vw;
+    }
+
+    .controlbutton-small {
+        width: 8vw;
+        height: 8vw;
+    }
+
+}
+
+@media screen and (max-width: 699px) and (orientation: landscape) {
+
+    .controlbutton {
+        width: 10vw;
+        height: 10vw;
+    }
+
+    .controlbutton-small {
+        width: 8vw;
+        height: 8vw;
     }
 }
 
-@media screen and (min-width: 640px) and (min-height: 320px) and (orientation: landscape) {
-    #progress {
-        height: 8px;
+@media screen and (min-width: 700px) and (max-height: 399px) and (orientation: landscape) {
+
+    .controlbutton {
+        width: 10vw;
+        height: 10vw;
+    }
+
+    .controlbutton-small {
+        width: 8vw;
+        height: 8vw;
     }
 }
 
-@media screen and (max-width: 639px) and (orientation: landscape) {
-    #progress {
-        height: 8px;
-        margin-top: 4px;
+@media screen and (min-width:700px) and (min-height: 400px) and (orientation: landscape) {
+
+    .controlbutton {
+        width: 9vw;
+        height: 9vw;
     }
+
+    .controlbutton-small {
+        width: 7vw;
+        height: 7vw;
+    }
+
 }
 
-@media screen and (min-width: 640px) and (min-height: 320px) and (orientation: landscape) {
-    #progress {
-        height: 8px;
-        margin-top: 4px;
+@media screen and (min-width:800px) and (min-height: 400px) and (orientation: landscape) {
+
+    .controlbutton {
+        width: 6vw;
+        height: 6vw;
     }
+
+    .controlbutton-small {
+        width: 5vw;
+        height: 5vw;
+    }
+
+}
+
+@media screen and (min-width:1024px) and (min-height: 400px) and (orientation: landscape) {
+
+    .controlbutton {
+        width: 6vw;
+        height: 6vw;
+    }
+
+    .controlbutton-small {
+        width: 4.5vw;
+        height: 4.5vw;
+    }
+
 }
