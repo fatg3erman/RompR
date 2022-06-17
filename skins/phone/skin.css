@@ -1210,6 +1210,7 @@ span.timer-time {
 	#infobar {
 		display: flex;
 		width: 45%;
+		position: relative;
 	}
 
 	#infopane {
@@ -1220,30 +1221,37 @@ span.timer-time {
 		text-align: center;
 		overflow:hidden;
 		height: 45%;
-		object-fit: scale-down;
+		width: 50%;
+		/*display: block;*/
 	}
 
 	#albumpicture {
-		width: auto;
+		width: 100%;
 		height: 100%;
+		object-fit: scale-down;
 	}
 
 	#dbtags, #playcount {
 		float: none;
 		width: 100%;
-		text-align: center;
-		margin-left:0;
+		text-align: right;
+		margin-left:4px;
 		margin-right:0;
 	}
 
 	#stars {
-		float:left;
+		float:right;
 		margin-right: 0;
 		margin-left: 0;
 	}
 
 	#nowplaying_icons {
 		text-align: center;
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 50%;
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
@@ -1300,6 +1308,7 @@ span.timer-time {
 
 	#albumcover {
 		height: 26vw;
+		width: unset;
 		text-align: center;
 		overflow:hidden;
 		display: flex;
@@ -1332,6 +1341,10 @@ span.timer-time {
 
 	#nowplaying_icons {
 		text-align: center;
+		position: unset;
+		top: unset;
+		right: unset;
+		width: unset;
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
