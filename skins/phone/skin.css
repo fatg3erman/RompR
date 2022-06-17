@@ -812,7 +812,7 @@ span.timer-time {
 =====================================================================
 */
 
-@media screen and (max-height: 699px) and (orientation: portrait) {
+@media screen and (orientation: portrait) {
 
 	#playlistm {
 		width:100%;
@@ -892,7 +892,7 @@ span.timer-time {
 =====================================================================
 */
 
-@media screen and (min-height: 700px) and (max-width: 699px) and (orientation: portrait) {
+@media screen and (min-height: 700px) and (min-width: 400px) and (max-width: 699px) and (orientation: portrait) {
 
 	.mainpane {
 		width: 100%;
@@ -1358,6 +1358,24 @@ span.timer-time {
 
 	#progress {
 		margin-top: 8px;
+	}
+
+}
+
+@media screen and (min-width:1160px) and (min-height: 320px) and (orientation: landscape) {
+	/* Big screens - 3 columns */
+	#infobar {
+		width: 26%;
+		display: flex !important;
+	}
+
+	#playlistm {
+		width: 30%;
+		display: flex !important;
+	}
+
+	.mainpane {
+		width: 44%;
 	}
 
 }
