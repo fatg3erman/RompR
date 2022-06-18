@@ -642,36 +642,38 @@ var infobar = function() {
 		},
 
 		setProgress: function(progress, duration) {
-			current_progress = progress;
-			if (progress < 3) {
-				markedaslistened = false;
-				playcount_incremented = false;
+			if (progress != current_progress) {
+				current_progress = progress;
+				if (progress < 3) {
+					markedaslistened = false;
+					playcount_incremented = false;
+				}
+				var percent = (duration == 0) ? 0 : (progress/duration) * 100;
+				// Even though the backend daemon does this too, we still do it here
+				// as it makes the UI update the playcount in nowplaying and updates
+				// the Up Next marker for audiobooks.
+				if (!playcount_incremented && percent >= 95) {
+					debug.trace("INFOBAR","Track playcount being updated");
+					nowplaying.incPlaycount(null);
+					playcount_incremented = true;
+				}
+				if (!markedaslistened && percent >= 95 && playlist.getCurrent('type') == 'podcast') {
+					podcasts.checkMarkPodcastAsListened(playlist.getCurrent('file'));
+					markedaslistened = true;
+				}
+				$("#progress").rangechooser("setRange", {min: 0, max: progress});
+				var remain = duration - progress;
+				uiHelper.setProgressTime({
+					progress: progress,
+					duration: duration,
+					remain: remain,
+					progressString: formatTimeString(progress),
+					durationString: formatTimeString(duration),
+					remainString: '-'+formatTimeString(remain)
+				});
+				nowplaying.progressUpdate(percent);
+				playlist.doTimeLeft();
 			}
-			var percent = (duration == 0) ? 0 : (progress/duration) * 100;
-			// Even though the backend daemon does this too, we still do it here
-			// as it makes the UI update the playcount in nowplaying and updates
-			// the Up Next marker for audiobooks.
-			if (!playcount_incremented && percent >= 95) {
-				debug.trace("INFOBAR","Track playcount being updated");
-				nowplaying.incPlaycount(null);
-				playcount_incremented = true;
-			}
-			if (!markedaslistened && percent >= 95 && playlist.getCurrent('type') == 'podcast') {
-				podcasts.checkMarkPodcastAsListened(playlist.getCurrent('file'));
-				markedaslistened = true;
-			}
-			$("#progress").rangechooser("setRange", {min: 0, max: progress});
-			var remain = duration - progress;
-			uiHelper.setProgressTime({
-				progress: progress,
-				duration: duration,
-				remain: remain,
-				progressString: formatTimeString(progress),
-				durationString: formatTimeString(duration),
-				remainString: '-'+formatTimeString(remain)
-			});
-			nowplaying.progressUpdate(percent);
-			playlist.doTimeLeft();
 		},
 
 		addToPlaylist: function(event) {
