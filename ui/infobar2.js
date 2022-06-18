@@ -10,6 +10,7 @@ var infobar = function() {
 	var notifycounter = 0;
 	var biggerizing = false;
 	var current_progress = 0;
+	var current_duration = 0;
 
 	function showLove(flag) {
 		if (lastfm.isLoggedIn() && flag) {
@@ -645,8 +646,9 @@ var infobar = function() {
 		},
 
 		setProgress: function(progress, duration) {
-			if (progress != current_progress) {
+			if (current_progress != progress || current_duration != duration) {
 				current_progress = progress;
+				current_duaration = duration;
 				if (progress < 3) {
 					markedaslistened = false;
 					playcount_incremented = false;

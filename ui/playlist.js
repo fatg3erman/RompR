@@ -455,7 +455,8 @@ var playlist = function() {
 			if (remain != remainingtime) {
 				remainingtime = remain;
 				$('#playlist-progress').rangechooser('setRange', {min: 0, max: (totaltime - remainingtime)});
-				$('#playlist-time-remaining').html(formatTimeString(remainingtime));
+				// The following double-update is necessary to work around a repaint bug in iPadOS Safari
+				$('#playlist-time-remaining').html('').html(formatTimeString(remainingtime));
 			}
 		},
 
