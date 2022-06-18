@@ -1126,12 +1126,26 @@ span.timer-time {
 		object-fit: scale-down;
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #stars, #bookmark {
-		/*margin-bottom: 8px;*/
+	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
+		height: 20px;
+		line-height: 20px;
 	}
+
+    .rating-icon-big {
+        height: 20px;
+        width: 100px;
+    }
+
+    .npicon {
+        width: 20px;
+        height: 20px;
+        padding: 0px;
+    }
 
 	#stars {
 		float: right;
+		height: 20px;
+		line-height: 20px;
 	}
 
 	#dbtags, #playcount {
