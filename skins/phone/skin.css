@@ -965,7 +965,7 @@ span.timer-time {
 	}
 
 	#progress {
-		height:  8px;
+		height: 8px;
 		margin-top: 2px;
 		margin-bottom: 2px;
 	}
@@ -1133,32 +1133,45 @@ span.timer-time {
 	}
 
     .rating-icon-big {
-        height: 20px;
-        width: 100px;
+        height: 22px;
+        width: 110px;
     }
 
     .npicon {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
         padding: 0px;
     }
 
 	#stars {
 		float: right;
-		height: 20px;
-		line-height: 20px;
+		height: 22px;
+		line-height: 22px;
 	}
 
 	#nowplaying_icons {
 		order: 3;
-		border-bottom: unset;
+		/*border-bottom: unset;*/
 		border-top: unset;
-		border-image: unset;
+		/*border-image: unset;*/
 		padding-top: 2px;
 	}
 
 	#dbtags, #playcount {
 		text-align: center;
+	}
+
+	#progress {
+		height: 10px;
+		margin-top: 4px;
+		margin-bottom: 2px;
+	}
+
+	#playbackTime {
+		font-size: 9px;
+		line-height: 9px;
+		height: 10px;
+		margin-bottom: 2px;
 	}
 
 }
