@@ -1151,9 +1151,9 @@ span.timer-time {
 
 	#nowplaying_icons {
 		order: 3;
-		/*border-bottom: unset;*/
+		border-bottom: unset;
 		border-top: unset;
-		/*border-image: unset;*/
+		border-image: unset;
 		padding-top: 2px;
 	}
 
