@@ -187,10 +187,12 @@ var infobar = function() {
 		var maxheight = parent.height();
 		var maxwidth = parent.parent().width();
 
-		// Start with a font size that will fill the height if no text wraps.
+		// Start with a font size that will just overfill fill the height if no text wraps.
+		// 0.45 would make it just about fill but I've found the starting there usually results
+		// in the text ending up slightly too small.
 		// This is like (maxheight/1.75)/1.25 which is based on the relative font
 		// sizes set in the CSS
-		var fontsize = Math.floor(maxheight*0.45);
+		var fontsize = Math.floor(maxheight*0.5);
 		var two_lines = getLines(2);
 
 		nptext.css('font-size', fontsize+'px');
@@ -200,31 +202,32 @@ var infobar = function() {
 		if (two_lines[0] != ' ') {
 			put_text_in_area(two_lines, nptext);
 
+			// Slowly reduce the font size until it fits.
 			// We can't simply calculate the font size based on the difference in height,
 			// because we've got text wrapping onto multiple lines and we don't know how that will
 			// change when we adjust the font size.
 			var final_fontsize = fontsize;
 			while (fontsize > 8 && (nptext.outerHeight(true) > maxheight || nptext.outerWidth(true) > maxwidth)) {
-				fontsize = Math.floor(fontsize * 0.75);
+				fontsize = Math.floor(fontsize * 0.85);
 				final_fontsize = fontsize;
 				nptext.css('font-size', fontsize+'px');
 				// debug.log('BIGGER_DOWN','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
 			}
 
-			var increment = final_fontsize / 4;
-			// debug.log('BIGGER-UP', 'Increment is',increment);
-			while (increment > 1) {
-				fontsize = Math.floor(fontsize + increment);
-				increment = increment / 2;
-				// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
-				nptext.css('font-size', fontsize+'px');
-				if (nptext.outerHeight(true) < maxheight && nptext.outerWidth(true) < maxwidth) {
-					// debug.log('BIGGER_UP','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
-					final_fontsize = fontsize
-				} else {
-					break;
-				}
-			}
+			// var increment = final_fontsize / 4;
+			// // debug.log('BIGGER-UP', 'Increment is',increment);
+			// while (increment > 1) {
+			// 	fontsize = Math.floor(fontsize + increment);
+			// 	increment = increment / 2;
+			// 	// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
+			// 	nptext.css('font-size', fontsize+'px');
+			// 	if (nptext.outerHeight(true) < maxheight && nptext.outerWidth(true) < maxwidth) {
+			// 		// debug.log('BIGGER_UP','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
+			// 		final_fontsize = fontsize
+			// 	} else {
+			// 		break;
+			// 	}
+			// }
 
 			// debug.log('BIGGEROZE', 'Final font size is',final_fontsize);
 			nptext.css('font-size', final_fontsize+'px');

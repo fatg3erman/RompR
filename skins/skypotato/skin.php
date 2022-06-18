@@ -25,9 +25,10 @@ create_body_tag('desktop');
 				<div id="nptext"></div>
 			</div>
 			<div id="nowplaying_icons" class="clearfix">
-				<div id="playcount" class="topstats"></div>
 				<?php
+				uibits::ui_pre_nowplaying_icons();
 				uibits::ui_nowplaying_icons();
+				uibits::ui_post_nowplaying_icons();
 				?>
 			</div>
 		</div>

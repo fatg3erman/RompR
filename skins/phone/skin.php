@@ -44,9 +44,10 @@ create_body_tag('phone');
 
 		<div id="nowplaying_icons" class="clearfix fixed">
 			<?php
+			uibits::ui_pre_nowplaying_icons();
 			uibits::ui_nowplaying_icons();
+			uibits::ui_post_nowplaying_icons();
 			?>
-			<div id="playcount"></div>
 		</div>
 
 		<div id="nowplaying-text-buttons" class="expand containerbox vertical">

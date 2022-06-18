@@ -143,5 +143,14 @@ class uibits extends ui_elements {
 		print '<div class="sizer"></div>';
 	}
 
+	public static function ui_pre_nowplaying_icons() {
+		print '<div id="playcount" class="topstats"></div>';
+		print '<div id="dbtags" class="invisible topstats">'."\n";
+		print '</div>';
+	}
+
+	public static function ui_post_nowplaying_icons() {
+	}
+
 }
 ?>

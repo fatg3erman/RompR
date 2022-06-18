@@ -659,6 +659,10 @@ class ui_elements {
 		print'</div>';
 	}
 
+	public static function ui_pre_nowplaying_icons() {
+		print '<div id="playcount" class="topstats"></div>';
+	}
+
 	public static function ui_nowplaying_icons() {
 		print '<div id="stars" class="invisible topstats">';
 		print '<i id="ratingimage" class="icon-0-stars rating-icon-big"></i>';
@@ -676,6 +680,9 @@ class ui_elements {
 		print '<div id="ptagadd" class="invisible topstats">';
 		print '<i class="icon-tags npicon clickicon"></i>';
 		print '</div>';
+	}
+
+	public static function ui_post_nowplaying_icons() {
 		print '<div id="dbtags" class="invisible topstats">'."\n";
 		print '</div>';
 	}

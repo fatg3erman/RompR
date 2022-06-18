@@ -959,7 +959,7 @@ span.timer-time {
 	}
 
 	#nowplaying_icons {
-		order: 3;
+		order: 1;
 		border: unset;
 		border-image: unset;
 		padding-top: 2px;
@@ -990,7 +990,14 @@ span.timer-time {
 	}
 
 	#dbtags, #playcount {
-		text-align: center;
+		text-align: left;
+		display: table-cell;
+		padding-left: 4px;
+		width: unset;
+	}
+
+	#dbtags {
+		text-align: right;
 	}
 
     .rating-icon-big {
@@ -1151,14 +1158,21 @@ span.timer-time {
 	}
 
 	#nowplaying_icons {
-		order: 3;
+		order: 1;
 		border: unset;
 		border-image: unset;
 		padding-top: 2px;
 	}
 
 	#dbtags, #playcount {
-		text-align: center;
+		text-align: left;
+		display: table-cell;
+		padding-left: 4px;
+		width: unset;
+	}
+
+	#dbtags {
+		text-align: right;
 	}
 
 	#progress {
