@@ -59,6 +59,26 @@ td.infobox-image {
     background-color: transparent !important;
 }
 
+.mw-parser-output .tracklist tr {
+    background-color: transparent !important;
+}
+
+.mw-parser-output .tracklist th[scope="col"] {
+    background-color: transparent !important;
+}
+
+.mw-parser-output .tracklist tr:nth-child(2n-1) {
+    background-color: transparent !important;
+}
+
+.mw-parser-output .tracklist-total-length td {
+    background-color: transparent !important;
+}
+
+.mw-parser-output .tracklist-total-length th>span {
+    background-color: transparent !important;
+}
+
 table.tracklist {
     line-height:1.5em;
 }

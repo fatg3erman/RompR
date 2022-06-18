@@ -252,11 +252,7 @@ var layoutProcessor = function() {
 
 		goToBrowserPlugin: function(panel) {
 			uiHelper.sourceControl('infopane');
-			uihelper.goToBrowserPanel(panel);
-		},
-
-		goToBrowserSection: function(section) {
-			// Wikipedia mobile does not return contents
+			uiHelper.goToBrowserPanel(panel);
 		},
 
 		notifyAddTracks: function() {

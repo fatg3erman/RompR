@@ -4,7 +4,10 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 $domain = "en";
 $userdomain = false;
-$mobile = (array_key_exists('layout', $_POST) && ($_POST['layout'] == 'phone' || $_POST['layout'] == 'tablet')) ? true : false;
+// $mobile = (array_key_exists('layout', $_POST) && ($_POST['layout'] == 'phone' || $_POST['layout'] == 'tablet')) ? true : false;
+
+$mobile = false;
+
 // Switch off error reporting prevents us from having to repeatedly check
 // that the objects we're foreaching on actually exist. Errors get dumped
 // to stdout and mess up the xml response. We don't wanna see them.

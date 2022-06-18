@@ -590,18 +590,14 @@ var uiHelper = function() {
 		},
 
 		goToBrowserSection: function(section) {
-			try {
-				layoutProcessor.goToBrowserSection(section);
-			} catch (err) {
-				$('#infopane').romprScrollTo(section);
-			}
+			$('#infopane').romprScrollTo(section);
 		},
 
 		goToBrowserPlugin: function(panel) {
 			try {
 				layoutProcessor.goToBrowserPlugin(panel);
 			} catch (err) {
-				setTimeout( function() { uihelper.goToBrowserPanel(panel) }, 500);
+				setTimeout( function() { uiHelper.goToBrowserPanel(panel) }, 500);
 			}
 		},
 

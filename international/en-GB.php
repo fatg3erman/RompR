@@ -93,7 +93,7 @@ language::add_translations([
 	"label_savedpl" =>						"Playlist saved as %s",
 
 	// Search Forms
-	"label_searchfor" =>					"Search For",
+	"label_searchfor" =>					"Search For Music",
 	"label_searching" =>					"Searching...",
 	"label_searchresults" =>				"Search Results",
 	"label_limitsearch" =>					"Filter By Source",

@@ -473,11 +473,6 @@ var layoutProcessor = function() {
 			}, 500);
 		},
 
-		goToBrowserSection: function(section) {
-			uiHelper.sourceControl('pluginholder');
-			$('#infopane').romprScrollTo(section);
-		},
-
 		toggleAudioOutpts: function() {
 			prefs.save({outputsvisible: !$('#outputbox').is(':visible')});
 			$("#outputbox").animate({width: 'toggle'},'fast',function() {

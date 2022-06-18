@@ -1254,6 +1254,10 @@ span.timer-time {
 		width: 50%;
 	}
 
+	#progress {
+		margin-top: 8px;
+	}
+
 	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
 		/*margin-bottom: 4px;*/
 		float: right;

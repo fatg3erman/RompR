@@ -171,7 +171,7 @@ var browser = function() {
 					$("#button_source"+prefs.infosource).addClass("currentbun");
 				}
 				if (scrollto)
-					uihelper.goToBrowserPanel(scrollto);
+					uiHelper.goToBrowserPanel(scrollto);
 
 			} else {
 				history.push(cloneObject(hist));
@@ -225,7 +225,7 @@ var browser = function() {
 				},
 				true, {artist: true, album: true, track: true}, false, false
 			);
-			uihelper.afterHistory();
+			uiHelper.afterHistory();
 			browser.update_forward_back_buttons();
 		},
 
