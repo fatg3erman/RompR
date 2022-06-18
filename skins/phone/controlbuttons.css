@@ -104,13 +104,13 @@
 @media screen and (min-height: 700px) and (min-width: 700px) and (orientation: portrait) {
 
     .controlbutton {
-        width: 10vw;
-        height: 10vw;
+        width: 9vw;
+        height: 9vw;
     }
 
     .controlbutton-small {
-        width: 8vw;
-        height: 8vw;
+        width: 7vw;
+        height: 7vw;
     }
 
 }
