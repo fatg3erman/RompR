@@ -164,7 +164,7 @@ var info_wikipedia = function() {
 							await new Promise(t => setTimeout(t, 500));
 						}
 						if (artistmeta.wikipedia.artistlink === null) {
-							debug.debug("WIKI PLUGIN",parent.nowplayingindex,"Artist asked to populate but no link could be found. Trying a search");
+							debug.debug("WIKI ARTIST",parent.nowplayingindex,"Artist asked to populate but no link could be found. Trying a search for",artistmeta.name);
 							wikipedia.search({	artist: artistmeta.name,
 												disambiguation: artistmeta.disambiguation || ""
 											},
@@ -172,7 +172,7 @@ var info_wikipedia = function() {
 											self.artist.wikiResponseHandler);
 							return;
 						}
-						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"artist is populating",artistmeta.wikipedia.artistlink);
+						debug.debug("WIKI ARTIST",parent.nowplayingindex,"artist is populating",artistmeta.wikipedia.artistlink);
 						wikipedia.getFullUri({	uri: artistmeta.wikipedia.artistlink,
 												term: artistmeta.name
 											},
@@ -181,7 +181,7 @@ var info_wikipedia = function() {
 					},
 
 					wikiResponseHandler: function(data) {
-						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"got artist data for",artistmeta.name,data);
+						debug.debug("WIKI ARTIST",parent.nowplayingindex,"got artist data for",artistmeta.name,data);
 						if (data) {
 							artistmeta.wikipedia.layout.finish(formatLink(data), formatPage(data), formatWiki(data));
 						} else {
@@ -213,8 +213,9 @@ var info_wikipedia = function() {
 
 					populate: async function() {
 						if (parent.playlistinfo.type == 'stream') {
-							albummeta.wikipedia.layout = new info_layout_empty();
-							return;
+							// Force us to search
+							albummeta.wikipedia.albumlink = null;
+							albummeta.musicbrainz.album_releasegroupid = null;
 						}
 						if (typeof albummeta.wikipedia.layout == 'undefined')
 							albummeta.wikipedia.layout = new info_html_layout({title: albummeta.name, type: 'album', source: me});
@@ -298,11 +299,11 @@ var info_wikipedia = function() {
 							await new Promise(t => setTimeout(t, 500));
 						}
 						if (trackmeta.wikipedia.tracklink === null) {
-							debug.debug("WIKI PLUGIN",parent.nowplayingindex,"track asked to populate but no link could be found. Trying a search");
+							debug.debug("WIKI TRACK",parent.nowplayingindex,"track asked to populate but no link could be found. Trying a search");
 							wikipedia.search({track: trackmeta.name, trackartist: parent.playlistinfo.trackartist}, self.track.wikiResponseHandler, self.track.wikiResponseHandler);
 							return;
 						}
-						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"track is populating",trackmeta.wikipedia.tracklink);
+						debug.debug("WIKI TRACK",parent.nowplayingindex,"track is populating",trackmeta.wikipedia.tracklink);
 						wikipedia.getFullUri({	uri: trackmeta.wikipedia.tracklink,
 												term: trackmeta.name
 											  },
@@ -312,7 +313,7 @@ var info_wikipedia = function() {
 					},
 
 					wikiResponseHandler: function(data) {
-						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"got track data for",trackmeta.name);
+						debug.debug("WIKI TRACK",parent.nowplayingindex,"got track data for",trackmeta.name);
 						if (data) {
 							trackmeta.wikipedia.layout.finish(formatLink(data), formatPage(data), formatWiki(data));
 						} else {
