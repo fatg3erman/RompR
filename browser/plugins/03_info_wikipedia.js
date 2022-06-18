@@ -58,12 +58,13 @@ var info_wikipedia = function() {
 		// Remove inline colour styles on elements.
 		// We do background color twice because some elements have been found
 		// to have 2 background color styles applied.
-		// if (prefs.theme == "Darkness.css" || prefs.theme == "TheBlues.css" || prefs.theme == "DarknessHiDPI.css" ) {
-			jq.find('[style*=background-color]').removeInlineCss('background-color');
-			jq.find('[style*=background-color]').removeInlineCss('background-color');
-			jq.find('[style*=background]').removeInlineCss('background');
-			jq.find('[style*=color]').removeInlineCss('color');
-		// }
+		jq.find('[style*=background-color]').removeInlineCss('background-color');
+		jq.find('[style*=background-color]').removeInlineCss('background-color');
+		jq.find('[style*=background]').removeInlineCss('background');
+		jq.find('[style*=color]').removeInlineCss('color');
+
+		jq.find('table.wikitable.floatright').removeInlineCss('width');
+
 		// Remove these bits because they're a pain in the arse
 		jq.find("li[class|='nv']").remove();
 
@@ -75,7 +76,7 @@ var info_wikipedia = function() {
 		var xml_node = $('api',xml);
 		var domain = xml_node.find('rompr > domain').text();
 		var page = xml_node.find('rompr > page').text();
-		if (domain == 'null' || page== 'null')
+		if (domain == 'null' || page == 'null')
 			return null;
 
 		return 'http://'+domain+'.wikipedia.org/wiki/'+page;

@@ -119,7 +119,7 @@ table.tracklist {
     margin-right:0px;
     margin-bottom:12px;
     margin-left:12px;
-    margin-top:12px;
+    /*margin-top:12px;*/
     border: 1px solid var(--border-colour);
     font-size: 92%;
     line-height: 1.5em;
@@ -131,13 +131,33 @@ table.tracklist {
     margin-right:0px;
     margin-bottom:12px;
     margin-left:12px;
-    margin-top:12px;
+    /*margin-top:12px;*/
     border: 1px solid var(--border-colour);
     font-size: 92%;
     line-height: 1.5em;
     clear: right;
     max-width: 325px;
     word-wrap: break-word;
+}
+
+/* Wikipedia */
+@media screen and (max-width: 480px) {
+
+    .infobox {
+        float:none;
+        clear:both;
+        margin-left:auto !important;
+        margin-right:auto !important;
+        width:90% !important;
+    }
+
+    .infobox_v3 {
+        float:none;
+        clear:both;
+        margin-left:auto !important;
+        margin-right:auto !important;
+        width:90% !important;
+    }
 }
 
 .thumb {
