@@ -648,7 +648,7 @@ var infobar = function() {
 		setProgress: function(progress, duration) {
 			if (current_progress != progress || current_duration != duration) {
 				current_progress = progress;
-				current_duaration = duration;
+				current_duration = duration;
 				if (progress < 3) {
 					markedaslistened = false;
 					playcount_incremented = false;
