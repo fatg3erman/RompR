@@ -212,6 +212,10 @@ var info_wikipedia = function() {
 				return {
 
 					populate: async function() {
+						if (parent.playlistinfo.type == 'stream') {
+							albummeta.wikipedia.layout = new info_layout_empty();
+							return;
+						}
 						if (typeof albummeta.wikipedia.layout == 'undefined')
 							albummeta.wikipedia.layout = new info_html_layout({title: albummeta.name, type: 'album', source: me});
 
@@ -220,15 +224,15 @@ var info_wikipedia = function() {
 						}
 						if (albummeta.wikipedia.albumlink === null) {
 							if (albummeta.musicbrainz.album_releasegroupid !== null) {
-								debug.debug("WIKI PLUGIN",parent.nowplayingindex,"No album link found  ... trying the album release group");
+								debug.debug("WIKI ALBUM",parent.nowplayingindex,"No album link found  ... trying the album release group");
 								musicbrainz.releasegroup.getInfo(albummeta.musicbrainz.album_releasegroupid, '', self.album.mbRgHandler, self.album.mbRgHandler);
 							} else {
-								debug.debug("WIKI PLUGIN",parent.nowplayingindex,"No album link or release group link ... trying a search");
+								debug.debug("WIKI ALBUM",parent.nowplayingindex,"No album link or release group link ... trying a search");
 								wikipedia.search({album: albummeta.name, albumartist: getSearchArtist()}, self.album.wikiResponseHandler, self.album.wikiResponseHandler);
 							}
 							return;
 						}
-						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"album is populating",albummeta.wikipedia.albumlink);
+						debug.debug("WIKI ALBUM",parent.nowplayingindex,"album is populating",albummeta.wikipedia.albumlink);
 						wikipedia.getFullUri({	uri: albummeta.wikipedia.albumlink,
 												term: albummeta.name
 											  },
@@ -238,7 +242,7 @@ var info_wikipedia = function() {
 					},
 
 					wikiResponseHandler: function(data) {
-						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"got album data for",albummeta.name,data);
+						debug.debug("WIKI ALBUM",parent.nowplayingindex,"got album data for",albummeta.name,data);
 						if (data) {
 							albummeta.wikipedia.layout.finish(formatLink(data), formatPage(data), formatWiki(data));
 						} else {
@@ -247,13 +251,13 @@ var info_wikipedia = function() {
 					},
 
 					mbRgHandler: function(data) {
-						debug.core("WIKI PLUGIN",parent.nowplayingindex,"got musicbrainz release group data for",albummeta.name, data);
+						debug.core("WIKI ALBUM",parent.nowplayingindex,"got musicbrainz release group data for",albummeta.name, data);
 						if (data.error) {
-							debug.trace("WIKI PLUGIN",parent.nowplayingindex," ... MB error",data);
+							debug.trace("WIKI ALBUM",parent.nowplayingindex," ... MB error",data);
 						} else {
 							for (var i in data.relations) {
 								if (data.relations[i].type == "wikipedia") {
-									debug.trace("WIKI PLUGIN",parent.nowplayingindex,"has found a Wikipedia album link",data.relations[i].url.resource);
+									debug.trace("WIKI ALBUM",parent.nowplayingindex,"has found a Wikipedia album link",data.relations[i].url.resource);
 									albummeta.wikipedia.albumlink = data.relations[i].url.resource;
 									self.album.populate();
 									return;

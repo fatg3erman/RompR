@@ -2006,7 +2006,7 @@ div.pref div.selectholder:not(.snapcast_select)
 
 div.selectholder.snapcast_select
 {
-	padding-right: 1em;
+	margin-right: 1em;
 }
 
 .snapcastgroup input[type="text"].expand {
