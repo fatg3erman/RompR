@@ -22,11 +22,12 @@ var info_wikipedia = function() {
 			$(this).attr("target", "_blank");
 		});
 
-		// Make the contents table links work
+		// Make the contents table links work. Remove the '#' because
+		// when we click them we need to escape the selector (see uiHelper.goToBrowserSection)
 		jq.find("a[href^='#']").each( function() {
 			if (!$(this).hasClass('infoclick')) {
 				var ref = $(this).attr('href');
-				$(this).attr('name', ref);
+				$(this).attr('name', ref.replace('#', ''));
 				$(this).attr("href", "#");
 				$(this).addClass("infoclick clickwikicontents");
 			}

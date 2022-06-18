@@ -590,7 +590,10 @@ var uiHelper = function() {
 		},
 
 		goToBrowserSection: function(section) {
-			$('#infopane').romprScrollTo(section);
+			// This is for scrolling to Wikipedia Sections ONLY
+			// Note $.escapeSelector, because Wikipedia returns anchors that
+			// have special characters in them.
+			$('#infopane').romprScrollTo('#'+$.escapeSelector(section));
 		},
 
 		goToBrowserPlugin: function(panel) {
