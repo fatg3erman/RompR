@@ -424,6 +424,11 @@ class prefs {
 		// We do NOT use cookieprefs values when loading the UI prefs
 		$valid = array_merge(self::BROWSER_PREFS, self::COOKIEPREFS);
 		$to_save = array_intersect_key($p, $valid);
+		// If we save these, the UI gets EXTREMELY confused if we change Player
+		// using the ?setup screen.
+		unset($to_save['currenthost']);
+		unset($to_save['player_backend']);
+		unset($to_save['browser_id']);
 		self::save_prefs_file($to_save, 'prefs/ui_defaults.var');
 	}
 
@@ -614,9 +619,8 @@ class prefs {
 			}
 			foreach ($_POST as $i => $value) {
 				logger::mark("INIT", "Setting Pref ".$i." to ".$value);
-				self::$prefs[$i] = $value;
+				self::set_pref([$i => $value]);
 			}
-			self::set_pref(['currenthost' => self::$prefs['currenthost']]);
 
 			// Setup screen passes currenthost, mpd_host, mpd_port, mpd_password, and unix_socket
 			// Alter the hosts setting for that host, but pull in mopidy_remote and do_consume

@@ -72,7 +72,7 @@ if (array_key_exists('REQUEST_URI', $_SERVER)) {
 //
 // Check that the player we've been asked to talk to actually exists
 //
-if (!defined('IS_ROMONITOR')) {
+if (!defined('IS_ROMONITOR') && !array_key_exists('setupversion', $_REQUEST)) {
 	if (!array_key_exists(prefs::currenthost(), prefs::get_pref('multihosts'))) {
 		logger::warn("INIT", prefs::currenthost(),"is not defined in the hosts defs");
 		foreach (prefs::get_pref('multihosts') as $key => $obj) {

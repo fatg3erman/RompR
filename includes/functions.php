@@ -349,36 +349,62 @@ function domainCheck($default, $domain) {
 }
 
 function getDomain($d) {
-	if ($d === null || $d == "")
-		return "local";
 
-	if (prefs::get_pref('player_backend') == 'mpd') {
-		if (strpos($d, 'api.soundcloud') !== false) {
-			return "soundcloud";
-		} else {
+	$a = strtok($d, ':');
+
+	// We have to do a little munging here because mpd local tracks don't start with
+	// a protocol like local: but they MAY have a : in the Uri as part of the filename.
+	// Hence the need to check all the supported protocols and return local
+	// if it isn't one of those.
+	// The Bahama Soul Club/The Cuban Tapes/15 The Bahama Soul Club feat. Arema Arega - Tiki Suite Pt 2: Mirando Al Mar (Club des Belugas remix).mp3
+	// returns 'The' as the domain if we just use the value returned by strtok($d, ':') + strtok($a, ' ');
+
+	switch ($a) {
+		case '':
 			return 'local';
-		}
+			break;
+
+		case 'http':
+		case 'https':
+			if (strpos($d, 'api.soundcloud') !== false) {
+				// MPD playing a soundcloud track
+				return "soundcloud";
+			} else if (strpos($d, 'vk.me') !== false) {
+				return 'vkontakte';
+			} else if (strpos($d, 'oe1:archive') !== false) {
+				return 'oe1';
+			} else if (strpos($d, 'http://leftasrain.com') !== false) {
+				return 'leftasrain';
+			} else if (strpos($d, 'archives.bassdrivearchive.com') !== false || strpos($d, 'bassdrive.com') !== false) {
+				return 'bassdrive';
+			} else {
+				return $a;
+			}
+			break;
+
+		case 'mms':
+		case 'mmsh':
+		case 'mmst':
+		case 'mmsu':
+		case 'gopher':
+		case 'rtp':
+		case 'rtsp':
+		case 'rtmp':
+		case 'rtmpt':
+		case 'rtmps':
+			return $a;
+			break;
+
+		default:
+			if (prefs::get_pref('player_backend') == 'mpd') {
+				return 'local';
+			} else {
+				return strtok($a, ' ');
+			}
+			break;
+
 	}
 
-	$d = urldecode($d);
-	$pos = strpos($d, ":");
-	$a = substr($d,0,$pos);
-	if ($a == "") {
-		return "local";
-	}
-	if ($a == 'http' || $a == 'https') {
-		if (strpos($d, 'vk.me') !== false) {
-			return 'vkontakte';
-		} else if (strpos($d, 'oe1:archive') !== false) {
-			return 'oe1';
-		} else if (strpos($d, 'http://leftasrain.com') !== false) {
-			return 'leftasrain';
-		} else if (strpos($d, 'archives.bassdrivearchive.com') !== false ||
-					strpos($d, 'bassdrive.com') !== false) {
-			return 'bassdrive';
-		}
-	}
-	return strtok($a, ' ');
 }
 
 function domainIcon($d, $c) {

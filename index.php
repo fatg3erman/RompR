@@ -22,6 +22,19 @@ if (file_exists('collection/collection.php') || is_dir('themes/fruit')) {
 check_php_installation();
 
 //
+// Has the user asked for the setup screen?
+//
+
+if (array_key_exists('setup', $_REQUEST)) {
+	logger::log('INIT', 'User asked for Setup Screen');
+	$title = language::gettext("setup_request");
+	include("setupscreen.php");
+	exit(0);
+}
+
+logger::log('INIT', 'Got Past Setup Bit');
+
+//
 // Check to see if a specific player has been requested in the URL
 //
 
@@ -74,16 +87,6 @@ if (!prefs::get_pref('country_userset')) {
 
 logger::debug("INIT", $_SERVER['SCRIPT_FILENAME']);
 logger::debug("INIT", $_SERVER['PHP_SELF']);
-
-//
-// Has the user asked for the setup screen?
-//
-
-if (array_key_exists('setup', $_REQUEST)) {
-	$title = language::gettext("setup_request");
-	include("setupscreen.php");
-	exit();
-}
 
 //
 // Attempt a player connection. This will set player_backend if it is not already set

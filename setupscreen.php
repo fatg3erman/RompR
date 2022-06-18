@@ -1,4 +1,12 @@
 <?php
+$currenthost = prefs::currenthost();
+$pdef = prefs::get_player_def();
+logger::log('SETUP', 'Initial currenthost is', $currenthost);
+// Calling set_pref(['currenthost' => null]) sets currenthost back to the Default value
+// of Default. This means that when we load and do check_setup_values() it doesn't
+// get changed to what we set it to here. We need to actually clear the cookie completely
+// and this is the only way we can do that.
+setcookie('currenthost', '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
 prefs::set_pref(['player_backend' => null]);
 prefs::set_pref(['skin' => 'desktop']);
 logger::log("SETUP", "Displaying Setup Screen");
@@ -11,8 +19,9 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 <meta name="viewport" content="width=100%, initial-scale=1.0, maximum-scale=1.0, '.
 'minimum-scale=1.0, user-scalable=0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />';
-print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.time()."&skin=".prefs::skin().'" />'."\n";
-print '<link rel="stylesheet" type="text/css" href="gettheme.php?version='.time().'" />'."\n";
+// Use a ?setupversion on the Uri to prevent vars.php from setting currenthost
+print '<link rel="stylesheet" type="text/css" href="get_css.php?setupversion='.time()."&skin=".prefs::skin().'" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="gettheme.php?setupversion='.time().'" />'."\n";
 print '<link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png" />
 <link rel="shortcut icon" sizes="128x128" href="newimages/favicon-128.png" />
 <link rel="shortcut icon" sizes="64x64" href="newimages/favicon-64.png" />
@@ -49,14 +58,13 @@ $c = 0;
 foreach (prefs::get_pref('multihosts') as $host => $def) {
 	print '<div class="styledinputs">';
 	print '<input id="host'.$c.'" type="radio" name="currenthost" value="'.$host.'" onclick="displaySettings(event)"';
-	if ($host == prefs::currenthost()) {
+	if ($host == $currenthost) {
 		print ' checked';
 	}
 	print '><label for="host'.$c.'">'.$host.'</label></div>';
 	$c++;
 }
 
-$pdef = prefs::get_player_def();
 print '<p>'.language::gettext("setup_ipaddress").'<br>';
 print '<input type="text" name="mpd_host" value="'.$pdef['host'].'" /></p>';
 print '<p>'.language::gettext("setup_port").'<br>';
