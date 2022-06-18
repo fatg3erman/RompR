@@ -872,6 +872,13 @@ span.timer-time {
 
 }
 
+@media screen and (orientation: landscape) {
+	#nowplaying_icons {
+		border-bottom: 1px solid;
+		border-image: linear-gradient(90deg, rgba(0, 0, 0, 0), var(--border-colour), rgba(0, 0, 0, 0)) 1;
+	}
+}
+
 /* == Tweaks for specific sizes */
 
 @media screen and (max-height: 480px) and (orientation: portrait) {
@@ -1248,6 +1255,8 @@ span.timer-time {
 		top: 0;
 		right: 0;
 		width: 50%;
+		border-bottom: unset;
+		border-image: unset;
 	}
 
 	#progress {
