@@ -349,18 +349,22 @@ function domainCheck($default, $domain) {
 }
 
 function getDomain($d) {
-	if ($d === null || $d == "") {
+	if ($d === null || $d == "")
 		return "local";
+
+	if (prefs::get_pref('player_backend') == 'mpd') {
+		if (strpos($d, 'api.soundcloud') !== false) {
+			return "soundcloud";
+		} else {
+			return 'local';
+		}
 	}
+
 	$d = urldecode($d);
 	$pos = strpos($d, ":");
 	$a = substr($d,0,$pos);
 	if ($a == "") {
 		return "local";
-	}
-	$s = substr($d,$pos+3,15);
-	if ($s == "api.soundcloud.") {
-		return "soundcloud";
 	}
 	if ($a == 'http' || $a == 'https') {
 		if (strpos($d, 'vk.me') !== false) {

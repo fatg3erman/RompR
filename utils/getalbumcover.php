@@ -323,7 +323,7 @@ function tryPlayer($albumimage) {
 	global $player, $delaytime;
 	$retval = $player->search_for_album_image($albumimage);
 	if ($retval != '') {
-		$delaytime = 100;
+		$delaytime = 500;
 	}
 	return $retval;
 }
