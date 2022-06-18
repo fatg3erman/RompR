@@ -860,8 +860,9 @@ span.timer-time {
 
 	#nowplaying_icons {
 		text-align: center;
-		border-bottom: 1px solid;
+		border: 1px solid;
 		border-image: linear-gradient(90deg, rgba(0, 0, 0, 0), var(--border-colour), rgba(0, 0, 0, 0)) 1;
+		border-image-slice: 0 0 1 0;
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
@@ -876,6 +877,7 @@ span.timer-time {
 	#nowplaying_icons {
 		border-bottom: 1px solid;
 		border-image: linear-gradient(90deg, rgba(0, 0, 0, 0), var(--border-colour), rgba(0, 0, 0, 0)) 1;
+		border-image-slice: 0 0 1 0;
 	}
 }
 
@@ -958,8 +960,7 @@ span.timer-time {
 
 	#nowplaying_icons {
 		order: 3;
-		border-bottom: unset;
-		border-top: unset;
+		border: unset;
 		border-image: unset;
 		padding-top: 2px;
 	}
@@ -1065,7 +1066,7 @@ span.timer-time {
 	#nowplaying_icons {
 		width: 24vw;
 		order: 2;
-		border-bottom: unset;
+		border: unset;
 		border-image: unset;
 	}
 
@@ -1151,8 +1152,7 @@ span.timer-time {
 
 	#nowplaying_icons {
 		order: 3;
-		border-bottom: unset;
-		border-top: unset;
+		border: unset;
 		border-image: unset;
 		padding-top: 2px;
 	}
@@ -1291,7 +1291,7 @@ span.timer-time {
 		top: 0;
 		right: 0;
 		width: 50%;
-		border-bottom: unset;
+		border: unset;
 		border-image: unset;
 	}
 
@@ -1390,6 +1390,9 @@ span.timer-time {
 		top: unset;
 		right: unset;
 		width: unset;
+		border-bottom: 1px solid;
+		border-image: linear-gradient(90deg, rgba(0, 0, 0, 0), var(--border-colour), rgba(0, 0, 0, 0)) 1;
+		border-image-slice: 0 0 1 0;
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
