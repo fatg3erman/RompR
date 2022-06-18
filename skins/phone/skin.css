@@ -1129,6 +1129,7 @@ span.timer-time {
 	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
 		height: 20px;
 		line-height: 20px;
+		float: left;
 	}
 
     .rating-icon-big {
@@ -1146,6 +1147,14 @@ span.timer-time {
 		float: right;
 		height: 20px;
 		line-height: 20px;
+	}
+
+	#nowplaying_icons {
+		order: 3;
+		border-bottom: unset;
+		border-top: unset;
+		border-image: unset;
+		padding-top: 2px;
 	}
 
 	#dbtags, #playcount {
