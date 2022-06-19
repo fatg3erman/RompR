@@ -226,6 +226,14 @@ var layoutProcessor = function() {
 
 	var oldchooser = 'albumlist';
 
+	var infobarObserver = new IntersectionObserver(function(entries, me) {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				infobar.rejigTheText();
+			}
+		});
+	});
+
 	return {
 
 		sortFaveRadios: false,
@@ -300,7 +308,9 @@ var layoutProcessor = function() {
 				oldchooser = source;
 				// Need to do this here - at the very least we need to reig the text
 				// because we might be switching to infobar from another panel
-				infobar.rejigTheText();
+				// We're now using intersectionObserver to do this, as tere's some timing thing
+				// that means doing it here doesn't always work.
+				// infobar.rejigTheText();
 			}
 			prefs.save({chooser: source});
 		},
@@ -367,6 +377,7 @@ var layoutProcessor = function() {
 				orientation: 'horizontal',
 				command: player.controller.volume
 			});
+			$('#infobar').get().forEach(d => infobarObserver.observe(d));
 		},
 
 		makeSortablePlaylist: function(id) {
