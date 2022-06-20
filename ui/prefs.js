@@ -537,6 +537,14 @@ var prefs = function() {
 
 		},
 
+		// "Special Values" are for prefs that might be set eg by a plugin
+		// but for which it's impossible to provide a default because you
+		// don't know the exact name of thf pref. Eg the volumelock state for
+		// a snapcast group.
+		// to Get the value, call this. The second param should be the default value
+		// and will be retured if the pref is not defined in localstorage.
+		// Whatever sets a Special Value is responsible for it. It will not be
+		// available as prefs.whatever
 		get_special_value: function(pref, def) {
 			let pn = hex_md5(pref);
 			if (localStorage.getItem("sprefs."+pn) != null && localStorage.getItem("sprefs."+pn) != "") {

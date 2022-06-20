@@ -348,7 +348,6 @@ function snapcastGroup() {
 			name = id;
 		}
 		holder.find('input[name="groupname"]').val(name);
-		self.set_lockbutton();
 	}
 
 	function setMuted(data) {
@@ -417,13 +416,13 @@ function snapcastGroup() {
 	}
 
 	this.set_lockbutton = function() {
-		volumelocked = prefs.get_special_value('lock_'+name, false);
+		volumelocked = prefs.get_special_value('lock_'+id, false);
 		let c = (volumelocked) ? 'icon-padlock' : 'icon-padlock-open';
 		lockbutton.removeClass('icon-padlock').removeClass('icon-padlock-open').addClass(c);
 	}
 
 	this.setVolumeLock = function() {
-		prefs.set_special_value('lock_'+name, !volumelocked);
+		prefs.set_special_value('lock_'+id, !volumelocked);
 		self.set_lockbutton();
 	}
 
@@ -448,6 +447,7 @@ function snapcastGroup() {
 		id = data.id;
 		setName(data);
 		setMuted(data);
+		self.set_lockbutton();
 
 		$.each(clients, function() {
 			this.fresh = false;
