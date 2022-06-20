@@ -896,6 +896,12 @@ span.timer-time {
 	}
 }
 
+@media screen and (max-width: 399px) and (max-height: 699px) and (orientation: portrait) {
+	#nowplaying_icons {
+		padding-bottom: 4px;
+	}
+}
+
 @media screen and (min-height: 640px) and (max-height: 699px) and (orientation: portrait) {
 	#albumpicture {
 		width: 98%;
@@ -1407,6 +1413,7 @@ span.timer-time {
 		border-bottom: 1px solid;
 		border-image: linear-gradient(90deg, rgba(0, 0, 0, 0), var(--border-colour), rgba(0, 0, 0, 0)) 1;
 		border-image-slice: 0 0 1 0;
+		padding-bottom: 4px;
 	}
 
 	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
