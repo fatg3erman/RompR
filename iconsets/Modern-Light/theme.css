@@ -111,4 +111,6 @@
     --icon-allmusic: url('iconsets/Modern-Light/allmusic-logo.svg');
     --icon-updown: url('iconsets/Modern-Light/arrow-updown.svg');
     --icon-bookmark: url('iconsets/Modern-Light/bookmark.svg');
+    --icon-padlock:  url('iconsets/Modern-Light/padlock.svg');
+    --icon-padlock-open: url('iconsets/Modern-Light/padlock_open.svg');
 }

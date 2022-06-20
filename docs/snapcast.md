@@ -15,6 +15,10 @@ The Snapcast panel shows you groups and the Clients in those groups.
 
 Groups can be muted using the Mute icon next to the group and renamed by editing the name.
 
+The volume controls for all the clients in a group can be locked together by clicking the padlock icon. When locked together,
+adjusting the volume of one client will adjust the volume of all the others by the same amount. You cannot adjust the volume of any client
+to a point where it would make another client's volume go over 100% or below 0%.
+
 Clients can be muted, removed, renamed, and have their volume adjusted.
 
 If your Snapcast server has multiple streams, you can assign a stream to a group by using the menu to the right of the group name

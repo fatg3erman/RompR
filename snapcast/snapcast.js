@@ -337,7 +337,9 @@ function snapcastGroup() {
 	var streammenu;
 	var name;
 	var mutebutton;
+	var lockbutton;
 	var changeNameTimer;
+	var volumelocked;
 
 	function setName(data) {
 		if (data.name) {
@@ -346,6 +348,7 @@ function snapcastGroup() {
 			name = id;
 		}
 		holder.find('input[name="groupname"]').val(name);
+		self.set_lockbutton();
 	}
 
 	function setMuted(data) {
@@ -407,7 +410,21 @@ function snapcastGroup() {
 		var sel = $('<div>', {class: 'selectholder snapcast_select expand'}).appendTo(title);
 		streammenu = $('<select>', {class: 'snapgroupstream'}).appendTo(sel);
 
+		lockbutton = $('<i>', {class: "inline-icon fixed clickicon", name: "groupvol-locked"}).appendTo(title).on('click', self.setVolumeLock);
+		self.set_lockbutton();
+
 		mutebutton = $('<i>', {class: "inline-icon fixed clickicon", name: "groupmuted"}).appendTo(title).on('click', self.setMute);
+	}
+
+	this.set_lockbutton = function() {
+		volumelocked = prefs.get_special_value('lock_'+name, false);
+		let c = (volumelocked) ? 'icon-padlock' : 'icon-padlock-open';
+		lockbutton.removeClass('icon-padlock').removeClass('icon-padlock-open').addClass(c);
+	}
+
+	this.setVolumeLock = function() {
+		prefs.set_special_value('lock_'+name, !volumelocked);
+		self.set_lockbutton();
 	}
 
 	this.removeSelf = function() {
@@ -439,7 +456,7 @@ function snapcastGroup() {
 			if (clients.hasOwnProperty(c.id)) {
 				clients[c.id].fresh = true;
 				debug.debug('SNAPCAST','Updating clients',c.id);
-				clients[c.id].client.update(id, c);
+				clients[c.id].client.update(id, c, self);
 			} else {
 				debug.log('SNAPCAST','Creating new client',c.id);
 				clients[c.id] = {
@@ -447,7 +464,7 @@ function snapcastGroup() {
 					client: new snapcastClient()
 				}
 				clients[c.id].client.initialise(holder);
-				clients[c.id].client.update(id, c);
+				clients[c.id].client.update(id, c, self);
 			}
 		});
 		$.each(clients, function(i, v) {
@@ -495,6 +512,22 @@ function snapcastGroup() {
 			updateStreamMenu(params);
 		}
 	}
+
+	this.check_volume_inc = function(client_id, increment, client_volume) {
+		if (!volumelocked)
+			return client_volume;
+
+		$.each(clients, function() {
+			increment = this.client.check_volume_increment(increment);
+		});
+		if (increment != 0) {
+			$.each(clients, function() {
+				this.client.increment_volume(increment);
+			});
+		}
+
+		return false;
+	}
 }
 
 function snapcastClient() {
@@ -512,6 +545,7 @@ function snapcastClient() {
 	var connected;
 	var changeNameTimer;
 	var changeLatencyTimer;
+	var parent_group;
 
 	var holder2;
 	var label_holder2;
@@ -616,9 +650,10 @@ function snapcastClient() {
 		changeLatencyTimer = setTimeout(self.changeLatency, 500);
 	}
 
-	this.update = function(index, data) {
+	this.update = function(index, data, parent) {
 		groupid = index;
 		id = data.id;
+		parent_group = parent;
 		connected = data.connected;
 		if (data.config.name) {
 			updateName(data.config.name)
@@ -671,8 +706,20 @@ function snapcastClient() {
 
 	this.setVolume = function(v) {
 		v = Math.round(v);
-		debug.log('SNAPCAST','Client',id,'setting volume to',v);
-		snapcast.setClientVolume(id, v, muted);
+		let increment = v - volumepc;
+		debug.log('SNAPCAST','Client',id,'setting volume to',v,increment);
+		let actual = parent_group.check_volume_inc(id, increment, v);
+		if (actual !== false)
+			snapcast.setClientVolume(id, actual, muted);
+	}
+
+	this.check_volume_increment = function(increment) {
+		let final_vol = Math.max(0, Math.min(100, volumepc+increment));
+		return final_vol - volumepc;
+	}
+
+	this.increment_volume = function(inc) {
+		snapcast.setClientVolume(id, volumepc+inc, muted);
 	}
 
 	this.setMute = function() {

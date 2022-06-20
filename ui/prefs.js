@@ -537,6 +537,19 @@ var prefs = function() {
 
 		},
 
+		get_special_value: function(pref, def) {
+			let pn = hex_md5(pref);
+			if (localStorage.getItem("sprefs."+pn) != null && localStorage.getItem("sprefs."+pn) != "") {
+				return JSON.parse(localStorage.getItem("sprefs."+pn));
+			} else {
+				return def;
+			}
+		},
+
+		set_special_value(pref, value) {
+			localStorage.setItem('sprefs.'+hex_md5(pref), JSON.stringify(value));
+		},
+
 		get_player_param: function(param) {
 			return prefs.multihosts[prefs.currenthost][param];
 		},

@@ -117,4 +117,6 @@
     --icon-allmusic: url('iconsets/Purpletrator/allmusic-logo.svg');
     --icon-updown: url('iconsets/Purpletrator/arrow-updown.svg');
     --icon-bookmark: url('iconsets/Purpletrator/bookmark.svg');
+    --icon-padlock:  url('iconsets/Purpletrator/padlock.svg');
+    --icon-padlock-open: url('iconsets/Purpletrator/padlock_open.svg');
 }

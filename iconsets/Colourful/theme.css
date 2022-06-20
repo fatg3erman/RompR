@@ -117,4 +117,6 @@
     --icon-allmusic: url('iconsets/Colourful/allmusic-logo.svg');
     --icon-updown: url('iconsets/Colourful/arrow-updown.svg');
     --icon-bookmark: url('iconsets/Colourful/bookmark.svg');
+    --icon-padlock:  url('iconsets/Colourful/padlock.svg');
+    --icon-padlock-open: url('iconsets/Colourful/padlock_open.svg');
 }

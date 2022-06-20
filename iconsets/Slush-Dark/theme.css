@@ -117,4 +117,6 @@
     --icon-allmusic: url('iconsets/Slush-Dark/allmusic-logo.svg');
     --icon-updown: url('iconsets/Slush-Dark/arrow-updown.svg');
     --icon-bookmark: url('iconsets/Slush-Dark/bookmark.svg');
+    --icon-padlock:  url('iconsets/Slush-Dark/padlock.svg');
+    --icon-padlock-open: url('iconsets/Slush-Dark/padlock_open.svg');
 }

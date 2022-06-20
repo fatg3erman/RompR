@@ -117,4 +117,6 @@
     --icon-allmusic: url('iconsets/Bobalophagus-Light/allmusic-logo.svg');
     --icon-updown: url('iconsets/Bobalophagus-Light/arrow-updown.svg');
     --icon-bookmark: url('iconsets/Bobalophagus-Light/bookmark.svg');
+    --icon-padlock:  url('iconsets/Bobalophagus-Light/padlock.svg');
+    --icon-padlock-open: url('iconsets/Bobalophagus-Light/padlock_open.svg');
 }

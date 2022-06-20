@@ -117,4 +117,6 @@
     --icon-allmusic: url('iconsets/Fiery/allmusic-logo.svg');
     --icon-updown: url('iconsets/Fiery/arrow-updown.svg');
     --icon-bookmark: url('iconsets/Fiery/bookmark.svg');
+    --icon-padlock:  url('iconsets/Fiery/padlock.svg');
+    --icon-padlock-open: url('iconsets/Fiery/padlock_open.svg');
 }

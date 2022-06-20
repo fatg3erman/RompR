@@ -2,20 +2,20 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="205.66005mm"
    height="207.89409mm"
    viewBox="0 0 205.66004 207.89409"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.2 5c3e80d, 2017-08-06"
-   sodipodi:docname="lastfm-love.svg">
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="lastfm-love.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2">
     <inkscape:path-effect
@@ -597,17 +597,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="256.56996"
-     inkscape:cy="342.87069"
+     inkscape:cx="256.42857"
+     inkscape:cy="343.57143"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="2560"
-     inkscape:window-height="1396"
+     inkscape:window-height="1411"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:snap-text-baseline="false" />
+     inkscape:snap-text-baseline="false"
+     inkscape:pagecheckerboard="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -616,7 +617,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -634,26 +635,23 @@
        ry="94.947044" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#3ED3D5;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#3ed3d5;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="98.236397"
        y="130.31609"
-       id="text9654"><tspan
-         sodipodi:role="line"
-         id="tspan9652"
-         x="98.236397"
-         y="139.67986"
-         style="stroke-width:0.26458332px;fill:#3ED3D5;fill-opacity:1" /></text>
+       id="text9654" />
     <g
-       style="display:block"
+       style="display:block;stroke:#3ed3d5;stroke-opacity:1;fill:#3ed3d5;fill-opacity:1"
        id="g13906"
        transform="matrix(6.920251,0,0,6.920251,37.422067,90.689429)">
       <g
          transform="translate(-1.8983051,-2.2135593)"
-         id="favorite">
+         id="favorite"
+         style="stroke:#3ed3d5;stroke-opacity:1;fill:#3ed3d5;fill-opacity:1">
         <path
            d="M 12,21.4 10.6,20 C 5.4,15.4 2,12.3 2,8.5 2,5.4 4.4,3 7.5,3 9.2,3 10.9,3.8 12,5.1 13.1,3.8 14.8,3 16.5,3 19.6,3 22,5.4 22,8.5 22,12.3 18.6,15.4 13.4,20 Z"
            id="path5"
-           inkscape:connector-curvature="0" />
+           inkscape:connector-curvature="0"
+           style="stroke:#3ed3d5;stroke-opacity:1;fill:#3ed3d5;fill-opacity:1" />
       </g>
     </g>
   </g>
@@ -662,4 +660,10 @@
      type="text/css">
 	.st0{clip-path:url(#SVGID_2_);fill:#00AEEF;}
 </style>
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#3ED3D5;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#3ED3D5;fill-opacity:1}</style></svg>
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#3ED3D5;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#3ED3D5;fill-opacity:1}</style>
+</svg>

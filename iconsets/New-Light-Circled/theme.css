@@ -117,4 +117,6 @@
     --icon-allmusic: url('iconsets/New-Light-Circled/allmusic-logo.svg');
     --icon-updown: url('iconsets/New-Light-Circled/arrow-updown.svg');
     --icon-bookmark: url('iconsets/New-Light-Circled/bookmark.svg');
+    --icon-padlock:  url('iconsets/New-Light-Circled/padlock.svg');
+    --icon-padlock-open: url('iconsets/New-Light-Circled/padlock_open.svg');
 }

@@ -117,4 +117,6 @@
     --icon-allmusic: url('iconsets/Bobalophatrator/allmusic-logo.svg');
     --icon-updown: url('iconsets/Bobalophatrator/arrow-updown.svg');
     --icon-bookmark: url('iconsets/Bobalophatrator/bookmark.svg');
+    --icon-padlock:  url('iconsets/Bobalophatrator/padlock.svg');
+    --icon-padlock-open: url('iconsets/Bobalophatrator/padlock_open.svg');
 }

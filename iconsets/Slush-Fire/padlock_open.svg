@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 24.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 512 512"
+   style="enable-background:new 0 0 512 512;"
+   xml:space="preserve"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs15"><linearGradient
+   id="linearGradient1185"><stop
+     style="stop-color:#FFF663;stop-opacity:1"
+     offset="0"
+     id="stop1181" /><stop
+     style="stop-color:#FB8626;stop-opacity:1"
+     offset="1"
+     id="stop1183" /></linearGradient>
+	
+	
+	
+	
+<radialGradient
+   xlink:href="#linearGradient1185"
+   id="radialGradient2090"
+   cx="256.05"
+   cy="256.8127"
+   fx="256.05"
+   fy="256.8127"
+   r="187.75"
+   gradientTransform="matrix(1,0,0,1.3591867,0,-92.243703)"
+   gradientUnits="userSpaceOnUse" /></defs>
+<g
+   id="g1179"
+   style="fill-opacity:1;fill:url(#radialGradient2090)"><path
+     d="m 409.6,163.38571 -34.1,0.8127 V 155.2254 C 375.5,88.625403 322.6,35.725398 256,35.725398 c -66.6,0 -119.5,52.900005 -119.5,119.500002 v 97.55714 l -34.1,5.68889 V 155.2254 C 102.4,69.925403 170.7,1.6253975 256,1.6253975 c 85.3,0 153.6,68.3000055 153.6,153.6000025 z"
+     id="path2"
+     style="fill-opacity:1;fill:url(#radialGradient2090)" /><g
+     id="g1172"
+     style="fill-opacity:1;fill:url(#radialGradient2090)"><path
+       d="m 392.5,512 h -273 c -29,0 -51.2,-19.0873 -51.2,-44.02116 V 291.89418 c 0,-24.93386 22.2,-44.02116 51.2,-44.02116 h 273.1 c 29,0 51.2,19.0873 51.2,44.02116 V 467.97884 C 443.7,492.9127 421.5,512 392.5,512 Z m -273,-234.8082 c -10.2,0 -17.1,5.84656 -17.1,14.70238 v 176.08466 c 0,8.76984 6.8,14.70238 17.1,14.70238 h 273.1 c 10.2,0 17.1,-5.84656 17.1,-14.70238 V 291.89418 c 0,-8.76984 -6.8,-14.70238 -17.1,-14.70238 z"
+       id="path4"
+       style="stroke-width:0.927248;fill-opacity:1;fill:url(#radialGradient2090)" /></g><circle
+     cx="256"
+     cy="336.45715"
+     r="34.099998"
+     id="circle6"
+     style="fill-opacity:1;fill:url(#radialGradient2090)" /><polygon
+     points="281.6,409.6 264.5,307.2 247.5,307.2 230.4,409.6 "
+     id="polygon8"
+     transform="translate(0,29.257143)"
+     style="fill-opacity:1;fill:url(#radialGradient2090)" /></g>
+</svg>
