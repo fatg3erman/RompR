@@ -31,69 +31,71 @@ if (array_key_exists('populate', $_REQUEST)) {
 	logger::debug("ICESCRAPER", "Page Title Is ".$page_title);
 
 	$list = $doc->find('div.card.shadow-sm');
-	uibits::directoryControlHeader('icecastlist', language::gettext('label_icecast'));
-	print '<div class="containerbox vertical-centre fullwidth"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
-	if (array_key_exists("searchfor", $_REQUEST)) {
-		print ' value="'.$_REQUEST['searchfor'].'"';
-	}
-	print ' /></div>';
-	print '<button class="fixed searchbutton iconbutton" name="cornwallis"></button></div>';
+	// uibits::directoryControlHeader('icecastlist', language::gettext('label_icecast'));
+	// print '<div class="containerbox vertical-centre fullwidth"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
+	// if (array_key_exists("searchfor", $_REQUEST)) {
+	// 	print ' value="'.$_REQUEST['searchfor'].'"';
+	// }
+	// print ' /></div>';
+	// print '<button class="fixed searchbutton iconbutton" name="cornwallis"></button></div>';
 
-	print uibits::ui_config_header([
-		'label_text' => $page_title
-	]);
+	if (count($list) > 0) {
+		// print uibits::ui_config_header([
+		// 	'label_text' => 'Icecast Radio '.$page_title
+		// ]);
 
-	foreach ($list as $server) {
-		$server_web_link = '';
-		$server_name = pq($server)->find('.card-title')->text();
-		logger::debug("ICESCRAPER", "Server Name Is ".$server_name);
-		$server_description = munge_ice_text(pq($server)->find('.card-text')->text());
+		foreach ($list as $server) {
+			$server_web_link = '';
+			$server_name = pq($server)->find('.card-title')->text();
+			logger::debug("ICESCRAPER", "Server Name Is ".$server_name);
+			$server_description = munge_ice_text(pq($server)->find('.card-text')->text());
 
-		$stream_tags = array();
-		$stream_tags_section = pq($server)->find('.badge.badge-secondary');
-		foreach ($stream_tags_section as $tag) {
-			$stream_tags[] = pq($tag)->text();
+			$stream_tags = array();
+			$stream_tags_section = pq($server)->find('.badge.badge-secondary');
+			foreach ($stream_tags_section as $tag) {
+				$stream_tags[] = pq($tag)->text();
+			}
+
+			$format = pq($server)->find('.badge.badge-primary')->text();
+			$listenlink = pq($server)->find('a.btn.btn-sm')->attr('href');
+
+			if ($listenlink != '') {
+				print uibits::albumHeader(array(
+					'openable' => false,
+					'Image' => 'newimages/icecast.svg',
+					'Artistname' => implode(', ', $stream_tags).' - '.$server_description,
+					'Albumname' => htmlspecialchars($server_name).' '.'<i class="'.audioClass($format).' inline-icon fixed"></i>',
+					'streamuri' => $listenlink,
+					'streamname' => $server_name,
+					'streamimg' => '',
+					'class' => 'radiochannel'
+				));
+			}
 		}
 
-		$format = pq($server)->find('.badge.badge-primary')->text();
-		$listenlink = pq($server)->find('a.btn.btn-sm')->attr('href');
-
-		if ($listenlink != '') {
-			print uibits::albumHeader(array(
-				'openable' => false,
-				'Image' => 'newimages/icecast.svg',
-				'Artistname' => implode(', ', $stream_tags).' - '.$server_description,
-				'Albumname' => htmlspecialchars($server_name).' '.'<i class="'.audioClass($format).' inline-icon fixed"></i>',
-				'streamuri' => $listenlink,
-				'streamname' => $server_name,
-				'streamimg' => '',
-				'class' => 'radiochannel'
-			));
+		$pager = $doc->find('ul.pagination')->children('li.page-item')->not('.disabled');
+		print '<div class="containerbox wrap configtitle textcentre">';
+		foreach ($pager as $page) {
+			$link = pq($page)->children('a.page-link')->attr('href');
+			print '<div class="clickable icescraper clickicon clickicepager expand" name="search'.$link.'">'.pq($page)->children('a')->text().'</div>';
 		}
+		print '</div>';
+	} else {
+		header('HTTP/1.1 204 No Content');
 	}
-
-	$pager = $doc->find('ul.pagination')->children('li.page-item')->not('.disabled');
-	print '<div class="containerbox wrap configtitle textcentre">';
-	foreach ($pager as $page) {
-		$link = pq($page)->children('a.page-link')->attr('href');
-		print '<div class="clickable icescraper clickicon clickicepager expand" name="search'.$link.'">'.pq($page)->children('a')->text().'</div>';
-	}
-	print '</div>';
-
 } else {
-	// print '<div id="icecastplugin">';
-	print uibits::albumHeader(array(
-		'playable' => false,
-		'id' => 'icecastlist',
-		'Image' => 'newimages/icecast.svg',
-		'Albumname' => language::gettext('label_icecast'),
-		'class' => 'radio icecastroot'
-	));
-	print '<div id="icecastlist" class="dropmenu notfilled is-albumlist">';
-	print uibits::ui_config_header([
-		'label' => 'label_loading'
-	]);
-	print '</div>';
+	// print uibits::albumHeader(array(
+	// 	'playable' => false,
+	// 	'id' => 'icecastlist',
+	// 	'Image' => 'newimages/icecast.svg',
+	// 	'Albumname' => language::gettext('label_icecast'),
+	// 	'class' => 'radio icecastroot'
+	// ));
+	// print '<div id="icecastlist" class="dropmenu notfilled is-albumlist">';
+	// print uibits::ui_config_header([
+	// 	'label' => 'label_loading'
+	// ]);
+	// print '</div>';
 }
 
 function munge_ice_text($text) {

@@ -98,10 +98,13 @@ create_body_tag('phone');
 		'label' => 'label_searchfor',
 		'icon_size' => 'smallicon'
 	]);
-	include("player/".prefs::get_pref('player_backend')."/search.php");
+	$sh = new search_handler();
+	$sh->create_search_panel();
 	?>
 	</div>
-	<div id="searchresultholder" class="selecotron is-albumlist"></div>
+	<?php
+	$sh->make_search_holders();
+	?>
 </div>
 
 <!-- File Browser -->
@@ -139,7 +142,7 @@ create_body_tag('phone');
 	print uibits::ui_config_header([
 		'lefticon' => 'icon-menu clickicon fixed openmenu',
 		'lefticon_name' => 'podcastbuttons',
-		'label' => 'label_podcasts',
+		'label' => 'label_subbed_podcasts',
 		'icon_size' => 'smallicon',
 		'title_class' => 'is-coverable'
 	]);

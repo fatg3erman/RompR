@@ -4,20 +4,15 @@ var tuneinRadioPlugin = {
 		return "streamplugins/03_tuneinradio.php?populate=2";
 	},
 
-	handleClick: function(event, clickedElement) {
-		if (clickedElement.hasClass("tuneinsearchbutton")) {
-			var term = $('[name="tuneinsearcher"]').val();
-			if (term) {
-				var uri = "streamplugins/03_tuneinradio.php?populate=2&search="+encodeURIComponent(term);
-			} else {
-				var uri = tuneinRadioPlugin.loadBigRadio();
-			}
-			clickRegistry.loadContentIntoTarget({
-				target: $('#tuneinlist'),
-				clickedElement: $('i[name="tuneinlist"]'),
-				uri: uri
-			});
-		}
+	search: async function(terms, domains) {
+		// Note, terms.any is an array but encodeURIComponent will join them with a ,
+		var uri = "streamplugins/03_tuneinradio.php?populate=2&search="+encodeURIComponent(terms.any)+'&domains='+domains.join(',');
+		await clickRegistry.loadContentIntoTarget({
+			target: $('#tunein_search'),
+			clickedElement: $('button[name="globalsearch"]'),
+			uri: uri
+		});
+		searchManager.make_search_title('tunein_search', 'Tunein Search');
 	},
 
 	browse: function(clickedElement, menutoopen) {
@@ -28,6 +23,7 @@ var tuneinRadioPlugin = {
 
 }
 
-clickRegistry.addClickHandlers('tunein', tuneinRadioPlugin.handleClick);
+// clickRegistry.addClickHandlers('tunein', tuneinRadioPlugin.handleClick);
 clickRegistry.addMenuHandlers('tuneinroot', tuneinRadioPlugin.loadBigRadio);
 clickRegistry.addMenuHandlers('tunein', tuneinRadioPlugin.browse);
+searchManager.add_search_plugin('tuneinsearch', tuneinRadioPlugin.search, ['podcasts', 'radio']);

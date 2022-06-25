@@ -20,23 +20,19 @@ var communityRadioPlugin = {
 		});
 	},
 
-	search: function(event, clickedElement) {
+	search: async function(terms, domains) {
 		var uri = 'streamplugins/04_communityradio.php?populate=3&order='+prefs.communityradioorderby;
-		var foundterm = false;
-		$('.comm_radio_searchterm').each(function() {
-			if ($(this).val() != '') {
-				foundterm = true;
-				uri += '&'+$(this).attr('name')+'='+encodeURIComponent($(this).val());
-			}
+		$.each(terms, function(i, v) {
+			let term = (i == 'any') ? 'name' : i;
+			// Note, terms.whatever is an array but encodeURIComponent will join them with a ,
+			uri += '&'+term+'='+encodeURIComponent(v);
 		});
-		if (!foundterm) {
-			uri = 'streamplugins/04_communityradio.php?populate=4';
-		}
-		clickRegistry.loadContentIntoTarget({
-			target: $('#communitystations'),
-			clickedElement: $('i[name="communityradiolist"]'),
+		await clickRegistry.loadContentIntoTarget({
+			target: $('#commradio_search'),
+			clickedElement: $('button[name="globalsearch"]'),
 			uri: uri
 		});
+		searchManager.make_search_title('commradio_search', 'Community Radio Browser');
 	},
 
 	browse: function(clickedElement, menutoopen) {
@@ -55,6 +51,7 @@ var communityRadioPlugin = {
 }
 
 clickRegistry.addClickHandlers('commradio', communityRadioPlugin.handleClick);
-clickRegistry.addClickHandlers('commradiosearch', communityRadioPlugin.search);
+// clickRegistry.addClickHandlers('commradiosearch', communityRadioPlugin.search);
 clickRegistry.addMenuHandlers('commradioroot', communityRadioPlugin.loadCommRadioRoot);
 clickRegistry.addMenuHandlers('commradio', communityRadioPlugin.browse);
+searchManager.add_search_plugin('commradiosearch', communityRadioPlugin.search, ['radio']);

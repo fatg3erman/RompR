@@ -653,7 +653,6 @@ var prefs = function() {
 					callback = layoutProcessor.hideBrowser;
 					break;
 
-				case 'searchcollectiononly':
 				case "tradsearch":
 					callback = setAvailableSearchOptions;
 					break;
@@ -816,7 +815,7 @@ var prefs = function() {
 					prefobj.actuallysortresultsby = (prefobj.sortresultsby == 'sameas') ? prefs.sortcollectionby : prefobj.sortresultsby;
 					callback = function() {
 						layoutProcessor.changeCollectionSortMode();
-						player.controller.reSearch();
+						searchManager.search();
 					}
 					break;
 

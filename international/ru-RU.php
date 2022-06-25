@@ -96,7 +96,6 @@ language::add_translations([
 	"label_searchfor" =>					"Искать",
 	"label_searching" =>					"Поиск...",
 	"label_searchresults" =>				"Результаты Поиска",
-	"label_limitsearch" =>					"Поиск конкретных бэкэндов",
 
 	// General multipurpose labels
 	"label_tracks" =>						"треки",
@@ -470,7 +469,6 @@ language::add_translations([
 	// New in 0.71
 	"label_albumsbyartist" =>				"Альбомы (по исполнителю)",
 	"config_wheelspeed" =>					"Скорость прокрутки колесика мыши",
-	"label_searchcollectiononly" =>			"Искать только в Музыкальной коллекции",
 
 	"label_radio_recommend" =>				"Рекомендации, основанные на этом %s",
 	"label_amendalbum" =>					"Изменить информацию об альбоме",

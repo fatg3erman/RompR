@@ -610,9 +610,9 @@ class poDatabase extends database {
 			print '</div>';
 
 			if (array_key_exists('configvisible', $_REQUEST) && $_REQUEST['configvisible'] == 1) {
-				print '<div class="marged whatdoicallthis toggledown invisible podconfigpanel" id="podconf_'.$pm.'" style="display:block">';
+				print '<div class="whatdoicallthis toggledown invisible podconfigpanel" id="podconf_'.$pm.'" style="display:block">';
 			} else {
-				print '<div class="marged whatdoicallthis toggledown invisible podconfigpanel" id="podconf_'.$pm.'">';
+				print '<div class="whatdoicallthis toggledown invisible podconfigpanel" id="podconf_'.$pm.'">';
 			}
 			print '<div class="containerbox vertical podoptions">';
 			print '<div class="containerbox fixed vertical-centre"><div class="divlabel">'.
@@ -1308,8 +1308,8 @@ class poDatabase extends database {
 		$qstring .= implode(', ', $sortarray);
 		$result = $this->generic_sql_query($qstring, false, PDO::FETCH_OBJ);
 		// Hack to make phone skin and skypotato skin work without too much extra effort
-		if ($subscribed == 1)
-			print uibits::ui_config_header(['label' => 'label_subbed_podcasts']);
+		// if ($subscribed == 1)
+		// 	print uibits::ui_config_header(['label' => 'label_subbed_podcasts']);
 		foreach ($result as $obj) {
 			$this->doPodcastHeader($obj, $subscribed);
 		}

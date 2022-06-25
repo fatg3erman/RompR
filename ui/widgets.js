@@ -1378,41 +1378,17 @@ $.widget("rompr.makeDomainChooser", {
 
 	options: {
 		default_domains: [],
-		sources_not_to_choose: {
-				file: 1,
-				http: 1,
-				https: 1,
-				mms: 1,
-				rtsp: 1,
-				somafm: 1,
-				spotifytunigo: 1,
-				rtmp: 1,
-				rtmps: 1,
-				sc: 1,
-				yt: 1,
-				m3u: 1,
-				spotifyweb: 1,
-				'podcast+http': 1,
-				'podcast+https': 1,
-				'podcast+ftp': 1,
-				'podcast+file': 1,
-				'podcast+itunes': 1,
-				'podcast+gpodder.net': 1,
-				'podcast+gpodder': 1
-		}
 	},
 
 	_create: function() {
 		var self = this;
 		this.options.holder = $('<div>', {class: 'containerbox wrap'}).appendTo(this.element);
-		for (var i in player.urischemes) {
-			if (!this.options.sources_not_to_choose.hasOwnProperty(i)) {
-				var makeunique = $("[id^='"+i+"_import_domain']").length+1;
-				var id = i+'_import_domain_'+makeunique;
-				this.options.holder.append('<div class="fixed brianblessed styledinputs">'+
-					'<input type="checkbox" class="topcheck" id="'+id+'"><label for="'+id+'">'+
-					i.capitalize()+'</label></div>');
-			}
+		for(var i in player.get_search_uri_schemes()) {
+			var makeunique = $("[id^='"+i+"_import_domain']").length+1;
+			var id = i+'_import_domain_'+makeunique;
+			this.options.holder.append('<div class="fixed brianblessed styledinputs">'+
+				'<input type="checkbox" class="topcheck" id="'+id+'"><label for="'+id+'">'+
+				i.capitalize()+'</label></div>');
 		}
 		this.setSelection(this.options.default_domains);
 		this.options.holder.disableSelection();

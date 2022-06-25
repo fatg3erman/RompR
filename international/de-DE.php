@@ -101,7 +101,6 @@ language::add_translations([
 	"label_searchfor" =>					"Suche nach",
 	"label_searching" =>					"Suche...",
 	"label_searchresults" =>				"Suchergebnisse",
-	"label_limitsearch" =>					"Durchsuche das genannte Backend",
 
 	// General multipurpose labels
 	"label_tracks" =>						"Titel",
@@ -516,7 +515,6 @@ language::add_translations([
 	// ----------------------------------------------------
 	//"podcast_undelete" =>					"Undelete Deleted Episodes",
 	//"podcast_removedownloaded" =>			"Remove Downloaded Files",
-	//"label_searchcollectiononly" =>		"Search Only in Music Collection",
 	//"label_radio_recommend" =>			"Recommendations based on this %s",
 	//"label_amendalbum" =>					"Amend Album Details",
 	//"label_tuneinradio" =>				"TuneIn Radio Directory",

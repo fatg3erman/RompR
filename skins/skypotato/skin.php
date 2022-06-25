@@ -193,9 +193,10 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 			'label' => 'label_searchfor',
 			'icon_size' => 'smallicon'
 		]);
-		include("player/".prefs::get_pref('player_backend')."/search.php");
+		$sh = new search_handler();
+		$sh->create_search_panel();
+		$sh->make_search_holders();
 		?>
-		<div id="searchresultholder" class="noborder selecotron is-albumlist"></div>
 	</div>
 
 	<!-- File Browser -->
@@ -225,19 +226,6 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 		?>
 	</div>
 
-	<!-- Podcasts -->
-
-	<div id="podcastslist" class="helpfulholder noselection invisible">
-		<?php
-		print uibits::ui_config_header([
-			'lefticon' => 'icon-menu clickicon fixed openmenu',
-			'lefticon_name' => 'podcastbuttons',
-			'label' => 'label_podcasts',
-			'icon_size' => 'smallicon'
-		]);
-		include("includes/podcast_base.php");
-		?>
-	</div>
 
 </div>
 
@@ -245,6 +233,20 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 
 <div id="infopane" class="cmiddle noborder infowiki expand">
 
+
+	<!-- Podcasts -->
+
+	<div id="podcastslist" class="invisible">
+		<?php
+		print uibits::ui_config_header([
+			'lefticon' => 'icon-menu clickicon fixed openmenu',
+			'lefticon_name' => 'podcastbuttons',
+			'label' => 'label_subbed_podcasts',
+			'icon_size' => 'smallicon'
+		]);
+		include("includes/podcast_base.php");
+		?>
+	</div>
 	<!-- Saved Playlists -->
 
 	<div id="playlistslist" class="invisible">

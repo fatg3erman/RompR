@@ -205,6 +205,7 @@ function carry_on_starting() {
 		$('#pluginplaylists_everywhere').prev().hide();
 		$('#pluginplaylists_everywhere').prev().prev().hide();
 	}
+	searchManager.setup_categories();
 }
 
 function get_geo_country() {

@@ -34,7 +34,7 @@ class db_collection extends collection_base {
 		}
 		if (array_key_exists('rating', $terms)) {
 			$qstring .= "JOIN (SELECT * FROM Ratingtable WHERE Rating >= ".
-				$terms['rating'].") AS rat ON rat.TTindex = t.TTindex ";
+				$terms['rating'][0].") AS rat ON rat.TTindex = t.TTindex ";
 		}
 		$qstring .= "LEFT JOIN Genretable USING (Genreindex) ";
 		$qstring .= "JOIN Artisttable AS a1 ON a1.Artistindex = t.Artistindex ";

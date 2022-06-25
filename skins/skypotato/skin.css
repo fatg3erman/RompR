@@ -705,6 +705,15 @@ div.playable.smartradio.collectionitem {
 }
 
 div.collectionpanel>div.configtitle>div.textcentre {
+	font-size:125%;
+}
+
+div.collectionpanel>div.configtitle[id^="bartist"] {
+	margin-top: 6px !important;
+	margin-bottom: 2px !important;
+}
+
+div.configtitle.search-section>div.textcentre {
 	font-size:140%;
 }
 
@@ -733,6 +742,10 @@ div[id^=dirholder]>div.clicktrack.line {
 .collectionitem.selecotron.masonry_opened.dropshadow {
 	padding-left: 0px;
 	width: 98%;
+}
+
+.collectionitem .playable.indent {
+	margin-left: 0px !important;
 }
 
 .collectionitem.fixed.selecotron:not(.masonry_opened)>.containerbox.wrap {
@@ -798,6 +811,7 @@ div.helpfulalbum>div.tagh.albumthing {
 .collectionitem.masonry_opened.dropshadow .containerbox.openmenu.podcast,
 .collectionitem.masonry_opened.dropshadow .containerbox.radiochannel  {
 	padding-bottom: 4px;
+	padding-top: 4px;
 	float: left;
 }
 

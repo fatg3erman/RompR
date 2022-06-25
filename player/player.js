@@ -182,6 +182,29 @@ var player = function() {
 		}
 	}
 
+	var sources_not_to_choose = {
+		file: 1,
+		http: 1,
+		https: 1,
+		mms: 1,
+		rtsp: 1,
+		somafm: 1,
+		spotifytunigo: 1,
+		rtmp: 1,
+		rtmps: 1,
+		sc: 1,
+		yt: 1,
+		m3u: 1,
+		spotifyweb: 1,
+		'podcast+http': 1,
+		'podcast+https': 1,
+		'podcast+ftp': 1,
+		'podcast+file': 1,
+		'podcast+itunes': 1,
+		'podcast+gpodder.net': 1,
+		'podcast+gpodder': 1
+	}
+
 	return {
 
 		// These are all the mpd status fields the program currently cares about.
@@ -228,6 +251,19 @@ var player = function() {
 			while (player.updatingcollection) {
 				await new Promise(t => setTimeout(t, 500));
 			}
+		},
+
+		get_search_uri_schemes: function() {
+			if (prefs.player_backend == 'mpd')
+				return ['local'];
+
+			let schemes = [];
+			for (var i in player.urischemes) {
+				if (!sources_not_to_choose.hasOwnProperty(i)) {
+					schemes.push(i);
+				}
+			}
+			return schemes;
 		}
 
 	}

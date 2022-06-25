@@ -122,6 +122,10 @@ input.inputfile
 	display: block !important;
 }
 
+label.oneline {
+	display: block !important;
+}
+
 div.filebutton
 {
 	word-break: break-all;
@@ -240,6 +244,10 @@ div.selectholder:hover
 select:hover
 {
 	cursor:pointer;
+}
+
+select:required:invalid {
+	color: grey;
 }
 
 option

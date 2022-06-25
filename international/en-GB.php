@@ -93,10 +93,9 @@ language::add_translations([
 	"label_savedpl" =>						"Playlist saved as %s",
 
 	// Search Forms
-	"label_searchfor" =>					"Search For Music",
+	"label_searchfor" =>					"Search",
 	"label_searching" =>					"Searching...",
 	"label_searchresults" =>				"Search Results",
-	"label_limitsearch" =>					"Filter By Source",
 
 	// General multipurpose labels
 	"label_tracks" =>						"tracks",
@@ -457,7 +456,7 @@ language::add_translations([
 	"label_filename" =>						"Filename",
 	"label_resultscollection" =>			"Collection",
 	"label_resultstree" =>					"Directory Tree",
-	"label_displayresultsas" =>				"Display Results As:",
+	"label_displayresultsas" =>				"Display Music Search Results As:",
 	"label_files" =>						"Files",
 	"label_albumartist" =>					"Album Artist",
 	"config_collectionfolders" =>			"Build Collection From:",
@@ -470,7 +469,6 @@ language::add_translations([
 	// New in 0.71
 	"label_albumsbyartist" =>				"Albums (by Artist)",
 	"config_wheelspeed" =>					"Mouse Wheel Scroll Speed",
-	"label_searchcollectiononly" =>			"Search Only in Music Collection",
 
 	"label_radio_recommend" =>				"Recommendations based on this %s",
 	"label_amendalbum" =>					"Amend Album Details",
@@ -745,6 +743,7 @@ language::add_translations([
 	"label_mpd_websocket" =>				'Port for MPD Websocket Server',
 	"label_ui_defaults" =>					'Defaults',
 	"button_save_defaults" =>				'Save As Default For All Browsers'
+
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

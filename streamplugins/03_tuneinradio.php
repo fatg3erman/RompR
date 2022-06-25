@@ -2,6 +2,9 @@
 
 class tuneinplugin {
 
+	private $domains = ['podcasts', 'radio'];
+	// private $browsing = true;
+
 	public function __construct() {
 		$this->url = 'http://opml.radiotime.com/';
 		$this->title = '';
@@ -26,22 +29,20 @@ class tuneinplugin {
 	public function parseParams() {
 		if (array_key_exists('url', $_REQUEST)) {
 			$this->url = $_REQUEST['url'];
-		} else {
+		} else if (!array_key_exists('search', $_REQUEST)) {
 			uibits::directoryControlHeader('tuneinlist', language::gettext('label_tuneinradio'));
-			print '<div class="containerbox fullwidth vertical-centre"><div class="expand">
-				<input class="enter clearbox tuneinsearchbox" name="tuneinsearcher" type="text" ';
-			if (array_key_exists('search', $_REQUEST)) {
-				print 'value="'.$_REQUEST['search'].'" ';
-			}
-			print '/></div><button class="fixed tuneinsearchbutton searchbutton iconbutton clickable tunein"></button></div>';
 		}
 		if (array_key_exists('title', $_REQUEST)) {
 			$this->title = $_REQUEST['title'];
 			uibits::directoryControlHeader($_REQUEST['target'], htmlspecialchars($this->title));
 		}
 		if (array_key_exists('search', $_REQUEST)) {
-			uibits::directoryControlHeader('tuneinlist', language::gettext('label_tuneinradio'));
+			$this->domains = explode(',', $_REQUEST['domains']);
+			// $this->browsing = false;
+			// uibits::directoryControlHeader('tunein_search', language::gettext('label_tuneinradio'));
 			$this->url .= 'Search.ashx?query='.urlencode($_REQUEST['search']);
+		} else {
+
 		}
 	}
 
@@ -59,8 +60,8 @@ class tuneinplugin {
 	private function parse_tree($node, $title) {
 
 		foreach ($node->outline as $o) {
+			// logger::log('TUNEIN', print_r($o, true));
 			$att = $o->attributes();
-			logger::core("TUNEIN", "  Text is",$att['text'],", type is",$att['type']);
 			switch ($att['type']) {
 
 				case '':
@@ -71,17 +72,28 @@ class tuneinplugin {
 					break;
 
 				case 'link':
-					uibits::printRadioDirectory($att, true, 'tunein');
+					if (
+						(!isset($att['key']) && in_array('radio', $this->domains))
+						|| (isset($att['key']) && in_array('podcasts', $this->domains))
+					) {
+						uibits::printRadioDirectory($att, true, 'tunein');
+					}
 					break;
 
 				case 'audio':
 					switch ($att['item']) {
 						case 'station':
+							if (!in_array('radio', $this->domains))
+								break 2;
+
 							$sname = $att['text'];
 							$year = 'Radio Station';
 							break;
 
 						case 'topic':
+							if (!in_array('podcasts', $this->domains))
+								break 2;
+
 							$sname = $title;
 							$year = 'Podcast Episode';
 							break;

@@ -2,12 +2,12 @@
 
 doPodcastBase();
 
-print '<div class="containerbox vertical-centre is-coverable"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.language::gettext('label_searchfor').' (iTunes)" /></div>';
-print '<button class="fixed searchbutton iconbutton spinable" onclick="podcasts.search()"></button>';
-print '</div>';
+// print '<div class="containerbox vertical-centre is-coverable"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.language::gettext('label_searchfor').' (iTunes)" /></div>';
+// print '<button class="fixed searchbutton iconbutton spinable" onclick="podcasts.search()"></button>';
+// print '</div>';
 
-print '<div class="fullwidth noselection clearfix is-coverable"><img id="podsclear" class="tright icon-cancel-circled inline-icon clickicon spinable" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
-print '<div id="podcast_search" class="fullwidth noselection is-albumlist"></div>';
+// print '<div class="fullwidth noselection clearfix is-coverable"><img id="podsclear" class="tright icon-cancel-circled inline-icon clickicon spinable" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
+// print '<div id="podcast_search" class="fullwidth noselection is-albumlist"></div>';
 
 print '<div id="podholder" class="collectionpanel">';
 

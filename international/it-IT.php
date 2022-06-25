@@ -96,7 +96,6 @@ language::add_translations([
 	"label_searchfor" =>					"Cerca Per",
 	"label_searching" =>					"Sto Cercando...",
 	"label_searchresults" =>				"Risultati della Ricerca",
-	"label_limitsearch" =>					"Cerca in un Backend Specifico",
 
 	// General multipurpose labels
 	"label_tracks" =>						"brani",
@@ -483,7 +482,6 @@ language::add_translations([
 	//"config_skin" =>						"SKIN",
 	//"label_albumsbyartist" =>				"Albums (by Artist)",
 	//"config_wheelspeed" =>				"Mouse Wheel Scroll Speed",
-	//"label_searchcollectiononly" =>		"Search Only in Music Collection",
 	//"label_radio_recommend" =>			"Recommendations based on this %s",
 	//"label_amendalbum" =>					"Amend Album Details",
 	//"config_cdplayermode" =>				"CD Player Mode (do not queue tracks, start album from selected track)",

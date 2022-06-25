@@ -63,7 +63,6 @@ function playerController() {
 	var plversion = null;
 	var oldplname;
 	var thenowplayinghack = false;
-	var lastsearchcmd = "search";
 	var stateChangeCallbacks = new Array();
 
 	this.trackstarttime = 0;
@@ -85,7 +84,7 @@ function playerController() {
 			if (!player.canPlay('spotify')) {
 				$('div.textcentre.textunderline:contains("Music From Spotify")').remove();
 			}
-			checkSearchDomains();
+			// checkSearchDomains();
 			doMopidyCollectionOptions();
 			playlist.radioManager.init();
 			self.do_command_list([]);
@@ -96,6 +95,7 @@ function playerController() {
 				+" at " + player_ip + ")"
 			);
 			checkProgress();
+			searchManager.add_search_plugin('playersearch', player.controller.search, player.get_search_uri_schemes());
 		} catch(err) {
 			debug.error("MPD","Failed to get URL Handlers",err);
 			infobar.permerror(language.gettext('error_noplayer'));
@@ -566,63 +566,36 @@ function playerController() {
 		}
 	}
 
-	this.search = function(command) {
+	this.search = async function(terms, domains) {
 		if (player.updatingcollection) {
 			infobar.notify(language.gettext('error_nosearchnow'));
 			return false;
 		}
-		var terms = {};
-		var termcount = 0;
-		lastsearchcmd = command;
-		$("#collectionsearcher").find('.searchterm').each( function() {
-			var key = $(this).attr('name');
-			var value = $(this).val();
-			if (value != "") {
-				debug.trace("PLAYER","Searching for",key, value);
-				terms[key] = value.split(',');
-				termcount++;
-			}
+		var st = {
+			command: 'search',
+			resultstype: (prefs.sortresultsby == 'results_as_tree') ? 'tree' : 'collection',
+			domains: domains,
+			dump: collectionHelper.collectionKey('b')
+		};
+		debug.log("PLAYER","Doing Search:",terms,st);
+		if ((Object.keys(terms).length == 1 && (terms.tag || terms.rating)) ||
+			(Object.keys(terms).length == 2 && (terms.tag && terms.rating)) ||
+			((terms.tag || terms.rating) && !(terms.composer || terms.performer || terms.any))) {
+			// Use the sql search engine if we're looking only for things it supports
+			debug.log("PLAYER","Searching using database search engine");
+			st.terms = terms;
+		} else {
+			st.mpdsearch = terms;
+		}
+		await clickRegistry.loadContentIntoTarget({
+			type: 'POST',
+			target: $('#searchresultholder'),
+			clickedElement: $('button[name="globalsearch"]'),
+			uri: 'api/collection/',
+			data: st
 		});
-		if ($('[name="searchrating"]').val() != "") {
-			terms['rating'] = $('[name="searchrating"]').val();
-			termcount++;
-		}
-		var domains = new Array();
-		if (prefs.search_limit_limitsearch && $('#mopidysearchdomains').length > 0) {
-			// The second term above is just in case we're swapping between MPD and Mopidy
-			// - it prevents an illegal invocation in JQuery if limitsearch is true for MPD
-			domains = $("#mopidysearchdomains").makeDomainChooser("getSelection");
-		}
-		if (termcount > 0) {
-			var st = {
-				command: command,
-				resultstype: (prefs.sortresultsby == 'results_as_tree') ? 'tree' : 'collection',
-				domains: domains,
-				dump: collectionHelper.collectionKey('b')
-			};
-			debug.log("PLAYER","Doing Search:",terms,st);
-			if ((termcount == 1 && (terms.tag || terms.rating)) ||
-				(termcount == 2 && (terms.tag && terms.rating)) ||
-				(prefs.player_backend == 'mopidy' && prefs.searchcollectiononly) ||
-				((terms.tag || terms.rating) && !(terms.composer || terms.performer || terms.any))) {
-				// Use the sql search engine if we're looking only for things it supports
-				debug.log("PLAYER","Searching using database search engine");
-				st.terms = terms;
-			} else {
-				st.mpdsearch = terms;
-			}
-			clickRegistry.loadContentIntoTarget({
-				type: 'POST',
-				target: $('#searchresultholder'),
-				clickedElement: $('button[name="playersearch"]'),
-				uri: 'api/collection/',
-				data: st
-			});
-		}
-	}
+		searchManager.make_search_title('searchresultholder', 'Music');
 
-	this.reSearch = function() {
-		player.controller.search(lastsearchcmd);
 	}
 
 	this.rawsearch = function(terms, sources, exact, callback, checkdb) {

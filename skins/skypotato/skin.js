@@ -303,7 +303,7 @@ var layoutProcessor = function() {
 			switch (source) {
 				case 'podcastslist':
 					fanooglePodcasts();
-					$('#infopane').romprScrollTo('#podholder');
+					$('#infopane').romprScrollTo('#podcastslist');
 					break;
 
 				case 'historyholder':
@@ -323,12 +323,22 @@ var layoutProcessor = function() {
 	}
 
 	function fanooglePodcasts() {
-		if (!$('#fruitbat').hasClass('contaierbox')) {
-			$('#podholder').detach().insertBefore($('#infoholder'));
+		if (!$('#fruitbat').hasClass('containerbox')) {
+			// $('#podholder').detach().insertBefore($('#infoholder'));
 			$('#fruitbat').removeClass('fullwidth').addClass('containerbox wrap');
-			$('#podcast_search').removeClass('fullwidth').addClass('containerbox wrap');
 		}
 		$('#fruitbat').appendDummySpacers();
+	}
+
+	function fanoogleSearcher() {
+		$('.search_result_box').not('#searchresultholder').each(function() {
+			if (!$(this).hasClass('containerbox')) {
+				$(this).detach().empty()
+					.removeClass('noborder')
+					.addClass('containerbox wrap collectionpanel').css('display', '')
+					.insertBefore($('#infoholder'));
+			}
+		});
 	}
 
 	function setBottomPanelWidths() {
@@ -417,7 +427,7 @@ var layoutProcessor = function() {
 				$('#searchresultholder').detach().empty()
 					.removeClass('noborder')
 					.addClass('containerbox wrap collectionpanel').css('display', '')
-					.insertBefore($('#infoholder'));
+					.prependTo($('#infoholder').parent());
 			}
 		} else {
 			if ($('#searchresultholder').hasClass('containerbox')) {
@@ -542,6 +552,7 @@ var layoutProcessor = function() {
 				switch (source) {
 					case 'albumlist':
 						$('.collectionpanel').hide(0);
+						$('#infopane .search-section').hide(0);
 						$('#infopane #collection').show(0);
 						if (prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
@@ -550,7 +561,9 @@ var layoutProcessor = function() {
 
 					case 'searcher':
 						$('.collectionpanel').hide(0);
-						$('#infopane #searchresultholder').show(0);
+						$('#infopane .search_result_box').show(0);
+						$('#infopane .search-section').show(0);
+						fanoogleSearcher();
 						if (prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
 						}
@@ -558,6 +571,7 @@ var layoutProcessor = function() {
 
 					case 'audiobooklist':
 						$('.collectionpanel').hide(0);
+						$('#infopane .search-section').hide(0);
 						$('#infopane #audiobooks').show(0);
 						if (prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
@@ -566,8 +580,9 @@ var layoutProcessor = function() {
 
 					case 'podcastslist':
 						$('.collectionpanel').hide(0);
+						$('#infopane .search-section').hide(0);
 						$('#podholder').show(0);
-						if (prefs.sourceshidden) {
+						if (!prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
 						}
 						break;
@@ -577,6 +592,7 @@ var layoutProcessor = function() {
 					case 'playlistslist':
 					case 'pluginplaylistslist':
 						$('.collectionpanel').hide(0);
+						$('#infopane .search-section').hide(0);
 						if (!prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
 						}
@@ -584,6 +600,7 @@ var layoutProcessor = function() {
 
 					case 'historyholder':
 						$('.collectionpanel').not('#infoholder').hide(0);
+						$('#infopane .search-section').hide(0);
 						if (prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
 						}
@@ -591,6 +608,7 @@ var layoutProcessor = function() {
 
 					default:
 						$('.collectionpanel').hide(0);
+						$('#infopane .search-section').hide(0);
 						if (prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
 						}

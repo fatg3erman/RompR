@@ -190,6 +190,7 @@ $scripts = array(
 	"includes/globals.js",
 	"ui/widgets.js",
 	"ui/uihelper.js",
+	"ui/searchmanager.js",
 	"skins/".prefs::skin()."/skin.js",
 	"player/controller.js",
 	"ui/collectionhelper.js",

@@ -393,28 +393,21 @@ var podcasts = function() {
 			podcasts.reloadList();
 		},
 
-		search: async function() {
-			if ($('#podcastsearch').val() == '') {
-				return true;
-			}
-			$('#podcast_search').empty();
+		search: async function(terms, domains) {
+			// Note, terms.any is an array but encodeURIComponent will join them with a ,
 			await clickRegistry.loadContentIntoTarget({
 				target: $('#podcast_search'),
-				clickedElement: $('#podcastsearch').parent().next(),
+				clickedElement: $('button[name="globalsearch"]'),
 				uri: 'api/podcasts/',
-				data: {search: encodeURIComponent($('#podcastsearch').val()), populate: 1}
+				data: {search: encodeURIComponent(terms.any), populate: 1}
 			});
-			$('#podcast_search').prepend('<div class="configtitle vertical-centre">'
-											+'<div class="textcentre expand"><b>Search Results for &quot;'+$('#podcastsearch').val()+'&quot;</b></div>'
-											+'<i class="clickable clickicon smallicon icon-cancel-circled removepodsearch podcast fixed"></i>'
-											+'</div>'
-										);
+			searchManager.make_search_title('podcast_search', 'Podcast Search Results for &quot;'+terms.any+'&quot;');
 		},
 
-		clearsearch: function() {
-			$('#podcast_search').clearOut().empty();
-			$('#podsclear').hide();
-		},
+		// clearsearch: function() {
+		// 	$('#podcast_search').clearOut().empty();
+		// 	$('#podsclear').hide();
+		// },
 
 		subscribe: async function(event, clickedElement) {
 			var index = clickedElement.next().val();
@@ -428,9 +421,9 @@ var podcasts = function() {
 			podcasts.doNewCount();
 		},
 
-		removeSearch: function(event, clickedElement) {
-			$('#podcast_search').clearOut().empty();
-		},
+		// removeSearch: function(event, clickedElement) {
+		// 	$('#podcast_search').clearOut().empty();
+		// },
 
 		storePlaybackProgress: function(track) {
 			podcastRequest({setprogress: track.progress, track: encodeURIComponent(track.uri), name: track.name}, null);
@@ -468,7 +461,7 @@ clickRegistry.addClickHandlers('podaction', podcasts.channelAction);
 clickRegistry.addClickHandlers('podglobal', podcasts.globalAction);
 clickRegistry.addClickHandlers('podtrackremove', podcasts.removePodcastTrack);
 clickRegistry.addClickHandlers('clickpodsubscribe', podcasts.subscribe);
-clickRegistry.addClickHandlers('removepodsearch', podcasts.removeSearch);
+// clickRegistry.addClickHandlers('removepodsearch', podcasts.removeSearch);
 clickRegistry.addClickHandlers('poddownload', podcasts.downloadPodcast);
 clickRegistry.addClickHandlers('podremdownload', podcasts.undownloadPodcast);
 clickRegistry.addClickHandlers('podgroupload', podcasts.downloadPodcastChannel);
@@ -476,3 +469,4 @@ clickRegistry.addClickHandlers('podmarklistened', podcasts.markEpisodeAsListened
 clickRegistry.addClickHandlers('podmarkunlistened', podcasts.markEpisodeAsUnlistened);
 clickRegistry.addClickHandlers('clickremovebookmark', podcasts.removeBookmark);
 clickRegistry.addMenuHandlers('podcast', podcasts.getPodcast);
+searchManager.add_search_plugin('podcastsearch', podcasts.search, ['podcasts']);

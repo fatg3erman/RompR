@@ -27,6 +27,7 @@ var clickRegistry = function() {
 	return {
 
 		addClickHandlers: function(source, fn) {
+			debug.log('CLICKHANDLER', 'Adding handler for', source);
 			clickHandlers[source] = fn;
 		},
 
@@ -96,7 +97,8 @@ var clickRegistry = function() {
 			opts = $.extend(opts, params);
 			var menutoopen = opts.target.prop('id');
 			var success = true;
-			opts.clickedElement.makeSpinner();
+			if (opts.clickedElement)
+				opts.clickedElement.makeSpinner();
 			opts.target.clearOut();
 			if (!opts.uri) {
 				opts.uri = findMenuLoader(opts.clickedElement, menutoopen);
@@ -125,7 +127,8 @@ var clickRegistry = function() {
 			} else {
 				debug.error('DOMENU', 'Unfilled menu element with no loader',opts.clickedElement);
 			}
-			opts.clickedElement.stopSpinner();
+			if (opts.clickedElement)
+				opts.clickedElement.stopSpinner();
 			opts.target.updateTracklist();
 			if (opts.target.hasClass('is-albumlist')) {
 				opts.target.doThingsAfterDisplayingListOfAlbums();
@@ -134,7 +137,9 @@ var clickRegistry = function() {
 
 			}
 			uiHelper.doCollectionStripyStuff();
-			findLoadCallback(opts.clickedElement, menutoopen);
+			if (opts.clickedElement)
+				findLoadCallback(opts.clickedElement, menutoopen);
+
 			return success;
 		}
 	}
@@ -345,6 +350,7 @@ function bindClickHandlers() {
 	$(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
 	$(document).on('click', '.choosepanel', uiHelper.changePanel);
 	$(document).on('click', '.clickaddtoplaylist', infobar.addToPlaylist);
+	$(document).on('click', '.search-category', searchManager.save_categories);
 }
 
  function checkLfmUser() {
@@ -608,10 +614,6 @@ function setAvailableSearchOptions() {
 	if (!prefs.tradsearch) {
 		$('.searchitem').not('[name="any"]').fadeOut('fast').find('input').val('');
 		$('.searchterm[name="any"]').parent().prop('colspan', '2');
-	} else if (prefs.searchcollectiononly) {
-		$('.searchitem').not(':visible').not('[name="composer"]').not('[name="performer"]').fadeIn('fast');
-		$('.searchitem[name="composer"]:visible,.searchitem[name="performer"]:visible').fadeOut('fast').find('input').val('');
-		$('.searchterm[name="any"]').parent().prop('colspan', '');
 	} else {
 		$('.searchitem').not(':visible').fadeIn('fast');
 		$('.searchterm[name="any"]').parent().prop('colspan', '');

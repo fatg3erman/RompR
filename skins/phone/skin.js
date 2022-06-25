@@ -1,19 +1,13 @@
 jQuery.fn.menuReveal = async function() {
 	var self = $(this);
-	if (self.hasClass('toggledown')) {
+	if (self.hasClass('toggledown') || self.hasClass('search_result_box')) {
 		await self.slideToggle('fast').promise();
 	} else {
 		self.findParentScroller().saveScrollPos();
 		self.siblings().addClass('menu-covered');
-		// GOD, CSS is so dumb. This would work IF there was an 'all siblings' selector, but no.
-		// CSS, in it sinfinite "wisdom" decided that you only ever need to select
-		// siblings that come AFTER the current element. We can't put the holder at the start of the div
-		// because that breaks the logic for updating and inserting albums
-		// self.addClass('menu-current');
-		if (self.prev().hasClass('subscribed-podcast'))
-			$('#podcast_search').addClass('menu-covered');
-		if (self.prev().hasClass('unsubscribed-podcast'))
-			$('#podholder').addClass('menu-covered');
+		if (self.parent().hasClass('search_result_box')) {
+			self.parent().siblings('.search_result_box').addClass('menu-covered');
+		}
 		self.makeTimerSpan();
 		await self.show(0).promise();
 	}
@@ -32,15 +26,13 @@ jQuery.fn.makeTimerSpan = function() {
 
 jQuery.fn.menuHide = async function() {
 	var self = $(this);
-	if (self.hasClass('toggledown')) {
+	if (self.hasClass('toggledown') || self.hasClass('search_result_box')) {
 		await self.slideToggle('fast').promise();
 	} else {
 		self.siblings().removeClass('menu-covered');
-		// self.removeClass('menu-current');
-		if (self.prev().hasClass('subscribed-podcast'))
-			$('#podcast_search').removeClass('menu-covered');
-		if (self.prev().hasClass('unsubscribed-podcast'))
-			$('#podholder').removeClass('menu-covered');
+		if (self.parent().hasClass('search_result_box')) {
+			self.parent().siblings('.search_result_box').removeClass('menu-covered');
+		}
 		await self.hide(0).promise();
 		self.findParentScroller().restoreScrollPos();
 
