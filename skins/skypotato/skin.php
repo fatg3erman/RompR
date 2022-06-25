@@ -123,14 +123,14 @@ create_body_tag('desktop');
 <div id="headerbar" class="noborder fixed">
 	<div id="sourcescontrols">
 <?php
-print '<i title="'.language::gettext('button_local_music').'" class="icon-music tooltip topimg choosepanel" name="albumlist"></i>';
 print '<i title="'.language::gettext('button_searchmusic').'" class="icon-search topimg tooltip choosepanel" name="searcher"></i>';
-print '<i title="'.language::gettext('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choosepanel" name="filelist"></i>';
+print '<i title="'.language::gettext('button_local_music').'" class="icon-music tooltip topimg choosepanel" name="albumlist"></i>';
+print '<i title="'.language::gettext('label_audiobooks').'" class="icon-audiobook tooltip topimg choosepanel" name="audiobooklist"></i>';
 print '<i title="'.language::gettext('button_internet_radio').'" class="icon-radio-tower tooltip topimg choosepanel" name="radiolist"></i>';
 print '<i title="'.language::gettext('label_podcasts').'" class="icon-podcast-circled tooltip topimg choosepanel spinable" name="podcastslist"></i>';
-print '<i title="'.language::gettext('label_audiobooks').'" class="icon-audiobook tooltip topimg choosepanel" name="audiobooklist"></i>';
-print '<i title="'.language::gettext('button_loadplaylist').'" class="icon-doc-text tooltip topimg choosepanel spinable" name="playlistslist"></i>';
 print '<i title="'.language::gettext('label_pluginplaylists').'" class="icon-wifi tooltip topimg choosepanel" name="pluginplaylistslist"></i>';
+print '<i title="'.language::gettext('button_loadplaylist').'" class="icon-doc-text tooltip topimg choosepanel spinable" name="playlistslist"></i>';
+print '<i title="'.language::gettext('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choosepanel" name="filelist"></i>';
 print '<i title="'.language::gettext('button_infopanel').'" class="icon-info-circled tooltip topimg choosepanel" name="infoholder"></i>';
 print '<i title="'.language::gettext('button_history').'" class="icon-versions tooltip topimg choosepanel" name="historyholder"></i>';
 print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topimg tooltip choosepanel" name="specialplugins"></i>';
@@ -211,9 +211,17 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 		<div id="filecollection" class="noborder selecotron"></div>
 	</div>
 
+
+</div>
+
+<!-- Info Panel -->
+
+<div id="infopane" class="cmiddle noborder infowiki expand">
+
+
 	<!-- Internet Radio -->
 
-	<div id="radiolist" class="invisible">
+	<div id="radiolist" class="invisible containerbox wrap extra-panel">
 		<?php
 		print uibits::ui_config_header([
 			'label' => 'button_internet_radio',
@@ -225,13 +233,6 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 		}
 		?>
 	</div>
-
-
-</div>
-
-<!-- Info Panel -->
-
-<div id="infopane" class="cmiddle noborder infowiki expand">
 
 
 	<!-- Podcasts -->

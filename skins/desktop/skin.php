@@ -85,14 +85,14 @@ create_body_tag('desktop');
 
 <div id="sourcescontrols" class="noborder fixed containerbox headercontainer topbox">
 <?php
-print '<i title="'.language::gettext('button_local_music').'" class="icon-music tooltip topimg choosepanel expand" name="albumlist"></i>';
 print '<i title="'.language::gettext('button_searchmusic').'" class="icon-search topimg tooltip choosepanel expand" name="searcher"></i>';
-print '<i title="'.language::gettext('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choosepanel expand" name="filelist"></i>';
+print '<i title="'.language::gettext('button_local_music').'" class="icon-music tooltip topimg choosepanel expand" name="albumlist"></i>';
+print '<i title="'.language::gettext('label_audiobooks').'" class="icon-audiobook tooltip topimg choosepanel expand" name="audiobooklist"></i>';
 print '<i title="'.language::gettext('button_internet_radio').'" class="icon-radio-tower tooltip topimg choosepanel expand" name="radiolist"></i>';
 print '<i title="'.language::gettext('label_podcasts').'" class="icon-podcast-circled tooltip topimg choosepanel expand spinable" name="podcastslist"></i>';
-print '<i title="'.language::gettext('label_audiobooks').'" class="icon-audiobook tooltip topimg choosepanel expand" name="audiobooklist"></i>';
-print '<i title="'.language::gettext('button_loadplaylist').'" class="icon-doc-text tooltip topimg choosepanel expand spinable" name="playlistslist"></i>';
 print '<i title="'.language::gettext('label_pluginplaylists').'" class="icon-wifi tooltip topimg choosepanel expand" name="pluginplaylistslist"></i>';
+print '<i title="'.language::gettext('button_loadplaylist').'" class="icon-doc-text tooltip topimg choosepanel expand spinable" name="playlistslist"></i>';
+print '<i title="'.language::gettext('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choosepanel expand" name="filelist"></i>';
 ?>
 <div class="expand"></div>
 </div>

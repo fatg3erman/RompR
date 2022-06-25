@@ -288,20 +288,19 @@ create_body_tag('phone');
 		</div>
 		<div id="narrowscreenicons" class="top_drop_menu rightmenu autohide clearfix topshadow">
 			<i class="noshrink icon-folder-open-empty topimg choosepanel tright" name="filelist"></i>
-			<i class="noshrink choosepanel icon-audiobook topimg tright" name="audiobooklist"></i>
 			<i class="noshrink choosepanel icon-doc-text topimg tright" name="playlistman"></i>
 			<i class="noshrink icon-info-circled topimg choosepanel tright" name="infopane"></i>
 			<i class="noshrink choosepanel icon-cog-alt topimg tright" name="prefsm"></i>
 		</div>
 		<i class="icon-no-response-playbutton topimg choosepanel expand" name="infobar"></i>
-		<i class="icon-music topimg choosepanel expand" name="albumlist"></i>
 		<i class="icon-search topimg choosepanel expand" name="searchpane"></i>
-		<i class="icon-folder-open-empty onlywide topimg choosepanel expand" name="filelist"></i>
+		<i class="icon-music topimg choosepanel expand" name="albumlist"></i>
+		<i class="choosepanel icon-audiobook topimg expand" name="audiobooklist"></i>
 		<i class="icon-radio-tower topimg choosepanel expand" name="radiolist"></i>
 		<i class="icon-podcast-circled topimg choosepanel expand spinable" name="podcastslist"></i>
-		<i class="choosepanel onlywide icon-audiobook topimg expand" name="audiobooklist"></i>
-		<i class="choosepanel onlywide icon-doc-text topimg expand spinable" name="playlistman"></i>
 		<i class="choosepanel icon-wifi topimg expand" name="pluginplaylistholder"></i>
+		<i class="choosepanel onlywide icon-doc-text topimg expand spinable" name="playlistman"></i>
+		<i class="icon-folder-open-empty onlywide topimg choosepanel expand" name="filelist"></i>
 		<div id="pluginicons" class="onlywide containerbox expandabit">
 		</div>
 		<i class="icon-volume-up topimg expand topbarmenu" name="volumedropper"></i>

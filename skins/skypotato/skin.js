@@ -281,6 +281,26 @@ jQuery.fn.doThingsAfterDisplayingListOfAlbums = function() {
 	});
 }
 
+jQuery.fn.hide_panel = function() {
+	return this.each(function() {
+		if ($(this).hasClass('invisible')) {
+			$(this).css({display: ''});
+		} else {
+			$(this).css({display: 'none'});
+		}
+	});
+}
+
+jQuery.fn.show_panel = function() {
+	return this.each(function() {
+		if ($(this).hasClass('containerbox')) {
+			$(this).css({display: 'flex'});
+		} else {
+			$(this).css({display: 'block'});
+		}
+	});
+}
+
 function showHistory() {
 	uiHelper.sourceControl('infoholder');
 }
@@ -298,28 +318,28 @@ var layoutProcessor = function() {
 
 	function showPanel(source) {
 		debug.log("UI","Showing Panel",source);
-		$('#'+source).show(0, function() {
-			$('.collectionpanel.'+source).not('.closed').show();
-			switch (source) {
-				case 'podcastslist':
-					fanooglePodcasts();
-					$('#infopane').romprScrollTo('#podcastslist');
-					break;
+		$('#'+source).show_panel();
+		$('.collectionpanel.'+source).not('.closed').show_panel();
+		switch (source) {
+			case 'podcastslist':
+				fanooglePodcasts();
+				$('#infopane').romprScrollTo('#podcastslist');
+				break;
 
-				case 'historyholder':
-					$('#infoholder').show(0, browser.rePoint);
-					break;
+			case 'historyholder':
+				$('#infoholder').show(0, browser.rePoint);
+				break;
 
-				case 'infoholder':
-					browser.rePoint();
-					break;
+			case 'infoholder':
+				browser.rePoint();
+				break;
 
-				case 'pluginholder':
-					browser.rePoint();
-					break;
+			case 'pluginholder':
+				browser.rePoint();
+				break;
 
-			}
-		});
+		}
+
 	}
 
 	function fanooglePodcasts() {
@@ -551,18 +571,20 @@ var layoutProcessor = function() {
 			if (loading_ui || source != prefs.chooser) {
 				switch (source) {
 					case 'albumlist':
-						$('.collectionpanel').hide(0);
-						$('#infopane .search-section').hide(0);
-						$('#infopane #collection').show(0);
+						$('.collectionpanel').hide_panel();
+						$('.extra-panel').hide_panel();
+						$('#infopane .search-section').hide_panel();
+						$('#infopane #collection').show_panel();
 						if (prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
 						}
 						break;
 
 					case 'searcher':
-						$('.collectionpanel').hide(0);
-						$('#infopane .search_result_box').show(0);
-						$('#infopane .search-section').show(0);
+						$('.collectionpanel').hide_panel();
+						$('.extra-panel').hide_panel();
+						$('#infopane .search_result_box').show_panel();
+						$('#infopane .search-section').show_panel();
 						fanoogleSearcher();
 						if (prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
@@ -570,18 +592,28 @@ var layoutProcessor = function() {
 						break;
 
 					case 'audiobooklist':
-						$('.collectionpanel').hide(0);
-						$('#infopane .search-section').hide(0);
-						$('#infopane #audiobooks').show(0);
+						$('.collectionpanel').hide_panel();
+						$('.extra-panel').hide_panel();
+						$('#infopane .search-section').hide_panel();
+						$('#infopane #audiobooks').show_panel();
 						if (prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
 						}
 						break;
 
 					case 'podcastslist':
-						$('.collectionpanel').hide(0);
-						$('#infopane .search-section').hide(0);
-						$('#podholder').show(0);
+						$('.collectionpanel').hide_panel();
+						$('.extra-panel').hide_panel();
+						$('#infopane .search-section').hide_panel();
+						$('#podholder').show_panel();
+						if (!prefs.sourceshidden) {
+							layoutProcessor.expandInfo('left');
+						}
+						break;
+
+					case 'radiolist':
+						$('.collectionpanel').hide_panel();
+						$('#infopane .search-section').hide_panel();
 						if (!prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
 						}
@@ -591,31 +623,34 @@ var layoutProcessor = function() {
 					case 'pluginholder':
 					case 'playlistslist':
 					case 'pluginplaylistslist':
-						$('.collectionpanel').hide(0);
-						$('#infopane .search-section').hide(0);
+						$('.extra-panel').hide_panel();
+						$('.collectionpanel').hide_panel();
+						$('#infopane .search-section').hide_panel();
 						if (!prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
 						}
 						break;
 
 					case 'historyholder':
-						$('.collectionpanel').not('#infoholder').hide(0);
-						$('#infopane .search-section').hide(0);
+						$('.extra-panel').hide_panel();
+						$('.collectionpanel').not('#infoholder').hide_panel();
+						$('#infopane .search-section').hide_panel();
 						if (prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
 						}
 						break;
 
 					default:
-						$('.collectionpanel').hide(0);
-						$('#infopane .search-section').hide(0);
+						$('.extra-panel').hide_panel();
+						$('.collectionpanel').hide_panel();
+						$('#infopane .search-section').hide_panel();
 						if (prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');
 						}
 						break;
 				}
 				loading_ui = false;
-				$('#'+prefs.chooser).hide(0);
+				$('#'+prefs.chooser).hide_panel();
 				showPanel(source);
 				prefs.save({chooser: source});
 			} else {
