@@ -33,8 +33,6 @@
 .album-play-controls
 {
     background-color: var(--sources-bg-colour);
-    padding-top: 4px;
-    padding-bottom: 4px;
 }
 
 .mainpane
