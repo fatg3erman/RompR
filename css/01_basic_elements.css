@@ -123,7 +123,8 @@ input.inputfile
 }
 
 label.oneline {
-	display: block !important;
+	margin-right: 1.5em;
+	font-size: 95%;
 }
 
 div.filebutton

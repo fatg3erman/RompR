@@ -55,11 +55,7 @@ class search_handler {
 			'label' => 'label_tradsearch'
 		]);
 
-		print '<div id="searchcategories" style="margin-top:4px">';
 		print '</div>';
-		print '</div>';
-
-		logger::log('INIT', 'Doing Search Bits');
 
 		$plugins = glob('search/*.php');
 		foreach ($plugins as $plugin) {
@@ -116,6 +112,8 @@ class search_handler {
 
 	public function make_search_control() {
 		print '<div id="collectionsearcher">';
+			print '<div id="searchcategories" style="margin-top:4px">';
+			print '</div>';
 			print '<div class="cleargroupparent fullwidth">';
 			foreach ($this->search_entries as $term => $params) {
 				if ($term != 'rating' && $term != 'tag') {
