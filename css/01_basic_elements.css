@@ -127,6 +127,10 @@ label.oneline {
 	font-size: 95%;
 }
 
+div.styledinputs>label.oneline:last-child {
+	margin-right: 0px;
+}
+
 div.filebutton
 {
 	word-break: break-all;

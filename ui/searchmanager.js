@@ -33,11 +33,15 @@ var searchManager = function() {
 		add_search_plugin: function(cls, search_func, categories) {
 			debug.log('SEARCHMANAGER', 'Adding Plugin', cls, categories.join(','));
 			plugins.push({class: cls, func: search_func, terms: {}});
-			for (let cat of categories) {
+			// The reversing and prepending here is really all by way of a hack to make Local come first,
+			// followed by any other Mopidy backends, then Radio, then Podcasts. Playersearch registers last
+			// because it has to look up the supported URI schemes first.
+			let cats = categories.reverse();
+			for (let cat of cats) {
 				if (!category_choosers.hasOwnProperty(cat)) {
 					let unique = Object.keys(category_choosers).length.toString();
 					category_choosers[cat] = $('<input>', {type: 'checkbox', name: cat, class: 'topcheck searchcategory', id: 'search_cat_'+unique})
-						.prop('checked', prefs.get_special_value('searchcat_'+cat, true)).appendTo(cat_holder);
+						.prop('checked', prefs.get_special_value('searchcat_'+cat, true)).prependTo(cat_holder);
 					$('<label>', {for: 'search_cat_'+unique, class: 'oneline search-category'}).html(cat.capitalize()).insertAfter(category_choosers[cat]);
 				}
 				category_choosers[cat].addClass(cls);

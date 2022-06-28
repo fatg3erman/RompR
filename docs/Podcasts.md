@@ -95,11 +95,10 @@ These are (left to right)
 
 ## Searching For Podcasts
 
-The Search box at the top searches iTunes for podcasts matching the terms you enter.
+You search for Podcasts using RompR's main search panel.
 
-![](images/podcasts4.png)
-
-Search results are displayed very much like your subscribed podcasts, except there are no options or controls. You can still play an episode from a podcast in the search results just by double-clcking it.
+Search results are displayed very much like your subscribed podcasts, except there are no options or controls.
+You can still play an episode from a podcast in the search results just by double-clcking it.
 
 To subscribe to a podcast from search results, click the RSS icon to the right.
 
@@ -119,10 +118,8 @@ You can also browse for Podcast episodes using the [TuneIn Radio Directory](/Rom
 
 ## Refreshing Podcasts
 
-Normally, Rompr will only refresh your Podcasts while the browser is open. If you have a lot of podcasts, and especially if they update frequently, this can take a long time and put a big load on your web server.
-
-If you would like to make Rompr update your podcasts overnight while you're not using it you can do this by creating a cron job. This is not the place to discuss how to create cron jobs, but it needs to run the command
-
-    curl http://address.of.rompr/api/podcasts/?rebuild=1&checkrefresh=1 > /dev/null
-
+RompR's backend Daemon takes care of refreshing Podcasts. The time it refreshes at is based on your refresh frequency setting (eg weekly) and the time and date
+of the last published epsisode - so if your favourite podcast always publishes at 12pm on Tuesday, and you set the refresh option to Weekly, RompR will refresh that
+podcast at 12pm every Tuesday. RompR also understands that humans are fallible creatures and so it does permit some leeway in the times - if it doesn't find a new episode
+it will try again an hour or two later, and also the next day.
 

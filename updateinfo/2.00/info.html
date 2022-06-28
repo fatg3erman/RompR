@@ -14,6 +14,9 @@ As a result of this change though, you will need to recreate any Alarms you had 
 <li>There is now a <a href="https://fatg3erman.github.io/RompR-And-MPD/">Websocket Server</a> that makes the UI more responsive when you're using MPD - essentially it
 mimics the part of Mopidy's HTTP interface that RompR uses. There are some pre-requisistes you need for this to work, please
 read the link.</li>
+<li> <b>DEPRECATION WARNING</b> I am going to remove support for IceCast radio, because the "API" really sucks, it requires PHPQuery to parse it,
+and PHP8 pretty much broke PHPQuery, which is now unmaintained. I might change my mind if enough people get in touch and tell me they really like it.
+In this release, IceCast is only available when you do a search - the "browser" has been removed.</li>
 <li>Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix,
 the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection
  and will not be selected by Personalised Radio stations. Note that selecting this option will force a rescan of your Music Collection.

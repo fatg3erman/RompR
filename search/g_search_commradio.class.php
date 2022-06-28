@@ -6,7 +6,7 @@ class g_search_commradio {
 			"soundcloud_Country" => 'country',
 			// "soundcloud_state" => 'state',
 			"settings_language" => 'language',
-			"irrelevant" => 'tag'
+			// "irrelevant" => 'tag'
 		);
 		$sh->add_search_entry($sterms, 'commradiosearch');
 		$cr = new commradioplugin();

@@ -20,6 +20,11 @@ As a result of this change though, you will need to recreate any Alarms you had 
 * There is now a [Websocket Server](/RompR-And-MPD) that makes the UI more responsive when you're using MPD - essentially it
 mimics the part of Mopidy's HTTP interface that RompR uses. It's not required but it is reccomended. There are some pre-requisistes you
 need for this to work, please read the link.
+* Unified Search - everything you can search for in RompR is now available through the main Search Panel instead of being
+spread out in different places throughout the interface.
+* **DEPRECATION WARNING** I am going to remove support for IceCast radio, because the "API" really sucks, it requires PHPQuery to parse it,
+and PHP8 pretty much broke PHPQuery, which is now unmaintained. I might change my mind if enough people get in touch and tell me they really like it.
+In this release, IceCast is only available when you do a search; the "browser" has been removed.
 * Fix bug where album art might be partially downloaded when using MPD (Fix contributed by corubba)
 * Try to make RompR properly timezone aware, so the alarm clock works when Daylight Saving Time is enabled, for example.
 RompR will try to work out your timezone, but if you notice the alarm clock isn't going off at the right time you
