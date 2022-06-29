@@ -50,7 +50,7 @@ class commradioplugin {
 		print uibits::radioChooser([
 			'playable' => false,
 			'id' => 'communityradiolist',
-			'Image' => 'newimages/broadcast.svg',
+			'Image' => 'newimages/commradio.svg',
 			'Albumname' => language::gettext('label_communityradio'),
 			'class' => 'radio commradioroot',
 		]);

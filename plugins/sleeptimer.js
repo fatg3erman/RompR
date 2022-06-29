@@ -55,6 +55,7 @@ var sleepTimer = function() {
 		},
 
 		toggle: function() {
+			prefs.save({sleepon: !prefs.sleepon});
 			sleepTimer.setButton();
 			sleepTimer.setTimer(true);
 		},
@@ -62,10 +63,10 @@ var sleepTimer = function() {
 		setButton: function() {
 			if (prefs.sleepon) {
 				$("#sleeptimer_icon").removeClass('currentbun').addClass('currentbun');
-				$('#sleepon').prop('checked', true);
+				$('#sleepon').removeClass('currentbun').addClass('currentbun');
 			} else {
 				$("#sleeptimer_icon").removeClass('currentbun');
-				$('#sleepon').prop('checked', false);
+				$('#sleepon').removeClass('currentbun');
 			}
 		},
 
@@ -134,25 +135,25 @@ var sleepTimer = function() {
 				'<div class="noselection">'+
 				'<table width="90%" align="center">'+
 				'<tr>'+
+				'<td></td>'+
 				'<td align="center"><i class="icon-increase smallicon clickicon" onmousedown="sleepTimer.startInc(1)" onmouseup="sleepTimer.stopInc()"></i></td>'+
 				'<td></td>'+
 				'</tr>'+
 				'<tr>'+
+				'<td align="left"><i id="sleepon" class="medicon icon-sleep clickicon"></i></td>'+
 				'<td align="center" class="alarmnumbers" id="sleepminutes">12</td>'+
 				'<td align="right" class="alarmnumbers" id="sleepruntime"</td>' +
 				'</tr>'+
 				'<tr>'+
-				'<td align="center"><i class="icon-decrease smallicon clickicon" onmousedown="sleepTimer.startInc(-1)" onmouseup="sleepTimer.stopInc()"></i></td>'+
 				'<td></td>'+
-				'</tr>'+
-				'<tr>'+
-				'<td><div class="styledinputs textcentre"><input type="checkbox" class="autoset toggle" id="sleepon"><label for="sleepon">ON</label></div></td>'+
+				'<td align="center"><i class="icon-decrease smallicon clickicon" onmousedown="sleepTimer.startInc(-1)" onmouseup="sleepTimer.stopInc()"></i></td>'+
 				'<td></td>'+
 				'</tr>'+
 				'</table>';
 			html += '</div>';
 			holder.html(html);
 			sleepTimer.pollState();
+			$('#sleepon').on('click', sleepTimer.toggle);
 			if (typeof(shortcuts) != 'undefined')
 				shortcuts.add('button_sleep', sleepTimer.fakeClick, "Q");
 		}

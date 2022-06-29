@@ -672,10 +672,6 @@ var prefs = function() {
 					callback = layoutProcessor.changeCollectionSortMode;
 					break;
 
-				case "sleepon":
-					callback = sleepTimer.toggle;
-					break;
-
 				case 'player_in_titlebar':
 					callback = infobar.forceTitleUpdate;
 					break;

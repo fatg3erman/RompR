@@ -48,9 +48,7 @@ Note that you can also edit the time for an alarm directly from the Alarms panel
 
 If you choose Fade In, but playback is stopped (not paused, but actually stopped) when the alarm starts, RompR will not know
 what volume to fade up to, because MPD does not report a volume when playback is stopped. In this case RompR wil fade the volume
-up to maximum.
-
-This does not apply to Mopidy, which always reports the volume correctly.
+up to maximum. This does not apply to Mopidy, which always reports the volume correctly.
 
 ## Cancelling Alarms and Snoozing
 
@@ -79,7 +77,11 @@ The Sleep Timer makes RompЯ pause playback after a specified number of minutes.
 
 ![](images/sleeptimer.png)
 
-Set the number of minutes, and click ON. You can also specify a keyboard shortcut for the sleep timer from the Configuration panel.
+Set the number of minutes, and click the icon to the left to start the timer. A countdown will begin.
 
-When it activates, the sleep timer will slowly fade the music out before it pauses.
+![](images/sleeptimer2.png)
+
+You can adjust the countdown while it is running.
+
+After the countdown has finished the sleep timer will slowly fade the music out before pausing playback. You can cancel the countdown by clicking the icon again.
 
