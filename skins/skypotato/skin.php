@@ -224,6 +224,8 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 	<div id="radiolist" class="invisible containerbox wrap extra-panel">
 		<?php
 		print uibits::ui_config_header([
+			'lefticon' => 'icon-menu clickicon fixed openmenu',
+			'lefticon_name' => 'anaconda',
 			'label' => 'button_internet_radio',
 			'icon_size' => 'smallicon'
 		]);

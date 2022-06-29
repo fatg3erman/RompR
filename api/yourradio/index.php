@@ -24,12 +24,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 function do_radio_header() {
 	uibits::directoryControlHeader('yourradiolist', language::gettext('label_yourradio'));
-	print '<div id="anaconda" class="noselection fullwidth">';
-		print '<div class="containerbox dropdown-container">';
-			print '<div class="expand"><input class="enter clearbox" id="yourradioinput" type="text" placeholder="'.language::gettext("label_radioinput").'" /></div>';
-			print '<button class="fixed iconbutton icon-no-response-playbutton" name="spikemilligan"></button>';
-		print '</div>';
-	print '</div>';
 	do_radio_list();
 }
 

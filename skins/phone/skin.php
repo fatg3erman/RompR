@@ -125,6 +125,8 @@ create_body_tag('phone');
 <div id="radiolist" class="scroller mainpane invisible pright">
 	<?php
 	print uibits::ui_config_header([
+		'lefticon' => 'icon-menu clickicon fixed openmenu',
+		'lefticon_name' => 'anaconda',
 		'label' => 'button_internet_radio',
 		'icon_size' => 'smallicon'
 	]);

@@ -2,11 +2,20 @@
 
 The Internet Radio Stations panel allows you to play radio stations from a variety of online sources.
 
+## Adding a URL
+
+If you know the URL of the radio stream you want to play you can addit directly to the Play Queue by entering it into the box you will open
+if you click the 3 dots icon at the top left
+
+![](images/yourradio3.png)
+
 ## Your Radio Stations
+
+This is a list of Favourite radio stations. It can be re-ordered by dragging items up and down.
 
 ![](images/yourradio.png)
 
-This is a list of Favourite radio stations. It can be re-ordered by dragging items up and down. You can add stations to this list by clicking the Radio Tower icon in the Play Queue while the station is playing.
+You can add stations to this list by clicking the Radio Tower icon in the Play Queue while the station is playing.
 
 ![](images/yourradio2.png)
 
@@ -16,7 +25,8 @@ This is a list of Favourite radio stations. It can be re-ordered by dragging ite
 
 ![](images/somafm.png)
 
-You'll be given a list of stations. You can play a station's highest quality stream just by double-clicking the station name. Opening up the station will give you more information as well as choice of streams in order of quality (highest quality first, lowest bandwidth last).
+You'll be given a list of stations. Before you can play a station for the first time you need to choose a stream quality. 'Highest Available Quality' will
+always work unless you have a limited bandwitdh connection, in which case chose one of the other settings. Not all stations support all quality settings.
 
 ## TuneIn Radio Directory
 
@@ -32,9 +42,7 @@ Double-click a Radio Station or Podcast in this list to listen to it.
 
 This uses the radio directory at [http://www.radio-browser.info/](http://www.radio-browser.info)
 
-![](images/commradio2.png)
-
-You can search using any or all of the fields (Name, Country, etc) or browse by Country, Language, and Tag.
+![](images/commradio3.png)
 
 You can change the order of the list by using the Order By menu at the top.
 
