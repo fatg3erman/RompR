@@ -39,6 +39,9 @@
 	transform: rotate(180deg);
 }
 
+/* Note. Because CSS is SO fucking dumb, it works out width and height
+before applying the rotation. Thus, using this breaks any layout where
+width and height aren't fixed to a specific and identical number of pixels. */
 .ninety {
 	transform: rotate(90deg);
 }

@@ -309,7 +309,7 @@ create_body_tag('phone');
 		<i class="icon-doc-text topimg choosepanel expand" name="playlistm"></i>
 		<i class="onlywide icon-info-circled topimg choosepanel expand" name="infopane"></i>
 		<i class="onlywide choosepanel icon-cog-alt topimg expand" name="prefsm"></i>
-		<i class="icon-menu topimg ninety expand topbarmenu" name="specialplugins"></i>
+		<i class="icon-library topimg expand topbarmenu" name="specialplugins"></i>
 		<i class="icon-menu topimg expand onlynarrow topbarmenu" name="narrowscreenicons"></i>
 	</div>
 </div>

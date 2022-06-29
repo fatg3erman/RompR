@@ -369,6 +369,10 @@ div.albumbitsmenu {
 	min-height: 2em;
 }
 
+.mainpane div.configtitle:first-child {
+	min-height: calc(var(--medium-icon-size) + 8px);
+}
+
 .mainpane {
 	position: relative;
 	top: 0;

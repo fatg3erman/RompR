@@ -573,7 +573,7 @@ img.notexist,img.notfound {
 	box-sizing: border-box;
 }
 
-#podcastslist div>i.clickicon:first-child {
+#podcastslist div:not(.configtitle)>i.clickicon:first-child {
 	margin-left: 0px;
 }
 
