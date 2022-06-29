@@ -47,13 +47,13 @@ class commradioplugin {
 
 	private function doHeader() {
 		// print '<div id="communityradioplugin">';
-		print uibits::albumHeader(array(
+		print uibits::radioChooser([
 			'playable' => false,
 			'id' => 'communityradiolist',
 			'Image' => 'newimages/broadcast.svg',
 			'Albumname' => language::gettext('label_communityradio'),
 			'class' => 'radio commradioroot',
-		));
+		]);
 		print '<div id="communityradiolist" class="dropmenu notfilled">';
 		print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
 		// print '</div>';

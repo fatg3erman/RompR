@@ -8,13 +8,13 @@ class somafmplugin {
 
 	public function doHeader() {
 		// print '<div id="somafmplugin">';
-		print uibits::albumHeader(array(
+		print uibits::radioChooser([
 			'playable' => false,
 			'id' => 'somafmlist',
 			'Image' => 'newimages/somafmlogo.svg',
 			'Albumname' => language::gettext('label_somafm'),
 			'class' => 'radio somafmroot',
-		));
+		]);
 		print '<div id="somafmlist" class="dropmenu notfilled is-albumlist">';
 		print uibits::ui_config_header(['label' => 'label_loading']);
 		print '</div>';

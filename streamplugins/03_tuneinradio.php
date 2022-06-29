@@ -12,13 +12,13 @@ class tuneinplugin {
 
 	public function doHeader() {
 		// print '<div id="tuneinradio">';
-		print uibits::albumHeader(array(
+		print uibits::radioChooser([
 			'playable' => false,
 			'id' => 'tuneinlist',
 			'Image' => 'newimages/tunein-logo.svg',
 			'Albumname' => language::gettext('label_tuneinradio'),
 			'class' => 'radio tuneinroot',
-		));
+		]);
 		print '<div id="tuneinlist" class="dropmenu notfilled is-albumlist">';
 		print uibits::ui_config_header([
 			'label' => 'label_loading'

@@ -739,6 +739,16 @@ div[id^=dirholder]>div.clicktrack.line {
 	max-width: 320px;
 }
 
+#radiolist>.collectionitem.fixed {
+	/*max-width: 200px;*/
+}
+
+#radiolist .radiosection .svg-square {
+	height: var(--cover-size);
+	width: var(--cover-size);
+	margin-right: 1em;
+}
+
 .collectionitem.selecotron.masonry_opened.dropshadow {
 	padding-left: 0px;
 	width: 98%;

@@ -51,6 +51,22 @@ class uibits extends ui_elements {
 		return $h;
 	}
 
+	// public static function radioChooser($obj) {
+	// 	return self::albumheader($obj);
+	// }
+
+	public static function radioChooser($obj) {
+		$h = '<div class="collectionitem radiosection fixed">';
+		$h .= '<div class="containerbox openmenu menuitem menu '.$obj['class'].'" name="'.$obj['id'].'">';
+		$albumimage = new baseAlbumImage(array('baseimage' => $obj['Image']));
+		$h .= $albumimage->html_for_image($obj, 'svg-square fixed', 'small');
+		$h .= artistNameHtml($obj);
+		// $h .= '<div class="expand">'.$obj['Albumname'].'</div>';
+		$h .= '</div>';
+		$h .= '</div>';
+		return $h;
+	}
+
 	public static function albumControlHeader($fragment, $why, $what, $who, $artist, $playall = true) {
 		// TODO Probably Don't Need This Bit Now
 		if ($fragment || $who == 'root') {

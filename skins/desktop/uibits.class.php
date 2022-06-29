@@ -62,6 +62,10 @@ class uibits extends ui_elements {
 		return $h;
 	}
 
+	public static function radioChooser($obj) {
+		return self::albumHeader($obj);
+	}
+
 	public static function albumControlHeader($fragment, $why, $what, $who, $artist, $playall = true) {
 		return '';
 	}
