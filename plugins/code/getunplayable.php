@@ -42,6 +42,7 @@ if (count($result) == 0) {
 		} else {
 			print '<input type="hidden" value="'.$track['AlbumArtist'].'" />';
 		}
+		print '<input type="hidden" value="'.$track['TTindex'].'" />';
 		print '<i class="icon-cancel-circled smallicon fixed clickicon clickremdb infoclick plugclickable tooltip" title="'.language::gettext('label_removefromcol').'"></i>';
 		print '<input type="hidden" value="'.$track['TTindex'].'" />';
 

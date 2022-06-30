@@ -121,6 +121,28 @@ class metaDatabase extends playlistCollection {
 		}
 	}
 
+	public function seturi($data) {
+		// ONLY for updating the URI of a track via eg unplayabletracks
+		$ttindex = $data['reqid'];
+		$uri = $data['file'];
+		logger::log('HACKETY', 'Updating URI of TTindex',$ttindex,'to',$uri);
+		prefs::$database->sql_prepare_query(true, null, null, null,
+			"UPDATE Tracktable SET Uri = ?, Hidden = 0, LinkChecked = 0 WHERE TTindex = ?",
+			$uri,
+			$ttindex
+		);
+		$albumindex = prefs::$database->simple_query('Albumindex', 'Tracktable', 'TTindex', $ttindex, null);
+		$domain = prefs::$database->simple_query('Domain', 'Albumtable', 'Albumindex', $albumindex, null);
+		if ($domain != getDomain($uri)) {
+			prefs::$database->sql_prepare_query(true, null, null, null,
+				"UPDATE Albumtable SET AlbumUri = ?, Domain = ? WHERE Albumindex = ?",
+				null,
+				'local',
+				$albumindex
+			);
+		}
+	}
+
 	public function inc($data) {
 
 		//

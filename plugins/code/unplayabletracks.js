@@ -33,11 +33,11 @@ var unplayabletracks = function() {
 	}
 
 	function searchForTrack(element) {
-		reqid++;
+		reqid = element.next().next().next().val();
 		element.addClass('upsch_'+reqid).makeSpinner();
 		if (trawler == null) {
 			trawler = new faveFinder(true);
-			trawler.setPriorities(['spotify']);
+			trawler.setPriorities(['spotify', 'youtube']);
 			trawler.setCheckDb(false);
 			trawler.setExact(false);
 		}
@@ -53,29 +53,29 @@ var unplayabletracks = function() {
 			]
 		}
 
-		databits[reqid].attributes = new Array();
-		var rat = element.parent().find('.rating-icon-small').first();
-		if (rat.hasClass('icon-1-stars')) {
-			debug.log("WISHLIST","1 star");
-			databits[reqid].attributes.push({attribute: 'Rating', value:  1});
-		} else if (rat.hasClass('icon-2-stars')) {
-			debug.log("WISHLIST","2 star");
-			databits[reqid].attributes.push({attribute: 'Rating', value:  2});
-		} else if (rat.hasClass('icon-3-stars')) {
-			debug.log("WISHLIST","3 star");
-			databits[reqid].attributes.push({attribute: 'Rating', value:  3});
-		} else if (rat.hasClass('icon-4-stars')) {
-			debug.log("WISHLIST","4 star");
-			databits[reqid].attributes.push({attribute: 'Rating', value:  4});
-		} else if (rat.hasClass('icon-5-stars')) {
-			debug.log("WISHLIST","5 star");
-			databits[reqid].attributes.push({attribute: 'Rating', value:  5});
-		}
-		var tag = element.parent().find('.tracktags').first();
-		if (tag.length > 0) {
-			debug.info("WISHLIST","Setting Tags Attribute");
-			databits[reqid].attributes.push({attribute: 'Tags', value: tag.text().split(", ")});
-		}
+		// databits[reqid].attributes = new Array();
+		// var rat = element.parent().find('.rating-icon-small').first();
+		// if (rat.hasClass('icon-1-stars')) {
+		// 	debug.log("WISHLIST","1 star");
+		// 	databits[reqid].attributes.push({attribute: 'Rating', value:  1});
+		// } else if (rat.hasClass('icon-2-stars')) {
+		// 	debug.log("WISHLIST","2 star");
+		// 	databits[reqid].attributes.push({attribute: 'Rating', value:  2});
+		// } else if (rat.hasClass('icon-3-stars')) {
+		// 	debug.log("WISHLIST","3 star");
+		// 	databits[reqid].attributes.push({attribute: 'Rating', value:  3});
+		// } else if (rat.hasClass('icon-4-stars')) {
+		// 	debug.log("WISHLIST","4 star");
+		// 	databits[reqid].attributes.push({attribute: 'Rating', value:  4});
+		// } else if (rat.hasClass('icon-5-stars')) {
+		// 	debug.log("WISHLIST","5 star");
+		// 	databits[reqid].attributes.push({attribute: 'Rating', value:  5});
+		// }
+		// var tag = element.parent().find('.tracktags').first();
+		// if (tag.length > 0) {
+		// 	debug.info("WISHLIST","Setting Tags Attribute");
+		// 	databits[reqid].attributes.push({attribute: 'Tags', value: tag.text().split(", ")});
+		// }
 
 		trawler.findThisOne(databits[reqid].data[databits[reqid].index], unplayabletracks.updateDatabase);
 	}
@@ -93,12 +93,11 @@ var unplayabletracks = function() {
 		debug.log("WISHLIST","Importing",databits[key], databits[key].data[index]);
 		element.parent().parent().parent().parent().css({opacity: '0.2'});
 		element.remove();
-		doSqlStuff(databits[key], databits[key].data[index], false);
+		doSqlStuff(databits[key].data[index], false);
 	}
 
-	function doSqlStuff(parentdata, data, callback) {
-		data.action = 'set';
-		data.attributes = parentdata.attributes;
+	function doSqlStuff(data, callback) {
+		data.action = 'seturi';
 		dbQueue.request([data], collectionHelper.updateCollectionDisplay,
 			function(rdata) {
 				infobar.error(language.gettext('label_general_error'));

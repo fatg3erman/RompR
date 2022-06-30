@@ -179,6 +179,9 @@ function faveFinder(returnall) {
 		if (req.data.Album) {
 			st.album = [req.data.Album];
 		}
+		if (req.data.Title && req.data.trackartist && !exact) {
+			st.any = [req.data.trackartist + ' ' + req.data.Title];
+		}
 		debug.debug("FAVEFINDER","Performing search",st,priority);
 		player.controller.rawsearch(st, priority, exact, self.handleResults, checkdb);
 	}
