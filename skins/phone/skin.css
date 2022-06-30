@@ -353,6 +353,11 @@ div.top_drop_menu {
 	max-height: calc(100vh - 40px);
 }
 
+div.open-plugin.backhi.clickable {
+	text-align: right;
+	padding-right: 1em;
+}
+
 div.albumbitsmenu {
 	position: absolute;
 	width: 75vw;
