@@ -1181,12 +1181,27 @@ class metaDatabase extends playlistCollection {
 		logger::log('YOUTUBEDL', 'Downloading',$uri_to_get);
 
 		$info = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
-			"SELECT Title, Artistname FROM Tracktable JOIN Artisttable USING (Artistindex) WHERE Uri = ?",
+			"SELECT
+				Title,
+				TrackNo,
+				ta.Artistname AS trackartist,
+				aa.Artistname AS albumartist,
+				Albumname
+				FROM
+				Tracktable
+				JOIN Artisttable AS ta USING (Artistindex)
+				JOIN Albumtable USING (Albumindex)
+				JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
+				WHERE Uri = ?
+			ORDER BY isSearchResult ASC",
 			$data['file']
 		);
 		if (is_array($info) && count($info) > 0) {
 			logger::log('YOUTUBEDL', '  Title is',$info[0]['Title']);
-			logger::log('YOUTUBEDL', '  Artist is',$info[0]['Artistname']);
+			logger::log('YOUTUBEDL', '  Track Number is',$info[0]['TrackNo']);
+			logger::log('YOUTUBEDL', '  Album is',$info[0]['Albumname']);
+			logger::log('YOUTUBEDL', '  Track Artist is',$info[0]['trackartist']);
+			logger::log('YOUTUBEDL', '  Album Artist is',$info[0]['albumartist']);
 		} else {
 			logger::log('YOUTUBEDL', '  Could not find title and artist from collection');
 		}
@@ -1242,10 +1257,11 @@ class metaDatabase extends playlistCollection {
 			$tagwriter->tag_encoding   = 'UTF-8';
 			$tagwriter->remove_other_tags = true;
 			$tags = array(
-				'artist' => array(html_entity_decode($info[0]['Artistname'])),
-				'albumartist' => array(html_entity_decode($info[0]['Artistname'])),
-				'album' => array(html_entity_decode($info[0]['Title'])),
-				'title' => array(html_entity_decode($info[0]['Title']))
+				'artist' => array(html_entity_decode($info[0]['trackartist'])),
+				'albumartist' => array(html_entity_decode($info[0]['albumartist'])),
+				'album' => array(html_entity_decode($info[0]['Albumname'])),
+				'title' => array(html_entity_decode($info[0]['Title'])),
+				'tracknumber' => array($info[0]['TrackNo'])
 			);
 			$tagwriter->tag_data = $tags;
 			if ($tagwriter->WriteTags()) {
