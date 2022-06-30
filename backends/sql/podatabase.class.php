@@ -1026,7 +1026,8 @@ class poDatabase extends database {
 			Duration,
 			Podcasttable.Title AS album,
 			Podcasttable.Artist AS artist,
-			PodcastTracktable.Title AS title
+			PodcastTracktable.Title AS title,
+			PodcastTracktable.Image AS image
 			FROM PodcastTracktable
 			JOIN Podcasttable USING (PODindex)
 			WHERE PODTrackindex = " . intval($key), false, PDO::FETCH_OBJ);
@@ -1064,29 +1065,86 @@ class poDatabase extends database {
 			$d = new url_downloader(array('url' => $url));
 			$download_file = 'prefs/podcasts/'.$channel.'/'.$key.'/'.$filename;
 			if ($d->get_data_to_file($download_file, true)) {
-				if ($obj->WriteTags != 0) {
-					logger::log('PODCASTS', 'Writing Tags to',$download_file);
-					$getID3 = new getID3;
-					$getID3->setOption(array('encoding'=>'UTF-8'));
+				$getID3 = new getID3;
+				$getID3->setOption(array('encoding'=>'UTF-8'));
+				$getID3->analyze($download_file);
 
+				$p = $getID3->info['playtime_seconds'];
+				if ($p) {
+					$obj->Duration = $p;
+					logger::log('PODCASTS', 'Updating database duration field to',$p,'seconds');
+				}
+
+				// Note - we need to merge our info with the current tags, getID3 will not
+				// merge them for us as aparently that's very hard. I synmpathise.
+				$current_tags = $getID3->info['tags'];
+				if (is_array($current_tags) && array_key_exists('id3v2', $current_tags)) {
+					logger::debug('PODCASTS', 'Using Current ID3v2 Tags');
+					$tags = $current_tags['id3v2'];
+				} else if (is_array($current_tags) && array_key_exists('id3v1', $current_tags)) {
+					logger::debug('PODCASTS', 'Using Current ID3v1 Tags');
+					$tags = $current_tags['id3v1'];
+				} else {
+					$tags = [];
+				}
+
+				if (array_key_exists('track_number', $tags) && is_array($tags['track_number'])) {
+					$track_number = $tags['track_number'][0];
+					logger::debug('PODCASTS', 'Using track number from tags',$track_number);
+				} else {
+					$track_number = format_tracknum($obj->title);
+					logger::debug('PODCASTS', 'Using track number from title',$track_number);
+					if ($track_number > 0)
+						$tags['track_number'] = array($track_number);
+				}
+
+				$track_image_file = null;
+				if ($obj->image) {
+					logger::trace('PODCASTS', 'Downloading Image',$obj->image);
+					$imgd = new url_downloader(['url' => $obj->image]);
+					$ext = pathinfo($obj->image, PATHINFO_EXTENSION);
+					$track_image_file = 'prefs/podcasts/'.$channel.'/'.$key.'/cover.'.$ext;
+					if ($imgd->get_data_to_file($track_image_file, true)) {
+						logger::log('PODCASTS', 'Downloaded Track Image to Embed into file');
+					} else {
+						logger::log('PODCASTS', 'Failed to download track image');
+						$track_image_file = null;
+					}
+				}
+
+				if ($obj->WriteTags != 0) {
+					logger::log('PODCASTS', 'Updating ID3 tags as requested by preference');
+					$tags['artist'] = array($obj->artist);
+					$tags['albumartist'] = array($obj->artist);
+					$tags['album'] = array($obj->album);
+					$tags['title'] = array($obj->title);
+				}
+
+				if ($track_image_file) {
+					if ($fd = @fopen($track_image_file, 'rb')) {
+  						$APICdata = fread($fd, filesize($track_image_file));
+  						fclose ($fd);
+						$tags['attached_picture'][0]['data']            = $APICdata;
+						$tags['attached_picture'][0]['picturetypeid']   = 0x03;                 // 'Cover (front)'
+						$tags['attached_picture'][0]['description']     = 'Cover Image';
+						$tags['attached_picture'][0]['mime']            = mime_content_type($track_image_file);
+					} else {
+						logger::warn('PODCASTS', 'Could not open file',$track_image_file,'to embed into audio');
+						@unlink($track_image_file);
+						$track_image_file = null;
+					}
+				}
+
+				if ($obj->WriteTags != 0 || $track_image_file != null) {
+					logger::log('PODCASTS', 'Writing ID3 tags to',$download_file);
 					getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
 
-					$tagwriter = new getid3_writetags;
+					$tagwriter = new getid3_writetags();
 					$tagwriter->filename       = $download_file;
-					$tagwriter->tagformats     = array('id3v2.4');
+					$tagwriter->tagformats     = array('id3v2.3');
 					$tagwriter->overwrite_tags = true;
 					$tagwriter->tag_encoding   = 'UTF-8';
-					$tagwriter->remove_other_tags = false;
-					$tags = array(
-						'artist' => array($obj->artist),
-						'albumartist' => array($obj->artist),
-						'album' => array($obj->album),
-						'title' => array($obj->title)
-					);
-					$tracknumber = format_tracknum($obj->title);
-					if ($tracknumber > 0) {
-						$tags['tracknumber'] = array($tracknumber);
-					}
+					$tagwriter->remove_other_tags = true;
 					$tagwriter->tag_data = $tags;
 					if ($tagwriter->WriteTags()) {
 						logger::log('PODCASTS', 'Successfully wrote tags');
@@ -1097,19 +1155,27 @@ class poDatabase extends database {
 						logger::error('PODCASTS', 'Failed to write tags!', implode(' ', $tagwriter->errors));
 					}
 				} else {
-					logger::log('PODCASTS', 'Not writing tags');
+					logger::log('PODCASTS', 'No Tags to Write');
 				}
-				if ($obj->Duration == 0 || $obj->Duration === null) {
-					logger::log('PODCASTS', 'Trying to work out duration');
-					$getID3 = new getID3;
-					$file = $getID3->analyze($download_file);
-					$p = $file['playtime_seconds'];
-					if ($p) {
-						$obj->Duration = $p;
-						logger::log('PODCASTS', 'Duration is',$p,'seconds');
-					}
+				if ($track_image_file)
+					unlink($track_image_file);
+
+				if ($track_number > 0 && is_numeric($track_number)) {
+					$tn = str_pad((string) $track_number, 3, '0', STR_PAD_LEFT);
+					$newfile = dirname($download_file).'/'.$tn.' - '.basename($download_file);
+					logger::log('PODCASTS', 'Renaming downloaded file to', $newfile);
+					rename($download_file, $newfile);
+				} else {
+					$newfile = $download_file;
 				}
-				$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Duration = ?, Downloaded=?, Localfilename=? WHERE PODTrackindex=?", $obj->Duration, 1, '/'.$download_file, $key);
+				$this->sql_prepare_query(true, null, null, null,
+					"UPDATE PodcastTracktable SET Duration = ?, Downloaded = ?, Localfilename = ?
+					WHERE PODTrackindex = ?",
+					$obj->Duration,
+					1,
+					 '/'.$newfile,
+					 $key
+				);
 			} else {
 				logger::error('PODCASTS', 'Failed to download',$key, $channel, $url);
 				header('HTTP/1.0 404 Not Found');
