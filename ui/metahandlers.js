@@ -46,7 +46,6 @@ var metaHandlers = function() {
 				dataType: "json"
 			})
 			.done(function(data) {
-				// debug.log("YOUTUBE DOWNLOAD","Download status is",data);
 				if (data.info) {
 					infobar.updatenotify(notify, 'Youtube Download : '+track_name+'<br />'+data.info);
 				} else if (data.result) {
