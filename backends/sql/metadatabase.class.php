@@ -1161,7 +1161,7 @@ class metaDatabase extends playlistCollection {
 		if ($ytdl_path === false)
 			$this->youtubedl_error('youtube-dl binary could not be found', null);
 
-		logger::log('YOUTUBEDL', 'youtube-dl is at',$ytdl_path);
+		logger::core('YOUTUBEDL', 'youtube-dl is at',$ytdl_path);
 		$avconv_path = find_executable('avconv');
 		if ($avconv_path === false) {
 			$avconv_path = find_executable('ffmpeg');
@@ -1219,12 +1219,9 @@ class metaDatabase extends playlistCollection {
 		while (is_dir($target_dir))
 			$target_dir .= '1';
 
-		// if (is_dir('prefs/youtubedl/'.$ttindex)) {
-		// 	$this->youtubedl_error('Target Directory prefs/youtubedl/'.$ttindex,'already exists', $progress_file);
-		// } else {
 		logger::log('YOUTUBEDL', 'Making Directory ',$target_dir);
 		mkdir($target_dir);
-		// }
+
 		// At this point, terminate the request so the download can run in the background.
 		// If we don't do this the browser will retry after 3 minutes and there's nothing we
 		// can do about that.

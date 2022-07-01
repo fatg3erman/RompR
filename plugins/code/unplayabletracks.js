@@ -25,11 +25,7 @@ var unplayabletracks = function() {
 	}
 
 	function getUnplayableTracks() {
-		// if (player.canPlay('spotify')) {
-			holder.load('plugins/code/getunplayable.php');
-		// } else {
-		// 	holder.html('<h3>'+language.gettext('label_onlyspotify')+'</h3>');
-		// }
+		holder.load('plugins/code/getunplayable.php');
 	}
 
 	function searchForTrack(element) {
@@ -52,30 +48,6 @@ var unplayabletracks = function() {
 				}
 			]
 		}
-
-		// databits[reqid].attributes = new Array();
-		// var rat = element.parent().find('.rating-icon-small').first();
-		// if (rat.hasClass('icon-1-stars')) {
-		// 	debug.log("WISHLIST","1 star");
-		// 	databits[reqid].attributes.push({attribute: 'Rating', value:  1});
-		// } else if (rat.hasClass('icon-2-stars')) {
-		// 	debug.log("WISHLIST","2 star");
-		// 	databits[reqid].attributes.push({attribute: 'Rating', value:  2});
-		// } else if (rat.hasClass('icon-3-stars')) {
-		// 	debug.log("WISHLIST","3 star");
-		// 	databits[reqid].attributes.push({attribute: 'Rating', value:  3});
-		// } else if (rat.hasClass('icon-4-stars')) {
-		// 	debug.log("WISHLIST","4 star");
-		// 	databits[reqid].attributes.push({attribute: 'Rating', value:  4});
-		// } else if (rat.hasClass('icon-5-stars')) {
-		// 	debug.log("WISHLIST","5 star");
-		// 	databits[reqid].attributes.push({attribute: 'Rating', value:  5});
-		// }
-		// var tag = element.parent().find('.tracktags').first();
-		// if (tag.length > 0) {
-		// 	debug.info("WISHLIST","Setting Tags Attribute");
-		// 	databits[reqid].attributes.push({attribute: 'Tags', value: tag.text().split(", ")});
-		// }
 
 		trawler.findThisOne(databits[reqid].data[databits[reqid].index], unplayabletracks.updateDatabase);
 	}
@@ -147,7 +119,7 @@ var unplayabletracks = function() {
 			var trackDiv = element.parent().parent();
 			var resultsDiv = $('<div>', {id: 'upsearch_'+results[0].key, class: 'toggledown'}).appendTo(trackDiv);
 			if (results.length > 0 && results[0].file) {
-				var dropper = $("<div>", {class: 'containerbox fixed'}).insertBefore(resultsDiv);
+				var dropper = $("<div>", {class: 'containerbox fixed', style: 'margin-top:1em'}).insertBefore(resultsDiv);
 				dropper.append('<i class="openmenu icon-menu clickicon fixed inline-icon" name="upsearch_'+results[0].reqid+'"></i>');
 				for (var i = 0; i < results.length; i++) {
 					var data = results[i];

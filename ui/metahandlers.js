@@ -31,7 +31,7 @@ var metaHandlers = function() {
 		return {...playlistinfo, ...data};
 	}
 
-	function youtubeDownloadMonitor(uri, track_name) {
+	function youtubeDownloadMonitor(uri, track_name, trackui) {
 		var self = this;
 		var notify = infobar.permnotify('Downloading Youtube Track '+track_name);
 		var timer;
@@ -51,7 +51,12 @@ var metaHandlers = function() {
 					infobar.updatenotify(notify, 'Youtube Download : '+track_name+'<br />'+data.info);
 				} else if (data.result) {
 					debug.log('YOUTUBE DOWNLOAD', 'Result is',data.result);
+					infobar.updatenotify(notify, 'Youtube Download : '+track_name+'<br />Success');
+					self.stop();
 					collectionHelper.updateCollectionDisplay(data.result);
+				} else if (data.error) {
+					debug.log('YOUTUBE DOWNLOAD', 'Error is',data.error);
+					infobar.updatenotify(notify, 'Youtube Download : '+track_name+'<br />'+data.error);
 					self.stop();
 				}
 				if (running) {
@@ -64,11 +69,16 @@ var metaHandlers = function() {
 			});
 		}
 
+		this.un_notify = function() {
+			infobar.removenotify(notify);
+		}
+
 		this.stop = function() {
 			debug.log('YOUTUBEDL', 'Stopping Monitor');
 			running = false;
 			clearTimeout(timer);
-			infobar.removenotify(notify);
+			trackui.find('.clicktrackmenu').stopSpinner();
+			setTimeout(self.un_notify, 2500);
 		}
 
 		timer = setTimeout(self.checkProgress, 1000);
@@ -182,7 +192,7 @@ var metaHandlers = function() {
 					var uri = decodeURIComponent($(this).attr('name'));
 					var track_name = $(this).find('div.tracktitle').html();
 					debug.log('YOUTUBEDL', uri, name);
-					var monitor = new youtubeDownloadMonitor(uri, track_name);
+					var monitor = new youtubeDownloadMonitor(uri, track_name, $(this));
 					try {
 						var data = await $.ajax({
 							url: "api/metadata/",
@@ -203,9 +213,6 @@ var metaHandlers = function() {
 								infobar.error('Failed to download YouTube track - '+err.responseText);
 							}
 							monitor.stop();
-							tracks.each(function() {
-								$(this).find('.clicktrackmenu').stopSpinner();
-							});
 						}
 					}
 				});

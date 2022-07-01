@@ -126,7 +126,8 @@ class collection_base extends database {
 			AND Title = ?
 			AND TrackNo = ?
 			AND Albumname = ?
-			AND Domain = ?',
+			AND Domain = ?
+			ORDER BY isSearchResult ASC',
 			$filedata['Title'], $filedata['Track'], $filedata['Album'], $filedata['domain']
 		);
 		foreach ($result as $tinfo) {
