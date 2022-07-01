@@ -434,18 +434,18 @@ body.touchclick .snap_vert_holder:last-child {
 
 div.normalmenu
 {
-	width:25vw;
-	max-width:360px;
-	min-width:240px;
+	width:35vw;
+	max-width:480px;
+	min-width:360px;
 }
 
 div.normalmenu.albumbitsmenu {
-	max-width: 300px;
+	max-width: 360px;
 }
 
 div.widemenu
 {
-	width:40vw;
+	width:50vw;
 	max-width:640px;
 	min-width:400px;
 }
