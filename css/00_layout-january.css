@@ -1718,7 +1718,7 @@ a.infoclick.clickreleasepage
 	height:auto;
 	max-width:360px;
 	transition: opacity 0.5s ease;
-	opacity: 1;
+	/*opacity: 1;*/
 	object-fit: scale-down;
 }
 
