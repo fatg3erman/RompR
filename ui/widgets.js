@@ -587,6 +587,8 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 		animate: false
 	},
 
+	touch: null,
+
 	_create: function() {
 		this.dragging = false;
 		var extraclass = (this.options.interactive) ? ' moveable' : '';
@@ -611,8 +613,17 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 		this.min = this.options.startmin;
 		this.max = this.options.startmax;
 		if (this.options.interactive) {
-			this._mouseInit();
+			if (uiHelper.is_touch_ui) {
+				this.touch = null;
+				this.element.on('touchstart', $.proxy(this._touchStart, this));
+				this.element.on('touchmove', $.proxy(this._touchMove, this));
+				this.element.on('touchend', $.proxy(this._touchEnd, this));
+				this.element.on('touchcancel', $.proxy(this._touchEnd, this));
+			} else {
+				this._mouseInit();
+			}
 		}
+
 		this.fill();
 	},
 
@@ -642,6 +653,33 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 			this.options.onstop(this.getRange());
 		}
 		return true;
+	},
+
+	_touchStart: function(e) {
+		if (e.touches.length == 1 && this.touch == null) {
+			e.preventDefault();
+			this.touch = e.touches[0].identifier;
+			this._mouseCapture(e.touches[0]);
+		}
+	},
+
+	_touchMove: function(e) {
+		if (e.touches.length == 1 && this.touch == e.touches[0].identifier) {
+			e.preventDefault();
+			this._mouseDrag(e.touches[0]);
+		}
+	},
+
+	_touchEnd: function(e) {
+		if (e.changedTouches && typeof(e.changedTouches) == 'object') {
+			for (let ct of e.changedTouches) {
+				if (ct.identifier == this.touch) {
+					e.preventDefault();
+					this.touch = null;
+					this._mouseStop(ct);
+				}
+			}
+		}
 	},
 
 	update: function(event) {
