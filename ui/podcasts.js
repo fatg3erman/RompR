@@ -174,8 +174,8 @@ var podcasts = function() {
 				clickedElement: $('i.icon-podacst-cricled.choosepanel'),
 				uri: "api/podcasts/?populate=1"
 			});
-			podcasts.doNewCount();
 			$('.choosepanel[name="podcastslist"]').stopSpinner();
+			podcasts.doNewCount();
 			sleepHelper.addWakeHelper(podcasts.checkIfSomeoneElseHasUpdatedStuff);
 			sleepHelper.addSleepHelper(podcasts.stopPolling);
 		},
@@ -282,15 +282,7 @@ var podcasts = function() {
 			$.getJSON("api/podcasts/?populate=1&getcounts=1", function(data) {
 				debug.core('PODCASTS','Got New Counts',data);
 				$.each(data, function(index, value) {
-					if (index == 'totals') {
-						// element = '#total_unlistened_podcasts';
-					} else {
-						if (newcounts[index] &&
-							(newcounts[index].new != value.new || newcounts[index].unlistened != value.unlistened)) {
-							debug.trace('PODCASTS', 'Podcast',index,'counts have changed to',value);
-							putPodCount('#podnumber_'+index, value.new, value.unlistened);
-						}
-					}
+					putPodCount('#podnumber_'+index, value.new, value.unlistened);
 				});
 				newcounts = data;
 			});

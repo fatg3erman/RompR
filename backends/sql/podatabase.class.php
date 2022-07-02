@@ -860,18 +860,9 @@ class poDatabase extends database {
 
 		$extra = '<div class="album-extra-controls">';
 		if ($y ->Subscribed == 1) {
-			$uc = $this->get_podcast_counts($y->PODindex);
-			$extra .= '<span id="podnumber_'.$y->PODindex.'"';
-			if ($uc['new'] > 0) {
-				$extra .= ' class="newpod">'.$uc['new'].'</span>';
-			} else {
-				$extra .= '></span>';
-			}
-			if ($uc['unlistened'] > 0) {
-				$extra .= '<span class="unlistenedpod">'.$uc['unlistened'].'</span>';
-			} else {
-				$extra .= '<span></span>';
-			}
+			// $uc = $this->get_podcast_counts($y->PODindex);
+			$extra .= '<span id="podnumber_'.$y->PODindex.'"></span>';
+			$extra .= '<span></span>';
 		} else {
 			$extra .= '<i class="clickicon clickable clickpodsubscribe podcast icon-rss inline-icon tooltip spinable" title="Subscribe to this podcast"></i><input type="hidden" value="'.$y->PODindex.'" />';
 		}
@@ -1192,26 +1183,20 @@ class poDatabase extends database {
 		return $channel;
 	}
 
-	private function get_podcast_counts($podid) {
-		if ($podid !== null) {
-			$ext = ' AND PODindex = '.$podid;
-		} else {
-			$ext = '';
-		}
-		$qstring = "SELECT COUNT(PODTrackindex) AS num FROM PodcastTracktable JOIN Podcasttable USING (PODindex) WHERE Subscribed = 1 AND New = 1 AND Listened = 0 AND Deleted = 0";
-		$results['new'] = $this->generic_sql_query($qstring.$ext, false, null, 'num', 0);
-
-		$qstring = "SELECT COUNT(PODTrackindex) AS num FROM PodcastTracktable JOIN Podcasttable USING (PODindex) WHERE Subscribed = 1 AND New = 0 AND Listened = 0 AND Deleted = 0";
-		$results['unlistened'] = $this->generic_sql_query($qstring.$ext, false, null, 'num', 0);
-		return $results;
-	}
-
 	public function get_all_counts() {
 		$counts = array();
-		$counts['totals'] = $this->get_podcast_counts(null);
-		$result = $this->generic_sql_query("SELECT PODindex FROM Podcasttable WHERE Subscribed = 1", false, PDO::FETCH_OBJ);
+
+		$result = $this->generic_sql_query(
+			"SELECT PODindex, IFNULL(new, 0) AS new, IFNULL(unlistened, 0) AS unlistened FROM
+				(SELECT PODindex, COUNT(PODTrackindex) AS new FROM PodcastTracktable JOIN Podcasttable USING (PODindex) WHERE Subscribed = 1 AND New = 1 AND Listened = 0 AND Deleted = 0 GROUP BY PODindex) AS nw
+			LEFT JOIN
+				(SELECT PODindex, COUNT(PODTrackindex) AS unlistened FROM PodcastTracktable JOIN Podcasttable USING (PODindex) WHERE Subscribed = 1 AND New = 0 AND Listened = 0 AND Deleted = 0 GROUP BY PODindex) AS un
+			USING (PODindex)",
+			false,
+			PDO::FETCH_OBJ
+		);
 		foreach ($result as $obj) {
-			$counts[$obj->PODindex] = $this->get_podcast_counts($obj->PODindex);
+			$counts[$obj->PODindex] = ['new' => $obj->new, 'unlistened' => $obj->unlistened];
 		}
 		return $counts;
 	}
@@ -1347,11 +1332,7 @@ class poDatabase extends database {
 
 	public function doPodcastList($subscribed) {
 		$qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM Podcasttable WHERE Subscribed = ".$subscribed." ORDER BY";
-		// if ($subscribed == 1) {
-		// 	$qstring = "SELECT Podcasttable.*, SUM(New = 1) AS new, SUM(Listened = 0) AS unlistened FROM Podcasttable JOIN PodcastTracktable USING(PODindex) WHERE Subscribed = 1 AND Deleted = 0 GROUP BY PODindex ORDER BY";
-		// } else {
-		// 	$qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM Podcasttable WHERE Subscribed = 0 ORDER BY";
-		// }
+
 		$sortarray = array();
 		for ($i = 0; $i < prefs::get_pref('podcast_sort_levels'); $i++) {
 			if (prefs::get_pref('podcast_sort_'.$i) == 'new' || prefs::get_pref('podcast_sort_'.$i) == 'unlistened') {
@@ -1373,9 +1354,7 @@ class poDatabase extends database {
 		}
 		$qstring .= implode(', ', $sortarray);
 		$result = $this->generic_sql_query($qstring, false, PDO::FETCH_OBJ);
-		// Hack to make phone skin and skypotato skin work without too much extra effort
-		// if ($subscribed == 1)
-		// 	print uibits::ui_config_header(['label' => 'label_subbed_podcasts']);
+
 		foreach ($result as $obj) {
 			$this->doPodcastHeader($obj, $subscribed);
 		}
