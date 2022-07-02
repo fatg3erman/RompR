@@ -614,6 +614,8 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 		this.max = this.options.startmax;
 		if (this.options.interactive) {
 			if (uiHelper.is_touch_ui) {
+				// Use touch events if we're on a touch UI, otherwise
+				// dragging doesn't work
 				this.touch = null;
 				this.element.on('touchstart', $.proxy(this._touchStart, this));
 				this.element.on('touchmove', $.proxy(this._touchMove, this));
@@ -1633,6 +1635,12 @@ function popup(opts) {
 	}
 
 }
+
+/*
+	Note that for continuous dragging to work, options.command
+	needs to take 2 parameters, the first being a volume value
+	and the second being a callback
+*/
 
 $.widget('rompr.volumeControl', {
 

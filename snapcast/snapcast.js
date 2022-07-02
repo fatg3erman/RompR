@@ -704,13 +704,16 @@ function snapcastClient() {
 		}
 	}
 
-	this.setVolume = function(v) {
+	this.setVolume = function(v, callback) {
 		v = Math.round(v);
 		let increment = v - volumepc;
 		debug.log('SNAPCAST','Client',id,'setting volume to',v,increment);
 		let actual = parent_group.check_volume_inc(id, increment, v);
 		if (actual !== false)
 			snapcast.setClientVolume(id, actual, muted);
+
+		if (callback)
+			callback();
 	}
 
 	this.check_volume_increment = function(increment) {
