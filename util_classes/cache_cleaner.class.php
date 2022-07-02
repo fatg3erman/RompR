@@ -120,7 +120,9 @@ class cache_cleaner extends database {
 		$now = time();
 		$yts = glob('prefs/youtubedl/*');
 		foreach ($yts as $dir) {
+			logger::log('CACHE CLEANER', $dir);
 			$flacs = glob($dir.'/*.flac');
+			$numfiles = 1;
 			foreach ($flacs as $flac) {
 				// We can check the immediately preceeding dir and the filename, nothing more -
 				// It might be in the colleciton as a streaming track, or it mnight be symlinked
@@ -129,12 +131,11 @@ class cache_cleaner extends database {
 				// to do with symlinking again. Don't forget that SQLite reuses old TTindexes because
 				// we didn't set it up as an AUTOINCREMEMNT column. For speed. Say it was for speed.
 				$numfiles = $this->check_youtube_uri_exists(basename(dirname($flac)).'/'.basename($flac));
-				if ($numfiles > 0)
-					continue 2;
-
 			}
-			logger::log('CACHE CLEANER', $flac,'does not have an associated track');
-			rrmdir($dir);
+			if ($numfiles == 0) {
+				logger::log('CACHE CLEANER', $flac,'does not have an associated track');
+				rrmdir($dir);
+			}
 		}
 		logger::info("CACHE CLEANER", "== Check For Orphaned youtube downloads took ".format_time(time() - $now));
 
@@ -226,15 +227,6 @@ class cache_cleaner extends database {
 
 	private function tidy_wishlist() {
 		$this->generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex NOT IN (SELECT DISTINCT Sourceindex FROM Tracktable WHERE Sourceindex IS NOT NULL)");
-	}
-
-	private function check_youtube_uri_exists($uri) {
-		$bacon = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
-			"SELECT TTindex FROM Tracktable WHERE Uri LIKE CONCAT('%', ?) AND Hidden = ?",
-			$uri,
-			0
-		);
-		return count($bacon);
 	}
 
 	private function tidy_ratings_and_playcounts() {

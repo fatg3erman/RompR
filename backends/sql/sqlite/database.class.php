@@ -216,6 +216,18 @@ class database extends data_base {
 
 	}
 
+	protected function check_youtube_uri_exists($uri) {
+		logger::trace('CLEANER', 'Checking for', $uri);
+		$bacon = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			"SELECT TTindex FROM Tracktable WHERE Uri LIKE '%' || ? AND Hidden = ?",
+			$uri,
+			0
+		);
+		return count($bacon);
+	}
+
+
+
 }
 
 ?>
