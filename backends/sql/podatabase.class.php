@@ -4,9 +4,21 @@ class poDatabase extends database {
 	private function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = true) {
 		$url = preg_replace('#^itpc://#', 'http://', $url);
 		$url = preg_replace('#^feed://#', 'http://', $url);
-		logger::mark("PARSE_RSS", "Parsing Feed ".$url);
+		logger::mark("PARSE_RSS", "Getting Feed ".$url);
+		$data = null;
+		if ($id && !is_dir('prefs/podcasts/'.$id)) {
+			mkdir('prefs/podcasts/'.$id, 0755);
+		}
+
 		$d = new url_downloader(array('url' => $url));
-		if (!$d->get_data_to_string()) {
+		if ($d->get_data_to_string()) {
+			$data = $d->get_data();
+		} else if ($id && file_exists('prefs/podcasts/'.$id.'/feed.xml')) {
+			// This shouldn't really be necessary but this'll pick up older podcasts where
+			// they're not updating because we didn't know about itunes:new-feed-url
+			logger::log('PODCASTS', 'Re-parsing previous feed for podcast', $id);
+			$data = file_get_contents('prefs/podcasts/'.$id.'/feed.xml');
+		} else {
 			header('HTTP/1.0 404 Not Found');
 			print "Feed Not Found";
 			logger::warn("PARSE_RSS", "  Failed to Download ".$url);
@@ -14,13 +26,9 @@ class poDatabase extends database {
 		}
 
 		if ($id) {
-			if (!is_dir('prefs/podcasts/'.$id)) {
-				mkdir('prefs/podcasts/'.$id, 0755);
-			}
-			file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $d->get_data());
+			file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $data);
 		}
 		try {
-			$data = $d->get_data();
 			libxml_use_internal_errors(true);
 			$feed = @simplexml_load_string($data);
 			if ($feed === false) {
@@ -41,6 +49,11 @@ class poDatabase extends database {
 		$itunes = $feed->channel->children('itunes', TRUE);
 		$sy = $feed->channel->children('sy', TRUE);
 		$googleplay = $feed->channel->children('googleplay', TRUE);
+
+		if ($itunes && $itunes->{'new-feed-url'}) {
+			logger::log('PODCASTS', 'Updating Feed URL to', (string) $itunes->{'new-feed-url'});
+			$podcast['FeedURL'] = (string) $itunes->{'new-feed-url'};
+		}
 
 		// Automatic Refresh
 		if ($ppg && $ppg->seriesDetails) {
@@ -299,6 +312,15 @@ class poDatabase extends database {
 		if ($lastpubdate !== null) {
 		    if ($podcast['LastPubDate'] !== false && $podcast['LastPubDate'] == $lastpubdate) {
 		        logger::mark("PARSE_RSS", "Podcast has not been updated since last refresh");
+		        if ($id) {
+		        	// If we're returning false then we're not returning the FeedURL so we need
+		        	// to update it here.
+		        	$this->sql_prepare_query(true, null, null, null,
+		        		"UPDATE Podcasttable SET FeedURL = ? WHERE PODindex = ?",
+		        		$podcast['FeedURL'],
+		        		$id
+		        	);
+		        }
 		        return false;
 		    }
 		}
@@ -417,10 +439,12 @@ class poDatabase extends database {
 		}
 		$this->open_transaction();
 
-		if ($podetails->Subscribed == 1 && prefs::get_pref('podcast_mark_new_as_unlistened')) {
-			// Mark New As Unlistened, if required, on all subscribed podcasts - this option makes thi happen
-			// even if no new episodes have been published.
-			$this->generic_sql_query("UPDATE PodcastTracktable SET New = 0 WHERE PODindex = ".$podetails->PODindex);
+		if ($podetails->Subscribed == 1) {
+			if (prefs::get_pref('podcast_mark_new_as_unlistened')) {
+				// Mark New As Unlistened, if required, on all subscribed podcasts - this option makes thi happen
+				// even if no new episodes have been published.
+				$this->generic_sql_query("UPDATE PodcastTracktable SET New = 0 WHERE PODindex = ".$podetails->PODindex);
+			}
 		}
 		if ($podcast === false) {
 			$this->check_next_refresh($podid, $podetails);
@@ -442,7 +466,8 @@ class poDatabase extends database {
 			$podcast['RefreshOption'] = $podetails->RefreshOption;
 			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New = ?, JustUpdated = ? WHERE PODindex = ?", 0, 0, $podid);
 		}
-		$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description = ?, DaysLive = ?, RefreshOption = ?, NextUpdate = ?, LastPubDate = ?, UpRetry = ? WHERE PODindex = ?",
+		$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET FeedURL = ?, Description = ?, DaysLive = ?, RefreshOption = ?, NextUpdate = ?, LastPubDate = ?, UpRetry = ? WHERE PODindex = ?",
+			$podcast['FeedURL'],
 			$podcast['Description'],
 			$podcast['DaysLive'],
 			$podcast['RefreshOption'],
