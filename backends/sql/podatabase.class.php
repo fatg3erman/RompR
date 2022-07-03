@@ -412,6 +412,7 @@ class poDatabase extends database {
 		$podcast = $this->parse_rss_feed($podetails->FeedURL, $podid, $podetails->LastPubDate);
 		if ($podcast === null) {
 			logger::warn('PODCASTS', 'Could not refresh podcast',$podid, $podetails->Title);
+			$this->check_next_refresh($podid, $podetails);
 			return $podid;
 		}
 		$this->open_transaction();
@@ -422,40 +423,7 @@ class poDatabase extends database {
 			$this->generic_sql_query("UPDATE PodcastTracktable SET New = 0 WHERE PODindex = ".$podetails->PODindex);
 		}
 		if ($podcast === false) {
-			// Podcast was not updated. Maybe we jyst need to try again later?
-			if ($podetails->UpRetry < 2) {
-				switch ($podetails->RefreshOption) {
-					case REFRESHOPTION_DAILY:
-						logger::log('PODCASTS', 'No new tracks found. Daily refresh, trying again in 2 hours');
-						$nextup = $podetails->NextUpdate + 7200;
-						break;
-
-					case REFRESHOPTION_WEEKLY:
-						logger::log('PODCASTS', 'No new tracks found. Weekly refresh, trying again tomorrow');
-						$nextup = $podetails->NextUpdate + 86400;
-						break;
-
-					case REFRESHOPTION_MONTHLY:
-						logger::log('PODCASTS', 'No new tracks found. Monthly refresh, trying again in 2 days');
-						$nextup = $podetails->NextUpdate + 172800;
-						break;
-
-					default:
-						$nextup = calculate_best_update_time(['LastPubDate' => $podetails->LastPubDate, 'RefreshOption' => $podetails->RefreshOption, 'Title' => $podetails->Title]);
-						break;
-
-				}
-			} else {
-				$nextup = calculate_best_update_time(['LastPubDate' => $podetails->LastPubDate, 'RefreshOption' => $podetails->RefreshOption, 'Title' => $podetails->Title]);
-			}
-
-			logger::log('PODCASTS', 'Next Update is', date('c', $nextup));
-
-			$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET NextUpdate = ?, UpRetry = ? WHERE PODindex = ?",
-				$nextup,
-				$podetails->UpRetry + 1,
-				$podid
-			);
+			$this->check_next_refresh($podid, $podetails);
 			// Still check to keep (days to keep still needs to be honoured)
 			$this->close_transaction();
 			if ($this->check_tokeep($podetails, $podid) || prefs::get_pref('podcast_mark_new_as_unlistened')) {
@@ -510,6 +478,43 @@ class poDatabase extends database {
 		$this->close_transaction();
 		$this->clear_refresh_pid();
 		return $podid;
+	}
+
+	private function check_next_refresh($podid, $podetails) {
+		// Podcast was not updated. Maybe we jyst need to try again later?
+		if ($podetails->UpRetry < 2) {
+			switch ($podetails->RefreshOption) {
+				case REFRESHOPTION_DAILY:
+					logger::log('PODCASTS', 'No new tracks found. Daily refresh, trying again in 2 hours');
+					$nextup = $podetails->NextUpdate + 7200;
+					break;
+
+				case REFRESHOPTION_WEEKLY:
+					logger::log('PODCASTS', 'No new tracks found. Weekly refresh, trying again tomorrow');
+					$nextup = $podetails->NextUpdate + 86400;
+					break;
+
+				case REFRESHOPTION_MONTHLY:
+					logger::log('PODCASTS', 'No new tracks found. Monthly refresh, trying again in 2 days');
+					$nextup = $podetails->NextUpdate + 172800;
+					break;
+
+				default:
+					$nextup = calculate_best_update_time(['LastPubDate' => $podetails->LastPubDate, 'RefreshOption' => $podetails->RefreshOption, 'Title' => $podetails->Title]);
+					break;
+
+			}
+		} else {
+			$nextup = calculate_best_update_time(['LastPubDate' => $podetails->LastPubDate, 'RefreshOption' => $podetails->RefreshOption, 'Title' => $podetails->Title]);
+		}
+
+		logger::log('PODCASTS', 'Next Update is', date('c', $nextup));
+
+		$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET NextUpdate = ?, UpRetry = ? WHERE PODindex = ?",
+			$nextup,
+			$podetails->UpRetry + 1,
+			$podid
+		);
 	}
 
 	private function check_tokeep($podetails, $podid) {

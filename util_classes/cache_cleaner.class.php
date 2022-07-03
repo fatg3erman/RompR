@@ -244,7 +244,7 @@ class cache_cleaner extends database {
 			if (!is_dir($file)) {
 				if($now - filemtime($file) > $time) {
 					logger::trace("CACHE CLEANER", "Removing file ".$file);
-					@unlink ($file);
+					@unlink($file);
 				}
 			}
 		}

@@ -50,7 +50,7 @@ if ($setup_error !== null)
 		print $setup_error;
 print '<p>'.language::gettext("setup_labeladdresses").'</p>';
 print '<p class="tiny">'.language::gettext("setup_addressnote").'</p>';
-print '<form name="mpdetails" action="index.php" method="post">';
+print '<form name="mpdetails" action="index.php?force_restart=1" method="post">';
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("setup_mpd").'</h3>';
 print '<p>Choose or edit a player</p>';
