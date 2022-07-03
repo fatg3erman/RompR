@@ -87,10 +87,11 @@ var podcasts = function() {
 		debug.core("PODCASTS","Updating counts",element,num,numl);
 		var indicator = $(element);
 		if (num == 0) {
-			indicator.removeClass('newpod');
+			indicator.removeClass('newpod').addClass('nopod_spacer');
 			indicator.html("");
 		} else {
 			indicator.html(num);
+			indicator.removeClass('nopod_spacer');
 			if (!indicator.hasClass('newpod')) {
 				indicator.addClass('newpod');
 			}

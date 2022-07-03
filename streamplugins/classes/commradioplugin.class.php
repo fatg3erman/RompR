@@ -75,20 +75,6 @@ class commradioplugin {
 			'selected' => prefs::get_pref('communityradioorderby')
 		]);
 
-		// print '<div class="fullwidth cleargroupparent">';
-		// foreach ($this->searchterms as $term) {
-		// 	print '<div class="containerbox vertical-centre fullwidth" name="'.$term.'">';
-		// 	print '<div class="expand">';
-		// 	print '<input class="comm_radio_searchterm clearbox enter cleargroup" name="'.$term.'" type="text" placeholder="'.ucfirst($term).'"/>';
-		// 	print '</div>';
-		// 	print '</div>';
-		// }
-		// print '<div class="containerbox fullwidth">';
-		// print '<div class="expand"></div>';
-		// print '<button class="fixed searchbutton iconbutton cleargroup clickable commradiosearch" name="commradiosearch"></button>';
-		// print '</div>';
-		// print '</div>';
-
 		print '</div>';
 
 		$this->doBrowseRoot();

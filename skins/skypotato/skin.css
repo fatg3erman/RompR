@@ -382,7 +382,7 @@ button.spinable.icon-spin6 {
 	vertical-align:middle;
 }
 
-.podcounts {
+/*.podcounts {
 	margin-left: 4px;
 	margin-bottom: 4px;
 	margin-right: 4px;
@@ -396,7 +396,7 @@ button.spinable.icon-spin6 {
 .podcounts>.unlistenedpod {
 	float: right;
 }
-
+*/
 .dragmenu {
 	cursor:move;
 }
@@ -509,6 +509,10 @@ body.touchclick .snap_vert_holder:last-child {
 	flex-shrink: 0;
 	text-align: center;
 	justify-content: center;
+	margin-left: 8px;
+	margin-right: 8px;
+	margin-top: 4px;
+	margin-bottom: 2px;
 }
 
 .album-extra-controls>i {
@@ -516,11 +520,6 @@ body.touchclick .snap_vert_holder:last-child {
 	flex-shrink: 1;
 	width: var(--small-icon-size);
 	height: var(--small-icon-size);
-}
-
-.album-extra-controls>span {
-	margin-top: 2px;
-	margin-bottom: 2px;
 }
 
 .newpod {
@@ -758,8 +757,7 @@ div[id^=dirholder]>div.clicktrack.line {
 	flex-basis: calc(100% - 8px);
 }
 
-#fruitbat .collectionitem.selecotron.masonry_opened.dropshadow,
-#podcast_search .collectionitem.selecotron.masonry_opened.dropshadow {
+#fruitbat .collectionitem.selecotron.masonry_opened.dropshadow {
 	margin-left: 4px;
 }
 
