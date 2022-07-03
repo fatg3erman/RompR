@@ -1265,7 +1265,7 @@ class init_database extends init_generic {
 					foreach ($indices as $index) {
 						if ($index['Column_name'] == 'Uri') {
 							$this->sql_prepare_query(true, null, null, null,
-								"DROP INDEX ? FROM Tracktable",
+								"DROP INDEX ? ON Tracktable",
 								$index['Key_name']
 							);
 						}
