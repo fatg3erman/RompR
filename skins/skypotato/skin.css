@@ -749,10 +749,21 @@ div[id^=dirholder]>div.clicktrack.line {
 	margin-right: 1em;
 }
 
+/* Don't know why but the background colour is visible through the left and right
+   borders but only when the panel is opened. So this is a kludge.
+   The podcast panels behave differently, despite having EXACTLY THE SAME MARKUP
+   so I don't fucking know what CSS thinks it's doing. */
 .collectionitem.selecotron.masonry_opened.dropshadow {
 	padding-left: 0px;
-	width: 98%;
+	flex-basis: calc(100% - 8px);
 }
+
+#fruitbat .collectionitem.selecotron.masonry_opened.dropshadow,
+#podcast_search .collectionitem.selecotron.masonry_opened.dropshadow {
+	margin-left: 4px;
+}
+
+/* End of kludge */
 
 .collectionitem .playable.indent {
 	margin-left: 0px !important;

@@ -1782,7 +1782,7 @@ a.infoclick.clickreleasepage
 	margin-top:4px;
 	padding: 8px;
 	box-sizing:border-box;
-	margin-bottom:1.5em;
+	margin-bottom:1em;
     background-color: var(--highlight-bg-colour);
     background-image: var(--highlight-bg-image);
     border-left: var(--open-album-border-highlight);
