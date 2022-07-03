@@ -545,7 +545,7 @@ var layoutProcessor = function() {
 		},
 
 		scrollSourcesTo: function(jq) {
-			$('#infopane').romprScrollTo(jq);
+			$('#infopane').romprScrollTo(jq, 100);
 		},
 
 		expandInfo: function(side) {

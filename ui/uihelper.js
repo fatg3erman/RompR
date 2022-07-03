@@ -319,17 +319,17 @@ jQuery.fn.doSomethingUseful = function(text) {
 	});
 }
 
-jQuery.fn.romprScrollTo = function(target) {
+jQuery.fn.romprScrollTo = function(target, speed = 250) {
 	return this.each(function() {
 		if (uiHelper.is_touch_ui) {
-			$(this).scrollTo(target, 250, {easing: 'swing'});
+			$(this).scrollTo(target, speed, {easing: 'swing'});
 		} else {
 			$(this).mCustomScrollbar('update');
 			$(this).mCustomScrollbar(
 				'scrollTo',
 				target,
 				{
-					scrollInertia: 250,
+					scrollInertia: speed,
 					easing: 'swing'
 				}
 			);
