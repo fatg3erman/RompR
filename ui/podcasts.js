@@ -88,7 +88,7 @@ var podcasts = function() {
 		var indicator = $(element);
 		if (num == 0) {
 			indicator.removeClass('newpod').addClass('nopod_spacer');
-			indicator.html("");
+			indicator.html('&nbsp;');
 		} else {
 			indicator.html(num);
 			indicator.removeClass('nopod_spacer');
@@ -99,7 +99,7 @@ var podcasts = function() {
 		var il = indicator.next();
 		if (numl == 0) {
 			il.removeClass('unlistenedpod');
-			il.html("");
+			il.html('&nbsp;');
 		} else {
 			il.html(numl);
 			if (!il.hasClass('unlistenedpod')) {

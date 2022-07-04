@@ -1215,21 +1215,13 @@ class poDatabase extends database {
 
 	public function get_all_counts() {
 		$counts = array();
-		// Slightly clunky SQL because SQLite doesn't support FULL OUTER JOIN or RIGHT JOIN
-		// so we need to add the rows where the LHS is null by using a UNION
 		$result = $this->generic_sql_query(
 			"SELECT PODindex, IFNULL(new, 0) AS new, IFNULL(unlistened, 0) AS unlistened FROM
-				(SELECT PODindex, COUNT(PODTrackindex) AS new FROM PodcastTracktable JOIN Podcasttable USING (PODindex) WHERE Subscribed = 1 AND New = 1 AND Listened = 0 AND Deleted = 0 GROUP BY PODindex) AS nw
-			LEFT JOIN
-				(SELECT PODindex, COUNT(PODTrackindex) AS unlistened FROM PodcastTracktable JOIN Podcasttable USING (PODindex) WHERE Subscribed = 1 AND New = 0 AND Listened = 0 AND Deleted = 0 GROUP BY PODindex) AS un
-			USING (PODindex)
-			UNION ALL
-			SELECT PODindex, IFNULL(new, 0) AS new, IFNULL(unlistened, 0) AS unlistened FROM
-				(SELECT PODindex, COUNT(PODTrackindex) AS unlistened FROM PodcastTracktable JOIN Podcasttable USING (PODindex) WHERE Subscribed = 1 AND New = 0 AND Listened = 0 AND Deleted = 0 GROUP BY PODindex) AS un
-			LEFT JOIN
-				(SELECT PODindex, COUNT(PODTrackindex) AS new FROM PodcastTracktable JOIN Podcasttable USING (PODindex) WHERE Subscribed = 1 AND New = 1 AND Listened = 0 AND Deleted = 0 GROUP BY PODindex) AS nw
-			USING (PODindex)
-			WHERE nw.new IS NULL
+				(SELECT PODindex FROM Podcasttable WHERE Subscribed = 1) AS subbed
+				LEFT JOIN
+				(SELECT PODindex, COUNT(PODTrackindex) AS new FROM PodcastTracktable WHERE New = 1 AND Listened = 0 AND Deleted = 0 GROUP BY PODindex) AS nw USING (PODindex)
+				LEFT JOIN
+				(SELECT PODindex, COUNT(PODTrackindex) AS unlistened FROM PodcastTracktable WHERE New = 0 AND Listened = 0 AND Deleted = 0 GROUP BY PODindex) AS un USING (PODindex)
 			ORDER BY PODindex ASC",
 			false,
 			PDO::FETCH_OBJ
