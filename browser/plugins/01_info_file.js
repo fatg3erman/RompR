@@ -33,7 +33,7 @@ var info_file = function() {
 		file = file.replace(/^file:\/\//, '');
 
 		layout.add_flow_box_header({title: language.gettext("info_file")});
-		layout.add_flow_box(file);
+		layout.add_flow_box_wrap_all(file);
 
 		if (info.Performer) {
 			if (typeof info.Performer == "object") {
@@ -103,7 +103,7 @@ var info_file = function() {
 				return;
 
 			layout.add_flow_box_header({title: language.gettext("info_file")});
-			layout.add_flow_box(file);
+			layout.add_flow_box_wrap_all(file);
 			var list = layout.add_sidebar_list(language.gettext("info_format"), data.format);
 			layout.append_to_list(list, language.gettext("info_samplerate"), data.samplerate+' Hz, '+data.bitdepth+' Bit');
 			[ 'bitrate', 'channels', 'year', 'genre', 'label', 'disctitle', 'encoder'].forEach(function(thing) {

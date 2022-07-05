@@ -1561,6 +1561,10 @@ div.info-box-expand .underline:nth-child(1) {
 	font-weight:bold;
 }
 
+.wrap-all {
+	word-break: break-all;
+}
+
 /*
 =====================================================================
 =

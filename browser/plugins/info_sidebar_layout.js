@@ -149,6 +149,10 @@ function info_sidebar_layout(options) {
 		return $('<div>', {class: 'mbbox'}).html(content).appendTo(self.mainbit);
 	}
 
+	this.add_flow_box_wrap_all = function(content) {
+		return $('<div>', {class: 'mbbox wrap-all'}).html(content).appendTo(self.mainbit);
+	}
+
 	this.add_non_flow_box_header = function(options) {
 		var settings = $.extend({
 			wide: false,
