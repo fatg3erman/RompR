@@ -121,7 +121,8 @@ input[type=text],input[type="number"] {
 
 #infopane {
 	height:100%;
-	overflow:auto;
+	overflow-y:auto;
+	overflow-x: hidden;
 	position:relative;
 	display:block;
 	padding-left: 4px;
