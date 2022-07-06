@@ -280,7 +280,7 @@ jQuery.fn.addCustomScrollBar = function() {
 		if (!uiHelper.is_touch_ui) {
 			$(this).mCustomScrollbar({
 				theme: "light-thick",
-				scrollInertia: 1000,
+				scrollInertia: 250,
 				// contentTouchScroll: 25,
 				mouseWheel: {
 					scrollAmount: parseInt(prefs.wheelscrollspeed),
