@@ -289,10 +289,12 @@ create_body_tag('phone');
 			<div class="sptext"></div>
 		</div>
 		<div id="narrowscreenicons" class="top_drop_menu rightmenu autohide clearfix topshadow">
-			<i class="noshrink icon-folder-open-empty topimg choosepanel tright" name="filelist"></i>
-			<i class="noshrink choosepanel icon-doc-text topimg tright" name="playlistman"></i>
-			<i class="noshrink icon-info-circled topimg choosepanel tright" name="infopane"></i>
-			<i class="noshrink choosepanel icon-cog-alt topimg tright" name="prefsm"></i>
+			<i class="choosepanel icon-wifi topimg tright" name="pluginplaylistholder"></i>
+			<i class="icon-folder-open-empty topimg choosepanel tright" name="filelist"></i>
+			<i class="choosepanel icon-doc-text topimg tright" name="playlistman"></i>
+			<i class="icon-info-circled topimg choosepanel tright" name="infopane"></i>
+			<i class="choosepanel icon-cog-alt topimg tright" name="prefsm"></i>
+			<i class="icon-library topimg tright topbarmenu" name="specialplugins"></i>
 		</div>
 		<i class="icon-no-response-playbutton topimg choosepanel expand" name="infobar"></i>
 		<i class="icon-search topimg choosepanel expand" name="searchpane"></i>
@@ -300,7 +302,7 @@ create_body_tag('phone');
 		<i class="choosepanel icon-audiobook topimg expand" name="audiobooklist"></i>
 		<i class="icon-radio-tower topimg choosepanel expand" name="radiolist"></i>
 		<i class="icon-podcast-circled topimg choosepanel expand spinable" name="podcastslist"></i>
-		<i class="choosepanel icon-wifi topimg expand" name="pluginplaylistholder"></i>
+		<i class="onlywide choosepanel icon-wifi topimg expand" name="pluginplaylistholder"></i>
 		<i class="choosepanel onlywide icon-doc-text topimg expand spinable" name="playlistman"></i>
 		<i class="icon-folder-open-empty onlywide topimg choosepanel expand" name="filelist"></i>
 		<div id="pluginicons" class="onlywide containerbox expandabit">
@@ -309,7 +311,7 @@ create_body_tag('phone');
 		<i class="icon-doc-text topimg choosepanel expand" name="playlistm"></i>
 		<i class="onlywide icon-info-circled topimg choosepanel expand" name="infopane"></i>
 		<i class="onlywide choosepanel icon-cog-alt topimg expand" name="prefsm"></i>
-		<i class="icon-library topimg expand topbarmenu" name="specialplugins"></i>
+		<i class="onlywide icon-library topimg expand topbarmenu" name="specialplugins"></i>
 		<i class="icon-menu topimg expand onlynarrow topbarmenu" name="narrowscreenicons"></i>
 	</div>
 </div>

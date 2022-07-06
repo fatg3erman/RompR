@@ -386,7 +386,7 @@ var layoutProcessor = function() {
 		createPluginHolder: function(icon, title, id, panel) {
 			var i = $('<i>', {class: 'topimg expand topbarmenu', name: panel, id: id}).appendTo('#pluginicons');
 			i.addClass(icon);
-			var j = $('<i>', {class: 'noshrink topimg tright topbarmenu', name: panel}).appendTo('#narrowscreenicons');
+			var j = $('<i>', {class: 'topimg tright topbarmenu', name: panel}).appendTo('#narrowscreenicons');
 			j.addClass(icon);
 			return i;
 		},

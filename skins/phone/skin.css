@@ -424,12 +424,12 @@ div.albumbitsmenu {
 }
 
 .top_drop_menu .topimg {
-	width:36px;
-	height:36px;
+	width:30px;
+	height:30px;
 }
 
 #narrowscreenicons {
-	padding-right: 24px;
+	/*padding-right: 24px;*/
 }
 
 .topimg.infoclick {
