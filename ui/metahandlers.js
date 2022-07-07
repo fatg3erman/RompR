@@ -16,7 +16,7 @@ var metaHandlers = function() {
 		var data = {
 			albumartist: (playlistinfo.Album == 'SoundCloud' || playlistinfo.type == 'stream') ? playlistinfo.trackartist : playlistinfo.albumartist,
 			metadata: null,
-			Album: (playlistinfo.type == 'local' || playlistinfo.type == 'podcast') ? playlistinfo.Album : null,
+			Album: (playlistinfo.type == 'local' || playlistinfo.type == 'podcast' || playlistinfo.type == 'audiobook') ? playlistinfo.Album : null,
 			// These are only used in the case where we're adding a track to the wishlist
 			streamname: playlistinfo.Album,
 			streamimage: playlistinfo['X-AlbumImage'],
