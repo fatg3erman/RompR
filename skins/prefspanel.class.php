@@ -522,16 +522,6 @@ class prefspanel extends uibits {
 		self::ui_checkbox(['id' => 'lastfm_scrobbling', 'label' => 'config_scrobbling', 'class' => 'lastfmlogin-required']);
 		self::ui_checkbox(['id' => 'synctags', 'label' => 'config_synctags', 'class' => 'lastfmlogin-required']);
 
-		print '<div class="pref lastfmlogin-required">'.language::gettext('config_scrobblepercent').'<br/>
-		<div id="scrobwrangler"></div>
-		</div>';
-
-		self::ui_textentry([
-			'label' => 'config_tagloved',
-			'id' => 'autotagname',
-			'class' => 'lastfmlogin-required'
-		]);
-
 		self::ui_select_box([
 			'id' => 'synclovevalue',
 			'label' => language::gettext('config_loveis'),
@@ -544,6 +534,16 @@ class prefspanel extends uibits {
 				4 => '4 '.language::gettext('stars'),
 				5 => '5 '.language::gettext('stars')
 			]
+		]);
+
+		print '<div class="pref lastfmlogin-required">'.language::gettext('config_scrobblepercent').'<br/>
+		<div id="scrobwrangler"></div>
+		</div>';
+
+		self::ui_textentry([
+			'label' => 'config_tagloved',
+			'id' => 'autotagname',
+			'class' => 'lastfmlogin-required'
 		]);
 
 		// =======================================================
