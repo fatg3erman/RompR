@@ -188,11 +188,11 @@ function browse_album() {
 
 function database_search() {
 	prefs::$database = new db_collection();
-	prefs::$database->open_transaction();
+	// prefs::$database->open_transaction();
 	prefs::$database->cleanSearchTables();
 	logger::log('SEARCH', 'Using Database For Search');
 	prefs::$database->doDbCollection($_REQUEST['terms'], checkDomains($_REQUEST), false);
-	prefs::$database->close_transaction();
+	// prefs::$database->close_transaction();
 	prefs::$database->dumpAlbums($_REQUEST['dump']);
 }
 
@@ -265,9 +265,11 @@ function update_collection() {
 
 	// prefs::$database->read_collection_lastmodified();
 
+	// The triggers aren't needed during this operation and slow things down
+	prefs::$database->drop_triggers();
+
 	// Browser is now happy. Now we can do our work in peace.
     logger::log('COLLECTION', 'Now were on our own');
-	prefs::$database->open_transaction();
 	$t = microtime(true);
     prefs::$database->cleanSearchTables();
     $performance['cleansearch'] = microtime(true) - $t;
@@ -275,6 +277,11 @@ function update_collection() {
 	$t = microtime(true);
     prefs::$database->prepareCollectionUpdate();
     $performance['prepareupdate'] = microtime(true) - $t;
+
+    // DO NOT open the transaction before this point, doing it
+    // any earlier makes MySQL very unhappy because reasons
+	prefs::$database->open_transaction();
+
     $player = new player();
     logger::log('COLLECTION', 'Doing Update');
 	$t = microtime(true);
@@ -285,14 +292,19 @@ function update_collection() {
 	$t = microtime(true);
 	prefs::$database->tracks_to_database();
     $performance['tracks_to_database_outer'] = microtime(true) - $t;
+
+	prefs::$database->close_transaction();
+
     logger::log('COLLECTION', 'Tidying...');
 	$t = microtime(true);
     prefs::$database->tidy_database();
     $performance['tidydatabase'] = microtime(true) - $t;
     logger::log('COLLECTION', 'Finishing...');
-	prefs::$database->close_transaction();
 	// Add a marker to the monitor file to say we've finished
 	$player->collectionUpdateDone();
+
+	prefs::$database->create_triggers();
+
 	// Clear the update lock
 	prefs::$database->clearUpdateLock();
 

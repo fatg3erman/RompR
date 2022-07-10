@@ -288,5 +288,161 @@ class database extends data_base {
 		return count($bacon);
 	}
 
+	public function drop_triggers() {
+		$triggers = $this->generic_sql_query('SHOW TRIGGERS');
+		foreach ($triggers as $trigger) {
+			logger::debug('MYSQL', 'Dropping Trigger', $trigger['Trigger']);
+			$this->generic_sql_query('DROP TRIGGER '.$trigger['Trigger']);
+		}
+	}
+
+	public function create_triggers() {
+		$this->create_update_triggers();
+		$this->create_conditional_triggers();
+		$this->create_playcount_triggers();
+		$this->create_progress_triggers();
+	}
+
+	// Note there are multiple create_xxxx_triggers functions because we need
+	// sometimes to be able to add them in batches when we're updating from
+	// an older schema version.
+
+	protected function create_conditional_triggers() {
+		if ($this->trigger_not_exists('Tracktable', 'track_insert_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER track_insert_trigger AFTER INSERT ON Tracktable
+								FOR EACH ROW
+								BEGIN
+									IF (NEW.Hidden=0)
+									THEN
+									  UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = NEW.Albumindex;
+									END IF;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('Tracktable', 'track_update_trigger')) {
+			return $this->generic_sql_query("CREATE TRIGGER track_update_trigger AFTER UPDATE ON Tracktable
+								FOR EACH ROW
+								BEGIN
+								IF (NEW.Hidden<>OLD.Hidden OR NEW.isAudiobook<>OLD.isAudiobook)
+								THEN
+									UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = NEW.Albumindex;
+									UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = OLD.Albumindex;
+								END IF;
+								END;", true);
+		}
+		return true;
+
+	}
+
+	protected function create_update_triggers() {
+		if ($this->trigger_not_exists('Ratingtable', 'rating_update_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER rating_update_trigger AFTER UPDATE ON Ratingtable
+								FOR EACH ROW
+								BEGIN
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+								UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
+								UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('Ratingtable', 'rating_insert_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER rating_insert_trigger AFTER INSERT ON Ratingtable
+								FOR EACH ROW
+								BEGIN
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+								UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
+								UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('Tagtable', 'tag_delete_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER tag_delete_trigger AFTER DELETE ON Tagtable
+								FOR EACH ROW
+								BEGIN
+								DELETE FROM TagListtable WHERE Tagindex = OLD.Tagindex;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('TagListtable', 'tag_insert_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER tag_insert_trigger AFTER INSERT ON TagListtable
+								FOR EACH ROW
+								BEGIN
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+								UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
+								UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('TagListtable', 'tag_remove_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER tag_remove_trigger AFTER DELETE ON TagListtable
+								FOR EACH ROW
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = OLD.TTindex);", true);
+		}
+
+		if ($this->trigger_not_exists('Tracktable', 'track_delete_trigger')) {
+			return $this->generic_sql_query("CREATE TRIGGER track_delete_trigger AFTER DELETE ON Tracktable
+								FOR EACH ROW
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = OLD.Albumindex;", true);
+		}
+		return true;
+	}
+
+	protected function create_playcount_triggers() {
+		if ($this->trigger_not_exists('Playcounttable', 'syncupdatetrigger')) {
+			$this->generic_sql_query("CREATE TRIGGER syncupdatetrigger BEFORE UPDATE ON Playcounttable
+								FOR EACH ROW
+								BEGIN
+									IF (NEW.Playcount > OLD.Playcount)
+									THEN
+										SET NEW.SyncCount = OLD.SyncCount + 1;
+									END IF;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('Playcounttable', 'syncinserttrigger')) {
+			return $this->generic_sql_query("CREATE TRIGGER syncinserttrigger BEFORE INSERT ON Playcounttable
+								FOR EACH ROW
+								BEGIN
+									SET NEW.SyncCount = 1;
+								END;", true);
+		}
+		return true;
+	}
+
+	protected function create_progress_triggers() {
+
+		if ($this->trigger_not_exists('Bookmarktable', 'bookmark_update_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER bookmark_update_trigger AFTER UPDATE ON Bookmarktable
+								FOR EACH ROW
+								BEGIN
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('Bookmarktable', 'bookmark_insert_trigger')) {
+			return $this->generic_sql_query("CREATE TRIGGER bookmark_insert_trigger AFTER INSERT ON Bookmarktable
+								FOR EACH ROW
+								BEGIN
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+								END;", true);
+		}
+		return true;
+	}
+
+	protected function trigger_not_exists($table, $trig) {
+		// MySQL does not have CREATE TRIGGER IF NOT EXISTS
+		$retval = true;
+		logger::log('MYSQL', 'Checking triggers on',$table,'for',$trig);
+		$r = $this->generic_sql_query("SHOW TRIGGERS LIKE '".$table."'");
+		foreach ($r as $trigger) {
+			logger::core('MYSQL', ' "'.$trigger['Trigger'].'"');
+			if ($trigger['Trigger'] == $trig) {
+				logger::core('MYSQL', '   Trigger Exists');
+				$retval = false;
+			}
+		}
+		return $retval;
+	}
+
 }
 ?>
