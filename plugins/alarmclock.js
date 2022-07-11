@@ -39,6 +39,10 @@ var alarmclock = function() {
 			}
 		}
 		$('#alarmclock_icon').removeClass('icon-alarm').removeClass('icon-alarm-on').addClass(alarm_enabled ? 'icon-alarm-on' : 'icon-alarm');
+
+		// Phone skin hack
+		$('#narrowscreenicons i[name="alarmpanel"]').removeClass('icon-alarm').removeClass('icon-alarm-on').addClass(alarm_enabled ? 'icon-alarm-on' : 'icon-alarm');
+
 		infobar.playbutton.flash(alarm_snoozing);
 		if (alarm_running !== false) {
 			let message = 'Alarm '+alarms[alarm_running].Name+' ('+alarms[alarm_running].Time+')';

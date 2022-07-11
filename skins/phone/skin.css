@@ -9,8 +9,8 @@
 :root {
 	--display-mode: 0;
 
-	--mainpane-left-padding: 4px;
-	--mainpane-right-padding: 4px;
+	--mainpane-left-padding: 0px;
+	--mainpane-right-padding: 0px;
 	--playlist-left-padding: var(--mainpane-left-padding);
 	--playlist-right-padding: var(--mainpane-right-padding);
 
