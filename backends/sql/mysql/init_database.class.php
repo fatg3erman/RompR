@@ -1264,10 +1264,7 @@ class init_database extends init_generic {
 					$indices = $this->generic_sql_query("SHOW INDEX FROM Tracktable");
 					foreach ($indices as $index) {
 						if ($index['Column_name'] == 'Uri') {
-							$this->sql_prepare_query(true, null, null, null,
-								"DROP INDEX ? ON Tracktable",
-								$index['Key_name']
-							);
+							$this->generic_sql_query("DROP INDEX ".$index['Key_name']." ON Tracktable");
 						}
 					}
 					$this->generic_sql_query("UPDATE Statstable SET Value = 93 WHERE Item = 'SchemaVer'", true);
