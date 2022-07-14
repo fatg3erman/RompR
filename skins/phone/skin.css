@@ -1436,13 +1436,14 @@ span.timer-time {
 
 	:root {
 		--display-mode: 2;
+		--mainpane-left-padding: 4px;
+		--mainpane-right-padding: 4px;
 	}
 
 	#nowplaying {
 		padding-right: 4px;
 		padding-left: 2px;
 	}
-
 
 }
 
