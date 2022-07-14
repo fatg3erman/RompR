@@ -350,6 +350,9 @@ function domainCheck($default, $domain) {
 
 function getDomain($d) {
 
+	if ($d === null)
+		return 'local';
+
 	$a = strtok($d, ':');
 
 	// We have to do a little munging here because mpd local tracks don't start with
