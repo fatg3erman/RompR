@@ -561,6 +561,21 @@ class prefspanel extends uibits {
 			'onclick' => 'prefs.save_defaults()'
 		]]);
 
+		// =======================================================
+		//
+		// Defaults
+		//
+		// =======================================================
+		print self::ui_config_header([
+			'label' => 'label_power'
+		]);
+
+		self::ui_config_button([[
+			'label' => 'button_power_off',
+			'name' => 'power-off',
+			'onclick' => 'prefs.power_off()'
+		]]);
+
 
 	}
 

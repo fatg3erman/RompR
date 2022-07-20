@@ -600,6 +600,10 @@ var prefs = function() {
 			infobar.notify('Defaults Have Been Saved');
 		},
 
+		power_off: async function() {
+			$.post('api/power/?off=true');
+		},
+
 		togglePref: function(event) {
 			debug.debug("PREFS","Toggling",event);
 			var prefobj = new Object;

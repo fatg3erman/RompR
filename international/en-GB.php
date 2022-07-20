@@ -744,6 +744,8 @@ language::add_translations([
 	"label_ui_defaults" =>					'Defaults',
 	"button_save_defaults" =>				'Save As Default For All Browsers'
 
+	"label_power" => 						'Power',
+	"button_power_off" =>					'Shut Down The Music Box'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------
