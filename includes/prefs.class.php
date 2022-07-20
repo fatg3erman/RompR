@@ -149,6 +149,7 @@ class prefs {
 		"hide_playlistslist" => false,
 		"hide_audiobooklist" => false,
 		"hide_searcher" => false,
+		"hide_pluginplaylistslist" => false,
 		"hidebrowser" => false,
 		"shownupdatewindow" => '',
 		"scrolltocurrent" => false,
