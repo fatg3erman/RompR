@@ -1,13 +1,13 @@
-pluginManager.addPlugin(language.gettext("button_infoyou"), null, null, 'plugins/code/helpfulthings.js', true);
+// pluginManager.addPlugin(language.gettext("button_infoyou"), null, null, 'plugins/code/helpfulthings.js', true);
 pluginManager.addPlugin(language.gettext("label_charts"), null, null, 'plugins/code/charts.js', true);
 pluginManager.addPlugin(language.gettext("label_recentlyplayed"), null, null, 'plugins/code/recentlyplayed.js', true);
-pluginManager.addPlugin(language.gettext("label_viewwishlist"), null, null, 'plugins/code/wishlistviewer.js', true);
-pluginManager.addPlugin(language.gettext("label_albumstolistento"), null, null, 'plugins/code/albumstolistento.js', true);
+// pluginManager.addPlugin(language.gettext("label_viewwishlist"), null, null, 'plugins/code/wishlistviewer.js', true);
+// pluginManager.addPlugin(language.gettext("label_albumstolistento"), null, null, 'plugins/code/albumstolistento.js', true);
 pluginManager.addPlugin(language.gettext("label_metabackup"), null, null, 'plugins/code/metaBackup.js', true);
-pluginManager.addPlugin(language.gettext("label_opmlimporter"), null, null, 'plugins/code/opmlImporter.js', true);
-pluginManager.addPlugin(language.gettext("label_lfm_playcountimporter"), null, null, 'plugins/code/lfmimporter.js', true);
-pluginManager.addPlugin(language.gettext("label_unplayabletracks"), null, null, 'plugins/code/unplayabletracks.js', true);
-pluginManager.addPlugin(language.gettext("label_cantataimporter"), null, null, 'plugins/code/cantataimporter.js', true);
+// pluginManager.addPlugin(language.gettext("label_opmlimporter"), null, null, 'plugins/code/opmlImporter.js', true);
+// pluginManager.addPlugin(language.gettext("label_lfm_playcountimporter"), null, null, 'plugins/code/lfmimporter.js', true);
+// pluginManager.addPlugin(language.gettext("label_unplayabletracks"), null, null, 'plugins/code/unplayabletracks.js', true);
+// pluginManager.addPlugin(language.gettext("label_cantataimporter"), null, null, 'plugins/code/cantataimporter.js', true);
 pluginManager.addPlugin(language.gettext("manage_bgs"), null, null, 'plugins/code/backimagemanager.js', true);
 
 function lfmDataExtractor(data) {
