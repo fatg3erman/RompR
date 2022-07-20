@@ -742,7 +742,7 @@ language::add_translations([
 	"info_mpd_websocket" =>					"Optional, provides extra functionality with MPD",
 	"label_mpd_websocket" =>				'Port for MPD Websocket Server',
 	"label_ui_defaults" =>					'Defaults',
-	"button_save_defaults" =>				'Save As Default For All Browsers'
+	"button_save_defaults" =>				'Save As Default For All Browsers',
 
 	"label_power" => 						'Power',
 	"button_power_off" =>					'Shut Down The Music Box'
