@@ -116,12 +116,12 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
 			var pos = {top: event.pageY - 12, left: event.pageX - this.drag_x_offset};
 			this.dragger.css({top: pos.top+"px", left: pos.left+"px"});
 		}
-		$('.trackacceptor').each(function() {
+		$('.trackacceptor').reverse().each(function() {
 			if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
 				// DON'T Break out of the each loop, as it prevents checkMouseOver
 				// from removing the 'highlighted' class from things we've previously dragged over
 				// if they would be the next one in the loop.
-				// return false;
+				return false;
 			}
 		});
 		return true;
@@ -130,7 +130,7 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
 	_mouseStop: function(event) {
 		this.dragging = false;
 		this.dragger.remove();
-		$('.trackacceptor').each(function() {
+		$('.trackacceptor').reverse().each(function() {
 			if ($(this).acceptDroppedTracks('dragstop', event)) {
 				return false;
 			}
@@ -371,8 +371,8 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 			position: 'absolute',
 			top: dragged.first().offset().top + 'px',
 			left: dragged.first().offset().left + 'px',
-			width: dragged.first().width() + 'px',
-			'z-index': 1500
+			width: dragged.first().width() + 'px'
+			// 'z-index': 1500
 		});
 		self.dragged_elements = new Array();
 		$.each(dragged, function() {
@@ -456,8 +456,8 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 				}
 
 				this.dragger.attr('id','dragger');
-				this.dragger.css('z-index', 1500);
-				this.dragger.addClass('draggable');
+				// this.dragger.css('z-index', 1500);
+				this.dragger.addClass('draggable dragsort');
 				$('.trackacceptor').acceptDroppedTracks('dragstart');
 			} else {
 				var pos = {top: event.pageY - 12, left: event.pageX - this.drag_x_offset};
@@ -472,7 +472,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 		} else if (this.draggingout) {
 			var pos = {top: event.pageY - 12, left: event.pageX - this.drag_x_offset};
 			this.dragger.css({top: pos.top+"px", left: pos.left+"px"});
-			$('.trackacceptor').each(function() {
+			$('.trackacceptor').reverse().each(function() {
 				if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
 					// Break out of the each loop
 					return false;
@@ -504,7 +504,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 			this.draggedout = false;
 			if (this.helper) this.helper.remove();
 			this.helper = null;
-			$('.trackacceptor').each(function() {
+			$('.trackacceptor').reverse().each(function() {
 				if ($(this).acceptDroppedTracks('dragstop', event)) {
 					return false;
 				}

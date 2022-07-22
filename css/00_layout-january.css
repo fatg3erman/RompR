@@ -113,7 +113,7 @@ table#debuginfotable tr td:nth-child(2) {
     background-color: var(--selected-bg-colour);
 	position:absolute;
 	width:300px;
-	z-index: 20002;
+	z-index: 20200;
 	padding: 4px;
 }
 
