@@ -699,10 +699,10 @@ class ui_elements {
 			'id' => 'wheelscrollspeed',
 			'type' => 'number'
 		]);
-		self::ui_config_button([
-			'label' => 'config_editshortcuts',
-			'onclick' => 'shortcuts.edit()'
-		]);
+		// self::ui_config_button([
+		// 	'label' => 'config_editshortcuts',
+		// 	'onclick' => 'shortcuts.edit()'
+		// ]);
 		print '</div>';
 	}
 

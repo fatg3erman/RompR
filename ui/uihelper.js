@@ -669,7 +669,7 @@ var uiHelper = function() {
 				$(document).on('mouseenter', '.combobox-entry', makeHoverWork);
 				$(document).on('mouseleave', '.combobox-entry', makeHoverWork);
 				$(document).on('mousemove', '.combobox-entry', makeHoverWork);
-				shortcuts.load();
+				// shortcuts.load();
 			}
 			$("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
 			$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
