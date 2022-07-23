@@ -197,13 +197,15 @@ var alarmclock = function() {
 			}
 			var index = element.attr('rompr_index');
 			var items = $('.selected').filter(onlyAlbums).removeClass('selected').clone();
-			var elements = items.wrapAll('<div></div>').parent();
 			$('.selected').removeClass('selected');
 			items.find('.menu').remove();
 			items.find('.icon-menu').remove();
 			items.find('.clickable.clickicon').remove();
 			items.find('.tagh.albumthing').remove();
-			$('input.alarmvalue[name="ItemToPlay"]').val(items.html());
+
+			var elements = items.wrapAll('<div></div>').parent();
+
+			$('input.alarmvalue[name="ItemToPlay"]').val(elements.html());
 			// We want a return value but it's an async function
 			// so we have to call it this way otherwise pc is just
 			// set to the Promise and that's not what we want.
@@ -216,7 +218,7 @@ var alarmclock = function() {
 			);
 
 			$('input.alarmvalue[name="PlayCommands"]').val(JSON.stringify(pc));
-			putAlarmDropPlayItem(items.html(), element);
+			putAlarmDropPlayItem(elements.html(), element);
 		},
 
 		deleteAlarm: async function(event, button) {
@@ -312,17 +314,21 @@ var alarmclock = function() {
 			let interrupt = makeACheckbox(ropebox, language.gettext('play_even_if_playing'), alarm.Interrupt, 'Interrupt', false, true);
 
 			// ItemToPlay
-			var alarmdropper = $('<div>', {id: 'alarmdropper', rompr_index: ourindex, class: 'alarmdropempty canbefaded containerbox vertical-centre'}).appendTo(ropebox);
+			var alarmdropper = $('<div>', {id: 'alarmdropper', rompr_index: ourindex, class: 'alarmdropempty canbefaded'}).appendTo(ropebox);
 
 			if (alarm.ItemToPlay == '') {
-				alarmdropper.html('<div class="containerbox menuitem fullwidth" style="height:100%"><div class="expand textcentre">'+language.gettext('label_alarm_to_play')+'</div></div>');
+				let text_key = (uiHelper.is_touch_ui) ? 'label_alarm_to_play_click' : 'label_alarm_to_play';
+				alarmdropper.html('<div class="containerbox menuitem fullwidth" style="height:100%"><div class="expand textcentre">'+language.gettext(text_key)+'</div></div>');
 			} else {
 				putAlarmDropPlayItem(alarm.ItemToPlay, alarmdropper);
 			}
 			buttonOpacity(interrupt, (alarm.PlayItem == 1 ? true : false));
 			buttonOpacity(alarmdropper, (alarm.PlayItem == 1 ? true : false));
-			if (!uiHelper.is_touch_ui)
-				alarmdropper.acceptDroppedTracks({ ondrop: alarmclock.dropped });
+			alarmdropper.acceptDroppedTracks({
+				ondrop: alarmclock.dropped,
+				useclick: true,
+				popup: alarm_editor
+			});
 
 			editor_popup.append($('<input>', {type: 'hidden', class: 'alarmvalue', name: 'ItemToPlay', value: alarm.ItemToPlay}));
 			editor_popup.append($('<input>', {type: 'hidden', class: 'alarmvalue', name: 'PlayCommands', value: alarm.PlayCommands}));

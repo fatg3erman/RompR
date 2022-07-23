@@ -401,9 +401,9 @@ var layoutProcessor = function() {
 
 // Dummy functions standing in for widgets we don't use in this version -
 // custom scroll bars, and drag/drop stuff
-jQuery.fn.acceptDroppedTracks = function() {
-	return this;
-}
+// jQuery.fn.acceptDroppedTracks = function() {
+// 	return this;
+// }
 
 jQuery.fn.sortableTrackList = function() {
 	return this;

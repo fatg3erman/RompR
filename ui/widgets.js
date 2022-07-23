@@ -144,11 +144,18 @@ $.widget("rompr.acceptDroppedTracks", {
 		coveredby: null,
 		scroll: false,
 		scrollparent: '',
-		started_sortable_drag: false
+		started_sortable_drag: false,
+		useclick: false,
+		popup: null,
+		notifier: null
 	},
 
 	_create: function() {
-		this.element.addClass('trackacceptor');
+		if (!uiHelper.is_touch_ui) {
+			this.element.addClass('trackacceptor');
+		} else if (this.options.useclick) {
+			this.element.on('click', $.proxy(this.useClick, this));
+		}
 		this.dragger_is_over = false;
 	},
 
@@ -179,6 +186,13 @@ $.widget("rompr.acceptDroppedTracks", {
 			this.dragger_is_over = false;
 			this.element.removeClass('highlighted');
 			this.options.ondrop(event, this.element);
+
+			if (this.options.notifier)
+				infobar.removenotify(this.options.notifier);
+
+			if (this.options.popup)
+				this.options.popup.unhide();
+
 			return true;
 		}
 		if (this.dragger_is_over && this.element.hasClass('sortabletracklist')) {
@@ -223,6 +237,15 @@ $.widget("rompr.acceptDroppedTracks", {
 		} else if (!this.dragger_is_over) {
 			this.element.removeClass('highlighted');
 		}
+	},
+
+	useClick: function() {
+		if (this.options.popup)
+			this.options.popup.hide();
+
+		this.options.notifier = infobar.permnotify('Select an item to Play');
+		playlist.addProxyCommand($.proxy(this.dragstop, this));
+		this.dragger_is_over = true;
 	}
 
  });
@@ -1639,6 +1662,14 @@ function popup(opts) {
 			options.buttons = $('<div>', {class: 'clearfix'}).appendTo(contents);
 
 		return $('<button>', {class: 't'+side, style: 'min-width: '+options.button_min_width}).html(language.gettext(label)).appendTo(options.buttons);
+	}
+
+	this.hide = function() {
+		win.css({display: 'none'});
+	}
+
+	this.unhide = function() {
+		win.css({display: ''});
 	}
 
 }
