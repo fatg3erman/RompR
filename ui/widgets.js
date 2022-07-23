@@ -116,6 +116,13 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
 			var pos = {top: event.pageY - 12, left: event.pageX - this.drag_x_offset};
 			this.dragger.css({top: pos.top+"px", left: pos.left+"px"});
 		}
+		// To cope with one trackacceptor covering another (eg the alarm editor covering
+		// the play queue) we loop through them in reverse, which *should* put them in
+		// z-index order. We set is_over to the first one that reports the dragger is
+		// over it. Then we call each one with the value of is_over so it can check whether
+		// the dragger is over it; sometimes they need to do something on dragOut, and they
+		// need to remove any highlighted class they may have, so we do need to loop through
+		// all of them.
 		var is_over = null;
 		$('.trackacceptor').reverse().each(function() {
 			if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
