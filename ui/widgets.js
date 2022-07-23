@@ -118,12 +118,10 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
 		}
 		$('.trackacceptor').reverse().each(function() {
 			if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
-				// DON'T Break out of the each loop, as it prevents checkMouseOver
-				// from removing the 'highlighted' class from things we've previously dragged over
-				// if they would be the next one in the loop.
 				return false;
 			}
 		});
+		$('.trackacceptor').acceptDroppedTracks('checkHighlighted');
 		return true;
 	},
 
@@ -200,7 +198,7 @@ $.widget("rompr.acceptDroppedTracks", {
 			event.pageY > this.bbox.top && event.pageY < this.bbox.bottom) {
 			if (!this.dragger_is_over) {
 				this.dragger_is_over = true;
-				this.element.addClass('highlighted');
+				// this.element.addClass('highlighted');
 			}
 			if (this.dragger_is_over && this.element.hasClass('sortabletracklist')) {
 				this.element.sortableTrackList('do_intersect_stuff', event, $("#dragger"));
@@ -209,13 +207,21 @@ $.widget("rompr.acceptDroppedTracks", {
 		} else {
 			if (this.dragger_is_over) {
 				debug.debug("UITHING","Dragger is NOT over",this.element.attr("id"));
-				this.element.removeClass('highlighted');
+				// this.element.removeClass('highlighted');
 				if (this.element.hasClass('sortabletracklist')) {
 					this.element.sortableTrackList('dragleave');
 				}
 				this.dragger_is_over = false;
 			}
 			return false;
+		}
+	},
+
+	checkHighlighted: function() {
+		if (this.dragger_is_over && !this.element.hasClass('highlighted')) {
+			this.element.addClass('highlighted');
+		} else if (!this.dragger_is_over) {
+			this.element.removeClass('highlighted');
 		}
 	}
 
@@ -478,6 +484,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 					return false;
 				}
 			});
+			$('.trackacceptor').acceptDroppedTracks('checkHighlighted');
 		}
 		return true;
 	},
