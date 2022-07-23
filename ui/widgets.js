@@ -119,9 +119,8 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
 		var is_over = null;
 		$('.trackacceptor').reverse().each(function() {
 			if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
-				if (is_over === null) {
-					is_over = this;
-				}
+				is_over = this;
+				return false;
 			}
 		});
 		$('.trackacceptor').acceptDroppedTracks('check_is_over', is_over, event);
@@ -511,9 +510,8 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 			var is_over = null;
 			$('.trackacceptor').reverse().each(function() {
 				if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
-					if (is_over === null) {
-						is_over = this;
-					}
+					is_over = this;
+					return false;
 				}
 			});
 			$('.trackacceptor').acceptDroppedTracks('check_is_over', is_over, event);
