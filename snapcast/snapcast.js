@@ -427,6 +427,9 @@ function snapcastGroup() {
 	}
 
 	this.removeSelf = function() {
+		$.each(clients, function() {
+			this.client.removeSelf();
+		});
 		holder.remove();
 	}
 
