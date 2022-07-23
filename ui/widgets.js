@@ -116,12 +116,15 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
 			var pos = {top: event.pageY - 12, left: event.pageX - this.drag_x_offset};
 			this.dragger.css({top: pos.top+"px", left: pos.left+"px"});
 		}
+		var is_over = null;
 		$('.trackacceptor').reverse().each(function() {
 			if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
-				return false;
+				if (is_over === null) {
+					is_over = this;
+				}
 			}
 		});
-		$('.trackacceptor').acceptDroppedTracks('checkHighlighted');
+		$('.trackacceptor').acceptDroppedTracks('check_is_over', is_over, event);
 		return true;
 	},
 
@@ -147,7 +150,8 @@ $.widget("rompr.acceptDroppedTracks", {
 		started_sortable_drag: false,
 		useclick: false,
 		popup: null,
-		notifier: null
+		notifier: null,
+		hidepanel: null
 	},
 
 	_create: function() {
@@ -193,6 +197,9 @@ $.widget("rompr.acceptDroppedTracks", {
 			if (this.options.popup)
 				this.options.popup.unhide();
 
+			if (this.options.hidepanel)
+				this.options.hidepanel.show();
+
 			return true;
 		}
 		if (this.dragger_is_over && this.element.hasClass('sortabletracklist')) {
@@ -210,38 +217,38 @@ $.widget("rompr.acceptDroppedTracks", {
 	checkMouseOver: function(event) {
 		if (event.pageX > this.bbox.left && event.pageX < this.bbox.right &&
 			event.pageY > this.bbox.top && event.pageY < this.bbox.bottom) {
-			if (!this.dragger_is_over) {
-				this.dragger_is_over = true;
-				// this.element.addClass('highlighted');
-			}
-			if (this.dragger_is_over && this.element.hasClass('sortabletracklist')) {
-				this.element.sortableTrackList('do_intersect_stuff', event, $("#dragger"));
-			}
+
 			return true;
+
 		} else {
-			if (this.dragger_is_over) {
-				debug.debug("UITHING","Dragger is NOT over",this.element.attr("id"));
-				// this.element.removeClass('highlighted');
-				if (this.element.hasClass('sortabletracklist')) {
-					this.element.sortableTrackList('dragleave');
-				}
-				this.dragger_is_over = false;
-			}
 			return false;
 		}
 	},
 
-	checkHighlighted: function() {
-		if (this.dragger_is_over && !this.element.hasClass('highlighted')) {
-			this.element.addClass('highlighted');
-		} else if (!this.dragger_is_over) {
+	check_is_over: function(is_over, event) {
+		if (is_over == this.element[0]) {
+			this.dragger_is_over = true;
+			if (!this.element.hasClass('highlighted'))
+				this.element.addClass('highlighted');
+
+			if (this.element.hasClass('sortabletracklist'))
+				this.element.sortableTrackList('do_intersect_stuff', event, $("#dragger"));
+
+		} else if (this.dragger_is_over) {
+			if (this.element.hasClass('sortabletracklist'))
+				this.element.sortableTrackList('dragleave');
+
 			this.element.removeClass('highlighted');
+			this.dragger_is_over = false;
 		}
 	},
 
 	useClick: function() {
 		if (this.options.popup)
 			this.options.popup.hide();
+
+		if (this.options.hidepanel)
+			this.options.hidepanel.hide();
 
 		this.options.notifier = infobar.permnotify('Select an item to Play');
 		playlist.addProxyCommand($.proxy(this.dragstop, this));
@@ -501,13 +508,15 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 		} else if (this.draggingout) {
 			var pos = {top: event.pageY - 12, left: event.pageX - this.drag_x_offset};
 			this.dragger.css({top: pos.top+"px", left: pos.left+"px"});
+			var is_over = null;
 			$('.trackacceptor').reverse().each(function() {
 				if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
-					// Break out of the each loop
-					return false;
+					if (is_over === null) {
+						is_over = this;
+					}
 				}
 			});
-			$('.trackacceptor').acceptDroppedTracks('checkHighlighted');
+			$('.trackacceptor').acceptDroppedTracks('check_is_over', is_over, event);
 		}
 		return true;
 	},

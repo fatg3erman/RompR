@@ -327,7 +327,8 @@ var alarmclock = function() {
 			alarmdropper.acceptDroppedTracks({
 				ondrop: alarmclock.dropped,
 				useclick: true,
-				popup: alarm_editor
+				popup: alarm_editor,
+				hidepanel: $('#alarmpanel')
 			});
 
 			editor_popup.append($('<input>', {type: 'hidden', class: 'alarmvalue', name: 'ItemToPlay', value: alarm.ItemToPlay}));
