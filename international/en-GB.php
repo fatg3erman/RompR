@@ -639,6 +639,7 @@ language::add_translations([
 	"label_daylabels" => array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
 	"label_alarm_play_specific" =>			"Play This Item :",
 	"label_alarm_to_play" =>				"Drop Item Here",
+	"label_alarm_to_play_click" =>			"Click To Select Item To Play",
 	"label_every_day" =>					"Every Day",
 	"label_every_wday" =>					"Every Weekday",
 	"label_every_wend" =>					"Every Weekend",

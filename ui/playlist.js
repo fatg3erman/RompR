@@ -28,6 +28,8 @@ var playlist = function() {
 	var remainingtime = null;
 	var totaltime = 0;
 
+	var add_proxy_command = null;
+
 	// Minimal set of information - just what infobar requires to make sure
 	// it blanks everything out
 	// Pos is for radioManager
@@ -628,14 +630,44 @@ var playlist = function() {
 			return tracks;
 		},
 
+		// Call this to make us do something other than adding tracks to the Play Queue
+		// when they're selected. It's a one-off operation.
+		addProxyCommand: function(cmd) {
+			add_proxy_command = cmd;
+		},
+
 		addItems: function(elements, moveto) {
+			if (add_proxy_command) {
+				$.each(elements, function() {
+					if ($(this).hasClass('track-control-icon') && $(this).hasClass('clickalbum')) {
+						playlist.select_tracks_for_proxy($(this));
+					} else if (!$(this).hasClass('selected') && !$(this).hasClass('track-control-icon'))
+						$(this).addClass('selected');
+				});
+				if ($('.selected').length > 0) {
+					add_proxy_command.call();
+					add_proxy_command = null;
+				}
+				return;
+			}
 			// Call into this to add UI elements to the Play Queue
 			// CD Player Mode will always be respected
 			var tracks = playlist.ui_elements_to_rompr_commands(elements);
 			playlist.add_by_rompr_commands(tracks,moveto);
 		},
 
+		select_tracks_for_proxy: function(element) {
+			var parent = element.parent();
+			while (!parent.hasClass('is-albumlist')) {
+				parent = parent.parent();
+			}
+			parent.find('.playable.draggable').not('.selected').addClass('selected');
+		},
+
 		mimicCDPlayerMode: function() {
+			if (add_proxy_command)
+				return;
+
 			var tracks = playlist.ui_elements_to_rompr_commands($('.selected').filter(removeOpenItems));
 			old_cdplayermode = prefs.cdplayermode;
 			prefs.cdplayermode = true;

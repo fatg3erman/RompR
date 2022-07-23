@@ -116,14 +116,14 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
 			var pos = {top: event.pageY - 12, left: event.pageX - this.drag_x_offset};
 			this.dragger.css({top: pos.top+"px", left: pos.left+"px"});
 		}
+		var is_over = null;
 		$('.trackacceptor').reverse().each(function() {
 			if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
-				// DON'T Break out of the each loop, as it prevents checkMouseOver
-				// from removing the 'highlighted' class from things we've previously dragged over
-				// if they would be the next one in the loop.
+				is_over = this;
 				return false;
 			}
 		});
+		$('.trackacceptor').acceptDroppedTracks('check_is_over', is_over, event);
 		return true;
 	},
 
@@ -146,11 +146,19 @@ $.widget("rompr.acceptDroppedTracks", {
 		coveredby: null,
 		scroll: false,
 		scrollparent: '',
-		started_sortable_drag: false
+		started_sortable_drag: false,
+		useclick: false,
+		popup: null,
+		notifier: null,
+		hidepanel: null
 	},
 
 	_create: function() {
-		this.element.addClass('trackacceptor');
+		if (!uiHelper.is_touch_ui) {
+			this.element.addClass('trackacceptor');
+		} else if (this.options.useclick) {
+			this.element.on('click', $.proxy(this.useClick, this));
+		}
 		this.dragger_is_over = false;
 	},
 
@@ -181,6 +189,16 @@ $.widget("rompr.acceptDroppedTracks", {
 			this.dragger_is_over = false;
 			this.element.removeClass('highlighted');
 			this.options.ondrop(event, this.element);
+
+			if (this.options.notifier)
+				infobar.removenotify(this.options.notifier);
+
+			if (this.options.popup)
+				this.options.popup.unhide();
+
+			if (this.options.hidepanel)
+				this.options.hidepanel.show();
+
 			return true;
 		}
 		if (this.dragger_is_over && this.element.hasClass('sortabletracklist')) {
@@ -198,25 +216,42 @@ $.widget("rompr.acceptDroppedTracks", {
 	checkMouseOver: function(event) {
 		if (event.pageX > this.bbox.left && event.pageX < this.bbox.right &&
 			event.pageY > this.bbox.top && event.pageY < this.bbox.bottom) {
-			if (!this.dragger_is_over) {
-				this.dragger_is_over = true;
-				this.element.addClass('highlighted');
-			}
-			if (this.dragger_is_over && this.element.hasClass('sortabletracklist')) {
-				this.element.sortableTrackList('do_intersect_stuff', event, $("#dragger"));
-			}
+
 			return true;
+
 		} else {
-			if (this.dragger_is_over) {
-				debug.debug("UITHING","Dragger is NOT over",this.element.attr("id"));
-				this.element.removeClass('highlighted');
-				if (this.element.hasClass('sortabletracklist')) {
-					this.element.sortableTrackList('dragleave');
-				}
-				this.dragger_is_over = false;
-			}
 			return false;
 		}
+	},
+
+	check_is_over: function(is_over, event) {
+		if (is_over == this.element[0]) {
+			this.dragger_is_over = true;
+			if (!this.element.hasClass('highlighted'))
+				this.element.addClass('highlighted');
+
+			if (this.element.hasClass('sortabletracklist'))
+				this.element.sortableTrackList('do_intersect_stuff', event, $("#dragger"));
+
+		} else if (this.dragger_is_over) {
+			if (this.element.hasClass('sortabletracklist'))
+				this.element.sortableTrackList('dragleave');
+
+			this.element.removeClass('highlighted');
+			this.dragger_is_over = false;
+		}
+	},
+
+	useClick: function() {
+		if (this.options.popup)
+			this.options.popup.hide();
+
+		if (this.options.hidepanel)
+			this.options.hidepanel.hide();
+
+		this.options.notifier = infobar.permnotify('Select an item to Play');
+		playlist.addProxyCommand($.proxy(this.dragstop, this));
+		this.dragger_is_over = true;
 	}
 
  });
@@ -472,12 +507,14 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 		} else if (this.draggingout) {
 			var pos = {top: event.pageY - 12, left: event.pageX - this.drag_x_offset};
 			this.dragger.css({top: pos.top+"px", left: pos.left+"px"});
+			var is_over = null;
 			$('.trackacceptor').reverse().each(function() {
 				if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
-					// Break out of the each loop
+					is_over = this;
 					return false;
 				}
 			});
+			$('.trackacceptor').acceptDroppedTracks('check_is_over', is_over, event);
 		}
 		return true;
 	},
@@ -1632,6 +1669,14 @@ function popup(opts) {
 			options.buttons = $('<div>', {class: 'clearfix'}).appendTo(contents);
 
 		return $('<button>', {class: 't'+side, style: 'min-width: '+options.button_min_width}).html(language.gettext(label)).appendTo(options.buttons);
+	}
+
+	this.hide = function() {
+		win.css({display: 'none'});
+	}
+
+	this.unhide = function() {
+		win.css({display: ''});
 	}
 
 }
