@@ -94,10 +94,21 @@ button.spinable.icon-spin6 {
 */
 
 #headerbar {
-	height:40px;
 	padding:0px;
 	margin:0px;
 	border:none;
+}
+
+@media screen and (orientation:  portrait) {
+	#headerbar {
+		height: 60px;
+	}
+}
+
+@media screen and (orientation:  landscape) {
+	#headerbar {
+		height: 50px;
+	}
 }
 
 #historypanel, #tagadder {
@@ -705,7 +716,7 @@ div.playable.clicktrack {
 .backmenu
 {
     background-color: var(--highlight-bg-colour);
-	height: 2.5em;
+	height: 4em;
 	padding-left: 38px;
 	padding-right: 8px;
 	width: 100%;

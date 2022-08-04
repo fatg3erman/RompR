@@ -348,7 +348,12 @@ function bindClickHandlers() {
 	$(document).on('mouseleave', "#dbtags>.tag", hideTagRemover);
 	$(document).on('click', 'body', closeMenus);
 	$(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
-	$(document).on('click', '.choosepanel', uiHelper.changePanel);
+    if (uiHelper.is_touch_ui) {
+    	$(document).on('touchstart', '.choosepanel', uiHelper.changePanel);
+    	$(document).on('touchend', '.choosepanel', uiHelper.absorbTouch);
+	} else {
+	    $(document).on('click', '.choosepanel', uiHelper.changePanel);
+	}
 	$(document).on('click', '.clickaddtoplaylist', infobar.addToPlaylist);
 	$(document).on('click', '.search-category', searchManager.save_categories);
 }

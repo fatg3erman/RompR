@@ -280,11 +280,11 @@ jQuery.fn.addCustomScrollBar = function() {
 		if (!uiHelper.is_touch_ui) {
 			$(this).mCustomScrollbar({
 				theme: "light-thick",
-				scrollInertia: 300,
+				scrollInertia: 250,
 				// contentTouchScroll: 25,
 				mouseWheel: {
 					scrollAmount: parseInt(prefs.wheelscrollspeed),
-					// normalizeDelta: false
+					normalizeDelta: false
 				},
 				alwaysShowScrollbar: 1,
 				advanced: {
@@ -680,11 +680,24 @@ var uiHelper = function() {
 			bindClickHandlers();
 			setPlayClickHandlers();
 			bindPlaylistClicks();
-			showUpdateWindow();
+			// showUpdateWindow();
 		},
 
-		changePanel: function() {
+		changePanel: function(e) {
+			e.preventDefault();
+      		e.stopPropagation();
+      		e.cancelBubble = true;
+      		e.returnValue = false;
 			uiHelper.sourceControl($(this).attr('name'));
+		    return false;
+		},
+
+		absorbTouch: function(e) {
+			e.preventDefault();
+      		e.stopPropagation();
+      		e.cancelBubble = true;
+      		e.returnValue = false;
+		    return false;
 		},
 
 		sourceControl: function(panel) {

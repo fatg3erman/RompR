@@ -307,12 +307,12 @@ create_body_tag('phone');
 		<i class="icon-folder-open-empty onlywide topimg choosepanel expand" name="filelist"></i>
 		<div id="pluginicons" class="onlywide containerbox expandabit">
 		</div>
-		<i class="icon-volume-up topimg expand topbarmenu" name="volumedropper"></i>
-		<i class="icon-doc-text topimg choosepanel expand" name="playlistm"></i>
+		<!-- <i class="icon-volume-up topimg expand topbarmenu" name="volumedropper"></i> -->
+		<!-- <i class="icon-doc-text topimg choosepanel expand" name="playlistm"></i> -->
 		<i class="onlywide icon-info-circled topimg choosepanel expand" name="infopane"></i>
 		<i class="onlywide choosepanel icon-cog-alt topimg expand" name="prefsm"></i>
 		<i class="onlywide icon-library topimg expand topbarmenu" name="specialplugins"></i>
-		<i class="icon-menu topimg expand onlynarrow topbarmenu" name="narrowscreenicons"></i>
+		<!-- <i class="icon-menu topimg expand onlynarrow topbarmenu" name="narrowscreenicons"></i> -->
 	</div>
 </div>
 
