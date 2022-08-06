@@ -136,7 +136,7 @@ var sleepTimer = function() {
 				'<table width="90%" align="center">'+
 				'<tr>'+
 				'<td></td>'+
-				'<td align="center"><i class="icon-increase smallicon clickicon" onmousedown="sleepTimer.startInc(1)" onmouseup="sleepTimer.stopInc()"></i></td>'+
+				'<td align="center"><i id="sleepinc" class="icon-increase smallicon clickicon"></i></td>'+
 				'<td></td>'+
 				'</tr>'+
 				'<tr>'+
@@ -146,7 +146,7 @@ var sleepTimer = function() {
 				'</tr>'+
 				'<tr>'+
 				'<td></td>'+
-				'<td align="center"><i class="icon-decrease smallicon clickicon" onmousedown="sleepTimer.startInc(-1)" onmouseup="sleepTimer.stopInc()"></i></td>'+
+				'<td align="center"><i id="sleepdec" class="icon-decrease smallicon clickicon"></i></td>'+
 				'<td></td>'+
 				'</tr>'+
 				'</table>';
@@ -154,6 +154,17 @@ var sleepTimer = function() {
 			holder.html(html);
 			sleepTimer.pollState();
 			$('#sleepon').on('click', sleepTimer.toggle);
+			if (uiHelper.is_touch_ui) {
+				var inc_start = 'touchstart';
+				var inc_stop = 'touchend';
+			} else {
+				var inc_start = 'mousedown';
+				var inc_stop = 'mouseup';
+			}
+			$('#sleepinc').on(inc_start, function() { sleepTimer.startInc(1) });
+			$('#sleepinc').on(inc_stop, function() { sleepTimer.stopInc() });
+			$('#sleepdec').on(inc_start, function() { sleepTimer.startInc(-1) });
+			$('#sleepdec').on(inc_stop, function() { sleepTimer.stopInc() });
 			if (typeof(shortcuts) != 'undefined')
 				shortcuts.add('button_sleep', sleepTimer.fakeClick, "Q");
 		}
