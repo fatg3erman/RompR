@@ -720,12 +720,14 @@ function snapcastClient() {
 	}
 
 	this.check_volume_increment = function(increment) {
+		if (!connected) return increment;
 		let final_vol = Math.max(0, Math.min(100, volumepc+increment));
 		return final_vol - volumepc;
 	}
 
 	this.increment_volume = function(inc) {
-		snapcast.setClientVolume(id, volumepc+inc, muted);
+		if (connected)
+			snapcast.setClientVolume(id, volumepc+inc, muted);
 	}
 
 	this.setMute = function() {

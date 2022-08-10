@@ -12,7 +12,7 @@ The Websocket Server is written in Python, because PHP isn't very good at that k
 
 Python probably needs to be at least version 3.9. asyncio is normally installed as part of a base python3 install.
 Websockets probably isn't installed and needs to be at least Version 10. At the time of writing you will have to install this from
-pip on most current distributions as even Ubuntu 22.04 is shipping version 8.
+pip on most current distributions as even Ubuntu 22.04 is only shipping version 9.
 
 	sudo pip3 install websockets
 
@@ -21,7 +21,7 @@ globally available. On most systems using pip3 without sudo will install it only
 
 * Note that there is also a package for python3 called 'websocket'. This is NOT the same package as websockets and will not work.
 
-I've tested the Websocket Server with Python 3.9 and websockets 10.3. It is still experimental so I can't guarantee it will work.
+I've tested the Websocket Server with Python 3.9 and Python 3.10 using websockets 10.3. It is still experimental so I can't guarantee it will work.
 
 ## To Enable the Websocket Server
 
@@ -35,13 +35,15 @@ You will see a connection notification that has two port numbers in it, for exam
 
 ![](/images/mpd_on_ws.png)
 
-If you don't get the second port number then the server failed to start.
+If you don't get the second port number then the websocket server failed to start.
 
 If you get a permanent message saying 'Player has stopped responding' this means the backend (web server) is able to connect to the MPD interface
 but your browser is not able to connect to the Websocket Server. If you get problems, try not using 'localhost' in your player definition and refresh
 the browser.
 
-## Trubleshooting
+## Troubleshooting
+
+If you enable debug logging at level 6, the actual command being used by RompR will appear in the log near the start.
 
 To run it from the command-line to test for problems, run
 
@@ -62,4 +64,3 @@ If you need a password, add a --mpdpassword= parameter to the end
 
 You MUST specify the parameters in that order or RompR will attempt to kill the process when it starts up, and will not be able to.
 
-If you enable debug logging at level 6, the actual command being used by RompR will appear in the log near the start.

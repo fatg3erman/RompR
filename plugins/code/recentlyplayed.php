@@ -13,13 +13,13 @@ foreach ($result as $obj) {
 		print '<tr class="tagh plugin_rpl_datetag"><th colspan="3">'.$date.'</th></tr>';
 	}
 	print '<tr class="draggable clicktrack playable spacerboogie" name="'.rawurlencode($obj['Uri']).'">';
-	print '<td width="40px"><img class="smallcover';
+	print '<td><div class="smallcover"><img class="smallcover';
 	if ($obj['Image']) {
 		print '" src="'.$obj['Image'];
 	} else {
 		print ' notfound';
 	}
-	print '" /></td>';
+	print '" /></div></td>';
 	print '<td class="dan"><b>'.$obj['Title'].'</b><br><i>by</i> <b>'.$obj['Artistname'].'</b><br><i>on</i> <b>'.$obj['Albumname'].'</b></td>';
 	print '<td class="dan">'.$obj['playtime'].'</td>';
 	print '</tr>';
