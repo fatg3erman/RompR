@@ -154,7 +154,7 @@ input[type=text],input[type="number"] {
 #notifications {
 	position:absolute;
 	width:50%;
-	max-width:540px;
+	max-width:800px;
 	padding:8px;
 	top:0px;
 	display:none;
