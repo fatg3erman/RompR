@@ -1098,15 +1098,16 @@ class poDatabase extends database {
 
 				// Note - we need to merge our info with the current tags, getID3 will not
 				// merge them for us as aparently that's very hard. I synmpathise.
-				$current_tags = $getID3->info['tags'];
-				if (is_array($current_tags) && array_key_exists('id3v2', $current_tags)) {
-					logger::debug('PODCASTS', 'Using Current ID3v2 Tags');
-					$tags = $current_tags['id3v2'];
-				} else if (is_array($current_tags) && array_key_exists('id3v1', $current_tags)) {
-					logger::debug('PODCASTS', 'Using Current ID3v1 Tags');
-					$tags = $current_tags['id3v1'];
-				} else {
-					$tags = [];
+				$tags = [];
+				if (array_key_exists('tags', $getID3->info)) {
+					$current_tags = $getID3->info['tags'];
+					if (is_array($current_tags) && array_key_exists('id3v2', $current_tags)) {
+						logger::debug('PODCASTS', 'Using Current ID3v2 Tags');
+						$tags = $current_tags['id3v2'];
+					} else if (is_array($current_tags) && array_key_exists('id3v1', $current_tags)) {
+						logger::debug('PODCASTS', 'Using Current ID3v1 Tags');
+						$tags = $current_tags['id3v1'];
+					}
 				}
 
 				if (array_key_exists('track_number', $tags) && is_array($tags['track_number'])) {
