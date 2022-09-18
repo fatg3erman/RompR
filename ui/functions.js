@@ -302,7 +302,11 @@ function get_file_extension(filename) {
 	if (filename.lastIndexOf('.') == -1)
 		return 'Unknown';
 
-	return filename.substring(filename.lastIndexOf('.')+1, filename.length) || 'Unknown';
+	let poop = filename.substring(filename.lastIndexOf('.')+1, filename.length) || 'Unknown';
+
+	let poop2 = poop.substring(0, poop.indexOf('?')) || poop;
+
+	return poop2;
 }
 
 function get_css_variable(name) {
