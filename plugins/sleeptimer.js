@@ -135,19 +135,11 @@ var sleepTimer = function() {
 				'<div class="noselection">'+
 				'<table width="90%" align="center">'+
 				'<tr>'+
-				'<td></td>'+
-				'<td align="center"><i id="sleepinc" class="icon-increase smallicon clickicon"></i></td>'+
-				'<td></td>'+
-				'</tr>'+
-				'<tr>'+
 				'<td align="left"><i id="sleepon" class="medicon icon-sleep clickicon"></i></td>'+
+				'<td align="center"><i id="sleepinc" class="icon-increase smallicon clickicon"></i></td>'+
 				'<td align="center" class="alarmnumbers" id="sleepminutes">12</td>'+
-				'<td align="right" class="alarmnumbers" id="sleepruntime"</td>' +
-				'</tr>'+
-				'<tr>'+
-				'<td></td>'+
 				'<td align="center"><i id="sleepdec" class="icon-decrease smallicon clickicon"></i></td>'+
-				'<td></td>'+
+				'<td align="right" class="alarmnumbers" id="sleepruntime"</td>' +
 				'</tr>'+
 				'</table>';
 			html += '</div>';
