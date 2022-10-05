@@ -4,6 +4,8 @@ The Info Panel will display information about the currently playing Artist, Albu
 
 ## Spotify
 
+Note - with Mopidy's Spotify Support being broken currently, some of the following will not work.
+
 The Spotify Info panel is another source of Music Discovery.
 
 ![](images/infopanel1.png)
@@ -11,8 +13,6 @@ The Spotify Info panel is another source of Music Discovery.
 You'll get a display of a biography of the artist, options to start up dynamic playlists based on this artist, and a list of albums by the artist. Each album can be opened to display a track listing.
 
 Mopidy-Spotify users can add tracks and albums to the Play Queue directly from this panel.
-
-The 'Headphones' icon will add the album to [Albums To Listen To](/RompR/Albums-To-Listen-To), from where you can come back and listen to the album at your leisure.
 
 The Musical Notes icon will add the album directly into your Music Collection.
 

@@ -100,6 +100,8 @@ var infobar = function() {
 				if (npinfo.Artist && npinfo.Album) {
 					lines[1].text = '<i>'+frequentLabels.by+'</i>'+' '+npinfo.Artist+" "
 						+'<i>'+frequentLabels.on+'</i>'+" "+npinfo.Album;
+				} else if (npinfo.Artist && !npinfo.Album && npinfo.Title) {
+					lines[1].text = '<i>'+frequentLabels.by+'</i>'+' '+npinfo.Artist;
 				} else if (npinfo.stream) {
 					if (npinfo.stream != 'No Title') {
 						lines[1].text = npinfo.stream;

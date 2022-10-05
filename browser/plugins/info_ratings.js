@@ -99,9 +99,14 @@ var info_ratings = function() {
 				update_wishlist = false;
 			}
 
-			function setFail(rdata) {
+			function setFail(rdata, err) {
 				debug.warn("RATING PLUGIN","Failure", rdata);
-				// infobar.error("Failed! Have you read the Wiki?");
+				try {
+					debug.mark('RATING PLUGIN', err.responseJSON);
+					infobar.error(err.responseJSON.error);
+				} catch(e) {
+
+				}
 				doThingsWithData();
 			}
 
@@ -145,12 +150,14 @@ var info_ratings = function() {
 				debug.log("RATINGS PLUGIN",parent.nowplayingindex,"Doing",action,type,value);
 				if (parent.playlistinfo.type == 'stream') {
 					infobar.notify(language.gettext('label_searching'));
-					// Prioritize - local, beetslocal, beets, spotify - in that order
+					// Prioritize - local, beetslocal, beets, ytmusic, spotify - in that order
 					// There's currently no way to change these for tracks that are rated from radio stations
 					// which means that these are the only domains that will be searched, but this is better
-					// than including podcasts and radio stations, which we'll never want
+					// than including podcasts and radio stations, which we'll never want.
 					// I'm also not including SoundCloud because it produces far too many false positives
+					// Also having to remove ytmuisc as the URLs are not reuseable
 					if (prefs.player_backend == 'mopidy') {
+						// trackFinder.setPriorities(["spotify", "ytmusic", "beets", "beetslocal", "local"]);
 						trackFinder.setPriorities(["spotify", "beets", "beetslocal", "local"]);
 					}
 					trackFinder.findThisOne(

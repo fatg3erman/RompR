@@ -74,7 +74,7 @@ function do_playlist_tracks($pl, $icon, $target) {
 				case "soundcloud":
 				case "youtube":
 				case "spotify":
-				case "gmusic":
+				case "ytmusic":
 					$icon = "icon-".$filedata['domain']."-circled";
 					break;
 

@@ -69,9 +69,9 @@ function start_userinterface() {
 }
 
 function open_discoverator() {
-	if (prefs.auto_discovembobulate) {
-		pluginManager.autoOpen(language.gettext('button_infoyou'));
-	}
+	// if (prefs.auto_discovembobulate) {
+	// 	pluginManager.autoOpen(language.gettext('button_infoyou'));
+	// }
 	startBackgroundInitTasks.doNextTask();
 }
 

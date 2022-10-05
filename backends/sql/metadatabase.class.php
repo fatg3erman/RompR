@@ -51,6 +51,11 @@ class metaDatabase extends playlistCollection {
 			logger::core('METADATA', 'Year is not a 4 digit year, analyzing Date field instead');
 			$data['year'] = getYear($data['Date']);
 		}
+		if ($data['domain'] == 'ytmusic') {
+			// ytmusic: URLs don't work unless mopidy-ytmusic has cached them
+			logger::log('METADATA', 'Setting URI to null for ytmusic track');
+			$data['file'] = null;
+		}
 		// Very Important. The default in MPD_FILE_MODEL is 0 because that works for collection building
 		$data['Last-Modified'] = null;
 	}
@@ -112,12 +117,21 @@ class metaDatabase extends playlistCollection {
 			logger::log("SET", "Created New Track with TTindex ".$ttids[0]);
 		}
 
-		if (count($ttids) > 0 && $this->doTheSetting($ttids, $data['attributes'], $data['file'])) {
+		if (count($ttids) > 0 && $ttids[0] !== null && $ttids[0] !== false && $this->doTheSetting($ttids, $data['attributes'], $data['file'])) {
 			logger::debug('SET', 'Set command success');
+			if ($data['file'] == null) {
+				$this->returninfo['error'] = $data['domain'].' tracks are not supported because the URIs are not re-useable. Added to Wishlist';
+				header('HTTP/1.1 417 Expectation Failed');
+			}
 		} else {
 			logger::warn("SET", "Set Command failed", print_r($ttids, true));
+			if (count($ttids) > 0 && $ttids[0] === false) {
+				$this->returninfo['error'] = $data['domain'].' tracks are not supported because the URIs are not re-useable';
+			} else {
+				$this->returninfo['error'] = 'TTindex not found';
+			}
+			logger::log('SET', $this->returninfo['error']);
 			header('HTTP/1.1 417 Expectation Failed');
-			$this->returninfo['error'] = 'TTindex not found';
 		}
 	}
 
@@ -1038,6 +1052,11 @@ class metaDatabase extends playlistCollection {
 		// If it gets to the stage where that's a problem, we'll just drop support for those backends.
 		// Fuck knows it'll make my life easier. I quite like having youtube support, but only because
 		// I've implemented the download audio option.
+
+		// if ($data['domain'] == 'ytmusic') {
+		// 	logger::warn('BACKEND', 'Cannot add ytmusic tracks to collection, the URIs are not re-useable');
+		// 	return false;
+		// }
 
 		if ($data['albumartist_index'] == null) {
 			// Does the albumartist exist?

@@ -8,9 +8,9 @@ RompЯ is a music player with the emphasis on discovery - discovering more about
 * Directory browser
 * Search
 * Tagging and Rating of tracks
-* Spotify, Soundcloud, GMusic, etc support (with Mopidy),
-* Add tracks from Spotify, Soundcloud, etc to the collection on the fly
-* Web Radio support, automatic Spotify search for radio tracks you like
+* Soundcloud, Youtube, Youtube Music, etc support (with Mopidy),
+* Add tracks from online servives to the collection on the fly
+* Web Radio support, automatic online search for radio tracks you like
 * Podcast search and subscribe
 * Alarm Clock
 * Sleep Timer

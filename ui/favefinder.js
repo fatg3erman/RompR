@@ -196,8 +196,8 @@ function faveFinder(returnall) {
 			html += '<i class="icon-soundcloud-circled inline-icon"></i>';
 		} else if (u.match(/youtube:/)) {
 			html += '<i class="icon-youtube-circled inline-icon"></i>';
-		} else if (u.match(/gmusic:/)) {
-			html += '<i class="icon-gmusic-circled inline-icon"></i>';
+		} else if (u.match(/ytmusic:/)) {
+			html += '<i class="icon-ytmusic-circled inline-icon"></i>';
 		} else if (u.match(/^podcast/)) {
 			html += '<i class="icon-podcast-circled inline-icon"></i>';
 		}

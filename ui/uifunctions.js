@@ -723,7 +723,7 @@ function doMopidyCollectionOptions() {
 		spotify: [{dir: "Spotify Playlists", label: "Spotify Playlists"},
 				  {dir: "Spotify/Your music/Your tracks", label: "Spotify 'Your Tracks'"},
 				  {dir: "Spotify/Your music/Your albums", label: "Spotify 'Your Albums'"}],
-		gmusic: [{dir: "Google Music/Albums", label: "Google Music"}],
+		// gmusic: [{dir: "Google Music/Albums", label: "Google Music"}],
 		soundcloud: [{dir: "SoundCloud/Liked", label: "SoundCloud Liked"},
 					 {dir: "SoundCloud/Sets", label: "SoundCloud Sets"},
 					 {dir: "SoundCloud/Stream", label: "SoundCloud Stream"}],

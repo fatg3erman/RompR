@@ -444,7 +444,7 @@ var dbQueue = function() {
 		} catch (err) {
 			debug.warn("DB QUEUE","Request Failed",err);
 			if (req.fail) {
-				req.fail(data);
+				req.fail(data, err);
 			}
 		}
 	}

@@ -258,7 +258,7 @@ class prefspanel extends uibits {
 			'label' => 'settings_interface'
 		]);
 		self::ui_checkbox(['id' => 'scrolltocurrent', 'label' => 'config_autoscroll']);
-		self::ui_checkbox(['id' => 'auto_discovembobulate', 'label' => 'config_discovembobulate']);
+		// self::ui_checkbox(['id' => 'auto_discovembobulate', 'label' => 'config_discovembobulate']);
 
 		self::ui_checkbox(['id' => 'displaycomposer', 'label' => 'config_displaycomposer']);
 		self::ui_checkbox(['id' => 'use_albumart_in_playlist', 'label' => 'config_albumartinplaylist']);

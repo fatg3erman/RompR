@@ -327,8 +327,8 @@ function domainCheck($default, $domain) {
 	switch ($domain) {
 		case 'soundcloud':
 		case 'spotify':
-		case 'gmusic':
 		case 'vkontakte':
+		case 'ytmusic':
 		case 'internetarchive':
 		case 'podcast':
 		case 'dirble':
@@ -414,7 +414,7 @@ function domainIcon($d, $c) {
 	$h = '';
 	switch($d) {
 		case "spotify":
-		case "gmusic":
+		case "ytmusic":
 		case "youtube":
 		case "internetarchive":
 		case "soundcloud":

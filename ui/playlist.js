@@ -891,7 +891,7 @@ var playlist = function() {
 			var d = s.shift();
 			switch (d) {
 				case "spotify":
-				case "gmusic":
+				case "ytmusic":
 				case "youtube":
 				case "internetarchive":
 				case "soundcloud":

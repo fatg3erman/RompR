@@ -1,4 +1,4 @@
-pluginManager.addPlugin(language.gettext("button_infoyou"), null, null, 'plugins/code/helpfulthings.js', true);
+// pluginManager.addPlugin(language.gettext("button_infoyou"), null, null, 'plugins/code/helpfulthings.js', true);
 pluginManager.addPlugin(language.gettext("label_charts"), null, null, 'plugins/code/charts.js', true);
 pluginManager.addPlugin(language.gettext("label_recentlyplayed"), null, null, 'plugins/code/recentlyplayed.js', true);
 pluginManager.addPlugin(language.gettext("label_viewwishlist"), null, null, 'plugins/code/wishlistviewer.js', true);
