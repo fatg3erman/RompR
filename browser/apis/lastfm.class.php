@@ -160,7 +160,7 @@ class lastfm {
 		logger::log('TOPARTISTS', 'Getting page',$params['page'],'for period',$params['period']);
 		$params['method'] = 'user.getTopArtists';
 		$params['user'] = prefs::get_pref('lastfm_user');
-		$params['limit'] = 10;
+		$params['limit'] = 100;
 		$params['cache'] = false;
 		$data = self::get_request($params, false);
 		$decoded = json_decode($data, true);

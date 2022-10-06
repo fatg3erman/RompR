@@ -106,12 +106,14 @@ class lastfm_radio extends musicCollection {
 						&& array_key_exists('playcount', $artist)
 						&& $artist['playcount'] >= $minplays
 					) {
-						logger::log('LASTFM', 'Top Artist',$artist['name']);
-						$this->add_toptrack(
-							self::TYPE_TOP_TRACK,
-							$artist['name'],
-							null
-						);
+						if ($this->check_audiobook_artist($artist['name'])) {
+							logger::log('LASTFM', 'Top Artist',$artist['name']);
+							$this->add_toptrack(
+								self::TYPE_TOP_TRACK,
+								$artist['name'],
+								null
+							);
+						}
 					}
 				}
 			}
@@ -272,6 +274,32 @@ class lastfm_radio extends musicCollection {
 			}
 		}
 		return $uri;
+	}
+
+	private function check_audiobook_artist($name) {
+		$numab = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0,
+			"SELECT COUNT(TTindex) AS num FROM Tracktable
+				JOIN Artisttable USING (Artistindex)
+				WHERE isAudiobook > 0
+				AND Hidden = 0
+				AND Artistname = ?",
+			$name
+		);
+		$nummusic = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0,
+			"SELECT COUNT(TTindex) AS num FROM Tracktable
+				JOIN Artisttable USING (Artistindex)
+				WHERE isAudiobook = 0
+				AND Hidden = 0
+				AND Artistname = ?",
+			$name
+		);
+		logger::log('LASTFM', 'Artist',$name,'has',$numab,'audiobook tracks and',$nummusic,'music albums');
+		if ($nummusic > 0) {
+			return true;
+		} else if ($nummusic == 0 && $numab == 0) {
+			return true;
+		}
+		return false;
 	}
 
 	public function doPlaylist($numtracks, &$player) {
