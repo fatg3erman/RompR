@@ -202,8 +202,8 @@ function carry_on_starting() {
 	//
 	if (prefs.player_backend == 'mopidy') {
 		$('#pluginplaylists_spotify').prev().hide();
-		$('#pluginplaylists_everywhere').prev().hide();
-		$('#pluginplaylists_everywhere').prev().prev().hide();
+		// $('#pluginplaylists_everywhere').prev().hide();
+		// $('#pluginplaylists_everywhere').prev().prev().hide();
 	}
 	searchManager.setup_categories();
 }

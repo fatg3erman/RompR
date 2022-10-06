@@ -5,8 +5,9 @@ var genreRadio = function() {
 		setup: function() {
 			//
 			// Genre (Music from Everywhere)
+			// ytmusic does not support genre search
 			//
-			if (player.canPlay('spotify') || player.canPlay('ytmusic')) {
+			if (player.canPlay('spotify')) {
 				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-music', language.gettext('label_genre'), 'genre_radio'));
 				$('button[name="genre_radio"]').on('click', function() {
 					var v = $('#genre_radio').val();
@@ -96,7 +97,7 @@ var lastFMArtistRadio = function() {
 }();
 
 playlist.radioManager.register("lastFMTrackRadio", lastFMTrackRadio, 'radios/code/lastfmtrackradio.js');
-playlist.radioManager.register("lastFMArtistRadio", lastFMArtistRadio, 'radios/code/lastfmartistradio.js');
-playlist.radioManager.register("genreRadio", genreRadio,'radios/code/genreradio.js');
-playlist.radioManager.register("singleArtistRadio", singleArtistRadio, 'radios/code/singleartistradio.js');
-playlist.radioManager.register("faveArtistRadio", faveArtistRadio, 'radios/code/faveartistradio.js');
+// playlist.radioManager.register("lastFMArtistRadio", lastFMArtistRadio, 'radios/code/lastfmartistradio.js');
+// playlist.radioManager.register("genreRadio", genreRadio,'radios/code/genreradio.js');
+// playlist.radioManager.register("singleArtistRadio", singleArtistRadio, 'radios/code/singleartistradio.js');
+// playlist.radioManager.register("faveArtistRadio", faveArtistRadio, 'radios/code/faveartistradio.js');

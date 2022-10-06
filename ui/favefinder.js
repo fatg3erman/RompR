@@ -94,6 +94,7 @@ function faveFinder(returnall) {
 		var worst_matches = new Array();
 		// Sort the results
 		for (let track of data) {
+			// NOTE isArtistorAlbum is currently "hacked" to ignore ytmusic: tracks as well as :artist: and :album:
 			if (track.file.isArtistOrAlbum()) continue;
 			var r = {...req.data, ...track};
 			debug.trace('FAVEFINDER','Found', r);

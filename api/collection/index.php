@@ -214,29 +214,7 @@ function raw_search() {
 		'doing_search' => true,
 		'trackbytrack' => false
 	]);
-	$found = false;
-	logger::trace("RAW SEARCH", "checkdb is ".$_REQUEST['checkdb']);
-	if ($_REQUEST['checkdb'] !== 'false') {
-		logger::trace("RAW SEARCH", " ... checking database first ");
-		$collection = new db_collection();
-		$t = $collection->doDbCollection($_REQUEST['rawterms'], $domains, true);
-		foreach ($t as $filedata) {
-			prefs::$database->newTrack($filedata);
-			$found = true;
-		}
-	}
-	if (!$found) {
-		$cmd = $_REQUEST['command'];
-		foreach ($_REQUEST['rawterms'] as $key => $term) {
-			$cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
-		}
-		logger::trace("RAW SEARCH", "Search command : ".$cmd);
-		$player = new player();
-		$dirs = array();
-		foreach ($player->parse_list_output($cmd, $dirs, $domains) as $filedata) {
-			prefs::$database->newTrack($filedata);
-		}
-	}
+	prefs::$database->do_raw_search($domains, $_REQUEST['checkdb'], $_REQUEST['rawterms'], $_REQUEST['command']);
 	prefs::$database->tracks_as_array();
 }
 

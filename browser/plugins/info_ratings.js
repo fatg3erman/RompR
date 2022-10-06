@@ -156,6 +156,10 @@ var info_ratings = function() {
 					// than including podcasts and radio stations, which we'll never want.
 					// I'm also not including SoundCloud because it produces far too many false positives
 					// Also having to remove ytmuisc as the URLs are not reuseable
+
+					//
+					// NOTE isArtistorAlbum is currently "hacked" to ignore ytmusic: tracks as well as :artist: and :album:
+
 					if (prefs.player_backend == 'mopidy') {
 						// trackFinder.setPriorities(["spotify", "ytmusic", "beets", "beetslocal", "local"]);
 						trackFinder.setPriorities(["spotify", "beets", "beetslocal", "local"]);

@@ -17,7 +17,10 @@ class prefs {
 		'radioparams' => [
 			"radiomode" => "",
 			"radioparam" => "",
-			"radioconsume" => []
+			"radioconsume" => [],
+			"radiodomains" => ['local', 'spotify', 'ytmusic'],
+			"toptracks_current" => 1,
+			"toptracks_total" => 1
 		]
 	];
 
@@ -168,7 +171,6 @@ class prefs {
 		"updateeverytime" => false,
 		"fullbiobydefault" => true,
 		"mopidy_search_domains" => array("local", "spotify"),
-		"mopidy_radio_domains" => array("local", "spotify"),
 		"outputsvisible" => false,
 		"wheelscrollspeed" => "150",
 		"displayremainingtime" => true,
@@ -471,6 +473,10 @@ class prefs {
 		return self::$prefs['skin'];
 	}
 
+	public static function player_name_hash() {
+		return hash('md2', self::$prefs['currenthost'], false);
+	}
+
 	public static function get_pref($pref) {
 		return (array_key_exists($pref, self::$prefs)) ? self::$prefs[$pref] : null;
 	}
@@ -559,6 +565,11 @@ class prefs {
 
 					self::$prefs['multihosts'][$key]['websocket'] = false;
 					break;
+
+				case 95:
+					if (!array_key_exists('radiodomains', self::$prefs['multihosts'][$key]['radioparams']))
+						self::$prefs['multihosts'][$key]['radioparams']['radiodomains'] = ['local', 'spotify', 'ytmusic'];
+
 
 			}
 		}

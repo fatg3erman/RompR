@@ -1160,11 +1160,17 @@ class base_mpd_player {
 
 		// This should be in a state where it can be passed direct to do_command_list()
 		// via controller.js - whichever browser is used to stop the radio will set these back
-		prefs::set_radio_params(['radioconsume' => [
-			['consume', $this->get_consume($status['consume'])],
-			['repeat', $status['repeat']],
-			['random', $status['random']]
-		]]);
+		prefs::set_radio_params(
+			[
+				'radioconsume' => [
+					['consume', $this->get_consume($status['consume'])],
+					['repeat', $status['repeat']],
+					['random', $status['random']]
+				],
+				'toptracks_current' => 1,
+				'toptracks_total' => 1
+			]
+		);
 		$this->do_command_list(['stop']);
 		$this->do_command_list(['clear']);
 		$this->do_command_list(['repeat 0']);
@@ -1376,13 +1382,14 @@ class base_mpd_player {
 		if ($playlistlength >= prefs::get_pref('smartradio_chunksize'))
 			return;
 
+		$tracksneeded = prefs::get_pref('smartradio_chunksize') - $playlistlength;
+		logger::trace(prefs::currenthost(), "Adding",$tracksneeded,"tracks from",$rp['radiomode'],$rp['radioparam']);
+
 		switch ($rp['radiomode']) {
 			case 'starRadios':
 			case 'mostPlayed':
 			case 'faveAlbums':
 			case 'recentlyaddedtracks':
-				$tracksneeded = prefs::get_pref('smartradio_chunksize') - $playlistlength;
-				logger::trace(prefs::currenthost(), "Adding",$tracksneeded,"tracks from",$rp['radiomode'],$rp['radioparam']);
 				prefs::$database = new collection_radio();
 				$tracks = prefs::$database->doPlaylist($rp['radioparam'], $tracksneeded);
 				prefs::$database->close_database();
@@ -1392,6 +1399,24 @@ class base_mpd_player {
 				}
 				$this->do_command_list($cmds);
 				break;
+
+			case 'lastFMTrackRadio':
+				prefs::$database = new lastfm_radio([
+					'doing_search' => true,
+					'trackbytrack' => false
+				]);
+				$result = prefs::$database->doPlaylist($tracksneeded, $this);
+				prefs::$database->close_database();
+				if (!$result) {
+					logger::log('LASTFMTRACK', 'Found no tracks. Stopping');
+					prefs::set_radio_params([
+						'radiomode' => '',
+						'radioparam' => ''
+					]);
+					$this->do_command_list($rp['radioconsume']);
+				}
+				break;
+
 		}
 	}
 }

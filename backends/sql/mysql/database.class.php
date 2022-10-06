@@ -444,5 +444,47 @@ class database extends data_base {
 		return $retval;
 	}
 
+	public function create_toptracks_table() {
+		$name = lastfm_radio::get_seed_table_name();
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
+			"topindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"Type INT NOT NULL, ".
+			"Artist VARCHAR(100), ".
+			"Title VARCHAR(255), ".
+			"UNIQUE INDEX(Artist, Title)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL",$name,"OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking ".$name." : ".$err);
+		}
+		$this->generic_sql_query("TRUNCATE TABLE ".$name);
+	}
+
+	public function add_toptrack($type, $artist, $title) {
+		$name = lastfm_radio::get_seed_table_name();
+		$this->sql_prepare_query(true, null, null, null,
+			"INSERT INTO ".$name." (Type, Artist, Title) VALUES (?, ? ,?) ON DUPLICATE KEY UPDATE Type = ?",
+			$type,
+			$artist,
+			$title,
+			$type
+		);
+	}
+
+	public function create_radio_uri_table() {
+		$name = 'Radio_Uri_'.prefs::player_name_hash();
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
+			"uriindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"Uri VARCHAR(2000)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL",$name,"OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking ".$name." : ".$err);
+		}
+		$this->generic_sql_query("TRUNCATE TABLE ".$name);
+	}
+
 }
 ?>

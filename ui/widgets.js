@@ -1467,7 +1467,7 @@ $.widget("rompr.makeDomainChooser", {
 	_create: function() {
 		var self = this;
 		this.options.holder = $('<div>', {class: 'containerbox wrap'}).appendTo(this.element);
-		for(var i in player.get_search_uri_schemes()) {
+		for(var i of player.get_search_uri_schemes()) {
 			var makeunique = $("[id^='"+i+"_import_domain']").length+1;
 			var id = i+'_import_domain_'+makeunique;
 			this.options.holder.append('<div class="fixed brianblessed styledinputs">'+

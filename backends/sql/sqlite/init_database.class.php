@@ -1298,6 +1298,12 @@ class init_database extends init_generic {
 					$this->generic_sql_query("UPDATE Statstable SET Value = 94 WHERE Item = 'SchemaVer'", true);
 					break;
 
+				case 94:
+					logger::log("SQL", "Updating FROM Schema version 94 TO Schema version 95");
+					prefs::upgrade_host_defs(95);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 95 WHERE Item = 'SchemaVer'", true);
+					break;
+
 			}
 			$sv++;
 		}

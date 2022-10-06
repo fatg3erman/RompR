@@ -137,6 +137,35 @@ class lastfm {
 
 	}
 
+	public static function user_get_top_tracks($params) {
+		//
+		// params:
+		//		period: valid value fo period - eg 7day
+		//		page: page to get (starts at 1)
+		logger::log('TOPTRACKS', 'Getting page',$params['page'],'for period',$params['period']);
+		$params['method'] = 'user.getTopTracks';
+		$params['user'] = prefs::get_pref('lastfm_user');
+		$params['limit'] = 100;
+		$params['cache'] = false;
+		$data = self::get_request($params, false);
+		$decoded = json_decode($data, true);
+		return $decoded;
+	}
+
+	public static function track_get_similar($params) {
+		//
+		// params:
+		//		track: Track Title
+		//		artist: Artist name
+		//		limit: Max number of tracks to return
+		logger::log('GETSIMILAR', 'Getting similar tracks for',$params['artist'],$params['track']);
+		$params['method'] = 'track.getSimilar';
+		$params['cache'] = true;
+		$data = self::get_request($params, false);
+		$decoded = json_decode($data, true);
+		return $decoded;
+	}
+
 	//
 	// Only for use by the UI for logging in
 	//

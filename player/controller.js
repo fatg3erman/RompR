@@ -87,7 +87,7 @@ function playerController() {
 			// checkSearchDomains();
 			doMopidyCollectionOptions();
 			playlist.radioManager.init();
-			self.do_command_list([]);
+			await self.do_command_list([]);
 			debug.info("MPD","Player is ready");
 			infobar.notify(
 				"Connected to "+prefs.currenthost+" ("
@@ -120,7 +120,7 @@ function playerController() {
 			debug.debug('PLAYER', 'Got response for',list,s);
 			let last_state = player.status.state;
 			player.status = cloneObject(s);
-			$('#radiodomains').makeDomainChooser("setSelection", player.status.mopidy_radio_domains);
+			$('#radiodomains').makeDomainChooser("setSelection", player.status.smartradio.radiodomains);
 			if (player.status.songid != self.previoussongid) {
 				if (playlist.trackHasChanged(player.status.songid)) {
 					self.previoussongid = player.status.songid;

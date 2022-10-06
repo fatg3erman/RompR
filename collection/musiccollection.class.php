@@ -381,5 +381,98 @@ class musicCollection extends collection_base {
 		$this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", $mbid, $imgkey);
 	}
 
+	public function do_raw_search($domains, $checkdb, $rawterms, $command) {
+		$found = false;
+		logger::trace("RAW SEARCH", "domains are ".print_r($domains, true));
+		logger::trace("RAW SEARCH", "terms are   ".print_r($rawterms, true));
+		if ($checkdb !== 'false') {
+			logger::trace("RAW SEARCH", " ... checking database first ");
+			$collection = new db_collection();
+			$t = $collection->doDbCollection($rawterms, $domains, true);
+			foreach ($t as $filedata) {
+				$this->newTrack($filedata);
+				$found = true;
+			}
+		}
+		if (!$found) {
+			foreach ($rawterms as $key => $term) {
+				$command .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
+			}
+			logger::trace("RAW SEARCH", "Search command : ".$command);
+			$player = new player();
+			$dirs = array();
+			foreach ($player->parse_list_output($command, $dirs, $domains) as $filedata) {
+				$this->newTrack($filedata);
+			}
+		}
+	}
+
+	public function fave_finder($params) {
+		logger::log('FAVEFINDER', 'Looking for',$params['Artist'],$params['Title']);
+		$rp = prefs::get_radio_params();
+		$st = [];
+		if ($params['Artist'])
+			$st[] = $params['Artist'];
+		if ($params['Title'])
+			$st[] = $params['Title'];
+		$this->do_raw_search($rp['radiodomains'], 'false', ['any' => [implode(' ', $st)]], 'search');
+		$retval = null;
+		$matches = [];
+		foreach ($this->albums as $album) {
+			$album->sortTracks();
+			foreach($album->tracks as $trackobj) {
+				if ($this->is_artist_or_album($trackobj->tags['file']))
+					continue;
+
+				if ($trackobj->tags['Title'] == null && $trackobj->tags['trackartist'] == null)
+					continue;
+
+				if ($this->compare_tracks_with_artist($params, $trackobj->tags)) {
+					logger::log('FAVEFINDER', 'Found',$trackobj->tags['trackartist'],$trackobj->tags['Title']);
+					// Prioritise tracks with Album information. ytmusic often doesn't return this.
+					if ($trackobj->tags['Album']) {
+						array_unshift($matches, $trackobj->tags['file']);
+					} else {
+						array_push($matches, $trackobj->tags['file']);
+					}
+				}
+			}
+		}
+		$this->albums = [];
+		if (count($matches) > 0)
+			$retval = $matches[0];
+
+		return $retval;
+	}
+
+	private function is_artist_or_album($file) {
+		if (strpos($file, ':album:') !== false || strpos($file, ':artist:') !== false) {
+			return true;
+		}
+		return false;
+	}
+
+	private function compare_tracks_with_artist($lookingfor, $track) {
+		if ($lookingfor['Artist'] && $lookingfor['Title']) {
+			if ($this->strip_track_name($lookingfor['Artist']) == $this->strip_track_name($track['trackartist'])
+				&& $this->strip_track_name($lookingfor['Title']) == $this->strip_track_name($track['Title'])) {
+				return true;
+			}
+		} else if ($lookingfor['Artist']) {
+			if ($this->strip_track_name($lookingfor['Artist']) == $this->strip_track_name($track['trackartist'])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function strip_track_name($thing) {
+		$thing = strtolower($thing);
+		$thing = preg_replace('/\s+\&\s+/', ' and ', $thing);
+		$thing = preg_replace('/\(.*? mix\)$/', '', $thing);
+		$thing = preg_replace("/\pP/", '', $thing);
+		return trim($thing);
+	}
+
 }
 ?>

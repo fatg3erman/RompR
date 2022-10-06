@@ -95,8 +95,10 @@ var playlist = function() {
 					radios[i].func.setup();
 				}
 				if (prefs.player_backend == "mopidy") {
+					// Don't set any default domains. player.controller will set them as soon as it knows what they are
+					// But this UI element HAS to exist before we try to do that
 					$("#radiodomains").addClass('tiny').makeDomainChooser({
-						default_domains: prefs.mopidy_radio_domains,
+						default_domains: [],
 						sources_not_to_choose: {
 									bassdrive: 1,
 									dirble: 1,
@@ -108,7 +110,7 @@ var playlist = function() {
 					});
 					$("#radiodomains").find('input.topcheck').each(function() {
 						$(this).on('click', function() {
-							prefs.save({mopidy_radio_domains: $("#radiodomains").makeDomainChooser("getSelection")});
+							prefs.save({radiodomains: $("#radiodomains").makeDomainChooser("getSelection")});
 						});
 					});
 				}

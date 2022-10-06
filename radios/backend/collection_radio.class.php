@@ -55,8 +55,7 @@ class collection_radio extends database {
 				break;
 
 			case "allrandom":
-				$sqlstring = "SELECT Uri FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND
-					isSearchResult < 2";
+				$sqlstring = "SELECT Uri FROM Tracktable WHERE Uri IS NOT NULL";
 				break;
 
 			case "neverplayed":
