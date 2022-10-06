@@ -12,7 +12,7 @@ before updating to this version, as if it does not work for you then rolling bac
 * If you do have problems after upgrading, please [raise a bug on the issue tracker](https://github.com/fatg3erman/RompR/issues)
 and I will attempt to fix it or assist you.
 * This version introduces the [RompR Backend Daemon](/Backend-Daemon) which replaces romonitor and is now a requirement.
-The Daemon performs some tasks that are very difficule to do in the browser but very easy to do if you have a process running permanently on the server.
+The Daemon performs some tasks that are very difficult to do in the browser but very easy to do if you have a process running permanently on the server.
 It requires a POSIX operating system and therefore RompR is no longer supported on Windows. RompR will, on most systems, start this daemon itself so you
 shouldn't need to do anything *except* if you were previously running romonitor, in which case you **must** read the link above.
 * Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin.
@@ -22,8 +22,8 @@ mimics the part of Mopidy's HTTP interface that RompR uses. It's not required bu
 need for this to work, please read the link.
 * Unified Search - everything you can search for in RompR is now available through the main Search Panel instead of being
 spread out in different places throughout the interface.
-* **DEPRECATION WARNING** I am going to remove support for IceCast radio, because the "API" really sucks, it requires PHPQuery to parse it,
-and PHP8 pretty much broke PHPQuery, which is now unmaintained. I might change my mind if enough people get in touch and tell me they really like it.
+* **DEPRECATION WARNING** I am going to remove support for IceCast radio, because the "API" really sucks.
+I might change my mind if enough people get in touch and tell me they really like it.
 In this release, IceCast is only available when you do a search; the "browser" has been removed.
 * Fix bug where album art might be partially downloaded when using MPD (Fix contributed by corubba)
 * Try to make RompR properly timezone aware, so the alarm clock works when Daylight Saving Time is enabled, for example.
@@ -53,6 +53,11 @@ the rompr/?setup screen has an option to mark all your Spotify tracks as unplaya
  I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
  * For Mopidy users, all Personalised Radio stations that relied on Spotify support have been disabled. I hope this is temporary, but with
  Mopidy's Spotify support being broken they serve no purpose and are impossible to test.
+ * The other Mopidy-specific Personal radio stations have been adjusted so that they work with Mopidy-Youtube and Mopidy-YTMusic.
+ For best results with Mopidy-Youtube you should ensure you have a Youtube Music account and enable it in the youtube section of
+ your mopidy.conf. Note that Moidy-YTMusic tracks cannot be added to the Music Collection because Mopidy-YTMusic does not permit you
+ to add a random URI it has not previously seen during the current session.
+* All Personal Radio stations are now populated by the Backend Daemon, so there is no longer any need to keep a browser open.
 * The usual collection of undocumented bugfixes.
 
 

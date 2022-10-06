@@ -20,21 +20,6 @@ var spotiMixRadio = function() {
 
 }();
 
-var mixRadio = function() {
-
-	return {
-
-		setup: function() {
-
-			if (player.canPlay('spotify')) {
-				//
-				// Favourite Artists and Related Artists (Music from Spotify)
-				//
-				$('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('mixRadio', null, 'icon-artist', language.gettext('label_radio_mix')));
-			}
-		}
-	}
-}();
 
 
 var artistRadio = function() {
@@ -68,6 +53,5 @@ var spotiTrackRadio = function() {
 
 
 playlist.radioManager.register("spotiMixRadio", spotiMixRadio, 'radios/code/spotimixradio.js');
-playlist.radioManager.register("mixRadio", mixRadio, 'radios/code/mixradio.js');
 playlist.radioManager.register("artistRadio", artistRadio, 'radios/code/artistradio.js');
 playlist.radioManager.register("spotiTrackRadio", spotiTrackRadio, 'radios/code/spotiTrackRadio.js');

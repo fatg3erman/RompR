@@ -445,13 +445,14 @@ class database extends data_base {
 	}
 
 	public function create_toptracks_table() {
-		$name = lastfm_radio::get_seed_table_name();
+		$name = everywhere_radio::get_seed_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"topindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
 			"Type INT NOT NULL, ".
 			"Artist VARCHAR(100), ".
 			"Title VARCHAR(255), ".
-			"UNIQUE INDEX(Artist, Title)) ENGINE=InnoDB", true))
+			"UNIQUE INDEX(Artist, Title), ".
+			"PRIMARY KEY (topindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL",$name,"OK");
 		} else {
@@ -462,7 +463,7 @@ class database extends data_base {
 	}
 
 	public function add_toptrack($type, $artist, $title) {
-		$name = lastfm_radio::get_seed_table_name();
+		$name = everywhere_radio::get_seed_table_name();
 		$this->sql_prepare_query(true, null, null, null,
 			"INSERT INTO ".$name." (Type, Artist, Title) VALUES (?, ? ,?) ON DUPLICATE KEY UPDATE Type = ?",
 			$type,
@@ -473,10 +474,13 @@ class database extends data_base {
 	}
 
 	public function create_radio_uri_table() {
-		$name = lastfm_radio::get_uri_table_name();
+		$name = everywhere_radio::get_uri_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"uriindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"Artist VARCHAR(100), ".
+			"Title VARCHAR(255), ".
 			"Uri VARCHAR(2000), ".
+			"UNIQUE INDEX(Artist, Title), ".
 			"PRIMARY KEY (uriindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL",$name,"OK");
@@ -485,6 +489,17 @@ class database extends data_base {
 			return array(false, "Error While Checking ".$name." : ".$err);
 		}
 		$this->generic_sql_query("TRUNCATE TABLE ".$name);
+	}
+
+	public function add_smart_uri($uri, $artist, $title) {
+		$name = everywhere_radio::get_uri_table_name();
+		$this->sql_prepare_query(true, null, null, null,
+			"INSERT INTO ".$name." (Artist, Title, Uri) VALUES (?, ? ,?) ON DUPLICATE KEY UPDATE Uri = ?",
+			$artist,
+			$title,
+			$uri,
+			$uri
+		);
 	}
 
 }

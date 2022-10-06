@@ -1406,18 +1406,48 @@ class base_mpd_player {
 					'doing_search' => true,
 					'trackbytrack' => false
 				]);
-				$result = prefs::$database->doPlaylist($tracksneeded, $this);
-				prefs::$database->close_database();
-				if (!$result) {
-					logger::log('LASTFMTRACK', 'Found no tracks. Stopping');
-					prefs::set_radio_params([
-						'radiomode' => '',
-						'radioparam' => ''
-					]);
-					$this->do_command_list($rp['radioconsume']);
-				}
+				$this->do_smartradio($tracksneeded);
 				break;
 
+			case 'singleArtistRadio':
+				prefs::$database = new artist_radio([
+					'doing_search' => true,
+					'trackbytrack' => false
+				]);
+				$this->do_smartradio($tracksneeded);
+				break;
+
+			case 'faveArtistRadio':
+				prefs::$database = new fave_artist_radio([
+					'doing_search' => true,
+					'trackbytrack' => false
+				]);
+				$this->do_smartradio($tracksneeded);
+				break;
+
+			case 'mixRadio':
+				prefs::$database = new mix_radio([
+					'doing_search' => true,
+					'trackbytrack' => false
+				]);
+				$this->do_smartradio($tracksneeded);
+				break;
+
+
+		}
+	}
+
+	private function do_smartradio($tracksneeded) {
+		$rp = prefs::get_radio_params();
+		$result = prefs::$database->doPlaylist($tracksneeded, $this);
+		prefs::$database->close_database();
+		if (!$result) {
+			logger::log('SMARTRADIO', 'Found no tracks. Stopping');
+			prefs::set_radio_params([
+				'radiomode' => '',
+				'radioparam' => ''
+			]);
+			$this->do_command_list($rp['radioconsume']);
 		}
 	}
 }

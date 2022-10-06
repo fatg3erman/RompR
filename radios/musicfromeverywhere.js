@@ -62,8 +62,6 @@ var lastFMTrackRadio = function() {
 	return {
 		setup: function() {
 			if (lastfm.isLoggedIn && (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube'))) {
-				// This isn't really spotify radio but it doesn't make sense unless spotify is available
-				// ytmusic will wrok too but only with a subscription
 				//
 				// Last.FM Mix Radio (Music from Everywhere). Uses favourite tracks to get recommendations
 				//
@@ -82,8 +80,6 @@ var lastFMArtistRadio = function() {
 
 		setup: function() {
 			if (lastfm.isLoggedIn && (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube'))) {
-				// This isn't really spotify radio but it doesn't make sense unless spotify is available
-				// ytmusic will wrok too but only with a subscription
 				//
 				// Last.FM Lucky Dip (Music from Everywhere). Uses favourite artists to get recommendations
 				//
@@ -96,8 +92,25 @@ var lastFMArtistRadio = function() {
 	}
 }();
 
+var mixRadio = function() {
+
+	return {
+
+		setup: function() {
+
+			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
+				//
+				// Favourite Artists and Related Artists (using Spotify API)
+				//
+				$('#pluginplaylists_everywhere').append(playlist.radioManager.standardBox('mixRadio', null, 'icon-artist', language.gettext('label_radio_mix')));
+			}
+		}
+	}
+}();
+
+playlist.radioManager.register("singleArtistRadio", singleArtistRadio, 'radios/code/singleartistradio.js');
+playlist.radioManager.register("faveArtistRadio", faveArtistRadio, 'radios/code/faveartistradio.js');
+playlist.radioManager.register("mixRadio", mixRadio, 'radios/code/mixradio.js');
 playlist.radioManager.register("lastFMTrackRadio", lastFMTrackRadio, 'radios/code/lastfmtrackradio.js');
 playlist.radioManager.register("lastFMArtistRadio", lastFMArtistRadio, 'radios/code/lastfmartistradio.js');
 // playlist.radioManager.register("genreRadio", genreRadio,'radios/code/genreradio.js');
-// playlist.radioManager.register("singleArtistRadio", singleArtistRadio, 'radios/code/singleartistradio.js');
-// playlist.radioManager.register("faveArtistRadio", faveArtistRadio, 'radios/code/faveartistradio.js');

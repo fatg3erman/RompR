@@ -49,26 +49,6 @@ class metaquery extends collection_base {
 		return $artists;
 	}
 
-	public function getfaveartists() {
-		// Can we have a tuning slider to increase the 'Playcount > x' value?
-		$this->generic_sql_query(
-			"CREATE TEMPORARY TABLE aplaytable AS SELECT SUM(Playcount) AS playtotal, Artistindex FROM
-			(SELECT Playcount, Artistindex FROM Playcounttable JOIN Tracktable USING (TTindex) WHERE
-			Playcount > 10) AS derived GROUP BY Artistindex", true);
-
-		$artists = array();
-		$result = $this->generic_sql_query(
-			"SELECT playtot, Artistname FROM (SELECT SUM(Playcount) AS playtot, Artistindex FROM
-			(SELECT Playcount, Artistindex FROM Playcounttable JOIN Tracktable USING (TTindex)) AS
-			derived GROUP BY Artistindex) AS alias JOIN Artisttable USING (Artistindex) WHERE
-			playtot > (SELECT AVG(playtotal) FROM aplaytable) ORDER BY ".database::SQL_RANDOM_SORT, false, PDO::FETCH_OBJ);
-		foreach ($result as $obj) {
-			logger::debug("FAVEARTISTS", "Artist :",$obj->Artistname);
-			$artists[] = array( 'name' => $obj->Artistname, 'plays' => $obj->playtot);
-		}
-		return $artists;
-	}
-
 	public function getlistenlater() {
 		$result = $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
 		$retval =  array();

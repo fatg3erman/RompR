@@ -430,44 +430,15 @@ class musicCollection extends collection_base {
 					logger::log('FAVEFINDER', 'Found',$trackobj->tags['trackartist'],$trackobj->tags['Title']);
 					// Prioritise tracks with Album information. ytmusic often doesn't return this.
 					if ($trackobj->tags['Album']) {
-						array_unshift($matches, $trackobj->tags['file']);
+						array_unshift($matches, $trackobj->tags);
 					} else {
-						array_push($matches, $trackobj->tags['file']);
+						array_push($matches, $trackobj->tags);
 					}
 				}
 			}
 		}
 		$this->albums = [];
 		return $matches;
-	}
-
-	private function is_artist_or_album($file) {
-		if (strpos($file, ':album:') !== false || strpos($file, ':artist:') !== false) {
-			return true;
-		}
-		return false;
-	}
-
-	private function compare_tracks_with_artist($lookingfor, $track) {
-		if ($lookingfor['Artist'] && $lookingfor['Title']) {
-			if ($this->strip_track_name($lookingfor['Artist']) == $this->strip_track_name($track['trackartist'])
-				&& $this->strip_track_name($lookingfor['Title']) == $this->strip_track_name($track['Title'])) {
-				return true;
-			}
-		} else if ($lookingfor['Artist']) {
-			if ($this->strip_track_name($lookingfor['Artist']) == $this->strip_track_name($track['trackartist'])) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private function strip_track_name($thing) {
-		$thing = strtolower($thing);
-		$thing = preg_replace('/\s+\&\s+/', ' and ', $thing);
-		$thing = preg_replace('/\(.*? mix\)$/', '', $thing);
-		$thing = preg_replace("/\pP/", '', $thing);
-		return trim($thing);
 	}
 
 }

@@ -28,19 +28,7 @@ If you were previously using romonitor to scrobble to last.FM, then you now need
 * Tidies the Backend Cache
 * Checks for unplayable/relinked Spotify tracks
 * When you're using Mopidy it takes care of consuming the tracklist, because Mopidy's consume is broken.
-* Runs Personalised Radio Stations:
-	* All Ratings Radios
-	* Tags Radio
-	* Genre Radio
-	* Artist Radio
-	* All Tracks At Random
-	* Never Played Tracks
-	* Recently Played Tracks
-	* Favourite Tracks
-	* Favourite Albums
-	* Recently Added Tracks
-	* Recently Added Albums
-	* All Custom Radio Stations
+* Runs Personalised Radio Stations
 
 (1) Note this is a breaking change. Scrobbling used to be done from the browser or alternatively from the program
 called romonitor that was in older versions of RompЯ. Scrobbling will not now work without the Backend Daemon.
@@ -56,7 +44,7 @@ are now supported in the Phone skin.
 
 It's really very simple.
 
-On most systems, RompR will take care of running the backend Daemon by itself. You do not need to do anything.
+On most systems, RompR will take care of running the backend Daemon by itself the first time you open a browser on RompR. You do not need to do anything.
 
 ### On Systems Where RompR can not start it automatically.
 
