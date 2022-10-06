@@ -162,7 +162,7 @@ var info_ratings = function() {
 
 					if (prefs.player_backend == 'mopidy') {
 						// trackFinder.setPriorities(["spotify", "ytmusic", "beets", "beetslocal", "local"]);
-						trackFinder.setPriorities(["spotify", "beets", "beetslocal", "local"]);
+						trackFinder.setPriorities(["youtube", "spotify", "beets", "beetslocal", "local"]);
 					}
 					trackFinder.findThisOne(
 						metaHandlers.fromPlaylistInfo.mapData(parent.playlistinfo, action, [{attribute: type, value: value}]),

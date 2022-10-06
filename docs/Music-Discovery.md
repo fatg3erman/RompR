@@ -6,6 +6,29 @@ RompЯ contains many features to help you discover new music based on your liste
 
 The Personalised Radio panel includes more radio stations designed to help you discover music - most of these are only present for people using Mopidy with Spotify.
 
+### Music From Everywhere
+
+![](images/musicfromeverywhere.png)
+This panel allows you to make use of all your Mopidy sources - Soundcloud, Youtube Music, etc to create playlists. Most of the stations here will work with Mopidy-Spotify, Mopidy-YTMusic, and Mopidy-Youtube
+
+The Last.FM stations require you to be [logged in to Last.FM](/RompR/LastFM). They use your Last.FM scrobbles and Last.FM's suggestion engine to create playlists based on your listening over the past week, month, year, or all time. 'Lucky Dip' may produce a more varied selection than 'Mix'.
+
+Favourite Artists will play a selection of tracks by artists determined to be your Favourites based on your listening habits.
+
+Genre requires Mopidy-Spotify because no other backends can search by Genre.
+
+Tracks by Artist will play a random selection of tracks by the artist you enter.
+
+### Note on Mopidy-YTMusic and Mopidy-Youtube
+
+The Music From Everywhere stations will search your Mopidy sources for music to play.
+
+If you're using Mopidy-YTMusic and you're not a paid subscriber it wil work but some tracks will not play. Also tracks from
+Mopidy-YTMusic cannot be added to the Music Collection because Mopidy-YTMusic cannot accept a URI it has not seen before. If you attempt to add a YTMusic track to the
+Collection it will instead be added to the Wishlist.
+
+If you're using Mopidy-Youtube these stations work best if you enable the Music API. See the Mopidy-Youtube documentation for how to do that.
+
 ### Music From Spotify (Disabled Due to no Spotify Support in Mopidy)
 
 ![](images/musicfromspotify.png)
@@ -14,19 +37,6 @@ The first three options (Spotify Weekly Mix, Spotify Swim, and Spotify Surprise!
 Favourite Artists and Related Artists calculates your favourite artists based on number of listens and ratings and then plays you tracks by those artists and by other artists that Spotify says are 'related' - which should mean they're of a similar genre or style.
 
 Finally you can type an artist name into 'Artists Similar To' to get tracks from artists that Spotify says are similar to that artist.
-
-### Music From Everywhere
-
-![](images/musicfromeverywhere.png)
-This panel allows you to make use of all your Mopidy sources - Soundcloud, Youtube Music, etc to create playlists.
-
-The Last.FM stations require you to be [logged in to Last.FM](/RompR/LastFM). They use your Last.FM scrobbles and Last.FM's suggestion engine to create playlists based on your listening over the past week, month, year, or all time. 'Lucky Dip' may produce a more varied selection than 'Mix'.
-
-Favourite Artists will play a selection of tracks by artists determined to be your Favourites based on your listening habits.
-
-Genre will play tracks of a specific Genre - note that some Mopidy backends do not support searching by Genre so results may be variable.
-
-Tracks by Artist will play a random selection of tracks by the artist you enter.
 
 ### Create Your Own Spotify Playlist Generator (Disabled Due to no Spotify Support in Mopidy)
 

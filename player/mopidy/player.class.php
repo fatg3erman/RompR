@@ -206,10 +206,12 @@ class player extends base_mpd_player {
 
 	private function preprocess_soundcloud(&$filedata) {
 		$filedata['folder'] = concatenate_artist_names($filedata['Artist']);
-		$filedata['AlbumArtist'] = $filedata['Artist'];
+		if (!$filedata['AlbumArtist'])
+			$filedata['AlbumArtist'] = $filedata['Artist'];
+
 		$filedata['X-AlbumUri'] = $filedata['file'];
-		if ($filedata['Title']) {
-			logger::log('SOUNDCLOUD', 'Setting Album from Title');
+		if ($filedata['Title'] && !$filedata['Album']) {
+			// logger::log('SOUNDCLOUD', 'Setting Album from Title');
 			$filedata['Album'] = $filedata['Title'];
 		}
 		if ($filedata['X-AlbumImage']) {

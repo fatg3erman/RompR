@@ -132,9 +132,15 @@ If you haven't done this right, then your music collection update will just hang
 
 Note that only Mopidy-Local seems to return Genres, so Genre-based Collection functions will not work as your might expect if you use Spotify, Soundcloud, etc.
 
-## Mopidy-Youtube
+## Note on Mopidy-YTMusic and Mopidy-Youtube
 
-This version of Rompr works best wuth the fork of Mopidy-Youtube [here](https://github.com/natumbri/mopidy-youtube)
+The Music From Everywhere stations will search your Mopidy sources for music to play.
+
+If you're using Mopidy-YTMusic and you're not a paid subscriber it wil work but some tracks will not play. Also tracks from
+Mopidy-YTMusic cannot be added to the Music Collection because Mopidy-YTMusic cannot accept a URI it has not seen before. If you attempt to add a YTMusic track to the
+Collection it will instead be added to the Wishlist.
+
+If you're using Mopidy-Youtube these stations work best if you enable the Music API. See the Mopidy-Youtube documentation for how to do that.
 
 If you add Youtube tracks to your Music Collection, you'll be given an option to download the audio.
 

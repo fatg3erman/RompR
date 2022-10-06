@@ -500,7 +500,7 @@ language::add_translations([
 	"label_dailymix" =>						"Your Daily Mix",
 	"label_luckydip" =>						"Your Lucky Dip",
 	"label_startshere" =>					"Your Discovery Starts Here",
-	"label_getspotify" =>					"Get Spotify To Start Discovering",
+	"label_getspotify" =>					"Get Spotify or Youtube Music To Start Discovering",
 	"because_liked" =>						"You like %s, so you might like:",
 	"because_listened" =>					"Similar to %s:",
 	"albumart_findsmall" =>					"Find Small Images",

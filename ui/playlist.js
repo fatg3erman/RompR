@@ -331,21 +331,7 @@ var playlist = function() {
 					count++;
 					switch (track.type) {
 						case "local":
-							var hidden;
-							switch (track.domain) {
-								case 'youtube':
-								case 'soundcloud':
-									// Track Name == Album Name for these, so it's pointless having them open
-									if (playlist.rolledup.hasOwnProperty(sortartist+track.Album)) {
-										hidden = playlist.rolledup[sortartist+track.Album];
-									} else {
-										hidden = true;
-									}
-									break;
-								default:
-									hidden = (playlist.rolledup[sortartist+track.Album]) ? true : false;
-									break;
-							}
+							var hidden = (playlist.rolledup[sortartist+track.Album]) ? true : false;
 							new_tracklist[count] = new Album(sortartist, track.Album, count, hidden);
 							break;
 						case "stream":
