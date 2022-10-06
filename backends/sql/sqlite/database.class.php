@@ -366,7 +366,7 @@ class database extends data_base {
 	}
 
 	public function create_radio_uri_table() {
-		$name = 'Radio_Uri_'.prefs::player_name_hash();
+		$name = lastfm_radio::get_uri_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"uriindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 			"Uri TEXT)", true))

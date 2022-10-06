@@ -473,10 +473,11 @@ class database extends data_base {
 	}
 
 	public function create_radio_uri_table() {
-		$name = 'Radio_Uri_'.prefs::player_name_hash();
+		$name = lastfm_radio::get_uri_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"uriindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
-			"Uri VARCHAR(2000)) ENGINE=InnoDB", true))
+			"Uri VARCHAR(2000), ".
+			"PRIMARY KEY (uriindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL",$name,"OK");
 		} else {

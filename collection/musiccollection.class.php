@@ -416,7 +416,6 @@ class musicCollection extends collection_base {
 		if ($params['Title'])
 			$st[] = $params['Title'];
 		$this->do_raw_search($rp['radiodomains'], 'false', ['any' => [implode(' ', $st)]], 'search');
-		$retval = null;
 		$matches = [];
 		foreach ($this->albums as $album) {
 			$album->sortTracks();
@@ -439,10 +438,7 @@ class musicCollection extends collection_base {
 			}
 		}
 		$this->albums = [];
-		if (count($matches) > 0)
-			$retval = $matches[0];
-
-		return $retval;
+		return $matches;
 	}
 
 	private function is_artist_or_album($file) {

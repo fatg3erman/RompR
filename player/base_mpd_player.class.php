@@ -1401,6 +1401,7 @@ class base_mpd_player {
 				break;
 
 			case 'lastFMTrackRadio':
+			case 'lastFMArtistRadio':
 				prefs::$database = new lastfm_radio([
 					'doing_search' => true,
 					'trackbytrack' => false
