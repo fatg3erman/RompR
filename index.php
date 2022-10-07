@@ -13,7 +13,7 @@ require_once ("includes/functions.php");
 // Do some important pre-load checks
 //
 
-if (file_exists('collection/collection.php') || is_dir('themes/fruit')) {
+if (file_exists('collection/collection.php') || is_dir('themes/fruit') || file_exists('radios/musicfromspotify.js')) {
 	big_bad_fail('Remains of an earlier installation still exist. To install this version of RompЯ you must
 		delete <b>everything except your albumart and prefs directories</b> and then copy the new version
 		into your rompr directory.');

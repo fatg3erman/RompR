@@ -52,9 +52,14 @@ class metaDatabase extends playlistCollection {
 			$data['year'] = getYear($data['Date']);
 		}
 		if ($data['domain'] == 'ytmusic') {
-			// ytmusic: URLs don't work unless mopidy-ytmusic has cached them
-			logger::log('METADATA', 'Setting URI to null for ytmusic track');
-			$data['file'] = null;
+			// if (strpos($data['file'], 'ytmusic:track:') !== false) {
+			// 	logger::log('METADATA', 'Translating YTMusic Track to Youtube Video');
+			// 	$data['file'] = str_replace('ytmusic:track', 'youtube:video', $data['file']);
+			// } else {
+				// ytmusic: URLs don't work unless mopidy-ytmusic has cached them
+				logger::log('METADATA', 'Setting URI to null for ytmusic track');
+				$data['file'] = null;
+			// }
 		}
 		// Very Important. The default in MPD_FILE_MODEL is 0 because that works for collection building
 		$data['Last-Modified'] = null;
@@ -865,12 +870,12 @@ class metaDatabase extends playlistCollection {
 	}
 
 	private function forced_uri_only($u,$d) {
-		// Some mopidy backends - YouTube and SoundCloud - can return the same artist/album/track info
+		// Some mopidy backends - SoundCloud - can return the same artist/album/track info
 		// for multiple different tracks.
 		// This gives us a problem because $this->find_item will think they're the same.
 		// So for those backends we always force urionly to be true
 		logger::core("USERRATINGS", "Checking domain : ".$d);
-		if ($u || $d == "youtube" || $d == "soundcloud") {
+		if ($u || $d == "soundcloud") {
 			return true;
 		} else {
 			return false;

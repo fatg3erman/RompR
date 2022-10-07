@@ -1426,6 +1426,8 @@ class base_mpd_player {
 				break;
 
 			case 'mixRadio':
+			case 'recommendationsRadio':
+			case 'genreRadio':
 				prefs::$database = new mix_radio([
 					'doing_search' => true,
 					'trackbytrack' => false

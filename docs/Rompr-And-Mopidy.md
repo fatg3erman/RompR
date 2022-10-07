@@ -137,10 +137,15 @@ Note that only Mopidy-Local seems to return Genres, so Genre-based Collection fu
 The Music From Everywhere stations will search your Mopidy sources for music to play.
 
 If you're using Mopidy-YTMusic and you're not a paid subscriber it wil work but some tracks will not play. Also tracks from
-Mopidy-YTMusic cannot be added to the Music Collection because Mopidy-YTMusic cannot accept a URI it has not seen before. If you attempt to add a YTMusic track to the
-Collection it will instead be added to the Wishlist.
+Mopidy-YTMusic cannot be added to the Music Collection because Mopidy-YTMusic cannot accept a URI it has not seen before.
+If you attempt to add a YTMusic track to the Collection it will instead be added to the Wishlist.
 
 If you're using Mopidy-Youtube these stations work best if you enable the Music API. See the Mopidy-Youtube documentation for how to do that.
+
+There is an option on the rompr/?setup screen to 'Translate YTMusic URIs to Youtube URIs'. If you enable this then, if you try to add a YTMusic
+track to the collection and you have mopidy-youtube enabled, the URI will be converted from mopidy-ytmuisc to mopidy-youtube and so the track can
+be added to the Collection. This will only work if you have mopidy-youtube set up so that it is using the ytmusicapi. Note that this hasn't been
+very thoroughly tested.
 
 If you add Youtube tracks to your Music Collection, you'll be given an option to download the audio.
 
@@ -158,6 +163,9 @@ and see what error messages you get.
 
 Assuming it works, the YoutTube video will be downloaded and the audio will be extracted to a FLAC file which will be streamed from your webserver
 using Mopidy's Stream backend the next time you add the track to the play queue.
+
+Note that if you have your Mopidy-Youtube set up to log in to Youtube Music and you are a paid subscriber, you might not get the high quality
+audio stream when you download the track. There might be a way to get youtube-dl to do this, but I haven't looked into it.
 
 If you have the flac packages installed (sudo apt install flac) then the downloaded file will be tagged with the artist and track name.
 Tagged tracks can be moved into your 'normal' music collection. Provided you have the option to 'Prefer Local Music to Internet Sources' enabled,

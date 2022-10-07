@@ -472,6 +472,7 @@ language::add_translations([
 
 	"label_radio_recommend" =>				"Recommendations based on this %s",
 	"label_amendalbum" =>					"Amend Album Details",
+	"label_radio_recommended" =>			"Recommendations For You",
 
 	//CHANGED in 0.60
 	"config_country" =>						"COUNTRY (for Spotify)",
@@ -743,7 +744,8 @@ language::add_translations([
 	"info_mpd_websocket" =>					"Optional, provides extra functionality with MPD",
 	"label_mpd_websocket" =>				'Port for MPD Websocket Server',
 	"label_ui_defaults" =>					'Defaults',
-	"button_save_defaults" =>				'Save As Default For All Browsers'
+	"button_save_defaults" =>				'Save As Default For All Browsers',
+	"setup_translate_ytmusic" =>			'Translate YTMusic URIs to Youtube URIs'
 
 	// ----------------------------------------------------
 	// Proobaly Unused

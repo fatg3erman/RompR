@@ -88,6 +88,13 @@ if (prefs::get_pref('use_mopidy_scan')) {
 print '><label for="mopscan">'.language::gettext('setup_mopidy_scan').'</label></div>';
 print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy#scanning-local-files" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
 
+print '<div class="styledinputs"><input id="yttrans" type="checkbox" name="translate_ytmusic" ';
+if (prefs::get_pref('translate_ytmusic')) {
+	print " checked";
+}
+print '><label for="yttrans">'.language::gettext('setup_translate_ytmusic').'</label></div>';
+print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy#note-on-mopidy-ytmusic-and-mopidy-youtube" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
+
 print '<div class="styledinputs"><input id="spotifyunplayable" type="checkbox" name="spotify_mark_unplayable" ';
 print '><label for="spotifyunplayable">Mark All Spotify Tracks as Unplayable</label></div>';
 

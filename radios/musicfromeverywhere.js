@@ -1,24 +1,23 @@
-// var genreRadio = function() {
+var genreRadio = function() {
 
-// 	return {
+	return {
 
-// 		setup: function() {
-// 			//
-// 			// Genre (Music from Everywhere)
-// 			// ytmusic does not support genre search
-// 			//
-// 			if (player.canPlay('spotify')) {
-// 				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-music', language.gettext('label_genre'), 'genre_radio'));
-// 				$('button[name="genre_radio"]').on('click', function() {
-// 					var v = $('#genre_radio').val();
-// 					if (v != '') {
-// 						playlist.radioManager.load('genreRadio', v);
-// 					}
-// 				});
-// 			}
-// 		}
-// 	}
-// }();
+		setup: function() {
+			//
+			// Genre (Music from Everywhere)
+			//
+			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
+				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-music', language.gettext('label_genre'), 'genre_radio'));
+				$('button[name="genre_radio"]').on('click', function() {
+					var v = $('#genre_radio').val();
+					if (v != '') {
+						playlist.radioManager.load('genreRadio', v);
+					}
+				});
+			}
+		}
+	}
+}();
 
 var faveArtistRadio = function() {
 
@@ -28,7 +27,9 @@ var faveArtistRadio = function() {
 			//
 			// Favourite Artists (Music from Everywhere)
 			//
-			$('#pluginplaylists_everywhere').append(playlist.radioManager.standardBox('faveArtistRadio', null, 'icon-artist', language.gettext('label_radio_fartist')));
+			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
+				$('#pluginplaylists_everywhere').append(playlist.radioManager.standardBox('faveArtistRadio', null, 'icon-artist', language.gettext('label_radio_fartist')));
+			}
 		}
 	}
 }();
@@ -108,9 +109,26 @@ var mixRadio = function() {
 	}
 }();
 
-playlist.radioManager.register("singleArtistRadio", singleArtistRadio, 'radios/code/singleartistradio.js');
-playlist.radioManager.register("faveArtistRadio", faveArtistRadio, 'radios/code/faveartistradio.js');
+var recommendationsRadio = function() {
+
+	return {
+
+		setup: function() {
+
+			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
+				//
+				// Favourite Artists and Related Artists (using Spotify API)
+				//
+				$('#pluginplaylists_everywhere').append(playlist.radioManager.standardBox('recommendationsRadio', null, 'icon-wifi', language.gettext('label_radio_recommended')));
+			}
+		}
+	}
+}();
+
+playlist.radioManager.register("recommendationsRadio", recommendationsRadio, 'radios/code/recommendationsradio.js');
 playlist.radioManager.register("mixRadio", mixRadio, 'radios/code/mixradio.js');
+playlist.radioManager.register("singleArtistRadio", singleArtistRadio, 'radios/code/singleartistradio.js');
+playlist.radioManager.register("genreRadio", genreRadio,'radios/code/genreradio.js');
+playlist.radioManager.register("faveArtistRadio", faveArtistRadio, 'radios/code/faveartistradio.js');
 playlist.radioManager.register("lastFMTrackRadio", lastFMTrackRadio, 'radios/code/lastfmtrackradio.js');
 playlist.radioManager.register("lastFMArtistRadio", lastFMArtistRadio, 'radios/code/lastfmartistradio.js');
-// playlist.radioManager.register("genreRadio", genreRadio,'radios/code/genreradio.js');

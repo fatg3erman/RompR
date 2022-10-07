@@ -21,6 +21,10 @@ var metaHandlers = function() {
 			streamname: playlistinfo.Album,
 			streamimage: playlistinfo['X-AlbumImage'],
 		}
+		if (prefs.translate_ytmusic && playlistinfo.file.indexOf('ytmusic:track:') === 0 && player.canPlay('youtube')) {
+			data.file = playlistinfo.file.replace('ytmusic:track', 'youtube:video');
+			data.domain = 'youtube';
+		}
 		if (prefs.player_backend == 'mpd' && playlistinfo.file && playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)) {
 			data.file = 'soundcloud://track/'+playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)[1];
 		}

@@ -25,10 +25,14 @@ class everywhere_radio extends musicCollection {
 
 	}
 
-	protected function do_seed_search() {
+	protected function do_seed_search($type = null) {
 		$uris = [];
 		$gotseeds = false;
-		$seeds = $this->generic_sql_query("SELECT * FROM ".self::get_seed_table_name()." ORDER BY ".self::SQL_RANDOM_SORT." LIMIT 1");
+		if ($type) {
+			$seeds = $this->generic_sql_query("SELECT * FROM ".self::get_seed_table_name()." WHERE Type = ".$type." ORDER BY ".self::SQL_RANDOM_SORT." LIMIT 1");
+		} else {
+			$seeds = $this->generic_sql_query("SELECT * FROM ".self::get_seed_table_name()." ORDER BY ".self::SQL_RANDOM_SORT." LIMIT 1");
+		}
 		foreach ($seeds as $seed) {
 			$gotseeds = true;
 			if ($seed['Type'] != self::TYPE_TOP_TRACK) {

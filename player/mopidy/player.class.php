@@ -127,6 +127,7 @@ class player extends base_mpd_player {
 
 			case "soundcloud":
 			case "youtube":
+			case "ytmusic":
 				$this->preprocess_soundcloud($filedata);
 				break;
 
@@ -209,14 +210,15 @@ class player extends base_mpd_player {
 		if (!$filedata['AlbumArtist'])
 			$filedata['AlbumArtist'] = $filedata['Artist'];
 
-		$filedata['X-AlbumUri'] = $filedata['file'];
-		if ($filedata['Title'] && !$filedata['Album']) {
-			// logger::log('SOUNDCLOUD', 'Setting Album from Title');
+		if (!$filedata['X-AlbumUri'])
+			$filedata['X-AlbumUri'] = $filedata['file'];
+
+		if ($filedata['Title'] && !$filedata['Album'])
 			$filedata['Album'] = $filedata['Title'];
-		}
-		if ($filedata['X-AlbumImage']) {
+
+		if ($filedata['X-AlbumImage'])
 			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);
-		}
+
 	}
 
 	private function check_radio_and_podcasts($filedata) {
