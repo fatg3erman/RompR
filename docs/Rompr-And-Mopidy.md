@@ -132,6 +132,7 @@ If you haven't done this right, then your music collection update will just hang
 
 Note that only Mopidy-Local seems to return Genres, so Genre-based Collection functions will not work as your might expect if you use Spotify, Soundcloud, etc.
 
+
 ## Note on Mopidy-YTMusic and Mopidy-Youtube
 
 The Music From Everywhere stations will search your Mopidy sources for music to play.

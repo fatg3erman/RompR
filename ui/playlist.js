@@ -30,6 +30,8 @@ var playlist = function() {
 
 	var add_proxy_command = null;
 
+	var trackfinder = null;
+
 	// Minimal set of information - just what infobar requires to make sure
 	// it blanks everything out
 	// Pos is for radioManager
@@ -673,6 +675,34 @@ var playlist = function() {
 				player.controller.addTracks(tracks, playpos, moveto, queue);
 				$('.selected').removeFromSelection();
 			}
+		},
+
+		search_and_add: function(element) {
+			if (trackfinder === null) {
+				// Prioritise youtube over ytmusic
+				trackfinder = new faveFinder(false);
+				trackfinder.setPriorities(["ytmusic", "youtube"]);
+				trackfinder.setCheckDb(false);
+			}
+			infobar.notify(language.gettext('label_searching'));
+			var params = {};
+			element.find('input.search_param').each(function() {
+				params[$(this).attr('name')] = unescapeHtml($(this).val());
+			});
+			trackfinder.findThisOne(
+				params,
+				function(data) {
+					debug.log('FAVE RESULTS', data);
+					if (data.file) {
+						playlist.add_by_rompr_commands([{
+								type: 'uri',
+								name: data.file
+							}],
+							null
+						);
+					}
+				}
+			)
 		},
 
 		setButtons: function() {

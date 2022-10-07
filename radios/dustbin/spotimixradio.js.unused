@@ -7,7 +7,6 @@ var spotiMixRadio = function() {
 	var param;
 	var trackfinder = new faveFinder(false);
 	trackfinder.setCheckDb(false);
-	trackfinder.setExact(true);
 	trackfinder.setPriorities(['spotify']);
 
 	function checkNonSpotifyTracks() {

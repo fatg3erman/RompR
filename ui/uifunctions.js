@@ -859,7 +859,17 @@ function spotifyTrackListing(data) {
 		if (player.canPlay('spotify')) {
 			h += '<div class="playable draggable clickable clicktrack fullwidth" name="'+rawurlencode(data.tracks.items[i].uri)+'">';
 		} else {
-			h += '<div class="fullwidth">';
+			if (player.canPlay('youtube') || player.canPlay('ytmusic')) {
+				h += '<div class="fullwidth playable clicktracksearch">';
+				h += '<input type="hidden" class="search_param" name="Title" value="'+escapeHtml(data.tracks.items[i].name)+'" />';
+				let poop = [];
+				data.artists.forEach(function(v) {
+					poop.push(v.name);
+				});
+				h += '<input type="hidden" class="search_param" name="trackartist" value="'+escapeHtml(concatenate_artist_names(poop))+'" />';
+			} else {
+				h += '<div class="fullwidth">';
+			}
 		}
 		h += '<div class="containerbox line">'+
 			'<div class="tracknumber fixed">'+data.tracks.items[i].track_number+'</div>'+

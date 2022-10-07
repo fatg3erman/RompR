@@ -7,7 +7,6 @@ function faveFinder(returnall) {
 	var throttle = null;
 	var priority = [];
 	var checkdb = true;
-	var exact = false;
 
 	function brk(b) {
 		if (b) {
@@ -145,8 +144,8 @@ function faveFinder(returnall) {
 	}
 
 	this.findThisOne = function(data, callback) {
-		debug.log("FAVEFINDER","New thing to look for",data.title);
-		debug.debug('FAVEFINDER', data);
+		debug.log("FAVEFINDER","New thing to look for",data.Title);
+		debug.log('FAVEFINDER', data);
 		queue.push({data: data, callback: callback});
 		if (throttle == null && queue.length == 1) {
 			self.next();
@@ -171,20 +170,23 @@ function faveFinder(returnall) {
 	this.searchForTrack = function() {
 		var req = queue[0];
 		var st = {};
-		if (req.data.Title) {
-			st.title = [req.data.Title];
+		if (player.canPlay('spotify') && (priority.length == 0 || priority.indexOf('spotify') > -1)) {
+			// Only spotify can handle multi-term searches
+			if (req.data.Title) {
+				st.title = [req.data.Title];
+			}
+			if (req.data.trackartist) {
+				st.artist = [req.data.trackartist];
+			}
+			if (req.data.Album) {
+				st.album = [req.data.Album];
+			}
 		}
-		if (req.data.trackartist) {
-			st.artist = [req.data.trackartist];
-		}
-		if (req.data.Album) {
-			st.album = [req.data.Album];
-		}
-		if (req.data.Title && req.data.trackartist && !exact) {
+		if (req.data.Title && req.data.trackartist) {
 			st.any = [req.data.trackartist + ' ' + req.data.Title];
 		}
 		debug.debug("FAVEFINDER","Performing search",st,priority);
-		player.controller.rawsearch(st, priority, exact, self.handleResults, checkdb);
+		player.controller.rawsearch(st, priority, self.handleResults, checkdb);
 	}
 
 	this.trackHtml = function(data, breaks) {
@@ -216,10 +218,6 @@ function faveFinder(returnall) {
 
 	this.setCheckDb = function(d) {
 		checkdb = d;
-	}
-
-	this.setExact = function(e) {
-		exact = e;
 	}
 
 }

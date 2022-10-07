@@ -12,7 +12,6 @@ var helpfulThings = function() {
 	var current_seed = null;
 	var trackfinder = new faveFinder(false);
 	trackfinder.setCheckDb(false);
-	trackfinder.setExact(true);
 	trackfinder.setPriorities(['spotify']);
 
 	function getRecommendationSeeds() {
@@ -116,7 +115,7 @@ var helpfulThings = function() {
 
 				$('#helpful_radio').append(html);
 
-				if (player.canPlay('spotify')) {
+				if (player.canPlay('spotify') || player.canPlay('youtube') || player.canPlay('ytmusic')) {
 					$('#hplfoldup').append('<div id="helpful_spinner"><i class="svg-square icon-spin6 spinner"></i></div>');
 					getRecommendationSeeds();
 				}

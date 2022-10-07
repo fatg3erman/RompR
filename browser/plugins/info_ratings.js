@@ -150,20 +150,20 @@ var info_ratings = function() {
 				debug.log("RATINGS PLUGIN",parent.nowplayingindex,"Doing",action,type,value);
 				if (parent.playlistinfo.type == 'stream') {
 					infobar.notify(language.gettext('label_searching'));
-					// Prioritize - local, beetslocal, beets, ytmusic, spotify - in that order
+					// Prioritize the backeds we'll use
 					// There's currently no way to change these for tracks that are rated from radio stations
 					// which means that these are the only domains that will be searched, but this is better
 					// than including podcasts and radio stations, which we'll never want.
 					// I'm also not including SoundCloud because it produces far too many false positives
-					// Also having to remove ytmuisc as the URLs are not reuseable
-
-					//
-					// NOTE isArtistorAlbum is currently "hacked" to ignore ytmusic: tracks as well as :artist: and :album:
 
 					if (prefs.player_backend == 'mopidy') {
-						// trackFinder.setPriorities(["spotify", "ytmusic", "beets", "beetslocal", "local"]);
-						trackFinder.setPriorities(["youtube", "spotify", "beets", "beetslocal", "local"]);
+						let prio = ["youtube", "spotify", "beets", "beetslocal", "local"];
+						if (prefs.translate_ytmusic && player.canPlay('youtube'))
+							prio.unshift('ytmusic');
+
+						trackFinder.setPriorities(prio);
 					}
+
 					trackFinder.findThisOne(
 						metaHandlers.fromPlaylistInfo.mapData(parent.playlistinfo, action, [{attribute: type, value: value}]),
 						self.updateDatabase

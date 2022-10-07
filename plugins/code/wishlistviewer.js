@@ -40,7 +40,6 @@ var wishlistViewer = function() {
 			trawler = new faveFinder(true);
 			trawler.setPriorities([]);
 			trawler.setCheckDb(false);
-			trawler.setExact(false);
 		}
 		databits[reqid] = {
 			index: 0,

@@ -140,7 +140,8 @@ class metaquery extends collection_base {
 			FROM Playcounttable JOIN Tracktable USING (TTindex)
 			JOIN Artisttable USING (Artistindex)
 			WHERE ".$this->sql_two_weeks_include($days).
-			" AND Uri IS NOT NULL GROUP BY Artistname, Title ORDER BY playtotal DESC LIMIT ".$limit);
+			" AND Uri IS NOT NULL AND Uri NOT LIKE 'http%' AND isAudiobook = 0
+			GROUP BY Artistname, Title ORDER BY playtotal DESC LIMIT ".$limit);
 
 		// 2. Get a list of recently played tracks, ignoring popularity
 		// $result = generic_sql_query(
@@ -152,7 +153,7 @@ class metaquery extends collection_base {
 		// $resultset = array_merge($resultset, $result);
 
 		// 3. Get the top tracks overall
-		$tracks = $this->get_track_charts(intval($top));
+		$tracks = $this->get_track_charts(intval($top), CHARTS_MUSIC_ONLY);
 		foreach ($tracks as $track) {
 			if ($track->Uri) {
 				$resultset[] = [
@@ -228,7 +229,7 @@ class metaquery extends collection_base {
 		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
 	}
 
-	private function get_track_charts($limit = 40) {
+	private function get_track_charts($limit = 40, $include = null) {
 		$query = "SELECT
 			Artistname AS label_artist,
 			Albumname AS label_album,
@@ -240,14 +241,16 @@ class metaquery extends collection_base {
 			JOIN Playcounttable USING (TTIndex)
 			JOIN Albumtable USING (Albumindex)
 			JOIN Artisttable USING (Artistindex)
-			".$this->charts_include_option()."
+			".$this->charts_include_option($include)."
 			GROUP BY label_artist, label_album, label_track
 			ORDER BY soundcloud_plays DESC LIMIT ".$limit;
 		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
 	}
 
-	private function charts_include_option() {
-		switch (prefs::get_pref('chartoption')) {
+	private function charts_include_option($include = null) {
+		if ($include == null)
+			$include = prefs::get_pref('chartoption');
+		switch ($include) {
 			case CHARTS_INCLUDE_ALL:
 				return '';
 				break;

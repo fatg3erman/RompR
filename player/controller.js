@@ -598,12 +598,12 @@ function playerController() {
 
 	}
 
-	this.rawsearch = function(terms, sources, exact, callback, checkdb) {
+	this.rawsearch = function(terms, sources, callback, checkdb) {
 		if (player.updatingcollection) {
 			infobar.notify(language.gettext('error_nosearchnow'));
 			callback([]);
 		}
-		debug.log('RAWSEARCH', terms, sources, exact, checkdb);
+		debug.log('RAWSEARCH', terms, sources, checkdb);
 		$.ajax({
 			type: "POST",
 			url: "api/collection/",
@@ -611,7 +611,7 @@ function playerController() {
 			data: {
 				rawterms: terms,
 				domains: sources,
-				command: exact ? "find" : "search",
+				command: "search",
 				checkdb: checkdb
 			}
 		})

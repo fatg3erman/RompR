@@ -428,6 +428,8 @@ function playPlayable(event, clickedElement) {
 	if (clickedElement.hasClass('clickdisc')) {
 		discSelect(event, clickedElement);
 		playlist.addItems($('.selected'),null);
+	} else if (clickedElement.hasClass('clicktracksearch')) {
+		playlist.search_and_add(clickedElement);
 	} else {
 		playlist.addItems(clickedElement, null);
 	}
