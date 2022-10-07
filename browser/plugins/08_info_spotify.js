@@ -22,11 +22,11 @@ var info_spotify = function() {
 		}
 
 		layout.add_sidebar_list(language.gettext("label_pop"), data.popularity);
-		if (player.canPlay('spotify')) {
-			let u = layout.add_sidebar_list(language.gettext("label_pluginplaylists"));
-			var l = $('<li>').appendTo(u);
-			makePersonalRadio(l, 'clickstarttrackradio', language.gettext('label_radio_recommend', [language.gettext('label_track')]));
-		}
+		// if (player.canPlay('spotify')) {
+		// 	let u = layout.add_sidebar_list(language.gettext("label_pluginplaylists"));
+		// 	var l = $('<li>').appendTo(u);
+		// 	makePersonalRadio(l, 'clickstarttrackradio', language.gettext('label_radio_recommend', [language.gettext('label_track')]));
+		// }
 
 		if (data.explicit)
 			layout.add_sidebar_list('', '<i class="icon-explicit stright standout"></i>');
@@ -94,10 +94,10 @@ var info_spotify = function() {
 
 		let u = layout.add_sidebar_list(language.gettext("label_pop"), data.popularity);
 		add_coll_button(u, 'clickstartsingleradio', 'icon-wifi', language.gettext('label_singleartistradio'));
-		if (player.canPlay('spotify')) {
-			add_coll_button(u, 'clickstartradio', 'icon-wifi', language.gettext('lastfm_simar'));
-			add_coll_button(u, 'clickstartartistradio', 'icon-wifi', language.gettext('label_radio_recommend',['Artist']));
-		}
+		// if (player.canPlay('spotify')) {
+		// 	add_coll_button(u, 'clickstartradio', 'icon-wifi', language.gettext('lastfm_simar'));
+		// 	add_coll_button(u, 'clickstartartistradio', 'icon-wifi', language.gettext('label_radio_recommend',['Artist']));
+		// }
 
 		if (data.images && data.images[0]) {
 			layout.add_main_image(data.images[0].url);
