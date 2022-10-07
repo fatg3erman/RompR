@@ -78,7 +78,6 @@ class ui_elements {
 
 		$data = array_merge(self::DEFAULT_TRACK_PARAMS, $data);
 
-		if (substr($data['title'],0,6) == "Album:") return 2;
 		if (substr($data['title'],0,7) == "Artist:") {
 			logger::warn('ALBUMTRACK', 'Found artist link in album - this should not be here!');
 			return 1;

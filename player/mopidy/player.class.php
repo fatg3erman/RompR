@@ -76,7 +76,7 @@ class player extends base_mpd_player {
 	}
 
 	protected function player_specific_fixups(&$filedata) {
-		if (strpos($filedata['file'], ':artist:') !== false) {
+		if (strpos($filedata['file'], 'spotify:artist:') !== false) {
 			$this->to_browse[] = [
 				'Uri' => $filedata['file'],
 				'Name' => preg_replace('/Artist: /', '', $filedata['Title'])

@@ -168,6 +168,19 @@ var spotify = function() {
 					}
 				};
 				spotify.request('', data, success, fail, prio);
+			},
+
+			search: function(name, success, fail, prio) {
+				var data = {
+					method: 'search',
+					params: {
+						q: name,
+						type: 'track',
+						limit: 50,
+						cache: true
+					}
+				};
+				spotify.request('', data, success, fail, prio);
 			}
 
 		},

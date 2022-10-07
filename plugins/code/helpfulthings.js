@@ -10,9 +10,6 @@ var helpfulThings = function() {
 	var maxwidth = 640;
 	var doneonce = false;
 	var current_seed = null;
-	var trackfinder = new faveFinder(false);
-	trackfinder.setCheckDb(false);
-	trackfinder.setPriorities(['spotify']);
 
 	function getRecommendationSeeds() {
 		debug.log(medebug, "Getting Seeds For Recommendations");
@@ -55,6 +52,27 @@ var helpfulThings = function() {
 		}
 	}
 
+	function find_best_track(source, data) {
+		if (data.tracks && data.tracks.items) {
+			for (var track of data.tracks.items) {
+				if (track.name.removePunctuation() == source.Title.removePunctuation()) {
+					var arts = [];
+					track.artists.forEach(function(artist) {
+						arts.push(artist.name);
+					});
+					var astring = concatenate_artist_names(arts);
+					if (astring.removePunctuation() == source.Artistname.removePunctuation()
+						&& artists.indexOf(source.Artistname) == -1)
+					{
+						artists.push(source.Artistname);
+						return track.id;
+					}
+				}
+			};
+		}
+		return false;
+	}
+
 	return {
 
 		open: function() {
@@ -73,18 +91,31 @@ var helpfulThings = function() {
 					powers = [' and Spotify'];
 				}
 
-				if ((player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) && lastfm.isLoggedIn()) {
-					var html = '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="lastFMTrackRadio+1month">';
-					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_dailymix")+'</b><br/>';
-					html += language.gettext('label_dailymixdesc', cloneObject(powers));
+				if ((player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube'))) {
+					var html = '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="recommendationsRadio">';
+					html += '<img class="smallcover fixed" src="newimages/favicon-128.png" />';
+					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_radio_recommended")+'</b><br/>';
+					html += language.gettext('label_recommenddesc', cloneObject(powers));
 					html += '</div></div>';
 
-					html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="lastFMArtistRadio+6month">';
-					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_luckydip")+'</b><br/>';
-					html += language.gettext('label_luckydipdesc', powers);
+					html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="mixRadio">';
+					html += '<img class="smallcover fixed" src="newimages/vinyl_record.svg" />';
+					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_radio_mix")+'</b><br/>';
+					html += language.gettext('label_rmixdesc', powers);
 					html += '</div></div>';
+				 	if (lastfm.isLoggedIn()) {
+						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="lastFMTrackRadio+1month">';
+						html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
+						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_dailymix")+'</b><br/>';
+						html += language.gettext('label_dailymixdesc', cloneObject(powers));
+						html += '</div></div>';
+
+						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="lastFMArtistRadio+6month">';
+						html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
+						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_luckydip")+'</b><br/>';
+						html += language.gettext('label_luckydipdesc', powers);
+						html += '</div></div>';
+					}
 				} else if ((player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) && !lastfm.isLoggedIn()) {
 					var html = '<div class="fixed containerbox plugin_hpl_radio">';
 					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
@@ -96,20 +127,6 @@ var helpfulThings = function() {
 					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_getspotify")+'</b><br/>';
 					html += language.gettext('label_nospotify')+"</div>";
-					html += '</div>';
-				}
-
-				if (player.canPlay('spotify')) {
-					html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="spotiMixRadio+7day">';
-					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
-					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext('label_spotify_mix')+'</b><br/>';
-					html += language.gettext('label_spotimixdesc')+"</div>";
-					html += '</div>';
-
-					html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="spotiMixRadio+1year">';
-					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
-					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext('label_spotify_dj')+'</b><br/>';
-					html += language.gettext('label_spotiswimdesc')+"</div>";
 					html += '</div>';
 				}
 
@@ -157,32 +174,24 @@ var helpfulThings = function() {
 		doStageTwo: function() {
 			if (nonspotitracks.length > 0) {
 				var t = nonspotitracks[0];
-				debug.trace(medebug, "Searching For Spotify ID for",t);
-				trackfinder.findThisOne(
-					{
-						Title: t.Title,
-						trackartist: t.Artistname
-						// duration: 0,
-						// albumartist: t.Artistname,
-						// date: 0
-					},
-					helpfulThings.gotTrackResults
+				debug.trace(medebug, "Searching For Spotify ID for",t.Artistname,t.Title);
+				spotify.track.search(
+					'artist:'+t.Artistname+' track:'+t.Title,
+					helpfulThings.gotTrackResults,
+					helpfulThings.gotTrackResults,
+					true
 				);
 			}
 			helpfulThings.getMoreStuff();
 		},
 
 		gotTrackResults: function(data) {
-			debug.debug(medebug,"Got Track Results",data);
 			var t = nonspotitracks.shift();
-			if (data.file && data.trackartist && artists.indexOf(data.trackartist) == -1) {
-				var m = data.file.match(/spotify:track:(.*)$/);
-				if (m && m[1]) {
-					debug.debug(medebug,"Found Spotify Track Uri",m[1]);
-					t.id = m[1];
-					trackseeds.push(t);
-					artists.push(data.trackartist);
-				}
+			debug.debug(medebug,"Got Track Results for",t.Artistname,t.Title,data);
+			var candidate = find_best_track(t, data);
+			if (candidate !== false) {
+				t.id = candidate;
+				trackseeds.push(t)
 			}
 			helpfulThings.doStageTwo();
 		},

@@ -419,14 +419,14 @@ class base_mpd_player {
 	}
 
 	protected function sanitize_data(&$filedata) {
-	   if (strpos($filedata['Title'], "[unplayable]") === 0) {
-			logger::debug("COLLECTION", "Ignoring unplayable track ".$filedata['file']);
-			return false;
-		}
-		if (strpos($filedata['Title'], "[loading]") === 0) {
-			logger::debug("COLLECTION", "Ignoring unloaded track ".$filedata['file']);
-			return false;
-		}
+	 //   if (strpos($filedata['Title'], "[unplayable]") === 0) {
+		// 	logger::debug("COLLECTION", "Ignoring unplayable track ".$filedata['file']);
+		// 	return false;
+		// }
+		// if (strpos($filedata['Title'], "[loading]") === 0) {
+		// 	logger::debug("COLLECTION", "Ignoring unloaded track ".$filedata['file']);
+		// 	return false;
+		// }
 		$filedata['unmopfile'] = $this->unmopify_file($filedata);
 
 		if ($filedata['Track'] == 0) {
@@ -444,7 +444,6 @@ class base_mpd_player {
 		// Disc Number
 		if ($filedata['Disc'] != null)
 			$filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
-
 
 		if (prefs::get_pref('use_original_releasedate') && $filedata['OriginalDate'])
 			$filedata['Date'] = $filedata['OriginalDate'];
