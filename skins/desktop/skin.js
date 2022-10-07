@@ -206,7 +206,7 @@ var layoutProcessor = function() {
 			if ($(albummenu).isClosed()) {
 				await $.proxy(clickRegistry.doMenu, $(albummenu)).call();
 			}
-			layoutProcessor.scrollCollectionTo(albummenu.parent());
+			layoutProcessor.scrollCollectionTo($(albummenu).parent());
 		},
 
 		setRadioModeHeader: function(html) {
