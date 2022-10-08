@@ -340,6 +340,10 @@ function domainCheck($default, $domain) {
 			return 'icon-tunein';
 			break;
 
+		case "yt":
+			return 'icon-youtube-circled';
+			break;
+
 		default:
 			return $default;
 			break;
@@ -416,6 +420,7 @@ function domainIcon($d, $c) {
 		case "spotify":
 		case "ytmusic":
 		case "youtube":
+		case "yt":
 		case "internetarchive":
 		case "soundcloud":
 		case "podcast":

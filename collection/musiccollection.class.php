@@ -16,7 +16,8 @@ class musicCollection extends collection_base {
 
 	public function newTrack(&$filedata) {
 		static $current_folder = null;
-		if ($this->options['dbterms'] === true || $this->check_url_against_database($filedata['file'], $this->options['dbterms']['tag'], $this->options['dbterms']['rating'])) {
+		if ($this->options['dbterms'] === true
+			|| $this->check_url_against_database($filedata['file'], $this->options['dbterms']['tag'], $this->options['dbterms']['rating'])) {
 			if ($this->options['doing_search']) {
 				// If we're doing a search, we check to see if that track is in the database
 				// because the user might have set the AlbumArtist to something different

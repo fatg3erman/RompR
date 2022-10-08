@@ -216,6 +216,11 @@ class player extends base_mpd_player {
 		if ($filedata['Title'] && !$filedata['Album'])
 			$filedata['Album'] = $filedata['Title'];
 
+		if (strpos($filedata['Artist'][0], 'YouTube Playlist') !== false) {
+			$filedata['Artist'] = ['YouTube Playlists'];
+			$filedata['AlbumArtist'] = ['YouTube Playlists'];
+		}
+
 		if ($filedata['X-AlbumImage'])
 			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);
 
