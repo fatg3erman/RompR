@@ -106,6 +106,7 @@ class collection_base extends database {
 				Uri,
 				TTindex,
 				Disc,
+				TrackNo AS Track,
 				Artistname AS AlbumArtist,
 				Albumtable.Image AS "X-AlbumImage",
 				mbid AS MUSICBRAINZ_ALBUMID,
@@ -124,11 +125,10 @@ class collection_base extends database {
 			WHERE
 			Hidden = 0
 			AND Title = ?
-			AND TrackNo = ?
 			AND Albumname = ?
 			AND Domain = ?
 			ORDER BY isSearchResult ASC',
-			$filedata['Title'], $filedata['Track'], $filedata['Album'], $filedata['domain']
+			$filedata['Title'], $filedata['Album'], $filedata['domain']
 		);
 		foreach ($result as $tinfo) {
 			if ($tinfo['Uri'] == $filedata['file']) {
@@ -174,12 +174,12 @@ class collection_base extends database {
 			}
 		}
 
-		if ($filedata['domain'] == 'youtube' && array_key_exists('AlbumArtist', $data)) {
-			// Workaround a mopidy-youtube bug where sometimes it reports incorrect Artist info
-			// if the item being added to the queue is not the result of a search. In this case we will
-			// (almost) always have AlbumArtist info, so use that and it'll then stay consistent with the collection
-			$data['Artist'] = $data['AlbumArtist'];
-		}
+		// if ($filedata['domain'] == 'youtube' && array_key_exists('AlbumArtist', $data)) {
+		// 	// Workaround a mopidy-youtube bug where sometimes it reports incorrect Artist info
+		// 	// if the item being added to the queue is not the result of a search. In this case we will
+		// 	// (almost) always have AlbumArtist info, so use that and it'll then stay consistent with the collection
+		// 	$data['Artist'] = $data['AlbumArtist'];
+		// }
 
 		foreach (MPD_ARRAY_PARAMS as $p) {
 			if (array_key_exists($p, $data) && $data[$p] !== null) {
