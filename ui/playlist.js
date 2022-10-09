@@ -770,18 +770,6 @@ var playlist = function() {
 			return finaltrack;
 		},
 
-		checkPodcastProgress: function() {
-			if (player.status.state == 'play' || player.status.state == 'pause') {
-				var durationfraction = player.status.progress/currentTrack.Time;
-				var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? player.status.progress : 0;
-				if (currentTrack.type == "podcast") {
-					podcasts.storePlaybackProgress({uri: currentTrack.file, progress: Math.round(progresstostore), name: 'Resume'});
-				} else if (currentTrack.type == 'audiobook') {
-					nowplaying.storePlaybackProgress(Math.round(progresstostore), null, 'Resume');
-				}
-			}
-		},
-
 		trackHasChanged: async function(backendid) {
 			await playlist.is_valid();
 			$retval = true;

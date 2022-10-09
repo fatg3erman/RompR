@@ -305,47 +305,47 @@ var metaHandlers = function() {
 		},
 
 		fromLastFMData: {
-				getMeta: function(data, success, fail) {
-					var track = metaHandlers.fromLastFMData.mapData(data, 'get', false);
-					dbQueue.request([track], success, fail);
-				},
+			getMeta: function(data, success, fail) {
+				var track = metaHandlers.fromLastFMData.mapData(data, 'get', false);
+				dbQueue.request([track], success, fail);
+			},
 
-				setMeta: function(data, action, attributes, success, fail) {
-					var tracks = [];
-					data.forEach(function(track) {
-						tracks.push(metaHandlers.fromLastFMData.mapData(track, action, attributes));
-					});
-					dbQueue.request(tracks, success, fail);
-					return cloneObject(tracks);
-				},
+			setMeta: function(data, action, attributes, success, fail) {
+				var tracks = [];
+				data.forEach(function(track) {
+					tracks.push(metaHandlers.fromLastFMData.mapData(track, action, attributes));
+				});
+				dbQueue.request(tracks, success, fail);
+				return cloneObject(tracks);
+			},
 
-				mapData: function(data, action, attributes) {
-					var track = {action: action};
-					track.Title = data.name;
-					if (data.album)
-						track.Album = data.album['#text'];
+			mapData: function(data, action, attributes) {
+				var track = {action: action};
+				track.Title = data.name;
+				if (data.album)
+					track.Album = data.album['#text'];
 
-					if (data.artist) {
-						// We have in the past tried to be clever about this, since
-						// mpdscribble and mopidy-scrobbler don't always join artist names
-						// the same way we do. Unfortunately it just ain't possible to do.
-						// This works well if you have last.fm autocorrect disabled on last.fm
-						// and you use Rompr to scrobble and have autocorrect turned off there too.
-						// Otherwise I'm afraid it can be a bit shit where there are multiple artist names
-						// And it's fuckin shocking if you're playing back podcasts and not scrobbling from Rompr,
-						// 'cos the metadata the players use is nothing like what comes out of the RSS which is what we use
-						track.trackartist = data.artist.name;
-						track.albumartist = track.trackartist;
-					}
-					if (data.date)
-						track.lastplayed = data.date.uts;
-
-					if (attributes)
-						track.attributes = attributes;
-
-					debug.debug("DBQUEUE", "LFM Mapped Data is",track);
-					return track;
+				if (data.artist) {
+					// We have in the past tried to be clever about this, since
+					// mpdscribble and mopidy-scrobbler don't always join artist names
+					// the same way we do. Unfortunately it just ain't possible to do.
+					// This works well if you have last.fm autocorrect disabled on last.fm
+					// and you use Rompr to scrobble and have autocorrect turned off there too.
+					// Otherwise I'm afraid it can be a bit shit where there are multiple artist names
+					// And it's fuckin shocking if you're playing back podcasts and not scrobbling from Rompr,
+					// 'cos the metadata the players use is nothing like what comes out of the RSS which is what we use
+					track.trackartist = data.artist.name;
+					track.albumartist = track.trackartist;
 				}
+				if (data.date)
+					track.lastplayed = data.date.uts;
+
+				if (attributes)
+					track.attributes = attributes;
+
+				debug.debug("DBQUEUE", "LFM Mapped Data is",track);
+				return track;
+			}
 		},
 
 		genericAction: function(action, success, fail) {
@@ -354,6 +354,16 @@ var metaHandlers = function() {
 			} else {
 				dbQueue.request([{action: action}], success, fail);
 			}
+		},
+
+		check_for_db_updates: function() {
+			dbQueue.request(
+				[{action: 'getreturninfo'}],
+				collectionHelper.updateCollectionDisplay,
+				function(data) {
+					debug.warn("Failed to get return info");
+				}
+			);
 		},
 
 		genericQuery: async function(action, success, fail) {

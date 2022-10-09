@@ -137,6 +137,12 @@ function playerController() {
 			if (last_state != player.status.state)
 				checkStateChange();
 			infobar.updateWindowValues();
+			if (player.status.db_updated == 'track') {
+				metaHandlers.check_for_db_updates();
+			} else if (player.status.db_updated != 'no') {
+				podcasts.loadPodcast(player.status.db_updated);
+			}
+
 		} catch (err) {
 			playlist.validate();
 			debug.error('CONTROLLER', 'Command List Failed', err);
@@ -329,18 +335,15 @@ function playerController() {
 	}
 
 	this.stop = function() {
-		playlist.checkPodcastProgress();
 		alarmclock.pre_stop_actions();
 		self.do_command_list([["stop"]]);
 	}
 
 	this.next = function() {
-		playlist.checkPodcastProgress();
 		self.do_command_list([["next"]]);
 	}
 
 	this.previous = function() {
-		playlist.checkPodcastProgress();
 		self.do_command_list([["previous"]]);
 	}
 
@@ -355,12 +358,10 @@ function playerController() {
 	}
 
 	this.playId = function(id) {
-		playlist.checkPodcastProgress();
 		self.do_command_list([["playid",id]]);
 	}
 
 	this.playByPosition = function(pos) {
-		playlist.checkPodcastProgress();
 		self.do_command_list([["play",pos.toString()]]);
 	}
 

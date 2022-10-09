@@ -25,6 +25,7 @@ class base_mpd_player {
 	protected $playlist_tracksadded;
 	protected $expected_state;
 
+	private $db_updated = 'no';
 	private $current_status = [];
 	public $current_song = [];
 
@@ -295,9 +296,56 @@ class base_mpd_player {
 		return $retarr;
 	}
 
+	// If we're doing certain actions we might want to set a Resume bookmark. It's better to do it here
+	// in the backend because then we handle setting the bookmark even if it's the alarm clock
+	// that is interrupting playback.
+	// It's a tad convoluted
+	private function check_set_resume_bookmark($cmds) {
+		$temp_status = $this->get_status();
+		if ($temp_status['state'] == 'play' || $temp_status['state'] == 'pause') {
+			foreach ($cmds as $c) {
+				if ($c == 'stop' || $c == 'next' || $c == 'previous' || strpos($c, 'play') === 0 || $c == 'clear') {
+					$this->set_resume($temp_status);
+					break;
+				}
+			}
+		}
+	}
+
+	// If we do something, we set $this->db_updated, which, if this is in response to something from the UI
+	// gets returned to controller.js and that will use it to call 'getreturninfo' via metaDatabase
+	private function set_resume($temp_status) {
+		$temp_db = new metaDatabase();
+		$dirs = [];
+		foreach ($this->parse_list_output('currentsong', $dirs, false) as $d) {
+			$currentsong = $d;
+		}
+		$info = $temp_db->doNewPlaylistFile($currentsong);
+		if (!$info['Time']) {
+			logger::warn('PLAYER', "Track Time is not set, cannot store resume position");
+			return;
+		}
+		$durationfraction = $temp_status['elapsed']/$info['Time'];
+		$progresstostore = ($durationfraction > 0.05 && $durationfraction < 0.95) ? $temp_status['elapsed'] : 0;
+		if ($info['type'] == 'audiobook') {
+			logger::log('PLAYER', 'Storing Resume progress of',intval($progresstostore),'on an Audiobook');
+			$info['attributes'] = [['attribute' => 'Bookmark', 'value' => [intval($progresstostore), 'Resume']]];
+			$temp_db->sanitise_data($info);
+			$temp_db->create_foundtracks();
+			$temp_db->set($info);
+			$this->db_updated = 'track';
+		} else if ($info['type'] == 'podcast') {
+			logger::log('PLAYER', 'Storing Resume progress of',intval($progresstostore),'on a Podcast');
+			$temp_db = new poDatabase();
+			$this->db_updated = $temp_db->setPlaybackProgress(intval($progresstostore), $info['file'], 'Resume');
+		}
+	}
+
 	public function do_command_list($cmds) {
 		$done = 0;
 		$cmd_status = null;
+
+		$this->check_set_resume_bookmark($cmds);
 
 		if ($this->player_type != prefs::get_pref('collection_player')) {
 			$this->translate_player_types($cmds);
@@ -993,6 +1041,7 @@ class base_mpd_player {
 			$this->mpd_status['error'] = preg_replace('/ACK \[.*?\]\s*/','',$this->mpd_status['error']);
 		}
 
+		$this->mpd_status['db_updated'] = $this->db_updated;
 		return $this->mpd_status;
 
 	}

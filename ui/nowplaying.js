@@ -434,7 +434,7 @@ var nowplaying = function() {
 				index = findCurrentTrack();
 			}
 			debug.log("NOWPLAYING","Setting Playback Progress on",index,"to", progress);
-			tracks_played[index].setMeta('set', 'Bookmark', [progress, name]);
+			tracks_played[index].setMeta('set', 'Bookmark', [Math.round(progress), name]);
 		},
 
 		addTrackToCollection: function(evt, index) {

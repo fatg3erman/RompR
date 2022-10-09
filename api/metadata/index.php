@@ -46,6 +46,10 @@ foreach($params as $p) {
 			prefs::$database->prepare_returninfo();
 			break;
 
+		case 'getreturninfo':
+			prefs::$database->prepare_returninfo();
+			break;
+
 		case 'youtubedl':
 			set_time_limit(0);
 			prefs::$database->close_transaction();
