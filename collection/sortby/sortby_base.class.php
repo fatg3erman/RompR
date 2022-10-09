@@ -275,13 +275,15 @@ class sortby_base {
 		logger::log('SORTBY', 'Doing Track List For Album',$this->who);
 		$trackarr = $this->track_sort_query();
 
-		if ($this->why == 'b' && count($trackarr) == 1 && substr($trackarr[0]['title'],0,6) == "Album:"
-			&& strpos($trackarr[0]['uri'], 'spotify:album') === 0) {
-			logger::log('SORTER', 'Album has one track which is a spotify album Uri');
-			if (prefs::$database->check_album_browse($this->who)) {
-				return;
+		if ($this->why == 'b') {
+			if (substr($trackarr[0]['title'],0,6) == "Album:") {
+				logger::log('SORTER', 'Album has one track which is an album Uri');
+				$this->who = prefs::$database->check_album_browse($this->who);
+				if ($this->who === true) {
+					return;
+				}
+				$trackarr = $this->track_sort_query();
 			}
-			$trackarr = $this->track_sort_query();
 		}
 
 		$most_recent = 0;

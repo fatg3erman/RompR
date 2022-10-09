@@ -39,12 +39,6 @@ switch (true) {
 		}
 		break;
 
-	case array_key_exists('browsealbum', $_REQUEST):
-		// Populate a spotify album in mopidy's search results - as spotify doesn't return all tracks
-		logit('browsealbum');
-		browse_album();
-		break;
-
 	case array_key_exists('terms', $_REQUEST):
 		// SQL database search request
 		logit('terms');
@@ -138,52 +132,6 @@ function mpd_search($cmd, $domains, $dbterms) {
 	prefs::$database->do_update_with_command($cmd, array(), $domains);
 	prefs::$database->dumpAlbums($_REQUEST['dump']);
 	prefs::$database->dumpArtistSearchResults($_REQUEST['dump']);
-}
-
-function browse_album() {
-	$a = preg_match('/^(a|b)(.*?)(\d+|root)/', $_REQUEST['browsealbum'], $matches);
-	if (!$a) {
-		print '<h3>'.language::gettext("label_general_error").'</h3>';
-		logger::error("DUMPALBUMS", "Browse Album Failed - regexp failed to match", $_REQUEST['browsealbum']);
-		return false;
-	}
-	$why = $matches[1];
-	$what = $matches[2];
-	$who = $matches[3];
-	prefs::$database = new musicCollection(
-		[
-			'doing_search' => true,
-			'trackbytrack' => true
-		]
-	);
-	$ad = prefs::$database->get_album_details($who);
-	$albumlink = $ad['AlbumUri'];
-	logger::trace('BROWSEALBUM',$why,$what,$who,$ad['Artistname'],$albumlink);
-	if (substr($albumlink, 0, 8) == 'podcast+') {
-		logger::trace("ALBUMS", "Browsing For Podcast ".substr($albumlink, 9));
-		$podatabase = new poDatabase();
-		$podid = $podatabase->getNewPodcast(substr($albumlink, 8), 0, false);
-		logger::log("ALBUMS", "Ouputting Podcast ID ".$podid);
-		$podatabase->outputPodcast($podid, false);
-		$podatabase->close_database();
-	} else {
-		prefs::$database->do_update_with_command('find file "'.$albumlink.'"', array(), false);
-		// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
-		// When we browse the album the new tracks therefore get added to a new album.
-		// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
-		// (otherwise the GUI doesn't work)
-		$sorter = choose_sorter_by_key($_REQUEST['browsealbum']);
-		$lister = new $sorter($why.'album'.$who);
-		$a = prefs::$database->find_justadded_albums();
-		if (is_array($a) && count($a) > 0 && $a[0] != $who) {
-			logger::log('BROWSEALBUM', 'New album',$a[0],'was created. Setting it to',$who);
-			if ($ad['Image'] != null) {
-				prefs::$database->set_image_for_album($a[0], $ad['Image']);
-			}
-			prefs::$database->replace_album_in_database($who, $a[0]);
-		}
-		print $lister->output_track_list(true);
-	}
 }
 
 function database_search() {

@@ -165,6 +165,7 @@ class musicCollection extends collection_base {
 	public function check_album_browse($index) {
 		$this->options['doing_search'] = true;
 		$this->options['trackbytrack'] = true;
+
 		$album_details = $this->get_album_details($index);
 		$uri = $album_details['AlbumUri'];
 
@@ -175,19 +176,30 @@ class musicCollection extends collection_base {
 
 		logger::log('COLLECTION', 'Browsing for album',$uri);
 		$this->do_update_with_command('find file "'.$uri.'"', array(), false);
-		// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
-		// When we browse the album the new tracks therefore get added to a new album.
-		// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
-		// (otherwise the GUI doesn't work)
 		$just_added = $this->find_justadded_albums();
-		if (is_array($just_added) && count($just_added) > 0 && $just_added[0] != $index) {
-			logger::log('BROWSEALBUM', 'New album',$just_added[0],'was created. Setting it to',$index);
-			if ($album_details['Image'] != null) {
-				$this->set_image_for_album($just_added[0], $album_details['Image']);
+		if (is_array($just_added) && count($just_added) > 0) {
+			logger::log('BROWSEALBUM', 'We got a just modded response');
+			if ($just_added[0] == $index) {
+				logger::log('BROWSEALBUM', 'We Modified existing album',$just_added[0]);
+				// This is a HACK. When browsing yt:playlist URIs we often end up getting details of an album that already exists
+				// because it was returned as an album by search. Those tracks might not have track numbers and so they
+				// get duplicated.
+				$this->generic_sql_query('DELETE FROM Tracktable WHERE Albumindex = '.$just_added[0].' AND TrackNo = 0');
+				return $just_added[0];
+			} else {
+				// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
+				// When we browse the album the new tracks therefore get added to a new album.
+				// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
+				// (otherwise the GUI doesn't work)
+				logger::log('BROWSEALBUM', 'New album',$just_added[0],'was created. Setting it to',$index);
+				if ($album_details['Image'] != null) {
+					$this->set_image_for_album($just_added[0], $album_details['Image']);
+				}
+				$this->replace_album_in_database($index, $just_added[0]);
 			}
-			$this->replace_album_in_database($index, $just_added[0]);
 		}
-		return false;
+
+		return $index;
 	}
 
 	public function check_artist_browse($index) {
