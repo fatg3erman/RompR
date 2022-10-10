@@ -145,7 +145,6 @@ function find_executable($prog) {
 	// Try to find an executable program by testing various paths until we find it.
 	// EXECUTABLES_PATHS will prioritise Homebrew (on macOS) over builtin utilities.
 	// Returns boolean false if the program is not found, or the path (not including the program name)
-	logger::debug("BITS", "  Looking for executable",$prog);
 	$retval = false;
 	foreach (EXECUTABLES_PATHS as $c) {
 		if (is_executable($c.$prog)) {
@@ -154,9 +153,9 @@ function find_executable($prog) {
 		}
 	}
 	if ($retval === false) {
-		logger::warn("BITS", "  Executable",$prog,"Not Found!");
+		logger::warn("BITS", "Executable",$prog,"Not Found!");
 	} else {
-		logger::debug("BITS", "  ..Found at",$retval.$prog);
+		logger::log("BITS", "Found",$prog,"at",$retval.$prog);
 	}
 	return $retval;
 

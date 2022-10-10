@@ -1181,16 +1181,24 @@ class metaDatabase extends playlistCollection {
 	}
 
 	public function youtubedl($data) {
-		$ytdl_path = find_executable('youtube-dl');
-		if ($ytdl_path === false)
-			$this->youtubedl_error('youtube-dl binary could not be found', null);
+		$downloader = 'yt-dlp';
+		$ytdl_path = find_executable($downloader);
+		if ($ytdl_path === false) {
+			$downloader = 'youtube-dl';
+			$ytdl_path = find_executable($downloader);
+			if ($ytdl_path === false)
+				$this->youtubedl_error('youtube-dl binary could not be found', null);
+		}
 
 		logger::core('YOUTUBEDL', 'youtube-dl is at',$ytdl_path);
-		$avconv_path = find_executable('avconv');
+		$avconv_path = find_executable('ffmpeg');
 		if ($avconv_path === false) {
-			$avconv_path = find_executable('ffmpeg');
+			if ($downloader == 'yt-dlp')
+				$this->youtubedl_error('Could not find ffmpeg - this is required for use with yt-dlp', null);
+
+			$avconv_path = find_executable('avconv');
 			if ($avconv_path === false)
-				$this->youtubedl_error('Could not find avconv or ffmpeg', null);
+				$this->youtubedl_error('Could not find ffmpeg or avconv', null);
 
 		}
 
@@ -1201,7 +1209,13 @@ class metaDatabase extends playlistCollection {
 		if (!$a)
 			$this->youtubedl_error('Could not match URI '.$data['file'], null);
 
-		$uri_to_get = 'https://youtu.be/'.$matches[1];
+		if ($downloader == 'yt-dlp') {
+			logger::log('YOUTUBEDL', 'Using yt-dlp so passing youtube music URI so we can get HQ downlaods');
+			$uri_to_get = 'https://music.youtube.com/watch/?v=';
+		} else {
+			$uri_to_get = 'https://youtu.be/';
+		}
+		$uri_to_get .= $matches[1];
 		logger::log('YOUTUBEDL', 'Downloading',$uri_to_get);
 
 		$info = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
@@ -1251,8 +1265,26 @@ class metaDatabase extends playlistCollection {
 		// can do about that.
 		close_browser_connection();
 		logger::log('YOUTUBEDL', 'OK now we start the fun');
-		file_put_contents($target_dir.'/original.uri', $uri_to_get);
-		exec($ytdl_path.'youtube-dl -o "'.$target_dir.'/%(title)s-%(id)s.%(ext)s" --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> '.$progress_file.' 2>&1', $output, $retval);
+		// file_put_contents($target_dir.'/original.uri', $uri_to_get);
+
+		$switches = [
+			'-o "'.$target_dir.'/%(title)s-%(id)s.%(ext)s"',
+			'--ffmpeg-location "'.$avconv_path.'"',
+			'--extract-audio',
+			'--write-thumbnail',
+			'--restrict-filenames',
+			'--newline',
+			'--audio-format flac',
+			'--audio-quality 0'
+		];
+		if ($downloader == 'yt-dlp') {
+			$switches[] = '--embed-thumbnail';
+			$switches[] = '--format bestvideo*+bestaudio/best';
+		}
+		$cmdline = $ytdl_path.$downloader.' '.implode(' ', $switches).' '.$uri_to_get;
+		logger::log('YOUTUBEDL', 'Command line is',$cmdline);
+		file_put_contents($progress_file, $cmdline."\n", FILE_APPEND);
+		exec($cmdline.' >> '.$progress_file.' 2>&1', $output, $retval);
 		if ($retval != 0 && $retval != 1) {
 			$this->youtubedl_error('youtube-dl returned error code '.$retval, $progress_file);
 		}
@@ -1294,6 +1326,8 @@ class metaDatabase extends playlistCollection {
 				logger::error('YOUTUBEDL', 'Failed to write tags!', implode(' ', $tagwriter->errors));
 			}
 		}
+
+		copy($progress_file, $target_dir.'/download_log.txt');
 
 		$new_uri = dirname(dirname(get_base_url())).'/'.$files[0];
 		logger::log('YOUTUBEDL', 'New URI is', $new_uri);

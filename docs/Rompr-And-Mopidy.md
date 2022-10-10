@@ -135,46 +135,53 @@ Note that only Mopidy-Local seems to return Genres, so Genre-based Collection fu
 
 ## Note on Mopidy-YTMusic and Mopidy-Youtube
 
-The Music From Everywhere stations will search your Mopidy sources for music to play.
-
-If you're using Mopidy-YTMusic and you're not a paid subscriber it wil work but some tracks will not play. Also tracks from
-Mopidy-YTMusic cannot be added to the Music Collection because Mopidy-YTMusic cannot accept a URI it has not seen before.
+Tracks from Mopidy-YTMusic cannot be added to the Music Collection because Mopidy-YTMusic cannot accept a URI it has not seen before.
 If you attempt to add a YTMusic track to the Collection it will instead be added to the Wishlist.
 
-If you're using Mopidy-Youtube these stations work best if you enable the Music API. See the Mopidy-Youtube documentation for how to do that.
+If you're using Mopidy-Youtube the Music From Everywhere Personalised Radio stations work best if you enable the Music API.
+If you're a Youtube Premium subscriber you need to enable yt_dlp and use a cookiefile. See the Mopidy-Youtube documentation for how to do that.
 
 There is an option on the rompr/?setup screen to 'Translate YTMusic URIs to Youtube URIs'. If you enable this then, if you try to add a YTMusic
 track to the collection and you have mopidy-youtube enabled, the URI will be converted from mopidy-ytmuisc to mopidy-youtube and so the track can
-be added to the Collection. This will only work if you have mopidy-youtube set up so that it is using the ytmusicapi. Note that this hasn't been
+be added to the Collection. This will only work if you have mopidy-youtube set up so that it is using the Music API. Note that this hasn't been
 very thoroughly tested.
+
+
+## Downloading Youtube Tracks
 
 If you add Youtube tracks to your Music Collection, you'll be given an option to download the audio.
 
 ![](images/youtubedl.png)
 
-In order for this to work you must have the programs youtube-dl and either avconv or ffmpeg installed on your system. On macOS you can get youtube-dl and ffmpeg using HomeBrew,
-on Linux there are probably packages for both of these. (avconv is simply the new name for ffmpeg, so install whichever your distribution provides)
+In order for this to work you must have the programs youtube-dl or yt-dlp, and either avconv or ffmpeg installed on your system.
+On macOS you can get youtube-dl and ffmpeg using HomeBrew, on Linux there are probably packages for both of these, or yt-dlp can be installed using pip.
+Note that yt-dlp is preferred over youtube-dl, and yt-dlp requires ffmpeg, avconv will not work. So if you have yt-dlp installed you must also have ffmpeg.
+
+The binaries must be installed so that they can be executed by your webserver. RompR will look under the following paths, in this order:
+/usr/local/bin/, /opt/local/bin/, /opt/homebrew/bin/, /usr/bin/
 
 If you're trying to use this feature and you keep getting an error, enable debug logging and look at the output. If all the binaries are installed then the debug log
-will tell you the uri it is trying to download, you should try that from the command line using
-
-	youtube-dl --ffmpeg-location path/to/your/ffmpeg/binary -x --newline --audio-format flac --audio-quality 0 uri/from/debug/log
-
-and see what error messages you get.
+will tell you the command line it is using, you should try that from a console to look for error messages.
 
 Assuming it works, the YoutTube video will be downloaded and the audio will be extracted to a FLAC file which will be streamed from your webserver
 using Mopidy's Stream backend the next time you add the track to the play queue.
 
-Note that if you have your Mopidy-Youtube set up to log in to Youtube Music and you are a paid subscriber, you might not get the high quality
-audio stream when you download the track. There might be a way to get youtube-dl to do this, but I haven't looked into it.
+The file will be downloaded to a subdirectory under rompr/prefs/youtubedl/. Assuming the download actually started there will be a log file
+in that directory which includes the complete command line that was used and all of the downloader's text output.
 
 If you have the flac packages installed (sudo apt install flac) then the downloaded file will be tagged with the artist and track name.
 Tagged tracks can be moved into your 'normal' music collection. Provided you have the option to 'Prefer Local Music to Internet Sources' enabled,
-the collection will simply update with the new location. Moving the files to your music collection means they can be played using the 'local' backend
-which support seeking and pausing much better than the stream backend.
+a Collection Update will discover the file. Moving the files to your music collection means they can be played using the 'local' backend
+which supports seeking and pausing much better than the stream backend.
 
 One way is to move the downloaded files from rompr/prefs/youtubedl into an appropriate folder, do 'mopidy local scan' and rescan your collection.
 
 Another approach is to symlink rompr/prefs/youtubedl into your Music Directory and make sure the webserver has write permissions.
 When you download a track you simply need to 'mopidy local scan' and then Update your Music Collection.
 
+### Youtube Music Premium Subscribers
+
+Youtube Music Premium subscribers have the ability to stream audio at a higher quality. To ensure your downloads use the highest quality streams
+you need to install yt-dlp and edit your /etc/yt-dlp.conf and set the --cookies option so it points to your cookie file.
+The cookie file must also be writeable by your webserver.
+This is the same cookie file you reference in the musicapi_cookiefile option for moidy-youtube. See Mopidy-Youtube's documentation for more info.
