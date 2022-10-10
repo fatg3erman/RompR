@@ -1279,9 +1279,7 @@ class base_mpd_player {
 		// Although doNewPlaylistFile does return a Playcount, it only does so for non-Hidden tracks
 		// and we don't really want to be messing around with get_extra_track_info() because that's
 		// used when doing a search and creating the tracklist and the way we need to widen that query to work here
-		// really doesn't look good. Also remember that the UI is still updating playcounts if it's open,
-		// and because it'll do it earlier than we do (so you gat a nice visual feedback) we MUST use the
-		// same data, processed in the same way.
+		// really doesn't look good.
 		prefs::$database->sanitise_data($this->current_song);
 		$this->current_song['Playcount'] = prefs::$database->get($this->current_song, 'Playcount');
 		prefs::$database->close_database();
