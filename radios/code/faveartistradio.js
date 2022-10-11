@@ -12,7 +12,7 @@ var faveArtistRadio = function() {
 		getURIs: async function() {
 			try {
 				var t = await $.ajax({
-					url: "radios/api/faveartistradio.php",
+					url: "radios/api/starRadios.php",
 					type: "POST",
 					contentType: false,
 					data: JSON.stringify({radiomode: mode, radioparam: param}),
@@ -26,7 +26,11 @@ var faveArtistRadio = function() {
 		},
 
 		modeHtml: function(p) {
-			return '<i class="icon-artist modeimg"/></i><span class="alignmid bold">'+language.gettext("label_radio_fartist")+'</span>';
+			if (param) {
+				return '<i class="icon-artist modeimg"/></i><span class="alignmid bold">'+param+' '+language.gettext("label_radio")+'</span>';
+			} else {
+				return '<i class="icon-artist modeimg"/></i><span class="alignmid bold">'+language.gettext("label_radio_fartist")+'</span>';
+			}
 		}
 	}
 }();

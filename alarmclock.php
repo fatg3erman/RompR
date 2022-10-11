@@ -47,10 +47,7 @@ while (true) {
 			'radioparam' => 'allrandom'
 		]);
 		$player->prepare_smartradio();
-		prefs::$database = new collection_radio();
-		prefs::$database->preparePlaylist();
-		prefs::$database->close_database();
-		$player->check_radiomode();
+		$player->do_smartradio(1);
 		$mpd_status = $player->do_command_list(['status']);
 	}
 

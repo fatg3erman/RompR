@@ -445,12 +445,13 @@ class database extends data_base {
 	}
 
 	public function create_toptracks_table() {
+		// UNIQUE INDEX dos take NULL into account, so we can't put NULL into those columns
 		$name = everywhere_radio::get_seed_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"topindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
 			"Type INT NOT NULL, ".
-			"Artist VARCHAR(100), ".
-			"Title VARCHAR(255), ".
+			"Artist VARCHAR(100) NOT NULL, ".
+			"Title VARCHAR(255) NOT NULL, ".
 			"UNIQUE INDEX(Artist, Title), ".
 			"PRIMARY KEY (topindex)) ENGINE=InnoDB", true))
 		{
@@ -477,8 +478,8 @@ class database extends data_base {
 		$name = everywhere_radio::get_uri_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"uriindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
-			"Artist VARCHAR(100), ".
-			"Title VARCHAR(255), ".
+			"Artist VARCHAR(100) NOT NULL, ".
+			"Title VARCHAR(255) NOT NULL, ".
 			"Uri VARCHAR(2000), ".
 			"UNIQUE INDEX(Artist, Title), ".
 			"PRIMARY KEY (uriindex)) ENGINE=InnoDB", true))

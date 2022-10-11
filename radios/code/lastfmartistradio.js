@@ -12,7 +12,7 @@ var lastFMArtistRadio = function() {
 		getURIs: async function() {
 			try {
 				var t = await $.ajax({
-					url: "radios/api/lastFmTrackRadio.php",
+					url: "radios/api/starRadios.php",
 					type: "POST",
 					contentType: false,
 					data: JSON.stringify({radiomode: mode, radioparam: param}),

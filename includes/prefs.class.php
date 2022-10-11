@@ -18,7 +18,7 @@ class prefs {
 			"radiomode" => "",
 			"radioparam" => "",
 			"radioconsume" => [],
-			"radiodomains" => ['local', 'spotify', 'ytmusic'],
+			"radiodomains" => ['local', 'spotify', 'youtube', 'ytmusic'],
 			"toptracks_current" => 1,
 			"toptracks_total" => 1
 		]
@@ -131,8 +131,6 @@ class prefs {
 		"lastfm_logged_in" => false,
 		"lastfm_scrobbling" => false,
 		"scrobblepercent" => 50,
-
-		"translate_ytmusic" => false
 	];
 
 	public const BROWSER_PREFS = [
@@ -570,9 +568,17 @@ class prefs {
 
 				case 95:
 					if (!array_key_exists('radiodomains', self::$prefs['multihosts'][$key]['radioparams']))
-						self::$prefs['multihosts'][$key]['radioparams']['radiodomains'] = ['local', 'spotify', 'ytmusic'];
+						self::$prefs['multihosts'][$key]['radioparams']['radiodomains'] = ['local', 'spotify', 'youtube', 'ytmusic'];
+						break;
 
-
+				case 96:
+					if (!array_key_exists('radio_process', self::$prefs['multihosts'][$key]['radioparams']))
+						self::$prefs['multihosts'][$key]['radioparams']['radio_process'] = [
+							"mode" => '',
+							"param" => '',
+							"pid" => ''
+						];
+						break;
 			}
 		}
 		self::save();
@@ -622,7 +628,7 @@ class prefs {
 		//
 
 		if (array_key_exists('currenthost', $_POST)) {
-			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable', 'spotify_mark_playable', 'translate_ytmusic') as $p) {
+			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable', 'spotify_mark_playable') as $p) {
 				if (array_key_exists($p, $_POST)) {
 					$_POST[$p] = true;
 				} else {

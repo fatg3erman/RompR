@@ -2,15 +2,19 @@
 
 class everywhere_radio extends musicCollection {
 
-	const TYPE_TOP_TRACK = 0;
-	const TYPE_RELATED_TRACK = 1;
-	const TYPE_USED_TOP_TRACK = 2;
+	// TYPE fields are a bitmask as a track in this table can be both a
+	// TOP_TRACK (to be used as a seed) and a search track (to be used for searching for
+	// tracks to play)
+	const TYPE_TOP_TRACK = 1;
+	const TYPE_USED_AS_SEED = 2;
+	const TYPE_RELATED_TRACK = 4;
+	const TYPE_USED_FOR_SEARCH = 8;
 
 	public function preparePlaylist() {
 		$this->create_toptracks_table();
 		$this->create_radio_uri_table();
 		$this->prepare();
-		return $this->search_for_track();
+		// return $this->search_for_track();
 	}
 
 	public static function get_seed_table_name() {
@@ -25,28 +29,45 @@ class everywhere_radio extends musicCollection {
 
 	}
 
+	// do_seed_search() takes a thing from TopTracks and searches for it.
+	// It returns an array of tracks from fave_finder().
+	// You can either use just one, OR call handle_multi_tracks() to put them
+	// in the Uri table then call get_one_uri() to return something from that table.
 	protected function do_seed_search($type = null) {
 		$uris = [];
 		$gotseeds = false;
+		$query_params = [];
+		$qstring = "SELECT * FROM ".self::get_seed_table_name()." WHERE ";
 		if ($type) {
-			$seeds = $this->generic_sql_query("SELECT * FROM ".self::get_seed_table_name()." WHERE Type = ".$type." ORDER BY ".self::SQL_RANDOM_SORT." LIMIT 1");
-		} else {
-			$seeds = $this->generic_sql_query("SELECT * FROM ".self::get_seed_table_name()." ORDER BY ".self::SQL_RANDOM_SORT." LIMIT 1");
+			$qstring .= "Type & ? > 0 AND ";
+			$query_params[] = $type;
 		}
+		$qstring .= "Type & ? = 0 ORDER BY ".self::SQL_RANDOM_SORT." LIMIT 1";
+		$query_params[] = self::TYPE_USED_FOR_SEARCH;
+		$seeds = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [], $qstring, $query_params);
 		foreach ($seeds as $seed) {
 			$gotseeds = true;
-			if ($seed['Type'] != self::TYPE_TOP_TRACK) {
-				$this->sql_prepare_query(true, null, null, null,
-					"DELETE FROM ".self::get_seed_table_name()." WHERE topindex = ?",
-					$seed['topindex']
-				);
-			}
+			$this->sql_prepare_query(true, null, null, null,
+				"UPDATE ".self::get_seed_table_name()." SET Type = Type + ? WHERE topindex = ?",
+				self::TYPE_USED_FOR_SEARCH,
+				$seed['topindex'],
+			);
 			$blarg = $this->fave_finder($seed);
 			foreach ($blarg as $try) {
 				if ($this->is_not_audiobook($try['file']))
 					$uris[] = $try;
 			}
 		}
+		// Tidy up tracks that have been used as seeds and searched for.
+		// RELATED_TRACK will never be used as a ssed (atm, at least)
+		// NOT A GOOD IDEA. We have a UNIQUE INDEX on TopTracks to prevent duplication of entries
+		// If we delete them then they could come back and get searched for again.
+		// $this->sql_prepare_query(true, null, null, null,
+		// 	"DELETE FROM ".self::get_seed_table_name()." WHERE ((Type & ? > 0 OR Type & ? > 0) AND Type & ? > 0)",
+		// 	self::TYPE_USED_AS_SEED,
+		// 	self::TYPE_RELATED_TRACK,
+		// 	self::TYPE_USED_FOR_SEARCH
+		// );
 		return array($uris, $gotseeds);
 	}
 
@@ -123,7 +144,8 @@ class everywhere_radio extends musicCollection {
 
 	protected function is_artist_or_album($file) {
 		if (
-			(static::IGNORE_ALBUMS && strpos($file, ':album:') !== false)
+			strpos($file, ':album:') !== false
+			|| strpos($file, ':playlist:') !== false
 			|| strpos($file, ':artist:') !== false
 		) {
 			return true;
@@ -153,7 +175,7 @@ class everywhere_radio extends musicCollection {
 		return trim($thing);
 	}
 
-	public function doPlaylist($numtracks, &$player) {
+	public function doPlaylist($param, $numtracks, &$player) {
 		while ($numtracks > 0) {
 			$uri = $this->search_for_track();
 			if ($uri === null) {
@@ -215,7 +237,7 @@ class everywhere_radio extends musicCollection {
 			$this->add_toptrack(
 				$type,
 				$artist['Artistname'],
-				null
+				''
 			);
 		}
 	}

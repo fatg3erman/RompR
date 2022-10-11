@@ -213,8 +213,8 @@ class player extends base_mpd_player {
 		if (!$filedata['X-AlbumUri'])
 			$filedata['X-AlbumUri'] = $filedata['file'];
 
-		if ($filedata['Title'] && !$filedata['Album'])
-			$filedata['Album'] = $filedata['Title'];
+		// if ($filedata['Title'] && !$filedata['Album'])
+		// 	$filedata['Album'] = $filedata['Title'];
 
 		if (strpos($filedata['Artist'][0], 'YouTube Playlist') !== false) {
 			$filedata['Artist'] = ['YouTube Playlists'];

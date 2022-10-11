@@ -1,13 +1,13 @@
 <?php
 
-class collection_radio extends database {
+class collection_radio extends musicCollection {
 
 	public function preparePlaylist() {
 		$this->generic_sql_query('UPDATE Tracktable SET usedInPlaylist = 0 WHERE usedInPlaylist = 1');
 		$this->init_random_albums();
 	}
 
-	public function doPlaylist($playlist, $limit) {
+	public function doPlaylist($playlist, $limit, &$player) {
 		logger::mark("SMARTRADIO", "Loading Playlist",$playlist,'limit',$limit);
 		$sqlstring = "";
 		$tags = null;
@@ -81,11 +81,12 @@ class collection_radio extends database {
 			$sqlstring .= ' AND Uri LIKE "local:%"';
 		}
 		$uris = $this->get_tracks($sqlstring, $limit, $tags, $random);
-		$json = array();
+		$cmds = array();
 		foreach ($uris as $u) {
-			$json[] = array( 'type' => 'uri', 'name' => $u);
+			$cmds[] = join_command_string(array('add', $u));
 		}
-		return $json;
+		$player->do_command_list($cmds);
+		return true;
 	}
 
 	private function smart_radio_tag($param) {

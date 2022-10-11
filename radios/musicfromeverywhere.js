@@ -50,7 +50,7 @@ var singleArtistRadio = function() {
 				$('button[name="singart_radio"]').on('click', function() {
 					var v = $('#singart_radio').val();
 					if (v != '') {
-						playlist.radioManager.load('singleArtistRadio', v);
+						playlist.radioManager.load('faveArtistRadio', v);
 					}
 				});
 			}
@@ -117,7 +117,7 @@ var recommendationsRadio = function() {
 
 			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
 				//
-				// Favourite Artists and Related Artists (using Spotify API)
+				// Recommendations For You
 				//
 				$('#pluginplaylists_everywhere').append(playlist.radioManager.standardBox('recommendationsRadio', null, 'icon-wifi', language.gettext('label_radio_recommended')));
 			}

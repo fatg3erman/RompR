@@ -343,8 +343,8 @@ class database extends data_base {
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"topindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 			"Type INTEGER NOT NULL, ".
-			"Artist VARCHAR(100) COLLATE NOCASE, ".
-			"Title VARCHAR(255) COLLATE NOCASE)", true))
+			"Artist VARCHAR(100) NOT NULL COLLATE NOCASE, ".
+			"Title VARCHAR(255) NOT NULL COLLATE NOCASE)", true))
 		{
 			logger::log("SQLITE",$name,"OK");
 			$this->generic_sql_query("DELETE FROM ".$name);
@@ -369,8 +369,8 @@ class database extends data_base {
 		$name = everywhere_radio::get_uri_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"uriindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
-			"Artist VARCHAR(100) COLLATE NOCASE, ".
-			"Title VARCHAR(255) COLLATE NOCASE, ".
+			"Artist VARCHAR(100) NOT NULL COLLATE NOCASE, ".
+			"Title VARCHAR(255) NOT NULL COLLATE NOCASE, ".
 			"Uri TEXT)", true))
 		{
 			logger::log("SQLITE",$name,"OK");

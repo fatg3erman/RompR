@@ -141,11 +141,6 @@ If you attempt to add a YTMusic track to the Collection it will instead be added
 If you're using Mopidy-Youtube the Music From Everywhere Personalised Radio stations work best if you enable the Music API.
 If you're a Youtube Premium subscriber you need to enable yt_dlp and use a cookiefile. See the Mopidy-Youtube documentation for how to do that.
 
-There is an option on the rompr/?setup screen to 'Translate YTMusic URIs to Youtube URIs'. If you enable this then, if you try to add a YTMusic
-track to the collection and you have mopidy-youtube enabled, the URI will be converted from mopidy-ytmuisc to mopidy-youtube and so the track can
-be added to the Collection. This will only work if you have mopidy-youtube set up so that it is using the Music API. Note that this hasn't been
-very thoroughly tested.
-
 
 ## Downloading Youtube Tracks
 
@@ -160,8 +155,8 @@ Note that yt-dlp is preferred over youtube-dl, and yt-dlp requires ffmpeg, avcon
 The binaries must be installed so that they can be executed by your webserver. RompR will look under the following paths, in this order:
 /usr/local/bin/, /opt/local/bin/, /opt/homebrew/bin/, /usr/bin/
 
-If you're trying to use this feature and you keep getting an error, enable debug logging and look at the output. If all the binaries are installed then the debug log
-will tell you the command line it is using, you should try that from a console to look for error messages.
+If you're trying to use this feature and you keep getting an error, enable debug logging and look at the output.
+If all the binaries are installed then the debug log will tell you the command line it is using, you should try that from a console to look for error messages.
 
 Assuming it works, the YoutTube video will be downloaded and the audio will be extracted to a FLAC file which will be streamed from your webserver
 using Mopidy's Stream backend the next time you add the track to the play queue.

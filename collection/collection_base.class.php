@@ -100,13 +100,11 @@ class collection_base extends database {
 		// We could also just not return the album index, but doing it this way speeds it up
 		// and I don't *think* it'll cause a problem.
 		$data = array();;
-
 		$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 			'SELECT
 				Uri,
 				TTindex,
 				Disc,
-				TrackNo AS Track,
 				Artistname AS AlbumArtist,
 				Albumtable.Image AS "X-AlbumImage",
 				mbid AS MUSICBRAINZ_ALBUMID,
@@ -125,13 +123,61 @@ class collection_base extends database {
 			WHERE
 			Hidden = 0
 			AND Title = ?
+			AND TrackNo = ?
 			AND Albumname = ?
 			AND Domain = ?
 			ORDER BY isSearchResult ASC',
-			$filedata['Title'], $filedata['Album'], $filedata['domain']
+			$filedata['Title'], $filedata['Track'], $filedata['Album'], $filedata['domain']
 		);
+
 		foreach ($result as $tinfo) {
 			if ($tinfo['Uri'] == $filedata['file']) {
+				if ($tinfo['isAudiobook'] > 0) {
+					$tinfo['type'] = 'audiobook';
+				}
+				$tinfo['isAudiobook'] = null;
+				$data = array_filter($tinfo, function($v) {
+					if ($v === null || $v == '') {
+						return false;
+					}
+					return true;
+				});
+				break;
+			}
+		}
+
+		// This is a fallback and I don't like having to do this, but YTMusic and Youtube sometimes don't
+		// return the same data they did last time.
+		// CASE WHEN because the track might already be in the database with a TrackNo of 0 (looking at you, YouTube)
+		if (count($data) == 0) {
+			$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
+				'SELECT
+					TTindex,
+					Disc,
+					CASE WHEN TrackNo = 0 THEN NULL ELSE TrackNo END AS Track,
+					Artistname AS AlbumArtist,
+					Albumtable.Image AS "X-AlbumImage",
+					mbid AS MUSICBRAINZ_ALBUMID,
+					Searched,
+					IFNULL(Playcount, 0) AS Playcount,
+					isAudiobook,
+					Albumindex AS album_index,
+					AlbumArtistindex AS albumartist_index,
+					useTrackIms AS usetrackimages,
+					Tracktable.Artistindex AS trackartist_index
+				FROM
+					Tracktable
+					JOIN Albumtable USING (Albumindex)
+					JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+					LEFT JOIN Playcounttable USING (TTindex)
+				WHERE
+				Hidden = 0
+				AND Uri = ?
+				ORDER BY isSearchResult ASC',
+				$filedata['file']
+			);
+
+			foreach ($result as $tinfo) {
 				if ($tinfo['isAudiobook'] > 0) {
 					$tinfo['type'] = 'audiobook';
 				}

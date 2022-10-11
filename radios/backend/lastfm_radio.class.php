@@ -1,8 +1,51 @@
 <?php
 
+// lastFMTrackRadio
+//   4 Last Fm Mix Stations
+
+// lastFMArtistradio
+//   The bottom 4 Last FM Stations
+
+// Initial seeds - either Top Tracks or Top Artists (from Last.FM) - get added to TopTracks as TYPE_TOP_TRACK
+// When we select a seed we use one that's marked as TYPE_TOP_TRACK and NOT TYPE_USED_AS_SEED
+//  then we set it to TYPE_TOP_TRACK + TYPE_USED_AS SEED
+// Then we use that to look up similar tracks or similar artists which get set as TYPE_RELATED_TRACK
+// Finally we pick a track to search for using the criteria TYPE_TOP_TRACK or TYPE_RELATED_TRACK
+// and that gets marked as TYPE_USED_FOR_SEARCH - so if it's a TOP_TRACK that hasnt been USED_AS_SEED it
+// can still be used as a seed but won't be used as a search track again.
+
 class lastfm_radio extends everywhere_radio {
 
-	const IGNORE_ALBUMS = true;
+	// search_for_track MUST return ONE Uri or NULL
+
+	public function search_for_track() {
+		$rp = prefs::get_radio_params();
+		logger::log('LASTFM', $rp['radiomode'], $rp['radioparam']);
+		$uris = [];
+		$gotseeds = true;
+		$retval = null;
+		while (count($uris) == 0 && $gotseeds) {
+			$this->get_seeds();
+			$this->get_similar_seeds();
+			list($uris, $gotseeds) = $this->do_seed_search(self::TYPE_TOP_TRACK + self::TYPE_RELATED_TRACK);
+		}
+		if (count($uris) > 0) {
+			switch ($rp['radiomode']) {
+				case 'lastFMTrackRadio':
+					$retval = $uris[0]['file'];
+					break;
+
+				case 'lastFMArtistRadio':
+					$this->handle_multi_tracks($uris);
+					break;
+			}
+		}
+		if ($rp['radiomode'] == 'lastFMArtistRadio')
+			$retval = $this->get_one_uri();
+
+		logger::log('LASTFM', 'Track Is',$retval);
+		return $retval;
+	}
 
 	private function get_seeds() {
 		$rp = prefs::get_radio_params();
@@ -23,6 +66,7 @@ class lastfm_radio extends everywhere_radio {
 
 				default:
 					logger::error('LASTFM', 'Unknown Mode',$rp['radiomode']);
+					break;
 			}
 		}
 	}
@@ -40,7 +84,6 @@ class lastfm_radio extends everywhere_radio {
 				]);
 			}
 			if (array_key_exists('track', $d)) {
-				$table_name = self::get_seed_table_name();
 				foreach ($d['track'] as $track) {
 					if (
 						array_key_exists('name', $track)
@@ -83,7 +126,6 @@ class lastfm_radio extends everywhere_radio {
 				]);
 			}
 			if (array_key_exists('artist', $d)) {
-				$table_name = self::get_seed_table_name();
 				foreach ($d['artist'] as $artist) {
 					if (
 						array_key_exists('name', $artist)
@@ -95,7 +137,7 @@ class lastfm_radio extends everywhere_radio {
 							$this->add_toptrack(
 								self::TYPE_TOP_TRACK,
 								$artist['name'],
-								null
+								''
 							);
 						}
 					}
@@ -107,13 +149,14 @@ class lastfm_radio extends everywhere_radio {
 	private function get_similar_seeds() {
 		$rp = prefs::get_radio_params();
 		$seeds = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
-			"SELECT * FROM ".self::get_seed_table_name()." WHERE Type = ? ORDER BY ".self::SQL_RANDOM_SORT." LIMIT 2",
-			self::TYPE_TOP_TRACK
+			"SELECT * FROM ".self::get_seed_table_name()." WHERE Type & ? > 0 AND Type & ? = 0 ORDER BY ".self::SQL_RANDOM_SORT." LIMIT 2",
+			self::TYPE_TOP_TRACK,
+			self::TYPE_USED_AS_SEED
 		);
 		foreach ($seeds as $seed) {
 			$this->sql_prepare_query(true, null, null, null,
-				"UPDATE ".self::get_seed_table_name()." SET Type = ? WHERE topindex = ?",
-				self::TYPE_USED_TOP_TRACK,
+				"UPDATE ".self::get_seed_table_name()." SET Type = Type + ? WHERE topindex = ?",
+				self::TYPE_USED_AS_SEED,
 				$seed['topindex']
 			);
 
@@ -176,41 +219,12 @@ class lastfm_radio extends everywhere_radio {
 						$this->add_toptrack(
 							self::TYPE_RELATED_TRACK,
 							$artist['name'],
-							null
+							''
 						);
 					}
 				}
 			}
 		}
-	}
-
-	// search_for_track MUST return ONE Uri or NULL
-
-	public function search_for_track() {
-		$rp = prefs::get_radio_params();
-		logger::log('LASTFM', $rp['radiomode'], $rp['radioparam']);
-		$uris = [];
-		$gotseeds = true;
-		$retval = null;
-		while (count($uris) == 0 && $gotseeds) {
-			$this->get_seeds();
-			$this->get_similar_seeds();
-			list($uris, $gotseeds) = $this->do_seed_search();
-		}
-		if (count($uris) > 0) {
-			switch ($rp['radiomode']) {
-				case 'lastFMTrackRadio':
-					$retval = $uris[0]['file'];
-					break;
-
-				case 'lastFMArtistRadio':
-					$this->handle_multi_tracks($uris);
-					$retval = $this->get_one_uri();
-					break;
-			}
-		}
-		logger::log('LASTFM', 'Track Is',$retval);
-		return $retval;
 	}
 
 }
