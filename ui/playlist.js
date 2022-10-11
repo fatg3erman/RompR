@@ -324,7 +324,7 @@ var playlist = function() {
 				totaltime += track.Time;
 				var sortartist = (track.albumartist == "" || track.albumartist == null) ? track.trackartist : track.albumartist;
 				if ((sortartist.toLowerCase() != current_artist.toLowerCase()) ||
-					track.Album.toLowerCase() != current_album.toLowerCase() ||
+					(track.Album && (track.Album.toLowerCase() != current_album.toLowerCase())) ||
 					track.type != current_type)
 				{
 					current_type = track.type;
@@ -1039,7 +1039,11 @@ function Album(artist, album, index, rolledup) {
 		}
 
 		var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
-		title.append('<div class="bumpad">'+self.artist+'</div><div class="bumpad">'+self.album+'</div>');
+		title.append('<div class="bumpad">'+self.artist+'</div><div class="bumpad">');
+		if (self.album)
+			title.append(self.album);
+
+		title.append('</div>');
 
 		var controls = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner)
 		controls.append('<i class="icon-cancel-circled inline-icon tooltip expand clickplaylist clickicon clickremovealbum" title="'+language.gettext('label_removefromplaylist')+'" name="'+self.index+'"></i>');

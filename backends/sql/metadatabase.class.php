@@ -51,15 +51,22 @@ class metaDatabase extends playlistCollection {
 			logger::core('METADATA', 'Year is not a 4 digit year, analyzing Date field instead');
 			$data['year'] = getYear($data['Date']);
 		}
-		if ($data['domain'] == 'ytmusic') {
-			// if (strpos($data['file'], 'ytmusic:track:') !== false) {
-			// 	logger::log('METADATA', 'Translating YTMusic Track to Youtube Video');
-			// 	$data['file'] = str_replace('ytmusic:track', 'youtube:video', $data['file']);
-			// } else {
-				// ytmusic: URLs don't work unless mopidy-ytmusic has cached them
-				logger::log('METADATA', 'Setting URI to null for ytmusic track');
-				$data['file'] = null;
-			// }
+
+		if ($data['Track'] == 0 &&
+			(strpos($data['X-AlbumUri'], 'yt:playlist:') !== false
+			|| strpos($data['X-AlbumUri'], 'youtube:playlist:') !== false
+			|| strpos($data['X-AlbumUri'], 'ytmusic:album:') !== false)
+		) {
+			logger::log('METADATA', 'Looking up Youtube Album to get Track Numnber');
+			$player = new player();
+			$dirs = [];
+			foreach ($player->parse_list_output('find file "'.$data['X-AlbumUri'].'"', $dirs, false) as $filedata) {
+				if ($filedata['Title'] == $data['Title']) {
+					logger::log('METADATA', 'Setting Track Number to', $filedata['Track']);
+					$data['Track'] = $filedata['Track'];
+				}
+			}
+			$player->close_mpd_connection();
 		}
 		// Very Important. The default in MPD_FILE_MODEL is 0 because that works for collection building
 		$data['Last-Modified'] = null;

@@ -357,18 +357,22 @@ class base_mpd_player {
 			$this->translate_commands_for_remote($cmds);
 		}
 
-		// foreach ($cmds as $cmd) {
-		// 	if (preg_match('/add "(youtube:video:.+)"/', $cmd, $matches)) {
-		// 		if (prefs::$database === null) {
-		// 			prefs::$database = new database();
-		// 		}
-		// 		$albumuri = prefs::$database->get_album_uri($matches[1]);
-		// 		if ($albumuri) {
-		// 			logger::log('PLAYER', 'Making Mopidy lookup album',$albumuri);
-		// 			$this->send_command('find file "'.$albumuri.'"');
-		// 		}
-		// 	}
-		// }
+		// HACKETY HACK
+		// ytmusic can't add a track unless the album has been looked up.
+		// If we've added a track to the collection and then restarted Mopidy our collection is buggered.
+		// This'll work in some instances, but not all.
+		foreach ($cmds as $cmd) {
+			if (preg_match('/add "(ytmusic:track:.+)"/', $cmd, $matches)) {
+				if (prefs::$database === null) {
+					prefs::$database = new database();
+				}
+				$albumuri = prefs::$database->get_album_uri($matches[1]);
+				if ($albumuri) {
+					logger::log('PLAYER', 'Making Mopidy lookup album',$albumuri);
+					$this->send_command('find file "'.$albumuri.'"');
+				}
+			}
+		}
 
 		$retries = 3;
 		if (count($cmds) > 1) {
@@ -492,6 +496,12 @@ class base_mpd_player {
 		// 	logger::debug("COLLECTION", "Ignoring unloaded track ".$filedata['file']);
 		// 	return false;
 		// }
+
+		if (strpos($filedata['file'], ":artist:") !== false) {
+			logger::debug("COLLECTION", "Ignoring artist Uri ".$filedata['file']);
+		 	return false;
+		}
+
 		$filedata['unmopfile'] = $this->unmopify_file($filedata);
 
 		if ($filedata['Track'] == 0) {
@@ -613,7 +623,7 @@ class base_mpd_player {
 			$state = $this->get_status_value('state');
 			$retries = 50;
 			while ($retries > 0 && ($state === null || $state != $expected_state)) {
-				usleep(100000);
+				usleep(250000);
 				$retries--;
 				$state = $this->get_status_value('state');
 			}

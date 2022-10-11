@@ -78,10 +78,10 @@ class ui_elements {
 
 		$data = array_merge(self::DEFAULT_TRACK_PARAMS, $data);
 
-		if (substr($data['title'],0,7) == "Artist:") {
-			logger::warn('ALBUMTRACK', 'Found artist link in album - this should not be here!');
-			return 1;
-		}
+		// if (substr($data['title'],0,7) == "Artist:") {
+		// 	logger::warn('ALBUMTRACK', 'Found artist link in album - this should not be here!');
+		// 	return 1;
+		// }
 
 		$d = getDomain($data['uri']);
 
