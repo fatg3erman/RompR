@@ -745,7 +745,6 @@ language::add_translations([
 	"label_mpd_websocket" =>				'Port for MPD Websocket Server',
 	"label_ui_defaults" =>					'Defaults',
 	"button_save_defaults" =>				'Save As Default For All Browsers',
-	"setup_translate_ytmusic" =>			'Translate YTMusic URIs to Youtube URIs',
 	"label_recommenddesc" =>				'A Radio Station of recommendations based on your listening',
 	"label_rmixdesc" =>						'A Radio Station of music by artists you love and artists like them'
 

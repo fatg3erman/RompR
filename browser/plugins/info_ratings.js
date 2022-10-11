@@ -158,8 +158,6 @@ var info_ratings = function() {
 
 					if (prefs.player_backend == 'mopidy') {
 						let prio = ["youtube", "spotify", "beets", "beetslocal", "local"];
-						if (prefs.translate_ytmusic && player.canPlay('youtube'))
-							prio.unshift('ytmusic');
 
 						trackFinder.setPriorities(prio);
 					}

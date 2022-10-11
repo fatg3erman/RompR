@@ -58,6 +58,13 @@ class database extends data_base {
 		);
 	}
 
+	public function get_album_uri($trackuri) {
+		return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
+			"SELECT AlbumUri FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Uri = ?",
+			$trackuri
+		);
+	}
+
 	protected function init_random_albums() {
 		$this->generic_sql_query('UPDATE Albumtable SET randomSort = RAND() * 10000000', true);
 	}

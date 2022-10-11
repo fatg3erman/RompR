@@ -338,6 +338,13 @@ class database extends data_base {
 
 	}
 
+	public function get_album_uri($trackuri) {
+		return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
+			"SELECT AlbumUri FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Uri = ?",
+			$trackuri
+		);
+	}
+
 	public function create_toptracks_table() {
 		$name = everywhere_radio::get_seed_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".

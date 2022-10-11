@@ -356,6 +356,20 @@ class base_mpd_player {
 		if ($this->is_remote) {
 			$this->translate_commands_for_remote($cmds);
 		}
+
+		// foreach ($cmds as $cmd) {
+		// 	if (preg_match('/add "(youtube:video:.+)"/', $cmd, $matches)) {
+		// 		if (prefs::$database === null) {
+		// 			prefs::$database = new database();
+		// 		}
+		// 		$albumuri = prefs::$database->get_album_uri($matches[1]);
+		// 		if ($albumuri) {
+		// 			logger::log('PLAYER', 'Making Mopidy lookup album',$albumuri);
+		// 			$this->send_command('find file "'.$albumuri.'"');
+		// 		}
+		// 	}
+		// }
+
 		$retries = 3;
 		if (count($cmds) > 1) {
 			do {
