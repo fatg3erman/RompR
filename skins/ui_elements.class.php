@@ -48,6 +48,8 @@ class ui_elements {
 	// class		Any extra classes to be added to the container
 	// podcounts	For a podcast, the HTML for the counts
 	// extralines	Any extra lines of info to go underneath Artistname
+	// year_always	true to always display Year regardless of sortbydate pref. Year will NOT
+	//					be wrapped in () if this is true. TuneIn uses it for eg <br />(Podcast Episode)
 
 	// NOTE - Radio channels are albumheader because they have an image, but they are always playbale
 	// and NEVER openable. Podcast user an albumheader
@@ -71,7 +73,8 @@ class ui_elements {
 		'userplaylist' => null,
 		'class' => '',
 		'podcounts' => null,
-		'extralines' => []
+		'extralines' => [],
+		'year_always' => false
 	];
 
 	public static function albumTrack($data, $bookmarks) {
@@ -250,11 +253,20 @@ class ui_elements {
 			}
 		}
 
-		if ($why == 'b' && $det['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $det['AlbumUri'], $matches)) {
-			$classes[] = 'clickaddtollviabrowse clickaddtocollectionviabrowse';
-			$spalbumid = $matches[1];
-		} else {
-			$spalbumid = '';
+		// if ($why == 'b' && $det['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $det['AlbumUri'], $matches)) {
+		// 	$classes[] = 'clickaddtollviabrowse clickaddtocollectionviabrowse';
+		// 	$spalbumid = $matches[1];
+		// } else {
+		// 	$spalbumid = '';
+		// }
+		if ($why == 'b' && $det['AlbumUri'] &&
+			(
+				strpos($det['AlbumUri'], 'ytmusic:album:') !== false ||
+				strpos($det['AlbumUri'], 'youtube:playlist:') !== false ||
+				strpos($det['AlbumUri'], 'yt:playlist:') !== false
+			)
+		){
+			$classes[] = 'clickaddtocollectionviabrowse';
 		}
 
 		if (!$det['buttons'])
@@ -262,10 +274,10 @@ class ui_elements {
 
 		if (count($classes) > 0) {
 			$classes[] = $det['iconclass'];
-			$html .= '<div class="icon-menu track-control-icon clickable clickicon clickalbummenu '
-					.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" spalbumid="'.$spalbumid;
+			$html .= '<div class="icon-menu inline-icon track-control-icon clickable clickicon clickalbummenu '
+					.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who;
 
-			if (in_array('clickalbumoptions', $classes))
+			if (in_array('clickalbumoptions', $classes) || in_array('clickaddtocollectionviabrowse', $classes))
 				$html .= '" uri="'.rawurlencode($det['AlbumUri']);
 
 			$html .= '"></div>';

@@ -148,7 +148,7 @@ class collection_base extends database {
 
 		// This is a fallback and I don't like having to do this, but YTMusic and Youtube sometimes don't
 		// return the same data they did last time.
-		// CASE WHEN because the track might already be in the database with a TrackNo of 0 (looking at you, YouTube)
+		// CASE WHEN because the track might already be in the database with a TrackNo of 0
 		if (count($data) == 0) {
 			$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 				'SELECT

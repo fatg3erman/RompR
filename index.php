@@ -214,8 +214,10 @@ foreach ($scripts as $i) {
 	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 if (prefs::get_player_param('websocket') === false) {
+	logger::log("INIT", "Loading non-websocket player script");
 	print '<script type="text/javascript" src="player/mpd/checkprogress.js?version='.$version_string.'"></script>'."\n";
 } else {
+	logger::log("INIT", "Loading Websocket player script");
 	print '<script type="text/javascript" src="player/mopidy/checkprogress.js?version='.$version_string.'"></script>'."\n";
 }
 $inc = glob("streamplugins/*.js");

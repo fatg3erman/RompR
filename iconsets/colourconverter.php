@@ -60,6 +60,9 @@ foreach ($dirs as $dir => $function) {
         foreach ($files as $file) {
             print $file."\n";
             $function($file);
+            if (file_exists($dir.'/'.basename($file)))
+                unlink($dir.'/'.basename($file));
+
             copy ($file, $dir.'/'.basename($file));
         }
     }

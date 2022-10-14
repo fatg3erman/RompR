@@ -233,55 +233,6 @@ var metaHandlers = function() {
 			}
 		},
 
-		fromSpotifyData: {
-
-			addAlbumTracksToCollection: function(data, albumartist) {
-				debug.info('AAGH','Adding an album');
-				var thisIsMessy = new Array();
-				if (data.tracks && data.tracks.items) {
-					debug.debug("AAAGH","Adding Album From",data);
-					infobar.notify(language.gettext('label_addingalbum'));
-					for (let t of data.tracks.items) {
-						var track = {
-							Title: t.name,
-							trackartist: joinartists(t.artists),
-							Track: t.track_number,
-							Time: t.duration_ms/1000,
-							Disc: t.disc_number,
-							domain: 'spotify',
-							albumartist: albumartist,
-							Album: data.name,
-							file: t.uri,
-							Date: data.release_date,
-							action: 'set',
-							urionly: true
-						}
-						track['X-AlbumUri'] = data.uri;
-						if (data.images) {
-							for (let j of data.images) {
-								if (j.url) {
-									track['X-AlbumImage'] = "getRemoteImage.php?url="+rawurlencode(j.url);
-									break;
-								}
-							}
-						}
-						if (data.genres && data.genres.length > 0) {
-							track.Genre = data.genres[0];
-						} else {
-							track.Genre = 'None';
-						}
-						thisIsMessy.push(track);
-					}
-					if (thisIsMessy.length > 0)
-						dbQueue.request(thisIsMessy, addedATrack, didntAddATrack);
-
-				} else {
-					debug.warn("SPOTIFY","Failed to add album - no tracks",data);
-					infobar.error(language.gettext('label_general_error'));
-				}
-			}
-		},
-
 		fromPlaylistInfo: {
 
 			getMeta: function(playlistinfo, success, fail) {

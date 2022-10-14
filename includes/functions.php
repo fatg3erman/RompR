@@ -449,8 +449,18 @@ function domainHtml($uri) {
 
 function artistNameHtml($obj) {
 	$h = '<div class="artistnamething">'.$obj['Albumname'];
-	if ($obj['Year'] && prefs::get_pref('sortbydate'))
-		$h .= ' <span class="notbold">('.$obj['Year'].')</span>';
+	if ($obj['Year'] && (prefs::get_pref('sortbydate') || $obj['year_always'])) {
+		$h .= ' <span class="notbold">';
+		if (!$obj['year_always'])
+			$h .= '(';
+
+		$h .= $obj['Year'];
+
+		if (!$obj['year_always'])
+			$h .= ')';
+
+		'</span>';
+	}
 
 	if ($obj['Artistname'])
 		$h .= '<br /><span class="notbold">'.$obj['Artistname'].'</span>';

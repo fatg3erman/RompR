@@ -1079,7 +1079,7 @@ function makeAlbumMenu(e, element) {
 	if ($(element).hasClass('clickaddtocollectionviabrowse')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem addtocollectionviabrowse closepopup',
-			spalbumid: $(element).attr('spalbumid')
+			name: $(element).attr('uri')
 		}).html(language.gettext('label_addtocollection')));
 	}
 	if ($(element).hasClass('clickusetrackimages')) {
@@ -1214,15 +1214,16 @@ function browseAndAddToListenLater(event, clickedElement) {
 }
 
 function browseAndAddToCollection(event, clickedElement) {
-	var albumid = clickedElement.attr('spalbumid')
-	spotify.album.getInfo(
-		albumid,
-		function(data) {
-			debug.debug('ADDALBUM', 'Success', joinartists(data.artists), data);
-			metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, joinartists(data.artists))
-		},
-		function(data) {
-			debug.error('ADDALBUM', 'Failed', data);
-		}, false
+	debug.log("PLAYLIST","Adding album to collection", decodeURIComponent(clickedElement.attr('name')));
+	metaHandlers.genericAction(
+		[{
+			action: 'addalbumtocollection',
+			albumuri: decodeURIComponent(clickedElement.attr('name'))
+		}],
+		collectionHelper.updateCollectionDisplay,
+		function(rdata) {
+			debug.warn("RATING PLUGIN","Failure to do bumfinger", rdata);
+			infobar.error('Failed to add album to collection')
+		}
 	);
 }

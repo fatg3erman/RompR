@@ -1046,9 +1046,9 @@ $.widget('rompr.spotifyAlbumThing', {
 				html += '<span class="artistnamething">'+concatenate_artist_names(an)+'</span><br />';
 			}
 			html += a.name+'</span>';
-			if (!player.canPlay('spotify')) {
-				html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled smallicon"></i></a>';
-			}
+			// if (!player.canPlay('spotify')) {
+			// 	html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled smallicon"></i></a>';
+			// }
 			if (layoutProcessor.openOnImage && player.canPlay('spotify')) {
 				html += '<div class="playdiv'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'"></div>';
 			}

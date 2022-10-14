@@ -283,9 +283,11 @@ class sortby_base {
 					return;
 				}
 				$trackarr = $this->track_sort_query();
-			} else if (strpos($trackarr[0]['AlbumUri'], 'yt:playlist:') !== false
-				|| strpos($trackarr[0]['AlbumUri'], 'youtube:playlist:') !== false
-				|| strpos($trackarr[0]['AlbumUri'], 'ytmusic:album:') !== false) {
+			} else if (
+				strpos($trackarr[0]['AlbumUri'], 'yt:playlist:') !== false
+				|| strpos($trackarr[0]['AlbumUri'], 'youtube:playlist:') !== false ||
+				strpos($trackarr[0]['AlbumUri'], 'ytmusic:album:') !== false
+			) {
 				// Basically we ALWAYS want to browse youtube music albums because
 				// they're often incomplete and never have Track Numbers
 				// and search results don't alwyas give us an Album: result

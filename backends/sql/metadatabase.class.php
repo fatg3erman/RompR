@@ -72,6 +72,20 @@ class metaDatabase extends playlistCollection {
 		$data['Last-Modified'] = null;
 	}
 
+	public function addalbumtocollection($data) {
+		logger::log('METADATA', 'Adding album',$data['albumuri'],'to collection');
+		$player = new player();
+		$dirs = [];
+		foreach ($player->parse_list_output('find file "'.$data['albumuri'].'"', $dirs, false) as $filedata) {
+			$filedata['X-AlbumUri'] = $data['albumuri'];
+			$playlistinfo = $this->doNewPlaylistFile($filedata);
+			$playlistinfo['action'] = 'set';
+			$playlistinfo['urionly'] = true;
+			$this->sanitise_data($playlistinfo);
+			$this->set($playlistinfo);
+		}
+	}
+
 	public function set($data) {
 
 		//
@@ -1060,15 +1074,6 @@ class metaDatabase extends playlistCollection {
 		// This copes with backends like youtube and soundcloud where 2 actual different tracks
 		// might fall foul of our UNiQUE KEY constraint because those backends don't really have
 		// the concept of an album or a track number.
-
-		// If it gets to the stage where that's a problem, we'll just drop support for those backends.
-		// Fuck knows it'll make my life easier. I quite like having youtube support, but only because
-		// I've implemented the download audio option.
-
-		// if ($data['domain'] == 'ytmusic') {
-		// 	logger::warn('BACKEND', 'Cannot add ytmusic tracks to collection, the URIs are not re-useable');
-		// 	return false;
-		// }
 
 		if ($data['albumartist_index'] == null) {
 			// Does the albumartist exist?

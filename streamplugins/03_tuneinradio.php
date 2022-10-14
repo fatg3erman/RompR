@@ -87,7 +87,7 @@ class tuneinplugin {
 								break 2;
 
 							$sname = $att['text'];
-							$year = 'Radio Station';
+							$year = '<br />(Radio Station)';
 							break;
 
 						case 'topic':
@@ -95,7 +95,7 @@ class tuneinplugin {
 								break 2;
 
 							$sname = $title;
-							$year = 'Podcast Episode';
+							$year = '<br />(Podcast Episode)';
 							break;
 
 						default:
@@ -114,7 +114,8 @@ class tuneinplugin {
 						'streamuri' => $att['URL'],
 						'streamname' => $sname,
 						'streamimg' => 'getRemoteImage.php?url='.rawurlencode($att['image']),
-						'class' => 'radiochannel'
+						'class' => 'radiochannel',
+						'year_always' => true
 					));
 					break;
 

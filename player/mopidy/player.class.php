@@ -126,9 +126,15 @@ class player extends base_mpd_player {
 				break;
 
 			case "soundcloud":
-			case "youtube":
-			case "ytmusic":
 				$this->preprocess_soundcloud($filedata);
+				break;
+
+			case "youtube":
+				$this->preprocess_youtube($filedata);
+				break;
+
+			case "ytmusic":
+				$this->preprocess_ytmusic($filedata);
 				break;
 
 			case "spotify":
@@ -213,13 +219,44 @@ class player extends base_mpd_player {
 		if (!$filedata['X-AlbumUri'])
 			$filedata['X-AlbumUri'] = $filedata['file'];
 
-		// if ($filedata['Title'] && !$filedata['Album'])
-		// 	$filedata['Album'] = $filedata['Title'];
+		if ($filedata['Title'] && !$filedata['Album'])
+			$filedata['Album'] = $filedata['Title'];
+
+		if ($filedata['X-AlbumImage'])
+			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);
+
+	}
+
+	private function preprocess_youtube(&$filedata) {
+		$filedata['folder'] = ($filedata['X-AlbumUri']) ? $filedata['X-AlbumUri'] : concatenate_artist_names($filedata['Artist']);
+		// if (!$filedata['AlbumArtist'])
+		// 	$filedata['AlbumArtist'] = $filedata['Artist'];
+
+		// if (!$filedata['X-AlbumUri'])
+		// 	$filedata['X-AlbumUri'] = $filedata['file'];
+
+		if ($filedata['Title'] && !$filedata['Album'])
+			$filedata['Album'] = $filedata['Title'];
 
 		if (strpos($filedata['Artist'][0], 'YouTube Playlist') !== false) {
 			$filedata['Artist'] = ['YouTube Playlists'];
-			$filedata['AlbumArtist'] = ['YouTube Playlists'];
 		}
+
+		if ($filedata['X-AlbumImage'])
+			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);
+
+	}
+
+	private function preprocess_ytmusic(&$filedata) {
+		$filedata['folder'] = ($filedata['X-AlbumUri']) ? $filedata['X-AlbumUri'] : concatenate_artist_names($filedata['Artist']);
+		// if (!$filedata['AlbumArtist'])
+		// 	$filedata['AlbumArtist'] = $filedata['Artist'];
+
+		// if (!$filedata['X-AlbumUri'])
+		// 	$filedata['X-AlbumUri'] = $filedata['file'];
+
+		// if ($filedata['Title'] && !$filedata['Album'])
+		// 	$filedata['Album'] = $filedata['Title'];
 
 		if ($filedata['X-AlbumImage'])
 			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);

@@ -1047,7 +1047,7 @@ function Album(artist, album, index, rolledup) {
 
 		var controls = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner)
 		controls.append('<i class="icon-cancel-circled inline-icon tooltip expand clickplaylist clickicon clickremovealbum" title="'+language.gettext('label_removefromplaylist')+'" name="'+self.index+'"></i>');
-		if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,7) == "spotify") {
+		if (tracks[0]['X-AlbumUri'] && ['youtube', 'ytmusic', 'spotify'].indexOf(tracks[0]['domain']) >= 0) {
 			controls.append('<i class="expand clickplaylist clickicon clickaddwholealbum icon-music inline-icon tooltip" title="'+language.gettext('label_addtocollection')+'" name="'+self.index+'"></i>');
 		}
 
@@ -1219,19 +1219,27 @@ function Album(artist, album, index, rolledup) {
 
 	this.addToCollection = function() {
 		debug.log("PLAYLIST","Adding album to collection");
-		if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,14) == "spotify:album:") {
-			spotify.album.getInfo(tracks[0].metadata.album.uri.substring(14,tracks[0].metadata.album.uri.length),
-			function(data) {
-				metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, tracks[0].albumartist)
-			},
-			function(data) {
-				debug.warn("ADD ALBUM","Failed to add album",data);
-				infobar.error(language.gettext('label_general_error'));
-			},
-			false);
-		} else {
-			debug.error("PLAYLIST","Trying to add non-spotify album to the collection!");
-		}
+		metaHandlers.genericAction(
+			[{
+				action: 'addalbumtocollection',
+				albumuri: tracks[0]['X-AlbumUri']
+			}],
+			collectionHelper.updateCollectionDisplay,
+			function(rdata) {
+				debug.warn("RATING PLUGIN","Failure to do bumfinger", rdata);
+				infobar.error('Failed to add album to collection')
+			}
+		);
+		// if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,14) == "spotify:album:") {
+		// 	spotify.album.getInfo(tracks[0].metadata.album.uri.substring(14,tracks[0].metadata.album.uri.length),
+		// 	function(data) {
+		// 		metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, tracks[0].albumartist)
+		// 	},
+		// 	function(data) {
+		// 		debug.warn("ADD ALBUM","Failed to add album",data);
+		// 		infobar.error(language.gettext('label_general_error'));
+		// 	},
+		// 	false);
 	}
 
 	function format_tracknum(tracknum) {

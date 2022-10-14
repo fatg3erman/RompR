@@ -41,6 +41,7 @@ foreach($params as $p) {
 		case 'deletewl':
 		case 'deleteid':
 		case 'resetresume':
+		case 'addalbumtocollection':
 			prefs::$database->create_foundtracks();
 			prefs::$database->{$p['action']}($p);
 			prefs::$database->prepare_returninfo();
