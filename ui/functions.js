@@ -134,7 +134,6 @@ String.prototype.fixDodgyLinks = function() {
 String.prototype.isArtistOrAlbum = function() {
 	if (this.indexOf(':artist:') > -1
 		|| this.indexOf(':album:') > -1
-		// || this.indexOf('ytmusic:') > -1
 	) {
 		return true;
 	} else {

@@ -93,7 +93,6 @@ function faveFinder(returnall) {
 		var worst_matches = new Array();
 		// Sort the results
 		for (let track of data) {
-			// NOTE isArtistorAlbum is currently "hacked" to ignore ytmusic: tracks as well as :artist: and :album:
 			if (track.file.isArtistOrAlbum()) continue;
 			var r = {...req.data, ...track};
 			debug.trace('FAVEFINDER','Found', r);
@@ -181,9 +180,18 @@ function faveFinder(returnall) {
 			if (req.data.Album) {
 				st.album = [req.data.Album];
 			}
-		}
-		if (req.data.Title && req.data.trackartist) {
-			st.any = [req.data.trackartist + ' ' + req.data.Title];
+		} else {
+			if (req.data.Title && req.data.trackartist) {
+				st.any = [req.data.trackartist + ' ' + req.data.Title];
+			} else if (req.data.Album && req.data.trackartist) {
+				st.any = [req.data.trackartist + ' ' + req.data.Album];
+			} else if (req.data.trackartist) {
+				st.any = [req.data.trackartist];
+			} else if (req.data.Title) {
+				st.any = [req.data.Title];
+			} else {
+				st.any = [[req.data.trackartist, req.data.Album, req.data.Title].join(' ')];
+			}
 		}
 		debug.debug("FAVEFINDER","Performing search",st,priority);
 		player.controller.rawsearch(st, priority, self.handleResults, checkdb);

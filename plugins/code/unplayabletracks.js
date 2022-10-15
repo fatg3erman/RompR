@@ -33,7 +33,7 @@ var unplayabletracks = function() {
 		element.addClass('upsch_'+reqid).makeSpinner();
 		if (trawler == null) {
 			trawler = new faveFinder(true);
-			trawler.setPriorities(['spotify', 'ytmusic', 'youtube']);
+			trawler.setPriorities([]);
 			trawler.setCheckDb(false);
 		}
 		databits[reqid] = {

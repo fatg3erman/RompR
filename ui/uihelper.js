@@ -672,7 +672,7 @@ var uiHelper = function() {
 				shortcuts.load();
 			}
 			$("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
-			$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
+			$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup playersearch', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
 			$('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add, placeholder: language.gettext('lastfm_addtagslabel')});
 			$(window).on('resize', uiHelper.adjustLayout);
 			layoutProcessor.initialise();

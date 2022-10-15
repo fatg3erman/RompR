@@ -679,16 +679,15 @@ var playlist = function() {
 
 		search_and_add: function(element) {
 			if (trackfinder === null) {
-				// Prioritise youtube over ytmusic
 				trackfinder = new faveFinder(false);
 				trackfinder.setPriorities(["ytmusic", "youtube"]);
 				trackfinder.setCheckDb(false);
 			}
-			infobar.notify(language.gettext('label_searching'));
 			var params = {};
 			element.find('input.search_param').each(function() {
 				params[$(this).attr('name')] = unescapeHtml($(this).val());
 			});
+			infobar.notify(language.gettext('label_searching')+' for '+params.Title);
 			trackfinder.findThisOne(
 				params,
 				function(data) {

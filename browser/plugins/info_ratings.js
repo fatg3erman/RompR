@@ -156,11 +156,8 @@ var info_ratings = function() {
 					// than including podcasts and radio stations, which we'll never want.
 					// I'm also not including SoundCloud because it produces far too many false positives
 
-					if (prefs.player_backend == 'mopidy') {
-						let prio = ["youtube", "spotify", "beets", "beetslocal", "local"];
-
-						trackFinder.setPriorities(prio);
-					}
+					if (prefs.player_backend == 'mopidy')
+						trackFinder.setPriorities(["ytmusic", "youtube", "spotify", "beets", "beetslocal", "local"]);
 
 					trackFinder.findThisOne(
 						metaHandlers.fromPlaylistInfo.mapData(parent.playlistinfo, action, [{attribute: type, value: value}]),

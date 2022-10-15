@@ -1008,6 +1008,9 @@ $.widget('rompr.spotifyAlbumThing', {
 				continue;
 			}
 			ids.push(a.id);
+			a.artists.forEach(function(v) {
+				an.push(v.name);
+			});
 
 			// Create the HTML for the album
 			var x = $('<div>', {class: this.options.classes+' clearfix albumwidget'}).appendTo(this.element);
@@ -1040,9 +1043,6 @@ $.widget('rompr.spotifyAlbumThing', {
 				appendto = y;
 			}
 			if (this.options.showbiogs) {
-				for (var ai in a.artists) {
-					an.push(a.artists[ai].name);
-				}
 				html += '<span class="artistnamething">'+concatenate_artist_names(an)+'</span><br />';
 			}
 			html += a.name+'</span>';
