@@ -74,11 +74,14 @@ while (true) {
 		}
 
 		if ($play_item) {
+			// a prefs::$database needs to exist before we call stop,
+			// because base_mpd_player needs it if it tries to set a Resume
+			// position on whatever's playing when the alarm goes off.
+			prefs::$database = new music_loader();
 			if ($mpd_status['state'] != 'stop')
 				$player->do_command_list(['stop']);
 
 			$player->do_command_list(['clear']);
-			prefs::$database = new music_loader();
 			$mpd_status = $player->rompr_commands_to_mpd($playcommands);
 			prefs::$database->close_database();
 			prefs::$database = null;
