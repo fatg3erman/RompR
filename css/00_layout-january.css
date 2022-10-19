@@ -1756,7 +1756,7 @@ a.infoclick.clickreleasepage
 	opacity:0;
 }
 
-.albumthing .clicktrack
+.albumthing .clicktrack:not(.textcentre)
 {
 	text-align:left;
 }

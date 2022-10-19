@@ -289,6 +289,7 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('clicktrackmenu', makeTrackMenu);
 	// clickRegistry.addClickHandlers('clickremovebookmark', removeBookmark);
 	clickRegistry.addClickHandlers('addtollviabrowse', browseAndAddToListenLater);
+	clickRegistry.addClickHandlers('removefromll', removeFromListenLater);
 	clickRegistry.addClickHandlers('addtocollectionviabrowse', browseAndAddToCollection);
 	clickRegistry.addClickHandlers('amendalbum', amendAlbumDetails);
 	clickRegistry.addClickHandlers('setasaudiobook', setAsAudioBook);
@@ -1073,8 +1074,14 @@ function makeAlbumMenu(e, element) {
 	if ($(element).hasClass('clickaddtollviabrowse')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem addtollviabrowse closepopup',
-			spalbumid: $(element).attr('spalbumid')
+			name: $(element).attr('uri')
 		}).html(language.gettext('label_addtolistenlater')));
+	}
+	if ($(element).hasClass('clickllremove')) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem removefromll closepopup',
+			name: $(element).attr('rompr_index')
+		}).html(language.gettext('label_removefromlistenlater')));
 	}
 	if ($(element).hasClass('clickaddtocollectionviabrowse')) {
 		d.append($('<div>', {
@@ -1094,6 +1101,7 @@ function makeAlbumMenu(e, element) {
 			name: $(element).attr('who')
 		}).html(language.gettext('label_unusetrackimages')));
 	}
+
 	menu.open();
 }
 
@@ -1200,30 +1208,48 @@ function actuallyAmendAlbumDetails(albumindex) {
 }
 
 function browseAndAddToListenLater(event, clickedElement) {
-	var albumid = clickedElement.attr('spalbumid')
-	spotify.album.getInfo(
-		albumid,
-		function(data) {
-			debug.debug('ADDLL', 'Success', data);
-			metaHandlers.addToListenLater(data);
-		},
-		function(data) {
-			debug.error('ADDLL', 'Failed', data);
-		}, false
-	);
+	var albumuri = decodeURIComponent(clickedElement.attr('name'));
+	var isspot = albumuri.match(/spotify:album:(.+)/);
+	if (isspot == null) {
+		debug.log('ADLL', 'Adding',albumuri,'via backend browse');
+		metaHandlers.addToListenLater(
+			{
+				action: 'browsetoll',
+				uri: albumuri
+			}
+		);
+	} else {
+		spotify.album.getInfo(
+			isspot[1],
+			function(data) {
+				debug.debug('ADDLL', 'Success', data);
+				metaHandlers.addToListenLater(
+					{
+						action: 'addtolistenlater',
+						json: data
+					}
+				);
+			},
+			function(data) {
+				debug.error('ADDLL', 'Failed', data);
+			},
+			false
+		);
+	}
 }
 
+function removeFromListenLater(event, clickedElement) {
+	if (typeof('albumstolistento') == 'undefined') {
+		debug.error('WHOOPS', 'Asking to remove an album from listen later when that plugin is not loaded');
+		return;
+	}
+	albumstolistento.removeId(clickedElement.attr('name'));
+}
+
+// Adds an album to the Music Collection by using MPD's find file on the album Uri.
+// Called in response to a click on an element with a class of clickaddtocollectionviabrowse
+// The element's name attribute should be the rawurlencode-d Album Uri
+
 function browseAndAddToCollection(event, clickedElement) {
-	debug.log("PLAYLIST","Adding album to collection", decodeURIComponent(clickedElement.attr('name')));
-	metaHandlers.genericAction(
-		[{
-			action: 'addalbumtocollection',
-			albumuri: decodeURIComponent(clickedElement.attr('name'))
-		}],
-		collectionHelper.updateCollectionDisplay,
-		function(rdata) {
-			debug.warn("RATING PLUGIN","Failure to do bumfinger", rdata);
-			infobar.error('Failed to add album to collection')
-		}
-	);
+	metaHandlers.addAlbumUriToCollection(decodeURIComponent(clickedElement.attr('name')));
 }

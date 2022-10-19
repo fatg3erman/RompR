@@ -30,6 +30,11 @@ switch ($p['action']) {
 		prefs::$database->addToListenLater($p['json']);
 		break;
 
+	case 'browsetoll':
+		prefs::$database = new metaDatabase();
+		prefs::$database->browsetoll($p['uri']);
+		break;
+
 	case 'removelistenlater':
 		prefs::$database->removeListenLater($p['index']);
 		break;

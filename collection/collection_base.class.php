@@ -33,61 +33,12 @@ class collection_base extends database {
 	protected $options = [
 		'doing_search' => false,
 		'trackbytrack' => true,
-		'dbterms' => ['tag' => null, 'rating' => null]
+		'dbterms' => ['tag' => null, 'rating' => null],
+		'searchterms' => false
 	];
-
-	// protected $collection_lastmodified = 0;
-	// protected $thisrun_lastmodified = 0;
 
 	private $find_album = true;
 	private $find_album2;
-
-	// public function check_lastmodified(&$filedata) {
-	// 	if ($this->options['doing_search'])
-	// 		return true;
-
-	// 	if ($filedata['Last-Modified'] == null)
-	// 		return true;
-
-	// 	$time = strtotime($filedata['Last-Modified']);
-
-	// 	if ($time > $this->collection_lastmodified) {
-	// 		if ($time > $this->thisrun_lastmodified)
-	// 			$this->thisrun_lastmodified = $time;
-
-	// 		$this->sql_prepare_query(true, null, null, null,
-	// 			"UPDATE Tracktable SET justAdded = 1, Hidden = 0 WHERE Uri = ?",
-	// 			$filedata['file']
-	// 		);
-
-	// 		return false;
-	// 	}
-
-	// 	return true;
-	// }
-
-	// public function read_collection_lastmodified() {
-	// 	$this->collection_lastmodified = $this->simple_query('Value', 'Statstable', 'Item', 'ColLastMod', 0);
-	// 	logger::log('COLLECTION', 'Collection LastMod is',$this->collection_lastmodified);
-	// }
-
-	// public function save_collection_lastmodified() {
-	// 	logger::log('COLLECTION', 'Setting Collection LastMod to',$this->thisrun_lastmodified);
-	// 	$cheese = $this->simple_query('Value', 'Statstable', 'Item', 'ColLastMod', 'NOTHING');
-	// 	if ($cheese === 'NOTHING') {
-	// 		$this->sql_prepare_query(true, null, null, null,
-	// 			"INSERT INTO Statstable (Item, Value) VALUES (?, ?)",
-	// 			'ColLastMod',
-	// 			$this->thisrun_lastmodified
-	// 		);
-	// 	} else {
-	// 		$this->sql_prepare_query(true, null, null, null,
-	// 			"UPDATE Statstable SET Value = ? WHERE Item = ?",
-	// 			$this->thisrun_lastmodified,
-	// 			'ColLastMod'
-	// 		);
-	// 	}
-	// }
 
 	public function get_option($option) {
 		return $this->options[$option];
@@ -1002,6 +953,146 @@ class collection_base extends database {
 		);
 	}
 
+	public function do_raw_search($domains, $rawterms, $command) {
+		logger::trace("RAW SEARCH", "domains are ".print_r($domains, true));
+		logger::trace("RAW SEARCH", "terms are   ".print_r($rawterms, true));
+		foreach ($rawterms as $key => $term) {
+			$command .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
+		}
+		logger::trace("RAW SEARCH", "Search command : ".$command);
+		$player = new player();
+		$dirs = array();
+		foreach ($player->parse_list_output($command, $dirs, $domains) as $filedata) {
+			$this->newTrack($filedata);
+		}
+	}
+
+	// rawterms, while you could pass anything, the only things that actually get
+	// checked are Title, Album, trackartist, and we do actually ony use those
+	// because we get all kinds of crud passed in from elsewhere
+	public function fave_finder($domains, $checkdb, $all_terms, $return_data) {
+		$rawterms = [
+			'Title' => $all_terms['Title'],
+			'trackartist' => $all_terms['trackartist'],
+			'Album' => $all_terms['Album']
+		];
+		$this->options['searchterms'] = array_map('strip_track_name', $rawterms);
+		$this->options['doing_search'] = true;
+		$this->options['trackbytrack'] = false;
+
+		logger::log('FAVEFINDER', 'Search Terms', print_r($this->options['searchterms'], true));
+		$found = false;
+		if ($checkdb){
+			logger::log('FAVEFINDER', 'Checking database first');
+			$collection = new db_collection();
+			$t = $collection->doDbCollection($rawterms, $domains, true);
+			foreach ($t as $filedata) {
+				$this->newTrack($filedata);
+				$found = true;
+			}
+		}
+		if (!$found) {
+			$this->do_raw_search($domains, ['any' => [implode(' ', $rawterms)]], 'search');
+		}
+
+		if (!$return_data)
+			return;
+
+		$best_matches = [];
+		$middle_matches = [];
+		$worst_matches = [];
+		foreach ($this->albums as $album) {
+			$album->sortTracks();
+			foreach($album->tracks as $trackobj) {
+				if ($rawterms['Album'] && !$rawterms['Title']) {
+					// In this case we're looking for an Album link
+					if ($this->is_album($trackobj->tags['file'])) {
+						logger::log('FAVEFINDER', 'Found album',$trackobj->tags['trackartist'],$trackobj->tags['Album']);
+						$best_matches[] = $trackobj->tags;
+					}
+				} else if ($this->is_artist_or_album($trackobj->tags['file'])) {
+					// Always ignore 'tracks' which are albumuris if we're not looking for an album
+					continue;
+				} else {
+					logger::log('FAVEFINDER', 'Found',$trackobj->tags['trackartist'],$trackobj->tags['Album'],$trackobj->tags['Title']);
+					if ($trackobj->tags['Album']) {
+						if ($rawterms['Album'] && strip_track_name($rawterms['Album']) == strip_track_name($trackobj->tags['Album'])) {
+							// Prioritse tracks where the Album title matches what we're looking for
+							$best_matches[] = $trackobj->tags;
+						} else {
+							$middle_matches[] = $trackobj->tags;
+						}
+					} else {
+						$worst_matches[] = $trackobj->tags;
+					}
+				}
+			}
+		}
+		$this->albums = [];
+		return array_merge($best_matches, $middle_matches, $worst_matches);
+	}
+
+	protected function is_artist_or_album($file) {
+		if (
+			strpos($file, ':album:') !== false
+			|| strpos($file, ':playlist:') !== false
+			|| strpos($file, ':artist:') !== false
+		) {
+			return true;
+		}
+		return false;
+	}
+
+	protected function is_album($file) {
+		if (
+			strpos($file, ':album:') !== false
+			|| strpos($file, ':playlist:') !== false
+		) {
+			return true;
+		}
+		return false;
+	}
+
+	protected function check_track_against_terms(&$track) {
+		$filedata = $track->tags;
+		// searchterms need to have been run through strip_track_name() before we get here. It's faster.
+		$lookingfor = $this->options['searchterms'];
+
+		if ($filedata['Title'] == null && $filedata['trackartist'] == null)
+			return false;
+
+		if ($lookingfor['trackartist'] && $lookingfor['Title']) {
+			if ($lookingfor['trackartist'] == strip_track_name($filedata['trackartist'])
+				&& $lookingfor['Title'] == strip_track_name($filedata['Title'])) {
+				logger::log('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
+				logger::log('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
+				return true;
+			}
+		} else if ($lookingfor['trackartist']) {
+			if ($lookingfor['trackartist'] == strip_track_name($filedata['trackartist'])) {
+				logger::log('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
+				return true;
+			}
+		} else if ($lookingfor['Title']) {
+			if ($lookingfor['Title'] == strip_track_name($filedata['Title'])) {
+				logger::log('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
+				return true;
+			}
+		}
+		return false;
+	}
 }
+
+function strip_track_name($thing) {
+	if (!$thing)
+		return $thing;
+
+	$thing = strtolower($thing);
+	$thing = preg_replace('/\s+\&\s+/', ' and ', $thing);
+	$thing = preg_replace('/\(.*? mix\)$/', '', $thing);
+	$thing = preg_replace("/\pP/", '', $thing);
+	return trim($thing);
+}
+
 
 ?>

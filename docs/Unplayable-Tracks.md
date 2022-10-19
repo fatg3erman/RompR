@@ -6,10 +6,6 @@ If you have Spotify tracks in your Music Collection, RompR will do a regular che
 
 ![](images/unplayable1.png)
 
-The Magnifying Glass icon will search to see if it can find this track on Spotify
+The Magnifying Glass icon will search to see if it can find this track on any of your Mopidy backend sources.
 
-![](images/unplayable2.png)
-
-As you can see here, I have an unplayable track in my collection, but Spotify have replaced it with an identical one. I think they just do it to annoy people.
-
-You can click the Import button to add that track to your Collection. It will inherit all the Tags, Rating, and Playcount data from the Unplayable one. You can delete the Unplayable one by clicking the X.
+If it can you will be able to import it, replacing the original in your Collection.

@@ -49,15 +49,6 @@ switch (true) {
 		}
 		break;
 
-	case array_key_exists("rawterms", $_REQUEST):
-		logit('rawterms');
-		// Handle an mpd-style search request requiring tl_track format results
-		// Note that raw_search uses the collection models but not the database
-		// hence $trackbytrack must be false
-		logger::log("MPD SEARCH", "Doing RAW search");
-		raw_search();
-		break;
-
 	case array_key_exists('rebuild', $_REQUEST):
 		logit('rebuild');
 		// This is a request to rebuild the music collection
@@ -149,21 +140,6 @@ function database_tree_search() {
 	prefs::$database = new db_collection();
 	prefs::$database->doDbCollection($_REQUEST['terms'], checkDomains($_REQUEST), $tree);
 	printFileSearch($tree);
-}
-
-function raw_search() {
-
-	// RAW search is used by favefinder, the wishlist, and various smart radios
-	// It uses the collection datamodels but does not use the database, because that
-	// might overwrite search results that the user is currently viewing.
-
-	$domains = checkDomains($_REQUEST);
-	prefs::$database = new musicCollection([
-		'doing_search' => true,
-		'trackbytrack' => false
-	]);
-	prefs::$database->do_raw_search($domains, $_REQUEST['checkdb'], $_REQUEST['rawterms'], $_REQUEST['command']);
-	prefs::$database->tracks_as_array();
 }
 
 function update_collection() {

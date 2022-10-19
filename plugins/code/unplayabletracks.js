@@ -4,7 +4,6 @@ var unplayabletracks = function() {
 	var holder;
 	var reqid = 0;
 	var databits = new Array();
-	var trawler = null;
 
 	function removeTrackFromDb(element, command) {
 		debug.log("DB_TRACKS","Remove track from database",element.next().val());
@@ -31,50 +30,37 @@ var unplayabletracks = function() {
 	function searchForTrack(element) {
 		reqid = element.next().next().next().val();
 		element.addClass('upsch_'+reqid).makeSpinner();
-		if (trawler == null) {
-			trawler = new faveFinder(true);
-			trawler.setPriorities([]);
-			trawler.setCheckDb(false);
-		}
-		databits[reqid] = {
-			index: 0,
-			data: [
-				{
-					Title: element.next().val(),
-					trackartist: element.next().next().val(),
-					key: reqid,
-					reqid: reqid
+		$('<div>', {id: 'upresults_'+reqid, class: 'unplayable_results holdingcell medium_masonry_holder helpfulholder noselection'}).insertAfter(element.parent());
+
+		metaHandlers.genericAction(
+			[{
+				action: 'findandreturnall',
+				Title: element.next().val(),
+				trackartist: element.next().next().val()
+			}],
+			function(data) {
+				debug.log('WISHLIST', 'Fave Finder Results', data);
+				$('.upsch_'+reqid).stopSpinner();
+				if (data.length > 0) {
+					$('#upresults_'+reqid).spotifyAlbumThing({
+						classes: 'brick spotify_album_masonry selecotron',
+						itemselector: 'brick',
+						is_plugin: true,
+						showanames: true,
+						imageclass: 'jalopy',
+						replace: reqid,
+						data: data
+					});
+				} else {
+					$('#upresults_'+reqid).html('<h3>No Tracks Found</h3>');
 				}
-			]
-		}
-
-		trawler.findThisOne(databits[reqid].data[databits[reqid].index], unplayabletracks.updateDatabase);
-	}
-
-	function chooseNew(clickedElement) {
-		var key = clickedElement.attr('romprkey');
-		$('#upsearch_'+key).find('.importbutton, .playbutton').fadeOut('fast');
-		clickedElement.next().fadeIn('fast');
-		clickedElement.prev().fadeIn('fast');
-	}
-
-	function importRow(element) {
-		var key = element.parent().prev().attr("romprkey");
-		var index = element.parent().prev().attr('romprindex');
-		debug.log("WISHLIST","Importing",databits[key], databits[key].data[index]);
-		element.parent().parent().parent().parent().css({opacity: '0.2'});
-		element.remove();
-		doSqlStuff(databits[key].data[index], false);
-	}
-
-	function doSqlStuff(data, callback) {
-		data.action = 'seturi';
-		dbQueue.request([data], collectionHelper.updateCollectionDisplay,
-			function(rdata) {
-				infobar.error(language.gettext('label_general_error'));
-				debug.warn("WISHLIST","Failure",rdata);
+			},
+			function() {
+				$('.upsch_'+reqid).stopSpinner();
+				$('#upresults_'+reqid).html('<h3>No Tracks Found</h3>');
 			}
 		);
+
 	}
 
 	return {
@@ -97,43 +83,18 @@ var unplayabletracks = function() {
 		},
 
 		handleClick: function(element, event) {
-			if (element.hasClass('clickremdb')) {
+			if (element.hasClass('clickspotifywidget')) {
+				let thing = $(event.target);
+				while (!thing.hasClass('unplayable_results')) {
+					thing = thing.parent();
+				}
+				thing.spotifyAlbumThing('handleClick', element);
+			} else if (element.hasClass('clickremdb')) {
 				removeTrackFromDb(element, 'deleteid');
 			} else if (element.hasClass('clicksearchtrack')) {
 				searchForTrack(element);
-			} else if (element.hasClass('choosenew')) {
-				chooseNew(element);
-			} else if (element.hasClass('importrow')) {
-				importRow(element);
-			} else if (element.hasClass('dropchoices')) {
-				$('#upchoices_'+element.attr('name')).slideToggle('fast');
 			}
 		},
-
-		updateDatabase: function(results) {
-			debug.debug("UNPLAYABLE","Found A Track",results);
-			databits[results[0].reqid].index = 0;
-			databits[results[0].reqid].data = results;
-			var element = $('.upsch_'+results[0].reqid);
-			var trackDiv = element.parent().parent();
-			var resultsDiv = $('<div>', {id: 'upsearch_'+results[0].key, class: 'toggledown'}).appendTo(trackDiv);
-			if (results.length > 0 && results[0].file) {
-				var dropper = $("<div>", {class: 'containerbox fixed', style: 'margin-top:1em'}).insertBefore(resultsDiv);
-				dropper.append('<i class="openmenu icon-menu clickicon fixed inline-icon" name="upsearch_'+results[0].reqid+'"></i>');
-				for (var i = 0; i < results.length; i++) {
-					var data = results[i];
-					var firstTrack = $('<div>', {class: 'containerbox vertical-centre underline', style: 'margin: 0'}).appendTo(resultsDiv);
-					var trackDetails = $('<div>', {romprindex: i, romprkey: data.reqid, class: 'backhi plugclickable infoclick choosenew ninesix indent expand'}).html(trawler.trackHtml(data, true)).appendTo(firstTrack);
-					firstTrack.append('<div class="fixed invisible importbutton"><button class="plugclickable infoclick importrow">Import</button></div>');
-					firstTrack.prepend('<div class="fixed invisible playbutton"><i class="icon-no-response-playbutton clickicon playable inline-icon" name="'+data.file+'"></i></div>');
-				}
-			} else {
-				resultsDiv.append('<div class="expand"><b><i>'+language.gettext("label_notfound")+'</i></b></div>');
-			}
-			element.removeClass('upsch_'+results[0].reqid).stopSpinner().remove();
-			resultsDiv.find('.invisible.importbutton').first().fadeIn('fast');
-			resultsDiv.find('.invisible.playbutton').first().fadeIn('fast');
-		}
 
 	}
 

@@ -204,7 +204,7 @@ $scripts = array(
 	"ui/nowplaying.js",
 	"ui/infobar2.js",
 	"ui/coverscraper.js",
-	"ui/favefinder.js",
+	// "ui/favefinder.js",
 	"ui/podcasts.js",
 	"browser/info.js",
 	"snapcast/snapcast.js"
@@ -225,7 +225,6 @@ foreach($inc as $i) {
 	logger::log("INIT", "Loading ".$i);
 	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
-
 javascript_globals::print_globals();
 
 $inc = glob("browser/helpers/*.js");

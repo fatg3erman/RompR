@@ -76,7 +76,7 @@ class mix_radio extends everywhere_radio {
 					self::TYPE_USED_AS_SEED,
 					$seed['topindex']
 				);
-				$spotify_id = $this->get_spotify_id($seed['Artist']);
+				$spotify_id = $this->get_spotify_id($seed['trackartist']);
 			}
 		}
 		if ($spotify_id !== null) {
@@ -113,7 +113,7 @@ class mix_radio extends everywhere_radio {
 					self::TYPE_USED_AS_SEED,
 					$seed['topindex']
 				);
-				$id = $this->get_spotify_id($seed['Artist']);
+				$id = $this->get_spotify_id($seed['trackartist']);
 				if ($id !== null)
 					$spotify_ids[] = $id;
 			}
@@ -175,7 +175,7 @@ class mix_radio extends everywhere_radio {
 		$candidates = json_decode(spotify::search($params, false), true);
 		if (array_key_exists('artists', $candidates) && array_key_exists('items', $candidates['artists'])) {
 			foreach ($candidates['artists']['items'] as $willies) {
-				if ($this->strip_track_name($willies['name']) == $this->strip_track_name($artist)) {
+				if (strip_track_name($willies['name']) == strip_track_name($artist)) {
 					logger::log('MIXRADIO', 'Spotify Artist',$willies['id'],$willies['name'],'matches',$artist);
 					return $willies['id'];
 				}

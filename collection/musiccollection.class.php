@@ -1,7 +1,7 @@
 <?php
 class musicCollection extends collection_base {
 
-	private $albums = [];
+	protected $albums = [];
 	protected $find_track;
 
 	public function __construct($opts = []) {
@@ -25,6 +25,10 @@ class musicCollection extends collection_base {
 			}
 
 			$track = new track($filedata);
+			if ($this->options['searchterms'] !== false && !$this->check_track_against_terms($track)) {
+				return;
+			}
+
 			if ($this->options['trackbytrack']) {
 				if ($track->tags['albumartist'] !== null && $track->tags['Disc'] !== null) {
 					//
@@ -89,23 +93,18 @@ class musicCollection extends collection_base {
 		$this->albums = array();
 	}
 
-	public function tracks_as_array() {
+	public function tracks_as_array($reqid) {
 		$c = true;
+		$player = new player();
 		print '[';
 		foreach($this->albums as $album) {
-			$image = $album->getImage('asdownloaded');
-			logger::log("COLLECTION", "Doing Album",$album->tracks[0]->tags['Album']);
-			$album->sortTracks();
-			foreach($album->tracks as $trackobj) {
-				if ($c) {
-					$c = false;
-				} else {
-					print ', ';
-				}
-				$trackobj->tags['X-AlbumImage'] = $image;
-				logger::trace("COLLECTION", "Title - ".$trackobj->tags['Title']);
-				print json_encode($trackobj->tags);
+			if ($c) {
+				$c = false;
+			} else {
+				print ', ';
 			}
+			$album->sortTracks();
+			print $album->dump_json($reqid, $player);
 		}
 		print ']';
 	}
@@ -465,66 +464,6 @@ class musicCollection extends collection_base {
 
 	public function update_album_mbid($mbid, $imgkey) {
 		$this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", $mbid, $imgkey);
-	}
-
-	public function do_raw_search($domains, $checkdb, $rawterms, $command) {
-		$found = false;
-		logger::trace("RAW SEARCH", "domains are ".print_r($domains, true));
-		logger::trace("RAW SEARCH", "terms are   ".print_r($rawterms, true));
-		if ($checkdb !== 'false') {
-			logger::trace("RAW SEARCH", " ... checking database first ");
-			$collection = new db_collection();
-			$t = $collection->doDbCollection($rawterms, $domains, true);
-			foreach ($t as $filedata) {
-				$this->newTrack($filedata);
-				$found = true;
-			}
-		}
-		if (!$found) {
-			foreach ($rawterms as $key => $term) {
-				$command .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
-			}
-			logger::trace("RAW SEARCH", "Search command : ".$command);
-			$player = new player();
-			$dirs = array();
-			foreach ($player->parse_list_output($command, $dirs, $domains) as $filedata) {
-				$this->newTrack($filedata);
-			}
-		}
-	}
-
-	public function fave_finder($params) {
-		logger::log('FAVEFINDER', 'Looking for',$params['Artist'],$params['Title']);
-		$rp = prefs::get_radio_params();
-		$st = [];
-		if ($params['Artist'])
-			$st[] = $params['Artist'];
-		if ($params['Title'])
-			$st[] = $params['Title'];
-		$this->do_raw_search($rp['radiodomains'], 'false', ['any' => [implode(' ', $st)]], 'search');
-		$matches = [];
-		foreach ($this->albums as $album) {
-			$album->sortTracks();
-			foreach($album->tracks as $trackobj) {
-				if ($this->is_artist_or_album($trackobj->tags['file']))
-					continue;
-
-				if ($trackobj->tags['Title'] == null && $trackobj->tags['trackartist'] == null)
-					continue;
-
-				if ($this->compare_tracks_with_artist($params, $trackobj->tags)) {
-					logger::log('FAVEFINDER', 'Found',$trackobj->tags['trackartist'],$trackobj->tags['Title']);
-					// Prioritise tracks with Album information. ytmusic often doesn't return this.
-					if ($trackobj->tags['Album']) {
-						array_unshift($matches, $trackobj->tags);
-					} else {
-						array_push($matches, $trackobj->tags);
-					}
-				}
-			}
-		}
-		$this->albums = [];
-		return $matches;
 	}
 
 }

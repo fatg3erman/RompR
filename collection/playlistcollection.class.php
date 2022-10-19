@@ -1,6 +1,6 @@
 <?php
 
-class playlistCollection extends collection_base {
+class playlistCollection extends musicCollection {
 
 	private $foundartists;
 

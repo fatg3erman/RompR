@@ -50,11 +50,16 @@ class metaquery extends collection_base {
 	}
 
 	public function getlistenlater() {
+		// The data we put in this table might have { album: { the data we want}}
+		// or it might have {the data we want}
+		// Munge it so it's all the same
 		$result = $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
 		$retval =  array();
 		foreach ($result as $r) {
-			$d = json_decode($r['JsonData']);
-			$d->rompr_index = $r['Listenindex'];
+			$d = json_decode($r['JsonData'], true);
+			if (array_key_exists('album', $d))
+				$d = $d['album'];
+			$d['rompr_index'] = $r['Listenindex'];
 			$retval[] = $d;
 		}
 		return $retval;

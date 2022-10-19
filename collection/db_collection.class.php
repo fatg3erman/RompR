@@ -48,20 +48,29 @@ class db_collection extends collection_base {
 		$qstring .= "AND t.Hidden = 0 AND t.isSearchResult < 2 ";
 
 		// Map search parameters to database tables
-		$searchmap = array(
-			'genre' => 'Genre',
-			'artist' => 'a1.Artistname',
-			'album' =>  'al.Albumname',
-			'title' => 't.Title',
-			'file' => 't.Uri',
-			'albumartist' => 'a2.Artistname'
-		);
-
+		if (array_key_exists('trackartist', $terms)) {
+			// Bit of a hack but faveFinder uses different search terms. Why?
+			$searchmap = [
+				'trackartist' => 'a1.Artistname',
+				'Title' => 't.Title',
+				'Album' => 'al.Albumname'
+			];
+		} else {
+			$searchmap = [
+				'genre' => 'Genre',
+				'artist' => 'a1.Artistname',
+				'album' =>  'al.Albumname',
+				'title' => 't.Title',
+				'file' => 't.Uri',
+				'albumartist' => 'a2.Artistname',
+				// These 3 come from faveFinder
+			];
+		}
 		foreach ($searchmap as $t => $d) {
-			if (array_key_exists($t, $terms)) {
+			if (array_key_exists($t, $terms) && $terms[$t]) {
 				$qstring .= 'AND (';
 				$qstring .= $this->format_for_search($terms[$t],$d, $parameters);
-				$qstring .= ' OR '.$this->format_for_search2($terms[$t],$d, $parameters);
+				// $qstring .= ' OR '.$this->format_for_search2($terms[$t],$d, $parameters);
 				$qstring .= ') ';
 			}
 		}
@@ -72,9 +81,9 @@ class db_collection extends collection_base {
 			foreach ($terms['any'] as $tim) {
 				$t = explode(' ',$tim);
 				foreach ($t as $tom) {
-					foreach ($searchmap AS $d) {
+					foreach ($searchmap as $d) {
 						$bunga[] = $this->format_for_search(array($tom), $d, $parameters);
-						$bunga[] = $this->format_for_search2(array($tom), $d, $parameters);
+						// $bunga[] = $this->format_for_search2(array($tom), $d, $parameters);
 					}
 				}
 			}
@@ -88,7 +97,7 @@ class db_collection extends collection_base {
 			$qstring .= "al.Year = ? ";
 		}
 
-		if (is_array($domains)) {
+		if (is_array($domains) && count($domains) > 0) {
 			$qstring .= "AND (";
 			$domainterms = array();
 			foreach ($domains as $dom) {
@@ -119,7 +128,8 @@ class db_collection extends collection_base {
 				'Date' => $obj->Year,
 				'year' => $obj->Year,
 				'Last-Modified' => $obj->LastModified,
-				'Genre' => $obj->Genre
+				'Genre' => $obj->Genre,
+				'trackartist' => $obj->Artistname
 			);
 			$filedata = array_replace(MPD_FILE_MODEL, $filedata);
 			logger::trace("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
@@ -143,6 +153,7 @@ class db_collection extends collection_base {
 
 	private function format_for_search($terms, $s, &$parameters) {
 		$a = array();
+		$terms = getArray($terms);
 		foreach ($terms as $i => $term) {
 			$a[] = "".$s." LIKE ?";
 			$parameters[] = '% '.trim($term). '%';
@@ -155,6 +166,7 @@ class db_collection extends collection_base {
 
 	private function format_for_search2($terms, $s, &$parameters) {
 		$a = array();
+		$terms = getArray($terms);
 		foreach ($terms as $i => $term) {
 			$a[] = "LOWER(".$s.') = ?';
 			$parameters[] = strtolower(trim($term));

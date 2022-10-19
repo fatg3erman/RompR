@@ -346,16 +346,19 @@ class database extends data_base {
 	}
 
 	public function create_toptracks_table() {
+		// UNIQUE INDEX doesn't take NULL into account, so we can't put NULL into those columns
+		// trackartist looks odd but it's consistent with what the UI does when
+		// it calls fave_finder
 		$name = everywhere_radio::get_seed_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"topindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 			"Type INTEGER NOT NULL, ".
-			"Artist VARCHAR(100) NOT NULL COLLATE NOCASE, ".
+			"trackartist VARCHAR(100) NOT NULL COLLATE NOCASE, ".
 			"Title VARCHAR(255) NOT NULL COLLATE NOCASE)", true))
 		{
 			logger::log("SQLITE",$name,"OK");
 			$this->generic_sql_query("DELETE FROM ".$name);
-			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (Artist, Title)");
+			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (trackartist, Title)");
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking ".$name." : ".$err);
@@ -365,7 +368,7 @@ class database extends data_base {
 	public function add_toptrack($type, $artist, $title) {
 		$name = everywhere_radio::get_seed_table_name();
 		$this->sql_prepare_query(true, null, null, null,
-			"INSERT OR IGNORE INTO ".$name." (Type, Artist, Title) VALUES (?, ? ,?)",
+			"INSERT OR IGNORE INTO ".$name." (Type, trackartist, Title) VALUES (?, ? ,?)",
 			$type,
 			$artist,
 			$title
@@ -376,13 +379,13 @@ class database extends data_base {
 		$name = everywhere_radio::get_uri_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"uriindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
-			"Artist VARCHAR(100) NOT NULL COLLATE NOCASE, ".
+			"trackartist VARCHAR(100) NOT NULL COLLATE NOCASE, ".
 			"Title VARCHAR(255) NOT NULL COLLATE NOCASE, ".
 			"Uri TEXT)", true))
 		{
 			logger::log("SQLITE",$name,"OK");
 			$this->generic_sql_query("DELETE FROM ".$name);
-			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (Artist, Title)");
+			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (trackartist, Title)");
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking ".$name." : ".$err);
@@ -392,7 +395,7 @@ class database extends data_base {
 	public function add_smart_uri($uri, $artist, $title) {
 		$name = everywhere_radio::get_uri_table_name();
 		$this->sql_prepare_query(true, null, null, null,
-			"INSERT OR IGNORE INTO ".$name." (Artist, Title, Uri) VALUES (?, ? ,?)",
+			"INSERT OR IGNORE INTO ".$name." (trackartist, Title, Uri) VALUES (?, ? ,?)",
 			$artist,
 			$title,
 			$uri

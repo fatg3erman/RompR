@@ -135,11 +135,15 @@ Note that only Mopidy-Local seems to return Genres, so Genre-based Collection fu
 
 ## Note on Mopidy-YTMusic and Mopidy-Youtube
 
-Tracks from Mopidy-YTMusic cannot be added to the Music Collection because Mopidy-YTMusic cannot accept a URI it has not seen before.
-If you attempt to add a YTMusic track to the Collection it will instead be added to the Wishlist.
+Mopidy-YTMusic cannot accept a URI it has not seen before. This gives RompR problems if you add YTMusic tracks to your collection and then restart
+Mopidy, because all the tracks in your collection will no longer work. I have suggested a fix for this that works for RompR but as yet there has
+been no movement on it. https://github.com/OzymandiasTheGreat/mopidy-ytmusic/pull/69 If you run that version then you can add tracks to your collection
+safely.
 
 If you're using Mopidy-Youtube the Music From Everywhere Personalised Radio stations work best if you enable the Music API.
-If you're a Youtube Premium subscriber you need to enable yt_dlp and use a cookiefile. See the Mopidy-Youtube documentation for how to do that.
+If you're a Youtube Premium subscriber you need to enable yt_dlp and use a cookiefile. See the Mopidy-Youtube documentation for how to do that. I've worked
+with the developer to bring the functionality more in line with what Spotify used to provide but there are limits. Youtbe Music does not
+have a proper API and there is some information - like track numbers - that is extremely unreliable.
 
 
 ## Downloading Youtube Tracks

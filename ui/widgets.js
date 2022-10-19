@@ -973,16 +973,18 @@ $.widget('rompr.spotifyAlbumThing', {
 		classes: 'spotify_album_masonry selecotron',
 		itemselector: 'spotify_album_masonry',
 		swapclass: 'spotify_album_masonry',
-		sub: '',
 		showbiogs: false,
+		showanames: false,
 		layoutcallback: null,
 		maxwidth: 640,
 		is_plugin: false,
+		replace: false,
 		imageclass: 'spotify_album_image',
 		masonified: false,
 		showlistenlater: true,
 		showremovebutton: false,
 		removecallback: null,
+		attributes: [],
 		data: []
 	},
 
@@ -992,101 +994,72 @@ $.widget('rompr.spotifyAlbumThing', {
 		this.options.id = this.element.attr('id');
 		this.element.empty();
 		this.element.append('<div class="sizer"></div>');
-		for (var i in this.options.data) {
-			var an = [];
-			var a = this.options.data[i];
-			debug.debug("SPOTIALBUM","Index is",i,"data is",a);
-			if (this.options.sub && a.hasOwnProperty(this.options.sub)) {
-				if (a.rompr_index) {
-					var b = a.rompr_index;
-				}
-				a = a[this.options.sub];
-				a.rompr_index = b;
-			}
-			if (ids.indexOf(a.id) > -1) {
-				debug.debug("SPALBUM","Duplicate album ID",a.id);
+		for (var data_index in this.options.data) {
+			var album = this.options.data[data_index];
+			if (ids.indexOf(album.id) > -1) {
+				debug.debug("SPALBUM","Duplicate album ID",album.id);
 				continue;
 			}
-			ids.push(a.id);
-			a.artists.forEach(function(v) {
-				an.push(v.name);
-			});
+			ids.push(album.id);
+
+			// If it haasn't got a domain then it must have come from spotify's API
+			if (!album.domain)
+				album.domain = 'spotify';
+
+			var artistname = combine_spotify_artists(album.artists);
 
 			// Create the HTML for the album
-			var x = $('<div>', {class: this.options.classes+' clearfix albumwidget'}).appendTo(this.element);
+			var album_widget = $('<div>', {class: this.options.classes+' clearfix albumwidget', rompr_index: album.rompr_index, data_index: data_index}).appendTo(this.element);
 
-			var clickclass = (this.options.is_plugin) ? ' plugclickable' : '';
-			var trackclass = (player.canPlay('spotify')) ? ' playable draggable' : '';
 			var cx = (this.options.showbiogs) ? ' tleft' : '';
-			var y = $('<div>', {class: 'helpfulalbum fullwidth notthere'+cx}).appendTo(x);
+			var album_holder = $('<div>', {class: 'helpfulalbum fullwidth notthere'+cx}).appendTo(album_widget);
 
 			var html;
 			var appendto;
 			if (layoutProcessor.openOnImage) {
-				appendto = $('<div>').appendTo(y);
-				appendto.append($('<img>', {
-					class: this.options.imageclass+clickclass+' menu infoclick clickopenalbum clickspotifywidget',
-					src: self._getImage(a),
-					name: self.options.id+'dropper_'+a.id
-				}));
-				html = '<div class="tagh albumthing sponklick relpos">'+
-					'<span class="title-menu'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'">';
+				var con = self._openOnImage(album_holder, album, artistname);
 			} else {
-				y.append($('<img>', {
-					class: this.options.imageclass+trackclass+' clicktrack',
-					src: self._getImage(a),
-					name: a.uri
-				}));
-				html = '<div class="tagh albumthing sponklick">'+
-					'<i class="icon-toggle-closed menu infoclick'+clickclass+' clickopenalbum clickspotifywidget" name="'+self.options.id+'dropper_'+a.id+'"></i>'+
-					'<span class="title-menu'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'">';
-				appendto = y;
+				var con = self._openOnToggle(album_holder, album, artistname);
 			}
-			if (this.options.showbiogs) {
-				html += '<span class="artistnamething">'+concatenate_artist_names(an)+'</span><br />';
-			}
-			html += a.name+'</span>';
-			// if (!player.canPlay('spotify')) {
-			// 	html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled smallicon"></i></a>';
-			// }
-			if (layoutProcessor.openOnImage && player.canPlay('spotify')) {
-				html += '<div class="playdiv'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'"></div>';
-			}
-			html += '</div>';
-			appendto.append(html);
-			var con = $('<div>', {class: 'tagh albumthing clearfix'}).appendTo(appendto);
-			if (self.options.showlistenlater) {
+
+			let buttonclasses = [];
+			if (self.options.showlistenlater && album.domain != 'local')
+				buttonclasses.push('clickaddtollviabrowse');
+
+			if (self.options.showremovebutton)
+				buttonclasses.push('clickllremove');
+
+			if (player.canPlay(album.domain) && album.domain != 'local')
+				buttonclasses.push('clickaddtocollectionviabrowse');
+
+			if (buttonclasses.length > 0) {
 				con.append($('<i>', {
-					class: 'tleft icon-headphones smallicon infoclick'+clickclass+' clickaddtolistenlater clickspotifywidget tooltip',
-					title: language.gettext('label_addtolistenlater'),
-					name: i
+					class: 'fixed icon-menu track-control-icon inline-icon clickable clickicon clickalbummenu '+buttonclasses.join(' '),
+					uri: album.uri,
+					rompr_index: album.rompr_index
 				}));
-			} else if (self.options.showremovebutton) {
-				con.append($('<i>', {
-					class: 'tleft icon-cancel-circled smallicon infoclick'+clickclass+' clickremovefromll clickspotifywidget tooltip',
-					title: language.gettext('label_removefromlistenlater'),
-					name: a.rompr_index
-				}));
+				if (layoutProcessor.openOnImage) {
+						// Add an invisible icon to the other size so the text remains centered.
+						con.prepend($('<i>', {
+						class: 'fixed track-control-icon inline-icon'
+					}));
+				}
 			}
-			if (player.canPlay('spotify')) {
-				con.append($('<i>', {
-					class: 'tright icon-music smallicon infoclick'+clickclass+' clickaddtocollection clickspotifywidget tooltip',
-					title: language.gettext('label_addtocollection'),
-					name: i
-				}));
-			}
-			y.append($('<div>', {
+
+			let drooopper = $('<div>', {
 				class: 'tagh albumthing invisible',
-				id: self.options.id+'dropper_'+a.id
-			}));
+				id: self.options.id+'dropper_'+album.id
+			}).appendTo(album_holder);
+			if (album.tracks && album.tracks.items)
+				drooopper.addClass('filled').html(spotifyTrackListing(album, true));
 			if (this.options.showbiogs) {
-				y.append($('<input>', {
+				album_holder.append($('<input>', {
 					type: 'hidden',
-					value: encodeURIComponent(concatenate_artist_names(an))
+					value: encodeURIComponent(artistname)
 				}));
-				x.append($('<span>', {
+				album_widget.append($('<span>', {
 					class: 'minwidthed',
-					id: self.options.id+'bio_'+a.id
+					id: self.options.id+'bio_'+album.id
 				}));
 			}
 		}
@@ -1106,8 +1079,49 @@ $.widget('rompr.spotifyAlbumThing', {
 		});
 	},
 
+	_openOnImage: function(album_holder, album, artistname) {
+		appendto = $('<div>').appendTo(album_holder);
+		appendto.append($('<img>', {
+			class: this.options.imageclass+this._clickClass()+' menu infoclick clickopenalbum clickspotifywidget',
+			src: this._getImage(album),
+			name: this.options.id+'dropper_'+album.id
+		}));
+		let text_holder = $('<div>', {class: 'tagh albumthing containerbox vertical-centre relpos'}).appendTo(appendto);
+		this._albumTitle(text_holder, album, artistname);
+		return text_holder;
+	},
+
+	_openOnToggle: function(album_holder, album, artistname) {
+		album_holder.append($('<img>', {
+			class: this.options.imageclass,
+			src: this._getImage(album)
+		}));
+		let text_holder = $('<div>', {class: 'tagh albumthing vertical-centre containerbox'}).appendTo(album_holder);
+		let toggle = $('<i>', {class: 'icon-toggle-closed menu infoclick'+this._clickClass()+' clickopenalbum clickspotifywidget', name: this.options.id+'dropper_'+album.id}).appendTo(text_holder);
+		this._albumTitle(text_holder, album, artistname);
+		return text_holder;
+	},
+
 	_setOption: function(key, value) {
 		this.options[key] = value;
+	},
+
+	_clickClass: function() {
+		return (this.options.is_plugin) ? ' plugclickable' : '';
+	},
+
+	_albumTitle: function(text_holder, album, artistname) {
+		let text_span = $('<div>', {class: 'expand title-menu textcentre'}).html(album.name).appendTo(text_holder);
+		if (this.options.showbiogs || this.options.showanames)
+			text_span.prepend('<span class="artistnamething">'+artistname+'</span><br />');
+
+		if (player.canPlay(album.domain)) {
+			text_span.addClass('playable draggable clickable clicktrack').attr('name', rawurlencode(album.uri));
+		} else {
+			text_span.addClass('playable clicktracksearch clicktrack');
+			text_span.prepend($('<input>', {type: 'hidden', name: 'trackartist', class: 'search_param', value: escapeHtml(artistname)}));
+			text_span.prepend($('<input>', {type: 'hidden', name: 'Album', class: 'search_param', value: escapeHtml(album.name)}));
+		}
 	},
 
 	handleClick: function(element) {
@@ -1116,6 +1130,9 @@ $.widget('rompr.spotifyAlbumThing', {
 		var id = element.attr("name").replace(self.options.id+'dropper_', '');
 		if (element.hasClass('clickopenalbum')) {
 			var dropper = $('#'+element.attr("name"));
+
+			debug.log('SPOOPY', 'Looking for dropper', dropper);
+
 			if (element.isOpen()) {
 				self.element.find('#'+self.options.id+'bio_'+id).hide();
 				element.toggleClosed();
@@ -1128,6 +1145,9 @@ $.widget('rompr.spotifyAlbumThing', {
 			} else {
 				element.toggleOpen();
 				if (dropper.hasClass("filled")) {
+					debug.log('SPOOPY', 'Dropper is already filled');
+					// It'll be filled if we filled it earlier, or it'll be filled on creation if it's an album that
+					// has come from the backend via metaDatabase browsetoll or similar.
 					self._openAlbum(dropper);
 					dropper.show();
 					self.element.find('#'+self.options.id+'bio_'+id).show();
@@ -1141,31 +1161,26 @@ $.widget('rompr.spotifyAlbumThing', {
 					spotify.album.getInfo(id, $.proxy(self.spotifyAlbumResponse, self), self.spotiError, true);
 				}
 			}
-		} else if (element.hasClass('clickaddtolistenlater')) {
-			debug.trace("SPALBUMTHING","Add To Listen Later",self.options.data[id]);
-			metaHandlers.addToListenLater(self.options.data[id]);
-		} else if (element.hasClass('clickremovefromll')) {
-			while (!(element.hasClass('albumwidget'))) {
-				element = element.parent();
+		} else if (element.hasClass('clickimporttrack')) {
+			var album_holder = element;
+			while (!album_holder.hasClass('albumwidget')) {
+				album_holder = album_holder.parent();
 			}
-			element.fadeOut('fast', browser.rePoint);
-			if (self.options.removecallback) {
-				self.options.removecallback(id);
-			}
-		} else if (element.hasClass('clickaddtocollection')) {
-			var ad = this.options.data[id];
-			if (this.options.sub && ad.hasOwnProperty(this.options.sub)) {
-				ad = ad[this.options.sub];
-			}
-			var artnames = [];
-			for (var art in ad.artists) {
-				artnames.push(ad.artists[art].name);
-			}
-			spotify.album.getInfo(ad.id, function(data) {
-				metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, concatenate_artist_names(artnames))
-			}, function() {
-				debug.error("SPOTIALBUM", "Failed To Add Album To Collection");
-			})
+			let data_index = album_holder.attr('data_index');
+			let track_index = element.attr('name');
+			debug.log('WLIMPORT', 'Album index',data_index,'track index',track_index,this.options.data[data_index]);
+			metaHandlers.fromBasicSpotifyInfo.importTrack(
+				this.options.data[data_index],
+				track_index,
+				this.options.attributes,
+				this.options.replace,
+				function (data) {
+					collectionHelper.updateCollectionDisplay(data);
+					let reqid = self.options.data[data_index].reqid;
+					if (reqid)
+						$('#wlresults_'+reqid).parent().remove();
+				}
+			);
 		}
 	},
 
@@ -1200,7 +1215,7 @@ $.widget('rompr.spotifyAlbumThing', {
 		var e = $("#"+this.options.id+'dropper_'+data.id);
 		e.show();
 		this._openAlbum(e);
-		e.addClass("filled").html(spotifyTrackListing(data));
+		e.addClass("filled").html(spotifyTrackListing(data, true));
 		infobar.markCurrentTrack();
 		browser.rePoint();
 	},
@@ -1232,13 +1247,16 @@ $.widget('rompr.spotifyAlbumThing', {
 		var img = 'newimages/spotify-icon.png';
 		if (a.images && a.images[0]) {
 			debug.debug("SPOTIALBUM","Images",a.images);
-			var img = 'getRemoteImage.php?url='+rawurlencode(a.images[0].url);
+			var img = a.images[0].url;
 			for (var j in a.images) {
 				if (a.images[j].width <= this.options.maxwidth) {
-					img = 'getRemoteImage.php?url='+rawurlencode(a.images[j].url);
+					img = a.images[j].url;
 					break;
 				}
 			}
+		}
+		if (img.indexOf('http') >= 0) {
+			img = 'getRemoteImage.php?url='+rawurlencode(img)
 			if (self.options.showbiogs) {
 				img += '&rompr_resize_size=medium';
 			} else {

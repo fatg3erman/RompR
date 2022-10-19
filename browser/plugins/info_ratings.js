@@ -1,8 +1,6 @@
 var info_ratings = function() {
 
 	var me = "ratings";
-	var trackFinder = new faveFinder(false);
-	var update_wishlist = false;
 
 	return {
 		getRequirements: function(parent) {
@@ -84,7 +82,7 @@ var info_ratings = function() {
 			}
 
 			function findSuccess(rdata) {
-				debug.debug("RATING PLUGIN","Success");
+				debug.debug("RATING PLUGIN","Success", rdata);
 				if (rdata) {
 					trackmeta.usermeta = rdata.metadata;
 					doThingsWithData();
@@ -92,11 +90,12 @@ var info_ratings = function() {
 					if (!rdata.hasOwnProperty('addedtracks')) {
 						infobar.error(language.gettext('error_trackexists'));
 					}
+					if (rdata.addedtracks && rdata.addedtracks[0] && rdata.addedtracks[0]['trackuri'] == '') {
+						infobar.notify(language.gettext("label_addtow"));
+						if (typeof(wishlistViewer) != 'undefined')
+							wishlistViewer.update();
+					}
 				}
-				if (update_wishlist && typeof(wishlistViewer) != 'undefined') {
-					wishlistViewer.update();
-				}
-				update_wishlist = false;
 			}
 
 			function setFail(rdata, err) {
@@ -150,18 +149,12 @@ var info_ratings = function() {
 				debug.log("RATINGS PLUGIN",parent.nowplayingindex,"Doing",action,type,value);
 				if (parent.playlistinfo.type == 'stream') {
 					infobar.notify(language.gettext('label_searching'));
-					// Prioritize the backeds we'll use
-					// There's currently no way to change these for tracks that are rated from radio stations
-					// which means that these are the only domains that will be searched, but this is better
-					// than including podcasts and radio stations, which we'll never want.
-					// I'm also not including SoundCloud because it produces far too many false positives
-
-					if (prefs.player_backend == 'mopidy')
-						trackFinder.setPriorities(["ytmusic", "youtube", "spotify", "beets", "beetslocal", "local"]);
-
-					trackFinder.findThisOne(
-						metaHandlers.fromPlaylistInfo.mapData(parent.playlistinfo, action, [{attribute: type, value: value}]),
-						self.updateDatabase
+					metaHandlers.fromPlaylistInfo.findAndSet(
+						parent.playlistinfo,
+						action,
+						[{attribute: type, value: value}],
+						findSuccess,
+						setFail
 					);
 				} else {
 					metaHandlers.fromPlaylistInfo.setMeta(
@@ -189,15 +182,6 @@ var info_ratings = function() {
 				} else {
 					return 0;
 				}
-			}
-
-			this.updateDatabase = function(data) {
-				debug.debug("RATINGS","Update Database Function Called",data);
-				if (!data.uri) {
-					infobar.notify(language.gettext("label_addtow"));
-					update_wishlist = true;
-				}
-				dbQueue.request([data], findSuccess, setFail);
 			}
 		}
 	}

@@ -67,7 +67,7 @@ foreach ($wishlist as $obj) {
 		print '<div class="fixed playlistrow2 playable clickstream" name="'.rawurlencode($obj['SourceUri']).'" streamname="'.$obj['SourceName'].'" streamimg="'.$obj['SourceImage'].'">While Listening To : <b>'.$obj['SourceName'].'</b></div>';
 	}
 	print '</div>';
-	print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip" title="'.language::gettext('label_searchtrack').'"></i>';
+	print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip spinable" title="'.language::gettext('label_searchtrack').'"></i>';
 	print '<input type="hidden" value="'.$obj['title'].'" />';
 	print '<input type="hidden" value="'.$obj['albumartist'].'" />';
 	print '<i class="icon-cancel-circled smallicon fixed clickicon clickremdb infoclick plugclickable tooltip" title="'.language::gettext('label_removefromwl').'"></i>';

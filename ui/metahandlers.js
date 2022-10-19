@@ -21,10 +21,6 @@ var metaHandlers = function() {
 			streamname: playlistinfo.Album,
 			streamimage: playlistinfo['X-AlbumImage'],
 		}
-		if (prefs.translate_ytmusic && playlistinfo.file.indexOf('ytmusic:track:') === 0 && player.canPlay('youtube')) {
-			data.file = playlistinfo.file.replace('ytmusic:track', 'youtube:video');
-			data.domain = 'youtube';
-		}
 		if (prefs.player_backend == 'mpd' && playlistinfo.file && playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)) {
 			data.file = 'soundcloud://track/'+playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)[1];
 		}
@@ -245,6 +241,19 @@ var metaHandlers = function() {
 				dbQueue.request([data], success, fail);
 			},
 
+			findAndSet: function(playlistinfo, action, attributes, success, fail) {
+				if (player.updatingcollection) {
+					infobar.notify(language.gettext('error_nosearchnow'));
+					return;
+				}
+				var data = getPostData(playlistinfo);
+				data.originalaction = action;
+				data.action = 'findandset';
+				if (attributes)
+					data.attributes = attributes;
+				dbQueue.request([data], success, fail);
+			},
+
 			mapData: function(playlistinfo, action, attributes) {
 				var data = getPostData(playlistinfo);
 				data.action = action;
@@ -252,6 +261,31 @@ var metaHandlers = function() {
 					data.attributes = attributes;
 
 				return data;
+			}
+		},
+
+		fromBasicSpotifyInfo: {
+
+			importTrack: function (albumdata, track_index, attributes, replace, success) {
+				// Don't send the albumimage. Either it has already been cached in which case we'll find it
+				// or it'll be a getremoteimage obtained through Mopidy, which we now want to swap for a
+				// cached one.
+				var data = {
+					action: (replace === false) ? 'set' : 'copy',
+					attributes: (replace === false) ? attributes : {copyfrom: replace},
+					Album: albumdata.name,
+					albumartist: combine_spotify_artists(albumdata.artists),
+					domain: albumdata.domain,
+					'X-AlbumUri': albumdata.uri,
+					file: albumdata.tracks.items[track_index].uri,
+					Title: albumdata.tracks.items[track_index].name,
+					Time: albumdata.tracks.items[track_index].duration_ms/1000,
+					Track: albumdata.tracks.items[track_index].track_number,
+					trackartist: combine_spotify_artists(albumdata.tracks.items[track_index].artists)
+				};
+				dbQueue.request([data], success, function() {
+					infobar.error('Import Failed because reasons');
+				});
 			}
 		},
 
@@ -337,11 +371,25 @@ var metaHandlers = function() {
 			}
 		},
 
-		addToListenLater: function(album) {
-			var data = {
-				action: 'addtolistenlater',
-				json: album
-			}
+		addAlbumUriToCollection(albumuri) {
+			debug.log("METADATA","Adding album to collection", albumuri);
+			metaHandlers.genericAction(
+				[{
+					action: 'addalbumtocollection',
+					albumuri: albumuri
+				}],
+				collectionHelper.updateCollectionDisplay,
+				function(rdata) {
+					debug.warn("BUMFINGER","Failure to do bumfinger", rdata);
+					infobar.error('Failed to add album to collection')
+				}
+			);
+		},
+
+		// data should be either {action :'addtolistenlater', json: {spotify album.getInfo}}
+		// OR
+		// {action: 'browsetoll', uri: an album uri that Mpodiy can find file}
+		addToListenLater: function(data) {
 			metaHandlers.genericQuery(
 				data,
 				function() {
@@ -384,7 +432,7 @@ var dbQueue = function() {
 
 	// Cleanup cleans the database but it also updates the track stats
 	var actions_requiring_cleanup = [
-		'set', 'remove', 'amendalbum', 'delete', 'deletewl', 'clearwishlist', 'setasaudiobook'
+		'set', 'remove', 'amendalbum', 'delete', 'deletewl', 'clearwishlist', 'setasaudiobook', 'copy'
 	];
 
 	async function process_request(req) {

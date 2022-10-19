@@ -183,6 +183,22 @@ class cache_cleaner extends database {
 	}
 
 	private function check_albums_using_image($image) {
+
+		static $listenlater_images = null;
+		if ($listenlater_images == null) {
+			$ll = $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
+			$listenlater_images = [];
+			foreach ($ll as $album) {
+				$ad = json_decode($album['JsonData'], true);
+				if (array_key_exists('albumimage', $ad)) {
+					$listenlater_images[] = $ad['albumimage']['small'];
+				}
+			}
+		}
+
+		if (in_array($image, $listenlater_images))
+			return 1;
+
 		return $this->sql_prepare_query(false, null, 'acount', 0,
 			"SELECT COUNT(Albumindex) AS acount FROM Albumtable
 			JOIN Tracktable USING (Albumindex)
@@ -191,7 +207,7 @@ class cache_cleaner extends database {
 			AND ((Hidden = 0
 			AND isSearchResult < 2)
 			OR LinkChecked = 4)
-			AND URI IS NOT NULL",
+			AND Uri IS NOT NULL",
 		$image);
 	}
 

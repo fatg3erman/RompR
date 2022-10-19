@@ -64,10 +64,10 @@ var info_spotify = function() {
 		}
 		let u = layout.add_sidebar_list(language.gettext("label_pop"), data.popularity);
 		layout.append_to_list(u, language.gettext("lastfm_releasedate"), data.release_date);
-		if (player.canPlay('spotify')) {
-			add_coll_button(u, 'clickaddtolistenlater', 'icon-headphones', language.gettext('label_addtolistenlater'));
-			add_coll_button(u, 'clickaddtocollection', 'icon-music', language.gettext('label_addtocollection'));
-		}
+		// if (player.canPlay('spotify')) {
+		// 	add_coll_button(u, 'clickaddtolistenlater', 'icon-headphones', language.gettext('label_addtolistenlater'));
+		// 	add_coll_button(u, 'clickaddtocollection', 'icon-music', language.gettext('label_addtocollection'));
+		// }
 
 		if (data.images && data.images[0]) {
 			layout.add_main_image(data.images[0].url);
@@ -263,10 +263,10 @@ var info_spotify = function() {
 					artistmeta.spotify.showing = "artists";
 					element.addClass("bsel");
 					getArtists();
-				} else if (element.hasClass('clickaddtolistenlater')) {
-					metaHandlers.addToListenLater(albummeta.spotify.album);
-				} else if (element.hasClass('clickaddtocollection')) {
-					metaHandlers.fromSpotifyData.addAlbumTracksToCollection(albummeta.spotify.album, artistmeta.spotify.artist.name);
+				// } else if (element.hasClass('clickaddtolistenlater')) {
+				// 	metaHandlers.addToListenLater(albummeta.spotify.album);
+				// } else if (element.hasClass('clickaddtocollection')) {
+				// 	metaHandlers.addAlbumUriToCollection(albummeta.spotify.album.uri);
 				} else if (element.hasClass('clickstartradio')) {
 					playlist.radioManager.load("artistRadio", 'spotify:artist:'+artistmeta.spotify.id);
 				}  else if (element.hasClass('clickstartsingleradio')) {

@@ -253,20 +253,16 @@ class ui_elements {
 			}
 		}
 
-		// if ($why == 'b' && $det['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $det['AlbumUri'], $matches)) {
-		// 	$classes[] = 'clickaddtollviabrowse clickaddtocollectionviabrowse';
-		// 	$spalbumid = $matches[1];
-		// } else {
-		// 	$spalbumid = '';
-		// }
 		if ($why == 'b' && $det['AlbumUri'] &&
 			(
 				strpos($det['AlbumUri'], 'ytmusic:album:') !== false ||
+				strpos($det['AlbumUri'], 'spotify:album:') !== false ||
 				strpos($det['AlbumUri'], 'youtube:playlist:') !== false ||
 				strpos($det['AlbumUri'], 'yt:playlist:') !== false
 			)
 		){
 			$classes[] = 'clickaddtocollectionviabrowse';
+			$classes[] = 'clickaddtollviabrowse';
 		}
 
 		if (!$det['buttons'])
@@ -277,7 +273,7 @@ class ui_elements {
 			$html .= '<div class="icon-menu inline-icon track-control-icon clickable clickicon clickalbummenu '
 					.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who;
 
-			if (in_array('clickalbumoptions', $classes) || in_array('clickaddtocollectionviabrowse', $classes))
+			if (in_array('clickalbumoptions', $classes) || in_array('clickaddtocollectionviabrowse', $classes) || in_array('clickaddtollviabrowse', $classes))
 				$html .= '" uri="'.rawurlencode($det['AlbumUri']);
 
 			$html .= '"></div>';

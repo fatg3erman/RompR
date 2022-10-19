@@ -599,32 +599,6 @@ function playerController() {
 
 	}
 
-	this.rawsearch = function(terms, sources, callback, checkdb) {
-		if (player.updatingcollection) {
-			infobar.notify(language.gettext('error_nosearchnow'));
-			callback([]);
-		}
-		debug.log('RAWSEARCH', terms, sources, checkdb);
-		$.ajax({
-			type: "POST",
-			url: "api/collection/",
-			dataType: 'json',
-			data: {
-				rawterms: terms,
-				domains: sources,
-				command: "search",
-				checkdb: checkdb
-			}
-		})
-		.done(function(data) {
-			callback(data);
-			data = null;
-		})
-		.fail(function() {
-			callback([]);
-		});
-	}
-
 	this.postLoadActions = function() {
 		if (player.status.songid != self.previoussongid) {
 			if (playlist.trackHasChanged(player.status.songid)) {

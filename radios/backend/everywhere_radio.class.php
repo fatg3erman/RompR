@@ -37,6 +37,7 @@ class everywhere_radio extends musicCollection {
 		$uris = [];
 		$gotseeds = false;
 		$query_params = [];
+		$rp = prefs::get_radio_params();
 		$qstring = "SELECT * FROM ".self::get_seed_table_name()." WHERE ";
 		if ($type) {
 			$qstring .= "Type & ? > 0 AND ";
@@ -52,7 +53,7 @@ class everywhere_radio extends musicCollection {
 				self::TYPE_USED_FOR_SEARCH,
 				$seed['topindex'],
 			);
-			$blarg = $this->fave_finder($seed);
+			$blarg = $this->fave_finder($rp['radiodomains'], false, $seed, true);
 			foreach ($blarg as $try) {
 				if ($this->is_not_audiobook($try['file']))
 					$uris[] = $try;
@@ -140,39 +141,6 @@ class everywhere_radio extends musicCollection {
 			return false;
 		}
 		return true;
-	}
-
-	protected function is_artist_or_album($file) {
-		if (
-			strpos($file, ':album:') !== false
-			|| strpos($file, ':playlist:') !== false
-			|| strpos($file, ':artist:') !== false
-		) {
-			return true;
-		}
-		return false;
-	}
-
-	protected function compare_tracks_with_artist($lookingfor, $track) {
-		if ($lookingfor['Artist'] && $lookingfor['Title']) {
-			if ($this->strip_track_name($lookingfor['Artist']) == $this->strip_track_name($track['trackartist'])
-				&& $this->strip_track_name($lookingfor['Title']) == $this->strip_track_name($track['Title'])) {
-				return true;
-			}
-		} else if ($lookingfor['Artist']) {
-			if ($this->strip_track_name($lookingfor['Artist']) == $this->strip_track_name($track['trackartist'])) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	protected function strip_track_name($thing) {
-		$thing = strtolower($thing);
-		$thing = preg_replace('/\s+\&\s+/', ' and ', $thing);
-		$thing = preg_replace('/\(.*? mix\)$/', '', $thing);
-		$thing = preg_replace("/\pP/", '', $thing);
-		return trim($thing);
 	}
 
 	public function doPlaylist($param, $numtracks, &$player) {

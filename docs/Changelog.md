@@ -49,14 +49,14 @@ I think MySQL is better at this, but I haven't checked.
 the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection
  and will not be selected by Personalised Radio stations. Note that selecting this option will force a rescan of your Music Collection.
  You can use the Unplayable Tracks plugin to view all your Spotify tracks, which will give you an easy way to browse them and decide
- which ones you want to buy digital or physical copies of.
- I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
+ which ones you want to buy digital or physical copies of. I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
+ If you have enabled Youtube Music support in Mopidy the Unplayable Tracks plugin will permit you to search for tracks on Youtube Music
+ and import them into your Collection in place of your Spotify tracks, preserving the tags, ratings, and playcounts.
  * For Mopidy users, all Personalised Radio stations that relied on Spotify support have been disabled. I hope this is temporary, but with
  Mopidy's Spotify support being broken they serve no purpose and are impossible to test.
  * The other Mopidy-specific Personal radio stations have been adjusted so that they work with Mopidy-Youtube and Mopidy-YTMusic.
  For best results with Mopidy-Youtube you should ensure you have a Youtube Music account and enable it in the youtube section of
- your mopidy.conf. Note that Moidy-YTMusic tracks cannot be added to the Music Collection because Mopidy-YTMusic does not permit you
- to add a random URI it has not previously seen during the current session.
+ your mopidy.conf.
 * All Personal Radio stations are now populated by the Backend Daemon, so there is no longer any need to keep a browser open.
 * The usual collection of undocumented bugfixes.
 

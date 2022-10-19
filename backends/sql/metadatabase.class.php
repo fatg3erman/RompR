@@ -52,7 +52,7 @@ class metaDatabase extends playlistCollection {
 			$data['year'] = getYear($data['Date']);
 		}
 
-		if ($data['Track'] == 0 &&
+		if (($data['Track'] == 0 || $data['Track'] == '') &&
 			(strpos($data['X-AlbumUri'], 'yt:playlist:') !== false
 			|| strpos($data['X-AlbumUri'], 'youtube:playlist:') !== false
 			|| strpos($data['X-AlbumUri'], 'ytmusic:album:') !== false)
@@ -72,18 +72,128 @@ class metaDatabase extends playlistCollection {
 		$data['Last-Modified'] = null;
 	}
 
+	//
+	// $data['albumuri'] should be a Uri that can be looked up using "find file"
+	// We pass it through the
+	//
 	public function addalbumtocollection($data) {
 		logger::log('METADATA', 'Adding album',$data['albumuri'],'to collection');
+		$this->options['doing_search'] = true;
+		$this->options['trackbytrack'] = false;
 		$player = new player();
 		$dirs = [];
 		foreach ($player->parse_list_output('find file "'.$data['albumuri'].'"', $dirs, false) as $filedata) {
 			$filedata['X-AlbumUri'] = $data['albumuri'];
-			$playlistinfo = $this->doNewPlaylistFile($filedata);
-			$playlistinfo['action'] = 'set';
-			$playlistinfo['urionly'] = true;
-			$this->sanitise_data($playlistinfo);
-			$this->set($playlistinfo);
+			$this->newTrack($filedata);
 		}
+		foreach ($this->albums as $album) {
+			$album->sortTracks();
+			foreach($album->tracks as $track) {
+				$playlistinfo = $this->doNewPlaylistFile($track->tags);
+				$playlistinfo['action'] = 'set';
+				$playlistinfo['urionly'] = true;
+				$this->sanitise_data($playlistinfo);
+				$this->set($playlistinfo);
+			}
+		}
+	}
+
+
+	//
+	// Used for searching for a track and adding it to the collection
+	// $data should contain things needed for fave_finder() - eg trackartist, Title, Album
+	// as well as originalaction - a metedatabase action, eg 'set'
+	// and some metadatabase attributes.
+	// Searches for thr track and the uses originalaction to do the metadatbase action
+	// to add it to the collection. This causes the usual returninfo mechanism to be
+	// triggered so the UI can be updated in one motion.
+	//
+	public function findandset($data) {
+		$matches = $this->fave_finder(
+			false,
+			true,
+			$data,
+			true
+		);
+		$best_match = array_shift($matches);
+		if ($best_match) {
+			logger::log('FINDAANDSET', 'Found', print_r($best_match, true));
+			$track = $this->doNewPlaylistFile($best_match);
+			$this->sanitise_data($track);
+		} else {
+			logger::log('FINDAANDSET', 'Did Not Find');
+			$track = $data;
+			$track['file'] = null;
+		}
+		$track['action'] = $data['originalaction'];
+		$track['attributes'] = $data['attributes'];
+		$this->{$track['action']}($track);
+	}
+
+	public function findandreturn($data) {
+		$matches = $this->fave_finder(
+			false,
+			false,
+			$data,
+			true
+		);
+		$best_match = array_shift($matches);
+		if (!$best_match) $best_match = [];
+		prefs::$database->returninfo = $best_match;
+	}
+
+	public function findandreturnall($data) {
+		$this->fave_finder(
+			false,
+			false,
+			$data,
+			false
+		);
+		$reqid = array_key_exists('reqid', $data) ? $data['reqid'] : null;
+		$this->tracks_as_array($reqid);
+	}
+
+	public function browsetoll($uri) {
+		logger::log('METADATA', 'Adding album',$uri,'to listen later');
+		$this->options['doing_search'] = true;
+		$this->options['trackbytrack'] = false;
+		$player = new player();
+		$dirs = [];
+		foreach ($player->parse_list_output('find file "'.$uri.'"', $dirs, false) as $filedata) {
+			$filedata['X-AlbumUri'] = $uri;
+			$this->newTrack($filedata);
+		}
+		$result = $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
+		logger::log('METADATA', 'Created',(count($this->albums)),'albums');
+		foreach ($this->albums as $album) {
+			$album->sortTracks();
+			$check_id = $album->get_dummy_id();
+			foreach ($result as $r) {
+				$d = json_decode($r['JsonData'], true);
+				if ($d['id'] == $check_id) {
+					logger::warn("LISTENLATER", "Trying to add duplicate album to Listen Later");
+					return;
+				}
+			}
+			$json = $album->dump_json(null, null);
+			$this->sql_prepare_query(true, null, null, null, "INSERT INTO AlbumsToListenTotable (JsonData) VALUES (?)", $json);
+		}
+	}
+
+	public function copy($data) {
+		$copyfrom = $data['attributes']['copyfrom'];
+		$current = $this->get_all_data($copyfrom);
+		logger::log('METADATA', 'Copyring from',$data['attributes']['copyfrom'],print_r($current, true));
+		$data['action'] = 'set';
+		$data['attributes'] = [['attribute' => 'Rating', 'value' => $current['Rating']]];
+		if (count($current['Tags']) > 0) {
+			$data['attributes'][] = ['attribute' => 'Tags', 'value' => $current['Tags']];
+		}
+		if ($current['Playcount'] > 0) {
+			$data['attributes'][] = ['attribute' => 'Playcount', 'value' => $current['Playcount']];
+		}
+		$this->remove_ttid($copyfrom);
+		$this->set($data);
 	}
 
 	public function set($data) {
@@ -145,10 +255,6 @@ class metaDatabase extends playlistCollection {
 
 		if (count($ttids) > 0 && $ttids[0] !== null && $ttids[0] !== false && $this->doTheSetting($ttids, $data['attributes'], $data['file'])) {
 			logger::debug('SET', 'Set command success');
-			if ($data['file'] == null) {
-				$this->returninfo['error'] = $data['domain'].' tracks are not supported because the URIs are not re-useable. Added to Wishlist';
-				header('HTTP/1.1 417 Expectation Failed');
-			}
 		} else {
 			logger::warn("SET", "Set Command failed", print_r($ttids, true));
 			if (count($ttids) > 0 && $ttids[0] === false) {
@@ -751,6 +857,7 @@ class metaDatabase extends playlistCollection {
 				}
 				$this->check_audiobook_status($ttid);
 				if ($uri) {
+					logger::log('METADATA', 'Creating Return Info');
 					$this->returninfo['metadata'] = $this->get_all_data($ttid);
 				}
 			}

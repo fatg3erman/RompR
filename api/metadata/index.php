@@ -42,6 +42,8 @@ foreach($params as $p) {
 		case 'deleteid':
 		case 'resetresume':
 		case 'addalbumtocollection':
+		case 'findandset':
+		case 'copy':
 			prefs::$database->create_foundtracks();
 			prefs::$database->{$p['action']}($p);
 			prefs::$database->prepare_returninfo();
@@ -66,7 +68,13 @@ foreach($params as $p) {
 
 		// Things that return information but do not modify items
 		case 'get':
+		case 'findandreturn':
 			prefs::$database->{$p['action']}($p);
+			break;
+
+		case 'findandreturnall':
+			prefs::$database->{$p['action']}($p);
+			exit(0);
 			break;
 
 		// Things that do not return information

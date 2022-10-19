@@ -452,14 +452,16 @@ class database extends data_base {
 	}
 
 	public function create_toptracks_table() {
-		// UNIQUE INDEX dos take NULL into account, so we can't put NULL into those columns
+		// UNIQUE INDEX doesn't take NULL into account, so we can't put NULL into those columns
+		// trackartist looks odd but it's consistent with what the UI does when
+		// it calls fave_finder
 		$name = everywhere_radio::get_seed_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"topindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
 			"Type INT NOT NULL, ".
-			"Artist VARCHAR(100) NOT NULL, ".
+			"trackartist VARCHAR(100) NOT NULL, ".
 			"Title VARCHAR(255) NOT NULL, ".
-			"UNIQUE INDEX(Artist, Title), ".
+			"UNIQUE INDEX(trackartist, Title), ".
 			"PRIMARY KEY (topindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL",$name,"OK");
@@ -473,7 +475,7 @@ class database extends data_base {
 	public function add_toptrack($type, $artist, $title) {
 		$name = everywhere_radio::get_seed_table_name();
 		$this->sql_prepare_query(true, null, null, null,
-			"INSERT INTO ".$name." (Type, Artist, Title) VALUES (?, ? ,?) ON DUPLICATE KEY UPDATE Type = ?",
+			"INSERT INTO ".$name." (Type, trackartist, Title) VALUES (?, ? ,?) ON DUPLICATE KEY UPDATE Type = ?",
 			$type,
 			$artist,
 			$title,
@@ -485,7 +487,7 @@ class database extends data_base {
 		$name = everywhere_radio::get_uri_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"uriindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
-			"Artist VARCHAR(100) NOT NULL, ".
+			"trackartist VARCHAR(100) NOT NULL, ".
 			"Title VARCHAR(255) NOT NULL, ".
 			"Uri VARCHAR(2000), ".
 			"UNIQUE INDEX(Artist, Title), ".
@@ -502,7 +504,7 @@ class database extends data_base {
 	public function add_smart_uri($uri, $artist, $title) {
 		$name = everywhere_radio::get_uri_table_name();
 		$this->sql_prepare_query(true, null, null, null,
-			"INSERT INTO ".$name." (Artist, Title, Uri) VALUES (?, ? ,?) ON DUPLICATE KEY UPDATE Uri = ?",
+			"INSERT INTO ".$name." (trackartist, Title, Uri) VALUES (?, ? ,?) ON DUPLICATE KEY UPDATE Uri = ?",
 			$artist,
 			$title,
 			$uri,

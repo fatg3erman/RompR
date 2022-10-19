@@ -30,8 +30,6 @@ var playlist = function() {
 
 	var add_proxy_command = null;
 
-	var trackfinder = null;
-
 	// Minimal set of information - just what infobar requires to make sure
 	// it blanks everything out
 	// Pos is for radioManager
@@ -678,20 +676,14 @@ var playlist = function() {
 		},
 
 		search_and_add: function(element) {
-			if (trackfinder === null) {
-				trackfinder = new faveFinder(false);
-				trackfinder.setPriorities(["ytmusic", "youtube"]);
-				trackfinder.setCheckDb(false);
-			}
-			var params = {};
+			var params = {action: 'findandreturn'};
 			element.find('input.search_param').each(function() {
 				params[$(this).attr('name')] = unescapeHtml($(this).val());
 			});
-			infobar.notify(language.gettext('label_searching')+' for '+params.Title);
-			trackfinder.findThisOne(
-				params,
+			infobar.notify(language.gettext('label_searching')+' for '+(params.Title ? params.Title : params.Album));
+			metaHandlers.genericAction(
+				[params],
 				function(data) {
-					debug.log('FAVE RESULTS', data);
 					if (data.file) {
 						playlist.add_by_rompr_commands([{
 								type: 'uri',
@@ -699,7 +691,12 @@ var playlist = function() {
 							}],
 							null
 						);
+					} else {
+						infobar.notify('Could not find that track');
 					}
+				},
+				function(data) {
+					infobar.notify('Could not find that track');
 				}
 			)
 		},
@@ -903,6 +900,10 @@ var playlist = function() {
 				case "podcast":
 				case "dirble":
 					return '<i class="icon-'+d+'-circled inline-icon fixed"></i>';
+					break;
+
+				case "yt":
+					return '<i class="icon-youtube-circled inline-icon fixed"></i>';
 					break;
 
 				case 'tunein':
@@ -1217,28 +1218,7 @@ function Album(artist, album, index, rolledup) {
 	}
 
 	this.addToCollection = function() {
-		debug.log("PLAYLIST","Adding album to collection");
-		metaHandlers.genericAction(
-			[{
-				action: 'addalbumtocollection',
-				albumuri: tracks[0]['X-AlbumUri']
-			}],
-			collectionHelper.updateCollectionDisplay,
-			function(rdata) {
-				debug.warn("RATING PLUGIN","Failure to do bumfinger", rdata);
-				infobar.error('Failed to add album to collection')
-			}
-		);
-		// if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,14) == "spotify:album:") {
-		// 	spotify.album.getInfo(tracks[0].metadata.album.uri.substring(14,tracks[0].metadata.album.uri.length),
-		// 	function(data) {
-		// 		metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, tracks[0].albumartist)
-		// 	},
-		// 	function(data) {
-		// 		debug.warn("ADD ALBUM","Failed to add album",data);
-		// 		infobar.error(language.gettext('label_general_error'));
-		// 	},
-		// 	false);
+		metaHandlers.addAlbumUriToCollection(tracks[0]['X-AlbumUri']);
 	}
 
 	function format_tracknum(tracknum) {

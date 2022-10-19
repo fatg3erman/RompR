@@ -226,16 +226,20 @@ var helpfulThings = function() {
 
 			// Need to make sure all the album IDs are unique, since we do get duplicates
 
+			let actualdata = [];
+			for (var track of data.tracks) {
+				actualdata.push(track.album);
+			}
+
 			holder.spotifyAlbumThing({
 				classes: 'brick spotify_album_masonry selecotron',
 				itemselector: 'brick',
-				sub: 'album',
 				showbiogs: true,
 				layoutcallback: function() { doneonce = true; helpfulThings.getMoreStuff() },
 				maxwidth: maxwidth,
 				is_plugin: true,
 				imageclass: 'jalopy',
-				data: data.tracks
+				data: actualdata
 			});
 		},
 
