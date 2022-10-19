@@ -46,11 +46,11 @@ I think MySQL is better at this, but I haven't checked.
 * All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.
 * Fix bug where Spotify tracks restored from a metadata backup would wrongly be classed as local.
 * Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix,
-the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection
- and will not be selected by Personalised Radio stations. Note that selecting this option will force a rescan of your Music Collection.
- You can use the Unplayable Tracks plugin to view all your Spotify tracks, which will give you an easy way to browse them and decide
+the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection and will be
+added to Your Wishlist. Note that selecting this option will force a rescan of your Music Collection.
+ The Wishlist Viewer will give you an easy way to browse them and decide
  which ones you want to buy digital or physical copies of. I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
- If you have enabled Youtube Music support in Mopidy the Unplayable Tracks plugin will permit you to search for tracks on Youtube Music
+ If you have enabled Youtube Music support in Mopidy the Wishlist Viewer will permit you to search for tracks on Youtube Music
  and import them into your Collection in place of your Spotify tracks, preserving the tags, ratings, and playcounts.
  * For Mopidy users, all Personalised Radio stations that relied on Spotify support have been disabled. I hope this is temporary, but with
  Mopidy's Spotify support being broken they serve no purpose and are impossible to test.

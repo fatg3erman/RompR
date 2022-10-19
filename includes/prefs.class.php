@@ -83,7 +83,6 @@ class prefs {
 		'auto_audiobook' => array(),
 		'backend_version' => '0',
 		"spotify_mark_unplayable" => false,
-		"spotify_mark_playable" => false,
 		// Need these next two so the player defs can be updated
 		"consume_workaround" => false,
 		"we_do_consume" => false,
@@ -628,7 +627,7 @@ class prefs {
 		//
 
 		if (array_key_exists('currenthost', $_POST)) {
-			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable', 'spotify_mark_playable') as $p) {
+			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable') as $p) {
 				if (array_key_exists($p, $_POST)) {
 					$_POST[$p] = true;
 				} else {

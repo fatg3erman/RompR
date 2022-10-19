@@ -978,7 +978,6 @@ $.widget('rompr.spotifyAlbumThing', {
 		layoutcallback: null,
 		maxwidth: 640,
 		is_plugin: false,
-		replace: false,
 		imageclass: 'spotify_album_image',
 		masonified: false,
 		showlistenlater: true,
@@ -1173,13 +1172,7 @@ $.widget('rompr.spotifyAlbumThing', {
 				this.options.data[data_index],
 				track_index,
 				this.options.attributes,
-				this.options.replace,
-				function (data) {
-					collectionHelper.updateCollectionDisplay(data);
-					let reqid = self.options.data[data_index].reqid;
-					if (reqid)
-						$('#wlresults_'+reqid).parent().remove();
-				}
+				collectionHelper.updateCollectionDisplay
 			);
 		}
 	},

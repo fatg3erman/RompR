@@ -43,7 +43,6 @@ foreach($params as $p) {
 		case 'resetresume':
 		case 'addalbumtocollection':
 		case 'findandset':
-		case 'copy':
 			prefs::$database->create_foundtracks();
 			prefs::$database->{$p['action']}($p);
 			prefs::$database->prepare_returninfo();

@@ -266,13 +266,13 @@ var metaHandlers = function() {
 
 		fromBasicSpotifyInfo: {
 
-			importTrack: function (albumdata, track_index, attributes, replace, success) {
+			importTrack: function (albumdata, track_index, attributes, success) {
 				// Don't send the albumimage. Either it has already been cached in which case we'll find it
 				// or it'll be a getremoteimage obtained through Mopidy, which we now want to swap for a
 				// cached one.
 				var data = {
-					action: (replace === false) ? 'set' : 'copy',
-					attributes: (replace === false) ? attributes : {copyfrom: replace},
+					action: 'set',
+					attributes: attributes,
 					Album: albumdata.name,
 					albumartist: combine_spotify_artists(albumdata.artists),
 					domain: albumdata.domain,
@@ -432,7 +432,7 @@ var dbQueue = function() {
 
 	// Cleanup cleans the database but it also updates the track stats
 	var actions_requiring_cleanup = [
-		'set', 'remove', 'amendalbum', 'delete', 'deletewl', 'clearwishlist', 'setasaudiobook', 'copy'
+		'set', 'remove', 'amendalbum', 'delete', 'deletewl', 'clearwishlist', 'setasaudiobook'
 	];
 
 	async function process_request(req) {

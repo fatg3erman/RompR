@@ -36,12 +36,12 @@ class album {
 
 	// Munge our album data into somthing approaching a spotify album object so
 	// we can pass it to spotifyAlbumThing.
-	public function dump_json($reqid, $player) {
+	public function dump_json($player) {
 		$image = $this->getImage('asdownloaded');
 		// Is this too hacky? It is if we start returning LOTS of matches, it's going to
 		// take a very long time. But otherwise we don't get any image at all for anything
 		// that isn't from search results
-		if (!$image && prefs::get_pref('player_backend') == 'mopidy')
+		if ($player && !$image && prefs::get_pref('player_backend') == 'mopidy')
 			$image = $player->find_album_image($this->tracks[0]->tags['X-AlbumUri']);
 
 		$data = [
@@ -49,7 +49,6 @@ class album {
 			'artists' => [['name' => $this->tracks[0]->tags['albumartist']]],
 			'uri' => $this->tracks[0]->tags['X-AlbumUri'],
 			'id' => md5($this->tracks[0]->tags['X-AlbumUri']),
-			'reqid' => $reqid,
 			'images' => [[
 				'url' => $image,
 				'width' => 0

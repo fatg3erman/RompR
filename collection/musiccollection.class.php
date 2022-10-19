@@ -93,7 +93,7 @@ class musicCollection extends collection_base {
 		$this->albums = array();
 	}
 
-	public function tracks_as_array($reqid) {
+	public function tracks_as_array() {
 		$c = true;
 		$player = new player();
 		print '[';
@@ -104,7 +104,7 @@ class musicCollection extends collection_base {
 				print ', ';
 			}
 			$album->sortTracks();
-			print $album->dump_json($reqid, $player);
+			print $album->dump_json($player);
 		}
 		print ']';
 	}

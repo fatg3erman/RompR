@@ -46,7 +46,7 @@ if (count($wishlist) > 0) {
 foreach ($wishlist as $obj) {
 	logger::log("WISHLIST", "Found Track",$obj['title'],"by",$obj['albumartist']);
 
-	print '<div class="containerbox vertical robotlove" id="walbum'.$obj['albumindex'].'">';
+	print '<div class="containerbox vertical robotlove" id="wtrack_'.$obj['ttid'].'">';
 	print '<div class="containerbox fixed">';
 	if ($obj['SourceImage']) {
 		print '<div class="smallcover fixed"><img class="smallcover" src="'.$obj['SourceImage'].'" /></div>';

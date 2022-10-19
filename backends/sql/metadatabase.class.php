@@ -149,8 +149,7 @@ class metaDatabase extends playlistCollection {
 			$data,
 			false
 		);
-		$reqid = array_key_exists('reqid', $data) ? $data['reqid'] : null;
-		$this->tracks_as_array($reqid);
+		$this->tracks_as_array();
 	}
 
 	public function browsetoll($uri) {
@@ -175,25 +174,9 @@ class metaDatabase extends playlistCollection {
 					return;
 				}
 			}
-			$json = $album->dump_json(null, null);
+			$json = $album->dump_json(null);
 			$this->sql_prepare_query(true, null, null, null, "INSERT INTO AlbumsToListenTotable (JsonData) VALUES (?)", $json);
 		}
-	}
-
-	public function copy($data) {
-		$copyfrom = $data['attributes']['copyfrom'];
-		$current = $this->get_all_data($copyfrom);
-		logger::log('METADATA', 'Copyring from',$data['attributes']['copyfrom'],print_r($current, true));
-		$data['action'] = 'set';
-		$data['attributes'] = [['attribute' => 'Rating', 'value' => $current['Rating']]];
-		if (count($current['Tags']) > 0) {
-			$data['attributes'][] = ['attribute' => 'Tags', 'value' => $current['Tags']];
-		}
-		if ($current['Playcount'] > 0) {
-			$data['attributes'][] = ['attribute' => 'Playcount', 'value' => $current['Playcount']];
-		}
-		$this->remove_ttid($copyfrom);
-		$this->set($data);
 	}
 
 	public function set($data) {
@@ -1024,8 +1007,10 @@ class metaDatabase extends playlistCollection {
 			$meta = $this->get_all_data($ttid);
 			$retval = [
 				['attribute' => 'Rating', 'value' => $meta['Rating']],
-				['attribute' => 'Tags', 'value' => $meta['Tags']]
+				['attribute' => 'Tags', 'value' => $meta['Tags']],
+				['attribute' => 'Playcount', 'value' => $meta['Playcount']]
 			];
+			$this->returninfo['deletedwishlist'][] = $ttid;
 			$this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex=".$ttid, true);
 			$this->generic_sql_query("DELETE FROM Tracktable WHERE TTindex=".$ttid, true);
 		}
@@ -1061,8 +1046,10 @@ class metaDatabase extends playlistCollection {
 			$meta = $this->get_all_data($obj['TTindex']);
 			$retval = [
 				['attribute' => 'Rating', 'value' => $meta['Rating']],
-				['attribute' => 'Tags', 'value' => $meta['Tags']]
+				['attribute' => 'Tags', 'value' => $meta['Tags']],
+				['attribute' => 'Playcount', 'value' => $meta['Playcount']]
 			];
+			$this->returninfo['deletedwishlist'][] = $obj['TTindex'];
 			$this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex=".$obj['TTindex'], true);
 			$this->generic_sql_query("DELETE FROM Tracktable WHERE TTindex=".$obj['TTindex'], true);
 		}

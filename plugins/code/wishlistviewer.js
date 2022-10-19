@@ -39,28 +39,6 @@ var wishlistViewer = function() {
 
 		attributes[reqid] = [];
 
-		var rat = element.parent().find('.rating-icon-small').first();
-		if (rat.hasClass('icon-1-stars')) {
-			debug.log("WISHLIST","1 star");
-			attributes[reqid].push({attribute: 'Rating', value:  1});
-		} else if (rat.hasClass('icon-2-stars')) {
-			debug.log("WISHLIST","2 star");
-			attributes[reqid].push({attribute: 'Rating', value:  2});
-		} else if (rat.hasClass('icon-3-stars')) {
-			debug.log("WISHLIST","3 star");
-			attributes[reqid].push({attribute: 'Rating', value:  3});
-		} else if (rat.hasClass('icon-4-stars')) {
-			debug.log("WISHLIST","4 star");
-			attributes[reqid].push({attribute: 'Rating', value:  4});
-		} else if (rat.hasClass('icon-5-stars')) {
-			debug.log("WISHLIST","5 star");
-			attributes[reqid].push({attribute: 'Rating', value:  5});
-		}
-		var tag = element.parent().find('.tracktags').first();
-		if (tag.length > 0) {
-			debug.info("WISHLIST","Setting Tags Attribute");
-			attributes[reqid].push({attribute: 'Tags', value: tag.text().split(", ")});
-		}
 		metaHandlers.genericAction(
 			[{
 				action: 'findandreturnall',

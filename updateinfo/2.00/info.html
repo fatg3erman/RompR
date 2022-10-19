@@ -5,24 +5,56 @@
 <ul>
 <li>This bump in version number reflects a big change in how RompR works internally. This has allowed me to improve
 a lot of the functionality, but I cannot possibly test it on every system.</li>
-<li>This version introduces the <a href="https://fatg3erman.github.io/Backend-Daemon/">RompR Backend Daemon</a> which replaces romonitor and is now a requirement.
-The Daemon performs some tasks that are better not left to the browser. It requires a POSIX operating system
-and therefore RompR is no longer supported on Windows. RompR will, on most systems, start this daemon itself so you
+<li><b>It is strongly reccommended that you back up your entire database before updating to this version</b>,
+as if it does not work for you then rolling back will be impossible without a database backup</li>
+<li>This version introduces the <a href="https://fatg3erman.github.io/RompR/Backend-Daemon">RompR Backend Daemon</a> which replaces romonitor and is now a requirement.
+The Daemon performs some tasks that are very difficult to do in the browser but very easy to do if you have a process running permanently on the server.
+It requires a POSIX operating system and therefore RompR is no longer supported on Windows. RompR will, on most systems, start this daemon itself so you
 shouldn't need to do anything *except* if you were previously running romonitor, in which case you **must** read the link above.</li>
 <li>Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin.
 As a result of this change though, you will need to recreate any Alarms you had previously configured.</li>
-<li>There is now a <a href="https://fatg3erman.github.io/RompR-And-MPD/">Websocket Server</a> that makes the UI more responsive when you're using MPD - essentially it
-mimics the part of Mopidy's HTTP interface that RompR uses. There are some pre-requisistes you need for this to work, please
-read the link.</li>
-<li> <b>DEPRECATION WARNING</b> I am going to remove support for IceCast radio, because the "API" really sucks, it requires PHPQuery to parse it,
-and PHP8 pretty much broke PHPQuery, which is now unmaintained. I might change my mind if enough people get in touch and tell me they really like it.
-In this release, IceCast is only available when you do a search - the "browser" has been removed.</li>
+<li>There is now a <a href="https://fatg3erman.github.io/RompR/RompR-And-MPD">Websocket Server</a> that makes the UI more responsive when you're using MPD - essentially it
+mimics the part of Mopidy's HTTP interface that RompR uses. It's not required but it is reccomended. There are some pre-requisistes you
+need for this to work, please read the link.</li>
+<li>Unified Search - everything you can search for in RompR is now available through the main Search Panel instead of being
+spread out in different places throughout the interface.</li>
+<li><b>DEPRECATION WARNING</b> I am going to remove support for IceCast radio, because the "API" really sucks.
+I might change my mind if enough people get in touch and tell me they really like it.
+In this release, IceCast is only available when you do a search; the "browser" has been removed.</li>
+<li>Fix bug where album art might be partially downloaded when using MPD (Fix contributed by corubba)</li>
+<li>Try to make RompR properly timezone aware, so the alarm clock works when Daylight Saving Time is enabled, for example.
+RompR will try to work out your timezone, but if you notice the alarm clock isn't going off at the right time you
+should set date.timezone in your php.ini.</li>
+<li>Done some work to make the Desktop and Skypotato skins work better on touch-enabled devices like tablets:
+    <ul>
+    <li>It should auto-detect a touch interface and enable swiping and long press on the Play Queue.</li>
+    <li>On a touch device, you can pinch to shrink or enlarge the left-hand list (ie the list of artists) in both skins, and also the Play Queue
+    in the desktop skin.</li>
+    <li>On a touch device it should now use the device's native scrolling instead of RompR's custom scrollbars.</li>
+</ul>
+</li>
+<li>A new button in the preferences panel allows you to save the current settings as defaults for all browsers. This will assist
+people who prefer to run in private sessions - your UI settings will be saved to the backend when you push this button.
+This includes the skin and single/double click mode but some prefs that are stored as Cookies are not saved - this includes the
+current Player as well some of the collection sort options.</li>
+<li>Clients in a Snapcast Group can now have their volumes locked together, so that adjusting one adjusts them all. So you can now set the
+relative volumes as you want them, then make the whole lot louder if you need to.</li>
+<li>Make the SQLite collection case-insensitive, which makes it work the same way as MySQL and means I can remove a lot of
+case checking statements, which speeds things up. Note that in SQLite case-sensitivity only works with ASCII characters.
+I think MySQL is better at this, but I haven't checked.</li>
+<li>All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.</li>
+<li>Fix bug where Spotify tracks restored from a metadata backup would wrongly be classed as local.</li>
 <li>Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix,
-the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection
- and will not be selected by Personalised Radio stations. Note that selecting this option will force a rescan of your Music Collection.
- You can use the Unplayable Tracks plugin to view all your Spotify tracks, which will give you an easy way to browse them and decide
- which ones you want to buy digital or physical copies of.
- I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.</li>
+the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection and will be
+added to Your Wishlist. Note that selecting this option will force a rescan of your Music Collection.
+ The Wishlist Viewer will give you an easy way to browse them and decide
+ which ones you want to buy digital or physical copies of. I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
+ If you have enabled Youtube Music support in Mopidy the Wishlist Viewer will permit you to search for tracks on Youtube Music
+ and import them into your Collection in place of your Spotify tracks, preserving the tags, ratings, and playcounts.</li>
  <li>For Mopidy users, all Personalised Radio stations that relied on Spotify support have been disabled. I hope this is temporary, but with
  Mopidy's Spotify support being broken they serve no purpose and are impossible to test.</li>
+ <li>The other Mopidy-specific Personal radio stations have been adjusted so that they work with Mopidy-Youtube and Mopidy-YTMusic.
+ For best results with Mopidy-Youtube you should ensure you have a Youtube Music account and enable it in the youtube section of
+ your mopidy.conf.</li>
+<li>All Personal Radio stations are now populated by the Backend Daemon, so there is no longer any need to keep a browser open.</li>
 </ul>
