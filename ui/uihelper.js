@@ -681,6 +681,7 @@ var uiHelper = function() {
 			setPlayClickHandlers();
 			bindPlaylistClicks();
 			showUpdateWindow();
+			uiHelper.set_rounded_corner_buffer_size();
 		},
 
 		changePanel: function() {
@@ -729,6 +730,10 @@ var uiHelper = function() {
 				});
 
 			}
+		},
+
+		set_rounded_corner_buffer_size: function() {
+			set_css_variable('--stupid-rounded-corner-buffer-size', prefs.stupid_rounded_corner_buffer_size.toString()+'px');
 		},
 
 		ui_config_header: function(options) {

@@ -6,14 +6,10 @@ The Albums To Listen To plugin is a place where you can keep a record of Spotify
 
 You can add albums to this list from the [Spotify Info Panel](/RompR/The-Info-Panel). You can then come back and listen at your leisure.
 
-If you have Mopidy with Spotify support (currently not working)
-Albums and tracks can be added to the Play Queue directly from this list and you can click the musical notes icon either under
-the album or next to it in the Play Queue.
+You can also add albums to this list from search results if those albums are from Youtube Music.
 
 If you have Mopidy with Youtube Music support (using either mopidy-youtube or mopidy-ytmusic) then you can click the track names in the
 album and RompR will attempt to find that track on Youtube Music and play it.
-
-If you decide you don't like it, just click the x to remove it from the list.
 
 All of the albums can be expanded to show a full track listing and a biography of the artist.
 

@@ -145,7 +145,7 @@ function set_mouse_touch_flags() {
 	// If we have a touch-UI the body should have a class of touchclick.
 	// (If it doesn't then it should have mouseclick)
 	// Note that the historical reasons the Phone skin uses a caless of phone as well as touchclick
-	if ($('body').hasClass('touchclick') || $('body').hasClass('phone')) {
+	if ($('body').hasClass('touchclick')) {
 		// Adjust desktop-oriented skins to run on touch devices
 		uiHelper.is_touch_ui = true;
 	}

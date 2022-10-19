@@ -187,7 +187,8 @@ class prefs {
 		'collectionbuttons_isopen' => false,
 		'advsearchoptions_isopen' => false,
 		'podcastbuttons_isopen' => false,
-		"somafm_quality" => 'highest_available_quality'
+		"somafm_quality" => 'highest_available_quality',
+		"stupid_rounded_corner_buffer_size" => 0
 
 	];
 

@@ -1047,8 +1047,9 @@ function Album(artist, album, index, rolledup) {
 
 		var controls = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner)
 		controls.append('<i class="icon-cancel-circled inline-icon tooltip expand clickplaylist clickicon clickremovealbum" title="'+language.gettext('label_removefromplaylist')+'" name="'+self.index+'"></i>');
+
 		if (tracks[0]['X-AlbumUri'] && ['youtube', 'ytmusic', 'spotify'].indexOf(tracks[0]['domain']) >= 0) {
-			controls.append('<i class="expand clickplaylist clickicon clickaddwholealbum icon-music inline-icon tooltip" title="'+language.gettext('label_addtocollection')+'" name="'+self.index+'"></i>');
+			controls.append('<i class="expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse" uri="'+tracks[0]['X-AlbumUri']+'"></i>');
 		}
 
 		var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');

@@ -33,19 +33,4 @@ if (file_exists('skins/'.prefs::skin().'/controlbuttons.css')) {
 	print "\n";
 }
 
-if (file_exists('skins/'.prefs::skin().'/skin.requires')) {
-	logger::log('GET-CSS', 'Reading Skin Requirements File');
-	$requires = file('skins/'.prefs::skin().'/skin.requires');
-	foreach ($requires as $s) {
-		$s = trim($s);
-		if (substr($s,0,1) != '#') {
-			$ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));
-			if ($ext == "css") {
-				logger::log('GET-CSS', $s);
-				readfile($s);
-				print "\n";
-			}
-		}
-	}
-}
 ?>

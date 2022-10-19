@@ -250,6 +250,10 @@ var prefs = function() {
 							}
 					}
 					break;
+
+				case 'stupid_rounded_corner_buffer_size':
+					callback = uiHelper.set_rounded_corner_buffer_size;
+					break;
 			}
 		});
 		prefs.save(felakuti, callback);

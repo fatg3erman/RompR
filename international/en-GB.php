@@ -746,8 +746,8 @@ language::add_translations([
 	"label_ui_defaults" =>					'Defaults',
 	"button_save_defaults" =>				'Save As Default For All Browsers',
 	"label_recommenddesc" =>				'A Radio Station of recommendations based on your listening',
-	"label_rmixdesc" =>						'A Radio Station of music by artists you love and artists like them'
-
+	"label_rmixdesc" =>						'A Radio Station of music by artists you love and artists like them',
+	"config_stupid_round_corners" =>		'Padding at bottom of screen (to help on phones with round corners or controls that get in the way)'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------
