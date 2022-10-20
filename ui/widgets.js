@@ -1049,8 +1049,10 @@ $.widget('rompr.spotifyAlbumThing', {
 				class: 'tagh albumthing invisible',
 				id: self.options.id+'dropper_'+album.id
 			}).appendTo(album_holder);
+			// If we've already got tracks (fave_finder will return them but spotify might not)
 			if (album.tracks && album.tracks.items)
 				drooopper.addClass('filled').html(spotifyTrackListing(album, true));
+
 			if (this.options.showbiogs) {
 				album_holder.append($('<input>', {
 					type: 'hidden',
@@ -1096,7 +1098,7 @@ $.widget('rompr.spotifyAlbumThing', {
 			src: this._getImage(album)
 		}));
 		let text_holder = $('<div>', {class: 'tagh albumthing vertical-centre containerbox'}).appendTo(album_holder);
-		let toggle = $('<i>', {class: 'icon-toggle-closed menu infoclick'+this._clickClass()+' clickopenalbum clickspotifywidget', name: this.options.id+'dropper_'+album.id}).appendTo(text_holder);
+		let toggle = $('<i>', {class: 'fixed icon-toggle-closed menu infoclick'+this._clickClass()+' clickopenalbum clickspotifywidget', name: this.options.id+'dropper_'+album.id}).appendTo(text_holder);
 		this._albumTitle(text_holder, album, artistname);
 		return text_holder;
 	},
@@ -1128,11 +1130,10 @@ $.widget('rompr.spotifyAlbumThing', {
 		var self = this;
 		var id = element.attr("name").replace(self.options.id+'dropper_', '');
 		if (element.hasClass('clickopenalbum')) {
+			// open the drop-down to show the track listing
 			var dropper = $('#'+element.attr("name"));
-
-			debug.log('SPOOPY', 'Looking for dropper', dropper);
-
 			if (element.isOpen()) {
+				// If it's already open, hide it
 				self.element.find('#'+self.options.id+'bio_'+id).hide();
 				element.toggleClosed();
 				if (self.options.showbiogs) {
@@ -1144,7 +1145,6 @@ $.widget('rompr.spotifyAlbumThing', {
 			} else {
 				element.toggleOpen();
 				if (dropper.hasClass("filled")) {
-					debug.log('SPOOPY', 'Dropper is already filled');
 					// It'll be filled if we filled it earlier, or it'll be filled on creation if it's an album that
 					// has come from the backend via metaDatabase browsetoll or similar.
 					self._openAlbum(dropper);
@@ -1152,6 +1152,8 @@ $.widget('rompr.spotifyAlbumThing', {
 					self.element.find('#'+self.options.id+'bio_'+id).show();
 					browser.rePoint();
 				} else {
+					// If it's not filled then this is a widget created by spotify API calls
+					// so we need to populate the track listing from spotify's API
 					if (layoutProcessor.openOnImage) {
 						element.parent().parent().makeSpinner();
 					} else {
@@ -1161,6 +1163,9 @@ $.widget('rompr.spotifyAlbumThing', {
 				}
 			}
 		} else if (element.hasClass('clickimporttrack')) {
+			//
+			// handle a click on the 'import track' button in the track listing
+			//
 			var album_holder = element;
 			while (!album_holder.hasClass('albumwidget')) {
 				album_holder = album_holder.parent();
@@ -1180,6 +1185,8 @@ $.widget('rompr.spotifyAlbumThing', {
 	_openAlbum: function(e) {
 		var self = this;
 		if (self.options.showbiogs) {
+			// If we've requested to show artist biogs, adjust the css so the panrl gets bigger
+			// and use Last.FM's API to get an artist biography if we haven't done so already.
 			e.parent().parent().removeClass(self.options.swapclass).addClass('masonry_opened dropshadow');
 			e.parent().parent().children('.helpfulalbum').removeClass('fullwidth');
 			self.element.find('#'+self.options.id+'bio_'+e.attr('id').replace(self.options.id+'dropper_')).show();
@@ -1200,6 +1207,8 @@ $.widget('rompr.spotifyAlbumThing', {
 	},
 
 	spotifyAlbumResponse: function(data) {
+		// Spotify album browse response handler. Create the track listing and
+		// call _openAlbum
 		if (layoutProcessor.openOnImage) {
 			$('[name="'+this.options.id+'dropper_'+data.id+'"]').parent().parent().stopSpinner();
 		} else {
@@ -1218,6 +1227,7 @@ $.widget('rompr.spotifyAlbumThing', {
 	},
 
 	artistInfo: function(data, reqid) {
+		// Got the Artist biograohy from Last.FM
 		var self = this;
 		debug.debug("MONKEYSPANNER","Got LastFM Info for reqid",data,reqid);
 		if (data) {
@@ -1237,10 +1247,10 @@ $.widget('rompr.spotifyAlbumThing', {
 
 	_getImage: function(a) {
 		var self = this;
-		var img = 'newimages/spotify-icon.png';
+		var img = 'newimages/vinyl_record.svg';
 		if (a.images && a.images[0]) {
 			debug.debug("SPOTIALBUM","Images",a.images);
-			var img = a.images[0].url;
+			img = a.images[0].url;
 			for (var j in a.images) {
 				if (a.images[j].width <= this.options.maxwidth) {
 					img = a.images[j].url;
@@ -1310,7 +1320,6 @@ $.widget('rompr.spotifyArtistThing', {
 				img = 'newimages/artist-icon.png';
 			}
 			var clickclass = (this.options.is_plugin) ? ' plugclickable' : '';
-			var trackclass = (player.canPlay('spotify')) ? ' playable clickable draggable' : '';
 			var y = $('<div>', {class: 'helpfulalbum fullwidth tleft notthere'}).appendTo(x);
 			var html;
 			var appendto;
@@ -1318,20 +1327,14 @@ $.widget('rompr.spotifyArtistThing', {
 				var t = $('<div>').appendTo(y);
 				t.append('<img class="'+this.options.imageclass+' menu infoclick'+clickclass+' clickopenartist clickspotifywidget" src="'+img+'"  name="'+a.id+'"/>');
 				html = '<div class="tagh albumthing sponklick relpos">'+
-					'<span class="title-menu'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'">'+a.name+'</span>';
+					'<span class="title-menu" name="'+rawurlencode(a.uri)+'">'+a.name+'</span>';
 				appendto = t;
 			} else {
-				y.append('<img class="'+this.options.imageclass+trackclass+' clicktrack" src="'+img+'" name="'+rawurlencode(a.uri)+'"/>');
+				y.append('<img class="'+this.options.imageclass+'" src="'+img+'" name="'+rawurlencode(a.uri)+'"/>');
 				var html = '<div class="tagh albumthing">'+
 							'<i class="icon-toggle-closed menu infoclick clickopenartist clickspotifywidget" name="'+a.id+'"></i>'+
-							'<span class="title-menu '+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'">'+a.name+'</span>';
+							'<span class="title-menu" name="'+rawurlencode(a.uri)+'">'+a.name+'</span>';
 				appendto = y;
-			}
-			if (!player.canPlay('spotify')) {
-				html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled smallicon"></i></a>';
-			}
-			if (layoutProcessor.openOnImage && player.canPlay('spotify')) {
-				html += '<div class="playdiv'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'"></div>';
 			}
 			html += '</div>';
 			appendto.append(html)

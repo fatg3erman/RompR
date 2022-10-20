@@ -358,11 +358,12 @@ class base_mpd_player {
 		}
 
 		// HACKETY HACK
-		// ytmusic can't add a track unless the album has been looked up.
+		// ytmusic can't add a track unless the album has been looked up. Youtube often doesn't know the track number
 		// If we've added a track to the collection and then restarted Mopidy our collection is buggered.
-		// This'll work in some instances, but not all.
+		// This'll work in some instances, but not all. What a rigmarole. Can't believe ytmusicapi regards track numbers
+		// as optional.
 		foreach ($cmds as $cmd) {
-			if (preg_match('/add "(ytmusic:track:.+)"/', $cmd, $matches)) {
+			if (preg_match('/add "([ytmusic:track:|youtube:video:].+)"/', $cmd, $matches)) {
 				if (prefs::$database === null) {
 					prefs::$database = new database();
 				}

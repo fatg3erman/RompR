@@ -28,8 +28,8 @@ foreach($params as $p) {
 
 		// Things that return information about modified items
 		case 'set':
-		case 'seturi':
-		case "add":
+		// case 'seturi':
+		// case "add":
 		case 'inc':
 		case 'remove':
 		case 'cleanup':

@@ -208,39 +208,17 @@ class metaquery extends collection_base {
 		}
 	}
 
-	private function get_artist_charts() {
-		$query = "SELECT
-			Artistname AS label_artist,
-			SUM(Playcount) AS soundcloud_plays
-			FROM
-			Tracktable JOIN Playcounttable USING (TTindex)
-			JOIN Artisttable USING (Artistindex)
-			".$this->charts_include_option()."
-			GROUP BY label_artist ORDER BY soundcloud_plays DESC LIMIT 40";
-		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
-	}
-
-	private function get_album_charts() {
-		$query = "SELECT
-			Artistname AS label_artist,
-			Albumname AS label_album,
-			SUM(Playcount) AS soundcloud_plays,
-			AlbumUri AS Uri
-			FROM Playcounttable JOIN Tracktable USING (TTindex)
-			JOIN Albumtable USING (Albumindex)
-			JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-			".$this->charts_include_option()."
-			GROUP BY label_artist, label_album ORDER BY soundcloud_plays DESC LIMIT 40";
-		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
-	}
-
 	private function get_track_charts($limit = 40, $include = null) {
+		// MIN(Uri) is simply because I needed an aggregate function and SQLite doesn't support ANY_VALUE.
+		// Use MAX(Playcount) because we can have multiple copies of the same track -
+		// they *should* all have the same Playcount but we can't be certain because of
+		// the vaguaries of track numbers with Youtube
 		$query = "SELECT
 			Artistname AS label_artist,
 			Albumname AS label_album,
 			Title AS label_track,
-			SUM(Playcount) AS soundcloud_plays,
-			Uri
+			MAX(Playcount) AS soundcloud_plays,
+			MIN(Uri) AS Uri
 			FROM
 			Tracktable
 			JOIN Playcounttable USING (TTIndex)
@@ -249,6 +227,48 @@ class metaquery extends collection_base {
 			".$this->charts_include_option($include)."
 			GROUP BY label_artist, label_album, label_track
 			ORDER BY soundcloud_plays DESC LIMIT ".$limit;
+		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
+	}
+
+	private function get_artist_charts() {
+		// This uses the track charts query as a subquery to remove duplicate
+		// tracks - ensures we only count each track once.
+		$query = "SELECT
+			Artistname AS label_artist,
+			SUM(Playcount) AS soundcloud_plays
+			FROM (
+				SELECT Title, Artistname, Albumname, MAX(Playcount) AS Playcount, MIN(AlbumUri) AS AlbumUri
+				FROM Tracktable
+				JOIN Playcounttable USING (TTindex)
+				JOIN Albumtable USING (albumindex)
+				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+				".$this->charts_include_option()."
+				GROUP BY Artistname, Albumname, Title
+			) AS nodupes
+			GROUP BY label_artist
+			ORDER BY soundcloud_plays DESC LIMIT 40";
+		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
+	}
+
+	private function get_album_charts() {
+		// This uses the track charts query as a subquery to remove duplicate
+		// tracks - ensures we only count each track once.
+		$query = "SELECT
+			Artistname AS label_artist,
+			Albumname AS label_album,
+			SUM(Playcount) AS soundcloud_plays,
+			MIN(AlbumUri) AS Uri
+			FROM (
+				SELECT Title, Artistname, Albumname, MAX(Playcount) AS Playcount, MIN(AlbumUri) AS AlbumUri
+				FROM Tracktable
+				JOIN Playcounttable USING (TTindex)
+				JOIN Albumtable USING (albumindex)
+				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+				".$this->charts_include_option()."
+				GROUP BY Artistname, Albumname, Title
+			) AS nodupes
+			GROUP BY label_artist, label_album
+			ORDER BY soundcloud_plays DESC LIMIT 40";
 		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
 	}
 

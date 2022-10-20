@@ -137,13 +137,19 @@ Note that only Mopidy-Local seems to return Genres, so Genre-based Collection fu
 
 Mopidy-YTMusic cannot accept a URI it has not seen before. This gives RompR problems if you add YTMusic tracks to your collection and then restart
 Mopidy, because all the tracks in your collection will no longer work. I have suggested a fix for this that works for RompR but as yet there has
-been no movement on it. https://github.com/OzymandiasTheGreat/mopidy-ytmusic/pull/69 If you run that version then you can add tracks to your collection
+been no movement on it. https://github.com/OzymandiasTheGreat/mopidy-ytmusic/pull/69. If you run that version then you can add tracks to your collection
 safely.
 
-If you're using Mopidy-Youtube the Music From Everywhere Personalised Radio stations work best if you enable the Music API.
-If you're a Youtube Premium subscriber you need to enable yt_dlp and use a cookiefile. See the Mopidy-Youtube documentation for how to do that. I've worked
-with the developer to bring the functionality more in line with what Spotify used to provide but there are limits. Youtbe Music does not
-have a proper API and there is some information - like track numbers - that is extremely unreliable.
+Mopidy-Youtube also supports the Youtube Music API. I've worked with the developer to bring the functionality more in line with what
+Spotify used to provide and in general it works well. At the time of writing (October 2022) the development version contains
+all the functionality RompR requires.
+
+I've put a lot of effort into these backends to replace a lot of what RompR used to rely on Mopidy-Spotify for but bear in mind
+Youtbe Music does not have a proper API and there is some information - like track numbers - that is extremely unreliable.
+RompR likes track numbers because they make Playcounts more accurate, and RompR will try very hard indeed to get
+Youtube to give it a track number when it needs one. Mopidy-Youtube is better than Mopidy-YTMusic in this respect.
+Mopidy-YTMusic often doesn't even return an Album name, which messes up Playcounts and Ratings and a lot of stuff. If that's important
+to you then you shouldn't use Mopidy-YTMusic.
 
 
 ## Downloading Youtube Tracks

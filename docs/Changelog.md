@@ -9,6 +9,8 @@
 a lot of the functionality, but I cannot possibly test it on every system.
 * **It is strongly reccommended that you [back up your entire database](/Backing-Up-Your-Metadata#Backing-Up-Your-Entire_database)
 before updating to this version, as if it does not work for you then rolling back will be impossible without a database backup.**
+* **In order to upgrade to this version from an earlier version you must delete everything from your installation except your prefs and albumart directories,
+then copy the new version in.**
 * If you do have problems after upgrading, please [raise a bug on the issue tracker](https://github.com/fatg3erman/RompR/issues)
 and I will attempt to fix it or assist you.
 * This version introduces the [RompR Backend Daemon](/Backend-Daemon) which replaces romonitor and is now a requirement.
@@ -38,27 +40,30 @@ should set date.timezone in your php.ini.
 people who prefer to run in private sessions - your UI settings will be saved to the backend when you push this button.
 This includes the skin and single/double click mode but some prefs that are stored as Cookies are not saved - this includes the
 current Player as well some of the collection sort options.
+* People who use phones with silly rounded corners can now specify a padding to be applied to the bottom of the Phone skin so that
+the rounded corners or other bits that Apple decide to put in our way don't obscure my UI.
 * Clients in a Snapcast Group can now have their volumes locked together, so that adjusting one adjusts them all. So you can now set the
 relative volumes as you want them, then make the whole lot louder if you need to.
 * Make the SQLite collection case-insensitive, which makes it work the same way as MySQL and means I can remove a lot of
-case checking statements, which speeds things up. Note that in SQLite case-sensitivity only works with ASCII characters.
-I think MySQL is better at this, but I haven't checked.
+case checking statements, which speeds things up.
 * All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.
-* Fix bug where Spotify tracks restored from a metadata backup would wrongly be classed as local.
+* All Personal Radio stations are now populated by the Backend Daemon, so there is no longer any need to keep a browser open.
+* The usual collection of undocumented bugfixes.
+* **Youtube Music as a Spotify Replacement**
 * Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix,
 the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection and will be
 added to Your Wishlist. Note that selecting this option will force a rescan of your Music Collection.
- The Wishlist Viewer will give you an easy way to browse them and decide
- which ones you want to buy digital or physical copies of. I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
+ The Wishlist Viewer will give you an easy way to browse them and decide which ones you want to buy digital or physical copies of.
+ I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
  If you have enabled Youtube Music support in Mopidy the Wishlist Viewer will permit you to search for tracks on Youtube Music
  and import them into your Collection in place of your Spotify tracks, preserving the tags, ratings, and playcounts.
- * For Mopidy users, all Personalised Radio stations that relied on Spotify support have been disabled. I hope this is temporary, but with
- Mopidy's Spotify support being broken they serve no purpose and are impossible to test.
- * The other Mopidy-specific Personal radio stations have been adjusted so that they work with Mopidy-Youtube and Mopidy-YTMusic.
+* For Mopidy users, all Personalised Radio stations that relied on Spotify support have been removed and are not coming back.
+* The other Mopidy-specific Personal radio stations have been adjusted so that they work with Mopidy-Youtube and Mopidy-YTMusic.
  For best results with Mopidy-Youtube you should ensure you have a Youtube Music account and enable it in the youtube section of
  your mopidy.conf.
-* All Personal Radio stations are now populated by the Backend Daemon, so there is no longer any need to keep a browser open.
-* The usual collection of undocumented bugfixes.
+* Where the Info Panel used to show lists of Spotify albums and allow you to play them it will still do this but now if you try
+to play tracks from them it will search for them using all your online sources and play whatever it can find. You can still add
+these albums to Albums To Listen To as well. You can also now add albums from Youtube that come up in search results to Albums To Listen To.
 
 
 ## Version 1.61

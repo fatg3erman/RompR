@@ -53,6 +53,7 @@ class everywhere_radio extends musicCollection {
 				self::TYPE_USED_FOR_SEARCH,
 				$seed['topindex'],
 			);
+			$seed['Album'] = null;
 			$blarg = $this->fave_finder($rp['radiodomains'], false, $seed, true);
 			foreach ($blarg as $try) {
 				if ($this->is_not_audiobook($try['file']))

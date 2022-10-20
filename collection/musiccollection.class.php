@@ -317,7 +317,7 @@ class musicCollection extends collection_base {
 				$wishtrack['artistindex']
 			);
 			foreach ($newtrack AS $track) {
-				logger::log('COLLECTION', "We have found wishlist track",$wishtrack['Title'],'by',$wishtrack['albumartist'],'as TTindex',$newtrack['TTindex']);
+				logger::log('COLLECTION', "We have found wishlist track",$wishtrack['Title'],'by',$wishtrack['trackartist'],'as TTindex',$newtrack['TTindex']);
 				$this->sql_prepare_query(true, null, null, null,
 					'UPDATE Ratingtable SET TTindex = ? WHERE TTindex = ?',
 					$newtrack['TTindex'],

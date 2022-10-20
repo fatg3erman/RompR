@@ -892,7 +892,8 @@ class collection_base extends database {
 			tr.Title AS title,
 			tr.Duration AS time,
 			tr.Albumindex AS albumindex,
-			a.Artistname AS albumartist,
+			a.Artistname AS trackartist,
+			CASE WHEN al.Albumname LIKE 'rompr_wish%' THEN NULL ELSE al.Albumname END AS Album,
 			a.Artistindex AS artistindex,
 			tr.DateAdded AS DateAdded,
 			ws.SourceName AS SourceName,
@@ -900,6 +901,7 @@ class collection_base extends database {
 			ws.SourceUri AS SourceUri
 			FROM
 			Tracktable AS tr
+			JOIN Albumtable AS al USING (Albumindex)
 			LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
 			LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
 			LEFT JOIN Tagtable AS t USING (Tagindex)
@@ -913,18 +915,18 @@ class collection_base extends database {
 		switch ($sortby) {
 			case 'artist':
 				foreach (prefs::get_pref('artistsatstart') as $a) {
-					$qstring .= "CASE WHEN LOWER(albumartist) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
+					$qstring .= "CASE WHEN LOWER(trackartist) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
 				}
 				if (count(prefs::get_pref('nosortprefixes')) > 0) {
 					$qstring .= "(CASE ";
 					foreach(prefs::get_pref('nosortprefixes') AS $p) {
 						$phpisshitsometimes = strlen($p)+2;
-						$qstring .= "WHEN LOWER(albumartist) LIKE '".strtolower($p)." %' THEN LOWER(SUBSTR(albumartist,".
+						$qstring .= "WHEN LOWER(trackartist) LIKE '".strtolower($p)." %' THEN LOWER(SUBSTR(trackartist,".
 							$phpisshitsometimes.")) ";
 					}
-					$qstring .= "ELSE LOWER(albumartist) END)";
+					$qstring .= "ELSE LOWER(trackartist) END)";
 				} else {
-					$qstring .= "LOWER(albumartist)";
+					$qstring .= "LOWER(trackartist)";
 				}
 				$qstring .= ", DateAdded, SourceName";
 				break;

@@ -44,7 +44,7 @@ if (count($wishlist) > 0) {
 }
 
 foreach ($wishlist as $obj) {
-	logger::log("WISHLIST", "Found Track",$obj['title'],"by",$obj['albumartist']);
+	logger::log("WISHLIST", "Found Track",$obj['title'],"by",$obj['trackartist']);
 
 	print '<div class="containerbox vertical robotlove" id="wtrack_'.$obj['ttid'].'">';
 	print '<div class="containerbox fixed">';
@@ -53,7 +53,10 @@ foreach ($wishlist as $obj) {
 	}
 	print '<div class="expand containerbox vertical">';
 	print '<div class="fixed tracktitle"><b>'.$obj['title'].'</b></div>';
-	print '<div class="fixed playlistrow2 trackartist">'.$obj['albumartist'].'</div>';
+	print '<div class="fixed playlistrow2 trackartist">'.$obj['trackartist'].'</div>';
+	if ($obj['Album'])
+		print '<div class="fixed playlistrow2"> (on '.$obj['Album'].')</div>';
+
 	if ($obj['rating'] > 0) {
 		print '<div class="fixed playlistrow2 trackrating"><i class="icon-'.$obj['rating'].'-stars rating-icon-small nopointer"></i></div>';
 	}
@@ -69,7 +72,7 @@ foreach ($wishlist as $obj) {
 	print '</div>';
 	print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip spinable" title="'.language::gettext('label_searchtrack').'"></i>';
 	print '<input type="hidden" value="'.$obj['title'].'" />';
-	print '<input type="hidden" value="'.$obj['albumartist'].'" />';
+	print '<input type="hidden" value="'.$obj['trackartist'].'" />';
 	print '<i class="icon-cancel-circled smallicon fixed clickicon clickremdb infoclick plugclickable tooltip" title="'.language::gettext('label_removefromwl').'"></i>';
 	print '<input type="hidden" value="'.$obj['ttid'].'" />';
 	print '</div>';
