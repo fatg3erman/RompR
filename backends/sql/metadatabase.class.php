@@ -268,15 +268,16 @@ class metaDatabase extends playlistCollection {
 		// If we still don't have any attributes (we might have come in with none as we do if we're
 		// just adding an album to the collection via find file) then finally see if the ttid being added
 		// already exists and take its rating (so we don't alter it) or just set rating to 0 to unhide
-		// a hidden track. Do we actually need to do that now we're junking hidden tracks?
-		// if (count($data['attributes']) == 0) {
-		// 	if (count($ttids) > 0) {
-		// 		$rat_test = $this->simple_query('Rating', 'Ratingtable', 'TTindex', $ttids[0], 0);
-		// 	} else {
-		// 		$rat_test = 0;
-		// 	}
-		// 	$data['attributes'] = [['attribute' => 'Rating', 'value'=> $rat_test]];
-		// }
+		// a hidden track via the trigger. Rmember that trigger also sets the justUpdated flag
+		// and sets isSearchResult to 1 (where necessary) so we always need to do something at this point.
+		if (count($data['attributes']) == 0) {
+			if (count($ttids) > 0) {
+				$rat_test = $this->simple_query('Rating', 'Ratingtable', 'TTindex', $ttids[0], 0);
+			} else {
+				$rat_test = 0;
+			}
+			$data['attributes'] = [['attribute' => 'Rating', 'value'=> $rat_test]];
+		}
 
 		if (count($ttids) == 0) {
 			$ttids[0] = $this->create_new_track($data);
@@ -284,7 +285,7 @@ class metaDatabase extends playlistCollection {
 		}
 
 		if (count($data['attributes']) == 0) {
-			logger::log('SET', 'No attributes to set. All done');
+			logger::error('SET', 'No attributes to set!');
 			return;
 		}
 
