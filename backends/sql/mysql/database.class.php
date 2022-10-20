@@ -490,7 +490,7 @@ class database extends data_base {
 			"trackartist VARCHAR(100) NOT NULL, ".
 			"Title VARCHAR(255) NOT NULL, ".
 			"Uri VARCHAR(2000), ".
-			"UNIQUE INDEX(Artist, Title), ".
+			"UNIQUE INDEX(trackartist, Title), ".
 			"PRIMARY KEY (uriindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL",$name,"OK");
