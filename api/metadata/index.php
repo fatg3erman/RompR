@@ -53,6 +53,7 @@ foreach($params as $p) {
 			break;
 
 		case 'youtubedl':
+		case 'youtubedl_album':
 			set_time_limit(0);
 			prefs::$database->close_transaction();
 			prefs::$database->create_foundtracks();

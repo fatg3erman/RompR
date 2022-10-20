@@ -703,6 +703,7 @@ language::add_translations([
 	"label_cantataimporter" =>				"Import Ratings from Cantata",
 	"podcast_writetags" =>					"Write ID3 Tags to Downloaded Files",
 	"label_youtubedl" =>					"Download Audio",
+	"label_youtubedl_all" =>				"Download All Youtube Tracks",
 	"error_playergone" =>					"Player '%s' has stopped resonding!",
 	"label_mopidy_http" =>					"Mopidy HTTP Interface Port",
 	"info_mopidy_http" =>					"Optional, provides extra functionality with Mopidy",

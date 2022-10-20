@@ -740,6 +740,17 @@ class collection_base extends database {
 
 	}
 
+	public function num_youtube_tracks($albumindex) {
+		return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0,
+			"SELECT COUNT(TTindex) AS num FROM Tracktable
+				WHERE Albumindex = ?
+				AND Hidden = 0
+				AND isSearchResult < 2
+				AND (Uri LIKE 'youtube%' OR Uri LIKE 'ytmusic%' OR Uri LIKE 'yt%')",
+			$albumindex
+		);
+	}
+
 	public function album_is_audiobook($albumindex) {
 		// Returns the maxiumum value of isAudiobook for a given album
 		return $this->generic_sql_query("SELECT MAX(isAudiobook) AS cnt FROM Tracktable WHERE Albumindex = ".$albumindex." AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2", false, null, 'cnt', 0);

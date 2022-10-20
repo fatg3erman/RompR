@@ -197,7 +197,7 @@ var metaHandlers = function() {
 							url: "api/metadata/",
 							type: "POST",
 							contentType: false,
-							data: JSON.stringify([{action: 'youtubedl', file: uri }]),
+							data: JSON.stringify([{action: 'youtubedl', urilist: [uri] }]),
 							dataType: "html",
 							cache: false
 						});
@@ -215,6 +215,35 @@ var metaHandlers = function() {
 						}
 					}
 				});
+			},
+
+			downloadAllYoutubeTracks: async function(event, element) {
+				debug.log('YTDLALL',event, element);
+				var albumname = decodeURIComponent(element.attr('aname'));
+				debug.log('YTDLALL', 'Downloading album', albumname);
+				var monitor = new youtubeDownloadMonitor(element.attr('who'), albumname, $(this));
+				try {
+					var data = await $.ajax({
+						url: "api/metadata/",
+						type: "POST",
+						contentType: false,
+						data: JSON.stringify([{action: 'youtubedl_album', why: element.attr('why'), who: element.attr('who') }]),
+						dataType: "html",
+						cache: false
+					});
+				} catch (err) {
+					if (err.status == 200) {
+						debug.log('YOUTUBEDL', 'Error handler caught success code! WTF?');
+					} else {
+						debug.warn("FUCK!", 'Why did that not work?');
+						debug.log('BUMBLETREE', err);
+						if (err.responseText) {
+							debug.error('YOUTUBEDL', err.responseText);
+							infobar.error('Failed to download YouTube Album - '+err.responseText);
+						}
+						monitor.stop();
+					}
+				}
 			},
 
 			removeAlbumFromDb: function(event, element) {

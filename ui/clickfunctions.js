@@ -306,6 +306,7 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('removealbum', metaHandlers.fromUiElement.removeAlbumFromDb);
 	// clickRegistry.addClickHandlers('resetresume', metaHandlers.fromUiElement.resetResumePosition);
 	clickRegistry.addClickHandlers('youtubedl', metaHandlers.fromUiElement.downloadYoutubeTrack);
+	clickRegistry.addClickHandlers('youtubedl_all', metaHandlers.fromUiElement.downloadAllYoutubeTracks);
 	clickRegistry.addClickHandlers('clickdeleteplaylisttrack', playlistManager.deletePlaylistTrack);
 	clickRegistry.addClickHandlers('clickdeleteplaylist', playlistManager.deletePlaylist);
 	clickRegistry.addClickHandlers('clickdeleteuserplaylist', playlistManager.deleteUserPlaylist);
@@ -1100,6 +1101,14 @@ function makeAlbumMenu(e, element) {
 			class: 'backhi clickable menuitem unusetrackimages closepopup',
 			name: $(element).attr('who')
 		}).html(language.gettext('label_unusetrackimages')));
+	}
+	if ($(element).hasClass('clickytdownloadall')) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem youtubedl_all closepopup',
+			who: $(element).attr('who'),
+			why: $(element).attr('why'),
+			aname: $(element).attr('aname')
+		}).html(language.gettext('label_youtubedl_all')));
 	}
 
 	menu.open();

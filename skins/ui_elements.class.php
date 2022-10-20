@@ -243,6 +243,8 @@ class ui_elements {
 					$classes[] = 'clickusetrackimages';
 				}
 			}
+			if (prefs::$database->num_youtube_tracks($who) > 0)
+				$classes[] = 'clickytdownloadall';
 		}
 
 		if (!$det['buttons']) {
@@ -271,7 +273,7 @@ class ui_elements {
 		if (count($classes) > 0) {
 			$classes[] = $det['iconclass'];
 			$html .= '<div class="icon-menu inline-icon track-control-icon clickable clickicon clickalbummenu '
-					.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who;
+					.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']);
 
 			if (in_array('clickalbumoptions', $classes) || in_array('clickaddtocollectionviabrowse', $classes) || in_array('clickaddtollviabrowse', $classes))
 				$html .= '" uri="'.rawurlencode($det['AlbumUri']);
