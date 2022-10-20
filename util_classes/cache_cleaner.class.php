@@ -116,28 +116,28 @@ class cache_cleaner extends database {
 		$this->tidy_wishlist();
 		logger::info("CACHE CLEANER", "== Check For Orphaned Wishlist Sources took ".format_time(time() - $now));
 
-		logger::info("CACHE CLEANER", "Checking for orphaned youtube downloads");
-		$now = time();
-		$yts = glob('prefs/youtubedl/*');
-		foreach ($yts as $dir) {
-			logger::log('CACHE CLEANER', $dir);
-			$flacs = glob($dir.'/*.flac');
-			$numfiles = 1;
-			foreach ($flacs as $flac) {
-				// We can check the immediately preceeding dir and the filename, nothing more -
-				// It might be in the colleciton as a streaming track, or it mnight be symlinked
-				// to the music directory, in which case the path will be completely different.
-				// We can't check TTindexes because that didn't work for some reason, probably
-				// to do with symlinking again. Don't forget that SQLite reuses old TTindexes because
-				// we didn't set it up as an AUTOINCREMEMNT column. For speed. Say it was for speed.
-				$numfiles = $this->check_youtube_uri_exists(basename(dirname($flac)).'/'.basename($flac));
-			}
-			if ($numfiles == 0) {
-				logger::log('CACHE CLEANER', $flac,'does not have an associated track');
-				rrmdir($dir);
-			}
-		}
-		logger::info("CACHE CLEANER", "== Check For Orphaned youtube downloads took ".format_time(time() - $now));
+		// logger::info("CACHE CLEANER", "Checking for orphaned youtube downloads");
+		// $now = time();
+		// $yts = glob('prefs/youtubedl/*');
+		// foreach ($yts as $dir) {
+		// 	logger::log('CACHE CLEANER', $dir);
+		// 	$flacs = glob($dir.'/*.flac');
+		// 	$numfiles = 1;
+		// 	foreach ($flacs as $flac) {
+		// 		// We can check the immediately preceeding dir and the filename, nothing more -
+		// 		// It might be in the colleciton as a streaming track, or it mnight be symlinked
+		// 		// to the music directory, in which case the path will be completely different.
+		// 		// We can't check TTindexes because that didn't work for some reason, probably
+		// 		// to do with symlinking again. Don't forget that SQLite reuses old TTindexes because
+		// 		// we didn't set it up as an AUTOINCREMEMNT column. For speed. Say it was for speed.
+		// 		$numfiles = $this->check_youtube_uri_exists(basename(dirname($flac)).'/'.basename($flac));
+		// 	}
+		// 	if ($numfiles == 0) {
+		// 		logger::log('CACHE CLEANER', $flac,'does not have an associated track');
+		// 		rrmdir($dir);
+		// 	}
+		// }
+		// logger::info("CACHE CLEANER", "== Check For Orphaned youtube downloads took ".format_time(time() - $now));
 
 		logger::info("CACHE CLEANER", "Tidying Ratings and Playcounts");
 		$now = time();
