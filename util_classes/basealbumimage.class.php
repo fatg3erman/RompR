@@ -58,7 +58,7 @@ class baseAlbumImage {
 	}
 
 	private function image_exists($image) {
-		logger::trace("ALBUMIMAGE", "Checking for existence of file ".$image);
+		logger::debug("ALBUMIMAGE", "Checking for existence of file ".$image);
 		return file_exists($image);
 	}
 
@@ -83,11 +83,11 @@ class baseAlbumImage {
 	}
 
 	private function check_if_image_already_downloaded() {
-		logger::log('ALBUMIMAGE', 'Checking if image exists for', $this->artist, $this->album);
+		logger::debug('ALBUMIMAGE', 'Checking if image exists for', $this->artist, $this->album);
 		foreach (['jpg', 'png', 'svg'] as $ext) {
 		$checkimages = $this->image_info_from_album_info($ext);
 			if ($this->image_exists($checkimages['small'])) {
-				logger::log("ALBUMIMAGE", "  ..  File exists");
+				logger::debug("ALBUMIMAGE", "  ..  File exists");
 				$this->images = $checkimages;
 				return true;
 			}

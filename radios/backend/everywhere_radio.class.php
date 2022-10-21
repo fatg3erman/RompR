@@ -48,6 +48,7 @@ class everywhere_radio extends musicCollection {
 		$seeds = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [], $qstring, $query_params);
 		foreach ($seeds as $seed) {
 			$gotseeds = true;
+			logger::log('EVRADIO', 'Got Seed', $seed['trackartist'], $seed['Title']);
 			$this->sql_prepare_query(true, null, null, null,
 				"UPDATE ".self::get_seed_table_name()." SET Type = Type + ? WHERE topindex = ?",
 				self::TYPE_USED_FOR_SEARCH,
@@ -60,21 +61,12 @@ class everywhere_radio extends musicCollection {
 					$uris[] = $try;
 			}
 		}
-		// Tidy up tracks that have been used as seeds and searched for.
-		// RELATED_TRACK will never be used as a ssed (atm, at least)
-		// NOT A GOOD IDEA. We have a UNIQUE INDEX on TopTracks to prevent duplication of entries
-		// If we delete them then they could come back and get searched for again.
-		// $this->sql_prepare_query(true, null, null, null,
-		// 	"DELETE FROM ".self::get_seed_table_name()." WHERE ((Type & ? > 0 OR Type & ? > 0) AND Type & ? > 0)",
-		// 	self::TYPE_USED_AS_SEED,
-		// 	self::TYPE_RELATED_TRACK,
-		// 	self::TYPE_USED_FOR_SEARCH
-		// );
 		return array($uris, $gotseeds);
 	}
 
 	protected function handle_multi_tracks($uris) {
 		foreach ($uris as $uri) {
+			logger::log('EVRADIO', 'Got Uri ',$uri['trackartist'], $uri['Title']);
 			$this->add_smart_uri($uri['file'], $uri['trackartist'], $uri['Title']);
 		}
 	}
@@ -82,10 +74,10 @@ class everywhere_radio extends musicCollection {
 	protected function get_one_uri() {
 		$table = self::get_uri_table_name();
 		$retval = null;
-		$r = $this->generic_sql_query("SELECT * FROM ".$table." ORDER BY ".self::SQL_RANDOM_SORT." LIMIT 1");
+		$r = $this->generic_sql_query("SELECT * FROM ".$table." WHERE used = 0 ORDER BY ".self::SQL_RANDOM_SORT." LIMIT 1");
 		if (count($r) > 0) {
 			$this->sql_prepare_query(true, null, null, null,
-				"DELETE FROM ".$table." WHERE uriindex = ?",
+				"UPDATE ".$table." SET used = 1 WHERE uriindex = ?",
 				$r[0]['uriindex']
 			);
 			$retval = $r[0]['Uri'];
@@ -111,7 +103,7 @@ class everywhere_radio extends musicCollection {
 			$name
 		);
 		if ($nummusic > 0) {
-			logger::log('EVYWHR', 'Artist', $name, 'has', $nummusic,'music tracks');
+			logger::debug('EVYWHR', 'Artist', $name, 'has', $nummusic,'music tracks');
 			return true;
 		}
 		$numab = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0,
@@ -122,7 +114,7 @@ class everywhere_radio extends musicCollection {
 			$name
 		);
 		if ($numab > 0) {
-			logger::log('EVYWHR', 'Artist', $name, 'has', $numab,'audiobook tracks - Ignoring');
+			logger::trace('EVYWHR', 'Artist', $name, 'has', $numab,'audiobook tracks - Ignoring');
 			return false;
 		}
 		// At this point we know it doesn't have any non-audiobook tracks that aren't http://

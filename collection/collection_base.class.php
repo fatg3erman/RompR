@@ -967,8 +967,8 @@ class collection_base extends database {
 	}
 
 	public function do_raw_search($domains, $rawterms, $command) {
-		logger::trace("RAW SEARCH", "domains are ".print_r($domains, true));
-		logger::trace("RAW SEARCH", "terms are   ".print_r($rawterms, true));
+		logger::core("RAW SEARCH", "domains are ".print_r($domains, true));
+		logger::core("RAW SEARCH", "terms are   ".print_r($rawterms, true));
 		foreach ($rawterms as $key => $term) {
 			$command .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
 		}
@@ -993,7 +993,7 @@ class collection_base extends database {
 		$this->options['doing_search'] = true;
 		$this->options['trackbytrack'] = false;
 
-		logger::log('FAVEFINDER', 'Search Terms', print_r($this->options['searchterms'], true));
+		logger::trace('FAVEFINDER', 'Search Terms', $this->options['searchterms']);
 		$found = false;
 		if ($checkdb){
 			logger::log('FAVEFINDER', 'Checking database first');
@@ -1077,35 +1077,22 @@ class collection_base extends database {
 		if ($lookingfor['trackartist'] && $lookingfor['Title']) {
 			if ($lookingfor['trackartist'] == strip_track_name($filedata['trackartist'])
 				&& $lookingfor['Title'] == strip_track_name($filedata['Title'])) {
-				logger::log('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
-				logger::log('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
+				logger::debug('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
+				logger::debug('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
 				return true;
 			}
 		} else if ($lookingfor['trackartist']) {
 			if ($lookingfor['trackartist'] == strip_track_name($filedata['trackartist'])) {
-				logger::log('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
+				logger::debug('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
 				return true;
 			}
 		} else if ($lookingfor['Title']) {
 			if ($lookingfor['Title'] == strip_track_name($filedata['Title'])) {
-				logger::log('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
+				logger::debug('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
 				return true;
 			}
 		}
 		return false;
 	}
 }
-
-function strip_track_name($thing) {
-	if (!$thing)
-		return $thing;
-
-	$thing = strtolower($thing);
-	$thing = preg_replace('/\s+\&\s+/', ' and ', $thing);
-	$thing = preg_replace('/\(.*? mix\)$/', '', $thing);
-	$thing = preg_replace("/\pP/", '', $thing);
-	return trim($thing);
-}
-
-
 ?>

@@ -529,8 +529,6 @@ class metaDatabase extends playlistCollection {
 		$this->returninfo['Playcount'] = $tempinfo['Playcount'];
 		$this->returninfo['Tags'] = $tempinfo['Tags'];
 
-		// logger::log('RETURNINFO', print_r($this->returninfo, true));
-
 		if ($item !== false)
 			return array_key_exists($item, $this->returninfo) ? $this->returninfo[$item] : 0;
 	}

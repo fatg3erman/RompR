@@ -1051,4 +1051,15 @@ function create_body_tag($base_class) {
 	print '">'."\n";
 }
 
+function strip_track_name($thing) {
+	if (!$thing)
+		return $thing;
+
+	$thing = strtolower($thing);
+	$thing = preg_replace('/\s+\&\s+/', ' and ', $thing);
+	$thing = preg_replace('/\(.*? mix\)$/', '', $thing);
+	$thing = preg_replace("/\pP/", '', $thing);
+	return trim($thing);
+}
+
 ?>

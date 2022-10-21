@@ -379,6 +379,7 @@ class database extends data_base {
 		$name = everywhere_radio::get_uri_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"uriindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+			"used INTEGER DEFAULT 0, ".
 			"trackartist VARCHAR(100) NOT NULL COLLATE NOCASE, ".
 			"Title VARCHAR(255) NOT NULL COLLATE NOCASE, ".
 			"Uri TEXT)", true))
@@ -392,12 +393,18 @@ class database extends data_base {
 		}
 	}
 
+	// artist and title are only used here to prevent duplicates so we use
+	// strip_track_name because online sources are often very inconsistent:
+	// Blood Sweat & Tears
+	// Blood, Sweat & Tears
+	// Blood, Sweat And Tears
+	// all come back in response to a search for Blood Sweat & Tears
 	public function add_smart_uri($uri, $artist, $title) {
 		$name = everywhere_radio::get_uri_table_name();
 		$this->sql_prepare_query(true, null, null, null,
 			"INSERT OR IGNORE INTO ".$name." (trackartist, Title, Uri) VALUES (?, ? ,?)",
-			$artist,
-			$title,
+			strip_track_name($artist),
+			strip_track_name($title),
 			$uri
 		);
 	}

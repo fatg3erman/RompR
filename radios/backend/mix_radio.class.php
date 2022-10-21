@@ -87,7 +87,7 @@ class mix_radio extends everywhere_radio {
 			$related = json_decode(spotify::artist_getrelated($params, false), true);
 			if (array_key_exists('artists', $related)) {
 				foreach ($related['artists'] as $bobbly) {
-					logger::trace('MIXRADIO', 'Related Artist', $bobbly['name']);
+					logger::log('MIXRADIO', 'Related Artist', $bobbly['name']);
 					$this->add_toptrack(
 						self::TYPE_RELATED_TRACK,
 						$bobbly['name'],
