@@ -517,16 +517,19 @@ class metaDatabase extends playlistCollection {
 		}
 		$ttids = $this->find_item($data, $this->forced_uri_only(false, $data['domain']));
 
-		$this->returninfo = self::NODATA;
+		$tempinfo = self::NODATA;
 		foreach ($ttids as $ttid) {
-			$tempinfo = $this->get_all_data($ttid);
-			$this->returninfo['Rating'] = ($tempinfo['Rating'] > $this->returninfo['Rating']) ? $tempinfo['Rating'] : $this->returninfo['Rating'];
-			$this->returninfo['Playcount'] = ($tempinfo['Playcount'] > $this->returninfo['Playcount']) ? $tempinfo['Playcount'] : $this->returninfo['Playcount'];
-			$this->returninfo['Tags'] = (count($tempinfo['Tags']) > count($this->returninfo['Tags'])) ? $tempinfo['Tags'] : $this->returninfo['Tags'];
-			$this->returninfo['isSearchResult'] = $tempinfo['isSearchResult'];
+			$this->returninfo = $this->get_all_data($ttid);
+			$tempinfo['Rating'] = max($tempinfo['Rating'], $this->returninfo['Rating']);
+			$tempinfo['Playcount'] = max($tempinfo['Playcount'], $this->returninfo['Playcount']);
+			$tempinfo['Tags'] = (count($tempinfo['Tags']) > count($this->returninfo['Tags'])) ? $tempinfo['Tags'] : $this->returninfo['Tags'];
 		}
 
-		logger::log('RETURNINFO', print_r($this->returninfo, true));
+		$this->returninfo['Rating'] = $tempinfo['Rating'];
+		$this->returninfo['Playcount'] = $tempinfo['Playcount'];
+		$this->returninfo['Tags'] = $tempinfo['Tags'];
+
+		// logger::log('RETURNINFO', print_r($this->returninfo, true));
 
 		if ($item !== false)
 			return array_key_exists($item, $this->returninfo) ? $this->returninfo[$item] : 0;
