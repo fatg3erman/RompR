@@ -699,101 +699,86 @@ class metaDatabase extends playlistCollection {
 		}
 
 		if (count($ttids) == 0) {
-			if ($data['Album']) {
-				// In this one ignore search results - we might have a search result with a track number which will override
-				// a hidden track without one, and we don't want to do that.
-				if ($data['albumartist'] !== null && $data['Track'] != 0) {
-					logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['Album'],"title",$data['Title'],"track number",$data['Track']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
-						"SELECT
-							TTindex
-						FROM
-							Tracktable JOIN Albumtable USING (Albumindex)
-							JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-						WHERE
-							Title = ?
-							AND Artistname = ?
-							AND Albumname = ?
-							AND TrackNo = ?
-							AND isSearchResult < 2",
-						$data['Title'], $data['albumartist'], $data['Album'], $data['Track']);
-					$ttids = array_merge($ttids, $t);
-				}
+			// In this one ignore search results - we might have a search result with a track number which will override
+			// a hidden track without one, and we don't want to do that.
+			if ($data['albumartist'] !== null && $data['Track'] != 0) {
+				logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['Album'],"title",$data['Title'],"track number",$data['Track']);
+				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
+					"SELECT
+						TTindex
+					FROM
+						Tracktable JOIN Albumtable USING (Albumindex)
+						JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+					WHERE
+						Title = ?
+						AND Artistname = ?
+						AND Albumname = ?
+						AND TrackNo = ?
+						AND isSearchResult < 2",
+					$data['Title'], $data['albumartist'], $data['Album'], $data['Track']);
+				$ttids = array_merge($ttids, $t);
+			}
 
-				if (count($ttids) == 0 && $data['albumartist'] !== null) {
-					logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['Album'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
-						"SELECT
-							TTindex
-						FROM
-							Tracktable JOIN Albumtable USING (Albumindex)
-							JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-						WHERE
-							Title = ?
-							AND Artistname = ?
-							AND Albumname = ?",
-						$data['Title'], $data['albumartist'], $data['Album']);
-					$ttids = array_merge($ttids, $t);
-				}
+			if (count($ttids) == 0 && $data['albumartist'] !== null) {
+				logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['Album'],"and title",$data['Title']);
+				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
+					"SELECT
+						TTindex
+					FROM
+						Tracktable JOIN Albumtable USING (Albumindex)
+						JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+					WHERE
+						Title = ?
+						AND Artistname = ?
+						AND Albumname = ?",
+					$data['Title'], $data['albumartist'], $data['Album']);
+				$ttids = array_merge($ttids, $t);
+			}
 
-				if (count($ttids) == 0 && ($data['albumartist'] == null || $data['albumartist'] == $data['trackartist'])) {
-					logger::log("FIND ITEM", "  Trying by artist",$data['trackartist'],",album",$data['Album'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
-						"SELECT
-							TTindex
-						FROM
-							Tracktable JOIN Artisttable USING (Artistindex)
-							JOIN Albumtable USING (Albumindex)
-						WHERE
-							Title = ?
-							AND Artistname = ?
-							AND Albumname = ?", $data['Title'], $data['trackartist'], $data['Album']);
-					$ttids = array_merge($ttids, $t);
-				}
-
-				// Finally look for Uri NULL which will be a wishlist item added via a radio station
-				if (count($ttids) == 0) {
-					logger::log("FIND ITEM", "  Trying by (wishlist) artist",$data['trackartist'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
-						"SELECT
-							TTindex
-						FROM
-							Tracktable JOIN Artisttable USING (Artistindex)
-						WHERE
-							Title = ?
-							AND Artistname = ?
-							AND Uri IS NULL",
-						$data['Title'], $data['trackartist']);
-					$ttids = array_merge($ttids, $t);
-				}
-			} else {
-				// No album supplied - ie this is from a radio stream or Mopidy-YTMusic which sometimes doesn't give us an album.
-				// First look for a match where there is something in the album field
-				logger::log("FIND ITEM", "  Trying by artist",$data['trackartist'],"Uri NOT NULL and title",$data['Title']);
+			if (count($ttids) == 0 && ($data['albumartist'] == null || $data['albumartist'] == $data['trackartist'])) {
+				logger::log("FIND ITEM", "  Trying by trackartist",$data['trackartist'],",album",$data['Album'],"and title",$data['Title']);
 				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
 					"SELECT
 						TTindex
 					FROM
 						Tracktable JOIN Artisttable USING (Artistindex)
-					 WHERE
+						JOIN Albumtable USING (Albumindex)
+					WHERE
 						Title = ?
 						AND Artistname = ?
-						AND Uri IS NOT NULL", $data['Title'], $data['trackartist']);
+						AND Albumname = ?", $data['Title'], $data['trackartist'], $data['Album']);
 				$ttids = array_merge($ttids, $t);
+			}
 
-				if (count($ttids) == 0) {
-					logger::log("FIND ITEM", "  Trying by (wishlist) artist",$data['trackartist'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
-						"SELECT
-							TTindex
-						FROM
-							Tracktable JOIN Artisttable USING (Artistindex)
-						WHERE
-							Title = ?
-							AND Artistname = ?
-							AND Uri IS NULL", $data['Title'], $data['trackartist']);
-					$ttids = array_merge($ttids, $t);
-				}
+			if (count($ttids) == 0 && !$data['Album']) {
+				logger::log("FIND ITEM", "  Trying by trackartist",$data['trackartist'],"and title",$data['Title']);
+				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
+					"SELECT
+						TTindex
+					FROM
+						Tracktable JOIN Artisttable USING (Artistindex)
+					WHERE
+						Title = ?
+						AND Artistname = ?
+						AND Uri IS NOT NULL",
+					$data['Title'], $data['trackartist']);
+				$ttids = array_merge($ttids, $t);
+			}
+
+			// Finally look for Uri NULL which will be a wishlist item added via a radio station
+			if (count($ttids) == 0) {
+				logger::log("FIND ITEM", "  Trying by (wishlist) artist",$data['trackartist'],"and title",$data['Title']);
+				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
+					"SELECT
+						TTindex
+					FROM
+						Tracktable JOIN Artisttable USING (Artistindex)
+					WHERE
+						Title = ?
+						AND Artistname = ?
+						AND Uri IS NULL",
+					$data['Title'], $data['trackartist']);
+				$ttids = array_merge($ttids, $t);
 			}
 		}
 
@@ -1229,44 +1214,40 @@ class metaDatabase extends playlistCollection {
 		// This is used by the metadata functions for adding new tracks. It is NOT used
 		// when doing a search or updating the collection, for reasons explained below.
 
-		// This copes with backends like youtube and soundcloud where 2 actual different tracks
-		// might fall foul of our UNiQUE KEY constraint because those backends don't really have
-		// the concept of an album or a track number.
-
-		// The indices come through from the frontend via get_extra_track_info() but using them
+		// IMPORTANT NOTE
+		// The indices
+		// albumartist_index, trackartist_index, album_index
+		// come through from the frontend via get_extra_track_info() but using them
 		// is DANGEROUS because the album and / or artist might no longer exist if the track is
 		// the result of a search and another search has been performed since.
 
-		// if ($data['albumartist_index'] == null) {
-			// Does the albumartist exist?
-			$data['albumartist_index'] = $this->check_artist($data['albumartist']);
-		// }
+		// Does the albumartist exist?
+		$data['albumartist_index'] = $this->check_artist($data['albumartist']);
 
 		// Does the track artist exist?
-		// if ($data['trackartist_index'] == null) {
-			if ($data['trackartist'] != $data['albumartist']) {
-				$data['trackartist_index'] = $this->check_artist($data['trackartist']);
-			} else {
-				$data['trackartist_index'] = $data['albumartist_index'];
-			}
-		// }
+		if ($data['trackartist'] != $data['albumartist']) {
+			$data['trackartist_index'] = $this->check_artist($data['trackartist']);
+		} else {
+			$data['trackartist_index'] = $data['albumartist_index'];
+		}
 
 		if ($data['albumartist_index'] === null || $data['trackartist_index'] === null) {
 			logger::warn('BACKEND', "Trying to create new track but failed to get an artist index");
 			return null;
 		}
 
-		// if ($data['album_index'] == null) {
-			// Does the album exist?
-			if ($data['Album'] == null) {
+		if ($data['Album'] == null) {
+			if ($data['domain'] == 'ytmusic' || $data['domain'] == 'youtube') {
+				logger::warn('BACKEND', 'Album name is not set for',$data['Title'],'- seeing what happens if we allow this');
+			} else {
 				$data['Album'] = 'rompr_wishlist_'.microtime('true');
 			}
-			$data['album_index'] = $this->check_album($data);
-			if ($data['album_index'] === null) {
-				logger::warn('BACKEND', "Trying to create new track but failed to get an album index");
-				return null;
-			}
-		// }
+		}
+		$data['album_index'] = $this->check_album($data);
+		if ($data['album_index'] === null) {
+			logger::warn('BACKEND', "Trying to create new track but failed to get an album index");
+			return null;
+		}
 
 		$data['sourceindex'] = null;
 		if ($data['file'] === null && $data['streamuri'] !== null) {
@@ -1278,33 +1259,33 @@ class metaDatabase extends playlistCollection {
 		// lastUpdateId() does not return the TTindex of the updated track but rather the current AUTO_INCREMENT value of the table
 		// which is about as useful as giving me a forwarding address that only contains the correct continent.
 
-		// We also have to cope with youtube and soundcloud, where the same combination of unique keys can actually refer to
+		// We also have to cope with soundcloud, where the same combination of unique keys can actually refer to
 		// different tracks. In those circumstances we will have looked up using uri only. As urionly did NOT find a track this
 		// means the track we're trying to add must be different. In this case we increment the disc number until we have a unique track.
 
-		// while (($bollocks = $this->check_track_exists($data)) !== false) {
-		// 	if ($this->forced_uri_only(false, $data['domain'])) {
-		// 		$data['Disc']++;
-		// 	} else {
-		// 		$track = $bollocks[0];
-		// 		$cock = false;
-		// 		logger::mark('BACKEND', 'Track being added already exists', $data['file'], $track['Uri']);
-		// 		$this->sql_prepare_query(true, null, null, null,
-		// 			"UPDATE Tracktable SET Uri = ?, Duration = ?, Hidden = ?, Sourceindex = ?, isAudiobook = ?, Genreindex = ?, TYear = ?, LinkChecked = ?, justAdded = ? WHERE TTindex = ?",
-		// 			$data['file'],
-		// 			$this->best_value($track['Duration'], $data['Time'], $cock),
-		// 			$data['hidden'],
-		// 			$data['sourceindex'],
-		// 			$data['isaudiobook'],
-		// 			$this->check_genre($data['Genre']),
-		// 			$this->best_value($track['TYear'], $data['year'], $cock),
-		// 			0,
-		// 			1,
-		// 			$track['TTindex']
-		// 		);
-		// 		return $track['TTindex'];
-		// 	}
-		// }
+		while (($bollocks = $this->check_track_exists($data)) !== false) {
+			if ($this->forced_uri_only(false, $data['domain'])) {
+				$data['Disc']++;
+			} else {
+				$track = $bollocks[0];
+				$cock = false;
+				logger::mark('BACKEND', 'Track being added already exists', $data['file'], $track['Uri']);
+				$this->sql_prepare_query(true, null, null, null,
+					"UPDATE Tracktable SET Uri = ?, Duration = ?, Hidden = ?, Sourceindex = ?, isAudiobook = ?, Genreindex = ?, TYear = ?, LinkChecked = ?, justAdded = ? WHERE TTindex = ?",
+					$data['file'],
+					$this->best_value($track['Duration'], $data['Time'], $cock),
+					$data['hidden'],
+					$data['sourceindex'],
+					$data['isaudiobook'],
+					$this->check_genre($data['Genre']),
+					$this->best_value($track['TYear'], $data['year'], $cock),
+					0,
+					1,
+					$track['TTindex']
+				);
+				return $track['TTindex'];
+			}
+		}
 
 		if ($this->sql_prepare_query(true, null, null, null,
 			"INSERT INTO
@@ -1334,13 +1315,13 @@ class metaDatabase extends playlistCollection {
 		return null;
 	}
 
-	// private function check_track_exists($data) {
-	// 	$bollocks = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
-	// 		"SELECT * FROM Tracktable WHERE Albumindex = ? AND Artistindex = ? AND TrackNo = ? AND Disc = ? AND Title = ?",
-	// 		$data['album_index'], $data['trackartist_index'], $data['Track'], $data['Disc'], $data['Title']
-	// 	);
-	// 	return (count($bollocks) > 0) ? $bollocks : false;
-	// }
+	private function check_track_exists($data) {
+		$bollocks = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			"SELECT * FROM Tracktable WHERE Albumindex = ? AND Artistindex = ? AND TrackNo = ? AND Disc = ? AND Title = ?",
+			$data['album_index'], $data['trackartist_index'], $data['Track'], $data['Disc'], $data['Title']
+		);
+		return (count($bollocks) > 0) ? $bollocks : false;
+	}
 
 	private function youtubedl_error($message, $progress_file) {
 		logger::error('YOUTUBEDL', $message);
