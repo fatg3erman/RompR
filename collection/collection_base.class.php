@@ -989,7 +989,8 @@ class collection_base extends database {
 			'trackartist' => $all_terms['trackartist'],
 			'Album' => $all_terms['Album']
 		];
-		$this->options['searchterms'] = array_map('strip_track_name', $rawterms);
+		// $this->options['searchterms'] = array_map('strip_track_name', $rawterms);
+		$this->options['searchterms'] = $rawterms;
 		$this->options['doing_search'] = true;
 		$this->options['trackbytrack'] = false;
 
@@ -1029,7 +1030,8 @@ class collection_base extends database {
 				} else {
 					logger::log('FAVEFINDER', 'Found',$trackobj->tags['trackartist'],$trackobj->tags['Album'],$trackobj->tags['Title']);
 					if ($trackobj->tags['Album']) {
-						if ($rawterms['Album'] && strip_track_name($rawterms['Album']) == strip_track_name($trackobj->tags['Album'])) {
+						// if ($rawterms['Album'] && strip_track_name($rawterms['Album']) == strip_track_name($trackobj->tags['Album'])) {
+						if ($rawterms['Album'] && metaphone_compare($rawterms['Album'], $trackobj->tags['Album'])) {
 							// Prioritse tracks where the Album title matches what we're looking for
 							$best_matches[] = $trackobj->tags;
 						} else {
@@ -1075,20 +1077,24 @@ class collection_base extends database {
 			return false;
 
 		if ($lookingfor['trackartist'] && $lookingfor['Title']) {
-			if ($lookingfor['trackartist'] == strip_track_name($filedata['trackartist'])
-				&& $lookingfor['Title'] == strip_track_name($filedata['Title'])) {
-				logger::debug('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
-				logger::debug('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
+			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'])
+				&& metaphone_compare($lookingfor['Title'], $filedata['Title'])) {
+			// if ($lookingfor['trackartist'] == strip_track_name($filedata['trackartist'])
+			// 	&& $lookingfor['Title'] == strip_track_name($filedata['Title'])) {
+				// logger::debug('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
+				// logger::debug('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
 				return true;
 			}
 		} else if ($lookingfor['trackartist']) {
-			if ($lookingfor['trackartist'] == strip_track_name($filedata['trackartist'])) {
-				logger::debug('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
+			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'])) {
+			// if ($lookingfor['trackartist'] == strip_track_name($filedata['trackartist'])) {
+			// 	logger::debug('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
 				return true;
 			}
 		} else if ($lookingfor['Title']) {
-			if ($lookingfor['Title'] == strip_track_name($filedata['Title'])) {
-				logger::debug('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
+			if (metaphone_compare($lookingfor['Title'], $filedata['Title'])) {
+			// if ($lookingfor['Title'] == strip_track_name($filedata['Title'])) {
+			// 	logger::debug('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
 				return true;
 			}
 		}

@@ -1057,11 +1057,30 @@ function strip_track_name($thing) {
 	if (!$thing)
 		return $thing;
 
+	// Convert to lower case, change & to and, and remove punctuation
 	$thing = strtolower($thing);
 	$thing = preg_replace('/\s+\&\s+/', ' and ', $thing);
-	$thing = preg_replace('/\(.*? mix\)$/', '', $thing);
 	$thing = preg_replace("/\pP/", '', $thing);
 	return trim($thing);
+}
+
+function metaphone_compare($search_term, $found_term) {
+	// Search term should be first, to ensure accuracy of the percentage measurement
+
+	// Still going to strip anything in brackets off the end because usually it's irrelevant
+	$new_search = preg_replace('/ \(.+?\)$/', '', $search_term);
+	$new_found = preg_replace('/ \(.+?\)$/', '', $found_term);
+
+	$meta_search = metaphone($new_search);
+	$meta_found = metaphone($new_found);
+	$dist = levenshtein($meta_search, $meta_found);
+	if ($dist <= (strlen($meta_search) * 0.25)) {
+		logger::trace('METAPHONE', $found_term,'matches',$search_term);
+		return true;
+	} else {
+		logger::core('METAPHONE', $found_term,'is NOT close enough to',$search_term);
+		return false;
+	}
 }
 
 ?>

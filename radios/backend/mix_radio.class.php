@@ -175,7 +175,8 @@ class mix_radio extends everywhere_radio {
 		$candidates = json_decode(spotify::search($params, false), true);
 		if (array_key_exists('artists', $candidates) && array_key_exists('items', $candidates['artists'])) {
 			foreach ($candidates['artists']['items'] as $willies) {
-				if (strip_track_name($willies['name']) == strip_track_name($artist)) {
+				if (metaphone_compare($artist, $willies['name'])) {
+				// if (strip_track_name($willies['name']) == strip_track_name($artist)) {
 					logger::log('MIXRADIO', 'Spotify Artist',$willies['id'],$willies['name'],'matches',$artist);
 					return $willies['id'];
 				}
