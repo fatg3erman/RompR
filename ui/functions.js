@@ -123,7 +123,8 @@ String.prototype.initcaps = function() {
 
 String.prototype.removePunctuation = function() {
 	var punctRE = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#\$%&\(\)\*\+,\-\.\/:;<=>\?@\[\]\^_`\{\|\}~]/g;
-	return this.replace(/\s*\&\s*/, ' and ').replace(punctRE,'').replace(/\s+/g, ' ');
+	var nopunc = this.replace(/\s*\&\s*/, ' and ').replace(punctRE,'').replace(/\s+/g, ' ');
+	return nopunc.toLowerCase();
 }
 
 String.prototype.fixDodgyLinks = function() {

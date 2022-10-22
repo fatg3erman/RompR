@@ -1030,7 +1030,6 @@ class collection_base extends database {
 				} else {
 					logger::log('FAVEFINDER', 'Found',$trackobj->tags['trackartist'],$trackobj->tags['Album'],$trackobj->tags['Title']);
 					if ($trackobj->tags['Album']) {
-						// if ($rawterms['Album'] && strip_track_name($rawterms['Album']) == strip_track_name($trackobj->tags['Album'])) {
 						if ($rawterms['Album'] && metaphone_compare($rawterms['Album'], $trackobj->tags['Album'])) {
 							// Prioritse tracks where the Album title matches what we're looking for
 							$best_matches[] = $trackobj->tags;
@@ -1070,31 +1069,22 @@ class collection_base extends database {
 
 	protected function check_track_against_terms(&$track) {
 		$filedata = $track->tags;
-		// searchterms need to have been run through strip_track_name() before we get here. It's faster.
 		$lookingfor = $this->options['searchterms'];
 
 		if ($filedata['Title'] == null && $filedata['trackartist'] == null)
 			return false;
 
 		if ($lookingfor['trackartist'] && $lookingfor['Title']) {
-			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'])
+			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'], 2)
 				&& metaphone_compare($lookingfor['Title'], $filedata['Title'])) {
-			// if ($lookingfor['trackartist'] == strip_track_name($filedata['trackartist'])
-			// 	&& $lookingfor['Title'] == strip_track_name($filedata['Title'])) {
-				// logger::debug('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
-				// logger::debug('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
 				return true;
 			}
 		} else if ($lookingfor['trackartist']) {
-			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'])) {
-			// if ($lookingfor['trackartist'] == strip_track_name($filedata['trackartist'])) {
-			// 	logger::debug('ARTIST', $lookingfor['trackartist'], '=', strip_track_name($filedata['trackartist']));
+			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'], 1)) {
 				return true;
 			}
 		} else if ($lookingfor['Title']) {
 			if (metaphone_compare($lookingfor['Title'], $filedata['Title'])) {
-			// if ($lookingfor['Title'] == strip_track_name($filedata['Title'])) {
-			// 	logger::debug('TITLE', $lookingfor['Title'], '=', strip_track_name($filedata['Title']));
 				return true;
 			}
 		}

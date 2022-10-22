@@ -56,11 +56,7 @@ var helpfulThings = function() {
 		if (data.tracks && data.tracks.items) {
 			for (var track of data.tracks.items) {
 				if (track.name.removePunctuation() == source.Title.removePunctuation()) {
-					var arts = [];
-					track.artists.forEach(function(artist) {
-						arts.push(artist.name);
-					});
-					var astring = concatenate_artist_names(arts);
+					var astring = combine_spotify_artists(track.artists);
 					if (astring.removePunctuation() == source.Artistname.removePunctuation()
 						&& artists.indexOf(source.Artistname) == -1)
 					{

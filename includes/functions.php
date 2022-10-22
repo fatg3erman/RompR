@@ -1064,8 +1064,19 @@ function strip_track_name($thing) {
 	return trim($thing);
 }
 
-function metaphone_compare($search_term, $found_term) {
-	// Search term should be first, to ensure accuracy of the percentage measurement
+function metaphone_compare($search_term, $found_term, $match_distance = null) {
+	// This is a fuzzy compare function for comparing album names, artist names, etc.
+	// Search term should be first, to ensure accuracy of the percentage measurement.
+	// It first calculates the metaphone for each term, then calculates the levenshtein
+	// distance between those and uses that to determine if they're the "same" or not.
+
+	// https://www.php.net/manual/en/function.metaphone.php
+	// https://www.php.net/manual/en/function.levenshtein.php
+
+	// The smaller the value of $match_distance the more exact the comparison.
+	// If match_distance is not supplied we use a value calculated as 25% of the length
+	// of the metaphone of search_term or 2, whichever is higher.
+	// You will probably want to tune this value by trail and error depending on the use case.
 
 	// Still going to strip anything in brackets off the end because usually it's irrelevant
 	$new_search = preg_replace('/ \(.+?\)$/', '', $search_term);
@@ -1074,11 +1085,14 @@ function metaphone_compare($search_term, $found_term) {
 	$meta_search = metaphone($new_search);
 	$meta_found = metaphone($new_found);
 	$dist = levenshtein($meta_search, $meta_found);
-	if ($dist <= (strlen($meta_search) * 0.25)) {
+	if ($match_distance === null)
+		$match_distance = max(2, (strlen($meta_search) * 0.25));
+
+	if ($dist <= $match_distance) {
 		logger::trace('METAPHONE', $found_term,'matches',$search_term);
 		return true;
 	} else {
-		logger::core('METAPHONE', $found_term,'is NOT close enough to',$search_term);
+		logger::core('METAPHONE', $found_term,'does not match',$search_term);
 		return false;
 	}
 }

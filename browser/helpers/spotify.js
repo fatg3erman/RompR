@@ -260,6 +260,17 @@ var spotify = function() {
 					}
 				};
 				spotify.request('', data, success, fail, prio);
+			},
+
+			find_possibilities(name, success, fail, prio) {
+				var data = {
+					method: 'find_possibilities',
+					params: {
+						name: name,
+						cache: true
+					}
+				};
+				spotify.request('', data, success, fail, prio);
 			}
 
 		},
