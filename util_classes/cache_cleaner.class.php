@@ -66,17 +66,13 @@ class cache_cleaner extends database {
 			$now = time();
 			// TODO: This is too slow
 			logger::info("CACHE CLEANER", "Checking albumart folder for unneeded images");
+			$used_images = $this->get_used_album_images();
 			$files = glob('albumart/small/*.*');
-			foreach ($files as $image) {
-				// Remove images for hidden tracks and search results. The missing check below will reset the db entries for those albums
-				// Keep everything for 24 hours regardless, we might be using it in a playlist or something
-				if (filemtime($image) < time()-86400) {
-					if ($this->check_albums_using_image($image) < 1) {
-						logger::log("CACHE CLEANER", "  Removing Unused Album image ",$image);
-						$albumimage = new baseAlbumImage(array('baseimage' => $image));
-						array_map('unlink', $albumimage->get_images());
-					}
-				}
+			$unused = array_diff($files, $used_images);
+			foreach ($unused as $image) {
+				logger::log("CACHE CLEANER", "  Removing Unused Album image ",$image);
+				$albumimage = new baseAlbumImage(array('baseimage' => $image));
+				array_map('unlink', $albumimage->get_images());
 			}
 			logger::info("CACHE CLEANER", "== Check For Unneeded Images took ".format_time(time() - $now));
 
@@ -182,30 +178,20 @@ class cache_cleaner extends database {
 		$this->close_transaction();
 	}
 
-	private function check_albums_using_image($image) {
-
-		static $listenlater_images = null;
-		if ($listenlater_images == null) {
-			$ll = $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
-			$listenlater_images = [];
-			foreach ($ll as $album) {
-				$ad = json_decode($album['JsonData'], true);
-				if (array_key_exists('albumimage', $ad)) {
-					$listenlater_images[] = $ad['albumimage']['small'];
-				}
+	private function get_used_album_images() {
+		$images = $this->sql_get_column(
+			"SELECT Image FROM Albumtable JOIN Tracktable USING (Albumindex)
+			WHERE Hidden = 0 AND Image LIKE 'albumart/small/%'", 0
+		);
+		$ll = $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
+		foreach ($ll as $album) {
+			$ad = json_decode($album['JsonData'], true);
+			if (array_key_exists('albumimage', $ad)) {
+				if (strpos($ad['albumimage']['small'], 'albumart/') === 0)
+					$images[] = $ad['albumimage']['small'];
 			}
 		}
-
-		if (in_array($image, $listenlater_images))
-			return 1;
-
-		return $this->sql_prepare_query(false, null, 'acount', 0,
-			"SELECT COUNT(Albumindex) AS acount FROM Albumtable
-			JOIN Tracktable USING (Albumindex)
-			WHERE
-			Image = ?
-			Hidden = 0",
-		$image);
+		return array_unique($images);
 	}
 
 	private function check_stations_using_image($image) {
