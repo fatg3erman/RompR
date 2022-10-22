@@ -131,6 +131,19 @@ class database extends data_base {
 				$url);
 	}
 
+	public function check_podcast_trackimage($uri) {
+		$retval = null;
+		$thing = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			"SELECT Image FROM PodcastTracktable WHERE Link = ? OR ? LIKE '%' || Localfilename",
+			$uri,
+			$uri
+		);
+		if (count($thing) > 0) {
+			$retval = $thing[0]['Image'];
+		}
+		return $retval;
+	}
+
 	public function optimise_database() {
 		$this->generic_sql_query("VACUUM", true);
 		$this->generic_sql_query("PRAGMA optimize", true);

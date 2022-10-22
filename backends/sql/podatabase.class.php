@@ -1393,19 +1393,6 @@ class poDatabase extends database {
 
 	}
 
-	public function check_trackimage($uri) {
-		$retval = null;
-		$thing = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
-			"SELECT Image FROM PodcastTracktable WHERE Link = ? OR Localfilename = ?",
-			$uri,
-			$uri
-		);
-		if (count($thing) > 0) {
-			$retval = $thing[0]['Image'];
-		}
-		return $retval;
-	}
-
 	private function check_refresh_pid() {
 		// $pid = getmypid();
 		// $rpid = $this->simple_query('Value', 'Statstable', 'Item', 'PodUpPid', null);
