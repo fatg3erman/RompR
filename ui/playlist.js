@@ -899,6 +899,7 @@ var playlist = function() {
 				case "soundcloud":
 				case "podcast":
 				case "dirble":
+				case "bandcamp":
 					return '<i class="icon-'+d+'-circled inline-icon fixed"></i>';
 					break;
 

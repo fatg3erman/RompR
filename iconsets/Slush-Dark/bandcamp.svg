@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Svg Vector Icons : http://www.onlinewebfonts.com/icon -->
+
+<svg
+   version="1.1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 1000 1000"
+   enable-background="new 0 0 1000 1000"
+   xml:space="preserve"
+   id="svg40"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs44"><linearGradient
+     id="linearGradient1102"><stop
+       style="stop-color:#656565;stop-opacity:1"
+       offset="0"
+       id="stop1098" /><stop
+       style="stop-color:#000000;stop-opacity:1"
+       offset="1"
+       id="stop1100" /></linearGradient><radialGradient
+     xlink:href="#linearGradient1102"
+     id="radialGradient1561"
+     cx="500"
+     cy="500"
+     fx="500"
+     fy="500"
+     r="490"
+     gradientUnits="userSpaceOnUse" /></defs>
+<metadata
+   id="metadata2"> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata>
+<g
+   id="g6"
+   style="fill:url(#radialGradient1561);fill-opacity:1"><path
+     d="M 500,10 C 229.4,10 10,229.4 10,500 10,770.6 229.4,990 500,990 770.6,990 990,770.6 990,500 990,229.4 770.6,10 500,10 Z M 660,720.4 H 136.3 L 340,279.6 h 523.8 z"
+     id="path4"
+     style="fill:url(#radialGradient1561);fill-opacity:1" /></g><g
+   id="g8" /><g
+   id="g10" /><g
+   id="g12" /><g
+   id="g14" /><g
+   id="g16" /><g
+   id="g18" /><g
+   id="g20" /><g
+   id="g22" /><g
+   id="g24" /><g
+   id="g26" /><g
+   id="g28" /><g
+   id="g30" /><g
+   id="g32" /><g
+   id="g34" /><g
+   id="g36" />
+</svg>
