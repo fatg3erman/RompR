@@ -74,6 +74,15 @@ if ($result == false) {
 }
 prefs::$database->check_setupscreen_actions();
 
+
+if (array_key_exists('cacheclean', $_REQUEST)) {
+	$cleaner = new cache_cleaner();
+	$cleaner->clean_cache();
+	exit(0);
+}
+
+
+
 //
 // Set the country code from the browser (though this may not be accurate)
 // - unless the user has already set it. Note, this is the lastfm country

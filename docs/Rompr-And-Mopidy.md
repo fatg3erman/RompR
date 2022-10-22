@@ -181,8 +181,9 @@ which supports seeking and pausing much better than the stream backend.
 
 One way is to move the downloaded files from rompr/prefs/youtubedl into an appropriate folder, do 'mopidy local scan' and rescan your collection.
 
-Another approach is to symlink rompr/prefs/youtubedl into your Music Directory and make sure the webserver has write permissions.
+Another approach is to symlink rompr/prefs/youtubedl into a subdirectory off your Music Directory and make sure the webserver has write permissions.
 When you download a track you simply need to 'mopidy local scan' and then Update your Music Collection.
+**Note though, that RompR is "in control" of the prefs/youtubedl directory and WILL DELETE anything that it doesn't recognise.**
 
 ### Youtube Music Premium Subscribers
 

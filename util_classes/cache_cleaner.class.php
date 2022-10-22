@@ -114,34 +114,15 @@ class cache_cleaner extends database {
 		$this->tidy_wishlist();
 		logger::info("CACHE CLEANER", "== Check For Orphaned Wishlist Sources took ".format_time(time() - $now));
 
-		// logger::info("CACHE CLEANER", "Checking for orphaned youtube downloads");
-		// $now = time();
-		// $yts = glob('prefs/youtubedl/*');
-		// foreach ($yts as $dir) {
-		// 	logger::log('CACHE CLEANER', $dir);
-		// 	$flacs = glob($dir.'/*.flac');
-		// 	$numfiles = 1;
-		// 	foreach ($flacs as $flac) {
-		// 		// We can check the immediately preceeding dir and the filename, nothing more -
-		// 		// It might be in the colleciton as a streaming track, or it mnight be symlinked
-		// 		// to the music directory, in which case the path will be completely different.
-		// 		// We can't check TTindexes because that didn't work for some reason, probably
-		// 		// to do with symlinking again. Don't forget that SQLite reuses old TTindexes because
-		// 		// we didn't set it up as an AUTOINCREMEMNT column. For speed. Say it was for speed.
-		// 		$numfiles = $this->check_youtube_uri_exists(basename(dirname($flac)).'/'.basename($flac));
-		// 	}
-		// 	if ($numfiles == 0) {
-		// 		logger::log('CACHE CLEANER', $flac,'does not have an associated track');
-		// 		rrmdir($dir);
-		// 	}
-		// }
-		// logger::info("CACHE CLEANER", "== Check For Orphaned youtube downloads took ".format_time(time() - $now));
+		logger::info("CACHE CLEANER", "Checking for orphaned youtube downloads");
+		$now = time();
+		$this->check_youtube_dir('prefs/youtubedl');
+		logger::info("CACHE CLEANER", "== Check For Orphaned youtube downloads took ".format_time(time() - $now));
 
 		logger::info("CACHE CLEANER", "Tidying Ratings and Playcounts");
 		$now = time();
 		$this->tidy_ratings_and_playcounts();
 		logger::info("CACHE CLEANER", "== Tidying Ratings and Playcounts took ".format_time(time() - $now));
-
 
 		// Compact the database
 		logger::mark("CACHE CLEANER", "Optimising Database");
@@ -154,6 +135,27 @@ class cache_cleaner extends database {
 		logger::mark("CACHE CLEANER", "Database Tidying Is Complete");
 		logger::mark("CACHE CLEANER", "-----------------------------------------------------------------------");
 
+	}
+
+	private function check_youtube_dir($path) {
+		$numfiles = 0;
+		foreach (new DirectoryIterator($path) as $f) {
+			if ($f->isFile()) {
+				$numfiles++;
+				$fpath = $f->getPathname();
+				if ($this->check_youtube_uri_exists(substr($fpath, strpos($fpath, 'prefs/youtubedl/'))) == 0) {
+					logger::log('CACHE CLEANER', $fpath,'does not have an associated track');
+					unlink($fpath);
+				}
+			} else if (!$f->isDot() && $f->isDir()) {
+				$numfiles++;
+				$this->check_youtube_dir($f->getRealPath());
+			}
+		}
+		if ($numfiles == 0) {
+			logger::log('CACHE CLEANER', $path,'is empty');
+			rmdir($path);
+		}
 	}
 
 	private function remove_hidden_images() {
@@ -202,10 +204,7 @@ class cache_cleaner extends database {
 			JOIN Tracktable USING (Albumindex)
 			WHERE
 			Image = ?
-			AND ((Hidden = 0
-			AND isSearchResult < 2)
-			OR LinkChecked = 4)
-			AND Uri IS NOT NULL",
+			Hidden = 0",
 		$image);
 	}
 
