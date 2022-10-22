@@ -57,9 +57,6 @@ class cache_cleaner extends database {
 		logger::info("CACHE CLEANER", "== Cache Was Cleaned In ".format_time(time() - $now),'seconds');
 
 		$now = time();
-		logger::info("CACHE CLEANER", "Checking database for hidden album art");
-		$this->remove_hidden_images();
-		logger::info("CACHE CLEANER", "== Check For Hidden Album Art took ".format_time(time() - $now));
 
 		prefs::load();
 		if (prefs::get_pref('cleanalbumimages')) {
@@ -154,30 +151,6 @@ class cache_cleaner extends database {
 		}
 	}
 
-	private function remove_hidden_images() {
-		// Note the final line checking that image isn't in use by another album
-		// it's an edge case where we have the album local but we also somehow have a spotify or whatever
-		// version with hidden tracks
-		$this->open_transaction();
-		$result = $this->generic_sql_query("SELECT DISTINCT Albumindex, Albumname, Image, Domain FROM
-			Tracktable JOIN Albumtable USING (Albumindex) JOIN Playcounttable USING (TTindex)
-			WHERE Hidden = 1 AND LinkChecked < 4
-			AND ".$this->sql_two_weeks()."
-			AND
-				Albumindex NOT IN (SELECT Albumindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Hidden = 0)
-			AND
-				Image NOT IN (SELECT Image FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Hidden = 0)", false, PDO::FETCH_OBJ);
-
-		foreach ($result as $obj) {
-			if (preg_match('#^albumart/small/#', $obj->Image)) {
-				logger::log("CACHE CLEANER", "Removing image for hidden album",$obj->Albumname,$obj->Image);
-				$this->generic_sql_query("UPDATE Albumtable SET Image = NULL, Searched = 0 WHERE Albumindex = ".$obj->Albumindex, true);
-				$this->check_transaction();
-			}
-		}
-		$this->close_transaction();
-	}
-
 	private function get_used_album_images() {
 		$images = $this->sql_get_column(
 			"SELECT Image FROM Albumtable JOIN Tracktable USING (Albumindex)
@@ -206,9 +179,9 @@ class cache_cleaner extends database {
 
 	private function check_for_missing_albumart() {
 		$this->open_transaction();
-		$result = $this->generic_sql_query("SELECT Albumindex, Albumname, Image, Domain FROM Albumtable WHERE Image NOT LIKE 'getRemoteImage%'", false, PDO::FETCH_OBJ);
+		$result = $this->generic_sql_query("SELECT Albumindex, Albumname, Image, Domain FROM Albumtable WHERE Image LIKE 'albumart/%'", false, PDO::FETCH_OBJ);
 		foreach ($result as $obj) {
-			if ($obj->Image != '' && !file_exists($obj->Image)) {
+			if (!file_exists($obj->Image)) {
 				logger::log("CACHE CLEANER", $obj->Albumname,"has missing image",$obj->Image);
 				if (file_exists("newimages/".$obj->Domain."-logo.svg")) {
 					$image = "newimages/".$obj->Domain."-logo.svg";
