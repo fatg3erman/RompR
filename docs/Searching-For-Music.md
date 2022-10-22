@@ -12,7 +12,7 @@ You can limit the scope of the search by using the checkboxes, so if you only wa
 RompR includes two sources for Podcasts - one is an Apple Podcasts (iTunes) search. The other is TuneIn, but TuneIn only returns podcast episodes - not feeds -
 so you cannot subscribe to podcasts returned by TuneIn.
 
-RompR includes 3 sources for Internet Radio -  the Community Radio Browser, TuneIn, and IceCast Radio.
+RompR includes 2 sources for Internet Radio -  the Community Radio Browser and TuneIn.
 
 If you open the Advanced Menu using the 3 dots at the top left you'll get some more options
 

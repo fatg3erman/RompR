@@ -75,7 +75,6 @@ language::add_translations([
 	"label_yourradio" =>					"Your Radio Stations",
 	"label_podcasts" =>						"Podcasts",
 	"label_somafm" =>						"Soma FM",
-	"label_icecast" =>						"Icecast Radio",
 	"label_emptyinfo" =>					"This is the information panel. Interesting stuff will appear here when you play some music",
 	"button_playlistcontrols" =>			"Playlist Controls",
 	"button_random" =>						"SHUFFLE",

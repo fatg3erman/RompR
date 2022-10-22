@@ -651,7 +651,6 @@ var uiHelper = function() {
 				setDraggable("#audiobooks");
 				setDraggable("#somafmlist");
 				setDraggable("#communityradiolist");
-				setDraggable("#icecastlist");
 				setDraggable("#tuneinlist");
 				setDraggable('#artistinformation');
 				setDraggable('#albuminformation');

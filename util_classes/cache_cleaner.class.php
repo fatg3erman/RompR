@@ -46,8 +46,6 @@ class cache_cleaner extends database {
 		$this->clean_cache_dir('prefs/jsoncache/commradio/', 604800);
 		// One Week
 		$this->clean_cache_dir('prefs/jsoncache/somafm/', 604800);
-		// One Week
-		$this->clean_cache_dir('prefs/jsoncache/icecast/', 604800);
 		// Six Months - after all, lyrics are small and don't change
 		$this->clean_cache_dir('prefs/jsoncache/lyrics/', 15552000);
 		// One week (or it can get REALLY big)

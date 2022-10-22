@@ -26,8 +26,7 @@ CONST CLASS_DIRS = array(
 	'plugins/backend',
 	'radios/backend',
 	'streamplugins/classes',
-	'search',
-	'phpQuery',
+	'search'
 );
 foreach (CLASS_DIRS as $d) {
 	set_include_path($d.PATH_SEPARATOR.get_include_path());

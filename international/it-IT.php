@@ -75,7 +75,6 @@ language::add_translations([
 	"label_podcasts" =>						"Podcast",
 	"label_somafm" =>						"Soma FM",
 	"label_bbcradio" =>						"Radio BBC Live",
-	"label_icecast" =>						"Radio Icecast",
 	"label_emptyinfo" =>					"Questo è il pannello informazioni. Diverse cose interessanti appariranno qui quando riprodurrai della musica.",
 	"button_playlistcontrols" =>			"Controlli Playlist",
 	"button_random" =>						"CASUALE",

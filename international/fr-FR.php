@@ -73,7 +73,6 @@ language::add_translations([
 	"label_podcasts" =>						"Podcasts",
 	"label_somafm" =>						"Soma FM",
 	"label_bbcradio" =>						"Live BBC Radio",
-	"label_icecast" =>						"Icecast Radio",
 	"label_emptyinfo" =>					"Panneau d'information concernant la musique en cours de lecture",
 	"button_playlistcontrols" =>			"Contrôle De La Playlist",
 	"button_random" =>						"ALÉATOIRE",

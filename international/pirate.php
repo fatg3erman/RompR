@@ -72,7 +72,6 @@ language::add_translations([
 	"label_podcasts" =>						"Peg Legs",
 	"label_somafm" =>						"Soma FM, yarrrrr",
 	"label_bbcradio" =>						"Live BBC Wireless. Better than dead.",
-	"label_icecast" =>						"Icecast Wireless",
 	"label_emptyinfo" =>					"Here be t'information ye be lookin' for when t'minstrel cranks up 'is fiddle. Yarrrrrrrr!",
 	"button_playlistcontrols" =>			"Minstrel Instructions",
 	"button_random" =>						"PEG LEG WALK",

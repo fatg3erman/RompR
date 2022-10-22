@@ -75,7 +75,6 @@ language::add_translations([
 	"label_yourradio" =>					"Твои Радио Станции",
 	"label_podcasts" =>						"Подкасты",
 	"label_somafm" =>						"Soma FM",
-	"label_icecast" =>						"Icecast Радио",
 	"label_emptyinfo" =>					"Это информационная панель. Интересные вещи появятся здесь, когда играете какую-нибудь музыку",
 	"button_playlistcontrols" =>			"Управление Плейлистом",
 	"button_random" =>						"ПЕРЕМЕШАТЬ",
