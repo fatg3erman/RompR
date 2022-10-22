@@ -1358,12 +1358,12 @@ class base_mpd_player {
 
 	private function check_idle_status($idle_status) {
 		logger::core(prefs::currenthost(), 'Idle Status is',print_r($idle_status, true));
-		$status = $this->get_status();
 
 		if (array_key_exists('changed', $idle_status)) {
-			logger::mark(prefs::currenthost(),"Player State Has Changed from",$this->current_status['state'],"to", $status['state']);
+			$status = $this->get_status();
 			// So we only get here if we were playing a song before we sent the idle command
 			if ($this->radiomode === false) {
+				logger::mark(prefs::currenthost(),"Player State Has Changed from",$this->current_status['state'],"to", $status['state']);
 				if ($status['state'] != 'pause' && array_key_exists('Time', $this->current_song)) {
 					if ($status['state'] == 'stop') {
 						// Ensure, if we go from paused to stop, that we use only the value of 'elapsed' to calculate how much we played.
@@ -1398,7 +1398,8 @@ class base_mpd_player {
 			}
 
 		}
-		$this->get_current_song_status();
+		if ($this->radiomode === false)
+			$this->get_current_song_status();
 	}
 
 	private function check_playcount_increment() {

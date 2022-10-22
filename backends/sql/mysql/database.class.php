@@ -475,11 +475,10 @@ class database extends data_base {
 	public function add_toptrack($type, $artist, $title) {
 		$name = everywhere_radio::get_seed_table_name();
 		$this->sql_prepare_query(true, null, null, null,
-			"INSERT INTO ".$name." (Type, trackartist, Title) VALUES (?, ? ,?) ON DUPLICATE KEY UPDATE Type = ?",
+			"INSERT IGNORE INTO ".$name." (Type, trackartist, Title) VALUES (?, ? ,?)",
 			$type,
 			$artist,
-			$title,
-			$type
+			$title
 		);
 	}
 
@@ -511,10 +510,9 @@ class database extends data_base {
 	public function add_smart_uri($uri, $artist, $title) {
 		$name = everywhere_radio::get_uri_table_name();
 		$this->sql_prepare_query(true, null, null, null,
-			"INSERT INTO ".$name." (trackartist, Title, Uri) VALUES (?, ? ,?) ON DUPLICATE KEY UPDATE Uri = ?",
+			"INSERT IGNORE INTO ".$name." (trackartist, Title, Uri) VALUES (?, ? ,?)",
 			strip_track_name($artist),
 			strip_track_name($title),
-			$uri,
 			$uri
 		);
 	}
