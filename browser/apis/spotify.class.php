@@ -193,7 +193,7 @@ class spotify {
 		$possibilities = [];
 		if (array_key_exists('artists', $candidates) && array_key_exists('items', $candidates['artists'])) {
 			foreach ($candidates['artists']['items'] as $willies) {
-				if (metaphone_compare($params['name'], $willies['name'], 1)) {
+				if (metaphone_compare($params['name'], $willies['name'], 0)) {
 					$possibilities[] = self::make_poss($willies);
 				}
 			}

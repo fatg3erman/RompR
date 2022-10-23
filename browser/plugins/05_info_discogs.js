@@ -770,53 +770,19 @@ var info_discogs = function() {
 					},
 
 					search: function() {
-						switch (artistmeta.discogs.searchparam) {
-							case 0:
-								var name = getSearchArtist();;
-								break;
-
-							case 1:
-								var name = mungeArtist(getSearchArtist());
-								break;
-
-							case 2:
-								self.artist.abjectFailure();
-								return;
-						}
 						searching = true;
-						debug.trace(medebug,'Searching for artist',name);
-						discogs.artist.search(name, self.artist.searchResponse, self.artist.searchFailure);
+						discogs.artist.search(getSearchArtist(), self.artist.searchResponse, self.artist.searchFailure);
 					},
 
 					searchResponse: function(data) {
 						debug.debug(medebug,'Got artist search response', data);
-						artistmeta.discogs.possibilities = new Array();
-						if (data.data.results && data.data.results.length > 0) {
-							for (var i in data.data.results) {
-								switch (artistmeta.discogs.searchparam) {
-									case 0:
-										var amatch = getSearchArtist();;
-										break;
-
-									case 1:
-										var amatch = mungeArtist(getSearchArtist());
-										break;
-								}
-								if (compareArtists(data.data.results[i].title, amatch)) {
-									debug.trace(medebug,'Found Artist index',i,data.data.results[i].title);
-									artistmeta.discogs.possibilities.push({
-										name: data.data.results[i].title,
-										link: data.data.results[i].resource_url,
-										image: data.data.results[i].thumb
-									});
-								}
-							}
-							if (artistmeta.discogs.possibilities.length > 0) {
-								artistmeta.discogs.artistlink = artistmeta.discogs.possibilities[0].link;
-								artistmeta.discogs.currentposs = 0;
-							}
+						artistmeta.discogs.possibilities = data.data;
+						if (artistmeta.discogs.possibilities.length > 0) {
+							artistmeta.discogs.artistlink = artistmeta.discogs.possibilities[0].link;
+							artistmeta.discogs.currentposs = 0;
+						} else {
+							self.artist.searchFailure();
 						}
-						artistmeta.discogs.searchparam++;
 						searching = false;
 					},
 
@@ -916,7 +882,7 @@ var info_discogs = function() {
 
 			this.album = function() {
 
-				var retries = 40;
+				var retries = 20;
 				var searching = false;
 
 				function try_album_release_group() {
@@ -991,48 +957,16 @@ var info_discogs = function() {
 					},
 
 					search: function() {
-						switch (albummeta.discogs.searchparam) {
-							case 0:
-								var artist = getSearchArtistForAlbum();;
-								break;
-
-							case 1:
-								var artist = mungeArtist(getSearchArtistForAlbum());
-								break;
-
-							case 2:
-								self.album.abjectFailure();
-								return;
-						}
 						searching = true;
-						debug.trace(medebug, 'Searching for album',artist,albummeta.name);
-						discogs.album.search(artist, albummeta.name, self.album.searchResponse, self.album.abjectFailure);
+						discogs.album.search(getSearchArtistForAlbum(), albummeta.name, self.album.searchResponse, self.album.abjectFailure);
 					},
 
 					searchResponse: function(data) {
 						debug.debug(medebug, 'Got album search results', data);
-						albummeta.discogs.searchparam++;
-						if (data.data.results && data.data.results.length > 0) {
-							var best = -1;
-							var besta = 0;
-							find_best_album: {
-								for (var i in data.data.results) {
-									if (data.data.results[i].format && data.data.results[i].master_url) {
-										for (var j in data.data.results[i].format) {
-											if (getSearchArtistForAlbum() == "Various" && data.data.results[i].format[j] == "Compilation") {
-												debug.trace(medebug, 'Using Compilation Result');
-												best = i;
-												break find_best_album;
-											} else if (data.data.results[i].format[j] == 'Album' && besta == 0) {
-												besta = i;
-											}
-										}
-									}
-								}
-							}
-							best = (best >= 0) ? best : besta;
-							albummeta.discogs.albumlink = data.data.results[best].resource_url || data.data.results[best].master_url;
-							debug.debug(medebug,'Using album search result', best, albummeta.discogs.albumlink);
+						if (data.data.albumlink) {
+							albummeta.discogs.albumlink = data.data.albumlink;
+						} else {
+							self.album.abjectFailure();
 						}
 						searching = false;
 					},
@@ -1141,63 +1075,20 @@ var info_discogs = function() {
 					},
 
 					search: function() {
-						switch (trackmeta.discogs.searchparam) {
-							case 0:
-								var artist = artistmeta.name;
-								break;
-
-							case 1:
-								var artist = mungeArtist(artistmeta.name);
-								break;
-
-							case 2:
-								var artist = parent.playlistinfo.AlbumArtist;
-								break;
-
-							case 4:
-								self.track.abjectFailure();
-								return;
-						}
 						searching = true;
-						debug.trace(medebug,'Searching for track',artist, trackmeta.name);
-						discogs.track.search(artist, trackmeta.name, self.track.searchResponse, self.track.abjectFailure);
+						debug.trace(medebug,'Searching for track',artistmeta.name, trackmeta.name);
+						discogs.track.search(artistmeta.name, trackmeta.name, parent.playlistinfo.albumartist, self.track.searchResponse, self.track.abjectFailure);
 					},
 
 					searchResponse: function(data) {
 						debug.debug(medebug, 'Got track search results', data);
-						if (data.data.results && data.data.results.length > 0) {
-							var best = 0;
-							find_best: {
-								for (var i in data.data.results) {
-									switch (trackmeta.discogs.searchparam) {
-										case 0:
-											var amatch = artistmeta.name;
-											break;
 
-										case 1:
-											var amatch = mungeArtist(artistmeta.name);
-											break;
-
-										case 2:
-											var amatch = parent.playlistinfo.AlbumArtist;
-											break;
-
-									}
-									if (data.data.results[i].format && data.data.results[i].resource_url && data.data.results[i].title.toLowerCase() == amatch+' - '+trackmeta.name.toLowerCase()) {
-										debug.debug(medebug,'Found Artist - Title match');
-										for (var j in data.data.results[i].format) {
-											if (data.data.results[i].format[j] == 'Single') {
-												best = i;
-												break find_best;
-											}
-										}
-									}
-								}
-							}
-							trackmeta.discogs.tracklink = data.data.results[best].resource_url;
-							debug.debug(medebug,'Using track search result', best, trackmeta.discogs.tracklink);
+						if (data.data.tracklink) {
+							trackmeta.discogs.tracklink = data.data.tracklink;
+							debug.debug(medebug,'Using track search result', trackmeta.discogs.tracklink);
+						} else {
+							self.track.abjectFailure();
 						}
-						trackmeta.discogs.searchparam++;
 						searching = false;
 					},
 

@@ -1075,12 +1075,12 @@ class collection_base extends database {
 			return false;
 
 		if ($lookingfor['trackartist'] && $lookingfor['Title']) {
-			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'], 2)
+			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'], 0)
 				&& metaphone_compare($lookingfor['Title'], $filedata['Title'])) {
 				return true;
 			}
 		} else if ($lookingfor['trackartist']) {
-			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'], 1)) {
+			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'], 0)) {
 				return true;
 			}
 		} else if ($lookingfor['Title']) {

@@ -1065,28 +1065,32 @@ function strip_track_name($thing) {
 }
 
 function metaphone_compare($search_term, $found_term, $match_distance = null) {
+	// Metaphones were an experiment. They were a bit too fuzzy for our porpoises.
 	// This is a fuzzy compare function for comparing album names, artist names, etc.
 	// Search term should be first, to ensure accuracy of the percentage measurement.
-	// It first calculates the metaphone for each term, then calculates the levenshtein
-	// distance between those and uses that to determine if they're the "same" or not.
-
-	// https://www.php.net/manual/en/function.metaphone.php
 	// https://www.php.net/manual/en/function.levenshtein.php
 
 	// The smaller the value of $match_distance the more exact the comparison.
-	// If match_distance is not supplied we use a value calculated as 25% of the length
-	// of the metaphone of search_term or 2, whichever is higher.
+	// If match_distance is not supplied we use a value calculated as 10% of the length
+	// of search_term or 1, whichever is higher.
 	// You will probably want to tune this value by trail and error depending on the use case.
+	// A value of 0 seems best for artists.
+
+	// We generally want to ignore matches with (Live in them, otherwise radio stations
+	// end up playing the same track over and over with different live versions.
+	// if (strpos(strtolower($found_term), 'live') !== false && strpos(strtolower($search_term), '(live') === false)
+	// 	return false;
 
 	// Still going to strip anything in brackets off the end because usually it's irrelevant
 	$new_search = preg_replace('/ \(.+?\)$/', '', $search_term);
 	$new_found = preg_replace('/ \(.+?\)$/', '', $found_term);
 
-	$meta_search = metaphone($new_search);
-	$meta_found = metaphone($new_found);
-	$dist = levenshtein($meta_search, $meta_found);
+	$new_search = strip_track_name($new_search);
+	$new_found = strip_track_name($new_found);
+
+	$dist = levenshtein($new_search, $new_found);
 	if ($match_distance === null)
-		$match_distance = max(2, (strlen($meta_search) * 0.25));
+		$match_distance = max(1, (strlen($new_search) * 0.10));
 
 	if ($dist <= $match_distance) {
 		logger::trace('METAPHONE', $found_term,'matches',$search_term);

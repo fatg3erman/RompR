@@ -165,7 +165,8 @@ class albumImage extends baseAlbumImage {
 					break;
 			}
 		}
-		unlink($download_file);
+		if (file_exists($download_file))
+			unlink($download_file);
 		$imagehandler->destroy();
 		return $this->images;
 

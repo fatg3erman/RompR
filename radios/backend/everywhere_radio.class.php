@@ -74,7 +74,11 @@ class everywhere_radio extends musicCollection {
 	protected function get_one_uri() {
 		$table = self::get_uri_table_name();
 		$retval = null;
-		$r = $this->generic_sql_query("SELECT * FROM ".$table." WHERE used = 0 ORDER BY ".self::SQL_RANDOM_SORT." LIMIT 1");
+		// There's already sufficient randomness. ORDER BY uriindex means we should usually get the most
+		// recent thing we searched for, otherwise especially early on we can keep getting multiple
+		// versions of the same track (eg this mix, that mix etc). We want them for later, in case, but
+		// keep them back, not all at once.
+		$r = $this->generic_sql_query("SELECT * FROM ".$table." WHERE used = 0 ORDER BY uriindex DESC LIMIT 1");
 		if (count($r) > 0) {
 			$this->sql_prepare_query(true, null, null, null,
 				"UPDATE ".$table." SET used = 1 WHERE uriindex = ?",

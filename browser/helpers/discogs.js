@@ -142,11 +142,12 @@ var discogs = function() {
 				discogs.request(reqid, data, success, fail);
 			},
 
-			search: function(artist, track, success, fail) {
+			search: function(artist, track, albumartist, success, fail) {
 				var data = {
 					method: 'track_search',
 					params: {
 						artist: artist,
+						albumartist: albumartist,
 						track: track
 					}
 				};
