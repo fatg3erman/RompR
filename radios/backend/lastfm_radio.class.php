@@ -166,7 +166,7 @@ class lastfm_radio extends everywhere_radio {
 	private function get_similar_tracks($seed) {
 		$similars = lastfm::track_get_similar([
 			'track' => $seed['Title'],
-			'artist' => $seed['Artist'],
+			'artist' => $seed['trackartist'],
 			'limit' => 50
 		]);
 
@@ -194,7 +194,7 @@ class lastfm_radio extends everywhere_radio {
 
 	private function get_similar_artists($seed) {
 		$similars = lastfm::artist_get_similar([
-			'artist' => $seed['Artist'],
+			'artist' => $seed['trackartist'],
 			'limit' => 50
 		]);
 
