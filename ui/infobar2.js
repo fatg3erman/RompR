@@ -13,10 +13,35 @@ var infobar = function() {
 	var current_duration = 0;
 
 	function showLove(flag) {
-		if (lastfm.isLoggedIn() && flag) {
+		if (flag && lastfm.isLoggedIn() && playlistinfo.type == 'local') {
 			$("#lastfm").removeClass('invisible');
 		} else {
-			$("#lastfm").addClass('invisible');
+			$("#lastfm").not('.invisible').addClass('invisible');
+		}
+	}
+
+	function showBookmarkButton(flag) {
+		// Show bookmark button for podcasts and anything in the Collection
+		if (flag
+			&& (playlistinfo.type == 'podcast'
+			|| (playlistinfo.TTindex !== null
+			&& playlistinfo.isSearchResult < 2))
+		) {
+			$("#bookmark").removeClass('invisible');
+		} else {
+			$("#bookmark").not('.invisible').addClass('invisible');
+		}
+	}
+
+	function showBanButton(flag) {
+		if (flag
+			&& playlistinfo.type == 'local'
+			&& playlist.radioManager.is_running()
+			&& playlist.radioManager.get_mode() != 'starRadios'
+		) {
+			$('#ban').removeClass('invisible');
+		} else {
+			$("#ban").not('.invisible').addClass('invisible');
 		}
 	}
 
@@ -478,27 +503,33 @@ var infobar = function() {
 				$("#ptagadd").removeClass('invisible');
 				$("#playcount").removeClass('invisible');
 				showLove(true);
+				showBookmarkButton(true);
+				showBanButton(true);
 			} else {
 				$("#stars").not('.invisible').addClass('invisible');
 				$("#dbtags").not('.invisible').addClass('invisible');
 				$("#ptagadd").not('.invisible').addClass('invisible');
 				$("#playcount").not('.invisible').addClass('invisible');
 				showLove(false);
+				showBookmarkButton(false);
+				showBanButton(false);
 			}
+
 			if (info.type != 'stream') {
 				$("#addtoplaylist").removeClass('invisible');
-				$("#bookmark").removeClass('invisible');
 			} else {
 				$("#addtoplaylist").not('.invisible').addClass('invisible');
-				$("#bookmark").not('.invisible').addClass('invisible');
 			}
+
 			if (info.Id === -1) {
+				// Basically this happens if there's no track playing
 				$("#stars").not('.invisible').addClass('invisible');
 				$("#dbtags").not('.invisible').addClass('invisible');
 				$("#playcount").not('.invisible').addClass('invisible');
 				$("#addtoplaylist").not('.invisible').addClass('invisible');
 				$("#ptagadd").not('.invisible').addClass('invisible');
 				$("#bookmark").not('.invisible').addClass('invisible');
+				$("#ban").not('.invisible').addClass('invisible');
 				showLove(false);
 			} else {
 				infobar.albumImage.setKey(info.ImgKey);

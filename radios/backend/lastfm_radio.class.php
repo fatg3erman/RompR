@@ -30,18 +30,9 @@ class lastfm_radio extends everywhere_radio {
 			list($uris, $gotseeds) = $this->do_seed_search(self::TYPE_TOP_TRACK + self::TYPE_RELATED_TRACK);
 		}
 		if (count($uris) > 0) {
-			switch ($rp['radiomode']) {
-				case 'lastFMTrackRadio':
-					$retval = $uris[0]['file'];
-					break;
-
-				case 'lastFMArtistRadio':
-					$this->handle_multi_tracks($uris);
-					break;
-			}
+			$this->handle_multi_tracks($uris);
 		}
-		if ($rp['radiomode'] == 'lastFMArtistRadio')
-			$retval = $this->get_one_uri();
+		$retval = $this->get_one_uri();
 
 		logger::log('LASTFM', 'Track Is',$retval);
 		return $retval;

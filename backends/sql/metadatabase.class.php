@@ -179,6 +179,11 @@ class metaDatabase extends playlistCollection {
 		}
 	}
 
+	public function ban($data) {
+		logger::log('METADATA', 'Banning',$data['trackartist'],$data['Title']);
+		$this->add_ban_track($data['trackartist'], $data['Title']);
+	}
+
 	public function set($data) {
 
 		//

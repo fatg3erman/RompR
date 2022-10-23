@@ -13,6 +13,7 @@ class everywhere_radio extends musicCollection {
 	public function preparePlaylist() {
 		$this->create_toptracks_table();
 		$this->create_radio_uri_table();
+		$this->create_radio_ban_table();
 		$this->prepare();
 		// return $this->search_for_track();
 	}
@@ -23,6 +24,10 @@ class everywhere_radio extends musicCollection {
 
 	public static function get_uri_table_name() {
 		return 'Smart_Uri_'.prefs::player_name_hash();
+	}
+
+	public static function get_ban_table_name() {
+		return 'Smart_Ban_'.prefs::player_name_hash();
 	}
 
 	protected function prepare() {
@@ -65,9 +70,18 @@ class everywhere_radio extends musicCollection {
 	}
 
 	protected function handle_multi_tracks($uris) {
+		$bantable = self::get_ban_table_name();
 		foreach ($uris as $uri) {
-			logger::log('EVRADIO', 'Got Uri ',$uri['trackartist'], $uri['Title']);
-			$this->add_smart_uri($uri['file'], $uri['trackartist'], $uri['Title']);
+			$banned = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'banindex', null,
+				"SELECT banindex FROM ".$bantable." WHERE trackartist = ? AND Title = ?",
+				$uri['trackartist'], $uri['Title']
+			);
+			if ($banned !== null) {
+				logger::log('EVRADIO',$uri['trackartist'], $uri['Title'],'is BANNED');
+			} else {
+				logger::log('EVRADIO', 'Got Uri ',$uri['trackartist'], $uri['Title']);
+				$this->add_smart_uri($uri['file'], $uri['trackartist'], $uri['Title']);
+			}
 		}
 	}
 

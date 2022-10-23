@@ -55,6 +55,7 @@ class collection_base extends database {
 			'SELECT
 				Uri,
 				TTindex,
+				isSearchResult,
 				Disc,
 				Artistname AS AlbumArtist,
 				Albumtable.Image AS "X-AlbumImage",
@@ -104,6 +105,7 @@ class collection_base extends database {
 			$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 				'SELECT
 					TTindex,
+					isSearchResult,
 					Disc,
 					CASE WHEN TrackNo = 0 THEN NULL ELSE TrackNo END AS Track,
 					Artistname AS AlbumArtist,

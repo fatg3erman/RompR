@@ -125,7 +125,6 @@ define('MPD_FILE_MODEL', array(
 		'MUSICBRAINZ_TRACKID' => '',
 		'Id' => null,
 		'Pos' => null,
-		'ttindex' => null,
 		'trackartist_index' => null,
 		'albumartist_index' => null,
 		'album_index' => null,
@@ -148,6 +147,8 @@ define('MPD_ARRAY_PARAMS', array(
 // it is created in class playlistCollection
 
 define('ROMPR_FILE_MODEL', array(
+		"TTindex" => null,
+		"isSearchResult" => null,
 		"progress" => 0,
 		"albumartist" => '',
 		"trackartist" => '',

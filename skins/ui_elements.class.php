@@ -686,6 +686,9 @@ class ui_elements {
 		print '<div id="lastfm" class="invisible topstats">';
 		print '<i title="'.language::gettext('button_love').'" class="icon-heart npicon clickicon tooltip spinable" id="love"></i>';
 		print '</div>';
+		print '<div id="ban" class="invisible topstats">';
+		print '<i title="'.language::gettext('button_ban').'" class="icon-block npicon clickicon tooltip"></i>';
+		print '</div>';
 		print '<div id="ptagadd" class="invisible topstats">';
 		print '<i class="icon-tags npicon clickicon"></i>';
 		print '</div>';

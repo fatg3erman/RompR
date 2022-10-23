@@ -29,6 +29,7 @@ language::add_translations([
 	"button_stopafter" =>					"Stop After Current Track",
 	"button_next" =>						"Next Track",
 	"button_love" =>						"Love this track",
+	"button_ban" =>							"Ban this track",
 	"button_volume" =>						"Volume",
 
 	// Configuration menu entries

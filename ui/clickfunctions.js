@@ -335,6 +335,7 @@ function bindClickHandlers() {
 	$('#addtoplaylist').on('click', addToPlaylist.show);
 	$('.close-pladd').on('click', addToPlaylist.close);
 	$('#bookmark').on('click', bookmarkAdder.show);
+	$('#ban').on('click', nowplaying.ban);
 	$('.close-bookmark').on('click', bookmarkAdder.close);
 	$(document).on('click', ".clickaddtoplaylist", addToPlaylist.close);
 	$(document).on('change', ".saveotron", prefs.saveTextBoxes);

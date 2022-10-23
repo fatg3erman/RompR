@@ -178,6 +178,11 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 		collections['ratings'].setAlbumMBID(mbid);
 	}
 
+	this.ban = function() {
+		collections['ratings'].ban();
+		player.controller.next();
+	}
+
 	this.getMeta = function(meta) {
 		return collections['ratings'].getMeta(meta);
 	}
@@ -495,6 +500,10 @@ var nowplaying = function() {
 					tracks_played[findCurrentTrack()].setMeta('set', 'Rating', 0);
 				}
 			}
+		},
+
+		ban: function() {
+			tracks_played[findCurrentTrack()].ban();
 		},
 
 		isThisCurrent: function(index) {

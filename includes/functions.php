@@ -1058,6 +1058,8 @@ function strip_track_name($thing) {
 		return $thing;
 
 	// Convert to lower case, change & to and, and remove punctuation
+	// Don't remove brackety stuff because this is used for preventing duplicate
+	// tracks in the smart_uri table, and we want all the versions that () might denote
 	$thing = strtolower($thing);
 	$thing = preg_replace('/\s+\&\s+/', ' and ', $thing);
 	$thing = preg_replace("/\pP/", '', $thing);
@@ -1073,15 +1075,9 @@ function metaphone_compare($search_term, $found_term, $match_distance = null) {
 	// The smaller the value of $match_distance the more exact the comparison.
 	// If match_distance is not supplied we use a value calculated as 10% of the length
 	// of search_term or 1, whichever is higher.
-	// You will probably want to tune this value by trail and error depending on the use case.
+	// You will probably want to tune this value by trial and error depending on the use case.
 	// A value of 0 seems best for artists.
 
-	// We generally want to ignore matches with (Live in them, otherwise radio stations
-	// end up playing the same track over and over with different live versions.
-	// if (strpos(strtolower($found_term), 'live') !== false && strpos(strtolower($search_term), '(live') === false)
-	// 	return false;
-
-	// Still going to strip anything in brackets off the end because usually it's irrelevant
 	$new_search = preg_replace('/ \(.+?\)$/', '', $search_term);
 	$new_found = preg_replace('/ \(.+?\)$/', '', $found_term);
 

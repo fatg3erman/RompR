@@ -352,7 +352,7 @@ var info_musicbrainz = function() {
 	}
 
 	function getCoverHTML(data, layout) {
-		if (!data)
+		if (!data || !data.images)
 			return;
 		debug.trace(medebug, 'Got Cover Images', data);
 		var img = data.images.shift();

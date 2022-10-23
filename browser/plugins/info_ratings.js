@@ -183,6 +183,11 @@ var info_ratings = function() {
 					return 0;
 				}
 			}
+
+			this.ban = function() {
+				this.setMeta('ban', 'dummy', 'baby');
+				infobar.notify('Banned '+parent.playlistinfo.trackartist+' - '+parent.playlistinfo.Title);
+			}
 		}
 	}
 }();

@@ -80,6 +80,8 @@ foreach($params as $p) {
 		// Things that do not return information
 		case 'setalbummbid':
 		case 'clearwishlist':
+		case 'ban':
+			prefs::$database->{$p['action']}($p);
 			break;
 
 		default:

@@ -514,6 +514,22 @@ class database extends data_base {
 		$this->generic_sql_query("TRUNCATE TABLE ".$name);
 	}
 
+	public function create_radio_ban_table() {
+		$name = everywhere_radio::get_ban_table_name();
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
+			"banindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"trackartist VARCHAR(100) NOT NULL, ".
+			"Title VARCHAR(255) NOT NULL, ".
+			"UNIQUE INDEX(trackartist, Title), ".
+			"PRIMARY KEY (banindex)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL",$name,"OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking ".$name." : ".$err);
+		}
+	}
+
 	// artist and title are only used here to prevent duplicates so we use
 	// strip_track_name because online sources are often very inconsistent:
 	// Blood Sweat & Tears
@@ -527,6 +543,15 @@ class database extends data_base {
 			strip_track_name($artist),
 			strip_track_name($title),
 			$uri
+		);
+	}
+
+	public function add_ban_track($artist, $title) {
+		$name = everywhere_radio::get_ban_table_name();
+		$this->sql_prepare_query(true, null, null, null,
+			"INSERT IGNORE INTO ".$name." (trackartist, Title) VALUES (?, ?)",
+			$artist,
+			$title
 		);
 	}
 
