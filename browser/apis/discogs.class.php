@@ -166,7 +166,7 @@ class discogs {
 			$results = json_decode($results, true);
 			if ($results['results']) {
 				foreach($results['results'] as $result) {
-					logger::log('DISCOGS', $result['title'], $aname, $options['track']);
+					// logger::log('DISCOGS', $result['title'], $aname, $options['track']);
 					if ($result['format'] && $result['resource_url'] && metaphone_compare($aname.' - '.$options['track'], $result['title'])) {
 						if (in_array('Single', $result['format'])) {
 							$retval['tracklink'] = $result['resource_url'];

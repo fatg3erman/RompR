@@ -4,8 +4,8 @@ ob_start();
 include ("includes/vars.php");
 include ("includes/functions.php");
 
-if(array_key_exists("url", $_POST)) {
-	$link = get_bio_link($_POST['url']);
+if (array_key_exists("url", $_REQUEST)) {
+	$link = get_bio_link($_REQUEST['url']);
 	if ($link !== false) {
 		print $link;
 	} else {
@@ -25,7 +25,7 @@ function get_bio_link($url) {
 	if ($d->get_data_to_file()) {
 		$DOM = new DOMDocument;
 		@$DOM->loadHTML($d->get_data());
-		$els = getElementsByClass($DOM, 'h2', 'artist-contain');
+		$els = getElementsByClass($DOM, 'div', 'artist-contain');
 		if (count($els) > 0) {
 			$e = $els[0];
 			$links = $e->GetElementsByTagName('img');

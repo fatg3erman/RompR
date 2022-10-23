@@ -4,8 +4,8 @@ ob_start();
 include ("includes/vars.php");
 include ("includes/functions.php");
 
-if(array_key_exists("url", $_POST)) {
-	$link = get_bio_link($_POST['url']);
+if (array_key_exists("url", $_REQUEST)) {
+	$link = get_bio_link($_REQUEST['url']);
 	if ($link !== false) {
 		get_allmusic_page($link);
 	} else {
