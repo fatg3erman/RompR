@@ -20,6 +20,58 @@ class musicbrainz {
 		return  self::BASE_URL.$uri.'?'.http_build_query($params);
 	}
 
+	public static function artist_search($params, $print_data) {
+		//
+		// params:
+		//		query 	=> artist name
+		//		album	=> album name
+		//
+		$query = [
+			'query'		=> $params['query'],
+			'limit'		=> 30,
+			'offset'	=> 0
+		];
+		$retval = ['musicbrainz_id' => -1];
+		$searchresult = self::request(self::create_url('artist/', $query), false);
+		$result = json_decode($searchresult, true);
+		if (array_key_exists('artists', $result)) {
+			foreach ($result['artists'] as $artist) {
+				if (metaphone_compare($params['query'], $artist['name'], 0)) {
+					// We've found a matching artist, now let's get its releases to see if there's a matching album
+					// - that way we know we've got the correct artist.
+					if ($params['album'] !== 'null') {
+						$releases = self::artist_releasegroups(['mbid' => $artist['id']], false);
+						$releases = json_decode($releases, true);
+						if (array_key_exists('release-groups', $releases)) {
+							foreach ($releases['release-groups'] as $release) {
+								if (metaphone_compare($params['album'], $release['title'])) {
+									logger::log('MUSICBRAINZ', 'Found ID for',$params['query'],'with matching release',$params['album'],$artist['id']);
+									$retval['musicbrainz_id'] = $artist['id'];
+									break 2;
+								}
+							}
+						}
+					} else {
+						logger::log('MUSICBRAINZ', 'Found ID for',$params['query'],'(without checking release)',$artist['id']);
+						$retval['musicbrainz_id'] = $artist['id'];
+						break;
+					}
+				}
+			}
+		}
+		print json_encode($retval);
+	}
+
+	private static function artist_releasegroups($params, $print_data) {
+		//
+		// params:
+		//		mbid 	=> artist's MusicBrainz ID
+		//
+
+		$query = ['inc' => 'release-groups'];
+		return  self::request( self::create_url('artist/'.$params['mbid'], $query), $print_data);
+	}
+
 	public static function artist_getinfo($params, $print_data) {
 
 		//

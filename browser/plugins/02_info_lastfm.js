@@ -337,9 +337,10 @@ var info_lastfm = function() {
 							} catch(err) {
 								mbid = null;
 							}
-							debug.trace(medebug,parent.nowplayingindex,"has found a musicbrainz artist ID",mbid);
+							debug.trace(medebug,parent.nowplayingindex,"setting musicbrainz artist ID to",mbid);
 							artistmeta.musicbrainz_id = mbid;
 						}
+						artistmeta.musicbrainz_id = null;
 						self.artist.doBrowserUpdate();
 					},
 

@@ -615,6 +615,15 @@ class base_mpd_player {
 	}
 
 	public function get_status() {
+		$retries = 10;
+		while ($retries > 0) {
+			$t = $this->do_mpd_command('status', true, false);
+			if (is_array($t))
+				return $t;
+
+			sleep(1);
+			$retries--;
+		}
 		return $this->do_mpd_command('status', true, false);
 	}
 

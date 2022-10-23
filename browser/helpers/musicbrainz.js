@@ -104,6 +104,17 @@ var musicbrainz = function() {
 						}
 					}, fail);
 				})();
+			},
+
+			search: function(name, album, track, success, fail) {
+				var data = {
+					method: 'artist_search',
+					params: {
+						query: name,
+						album: album
+					}
+				};
+				musicbrainz.request('', data, success, fail);
 			}
 
 		},

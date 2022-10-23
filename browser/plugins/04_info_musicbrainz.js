@@ -673,14 +673,28 @@ var info_musicbrainz = function() {
 						if (typeof artistmeta.musicbrainz.layout == 'undefined')
 							artistmeta.musicbrainz.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
 
+						// If it's not set by the tags, wait for Last.FM to get one
 						while (artistmeta.musicbrainz_id == '') {
 							await new Promise(t => setTimeout(t, 500));
 						}
 
+						// If last.FM didn't get one, try a search
 						if (artistmeta.musicbrainz_id === null) {
-							debug.info(medebug,parent.nowplayingindex,"Artist asked to populate but no MBID could be found. Aborting");
-							self.artist.abjectFailure();
+							debug.info(medebug, parent.nowplayingindex,"Artist performing search");
+							musicbrainz.artist.search(
+								artistmeta.name,
+								(parent.playlistinfo.type == 'stream') ? 'null' : albummeta.name,
+								self.artist.mbSearchResult,
+								self.artist.mbSearchResult
+							);
 						}
+
+						// Wait for the search to come back
+						while (artistmeta.musicbrainz_id == null) {
+							await new Promise(t => setTimeout(t, 500));
+						}
+
+						// Search must have worked for the next part to still be undefined
 						if (artistmeta.musicbrainz[artistmeta.musicbrainz_id] === undefined) {
 							debug.debug(medebug,parent.nowplayingindex,"artist is populating",artistmeta.musicbrainz_id);
 							musicbrainz.artist.getInfo(
@@ -690,13 +704,21 @@ var info_musicbrainz = function() {
 						}
 					},
 
-					abjectFailure: function(err) {
-						artistmeta.musicbrainz_id = -1;
-						if (err) {
-							artistmeta.musicbrainz[artistmeta.musicbrainz_id] = err;
+					mbSearchResult: function(data) {
+						if (data.musicbrainz_id == -1) {
+							self.artist.abjectFailure();
 						} else {
-							artistmeta.musicbrainz[artistmeta.musicbrainz_id] = {error: language.gettext("musicbrainz_noartist")};
+							artistmeta.musicbrainz_id = data.musicbrainz_id;
 						}
+					},
+
+					abjectFailure: function(err) {
+						if (err) {
+							artistmeta.musicbrainz[-1] = err;
+						} else {
+							artistmeta.musicbrainz[-1] = {error: language.gettext("musicbrainz_noartist")};
+						}
+						artistmeta.musicbrainz_id = -1;
 						parent.updateData({
 								wikipedia: { artistlink: null },
 								discogs: {  artistlink: null },
