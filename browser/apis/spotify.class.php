@@ -197,9 +197,10 @@ class spotify {
 					$possibilities[] = self::make_poss($willies);
 				}
 			}
-			if (count($possibilities) == 0 && count($candidates) == 1) {
-				$possibilities[] = self::make_poss($candidates[0]);
-			}
+			// Don't do this, it's worse than returning nothing since it's never right.
+			// if (count($possibilities) == 0 && is_array($candidates) && count($candidates) == 1) {
+			// 	$possibilities[] = self::make_poss(array_shift($candidates['artists']['items']));
+			// }
 		}
 		print json_encode($possibilities);
 	}
