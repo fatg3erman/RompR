@@ -1066,6 +1066,20 @@ function strip_track_name($thing) {
 	return trim($thing);
 }
 
+// Remove any of our 'Ignore this prefix' values from the start of a string.
+// TYhis is for comparing eg Back Doors and The Back Doors, which is a
+// a common type of problem.
+function strip_prefixes($name) {
+	$pf = array_map('strtolower', prefs::get_pref('nosortprefixes'));
+	$stripname = strtolower($name);
+	foreach ($pf as $prefix) {
+		if (strpos($stripname, $prefix.' ') === 0) {
+			return substr($name, strlen($prefix)+1);
+		}
+	}
+	return $name;
+}
+
 function metaphone_compare($search_term, $found_term, $match_distance = null) {
 	// Metaphones were an experiment. They were a bit too fuzzy for our porpoises.
 	// This is a fuzzy compare function for comparing album names, artist names, etc.
@@ -1078,8 +1092,14 @@ function metaphone_compare($search_term, $found_term, $match_distance = null) {
 	// You will probably want to tune this value by trial and error depending on the use case.
 	// A value of 0 seems best for artists.
 
-	$new_search = preg_replace('/ \(.+?\)$/', '', $search_term);
-	$new_found = preg_replace('/ \(.+?\)$/', '', $found_term);
+	// mb_detect_encdoing is VeRY slow, but we don't know what encoding the source
+	// material is.
+
+	$new_search = mb_convert_encoding($search_term, 'ASCII', mb_detect_encoding($search_term));
+	$new_found = mb_convert_encoding($found_term, 'ASCII', mb_detect_encoding($found_term));
+
+	$new_search = preg_replace('/ \(.+?\)$/', '', $new_search);
+	$new_found = preg_replace('/ \(.+?\)$/', '', $new_found);
 
 	$new_search = strip_track_name($new_search);
 	$new_found = strip_track_name($new_found);
@@ -1092,7 +1112,7 @@ function metaphone_compare($search_term, $found_term, $match_distance = null) {
 		logger::trace('METAPHONE', $found_term,'matches',$search_term);
 		return true;
 	} else {
-		logger::core('METAPHONE', $found_term,'does not match',$search_term);
+		logger::core('METAPHONE', $new_found,'does not match',$new_search);
 		return false;
 	}
 }

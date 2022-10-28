@@ -3,6 +3,7 @@ class musicCollection extends collection_base {
 
 	protected $albums = [];
 	protected $find_track;
+	protected $force_keys = [];
 
 	public function __construct($opts = []) {
 		$this->options = array_merge($this->options, $opts);
@@ -27,6 +28,11 @@ class musicCollection extends collection_base {
 			$track = new track($filedata);
 			if ($this->options['searchterms'] !== false && !$this->check_track_against_terms($track)) {
 				return;
+			}
+
+			// Anything we want to force to a specific value - see do_update_with_command()
+			foreach ($this->force_keys as $k => $v) {
+				$filedata[$k] = $v;
 			}
 
 			if ($this->options['trackbytrack']) {
@@ -232,28 +238,14 @@ class musicCollection extends collection_base {
 
 		logger::log('COLLECTION', 'Browsing for album',$uri);
 		$this->create_foundtracks();
-		$this->do_update_with_command('find file "'.$uri.'"', array(), false);
+		$this->do_update_with_command('find file "'.$uri.'"', array(), false, ['AlbumArtist' => $album_details['Artistname']]);
 		$just_added = $this->find_justadded_albums();
 		if (is_array($just_added) && count($just_added) > 0) {
 			logger::log('BROWSEALBUM', 'We got a just modded response');
 			$modded_album = array_pop($just_added);
 			if ($modded_album == $index) {
 				logger::log('BROWSEALBUM', 'We Modified existing album',$index);
-				// This is a HACK. When browsing yt:playlist URIs we often end up getting details of an album that already exists
-				// because it was returned as an album by search. Those tracks might not have track numbers and so they
-				// get duplicated.
-				// But just in case, we check to see if doing that will remove all the tracks
-				$num_without_zero = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0,
-					"SELECT COUNT(TTindex) AS num FROM Tracktable WHERE Albumindex = ? AND TrackNo > 0",
-					$index
-				);
-				if ($num_without_zero > 0) {
-					logger::log('BROWSEALBUM', 'Removing all tracks from album',$index,'with tracknumber = 0');
-					$this->generic_sql_query("DELETE FROM Tracktable WHERE Albumindex = ".$index." AND TrackNo = 0");
-				} else {
-					logger::log('BROWSEALBUM', 'There are no tracks with tracknumber > 0. Deleting album link only');
-					$this->generic_sql_query("DELETE FROM Tracktable WHERE Albumindex = '.$index.' AND Title LIKE 'Album:%'");
-				}
+				$this->rescan_zero_tracks($index);
 				return $index;
 			} else {
 				// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
@@ -265,10 +257,49 @@ class musicCollection extends collection_base {
 					$this->set_image_for_album($modded_album, $album_details['Image']);
 				}
 				$this->replace_album_in_database($index, $modded_album);
+				$this->rescan_zero_tracks($index);
 			}
 		}
 
 		return $index;
+	}
+
+	private function rescan_zero_tracks($index) {
+		// This is a HACK. When browsing yt:playlist URIs we often end up getting details of an album that already exists
+		// because it was returned as an album by search. Those tracks might not have track numbers and so they
+		// get duplicated. But also sometimes for reasons beyond the realms of comprehension, sometimes this
+		// browse DOESN't return all the tracks. I think we get two playlists that combine to one album because it's
+		// a multi-disc set and Youtube can't just have one playlist for that can it, oh no, that would helpful.
+		$tracks = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, [],
+			"SELECT Title FROM Tracktable WHERE Albumindex = ? AND TrackNo > 0 AND isSearchResult > 0",
+			$index
+		);
+		foreach ($tracks as $title) {
+			$dumbass = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'TTindex', null,
+				"SELECT TTindex FROM Tracktable WHERE Albumindex = ? AND Title = ? AND TrackNo = 0 AND isSearchResult = 2",
+				$index,
+				$title
+			);
+			if ($dumbass) {
+				logger::log('BROWSEALBUM', 'Deleting TTindex',$dumbass,'because it now has a better copy with a track number');
+				$this->sql_prepare_query(true, null, null, null,
+					"DELETE FROM Tracktable WHERE TTindex = ?",
+					$dumbass
+				);
+			}
+		}
+		$count = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0,
+			"SELECT COUNT(TTindex) AS num FROM Tracktable WHERE Albumindex = ? AND Title NOT LIKE 'Album:%'",
+			$index
+		);
+		if ($count > 0) {
+			logger::log('BROWSEALBUM', 'Deleting Album link track because there are others');
+			$this->sql_prepare_query(true, null, null, null,
+				"DELETE FROM Tracktable WHERE Albumindex = ? AND Title LIKE 'Album:%'",
+				$index
+			);
+		}
+
 	}
 
 	public function check_artist_browse($index) {
@@ -286,8 +317,15 @@ class musicCollection extends collection_base {
 		}
 	}
 
-	public function do_update_with_command($cmd, $dirs, $domains) {
+	public function do_update_with_command($cmd, $dirs, $domains, $force_keys = []) {
 		logger::log('COLLECTION', 'Doing update with',$cmd);
+		// In cases where we're browsing search results from eg youtube, the initial
+		// Album Artist can sometimes be wrong, but we want it to be the same otherwise
+		// the UI doesn't work, so force it.
+		foreach ($force_keys as $k => $v) {
+			logger::log('COLLECTION', 'Forcing',$k,'to',$v);
+		}
+		$this->force_keys = $force_keys;
 		$this->open_transaction();
 		$this->prepareCollectionUpdate();
 		$player = new player();

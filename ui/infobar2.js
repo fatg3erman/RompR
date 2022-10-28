@@ -242,22 +242,6 @@ var infobar = function() {
 				// debug.log('BIGGER_DOWN','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
 			}
 
-			// var increment = final_fontsize / 4;
-			// // debug.log('BIGGER-UP', 'Increment is',increment);
-			// while (increment > 1) {
-			// 	fontsize = Math.floor(fontsize + increment);
-			// 	increment = increment / 2;
-			// 	// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
-			// 	nptext.css('font-size', fontsize+'px');
-			// 	if (nptext.outerHeight(true) < maxheight && nptext.outerWidth(true) < maxwidth) {
-			// 		// debug.log('BIGGER_UP','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
-			// 		final_fontsize = fontsize
-			// 	} else {
-			// 		break;
-			// 	}
-			// }
-
-			// debug.log('BIGGEROZE', 'Final font size is',final_fontsize);
 			nptext.css('font-size', final_fontsize+'px');
 
 			if (npinfo.Title && npinfo.Album && npinfo.Artist) {

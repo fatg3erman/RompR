@@ -187,16 +187,26 @@ var info_file = function() {
 				parent.updateData({
 					file: { },
 					fileinfo: { },
-					lyrics: { }
+					lyrics: {
+						lyrics: ''
+					}
 				}, trackmeta);
 
 				parent.updateData({
-					file: { layout: new info_layout_empty() }
+					file: { },
 				}, albummeta);
 
 				parent.updateData({
-					file: { layout: new info_layout_empty() }
+					file: { },
 				}, artistmeta);
+
+				// Don't put these definitions in the updateData calls above
+				// because they're functions and get treated like triggers
+				if (typeof albummeta.file.layout == 'undefined')
+					albummeta.file.layout = new info_layout_empty();
+
+				if (typeof artistmeta.file.layout == 'undefined')
+					artistmeta.file.layout = new info_layout_empty();
 
 				if (typeof trackmeta.file.layout == 'undefined') {
 					trackmeta.file.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
@@ -233,6 +243,13 @@ var info_file = function() {
 			this.updateFileInformation = function() {
 				trackmeta.fileinfo.player = cloneObject(player.status);
 				debug.core("FILE PLUGIN","Doing update from",trackmeta);
+				parent.updateData({
+						lyrics: {
+							lyrics: null
+						}
+					},
+					trackmeta
+				);
 				trackmeta.lyrics.lyrics = null;
 				self.doBrowserUpdate();
 			}
@@ -243,12 +260,13 @@ var info_file = function() {
 				.done(function(data) {
 					debug.core("FILE PLUGIN",'Got info from beets server',data);
 					trackmeta.fileinfo.beets = data;
-					if (data.lyrics) {
-						debug.mark("FILE PLUGIN","Got lyrics from Beets Server");
-						trackmeta.lyrics.lyrics = data.lyrics;
-					} else {
-						trackmeta.lyrics.lyrics = null;
-					}
+					parent.updateData({
+							lyrics: {
+								lyrics: (data.lyrics) ? data.lyrics : null
+							}
+						},
+						trackmeta
+					);
 					self.doBrowserUpdate();
 				})
 				.fail( function() {

@@ -215,5 +215,14 @@ class album {
 		}
 	}
 
+	public function check_ytmusic_lookup() {
+		logger::debug('ALBUM', 'Uri is',$this->tracks[0]->tags['X-AlbumUri']);
+		if (strpos($this->tracks[0]->tags['X-AlbumUri'], 'ytmusic:') !== false) {
+			logger::log('ALBUM', 'Forcing lookup of album', $this->tracks[0]->tags['X-AlbumUri']);
+			return $this->tracks[0]->tags['X-AlbumUri'];
+		}
+		return false;
+	}
+
 }
 ?>

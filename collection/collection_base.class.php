@@ -1017,7 +1017,15 @@ class collection_base extends database {
 		$best_matches = [];
 		$middle_matches = [];
 		$worst_matches = [];
+		$player = new player();
 		foreach ($this->albums as $album) {
+			// If it's a ytmusic track we really really want to get the track number, which we don't get
+			// without doing a lookup. It's quick enough if we do it now. The other mechanism we have, in do-command_list
+			// doesn't work because the album isn't in the database
+			$uri = $album->check_ytmusic_lookup();
+			if ($uri)
+				$player->do_command_list(['find file "'.$uri.'"']);
+
 			$album->sortTracks();
 			foreach($album->tracks as $trackobj) {
 				if ($rawterms['Album'] && !$rawterms['Title']) {

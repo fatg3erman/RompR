@@ -40,9 +40,9 @@ function download_image_file($url, $outfile) {
 		logger::trace("GETREMOTEIMAGE", "  ... Downloading it");
 		$d = new url_downloader(array('url' => $url));
 		if ($d->get_data_to_file($outfile, true)) {
-			logger::trace("GETREMOTEIMAGE", "Cached Image ".$outfile);
+			logger::core("GETREMOTEIMAGE", "Cached Image ".$outfile);
 			$content_type = $d->get_content_type();
-			logger::trace("GETREMOTEIMAGE", "  ... Content Type is ".$content_type);
+			logger::core("GETREMOTEIMAGE", "  ... Content Type is ".$content_type);
 			if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
 				logger::warn("GETREMOTEIMAGE", "      Not an image file! ",$url);
 				unlink($outfile);

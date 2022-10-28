@@ -51,6 +51,52 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 		return self.special_layouts[index];
 	}
 
+	// playlitsinfo.metadata is initiliased in playlistcollection
+	// {
+	// 	track: {
+	// 		name: 				Title,
+	// 		musicbrainz_id: 	MUSICBRAINZ_TRACKID,
+	//		artist: 			Track artist (concat string)
+	// 		backendid: 			Playlist Id of track
+	// 	},
+	// 	album: {
+	// 		name: 				Album,
+	// 		musicbrainz_id: 	MUSICBRAINZ_ALBUMID,
+	// 		uri: 				X-AlbumUri,
+	// 		backendid: 			Playlist Id of track,
+	//		artist: 			album artist (concat string)
+	// 		spotify: 			{id: spotify_id if spotify track}
+	// 	},
+	//  iscomposer: "true" if the first artist in the list is the composer. Only used when doing
+	//						Last.Fm corrections - ignore the corrections if this is "false"
+	// 	artists: [
+	// 		name: 				Artist,
+	// 		musicbrainz_id: 	MUSICBRAINZ_ARTISTID,
+	// 		type: 				composer, performer, albumartist, artist
+	// 		ignore: 			bool, ont' know what this is for, always seems to be false
+	// 		backendid: 			Playlist Id of track
+	// 	],
+	// 	...
+	// }
+
+	// Each collection gets
+	// artistmeta
+	// albummeta
+	// trackmeta
+	// which are initially set to the above, artistmeta will be the array index of the
+	// currently displayed artist.
+	// Collections should then add their own metadata into those structures, eg
+	// albummeta.lastfm = {}
+	// by calling parent.updatedata({ sructure }, albummeta);
+
+	// playlistinfo also contains the following which can be trusted:
+	// {
+	// 	trackartist: 			Artist (concat string),
+	// 	albumartist: 			AlbumArtist (concat string)
+	// }
+	// DO NOT trust AlbumArtist as that comes from get_extra_track_info and the
+	// track might not be in the database
+
 	this.get_a_thing = function(type, thing) {
 		switch (type) {
 			case 'track':
@@ -119,19 +165,81 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 		collections[source].handleClick(panel, element, event);
 	}
 
-	this.updateData = function(data, start) {
+	// collections should call this to update the metadata
+	// cal it with a data structure and a start point
+	// parent.updateData({
+	// 		wikipedia: { artistlink: null },
+	// 		discogs: {  artistlink: null },
+	// 		allmusic: {  artistlink: null }
+	// 	},
+	// 	artistmeta
+	// );
+
+	// Unitialised items should be set to ''
+	// Collections should set data it is looking for but cannot find to null
+	// This will allow other collections to trigger on a value of null should
+	// they wish to take further action - eg searching.
+
+	// Collections call also add triggers. triggers are callbacks that will be
+	// called when a certain value gets changed eg
+	// parent.updateData({
+	// 	lastfm: {},
+	// 	allmusic: {artistlink: ''},
+	// 	triggers: {
+	// 		allmusic: {
+	// 			artistlink: self.artist.tryForAllmusicImage
+	// 		}
+	// 	}
+	// }, artistmeta);
+	// This will call a function when artistmeta.allmusic.artistlink gets changed.
+	// Multiple triggers are allowed, but onyl one per key per collection
+	// NEVER EVER call this function with trigger set to anything. That is only
+	// for use by this function, which cals itself recursively.
+
+	this.updateData = function(data, start, trigger) {
 		if (start === undefined || start === null) {
 			start = self.playlistinfo;
 		}
 		for (var i in data) {
+			if (start.triggers) {
+				trigger = start.triggers;
+			}
+			debug.core('UPDATEDATA', i);
 			if (typeof data[i] == "object" && data[i] !== null) {
-				if (start[i] === undefined) {
+				if (typeof(start[i]) == 'undefined') {
 					start[i] = {};
 				}
-				self.updateData(data[i], start[i]);
+				if (trigger && trigger[i] && i != 'triggers') {
+					trigger = trigger[i];
+				} else {
+					trigger = null;
+				}
+				self.updateData(data[i], start[i], trigger);
 			} else {
-				if (start[i] === undefined || start[i] == "" || start[i] == null) {
+				if (typeof(data[i]) == 'function') {
+					// data[i] can and will be a function if AND ONLY IF it is a trigger
+					if (start[i] === undefined)
+						start[i] = [];
+
+					start[i].push(data[i]);
+
+				} else if (
+					typeof(start[i]) == 'undefined'
+					|| start[i] === ""
+					|| (start[i] === null && (data[i] !== '' && data[i] !== null))
+					|| start[i] === false
+				) {
+					// Permit values to be updated only from "" or null, unless they're booleans which we use as flags
+					// but we only allow those to go false => true otherwise initialising new collection unsets flags
+					// in the data that we don't want to unset
 					start[i] = data[i];
+					debug.core('UPDATEDATA', 'Setting',i,'to',data[i]);
+					if (trigger && typeof(trigger[i]) == 'object') {
+						debug.log('NOWPLAYING', 'Calling triggers for',i);
+						for (var fn of trigger[i]) {
+							fn.call();
+						}
+					}
 				}
 			}
 		}
@@ -306,6 +414,7 @@ var nowplaying = function() {
 									playlistinfo.metadata.artists[i].name == tracks_played[j].playlistinfo.metadata.artists[k].name) {
 									debug.debug("NOWPLAYING","Using artist info from",j,k,"for",i);
 									playlistinfo.metadata.artists[i] = tracks_played[j].playlistinfo.metadata.artists[k];
+									playlistinfo.metadata.artists[i].triggers = {};
 									break acheck;
 								}
 							}
@@ -328,6 +437,7 @@ var nowplaying = function() {
 								if (!fa) {
 									debug.debug("NOWPLAYING","Using album info from",j);
 									playlistinfo.metadata.album = tracks_played[j].playlistinfo.metadata.album;
+									playlistinfo.metadata.album.triggers = {};
 									fa = true;
 								}
 								if (!ft && !tracks_played[j].playlistinfo.metadata.track.special &&
@@ -335,6 +445,7 @@ var nowplaying = function() {
 									playlistinfo.Title == tracks_played[j].playlistinfo.Title) {
 									debug.debug("NOWPLAYING","Using track info from",j);
 									playlistinfo.metadata.track = tracks_played[j].playlistinfo.metadata.track;
+									playlistinfo.metadata.track.triggers = {};
 									ft = true;
 								}
 								if (fa && ft) {

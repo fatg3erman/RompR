@@ -335,9 +335,11 @@ language::add_translations([
 	"musicbrainz_officalhomepage" =>		"Official Homepage (%s)",
 	"musicbrainz_fansite" =>				"Fan Site (%s)",
 	"musicbrainz_lyrics" =>					"Lyrics (%s)",
-	"musicbrainz_social" =>					"Social Network",
+	"musicbrainz_social" =>					"Social Network (%s)",
+	"musicbrainz_streaming" =>				"Free Streaming (%s)",
 	"musicbrainz_microblog" =>				"Microblog",
 	"musicbrainz_review" =>					"Review (%s)",
+	"musicbrainz_purchase" =>				"Purchase (%s)",
 	"musicbrainz_novotes" =>				"(No Votes)",
 	// eg: 3/5 from 15 votes
 	"musicbrainz_votes" =>					"%s/5 from %s votes",
@@ -347,6 +349,7 @@ language::add_translations([
 	"musicbrainz_date" =>					"DATE",
 	"musicbrainz_country" =>				"COUNTRY",
 	"musicbrainz_disc" =>					"DISC",
+	"musicbrainz_album_releases" =>			"RELEASES OF THIS ALBUM",
 
 	// SoundCloud info panel
 	"button_soundcloud" =>					"Info Panel (SoundCloud)",

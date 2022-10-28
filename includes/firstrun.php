@@ -14,6 +14,7 @@ $root_level_dirs = array(
 	'prefs/jsoncache/commradio',
 	'prefs/jsoncache/somafm',
 	'prefs/jsoncache/bing',
+	'prefs/jsoncache/wikidata',
 	'prefs/userplaylists',
 	'prefs/plimages',
 	'prefs/userbackgrounds',

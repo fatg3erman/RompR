@@ -172,7 +172,8 @@ Assuming it works, the YoutTube video will be downloaded and the audio will be e
 using Mopidy's Stream backend the next time you add the track to the play queue.
 
 The file will be downloaded to a subdirectory under rompr/prefs/youtubedl/. Assuming the download actually started there will be a log file
-in that directory which includes the complete command line that was used and all of the downloader's text output.
+in that directory which includes the complete command line that was used and all of the downloader's text output. (Note, these files will
+be cleaned up at regular intervals).
 
 If you have the flac packages installed (sudo apt install flac) then the downloaded file will be tagged with the artist and track name.
 Tagged tracks can be moved into your 'normal' music collection. Provided you have the option to 'Prefer Local Music to Internet Sources' enabled,
@@ -181,9 +182,10 @@ which supports seeking and pausing much better than the stream backend.
 
 One way is to move the downloaded files from rompr/prefs/youtubedl into an appropriate folder, do 'mopidy local scan' and rescan your collection.
 
-Another approach is to symlink rompr/prefs/youtubedl into a subdirectory off your Music Directory and make sure the webserver has write permissions.
+Another approach is to symlink rompr/prefs/youtubedl into a youtubedl subdirectory off your Music Directory and make sure the webserver has write permissions.
 When you download a track you simply need to 'mopidy local scan' and then Update your Music Collection.
-**Note though, that RompR is "in control" of the prefs/youtubedl directory and WILL DELETE anything that it doesn't recognise.**
+**Note though, that RompR is "in control" of the prefs/youtubedl directory and WILL DELETE anything that it doesn't recognise. Also the directory
+you symlink to MUST be called youtubedl or everything in it will get deleted.**
 
 ### Youtube Music Premium Subscribers
 

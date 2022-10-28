@@ -29,25 +29,29 @@ class cache_cleaner extends database {
 		// otherwise they will ban us. Don't spoil it for everyone.
 		$now = time();
 		// One Month
-		$this->clean_cache_dir('prefs/jsoncache/musicbrainz/', 2592000);
-		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/allmusic/', 2592000);
 		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/discogs/', 2592000);
+		// One Month
+		$this->clean_cache_dir('prefs/jsoncache/musicbrainz/', 2592000);
 		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/wikipedia/', 2592000);
 		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/lastfm/', 2592000);
 		// One Month
-		$this->clean_cache_dir('prefs/jsoncache/soundcloud/', 2592000);
-		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/spotify/', 2592000);
+		// Six Months - after all, lyrics are small and don't change
+		$this->clean_cache_dir('prefs/jsoncache/lyrics/', 15552000);
+		// One Month
+		$this->clean_cache_dir('prefs/jsoncache/soundcloud/', 2592000);
 		// One Week
 		$this->clean_cache_dir('prefs/jsoncache/commradio/', 604800);
 		// One Week
 		$this->clean_cache_dir('prefs/jsoncache/somafm/', 604800);
-		// Six Months - after all, lyrics are small and don't change
-		$this->clean_cache_dir('prefs/jsoncache/lyrics/', 15552000);
+		// One Month
+		$this->clean_cache_dir('prefs/jsoncache/bing/', 2592000);
+		// One Month
+		$this->clean_cache_dir('prefs/jsoncache/wikidata/', 2592000);
 		// One week (or it can get REALLY big)
 		$this->clean_cache_dir('prefs/imagecache/', 604800);
 		// Clean the albumart temporary upload directory
@@ -136,7 +140,7 @@ class cache_cleaner extends database {
 			if ($f->isFile()) {
 				$numfiles++;
 				$fpath = $f->getPathname();
-				if ($this->check_youtube_uri_exists(substr($fpath, strpos($fpath, 'prefs/youtubedl/'))) == 0) {
+				if ($this->check_youtube_uri_exists(substr($fpath, strpos($fpath, 'youtubedl/'))) == 0) {
 					logger::log('CACHE CLEANER', $fpath,'does not have an associated track');
 					unlink($fpath);
 				}

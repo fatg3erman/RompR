@@ -68,17 +68,15 @@ var discogs = function() {
 				do_Request();
 		},
 
-		artist: {
+		verify_data: function(data, success, fail) {
+			var params = {
+				method: 'verify_data',
+				params: data
+			}
+			discogs.request('', params, success, fail)
+		},
 
-			search: function(name, success, fail) {
-				var data = {
-					method: 'artist_search',
-					params: {
-						q: name
-					}
-				};
-				discogs.request('', data, success, fail);
-			},
+		artist: {
 
 			getInfo: function(reqid, id, success, fail) {
 				var data = {
@@ -115,17 +113,6 @@ var discogs = function() {
 				discogs.request(reqid, data, success, fail);
 			},
 
-			search: function(artist, album, success, fail) {
-				var data = {
-					method: 'album_search',
-					params: {
-						artist: artist,
-						release_title: album
-					}
-				};
-				discogs.request('', data, success, fail);
-			}
-
 		},
 
 		track: {
@@ -141,18 +128,6 @@ var discogs = function() {
 				};
 				discogs.request(reqid, data, success, fail);
 			},
-
-			search: function(artist, track, albumartist, success, fail) {
-				var data = {
-					method: 'track_search',
-					params: {
-						artist: artist,
-						albumartist: albumartist,
-						track: track
-					}
-				};
-				discogs.request('', data, success, fail);
-			}
 
 		},
 

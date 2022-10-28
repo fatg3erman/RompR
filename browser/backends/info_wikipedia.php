@@ -171,7 +171,7 @@ function get_wikipedia_page($page, $site, $langsearch) {
 			foreach($info->mobileview->sections->section as $section) {
 				$reformat .= htmlspecialchars($section, ENT_QUOTES);
 			}
-			$reformat .= '</text></parse><rompr><domain>'.$format_domain.'</domain><page>'.$page.'</page></rompr></api>';
+			$reformat .= '</text></parse><rompr><domain>'.$format_domain.'</domain><page>'.htmlspecialchars(rawurldecode($page), ENT_QUOTES).'</page></rompr></api>';
 			return $reformat;
 		} else {
 			$info = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -197,7 +197,7 @@ function get_wikipedia_page($page, $site, $langsearch) {
 function wrap_response($xml, $domain, $page) {
 	$meta = $xml->addChild('rompr');
 	$meta->addChild('domain', $domain);
-	$meta->addChild('page', $page);
+	$meta->addChild('page', htmlspecialchars(rawurldecode($page), ENT_QUOTES));
 	return $xml->asXML();
 }
 
@@ -242,7 +242,7 @@ function prepare_string($searchstring) {
 
 function wikipedia_find_exact($searchfor, $domain) {
 
-	$xml = wikipedia_request('http://'.$domain.'.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . rawurlencode($searchfor) . '&srprop=score&format=xml');
+	$xml = wikipedia_request('http://'.$domain.'.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . rawurlencode($searchfor) . '&format=xml');
 	if ($xml == null) {
 		return '';
 	}
@@ -271,7 +271,7 @@ function find_dismbiguation_page($page) {
 
 	$searchfor = $page.' (disambiguation)';
 	logger::log("WIKIPEDIA", "Searching Wikipedia for ".$searchfor);
-	$xml = wikipedia_request('http://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . rawurlencode($searchfor) . '&srprop=score&format=xml');
+	$xml = wikipedia_request('http://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . rawurlencode($searchfor) . '&format=xml');
 	$results = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
 
 	foreach ($results->query->search->p as $id) {
@@ -288,7 +288,7 @@ function wikipedia_get_list_of_suggestions($term) {
 
 	global $domain;
 	logger::log("WIKIPEDIA", "Getting list of suggestions for ".$term." from ".$domain.".wikipedia.org");
-	$xml = wikipedia_request('http://'.$domain.'.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . rawurlencode($term) . '&srprop=score&format=xml');
+	$xml = wikipedia_request('http://'.$domain.'.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . rawurlencode($term) . '&format=xml');
 	if ($xml != "") {
 		$html = '<?xml version="1.0" encoding="UTF-8"?><api><parse><text xml:space="preserve">';
 		$xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -305,7 +305,7 @@ function wikipedia_get_list_of_suggestions($term) {
 		}
 		$html .= htmlspecialchars("</ul>", ENT_QUOTES);
 		$html .= '</text></parse>';
-		$html .= '<rompr><domain>'.$domain.'</domain><page>'.htmlspecialchars($term, ENT_QUOTES).'</page></rompr></api>';
+		$html .= '<rompr><domain>'.$domain.'</domain><page>'.htmlspecialchars(rawurldecode($term), ENT_QUOTES).'</page></rompr></api>';
 
 		return $html;
 	} else {

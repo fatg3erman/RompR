@@ -17,12 +17,12 @@ function updateStreamInfo() {
 				temp.trackartist = parts.shift();
 				temp.Title = parts.join(" - ");
 				temp.metadata.artists = [{name: temp.trackartist, musicbrainz_id: ""}];
-				temp.metadata.track = {name: temp.Title, musicbrainz_id: ""};
+				temp.metadata.track = {name: temp.Title, musicbrainz_id: "", artist: temp.trackartist};
 			} else if (player.status.Title && player.status.Artist) {
 				temp.trackartist = player.status.Artist;
 				temp.Title = player.status.Title;
 				temp.metadata.artists = [{name: temp.trackartist, musicbrainz_id: ""}];
-				temp.metadata.track = {name: temp.Title, musicbrainz_id: ""};
+				temp.metadata.track = {name: temp.Title, musicbrainz_id: "", artist: temp.trackartist};
 			}
 		}
 		if (player.status.Name && !player.status.Name.match(/^\//) && temp.Album == rompr_unknown_stream) {
