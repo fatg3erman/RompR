@@ -392,6 +392,9 @@ var playlist = function() {
 			$('.clear_playlist').on('click', playlist.clear).stopSpinner();
 			playlist.radioManager.checkStatus();
 			current_queue_request++;
+			if (playlist.radioManager.is_running() && finaltrack < (prefs.smartradio_chunksize-1)) {
+				playlist.waiting();
+			}
 		},
 
 		is_valid: async function() {
