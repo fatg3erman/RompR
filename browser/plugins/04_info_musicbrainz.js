@@ -606,8 +606,13 @@ var info_musicbrainz = function() {
 					self.verify_data();
 				}
 
-				if (typeof artistmeta.musicbrainz.layout == 'undefined')
+				if (typeof artistmeta.musicbrainz.layout == 'undefined') {
 					artistmeta.musicbrainz.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
+					if (artistmeta.name == '' && trackmeta.name == '') {
+						artistmeta.musicbrainz.populated = true;
+						self.artist.doBrowserUpdate({error: 'There is no Artist to display information for'});
+					}
+				}
 
 				if (typeof albummeta.musicbrainz.layout == 'undefined') {
 					if (parent.playlistinfo.type == 'stream') {
@@ -618,8 +623,14 @@ var info_musicbrainz = function() {
 					}
 				}
 
-				if (typeof trackmeta.musicbrainz.layout == 'undefined')
-					trackmeta.musicbrainz.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
+				if (typeof trackmeta.musicbrainz.layout == 'undefined') {
+					if (trackmeta.name == '') {
+						trackmeta.musicbrainz.populated = true;
+						trackmeta.musicbrainz.layout = new info_layout_empty();
+					} else {
+						trackmeta.musicbrainz.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
+					}
+				}
 
 			}
 

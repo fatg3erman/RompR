@@ -114,6 +114,11 @@ class musicbrainz {
 
 		logger::log('MUSICBRAINZ', print_r($params, true));
 
+		if ($params['artist']['name'] == '' && $params['album']['artist'] == 'Radio' && $params['track']['name'] == '') {
+			print json_encode(self::$retval);
+			exit(0);
+		}
+
 		if ($params['artist']['musicbrainz_id']) {
 			self::$retval['artistmeta']['musicbrainz']['musicbrainz_id'] = $params['artist']['musicbrainz_id'];
 		} else {

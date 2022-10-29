@@ -198,12 +198,7 @@ var info_lastfm = function() {
 			this.populate = function() {
 				debug.debug('LASTFM', 'Asked To Populate');
 				parent.updateData({
-					lastfm: {done_image: false},
-					triggers: {
-						allmusic: {
-							link: self.artist.tryForAllmusicImage
-						}
-					}
+					lastfm: {done_image: false}
 				}, artistmeta);
 
 				parent.updateData({
@@ -320,12 +315,23 @@ var info_lastfm = function() {
 				return {
 
 					populate: function() {
-						artistmeta.lastfm.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
-						debug.debug(medebug,parent.nowplayingindex,"artist is populating",artistmeta.name);
-						lastfm.artist.getInfo( {artist: artistmeta.name},
-												this.lfmResponseHandler,
-												this.lfmResponseHandler
-						);
+						if (artistmeta.name == '') {
+							artistmeta.lastfm.layout = new info_layout_empty();
+						} else {
+							artistmeta.lastfm.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
+							debug.debug(medebug,parent.nowplayingindex,"artist is populating",artistmeta.name);
+							lastfm.artist.getInfo( {artist: artistmeta.name},
+													this.lfmResponseHandler,
+													this.lfmResponseHandler
+							);
+							parent.updateData({
+								triggers: {
+									allmusic: {
+										link: self.artist.tryForAllmusicImage
+									}
+								}
+							}, artistmeta);
+						}
 					},
 
 					lfmResponseHandler: function(data) {
@@ -577,11 +583,15 @@ var info_lastfm = function() {
 				return {
 
 					populate: function() {
-						trackmeta.lastfm.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
-						debug.debug(medebug,parent.nowplayingindex,"Getting last.fm data for track",trackmeta.name);
-						lastfm.track.getInfo( { artist: getSearchArtist(), track: trackmeta.name },
-												this.lfmResponseHandler,
-												this.lfmResponseHandler );
+						if (trackmeta.name == '') {
+							trackmeta.lastfm.layout = new info_layout_empty();
+						} else {
+							trackmeta.lastfm.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
+							debug.debug(medebug,parent.nowplayingindex,"Getting last.fm data for track",trackmeta.name);
+							lastfm.track.getInfo( { artist: getSearchArtist(), track: trackmeta.name },
+													this.lfmResponseHandler,
+													this.lfmResponseHandler );
+						}
 					},
 
 					lfmResponseHandler: function(data) {

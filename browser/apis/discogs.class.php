@@ -93,6 +93,11 @@ class discogs {
 
 		logger::log('DISCOGS', 'PARAMS', print_r($params, true));
 
+		if ($params['artist']['name'] == '' && $params['album']['artist'] == 'Radio' && $params['track']['name'] == '') {
+			print json_encode(self::$retval);
+			exit(0);
+		}
+
 		if ($params['artist']['artistlink'] == null) {
 			logger::log('DISCOGS', 'Searching for Artist');
 			self::$retval['artistmeta']['discogs']['possibilities'] = self::artist_search(['q' => $params['artist']['name']], false);
