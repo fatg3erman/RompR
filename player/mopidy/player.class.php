@@ -228,19 +228,24 @@ class player extends base_mpd_player {
 	}
 
 	private function preprocess_youtube(&$filedata) {
+
+		// These settings make Mopidy-Youtube work best in Youtube Video mode
+		// They're not so good in Youtube Music mode. I recommend Mopidy-YTMusic
+		// (my fork) for Youtube Music
+
 		$filedata['folder'] = hash('md2', $filedata['X-AlbumUri'], false);
-		// if (!$filedata['AlbumArtist'])
-		// 	$filedata['AlbumArtist'] = $filedata['Artist'];
+		if (!$filedata['AlbumArtist'])
+			$filedata['AlbumArtist'] = $filedata['Artist'];
 
-		// if (!$filedata['X-AlbumUri'])
-		// 	$filedata['X-AlbumUri'] = $filedata['file'];
+		if (!$filedata['X-AlbumUri'])
+			$filedata['X-AlbumUri'] = $filedata['file'];
 
-		if ($filedata['Title'] && !$filedata['Album'])
+		if ($filedata['Title'] && (!$filedata['Album'] || $filedata['Album'] == 'YouTube Playlist'))
 			$filedata['Album'] = $filedata['Title'];
 
-		if (strpos($filedata['Artist'][0], 'YouTube Playlist') !== false) {
-			$filedata['Artist'] = ['YouTube Playlists'];
-		}
+		// if (strpos($filedata['Artist'][0], 'YouTube Playlist') !== false) {
+		// 	$filedata['Artist'] = ['YouTube Playlists'];
+		// }
 
 		if ($filedata['X-AlbumImage'])
 			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);

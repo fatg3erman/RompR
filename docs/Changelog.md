@@ -55,6 +55,7 @@ added to Your Wishlist. Note that selecting this option will force a rescan of y
  I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
  If you have enabled Youtube Music support in Mopidy the Wishlist Viewer will permit you to search for tracks on Youtube Music
  and import them into your Collection in place of your Spotify tracks, preserving the tags, ratings, and playcounts.
+* For YouTube Music support in RompR, the best results come with my fork of Mopidy-YTMusic : https://github.com/fatg3erman/mopidy-ytmusic/tree/feature/browse-album
 * For Mopidy users, all Personalised Radio stations that relied on Spotify support have been removed and are not coming back.
 * The other Mopidy-specific Personal radio stations have been adjusted so that they work with Mopidy-Youtube and Mopidy-YTMusic.
  For best results with Mopidy-Youtube you should ensure you have a Youtube Music account and enable it in the youtube section of

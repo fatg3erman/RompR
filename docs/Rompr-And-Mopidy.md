@@ -140,16 +140,18 @@ Mopidy, because all the tracks in your collection will no longer work. I have su
 been no movement on it. https://github.com/OzymandiasTheGreat/mopidy-ytmusic/pull/69. If you run that version then you can add tracks to your collection
 safely.
 
-Mopidy-Youtube also supports the Youtube Music API. I've worked with the developer to bring the functionality more in line with what
-Spotify used to provide and in general it works well. At the time of writing (October 2022) the development version contains
-all the functionality RompR requires.
+My fork of Mopidy-YTMusic is here, and I recommend you use this until the above chnage is merged into the main version.
 
-I've put a lot of effort into these backends to replace a lot of what RompR used to rely on Mopidy-Spotify for but bear in mind
+https://github.com/fatg3erman/mopidy-ytmusic/tree/feature/browse-album
+
+Mopidy-Youtube also supports the Youtube Music API.
+
+I've put a lot of effort into using these backends to replace a lot of what RompR used to rely on Mopidy-Spotify for but bear in mind
 Youtbe Music does not have a proper API and there is some information - like track numbers - that is extremely unreliable.
 RompR likes track numbers because they make Playcounts more accurate, and RompR will try very hard indeed to get
-Youtube to give it a track number when it needs one. Mopidy-Youtube is better than Mopidy-YTMusic in this respect.
-Mopidy-YTMusic often doesn't even return an Album name, which messes up Playcounts and Ratings and a lot of stuff. If that's important
-to you then you shouldn't use Mopidy-YTMusic.
+Youtube to give it a track number when it needs one. The best functionality with RompR and Youtube Music comes by using
+my fork of Mopidy-YTMusic. RompR's Mopidy-Youtube support is based on using it for starndard YouTube, not Youtube Music.
+
 
 
 ## Downloading Youtube Tracks
