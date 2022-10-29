@@ -238,7 +238,12 @@ class musicCollection extends collection_base {
 
 		logger::log('COLLECTION', 'Browsing for album',$uri);
 		$this->create_foundtracks();
-		$this->do_update_with_command('find file "'.$uri.'"', array(), false, ['AlbumArtist' => $album_details['Artistname']]);
+		// We want the tracks we're browsing to appear under the same album. Sometimes Mopidy-YTMusic hasn't returned an album name
+		// or some tracks have an album name and some haven't. It gets very confusing in the UI and for the backend
+		// so we force the values of AlbumArtist and Album to be the same as the one we're browsing
+		// whatever comes back from Mopidy. This isn't ideal but ytmusicapi seems very inconsistent
+		// in what information it returns so we need to tidy it up.
+		$this->do_update_with_command('find file "'.$uri.'"', array(), false, ['AlbumArtist' => $album_details['Artistname'], 'Album' => $album_details['Albumname']]);
 		$just_added = $this->find_justadded_albums();
 		if (is_array($just_added) && count($just_added) > 0) {
 			logger::log('BROWSEALBUM', 'We got a just modded response');
@@ -251,7 +256,8 @@ class musicCollection extends collection_base {
 				// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
 				// When we browse the album the new tracks therefore get added to a new album.
 				// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
-				// (otherwise the GUI doesn't work)
+				// (otherwise the GUI doesn't work). This shouldn't now be necessary as we force it above
+				// but I eft this here just in case.
 				logger::log('BROWSEALBUM', 'New album',$modded_album,'was created. Setting it to',$index);
 				if ($album_details['Image'] != null) {
 					$this->set_image_for_album($modded_album, $album_details['Image']);
