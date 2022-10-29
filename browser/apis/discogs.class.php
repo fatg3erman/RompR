@@ -127,7 +127,7 @@ class discogs {
 			self::$retval['albummeta']['discogs']['releaseid'] = self::find_id($params['album']['releaselink']);
 			logger::log('DISCOGS', 'Getting Album Release Data',self::$retval['albummeta']['discogs']['releaseid']);
 			self::$retval['metadata']['album']['release'] = json_decode(self::album_getinfo(['id' => 'releases/'.self::$retval['albummeta']['discogs']['releaseid']], false), true);
-			if ($params['album']['masterlink'] == null && self::$retval['metadata']['album']['release']['master_id']) {
+			if ($params['album']['masterlink'] == null &&  array_key_exists('master_id', self::$retval['metadata']['album']['release']) && self::$retval['metadata']['album']['release']['master_id']) {
 				// If we don't have a master link we can find one from the release link.
 				// The master link is more useful to us
 				// TODO maybe if we have a master link we don't bother getting the release data
