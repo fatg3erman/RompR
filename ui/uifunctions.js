@@ -720,14 +720,17 @@ function doMopidyCollectionOptions() {
 		local: [{dir: "Local media", label: "Local Media"}],
 		beetslocal: [{dir: "Local (beets)", label: "Local (beets)"}],
 		beets: [{dir: "Beets library/Albums by Artist", label: "Beets Library"}],
-		spotify: [{dir: "Spotify Playlists", label: "Spotify Playlists"},
-				  {dir: "Spotify/Your music/Your tracks", label: "Spotify 'Your Tracks'"},
+		spotify: [{dir: "Spotify/Your music/Your tracks", label: "Spotify 'Your Tracks'"},
 				  {dir: "Spotify/Your music/Your albums", label: "Spotify 'Your Albums'"}],
-		// gmusic: [{dir: "Google Music/Albums", label: "Google Music"}],
 		soundcloud: [{dir: "SoundCloud/Liked", label: "SoundCloud Liked"},
 					 {dir: "SoundCloud/Sets", label: "SoundCloud Sets"},
 					 {dir: "SoundCloud/Stream", label: "SoundCloud Stream"}],
-		vkontakte: [{dir: "VKontakte", label: "VKontakte" }]
+		vkontakte: [{dir: "VKontakte", label: "VKontakte" }],
+		ytmusic: [
+			{dir: "YouTube Music/Liked Songs", label: "YouTube Music Liked Songs"},
+			{dir: "YouTube Music/Albums", label: "YouTube Music Albums"},
+			{dir: "YouTube Music/Subscriptions", label: "YouTube Music Subscriptions"},
+		]
 	}
 
 	for (var i in domains) {

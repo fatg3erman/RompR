@@ -23,30 +23,9 @@ class player extends base_mpd_player {
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
 			logger::log('MOPIDY', 'Scanning', $dir);
-			if ($dir == "Spotify Playlists") {
-				$dirs_dummy = array();
-				$playlists = $this->do_mpd_command("listplaylists", true, true);
-				logger::log('MOPIDY', 'Playlists are',print_r($playlists, true));
-				if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
-					foreach ($playlists['playlist'] as $pl) {
-						if (preg_match('/\(by spotify\)/', $pl)) {
-							logger::info("COLLECTION", "Ignoring Playlist ".$pl);
-						} else {
-							logger::log("COLLECTION", "Scanning Playlist ".$pl);
-							fwrite($this->monitor, "\n<b>".language::gettext('label_scanningp', array($pl))."</b>\n");
-							foreach ($this->parse_list_output('listplaylistinfo "'.format_for_mpd($pl).'"', $dirs_dummy, false) as $filedata) {
-								yield $filedata;
-							}
-						}
-					}
-				} else {
-					logger::log('MOPIDY', 'No Spotify Playlists Found');
-				}
-			} else {
-				fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs)))."\n");
-				foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($this->local_media_check($dir)).'"', $dirs, false) as $filedata) {
-					yield $filedata;
-				}
+			fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs)))."\n");
+			foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($this->local_media_check($dir)).'"', $dirs, false) as $filedata) {
+				yield $filedata;
 			}
 		}
 		fwrite($this->monitor, "\nUpdating Database\n");
@@ -240,6 +219,8 @@ class player extends base_mpd_player {
 		if (!$filedata['X-AlbumUri'])
 			$filedata['X-AlbumUri'] = $filedata['file'];
 
+		// This is definitely a good idea for YouTube videos since none of them
+		// have an album but they don't all want to appear under the same nameless album.
 		if ($filedata['Title'] && (!$filedata['Album'] || $filedata['Album'] == 'YouTube Playlist'))
 			$filedata['Album'] = $filedata['Title'];
 
@@ -254,14 +235,14 @@ class player extends base_mpd_player {
 
 	private function preprocess_ytmusic(&$filedata) {
 		$filedata['folder'] = hash('md2', $filedata['X-AlbumUri'], false);
-		// if (!$filedata['AlbumArtist'])
-		// 	$filedata['AlbumArtist'] = $filedata['Artist'];
+		// I think this is a good idea. I'm not really sure, but if we're building the collection
+		// from YTMusic Liked Songs, none of them have an album so they all appear under a nameless
+		// album under Various Artists.
+		if ($filedata['Title'] && !$filedata['Album'])
+			$filedata['Album'] = $filedata['Title'];
 
-		// if (!$filedata['X-AlbumUri'])
-		// 	$filedata['X-AlbumUri'] = $filedata['file'];
-
-		// if ($filedata['Title'] && !$filedata['Album'])
-		// 	$filedata['Album'] = $filedata['Title'];
+		// Don't try to to set X-AlbumUri for YTMusic, as might get it from
+		// another track or from an Album: search results for that album.
 
 		if ($filedata['X-AlbumImage'])
 			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);

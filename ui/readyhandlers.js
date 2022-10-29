@@ -82,8 +82,8 @@ var startBackgroundInitTasks = function() {
 		start_userinterface,
 		collectionHelper.checkCollection,
 		load_podcasts,
-		load_playlists,
-		open_discoverator
+		open_discoverator,
+		load_playlists
 	];
 
 	return {

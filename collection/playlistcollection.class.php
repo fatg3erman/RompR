@@ -7,6 +7,7 @@ class playlistCollection extends musicCollection {
 	public function doNewPlaylistFile(&$filedata) {
 		// Translate from MPD_FILE_MODEL to ROMPR_FILE_MODEL
 		$filedata = array_replace(MPD_FILE_MODEL, ROMPR_FILE_MODEL, $filedata, $this->get_extra_track_info($filedata));
+
 		$track = new track($filedata);
 		if ($track->tags['albumartist'] === null)
 			$track->tags['albumartist'] = $track->get_sort_artist();
