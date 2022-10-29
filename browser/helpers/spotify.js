@@ -38,13 +38,9 @@ var spotify = function() {
 		var d;
 		throttle = (c == "From Cache") ? 50 : rate;
 		debug.debug("SPOTIFY","Request success",c,req,data,jqxhr);
-		// if (data === null) {
-		// 	debug.warn("SPOTIFY","No data in response");
-		// 	req.fail({error: language.gettext("spotify_error")});
-		// }
 		debug.log('SPOTIFY', data);
-		var root = objFirst(data);
 		try {
+			var root = objFirst(data);
 			if (data[root].next) {
 				debug.debug("SPOTIFY","Got a response with a next page!");
 				if (data[root].previous == null) {
