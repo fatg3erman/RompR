@@ -198,7 +198,12 @@ var info_lastfm = function() {
 			this.populate = function() {
 				debug.debug('LASTFM', 'Asked To Populate');
 				parent.updateData({
-					lastfm: {}
+					lastfm: {done_image: false},
+					triggers: {
+						allmusic: {
+							link: self.artist.tryForAllmusicImage
+						}
+					}
 				}, artistmeta);
 
 				parent.updateData({
@@ -289,7 +294,7 @@ var info_lastfm = function() {
 			}
 
 			function getSearchArtist() {
-				return (albummeta.artist && albummeta.artist != "" && parent.playlistinfo.type != 'stream') ? albummeta.artist : parent.playlistinfo.trackartist;
+				return (albummeta.artist && albummeta.artist != "" && parent.playlistinfo.type != 'stream') ? albummeta.artist : trackmeta.artist;
 			}
 
 			function sendLastFMCorrections() {
@@ -312,8 +317,6 @@ var info_lastfm = function() {
 
 			this.artist = function() {
 
-				var retries = 30;
-
 				return {
 
 					populate: function() {
@@ -330,27 +333,37 @@ var info_lastfm = function() {
 						debug.debug(medebug,data);
 						var de = new lfmDataExtractor(data);
 						artistmeta.lastfm.data = de.getCheckedData('artist');
-						if (artistmeta.musicbrainz_id == "") {
-							var mbid = null;
-							try {
-								mbid = data.artist.mbid || null;
-							} catch(err) {
-								mbid = null;
-							}
-							debug.trace(medebug,parent.nowplayingindex,"has found a musicbrainz artist ID",mbid);
-							artistmeta.musicbrainz_id = mbid;
+						var mbid = null;
+						try {
+							mbid = data.artist.mbid || null;
+						} catch(err) {
+							mbid = null;
 						}
+						debug.trace(medebug,parent.nowplayingindex,"setting musicbrainz artist ID to",mbid);
+						parent.updateData({
+								lastfm: {
+									musicbrainz_id: mbid
+								}
+							},
+							artistmeta
+						);
 						self.artist.doBrowserUpdate();
 					},
 
-					tryForAllmusicImage: async function() {
-						while (retries > 0 && (typeof artistmeta.allmusic == 'undefined' || typeof artistmeta.allmusic.artistlink === 'undefined')) {
-							retries--;
-							await new Promise(t => setTimeout(t, 500));
+					tryForAllmusicImage: function() {
+						if (artistmeta.lastfm.done_image || artistmeta.allmusic.link == null || artistmeta.allmusic.link == '') {
+							return;
 						}
 						try {
-							debug.log(medebug,"Getting allmusic bio from",artistmeta.allmusic.artistlink);
-							$.post('browser/backends/getamimage.php', {url: artistmeta.allmusic.artistlink})
+							parent.updateData({
+									lastfm: {
+										done_image: true
+									}
+								},
+								artistmeta
+							);
+							debug.log(medebug,"Getting allmusic bio from",artistmeta.allmusic.link);
+							$.post('browser/backends/getamimage.php', {url: artistmeta.allmusic.link})
 							 .done( function(data) {
 								debug.debug(medebug,"Got Allmusic Image", data);
 								artistmeta.lastfm.layout.add_main_image(data);
@@ -462,19 +475,6 @@ var info_lastfm = function() {
 						debug.debug(medebug, data);
 						var de = new lfmDataExtractor(data);
 						albummeta.lastfm.data = de.getCheckedData('album');
-						if (albummeta.musicbrainz_id == "") {
-							var mbid = null;
-							try {
-								mbid = data.album.mbid || null;
-							} catch(err) {
-								mbid = null;
-							}
-							if (mbid !== null) {
-								debug.trace(medebug,parent.nowplayingindex,"has found a musicbrainz album ID",mbid);
-								nowplaying.updateAlbumMBID(parent.nowplayingindex,mbid);
-							}
-							albummeta.musicbrainz_id = mbid;
-						}
 						self.album.doBrowserUpdate();
 					},
 
@@ -589,16 +589,6 @@ var info_lastfm = function() {
 						debug.debug(medebug, data);
 						var de = new lfmDataExtractor(data);
 						trackmeta.lastfm.data = de.getCheckedData('track');
-						if (trackmeta.musicbrainz_id == "") {
-							var mbid = null;
-							try {
-								mbid = data.track.mbid || null;
-							} catch(err) {
-								mbid = null;
-							}
-							debug.trace(medebug,parent.nowplayingindex,"has found a musicbrainz track ID",mbid);
-							trackmeta.musicbrainz_id = mbid;
-						}
 						sendLastFMCorrections();
 						sendMetadataUpdates();
 						self.track.doBrowserUpdate();

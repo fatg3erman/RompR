@@ -23,6 +23,7 @@ jQuery.fn.animatePanel = function(options) {
 					i = (prefs.playlisthidden) ? "icon-angle-double-left" : "icon-angle-double-right";
 					$("#expandright").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
 				}
+				browser.rePoint();
 			}
 		}
 	);
@@ -206,7 +207,7 @@ var layoutProcessor = function() {
 			if ($(albummenu).isClosed()) {
 				await $.proxy(clickRegistry.doMenu, $(albummenu)).call();
 			}
-			layoutProcessor.scrollCollectionTo(albummenu.parent());
+			layoutProcessor.scrollCollectionTo($(albummenu).parent());
 		},
 
 		setRadioModeHeader: function(html) {

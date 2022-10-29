@@ -58,7 +58,7 @@ class baseAlbumImage {
 	}
 
 	private function image_exists($image) {
-		logger::trace("ALBUMIMAGE", "Checking for existence of file ".$image);
+		logger::core("ALBUMIMAGE", "Checking for existence of file ".$image);
 		return file_exists($image);
 	}
 
@@ -82,12 +82,12 @@ class baseAlbumImage {
 		return $this->images;
 	}
 
-	private function check_if_image_already_downloaded() {
-		logger::log('ALBUMIMAGE', 'Checking if image exists for', $this->artist, $this->album);
+	private function image_already_downloaded() {
+		logger::debug('ALBUMIMAGE', 'Checking if image exists for', $this->artist, $this->album);
 		foreach (['jpg', 'png', 'svg'] as $ext) {
 		$checkimages = $this->image_info_from_album_info($ext);
 			if ($this->image_exists($checkimages['small'])) {
-				logger::log("ALBUMIMAGE", "  ..  File exists");
+				logger::core("ALBUMIMAGE", "  ..  File exists");
 				$this->images = $checkimages;
 				return true;
 			}
@@ -111,7 +111,7 @@ class baseAlbumImage {
 				// BUT they may be present anyway, if a stream was added eg from a playlist
 				// of streams and coverscraper found one. So check, otherwise coverscraper
 				// will search for it every time the playlist repopulates.
-				if ($this->check_if_image_already_downloaded()) {
+				if ($this->image_already_downloaded()) {
 					return true;
 				}
 				$disc_checked = true;
@@ -124,7 +124,7 @@ class baseAlbumImage {
 			// if this returns no image because we use best_value()
 
 			if ($in_playlist) {
-				if (!$disc_checked && $this->check_if_image_already_downloaded()) {
+				if (!$disc_checked && $this->image_already_downloaded()) {
 					// Image may have already been downloaded if we've added the album
 					// to the Current Playlist from search results.
 				} else {
@@ -145,7 +145,7 @@ class baseAlbumImage {
 			}
 
 			if (prefs::$database->get_option('doing_search')) {
-				if (!$disc_checked && $this->check_if_image_already_downloaded()) {
+				if (!$disc_checked && $this->image_already_downloaded()) {
 					// We may have searched for it before
 					return true;
 				}

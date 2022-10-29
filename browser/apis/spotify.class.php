@@ -175,10 +175,48 @@ class spotify {
 		$use_cache = $params['cache'];
 		unset($params['cache']);
 		$url = self::BASE_URL.'v1/search?';
-		// Original js code had this regexp applied to the artist.
-		// name.replace(/&|%|@|:|\+|'|\\|\*|"|\?|\//g,'')
 		$url .= http_build_query($params);
 		return self::request($url, $print_data, $use_cache);
+	}
+
+	public static function find_possibilities($params, $print_data) {
+		$search_results = self::search(
+			[
+				'q'		=> $params['name'],
+				'type'	=> 'artist',
+				'limit'	=> 50,
+				'cache' => $params['cache']
+			],
+			false
+		);
+		$candidates = json_decode($search_results, true);
+		$possibilities = [];
+		if (array_key_exists('artists', $candidates) && array_key_exists('items', $candidates['artists'])) {
+			foreach ($candidates['artists']['items'] as $willies) {
+				if (metaphone_compare($params['name'], $willies['name'], 0)) {
+					$possibilities[] = self::make_poss($willies);
+				}
+			}
+			// Don't do this, it's worse than returning nothing since it's never right.
+			// if (count($possibilities) == 0 && is_array($candidates) && count($candidates) == 1) {
+			// 	$possibilities[] = self::make_poss(array_shift($candidates['artists']['items']));
+			// }
+		}
+		print json_encode($possibilities);
+	}
+
+	private static function make_poss($willies) {
+		if ($willies['images'] && count($willies['images']) > 0) {
+			$im = array_pop($willies['images']);
+			$im = $im['url'];
+		} else {
+			$im = null;
+		}
+		return [
+			'name'	=> $willies['name'],
+			'id'	=> $willies['id'],
+			'image'	=> $im
+		];
 	}
 
 	// public static function get_genreseeds($params, $print_data) {

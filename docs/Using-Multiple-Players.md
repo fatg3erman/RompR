@@ -97,7 +97,7 @@ There is now some support for mixing Mopidy and MPD. You can have some players a
 
 * You can only update your Music Collection when you are using the same type of player that was used to create it.
 * You must be using Mopidy's 'local' (or 'local-sqlite') backend for your local files. Using 'file' is not supported.
-* Obviously, attempting to add tracks from spotify, gmusic, etc to MPD will not work.
+* Obviously, attempting to add tracks from online services to MPD will not work.
 * Transferring the Play Queue between players will work, but only if all tracks are local or streams. If the Play Queue contains tracks that cannot be played by MPD and you switch to MPD, the results will be unpredictable.
 * Any MPD players will need to keep their local music database updated. If you use a Mopidy Player to create your Music Collection (and you should), then you will need to use another MPD client for this (for example, Sonata).
 * All players must have their local tracks mounted on the same path, as described above.

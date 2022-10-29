@@ -61,6 +61,14 @@ var musicbrainz = function() {
 
 		},
 
+		verify_data: function(data, success, fail) {
+			var params = {
+				method: 'verify_data',
+				params: data
+			}
+			musicbrainz.request('', params, success, fail)
+		},
+
 		artist: {
 
 			getInfo: function(mbid, success, fail) {
@@ -75,35 +83,31 @@ var musicbrainz = function() {
 
 			getReleases: function(mbid, reqid, success, fail) {
 				var result = { id: reqid };
-				result['release-groups'] = new Array();
-				(function getAllReleaseGroups() {
-					var data = {
-						method: 'artist_releases',
-						params: {
-							mbid: mbid,
-							offset: result['release-groups'].length
-						}
-					};
-					musicbrainz.request(reqid, data, function(data) {
-						debug.debug("MUSICBRAINZ","Release group data:",data);
-						if (data.error) {
-							if (result['release-groups'].length > 0) {
-								success(result);
-							} else {
-								fail(data);
-							}
-						} else {
-							for (var i in data['release-groups']) {
-								result['release-groups'].push(data['release-groups'][i]);
-							}
-							if (result['release-groups'].length == data['release-group-count']) {
-								success(result);
-							} else {
-								getAllReleaseGroups();
-							}
-						}
-					}, fail);
-				})();
+				var data = {
+					method: 'artist_releases',
+					params: {
+						mbid: mbid,
+					}
+				};
+				musicbrainz.request(reqid, data, function(data) {
+					if (data.error) {
+						fail(data);
+					} else {
+						result['release-groups'] = data['release-groups'];
+						success(result);
+					}
+				}, fail);
+			},
+
+			search: function(name, album, track, success, fail) {
+				var data = {
+					method: 'artist_search',
+					params: {
+						query: name,
+						album: album
+					}
+				};
+				musicbrainz.request('', data, success, fail);
 			}
 
 		},

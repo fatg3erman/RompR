@@ -205,6 +205,7 @@ jQuery.fn.animatePanel = function(options) {
 	var panel = this.attr("id");
 	debug.log('UI', 'Animating Panel',panel,settings);
 	this.css('width', settings[panel]+'%');
+	browser.rePoint();
 }
 
 jQuery.fn.removeCollectionDrodown = function() {

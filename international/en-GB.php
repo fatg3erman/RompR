@@ -29,6 +29,7 @@ language::add_translations([
 	"button_stopafter" =>					"Stop After Current Track",
 	"button_next" =>						"Next Track",
 	"button_love" =>						"Love this track",
+	"button_ban" =>							"Ban this track",
 	"button_volume" =>						"Volume",
 
 	// Configuration menu entries
@@ -75,7 +76,6 @@ language::add_translations([
 	"label_yourradio" =>					"Your Radio Stations",
 	"label_podcasts" =>						"Podcasts",
 	"label_somafm" =>						"Soma FM",
-	"label_icecast" =>						"Icecast Radio",
 	"label_emptyinfo" =>					"This is the information panel. Interesting stuff will appear here when you play some music",
 	"button_playlistcontrols" =>			"Playlist Controls",
 	"button_random" =>						"SHUFFLE",
@@ -335,9 +335,11 @@ language::add_translations([
 	"musicbrainz_officalhomepage" =>		"Official Homepage (%s)",
 	"musicbrainz_fansite" =>				"Fan Site (%s)",
 	"musicbrainz_lyrics" =>					"Lyrics (%s)",
-	"musicbrainz_social" =>					"Social Network",
+	"musicbrainz_social" =>					"Social Network (%s)",
+	"musicbrainz_streaming" =>				"Free Streaming (%s)",
 	"musicbrainz_microblog" =>				"Microblog",
 	"musicbrainz_review" =>					"Review (%s)",
+	"musicbrainz_purchase" =>				"Purchase (%s)",
 	"musicbrainz_novotes" =>				"(No Votes)",
 	// eg: 3/5 from 15 votes
 	"musicbrainz_votes" =>					"%s/5 from %s votes",
@@ -347,6 +349,7 @@ language::add_translations([
 	"musicbrainz_date" =>					"DATE",
 	"musicbrainz_country" =>				"COUNTRY",
 	"musicbrainz_disc" =>					"DISC",
+	"musicbrainz_album_releases" =>			"RELEASES OF THIS ALBUM",
 
 	// SoundCloud info panel
 	"button_soundcloud" =>					"Info Panel (SoundCloud)",
@@ -472,6 +475,7 @@ language::add_translations([
 
 	"label_radio_recommend" =>				"Recommendations based on this %s",
 	"label_amendalbum" =>					"Amend Album Details",
+	"label_radio_recommended" =>			"Recommendations For You",
 
 	//CHANGED in 0.60
 	"config_country" =>						"COUNTRY (for Spotify)",
@@ -500,7 +504,7 @@ language::add_translations([
 	"label_dailymix" =>						"Your Daily Mix",
 	"label_luckydip" =>						"Your Lucky Dip",
 	"label_startshere" =>					"Your Discovery Starts Here",
-	"label_getspotify" =>					"Get Spotify To Start Discovering",
+	"label_getspotify" =>					"Get Spotify or Youtube Music To Start Discovering",
 	"because_liked" =>						"You like %s, so you might like:",
 	"because_listened" =>					"Similar to %s:",
 	"albumart_findsmall" =>					"Find Small Images",
@@ -626,7 +630,7 @@ language::add_translations([
 	"label_dailymixdesc" =>					"A playlist just for you, a mix of tracks you know and new music you might love. Powered by Last.FM %s",
 	"label_luckydipdesc" =>					"A radio station just for you, playing a wider range of music by artists you know and artists you don't yet love. Powered by Last.FM %s",
 	"label_goonlogin" =>					"Log in to Last.FM and start scrobbling. RompЯ can then delight you with new music you're going to love!",
-	"label_nospotify" =>					"Use Mopidy with a Spotify Premium subscription and start scrobbbling to Last.FM so RompЯ can delight you with new music you're going to love!",
+	"label_nospotify" =>					"Use Mopidy with a Youtube Music subscription and start scrobbbling to Last.FM so RompЯ can delight you with new music you're going to love!",
 	"label_spotimixdesc" =>					"A radio station of suggestions based on your recent listening. Powered by RompЯ and Spotify",
 	"label_spotiswimdesc" =>				"Scanning the vastness of Spotify. Powered by RompЯ and Spotify",
 	"label_opmlexp" =>						"OPML Export",
@@ -702,6 +706,7 @@ language::add_translations([
 	"label_cantataimporter" =>				"Import Ratings from Cantata",
 	"podcast_writetags" =>					"Write ID3 Tags to Downloaded Files",
 	"label_youtubedl" =>					"Download Audio",
+	"label_youtubedl_all" =>				"Download All Youtube Tracks",
 	"error_playergone" =>					"Player '%s' has stopped resonding!",
 	"label_mopidy_http" =>					"Mopidy HTTP Interface Port",
 	"info_mopidy_http" =>					"Optional, provides extra functionality with Mopidy",
@@ -744,9 +749,9 @@ language::add_translations([
 	"label_mpd_websocket" =>				'Port for MPD Websocket Server',
 	"label_ui_defaults" =>					'Defaults',
 	"button_save_defaults" =>				'Save As Default For All Browsers',
-
-	"label_power" => 						'Power',
-	"button_power_off" =>					'Shut Down The Music Box'
+	"label_recommenddesc" =>				'A Radio Station of recommendations based on your listening',
+	"label_rmixdesc" =>						'A Radio Station of music by artists you love and artists like them',
+	"config_stupid_round_corners" =>		'Padding at bottom of screen (to help on phones with round corners or controls that get in the way)'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

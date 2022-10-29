@@ -17,7 +17,10 @@ class prefs {
 		'radioparams' => [
 			"radiomode" => "",
 			"radioparam" => "",
-			"radioconsume" => []
+			"radioconsume" => [],
+			"radiodomains" => ['local', 'spotify', 'youtube', 'ytmusic'],
+			"toptracks_current" => 1,
+			"toptracks_total" => 1
 		]
 	];
 
@@ -80,7 +83,6 @@ class prefs {
 		'auto_audiobook' => array(),
 		'backend_version' => '0',
 		"spotify_mark_unplayable" => false,
-		"spotify_mark_playable" => false,
 		// Need these next two so the player defs can be updated
 		"consume_workaround" => false,
 		"we_do_consume" => false,
@@ -127,7 +129,7 @@ class prefs {
 		"autotagname" => "",
 		"lastfm_logged_in" => false,
 		"lastfm_scrobbling" => false,
-		"scrobblepercent" => 50
+		"scrobblepercent" => 50,
 	];
 
 	public const BROWSER_PREFS = [
@@ -168,7 +170,6 @@ class prefs {
 		"updateeverytime" => false,
 		"fullbiobydefault" => true,
 		"mopidy_search_domains" => array("local", "spotify"),
-		"mopidy_radio_domains" => array("local", "spotify"),
 		"outputsvisible" => false,
 		"wheelscrollspeed" => "150",
 		"displayremainingtime" => true,
@@ -186,7 +187,8 @@ class prefs {
 		'collectionbuttons_isopen' => false,
 		'advsearchoptions_isopen' => false,
 		'podcastbuttons_isopen' => false,
-		"somafm_quality" => 'highest_available_quality'
+		"somafm_quality" => 'highest_available_quality',
+		"stupid_rounded_corner_buffer_size" => 0
 
 	];
 
@@ -471,6 +473,10 @@ class prefs {
 		return self::$prefs['skin'];
 	}
 
+	public static function player_name_hash() {
+		return hash('md2', self::$prefs['currenthost'], false);
+	}
+
 	public static function get_pref($pref) {
 		return (array_key_exists($pref, self::$prefs)) ? self::$prefs[$pref] : null;
 	}
@@ -560,6 +566,19 @@ class prefs {
 					self::$prefs['multihosts'][$key]['websocket'] = false;
 					break;
 
+				case 95:
+					if (!array_key_exists('radiodomains', self::$prefs['multihosts'][$key]['radioparams']))
+						self::$prefs['multihosts'][$key]['radioparams']['radiodomains'] = ['local', 'spotify', 'youtube', 'ytmusic'];
+						break;
+
+				case 96:
+					if (!array_key_exists('radio_process', self::$prefs['multihosts'][$key]['radioparams']))
+						self::$prefs['multihosts'][$key]['radioparams']['radio_process'] = [
+							"mode" => '',
+							"param" => '',
+							"pid" => ''
+						];
+						break;
 			}
 		}
 		self::save();
@@ -609,7 +628,7 @@ class prefs {
 		//
 
 		if (array_key_exists('currenthost', $_POST)) {
-			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable', 'spotify_mark_playable') as $p) {
+			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable') as $p) {
 				if (array_key_exists($p, $_POST)) {
 					$_POST[$p] = true;
 				} else {

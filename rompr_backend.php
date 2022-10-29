@@ -16,7 +16,7 @@ while (true) {
     $players = array_keys(prefs::get_pref('multihosts'));
 
     foreach ($players as $player) {
-        $cmd = $pwd.'/romonitor.php --currenthost '.$player;
+        $cmd = $pwd.'/romonitor.php --currenthost '.rawurlencode($player);
         $mon_running = false;
         if (array_key_exists($player, $monitors) && posix_getpgid($monitors[$player]) !== false) {
             // If we started it and it's still running

@@ -76,7 +76,7 @@ class player extends base_mpd_player {
 	}
 
 	protected function player_specific_fixups(&$filedata) {
-		if (strpos($filedata['file'], ':artist:') !== false) {
+		if (strpos($filedata['file'], 'spotify:artist:') !== false) {
 			$this->to_browse[] = [
 				'Uri' => $filedata['file'],
 				'Name' => preg_replace('/Artist: /', '', $filedata['Title'])
@@ -126,8 +126,15 @@ class player extends base_mpd_player {
 				break;
 
 			case "soundcloud":
-			case "youtube":
 				$this->preprocess_soundcloud($filedata);
+				break;
+
+			case "youtube":
+				$this->preprocess_youtube($filedata);
+				break;
+
+			case "ytmusic":
+				$this->preprocess_ytmusic($filedata);
 				break;
 
 			case "spotify":
@@ -206,15 +213,54 @@ class player extends base_mpd_player {
 
 	private function preprocess_soundcloud(&$filedata) {
 		$filedata['folder'] = concatenate_artist_names($filedata['Artist']);
-		$filedata['AlbumArtist'] = $filedata['Artist'];
-		$filedata['X-AlbumUri'] = $filedata['file'];
-		if ($filedata['Title']) {
-			logger::log('SOUNDCLOUD', 'Setting Album from Title');
+		if (!$filedata['AlbumArtist'])
+			$filedata['AlbumArtist'] = $filedata['Artist'];
+
+		if (!$filedata['X-AlbumUri'])
+			$filedata['X-AlbumUri'] = $filedata['file'];
+
+		if ($filedata['Title'] && !$filedata['Album'])
 			$filedata['Album'] = $filedata['Title'];
-		}
-		if ($filedata['X-AlbumImage']) {
+
+		if ($filedata['X-AlbumImage'])
 			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);
+
+	}
+
+	private function preprocess_youtube(&$filedata) {
+		$filedata['folder'] = hash('md2', $filedata['X-AlbumUri'], false);
+		// if (!$filedata['AlbumArtist'])
+		// 	$filedata['AlbumArtist'] = $filedata['Artist'];
+
+		// if (!$filedata['X-AlbumUri'])
+		// 	$filedata['X-AlbumUri'] = $filedata['file'];
+
+		// if ($filedata['Title'] && !$filedata['Album'])
+		// 	$filedata['Album'] = $filedata['Title'];
+
+		if (strpos($filedata['Artist'][0], 'YouTube Playlist') !== false) {
+			$filedata['Artist'] = ['YouTube Playlists'];
 		}
+
+		if ($filedata['X-AlbumImage'])
+			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);
+
+	}
+
+	private function preprocess_ytmusic(&$filedata) {
+		$filedata['folder'] = hash('md2', $filedata['X-AlbumUri'], false);
+		// if (!$filedata['AlbumArtist'])
+		// 	$filedata['AlbumArtist'] = $filedata['Artist'];
+
+		// if (!$filedata['X-AlbumUri'])
+		// 	$filedata['X-AlbumUri'] = $filedata['file'];
+
+		// if ($filedata['Title'] && !$filedata['Album'])
+		// 	$filedata['Album'] = $filedata['Title'];
+
+		if ($filedata['X-AlbumImage'])
+			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);
+
 	}
 
 	private function check_radio_and_podcasts($filedata) {

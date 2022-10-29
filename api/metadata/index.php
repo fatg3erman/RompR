@@ -28,8 +28,8 @@ foreach($params as $p) {
 
 		// Things that return information about modified items
 		case 'set':
-		case 'seturi':
-		case "add":
+		// case 'seturi':
+		// case "add":
 		case 'inc':
 		case 'remove':
 		case 'cleanup':
@@ -41,12 +41,19 @@ foreach($params as $p) {
 		case 'deletewl':
 		case 'deleteid':
 		case 'resetresume':
+		case 'addalbumtocollection':
+		case 'findandset':
 			prefs::$database->create_foundtracks();
 			prefs::$database->{$p['action']}($p);
 			prefs::$database->prepare_returninfo();
 			break;
 
+		case 'getreturninfo':
+			prefs::$database->prepare_returninfo();
+			break;
+
 		case 'youtubedl':
+		case 'youtubedl_album':
 			set_time_limit(0);
 			prefs::$database->close_transaction();
 			prefs::$database->create_foundtracks();
@@ -61,12 +68,20 @@ foreach($params as $p) {
 
 		// Things that return information but do not modify items
 		case 'get':
+		case 'findandreturn':
 			prefs::$database->{$p['action']}($p);
+			break;
+
+		case 'findandreturnall':
+			prefs::$database->{$p['action']}($p);
+			exit(0);
 			break;
 
 		// Things that do not return information
 		case 'setalbummbid':
 		case 'clearwishlist':
+		case 'ban':
+			prefs::$database->{$p['action']}($p);
 			break;
 
 		default:

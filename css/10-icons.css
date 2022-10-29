@@ -42,9 +42,10 @@
 .icon-doc-text-1 { background-image: var(--icon-doc-text-1); }
 .icon-soundcloud-circled { background-image: var(--icon-soundcloud-circled); }
 .icon-youtube-circled { background-image: var(--icon-youtube-circled); }
-.icon-gmusic-circled { background-image: var(--icon-gmusic-circled); }
+.icon-ytmusic-circled { background-image: var(--icon-ytmusic-circled); }
 .icon-spotify-circled { background-image: var(--icon-spotify-circled); }
 .icon-vkontakte-circled { background-image: var(--icon-vkontakte-circled); }
+.icon-bandcamp-circled { background-image: var(--icon-bandcamp-circled); }
 .icon-podcast-circled { background-image: var(--icon-podcast-circled); }
 .icon-audiobook { background-image: var(--icon-audiobook); }
 .icon-internetarchive-circled { background-image: var(--icon-internetarchive-circled); }

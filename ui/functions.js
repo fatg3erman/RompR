@@ -123,7 +123,8 @@ String.prototype.initcaps = function() {
 
 String.prototype.removePunctuation = function() {
 	var punctRE = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#\$%&\(\)\*\+,\-\.\/:;<=>\?@\[\]\^_`\{\|\}~]/g;
-	return this.replace(/\s*\&\s*/, ' and ').replace(punctRE,'').replace(/\s+/g, ' ');
+	var nopunc = this.replace(/\s*\&\s*/, ' and ').replace(punctRE,'').replace(/\s+/g, ' ');
+	return nopunc.toLowerCase();
 }
 
 String.prototype.fixDodgyLinks = function() {
@@ -132,7 +133,9 @@ String.prototype.fixDodgyLinks = function() {
 }
 
 String.prototype.isArtistOrAlbum = function() {
-	if (this.indexOf(':artist:') > -1 || this.indexOf(':album:') > -1) {
+	if (this.indexOf(':artist:') > -1
+		|| this.indexOf(':album:') > -1
+	) {
 		return true;
 	} else {
 		return false;
@@ -302,7 +305,11 @@ function get_file_extension(filename) {
 	if (filename.lastIndexOf('.') == -1)
 		return 'Unknown';
 
-	return filename.substring(filename.lastIndexOf('.')+1, filename.length) || 'Unknown';
+	let poop = filename.substring(filename.lastIndexOf('.')+1, filename.length) || 'Unknown';
+
+	let poop2 = poop.substring(0, poop.indexOf('?')) || poop;
+
+	return poop2;
 }
 
 function get_css_variable(name) {

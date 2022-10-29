@@ -17,7 +17,7 @@ class gd_Image {
 		set_error_handler('gd_Image::gd_handle_error', E_ALL);
 
 		$this->filename = $filename;
-		logger::log("GD-IMAGE", "Checking File ".$filename);
+		logger::core("GD-IMAGE", "Checking File ".$filename);
 		$imgtypes = imagetypes();
 		try {
 			$image_info = getimagesize($filename);
@@ -45,7 +45,7 @@ class gd_Image {
 
 		switch ($image_type) {
 			case IMAGETYPE_JPEG:
-				logger::trace("GD-IMAGE", "Image type is JPEG");
+				logger::core("GD-IMAGE", "Image type is JPEG");
 				if (defined('IMG_JPG') && ($imgtypes && IMG_JPG) && function_exists('imagecreatefromjpeg') && function_exists('imagejpeg')) {
 					try {
 						$this->image = imagecreatefromjpeg($filename);
@@ -59,7 +59,7 @@ class gd_Image {
 				break;
 
 			case IMAGETYPE_GIF:
-				logger::trace("GD-IMAGE", "Image type is GIF");
+				logger::core("GD-IMAGE", "Image type is GIF");
 				if (defined('IMG_GIF') && ($imgtypes && IMG_GIF) && function_exists('imagecreatefromgif')) {
 					try {
 						$this->image = imagecreatefromgif($filename);
@@ -73,7 +73,7 @@ class gd_Image {
 				break;
 
 			case IMAGETYPE_PNG:
-				logger::trace("GD-IMAGE", "Image type is PNG");
+				logger::core("GD-IMAGE", "Image type is PNG");
 				if (defined('IMG_PNG') && ($imgtypes && IMG_PNG) && function_exists('imagecreatefrompng') && function_exists('imagepng')) {
 					try {
 						$this->image = imagecreatefrompng($filename);
@@ -87,7 +87,7 @@ class gd_Image {
 				break;
 
 			case IMAGETYPE_WBMP:
-				logger::trace("GD-IMAGE", "Image type is WBMP");
+				logger::core("GD-IMAGE", "Image type is WBMP");
 				if (defined('IMG_WBMP') && ($imgtypes && IMG_WBMP) && function_exists('imagecreatefromwbmp')) {
 					try {
 						$this->image = imagecreatefromwbmp($filename);
@@ -101,7 +101,7 @@ class gd_Image {
 				break;
 
 			case IMAGETYPE_XBM:
-				logger::trace("GD-IMAGE", "Image type is XBM");
+				logger::core("GD-IMAGE", "Image type is XBM");
 				if (defined('IMG_XPM') && ($imgtypes && IMG_XPM) && function_exists('imagecreatefromxbm')) {
 					try {
 						$this->image = imagecreatefromxbm($filename);
@@ -115,7 +115,7 @@ class gd_Image {
 				break;
 
 			case IMAGETYPE_WEBP:
-				logger::trace("GD-IMAGE", "Image type is WEBP");
+				logger::core("GD-IMAGE", "Image type is WEBP");
 				if (defined('IMG_WEBP') && ($imgtypes && IMG_WEBP) && function_exists('imagecreatefromwebp')) {
 					try {
 						$this->image = imagecreatefromwebp($filename);
@@ -129,7 +129,7 @@ class gd_Image {
 				break;
 
 			case IMAGETYPE_BMP:
-				logger::trace("GD-IMAGE", "Image type is BMP");
+				logger::core("GD-IMAGE", "Image type is BMP");
 				if (defined('IMG_BMP') && ($imgtypes && IMG_BMP) && function_exists('imagecreatefrombmp')) {
 					try {
 						$this->image = imagecreatefrombmp($filename);
@@ -180,10 +180,10 @@ class gd_Image {
 
 	public function outputResizedFile($size, $filename = null) {
 		if ($this->image_type == IMAGETYPE_PNG) {
-			logger::trace("GD-IMAGE", "  Outputting PNG file of size",$size);
+			logger::core("GD-IMAGE", "  Outputting PNG file of size",$size);
 			header('Content-type: image/png');
 		} else {
-			logger::trace("GD-IMAGE", "  Outputting JPEG file of size",$size);
+			logger::core("GD-IMAGE", "  Outputting JPEG file of size",$size);
 			header('Content-type: image/jpeg');
 		}
 		switch ($size) {

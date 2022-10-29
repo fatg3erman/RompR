@@ -419,7 +419,7 @@ var podcasts = function() {
 		// },
 
 		storePlaybackProgress: function(track) {
-			podcastRequest({setprogress: track.progress, track: encodeURIComponent(track.uri), name: track.name}, null);
+			podcastRequest({setprogress: Math.round(track.progress), track: encodeURIComponent(track.uri), name: track.name}, null);
 		},
 
 		removeBookmark: function(event, clickedElement) {

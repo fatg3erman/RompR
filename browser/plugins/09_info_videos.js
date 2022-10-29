@@ -70,7 +70,7 @@ var info_videos = function() {
 				}, albummeta);
 
 				parent.updateData({
-					videos: {}
+					videos: {},
 				}, trackmeta);
 
 				if (typeof artistmeta.videos.layout == 'undefined')

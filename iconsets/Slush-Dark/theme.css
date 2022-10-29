@@ -46,8 +46,9 @@
     --icon-doc-text-1: url('iconsets/Slush-Dark/lyrics.svg');
     --icon-soundcloud-circled: url('iconsets/Slush-Dark/soundcloud-logo.svg');
     --icon-youtube-circled: url('iconsets/Slush-Dark/youtube-logo.svg');
-    --icon-gmusic-circled: url('iconsets/Slush-Dark/gmusic-logo.svg');
+    --icon-ytmusic-circled: url('iconsets/Slush-Dark/gmusic-logo.svg');
     --icon-spotify-circled: url('iconsets/Slush-Dark/spotify-logo.svg');
+    --icon-bandcamp-circled: url('iconsets/Slush-Dark/bandcamp.svg');
     --icon-vkontakte-circled: url('iconsets/Slush-Dark/vkontakte-logo.svg');
     --icon-podcast-circled: url('iconsets/Slush-Dark/podcast-logo.svg');
     --icon-audiobook: url('iconsets/Slush-Dark/audiobook.svg');
@@ -119,4 +120,5 @@
     --icon-bookmark: url('iconsets/Slush-Dark/bookmark.svg');
     --icon-padlock:  url('iconsets/Slush-Dark/padlock.svg');
     --icon-padlock-open: url('iconsets/Slush-Dark/padlock_open.svg');
+    --icon-instagram: url('iconsets/Slush-Dark/instagram.svg');
 }

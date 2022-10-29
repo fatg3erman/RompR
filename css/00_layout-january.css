@@ -1756,7 +1756,7 @@ a.infoclick.clickreleasepage
 	opacity:0;
 }
 
-.albumthing .clicktrack
+.albumthing .clicktrack:not(.textcentre)
 {
 	text-align:left;
 }
@@ -2066,6 +2066,7 @@ div.selectholder.snapcast_select
 .snap_vert_holder {
 	position: relative;
 	margin-left: 20px;
+	overflow-y: clip;
 }
 
 .snap_vert_text {

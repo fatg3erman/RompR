@@ -9,6 +9,8 @@ if (file_exists('prefs/youtubedl/dlprogress_'.$_REQUEST['key'])) {
 	if ($r !== false) {
 		if (preg_match('/\[ffmpeg\]\s*Destination:\s*(.+)$/', $r, $matches) && file_exists($matches[1])) {
 			$retval = 'Writing Audio : Written '.format_bytes(filesize(trim($matches[1]))).'bytes';
+		} else if (preg_match('/\[ExtractAudio\]\s*Destination:\s*(.+)$/', $r, $matches) && file_exists($matches[1])) {
+			$retval = 'Writing Audio : Written '.format_bytes(filesize(trim($matches[1]))).'bytes';
 		} else {
 			$retval = $r;
 		}

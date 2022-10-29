@@ -204,6 +204,15 @@ var collectionHelper = function() {
 				infobar.markCurrentTrack();
 			}
 
+			if (rdata && rdata.hasOwnProperty('deletedwishlist') && rdata.deletedwishlist.length > 0) {
+				$.each(rdata.deletedwishlist, function(i, v) {
+					if ($('#wtrack_'+v.toString()).next().hasClass('wishlist_results')) {
+						$('#wtrack_'+v.toString()).next().remove();
+					}
+					$('#wtrack_'+v.toString()).remove();
+				});
+			}
+
 			// If we had an insertAtStart for collection, it'll be inserted before the stats display
 			// so just pop that out and back in again.
 			$('#fothergill').detach().prependTo($('#collection'));

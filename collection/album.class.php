@@ -26,8 +26,50 @@ class album {
 			$this->tracks[0]->tags['MUSICBRAINZ_ALBUMID'] = $track->tags['MUSICBRAINZ_ALBUMID'];
 		}
 		if ($this->tracks[0]->tags['X-AlbumUri'] === null) {
-			$this->tracks[0]->tags['X-AlbumUri'] = $track->tags['X-AlbumUri'];
+			if (strpos($track->tags['file'], ':album:') !== false || strpos($track->tags['file'], ':playlist:') !== false) {
+				$this->tracks[0]->tags['X-AlbumUri'] = $track->tags['file'];
+			} else {
+				$this->tracks[0]->tags['X-AlbumUri'] = $track->tags['X-AlbumUri'];
+			}
 		}
+	}
+
+	// Munge our album data into somthing approaching a spotify album object so
+	// we can pass it to spotifyAlbumThing.
+	public function dump_json($player) {
+		$image = $this->getImage('asdownloaded');
+		// Is this too hacky? It is if we start returning LOTS of matches, it's going to
+		// take a very long time. But otherwise we don't get any image at all for anything
+		// that isn't from search results
+		if ($player && !$image && prefs::get_pref('player_backend') == 'mopidy')
+			$image = $player->find_album_image($this->tracks[0]->tags['X-AlbumUri']);
+
+		$data = [
+			'name' => $this->tracks[0]->tags['Album'],
+			'artists' => [['name' => $this->tracks[0]->tags['albumartist']]],
+			'uri' => $this->tracks[0]->tags['X-AlbumUri'],
+			'id' => md5($this->tracks[0]->tags['X-AlbumUri']),
+			'images' => [[
+				'url' => $image,
+				'width' => 0
+			]],
+			'domain' => $this->tracks[0]->tags['domain'],
+			'tracks' => ['items' => []]
+		];
+		foreach ($this->tracks as $track) {
+			$data['tracks']['items'][] = [
+				'uri' => $track->tags['file'],
+				'name' => $track->tags['Title'],
+				'track_number' => $track->tags['Track'],
+				'duration_ms' => $track->tags['Time']*1000,
+				'artists' => [['name' => $track->tags['trackartist']]]
+			];
+		}
+		return json_encode($data);
+	}
+
+	public function get_dummy_id() {
+		return md5($this->tracks[0]->tags['X-AlbumUri']);
 	}
 
 	public function check_database() {
@@ -71,6 +113,10 @@ class album {
 			}
 		}
 		return $tracks;
+	}
+
+	public function get_album_name() {
+		return $this->tracks[0]->tags['Album'];
 	}
 
 	public function sortTracks() {
@@ -167,6 +213,15 @@ class album {
 				$track->tags['albumartist'] = $candidate;
 			}
 		}
+	}
+
+	public function check_ytmusic_lookup() {
+		logger::debug('ALBUM', 'Uri is',$this->tracks[0]->tags['X-AlbumUri']);
+		if (strpos($this->tracks[0]->tags['X-AlbumUri'], 'ytmusic:') !== false) {
+			logger::log('ALBUM', 'Forcing lookup of album', $this->tracks[0]->tags['X-AlbumUri']);
+			return $this->tracks[0]->tags['X-AlbumUri'];
+		}
+		return false;
 	}
 
 }

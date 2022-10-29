@@ -3,8 +3,8 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 250);
 define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 93);
-define('ROMPR_VERSION', '2.03');
+define('ROMPR_SCHEMA_VERSION', 96);
+define('ROMPR_VERSION', '2.00');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -125,7 +125,6 @@ define('MPD_FILE_MODEL', array(
 		'MUSICBRAINZ_TRACKID' => '',
 		'Id' => null,
 		'Pos' => null,
-		'ttindex' => null,
 		'trackartist_index' => null,
 		'albumartist_index' => null,
 		'album_index' => null,
@@ -148,6 +147,8 @@ define('MPD_ARRAY_PARAMS', array(
 // it is created in class playlistCollection
 
 define('ROMPR_FILE_MODEL', array(
+		"TTindex" => null,
+		"isSearchResult" => null,
 		"progress" => 0,
 		"albumartist" => '',
 		"trackartist" => '',

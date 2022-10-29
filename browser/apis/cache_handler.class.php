@@ -45,7 +45,7 @@ class cache_handler extends url_downloader {
 			// If that data exists, return it else return our standard array('error' => value)
 			if ($this->get_data() != '') {
 				$retval = $this->get_data();
-				logger::log('CACHE HANDLER', $retval);
+				logger::core('CACHE HANDLER', $retval);
 			} else {
 				$retval =  json_encode(array('error' => $header));
 			}

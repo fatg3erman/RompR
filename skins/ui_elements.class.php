@@ -48,6 +48,8 @@ class ui_elements {
 	// class		Any extra classes to be added to the container
 	// podcounts	For a podcast, the HTML for the counts
 	// extralines	Any extra lines of info to go underneath Artistname
+	// year_always	true to always display Year regardless of sortbydate pref. Year will NOT
+	//					be wrapped in () if this is true. TuneIn uses it for eg <br />(Podcast Episode)
 
 	// NOTE - Radio channels are albumheader because they have an image, but they are always playbale
 	// and NEVER openable. Podcast user an albumheader
@@ -71,18 +73,18 @@ class ui_elements {
 		'userplaylist' => null,
 		'class' => '',
 		'podcounts' => null,
-		'extralines' => []
+		'extralines' => [],
+		'year_always' => false
 	];
 
 	public static function albumTrack($data, $bookmarks) {
 
 		$data = array_merge(self::DEFAULT_TRACK_PARAMS, $data);
 
-		if (substr($data['title'],0,6) == "Album:") return 2;
-		if (substr($data['title'],0,7) == "Artist:") {
-			logger::warn('ALBUMTRACK', 'Found artist link in album - this should not be here!');
-			return 1;
-		}
+		// if (substr($data['title'],0,7) == "Artist:") {
+		// 	logger::warn('ALBUMTRACK', 'Found artist link in album - this should not be here!');
+		// 	return 1;
+		// }
 
 		$d = getDomain($data['uri']);
 
@@ -241,6 +243,8 @@ class ui_elements {
 					$classes[] = 'clickusetrackimages';
 				}
 			}
+			if (prefs::$database->num_youtube_tracks($who) > 0)
+				$classes[] = 'clickytdownloadall';
 		}
 
 		if (!$det['buttons']) {
@@ -251,11 +255,16 @@ class ui_elements {
 			}
 		}
 
-		if ($why == 'b' && $det['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $det['AlbumUri'], $matches)) {
-			$classes[] = 'clickaddtollviabrowse clickaddtocollectionviabrowse';
-			$spalbumid = $matches[1];
-		} else {
-			$spalbumid = '';
+		if ($why == 'b' && $det['AlbumUri'] &&
+			(
+				strpos($det['AlbumUri'], 'ytmusic:album:') !== false ||
+				strpos($det['AlbumUri'], 'spotify:album:') !== false ||
+				strpos($det['AlbumUri'], 'youtube:playlist:') !== false ||
+				strpos($det['AlbumUri'], 'yt:playlist:') !== false
+			)
+		){
+			$classes[] = 'clickaddtocollectionviabrowse';
+			$classes[] = 'clickaddtollviabrowse';
 		}
 
 		if (!$det['buttons'])
@@ -263,10 +272,10 @@ class ui_elements {
 
 		if (count($classes) > 0) {
 			$classes[] = $det['iconclass'];
-			$html .= '<div class="icon-menu track-control-icon clickable clickicon clickalbummenu '
-					.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" spalbumid="'.$spalbumid;
+			$html .= '<div class="icon-menu inline-icon track-control-icon clickable clickicon clickalbummenu '
+					.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']);
 
-			if (in_array('clickalbumoptions', $classes))
+			if (in_array('clickalbumoptions', $classes) || in_array('clickaddtocollectionviabrowse', $classes) || in_array('clickaddtollviabrowse', $classes))
 				$html .= '" uri="'.rawurlencode($det['AlbumUri']);
 
 			$html .= '"></div>';
@@ -676,6 +685,9 @@ class ui_elements {
 		print '</div>';
 		print '<div id="lastfm" class="invisible topstats">';
 		print '<i title="'.language::gettext('button_love').'" class="icon-heart npicon clickicon tooltip spinable" id="love"></i>';
+		print '</div>';
+		print '<div id="ban" class="invisible topstats">';
+		print '<i title="'.language::gettext('button_ban').'" class="icon-block npicon clickicon tooltip"></i>';
 		print '</div>';
 		print '<div id="ptagadd" class="invisible topstats">';
 		print '<i class="icon-tags npicon clickicon"></i>';

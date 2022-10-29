@@ -7,8 +7,11 @@ class javascript_globals {
 		print "var old_style_albumart = ".prefs::$database->checkAlbumArt().";\n";
 		// There is no default language set in prefs, so that we can try to detect
 		// it from the browser. This we set a global here so we know what it was.
+		logger::log('INIT', 'Doing interfacelanguage');
 		print "prefs.interface_language = '".language::get_interface_language()."';\n";
+		logger::log('INIT', 'Doing ONLY_PLUGINS_ON_MENU');
 		print "const only_plugins_on_menu = '".uibits::ONLY_PLUGINS_ON_MENU."';\n";
+		logger::log('INIT', 'Doing rompr_version');
 		print "const rompr_version = '".$version_string."';\n";
 		print "const browserLanguage = '".language::get_browser_language()."';\n";
 		print "const mopidy_min_version = '".ROMPR_MOPIDY_MIN_VERSION."';\n";

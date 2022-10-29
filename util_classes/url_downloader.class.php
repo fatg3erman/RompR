@@ -35,7 +35,7 @@ class url_downloader {
 	private $info;
 	private $status;
 	private $file;
-	protected $from_cache = false;
+	public $from_cache = false;
 	protected $options;
 
 	public function __construct($options) {
@@ -76,7 +76,7 @@ class url_downloader {
 		// It sets $this->content to the contents of the file, which can be retrievd by calling $this->get_data()
 		//
 
-		logger::log("URL_DOWNLOADER", "Downloading",$this->options['url'],'to string');
+		logger::core("URL_DOWNLOADER", "Downloading",$this->options['url'],'to string');
 		curl_setopt($this->ch, CURLOPT_HEADER, true);
 		curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, function($curl, $header) {
 			$len = strlen($header);
@@ -111,6 +111,7 @@ class url_downloader {
 		//
 
 		$this->file = $file;
+		$this->from_cache = false;
 		if ($this->file === null && $this->options['cache'] === null) {
 			return $this->get_data_to_string();
 		} else if ($this->options['cache'] !== null) {
@@ -122,7 +123,7 @@ class url_downloader {
 				return true;
 			}
 		}
-		logger::trace("URL_DOWNLOADER", "  Downloading to",$this->file);
+		logger::core("URL_DOWNLOADER", "  Downloading to",$this->file);
 		if (file_exists($this->file))
 			unlink ($this->file);
 
@@ -152,7 +153,7 @@ class url_downloader {
 		$this->info = curl_getinfo($this->ch);
 		curl_close($this->ch);
 		if ($this->get_status() == '200') {
-			logger::debug("URL_DOWNLOADER", "  ..  Download Success");
+			logger::core("URL_DOWNLOADER", "  ..  Download Success");
 			return true;
 		} else {
 			logger::warn("URL_DOWNLOADER", "  ..  Download Failed With Status Code",$this->get_status());

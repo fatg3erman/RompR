@@ -1,9 +1,8 @@
 var wishlistViewer = function() {
 
 	var wlv = null;
-	var trawler = null;
-	var databits = new Array();
 	var reqid = 0;
+	var attributes = [];
 
 	function removeTrackFromWl(element, command) {
 		debug.log("DB_TRACKS","Remove track from database",element.next().val());
@@ -36,62 +35,37 @@ var wishlistViewer = function() {
 	function searchForTrack(element) {
 		reqid++;
 		element.addClass('wlsch_'+reqid).makeSpinner();
-		if (trawler == null) {
-			trawler = new faveFinder(true);
-			trawler.setPriorities([]);
-			trawler.setCheckDb(false);
-			trawler.setExact(false);
-		}
-		databits[reqid] = {
-			index: 0,
-			data: [
-				{
-					Title: element.next().val(),
-					trackartist: element.next().next().val(),
-					key: reqid,
-					reqid: reqid
+		$('<div>', {id: 'wlresults_'+reqid, class: 'wishlist_results holdingcell medium_masonry_holder helpfulholder noselection'}).insertAfter(element.parent());
+
+		attributes[reqid] = [];
+
+		metaHandlers.genericAction(
+			[{
+				action: 'findandreturnall',
+				reqid: reqid,
+				Title: element.next().val(),
+				trackartist: element.next().next().val()
+			}],
+			function(data) {
+				debug.log('WISHLIST', 'Fave Finder Results', data);
+				$('.wlsch_'+reqid).stopSpinner();
+				if (data.length > 0) {
+					$('#wlresults_'+reqid).spotifyAlbumThing({
+						classes: 'brick spotify_album_masonry selecotron',
+						itemselector: 'brick',
+						is_plugin: true,
+						showanames: true,
+						imageclass: 'jalopy',
+						attributes: attributes[reqid],
+						data: data
+					});
+				} else {
+					$('#wlresults_'+reqid).html('<h3>No Tracks Found</h3>');
 				}
-			],
-			attributes: new Array()
-		}
-
-		// We need to ensure the ratings and tags get added if the track already exists
-		// or we create a new one.
-		// We also need to ensure that the wishlist version gets removed from the database
-		databits[reqid].attributes = new Array();
-		var rat = element.parent().find('.rating-icon-small').first();
-		if (rat.hasClass('icon-1-stars')) {
-			debug.log("WISHLIST","1 star");
-			databits[reqid].attributes.push({attribute: 'Rating', value:  1});
-		} else if (rat.hasClass('icon-2-stars')) {
-			debug.log("WISHLIST","2 star");
-			databits[reqid].attributes.push({attribute: 'Rating', value:  2});
-		} else if (rat.hasClass('icon-3-stars')) {
-			debug.log("WISHLIST","3 star");
-			databits[reqid].attributes.push({attribute: 'Rating', value:  3});
-		} else if (rat.hasClass('icon-4-stars')) {
-			debug.log("WISHLIST","4 star");
-			databits[reqid].attributes.push({attribute: 'Rating', value:  4});
-		} else if (rat.hasClass('icon-5-stars')) {
-			debug.log("WISHLIST","5 star");
-			databits[reqid].attributes.push({attribute: 'Rating', value:  5});
-		}
-		var tag = element.parent().find('.tracktags').first();
-		if (tag.length > 0) {
-			debug.info("WISHLIST","Setting Tags Attribute");
-			databits[reqid].attributes.push({attribute: 'Tags', value: tag.text().split(", ")});
-		}
-		trawler.findThisOne(databits[reqid].data[databits[reqid].index], wishlistViewer.updateDatabase);
-	}
-
-	function doSqlStuff(parentdata, data, callback) {
-		data.action = 'set';
-		data.urionly = true;
-		data.attributes = parentdata.attributes;
-		dbQueue.request([data], collectionHelper.updateCollectionDisplay,
-			function(rdata) {
-				infobar.error(language.gettext('label_general_error'));
-				debug.warn("WISHLIST","Failure",rdata);
+			},
+			function() {
+				$('.wlsch_'+reqid).stopSpinner();
+				$('#wlresults_'+reqid).html('<h3>No Tracks Found</h3>');
 			}
 		);
 	}
@@ -114,22 +88,6 @@ var wishlistViewer = function() {
 		loadWishlist(false);
 	}
 
-	function chooseNew(clickedElement) {
-		var key = clickedElement.attr('romprkey');
-		$('#wlsearch_'+key).find('.importbutton, .playbutton').fadeOut('fast');
-		clickedElement.next().fadeIn('fast');
-		clickedElement.prev().fadeIn('fast');
-	}
-
-	function importRow(element) {
-		var key = element.parent().prev().attr("romprkey");
-		var index = element.parent().prev().attr('romprindex');
-		debug.log("WISHLIST","Importing",databits[key], databits[key].data[index]);
-		element.parent().parent().parent().parent().css({opacity: '0.2'});
-		element.remove();
-		doSqlStuff(databits[key], databits[key].data[index], false);
-	}
-
 	return {
 
 		open: function() {
@@ -145,49 +103,23 @@ var wishlistViewer = function() {
 		},
 
 		handleClick: function(element, event) {
-			if (element.hasClass('clickremdb')) {
+			if (element.hasClass('clickspotifywidget')) {
+				let thing = $(event.target);
+				while (!thing.hasClass('wishlist_results')) {
+					thing = thing.parent();
+				}
+				thing.spotifyAlbumThing('handleClick', element);
+			} else if (element.hasClass('clickremdb')) {
 				removeTrackFromWl(element, 'deletewl');
 			} else if (element.hasClass('clicksearchtrack')) {
 				searchForTrack(element);
-			} else if (element.hasClass('choosenew')) {
-				chooseNew(element);
-			} else if (element.hasClass('importrow')) {
-				importRow(element);
 			} else if (element.hasClass('clickclearwishlist')) {
 				clearWishlist();
-			} else if (element.hasClass('dropchoices')) {
-				$('#wlchoices_'+element.attr('name')).slideToggle('fast');
 			}
 		},
 
 		close: function() {
 			wlv = null;
-		},
-
-		updateDatabase: function(results) {
-			debug.log("WISHLIST","Found A Track",results);
-			databits[results[0].reqid].index = 0;
-			databits[results[0].reqid].data = results;
-			var element = $('.wlsch_'+results[0].reqid);
-			var trackDiv = element.parent().parent();
-			var resultsDiv = $('<div>', {id: 'wlsearch_'+results[0].key, class: 'toggledown'}).appendTo(trackDiv);
-			if (results.length > 0 && results[0].file) {
-				var dropper = $("<div>", {class: 'containerbox fixed'}).insertBefore(resultsDiv);
-				dropper.append('<i class="openmenu icon-menu clickicon fixed inline-icon" name="wlsearch_'+results[0].reqid+'"></i>');
-				for (var i = 0; i < results.length; i++) {
-					var data = results[i];
-					var firstTrack = $('<div>', {class: 'containerbox vertical-centre underline', style: 'margin: 0'}).appendTo(resultsDiv);
-					var trackDetails = $('<div>', {romprindex: i, romprkey: data.reqid, class: 'backhi plugclickable infoclick choosenew ninesix indent expand'}).html(trawler.trackHtml(data, true)).appendTo(firstTrack);
-					firstTrack.append('<div class="fixed invisible importbutton"><button class="plugclickable infoclick importrow">Import</button></div>');
-					firstTrack.prepend('<div class="fixed invisible playbutton"><i class="icon-no-response-playbutton clickicon playable inline-icon" name="'+data.file+'"></i></div>');
-				}
-			} else {
-				resultsDiv.append('<div class="expand"><b><i>'+language.gettext("label_notfound")+'</i></b></div>');
-			}
-			element.removeClass('wlsch_'+results[0].reqid).stopSpinner().remove();
-			// resultsDiv.find('.invisible').first().fadeIn('fast');
-			resultsDiv.find('.invisible.importbutton').first().fadeIn('fast');
-			resultsDiv.find('.invisible.playbutton').first().fadeIn('fast');
 		},
 
 		update: function() {

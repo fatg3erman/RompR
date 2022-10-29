@@ -131,6 +131,19 @@ class database extends data_base {
 				$url);
 	}
 
+	public function check_podcast_trackimage($uri) {
+		$retval = null;
+		$thing = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			"SELECT Image FROM PodcastTracktable WHERE Link = ? OR ? LIKE '%' || Localfilename",
+			$uri,
+			$uri
+		);
+		if (count($thing) > 0) {
+			$retval = $thing[0]['Image'];
+		}
+		return $retval;
+	}
+
 	public function optimise_database() {
 		$this->generic_sql_query("VACUUM", true);
 		$this->generic_sql_query("PRAGMA optimize", true);
@@ -338,6 +351,100 @@ class database extends data_base {
 
 	}
 
-}
+	public function get_album_uri($trackuri) {
+		return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
+			"SELECT AlbumUri FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Uri = ?",
+			$trackuri
+		);
+	}
 
+	public function create_toptracks_table() {
+		// UNIQUE INDEX doesn't take NULL into account, so we can't put NULL into those columns
+		// trackartist looks odd but it's consistent with what the UI does when
+		// it calls fave_finder
+		$name = everywhere_radio::get_seed_table_name();
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
+			"topindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+			"Type INTEGER NOT NULL, ".
+			"trackartist VARCHAR(100) NOT NULL COLLATE NOCASE, ".
+			"Title VARCHAR(255) NOT NULL COLLATE NOCASE)", true))
+		{
+			logger::log("SQLITE",$name,"OK");
+			$this->generic_sql_query("DELETE FROM ".$name);
+			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (trackartist, Title)");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking ".$name." : ".$err);
+		}
+	}
+
+	public function add_toptrack($type, $artist, $title) {
+		$name = everywhere_radio::get_seed_table_name();
+		$this->sql_prepare_query(true, null, null, null,
+			"INSERT OR IGNORE INTO ".$name." (Type, trackartist, Title) VALUES (?, ? ,?)",
+			$type,
+			$artist,
+			$title
+		);
+	}
+
+	public function create_radio_uri_table() {
+		$name = everywhere_radio::get_uri_table_name();
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
+			"uriindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+			"used INTEGER DEFAULT 0, ".
+			"trackartist VARCHAR(100) NOT NULL COLLATE NOCASE, ".
+			"Title VARCHAR(255) NOT NULL COLLATE NOCASE, ".
+			"Uri TEXT)", true))
+		{
+			logger::log("SQLITE",$name,"OK");
+			$this->generic_sql_query("DELETE FROM ".$name);
+			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (trackartist, Title)");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking ".$name." : ".$err);
+		}
+	}
+
+	public function create_radio_ban_table() {
+		$name = everywhere_radio::get_ban_table_name();
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
+			"banindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+			"trackartist VARCHAR(100) NOT NULL COLLATE NOCASE, ".
+			"Title VARCHAR(255) NOT NULL COLLATE NOCASE)", true))
+		{
+			logger::log("SQLITE",$name,"OK");
+			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (trackartist, Title)");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking ".$name." : ".$err);
+		}
+	}
+
+	// artist and title are only used here to prevent duplicates so we use
+	// strip_track_name because online sources are often very inconsistent:
+	// Blood Sweat & Tears
+	// Blood, Sweat & Tears
+	// Blood, Sweat And Tears
+	// all come back in response to a search for Blood Sweat & Tears
+	public function add_smart_uri($uri, $artist, $title) {
+		$name = everywhere_radio::get_uri_table_name();
+		$this->sql_prepare_query(true, null, null, null,
+			"INSERT OR IGNORE INTO ".$name." (trackartist, Title, Uri) VALUES (?, ? ,?)",
+			strip_track_name($artist),
+			strip_track_name($title),
+			$uri
+		);
+	}
+
+	public function add_ban_track($artist, $title) {
+		$name = everywhere_radio::get_ban_table_name();
+		$this->sql_prepare_query(true, null, null, null,
+			"INSERT OR IGNORE INTO ".$name." (trackartist, Title) VALUES (?, ?)",
+			$artist,
+			$title
+		);
+	}
+
+}
 ?>

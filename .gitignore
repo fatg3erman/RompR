@@ -12,3 +12,5 @@ MusicFolders
 *.kdev4
 player/mpd/telnet.py
 player/mpd/websocket.py
+iconfactory
+decode.txt

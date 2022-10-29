@@ -197,7 +197,7 @@ var metaHandlers = function() {
 							url: "api/metadata/",
 							type: "POST",
 							contentType: false,
-							data: JSON.stringify([{action: 'youtubedl', file: uri }]),
+							data: JSON.stringify([{action: 'youtubedl', urilist: [uri] }]),
 							dataType: "html",
 							cache: false
 						});
@@ -217,6 +217,35 @@ var metaHandlers = function() {
 				});
 			},
 
+			downloadAllYoutubeTracks: async function(event, element) {
+				debug.log('YTDLALL',event, element);
+				var albumname = decodeURIComponent(element.attr('aname'));
+				debug.log('YTDLALL', 'Downloading album', albumname);
+				var monitor = new youtubeDownloadMonitor(element.attr('who'), albumname, $(this));
+				try {
+					var data = await $.ajax({
+						url: "api/metadata/",
+						type: "POST",
+						contentType: false,
+						data: JSON.stringify([{action: 'youtubedl_album', why: element.attr('why'), who: element.attr('who') }]),
+						dataType: "html",
+						cache: false
+					});
+				} catch (err) {
+					if (err.status == 200) {
+						debug.log('YOUTUBEDL', 'Error handler caught success code! WTF?');
+					} else {
+						debug.warn("FUCK!", 'Why did that not work?');
+						debug.log('BUMBLETREE', err);
+						if (err.responseText) {
+							debug.error('YOUTUBEDL', err.responseText);
+							infobar.error('Failed to download YouTube Album - '+err.responseText);
+						}
+						monitor.stop();
+					}
+				}
+			},
+
 			removeAlbumFromDb: function(event, element) {
 				var albumToGo = element.attr("name");
 				dbQueue.request(
@@ -226,55 +255,6 @@ var metaHandlers = function() {
 						debug.warn("Failed to remove album! Possibly duplicate request?");
 					}
 				);
-			}
-		},
-
-		fromSpotifyData: {
-
-			addAlbumTracksToCollection: function(data, albumartist) {
-				debug.info('AAGH','Adding an album');
-				var thisIsMessy = new Array();
-				if (data.tracks && data.tracks.items) {
-					debug.debug("AAAGH","Adding Album From",data);
-					infobar.notify(language.gettext('label_addingalbum'));
-					for (let t of data.tracks.items) {
-						var track = {
-							Title: t.name,
-							trackartist: joinartists(t.artists),
-							Track: t.track_number,
-							Time: t.duration_ms/1000,
-							Disc: t.disc_number,
-							domain: 'spotify',
-							albumartist: albumartist,
-							Album: data.name,
-							file: t.uri,
-							Date: data.release_date,
-							action: 'set',
-							urionly: true
-						}
-						track['X-AlbumUri'] = data.uri;
-						if (data.images) {
-							for (let j of data.images) {
-								if (j.url) {
-									track['X-AlbumImage'] = "getRemoteImage.php?url="+rawurlencode(j.url);
-									break;
-								}
-							}
-						}
-						if (data.genres && data.genres.length > 0) {
-							track.Genre = data.genres[0];
-						} else {
-							track.Genre = 'None';
-						}
-						thisIsMessy.push(track);
-					}
-					if (thisIsMessy.length > 0)
-						dbQueue.request(thisIsMessy, addedATrack, didntAddATrack);
-
-				} else {
-					debug.warn("SPOTIFY","Failed to add album - no tracks",data);
-					infobar.error(language.gettext('label_general_error'));
-				}
 			}
 		},
 
@@ -290,6 +270,19 @@ var metaHandlers = function() {
 				dbQueue.request([data], success, fail);
 			},
 
+			findAndSet: function(playlistinfo, action, attributes, success, fail) {
+				if (player.updatingcollection) {
+					infobar.notify(language.gettext('error_nosearchnow'));
+					return;
+				}
+				var data = getPostData(playlistinfo);
+				data.originalaction = action;
+				data.action = 'findandset';
+				if (attributes)
+					data.attributes = attributes;
+				dbQueue.request([data], success, fail);
+			},
+
 			mapData: function(playlistinfo, action, attributes) {
 				var data = getPostData(playlistinfo);
 				data.action = action;
@@ -300,48 +293,73 @@ var metaHandlers = function() {
 			}
 		},
 
+		fromBasicSpotifyInfo: {
+
+			importTrack: function (albumdata, track_index, attributes, success) {
+				// Don't send the albumimage. Either it has already been cached in which case we'll find it
+				// or it'll be a getremoteimage obtained through Mopidy, which we now want to swap for a
+				// cached one.
+				var data = {
+					action: 'set',
+					attributes: attributes,
+					Album: albumdata.name,
+					albumartist: combine_spotify_artists(albumdata.artists),
+					domain: albumdata.domain,
+					'X-AlbumUri': albumdata.uri,
+					file: albumdata.tracks.items[track_index].uri,
+					Title: albumdata.tracks.items[track_index].name,
+					Time: albumdata.tracks.items[track_index].duration_ms/1000,
+					Track: albumdata.tracks.items[track_index].track_number,
+					trackartist: combine_spotify_artists(albumdata.tracks.items[track_index].artists)
+				};
+				dbQueue.request([data], success, function() {
+					infobar.error('Import Failed because reasons');
+				});
+			}
+		},
+
 		fromLastFMData: {
-				getMeta: function(data, success, fail) {
-					var track = metaHandlers.fromLastFMData.mapData(data, 'get', false);
-					dbQueue.request([track], success, fail);
-				},
+			getMeta: function(data, success, fail) {
+				var track = metaHandlers.fromLastFMData.mapData(data, 'get', false);
+				dbQueue.request([track], success, fail);
+			},
 
-				setMeta: function(data, action, attributes, success, fail) {
-					var tracks = [];
-					data.forEach(function(track) {
-						tracks.push(metaHandlers.fromLastFMData.mapData(track, action, attributes));
-					});
-					dbQueue.request(tracks, success, fail);
-					return cloneObject(tracks);
-				},
+			setMeta: function(data, action, attributes, success, fail) {
+				var tracks = [];
+				data.forEach(function(track) {
+					tracks.push(metaHandlers.fromLastFMData.mapData(track, action, attributes));
+				});
+				dbQueue.request(tracks, success, fail);
+				return cloneObject(tracks);
+			},
 
-				mapData: function(data, action, attributes) {
-					var track = {action: action};
-					track.Title = data.name;
-					if (data.album)
-						track.Album = data.album['#text'];
+			mapData: function(data, action, attributes) {
+				var track = {action: action};
+				track.Title = data.name;
+				if (data.album)
+					track.Album = data.album['#text'];
 
-					if (data.artist) {
-						// We have in the past tried to be clever about this, since
-						// mpdscribble and mopidy-scrobbler don't always join artist names
-						// the same way we do. Unfortunately it just ain't possible to do.
-						// This works well if you have last.fm autocorrect disabled on last.fm
-						// and you use Rompr to scrobble and have autocorrect turned off there too.
-						// Otherwise I'm afraid it can be a bit shit where there are multiple artist names
-						// And it's fuckin shocking if you're playing back podcasts and not scrobbling from Rompr,
-						// 'cos the metadata the players use is nothing like what comes out of the RSS which is what we use
-						track.trackartist = data.artist.name;
-						track.albumartist = track.trackartist;
-					}
-					if (data.date)
-						track.lastplayed = data.date.uts;
-
-					if (attributes)
-						track.attributes = attributes;
-
-					debug.debug("DBQUEUE", "LFM Mapped Data is",track);
-					return track;
+				if (data.artist) {
+					// We have in the past tried to be clever about this, since
+					// mpdscribble and mopidy-scrobbler don't always join artist names
+					// the same way we do. Unfortunately it just ain't possible to do.
+					// This works well if you have last.fm autocorrect disabled on last.fm
+					// and you use Rompr to scrobble and have autocorrect turned off there too.
+					// Otherwise I'm afraid it can be a bit shit where there are multiple artist names
+					// And it's fuckin shocking if you're playing back podcasts and not scrobbling from Rompr,
+					// 'cos the metadata the players use is nothing like what comes out of the RSS which is what we use
+					track.trackartist = data.artist.name;
+					track.albumartist = track.trackartist;
 				}
+				if (data.date)
+					track.lastplayed = data.date.uts;
+
+				if (attributes)
+					track.attributes = attributes;
+
+				debug.debug("DBQUEUE", "LFM Mapped Data is",track);
+				return track;
+			}
 		},
 
 		genericAction: function(action, success, fail) {
@@ -350,6 +368,16 @@ var metaHandlers = function() {
 			} else {
 				dbQueue.request([{action: action}], success, fail);
 			}
+		},
+
+		check_for_db_updates: function() {
+			dbQueue.request(
+				[{action: 'getreturninfo'}],
+				collectionHelper.updateCollectionDisplay,
+				function(data) {
+					debug.warn("Failed to get return info");
+				}
+			);
 		},
 
 		genericQuery: async function(action, success, fail) {
@@ -372,11 +400,25 @@ var metaHandlers = function() {
 			}
 		},
 
-		addToListenLater: function(album) {
-			var data = {
-				action: 'addtolistenlater',
-				json: album
-			}
+		addAlbumUriToCollection(albumuri) {
+			debug.log("METADATA","Adding album to collection", albumuri);
+			metaHandlers.genericAction(
+				[{
+					action: 'addalbumtocollection',
+					albumuri: albumuri
+				}],
+				collectionHelper.updateCollectionDisplay,
+				function(rdata) {
+					debug.warn("BUMFINGER","Failure to do bumfinger", rdata);
+					infobar.error('Failed to add album to collection')
+				}
+			);
+		},
+
+		// data should be either {action :'addtolistenlater', json: {spotify album.getInfo}}
+		// OR
+		// {action: 'browsetoll', uri: an album uri that Mpodiy can find file}
+		addToListenLater: function(data) {
 			metaHandlers.genericQuery(
 				data,
 				function() {
@@ -444,7 +486,7 @@ var dbQueue = function() {
 		} catch (err) {
 			debug.warn("DB QUEUE","Request Failed",err);
 			if (req.fail) {
-				req.fail(data);
+				req.fail(data, err);
 			}
 		}
 	}

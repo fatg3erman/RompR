@@ -95,8 +95,10 @@ var playlist = function() {
 					radios[i].func.setup();
 				}
 				if (prefs.player_backend == "mopidy") {
+					// Don't set any default domains. player.controller will set them as soon as it knows what they are
+					// But this UI element HAS to exist before we try to do that
 					$("#radiodomains").addClass('tiny').makeDomainChooser({
-						default_domains: prefs.mopidy_radio_domains,
+						default_domains: [],
 						sources_not_to_choose: {
 									bassdrive: 1,
 									dirble: 1,
@@ -108,7 +110,7 @@ var playlist = function() {
 					});
 					$("#radiodomains").find('input.topcheck').each(function() {
 						$(this).on('click', function() {
-							prefs.save({mopidy_radio_domains: $("#radiodomains").makeDomainChooser("getSelection")});
+							prefs.save({radiodomains: $("#radiodomains").makeDomainChooser("getSelection")});
 						});
 					});
 				}
@@ -189,6 +191,10 @@ var playlist = function() {
 
 			is_running: function() {
 				return (this_radio != '');
+			},
+
+			get_mode: function() {
+				return this_radio;
 			},
 
 			loadFromUiElement: function(element) {
@@ -320,7 +326,7 @@ var playlist = function() {
 				totaltime += track.Time;
 				var sortartist = (track.albumartist == "" || track.albumartist == null) ? track.trackartist : track.albumartist;
 				if ((sortartist.toLowerCase() != current_artist.toLowerCase()) ||
-					track.Album.toLowerCase() != current_album.toLowerCase() ||
+					(track.Album && (track.Album.toLowerCase() != current_album.toLowerCase())) ||
 					track.type != current_type)
 				{
 					current_type = track.type;
@@ -329,21 +335,7 @@ var playlist = function() {
 					count++;
 					switch (track.type) {
 						case "local":
-							var hidden;
-							switch (track.domain) {
-								case 'youtube':
-								case 'soundcloud':
-									// Track Name == Album Name for these, so it's pointless having them open
-									if (playlist.rolledup.hasOwnProperty(sortartist+track.Album)) {
-										hidden = playlist.rolledup[sortartist+track.Album];
-									} else {
-										hidden = true;
-									}
-									break;
-								default:
-									hidden = (playlist.rolledup[sortartist+track.Album]) ? true : false;
-									break;
-							}
+							var hidden = (playlist.rolledup[sortartist+track.Album]) ? true : false;
 							new_tracklist[count] = new Album(sortartist, track.Album, count, hidden);
 							break;
 						case "stream":
@@ -687,6 +679,32 @@ var playlist = function() {
 			}
 		},
 
+		search_and_add: function(element) {
+			var params = {action: 'findandreturn'};
+			element.find('input.search_param').each(function() {
+				params[$(this).attr('name')] = unescapeHtml($(this).val());
+			});
+			infobar.notify(language.gettext('label_searching')+' for '+(params.Title ? params.Title : params.Album));
+			metaHandlers.genericAction(
+				[params],
+				function(data) {
+					if (data.file) {
+						playlist.add_by_rompr_commands([{
+								type: 'uri',
+								name: data.file
+							}],
+							null
+						);
+					} else {
+						infobar.notify('Could not find that track');
+					}
+				},
+				function(data) {
+					infobar.notify('Could not find that track');
+				}
+			)
+		},
+
 		setButtons: function() {
 			var c = (player.status.xfade === undefined || player.status.xfade === null || player.status.xfade == 0) ? "off" : "on";
 			$("#crossfade").flowToggle(c);
@@ -750,18 +768,6 @@ var playlist = function() {
 
 		getfinaltrack: function() {
 			return finaltrack;
-		},
-
-		checkPodcastProgress: function() {
-			if (player.status.state == 'play' || player.status.state == 'pause') {
-				var durationfraction = player.status.progress/currentTrack.Time;
-				var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? player.status.progress : 0;
-				if (currentTrack.type == "podcast") {
-					podcasts.storePlaybackProgress({uri: currentTrack.file, progress: Math.round(progresstostore), name: 'Resume'});
-				} else if (currentTrack.type == 'audiobook') {
-					nowplaying.storePlaybackProgress(Math.round(progresstostore), null, 'Resume');
-				}
-			}
 		},
 
 		trackHasChanged: async function(backendid) {
@@ -891,13 +897,18 @@ var playlist = function() {
 			var d = s.shift();
 			switch (d) {
 				case "spotify":
-				case "gmusic":
+				case "ytmusic":
 				case "youtube":
 				case "internetarchive":
 				case "soundcloud":
 				case "podcast":
 				case "dirble":
+				case "bandcamp":
 					return '<i class="icon-'+d+'-circled inline-icon fixed"></i>';
+					break;
+
+				case "yt":
+					return '<i class="icon-youtube-circled inline-icon fixed"></i>';
 					break;
 
 				case 'tunein':
@@ -1033,12 +1044,17 @@ function Album(artist, album, index, rolledup) {
 		}
 
 		var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
-		title.append('<div class="bumpad">'+self.artist+'</div><div class="bumpad">'+self.album+'</div>');
+		title.append('<div class="bumpad">'+self.artist+'</div><div class="bumpad">');
+		if (self.album)
+			title.append(self.album);
+
+		title.append('</div>');
 
 		var controls = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner)
 		controls.append('<i class="icon-cancel-circled inline-icon tooltip expand clickplaylist clickicon clickremovealbum" title="'+language.gettext('label_removefromplaylist')+'" name="'+self.index+'"></i>');
-		if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,7) == "spotify") {
-			controls.append('<i class="expand clickplaylist clickicon clickaddwholealbum icon-music inline-icon tooltip" title="'+language.gettext('label_addtocollection')+'" name="'+self.index+'"></i>');
+
+		if (tracks[0]['X-AlbumUri'] && ['youtube', 'ytmusic', 'spotify'].indexOf(tracks[0]['domain']) >= 0) {
+			controls.append('<i class="expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse" uri="'+tracks[0]['X-AlbumUri']+'"></i>');
 		}
 
 		var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');
@@ -1208,20 +1224,7 @@ function Album(artist, album, index, rolledup) {
 	}
 
 	this.addToCollection = function() {
-		debug.log("PLAYLIST","Adding album to collection");
-		if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,14) == "spotify:album:") {
-			spotify.album.getInfo(tracks[0].metadata.album.uri.substring(14,tracks[0].metadata.album.uri.length),
-			function(data) {
-				metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, tracks[0].albumartist)
-			},
-			function(data) {
-				debug.warn("ADD ALBUM","Failed to add album",data);
-				infobar.error(language.gettext('label_general_error'));
-			},
-			false);
-		} else {
-			debug.error("PLAYLIST","Trying to add non-spotify album to the collection!");
-		}
+		metaHandlers.addAlbumUriToCollection(tracks[0]['X-AlbumUri']);
 	}
 
 	function format_tracknum(tracknum) {

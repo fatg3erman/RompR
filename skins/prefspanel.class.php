@@ -257,6 +257,7 @@ class prefspanel extends uibits {
 		print self::ui_config_header([
 			'label' => 'settings_interface'
 		]);
+
 		self::ui_checkbox(['id' => 'scrolltocurrent', 'label' => 'config_autoscroll']);
 		// self::ui_checkbox(['id' => 'auto_discovembobulate', 'label' => 'config_discovembobulate']);
 
@@ -285,6 +286,15 @@ class prefspanel extends uibits {
 		]);
 
 		self::ui_checkbox(['id' => 'cdplayermode', 'label' => 'config_cdplayermode']);
+
+		if (prefs::skin() == 'phone') {
+			self::ui_textentry([
+				'label' => 'config_stupid_round_corners',
+				'type' => 'number',
+				'size' => 4,
+				'id' => 'stupid_rounded_corner_buffer_size'
+			]);
+		}
 
 		self::prefs_mouse_options();
 

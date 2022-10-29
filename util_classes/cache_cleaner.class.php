@@ -29,27 +29,29 @@ class cache_cleaner extends database {
 		// otherwise they will ban us. Don't spoil it for everyone.
 		$now = time();
 		// One Month
-		$this->clean_cache_dir('prefs/jsoncache/musicbrainz/', 2592000);
-		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/allmusic/', 2592000);
 		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/discogs/', 2592000);
+		// One Month
+		$this->clean_cache_dir('prefs/jsoncache/musicbrainz/', 2592000);
 		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/wikipedia/', 2592000);
 		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/lastfm/', 2592000);
 		// One Month
-		$this->clean_cache_dir('prefs/jsoncache/soundcloud/', 2592000);
-		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/spotify/', 2592000);
+		// Six Months - after all, lyrics are small and don't change
+		$this->clean_cache_dir('prefs/jsoncache/lyrics/', 15552000);
+		// One Month
+		$this->clean_cache_dir('prefs/jsoncache/soundcloud/', 2592000);
 		// One Week
 		$this->clean_cache_dir('prefs/jsoncache/commradio/', 604800);
 		// One Week
 		$this->clean_cache_dir('prefs/jsoncache/somafm/', 604800);
-		// One Week
-		$this->clean_cache_dir('prefs/jsoncache/icecast/', 604800);
-		// Six Months - after all, lyrics are small and don't change
-		$this->clean_cache_dir('prefs/jsoncache/lyrics/', 15552000);
+		// One Month
+		$this->clean_cache_dir('prefs/jsoncache/bing/', 2592000);
+		// One Month
+		$this->clean_cache_dir('prefs/jsoncache/wikidata/', 2592000);
 		// One week (or it can get REALLY big)
 		$this->clean_cache_dir('prefs/imagecache/', 604800);
 		// Clean the albumart temporary upload directory
@@ -59,26 +61,19 @@ class cache_cleaner extends database {
 		logger::info("CACHE CLEANER", "== Cache Was Cleaned In ".format_time(time() - $now),'seconds');
 
 		$now = time();
-		logger::info("CACHE CLEANER", "Checking database for hidden album art");
-		$this->remove_hidden_images();
-		logger::info("CACHE CLEANER", "== Check For Hidden Album Art took ".format_time(time() - $now));
 
 		prefs::load();
 		if (prefs::get_pref('cleanalbumimages')) {
 			$now = time();
 			// TODO: This is too slow
 			logger::info("CACHE CLEANER", "Checking albumart folder for unneeded images");
+			$used_images = $this->get_used_album_images();
 			$files = glob('albumart/small/*.*');
-			foreach ($files as $image) {
-				// Remove images for hidden tracks and search results. The missing check below will reset the db entries for those albums
-				// Keep everything for 24 hours regardless, we might be using it in a playlist or something
-				if (filemtime($image) < time()-86400) {
-					if ($this->check_albums_using_image($image) < 1) {
-						logger::log("CACHE CLEANER", "  Removing Unused Album image ",$image);
-						$albumimage = new baseAlbumImage(array('baseimage' => $image));
-						array_map('unlink', $albumimage->get_images());
-					}
-				}
+			$unused = array_diff($files, $used_images);
+			foreach ($unused as $image) {
+				logger::log("CACHE CLEANER", "  Removing Unused Album image ",$image);
+				$albumimage = new baseAlbumImage(array('baseimage' => $image));
+				array_map('unlink', $albumimage->get_images());
 			}
 			logger::info("CACHE CLEANER", "== Check For Unneeded Images took ".format_time(time() - $now));
 
@@ -118,32 +113,13 @@ class cache_cleaner extends database {
 
 		logger::info("CACHE CLEANER", "Checking for orphaned youtube downloads");
 		$now = time();
-		$yts = glob('prefs/youtubedl/*');
-		foreach ($yts as $dir) {
-			logger::log('CACHE CLEANER', $dir);
-			$flacs = glob($dir.'/*.flac');
-			$numfiles = 1;
-			foreach ($flacs as $flac) {
-				// We can check the immediately preceeding dir and the filename, nothing more -
-				// It might be in the colleciton as a streaming track, or it mnight be symlinked
-				// to the music directory, in which case the path will be completely different.
-				// We can't check TTindexes because that didn't work for some reason, probably
-				// to do with symlinking again. Don't forget that SQLite reuses old TTindexes because
-				// we didn't set it up as an AUTOINCREMEMNT column. For speed. Say it was for speed.
-				$numfiles = $this->check_youtube_uri_exists(basename(dirname($flac)).'/'.basename($flac));
-			}
-			if ($numfiles == 0) {
-				logger::log('CACHE CLEANER', $flac,'does not have an associated track');
-				rrmdir($dir);
-			}
-		}
+		$this->check_youtube_dir('prefs/youtubedl');
 		logger::info("CACHE CLEANER", "== Check For Orphaned youtube downloads took ".format_time(time() - $now));
 
 		logger::info("CACHE CLEANER", "Tidying Ratings and Playcounts");
 		$now = time();
 		$this->tidy_ratings_and_playcounts();
 		logger::info("CACHE CLEANER", "== Tidying Ratings and Playcounts took ".format_time(time() - $now));
-
 
 		// Compact the database
 		logger::mark("CACHE CLEANER", "Optimising Database");
@@ -158,41 +134,41 @@ class cache_cleaner extends database {
 
 	}
 
-	private function remove_hidden_images() {
-		// Note the final line checking that image isn't in use by another album
-		// it's an edge case where we have the album local but we also somehow have a spotify or whatever
-		// version with hidden tracks
-		$this->open_transaction();
-		$result = $this->generic_sql_query("SELECT DISTINCT Albumindex, Albumname, Image, Domain FROM
-			Tracktable JOIN Albumtable USING (Albumindex) JOIN Playcounttable USING (TTindex)
-			WHERE Hidden = 1 AND LinkChecked < 4
-			AND ".$this->sql_two_weeks()."
-			AND
-				Albumindex NOT IN (SELECT Albumindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Hidden = 0)
-			AND
-				Image NOT IN (SELECT Image FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Hidden = 0)", false, PDO::FETCH_OBJ);
-
-		foreach ($result as $obj) {
-			if (preg_match('#^albumart/small/#', $obj->Image)) {
-				logger::log("CACHE CLEANER", "Removing image for hidden album",$obj->Albumname,$obj->Image);
-				$this->generic_sql_query("UPDATE Albumtable SET Image = NULL, Searched = 0 WHERE Albumindex = ".$obj->Albumindex, true);
-				$this->check_transaction();
+	private function check_youtube_dir($path) {
+		$numfiles = 0;
+		foreach (new DirectoryIterator($path) as $f) {
+			if ($f->isFile()) {
+				$numfiles++;
+				$fpath = $f->getPathname();
+				if ($this->check_youtube_uri_exists(substr($fpath, strpos($fpath, 'youtubedl/'))) == 0) {
+					logger::log('CACHE CLEANER', $fpath,'does not have an associated track');
+					unlink($fpath);
+				}
+			} else if (!$f->isDot() && $f->isDir()) {
+				$numfiles++;
+				$this->check_youtube_dir($f->getRealPath());
 			}
 		}
-		$this->close_transaction();
+		if ($numfiles == 0) {
+			logger::log('CACHE CLEANER', $path,'is empty');
+			rmdir($path);
+		}
 	}
 
-	private function check_albums_using_image($image) {
-		return $this->sql_prepare_query(false, null, 'acount', 0,
-			"SELECT COUNT(Albumindex) AS acount FROM Albumtable
-			JOIN Tracktable USING (Albumindex)
-			WHERE
-			Image = ?
-			AND ((Hidden = 0
-			AND isSearchResult < 2)
-			OR LinkChecked = 4)
-			AND URI IS NOT NULL",
-		$image);
+	private function get_used_album_images() {
+		$images = $this->sql_get_column(
+			"SELECT Image FROM Albumtable JOIN Tracktable USING (Albumindex)
+			WHERE Hidden = 0 AND Image LIKE 'albumart/small/%'", 0
+		);
+		$ll = $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
+		foreach ($ll as $album) {
+			$ad = json_decode($album['JsonData'], true);
+			if (array_key_exists('albumimage', $ad)) {
+				if (strpos($ad['albumimage']['small'], 'albumart/') === 0)
+					$images[] = $ad['albumimage']['small'];
+			}
+		}
+		return array_unique($images);
 	}
 
 	private function check_stations_using_image($image) {
@@ -207,9 +183,9 @@ class cache_cleaner extends database {
 
 	private function check_for_missing_albumart() {
 		$this->open_transaction();
-		$result = $this->generic_sql_query("SELECT Albumindex, Albumname, Image, Domain FROM Albumtable WHERE Image NOT LIKE 'getRemoteImage%'", false, PDO::FETCH_OBJ);
+		$result = $this->generic_sql_query("SELECT Albumindex, Albumname, Image, Domain FROM Albumtable WHERE Image LIKE 'albumart/%'", false, PDO::FETCH_OBJ);
 		foreach ($result as $obj) {
-			if ($obj->Image != '' && !file_exists($obj->Image)) {
+			if (!file_exists($obj->Image)) {
 				logger::log("CACHE CLEANER", $obj->Albumname,"has missing image",$obj->Image);
 				if (file_exists("newimages/".$obj->Domain."-logo.svg")) {
 					$image = "newimages/".$obj->Domain."-logo.svg";

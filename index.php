@@ -13,7 +13,7 @@ require_once ("includes/functions.php");
 // Do some important pre-load checks
 //
 
-if (file_exists('collection/collection.php') || is_dir('themes/fruit')) {
+if (file_exists('collection/collection.php') || is_dir('themes/fruit') || file_exists('radios/musicfromspotify.js')) {
 	big_bad_fail('Remains of an earlier installation still exist. To install this version of RompЯ you must
 		delete <b>everything except your albumart and prefs directories</b> and then copy the new version
 		into your rompr directory.');
@@ -73,6 +73,15 @@ if ($result == false) {
 	sql_init_fail($message);
 }
 prefs::$database->check_setupscreen_actions();
+
+
+if (array_key_exists('cacheclean', $_REQUEST)) {
+	$cleaner = new cache_cleaner();
+	$cleaner->clean_cache();
+	exit(0);
+}
+
+
 
 //
 // Set the country code from the browser (though this may not be accurate)
@@ -171,6 +180,7 @@ print '<script type="application/json" name="default_player">'."\n".json_encode(
 print '<script type="application/json" name="player_connection_params">'."\n".json_encode(prefs::PLAYER_CONNECTION_PARAMS)."\n</script>\n";
 print '<script type="application/json" name="browser_prefs">'."\n".json_encode(array_keys(prefs::BROWSER_PREFS))."\n</script>\n";
 print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string."&skin=".prefs::skin().'" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="css/scrollbars/jquery.mCustomScrollbar.css?version='.$version_string.'" />'."\n";
 
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />
@@ -204,18 +214,24 @@ $scripts = array(
 	"ui/nowplaying.js",
 	"ui/infobar2.js",
 	"ui/coverscraper.js",
-	"ui/favefinder.js",
+	// "ui/favefinder.js",
 	"ui/podcasts.js",
 	"browser/info.js",
-	"snapcast/snapcast.js"
+	"snapcast/snapcast.js",
+	"jquery/jquery.hotkeys.js",
+	"jquery/jquery.mCustomScrollbar.concat.min-3.1.5.js",
+	"ui/hotkeys.js",
+	"jquery/jquery.scrollTo.min.js"
 );
 foreach ($scripts as $i) {
 	logger::log("INIT", "Loading ".$i);
 	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 if (prefs::get_player_param('websocket') === false) {
+	logger::log("INIT", "Loading non-websocket player script");
 	print '<script type="text/javascript" src="player/mpd/checkprogress.js?version='.$version_string.'"></script>'."\n";
 } else {
+	logger::log("INIT", "Loading Websocket player script");
 	print '<script type="text/javascript" src="player/mopidy/checkprogress.js?version='.$version_string.'"></script>'."\n";
 }
 $inc = glob("streamplugins/*.js");
@@ -223,7 +239,6 @@ foreach($inc as $i) {
 	logger::log("INIT", "Loading ".$i);
 	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
-
 javascript_globals::print_globals();
 
 $inc = glob("browser/helpers/*.js");
@@ -256,19 +271,6 @@ if (prefs::get_pref('load_plugins_at_loadtime')) {
 	}
 }
 
-// Load any Javascript from the skin requirements file
-$skinrequires = [];
-if (file_exists('skins/'.prefs::skin().'/skin.requires')) {
-	$skinrequires = file('skins/'.prefs::skin().'/skin.requires');
-}
-foreach ($skinrequires as $s) {
-	$s = trim($s);
-	$ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));
-	if ($ext == "js") {
-		logger::log("INIT", "Including Skin Requirement ".$s);
-		print '<script type="text/javascript" src="'.$s.'?version='.$version_string.'"></script>'."\n";
-	}
-}
 ?>
 
 </head>

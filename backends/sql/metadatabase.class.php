@@ -11,6 +11,7 @@ class metaDatabase extends playlistCollection {
 	public const NODATA = [
 		'isSearchResult' => 4,
 		'Rating' => 0,
+		'Playcount' => 0,
 		'Tags' => []
 	];
 
@@ -51,14 +52,154 @@ class metaDatabase extends playlistCollection {
 			logger::core('METADATA', 'Year is not a 4 digit year, analyzing Date field instead');
 			$data['year'] = getYear($data['Date']);
 		}
+
+		if (($data['Track'] == 0 || $data['Track'] == '') &&
+			(strpos($data['X-AlbumUri'], 'yt:playlist:') !== false
+			|| strpos($data['X-AlbumUri'], 'youtube:playlist:') !== false
+			|| strpos($data['X-AlbumUri'], 'ytmusic:album:') !== false)
+		) {
+			logger::log('METADATA', 'Looking up Youtube Album to get Track Numnber');
+			$player = new player();
+			$dirs = [];
+			foreach ($player->parse_list_output('find file "'.$data['X-AlbumUri'].'"', $dirs, false) as $filedata) {
+				if ($filedata['Title'] == $data['Title']) {
+					logger::log('METADATA', 'Setting Track Number to', $filedata['Track']);
+					$data['Track'] = $filedata['Track'];
+				}
+			}
+			$player->close_mpd_connection();
+		}
 		// Very Important. The default in MPD_FILE_MODEL is 0 because that works for collection building
 		$data['Last-Modified'] = null;
+	}
+
+	//
+	// $data['albumuri'] should be a Uri that can be looked up using "find file"
+	// We pass it through the
+	//
+	public function addalbumtocollection($data) {
+		logger::log('METADATA', 'Adding album',$data['albumuri'],'to collection');
+		$this->options['doing_search'] = true;
+		$this->options['trackbytrack'] = false;
+		$player = new player();
+		$dirs = [];
+		foreach ($player->parse_list_output('find file "'.$data['albumuri'].'"', $dirs, false) as $filedata) {
+			$filedata['X-AlbumUri'] = $data['albumuri'];
+			$this->newTrack($filedata);
+		}
+		foreach ($this->albums as $album) {
+			$album->sortTracks();
+			foreach($album->tracks as $track) {
+				$playlistinfo = $this->doNewPlaylistFile($track->tags);
+				$playlistinfo['action'] = 'set';
+				$playlistinfo['urionly'] = true;
+				$this->sanitise_data($playlistinfo);
+				$this->set($playlistinfo);
+			}
+		}
+	}
+
+	//
+	// Used for searching for a track and adding it to the collection
+	// $data should contain things needed for fave_finder() - eg trackartist, Title, Album
+	// as well as originalaction - a metedatabase action, eg 'set'
+	// and some metadatabase attributes.
+	// Searches for thr track and the uses originalaction to do the metadatbase action
+	// to add it to the collection. This causes the usual returninfo mechanism to be
+	// triggered so the UI can be updated in one motion.
+	//
+	public function findandset($data) {
+		$matches = $this->fave_finder(
+			false,
+			true,
+			$data,
+			true
+		);
+		$best_match = array_shift($matches);
+		if ($best_match) {
+			logger::log('FINDAANDSET', 'Found', print_r($best_match, true));
+			$track = $this->doNewPlaylistFile($best_match);
+			$this->sanitise_data($track);
+		} else {
+			logger::log('FINDAANDSET', 'Did Not Find');
+			$track = $data;
+			$track['file'] = null;
+		}
+		$track['action'] = $data['originalaction'];
+		$track['attributes'] = $data['attributes'];
+		$this->{$track['action']}($track);
+	}
+
+	public function findandreturn($data) {
+		$matches = $this->fave_finder(
+			false,
+			false,
+			$data,
+			true
+		);
+		$best_match = array_shift($matches);
+		if (!$best_match) $best_match = [];
+		prefs::$database->returninfo = $best_match;
+	}
+
+	public function findandreturnall($data) {
+		$this->fave_finder(
+			false,
+			false,
+			$data,
+			false
+		);
+		$this->tracks_as_array();
+	}
+
+	public function browsetoll($uri) {
+		logger::log('METADATA', 'Adding album',$uri,'to listen later');
+		$this->options['doing_search'] = true;
+		$this->options['trackbytrack'] = false;
+		$player = new player();
+		$dirs = [];
+		foreach ($player->parse_list_output('find file "'.$uri.'"', $dirs, false) as $filedata) {
+			$filedata['X-AlbumUri'] = $uri;
+			$this->newTrack($filedata);
+		}
+		$result = $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
+		logger::log('METADATA', 'Created',(count($this->albums)),'albums');
+		foreach ($this->albums as $album) {
+			$album->sortTracks();
+			$check_id = $album->get_dummy_id();
+			foreach ($result as $r) {
+				$d = json_decode($r['JsonData'], true);
+				if ($d['id'] == $check_id) {
+					logger::warn("LISTENLATER", "Trying to add duplicate album to Listen Later");
+					return;
+				}
+			}
+			$json = $album->dump_json(null);
+			$this->sql_prepare_query(true, null, null, null, "INSERT INTO AlbumsToListenTotable (JsonData) VALUES (?)", $json);
+		}
+	}
+
+	public function ban($data) {
+		logger::log('METADATA', 'Banning',$data['trackartist'],$data['Title']);
+		$this->add_ban_track($data['trackartist'], $data['Title']);
 	}
 
 	public function set($data) {
 
 		//
 		// Set Metadata either on a new or an existing track
+		//
+
+		//
+		// There's a ot of mess in here regarding coping with multiple TTIDs.
+		// This can happen because some backends don't return Track Numbers all the time, but we do use them because you
+		// can have 3 tracks with the same title on the same album and them all be different, can't you Jimi Hendrix?
+		// So we might have a Hidden track or wishlist track without a track number, which has a Playcount.
+		// Then we might do a search and add another copy of that track that does have a track number.
+		// If we than Play that search result, we want the Playcount from the Hidden track.
+		// find_item() doesn't check track numbers for tracks which are search results because otherwise
+		// when we play the search result that's the only one it'll return and we won't get the Playcount.
+		// If we add that track to the Collection of course, we probably lose it don't we?
 		//
 
 		if ($data['trackartist'] === null || $data['Title'] === null ) {
@@ -70,41 +211,77 @@ class metaDatabase extends playlistCollection {
 
 		$ttids = $this->find_item($data, $this->forced_uri_only($data['urionly'], $data['domain']));
 
-		$newttids = array();
-		$dummytributes = false;
+		if ($data['attributes'] == null)
+			$data['attributes'] = [];
+
+		$wishlist_attributes = [];
+		$no_good = [];
 		foreach ($ttids as $ttid) {
 			//
 			// If we found a track, check to see if it's in the wishlist and remove it if it is because
 			// no longer want it, but preserve its metadata.
 			//
-			if (($dummytributes = $this->track_is_wishlist($ttid)) === false)
-				$newttids[] = $ttid;
-
-			// Hackery-wackery. In the event his request has come in from unplayable tracks to replace
-			// an unplayable track, make sure we set it as playable. Does no harm to do this on any track
-			$this->sql_prepare_query(true, null, null, null,
-				"UPDATE Tracktable SET LinkChecked = 0 WHERE TTindex = ?",
-				$ttid
-			);
+			$frogbar = $this->track_is_wishlist($ttid);
+			if ($frogbar !== false) {
+				$no_good[] = $ttid;
+				$wishlist_attributes = $frogbar;
+			}
 
 		}
-		$ttids = $newttids;
-		if (count($ttids) == 0 && $data['urionly'] && $dummytributes === false) {
+		$ttids = array_diff($ttids, $no_good);
+
+		if (count($ttids) == 0 && $data['urionly'] && count($wishlist_attributes) == 0) {
 			//
 			// In the case where urionly is set, we won't have matched on a wishlist track so check for one of
 			// those here now.
 			//
-			$dummytributes = $this->check_for_wishlist_track($data);
+			$frogbar = $this->check_for_wishlist_track($data);
+			if ($frogbar !== false) {
+				$wishlist_attributes = $frogbar;
+			}
 		}
 
-		//
-		// If we don't have any attributes, set a dummy attribute because this will result in the track
-		// being unhidden/un-searchified if it already exists.
-		// But in the case where the above wishlist checks returned some metatdata, use that instead
-		// to make sure we transfer metadata from the wishlist to our new track
-		//
-		if ($data['attributes'] == null) {
-			$data['attributes'] = ($dummytributes === false) ? [['attribute' => 'Rating', 'value'=> 0]] : $dummytributes;
+		$hidden_attributes = [];
+		$no_good = [];
+		foreach ($ttids as $ttid) {
+			// Hidden tracks can have URIs. This is a problem because we might have matched on one
+			// that is from a backend we can no longer play (eg spotify). If we just go through and
+			// unhide it, we won't update the URI. If we attempt to update the track's URI we might
+			// still have an album with a 'wrong' domain, and then check_album will get very confused
+			// in the future and all in all it's just a mess.
+			// A hidden track can only have a Playcount. Let's copy it, then delete the hidden track.
+			$frogbar = $this->check_for_hidden_track($ttid);
+			if ($frogbar !== false) {
+				$no_good[] = $ttid;
+				$hidden_attributes = $frogbar;
+			}
+		}
+		$ttids = array_diff($ttids, $no_good);
+
+		// Merge the set of thinsg we now have - anything from the wishlist or hidden track (which now no longer exist)
+		// and anything we've been asked to set, with the latter taking precedence.
+		$to_set = [];
+		$set = array_merge($wishlist_attributes, $hidden_attributes, $data['attributes']);
+		foreach ($set as $at) {
+			$to_set[$at['attribute']] = $at['value'];
+		}
+		$data['attributes'] = [];
+		foreach ($to_set as $at => $v) {
+			$data['attributes'][] = ['attribute' => $at, 'value' => $v];
+		}
+
+		// If we still don't have any attributes (we might have come in with none as we do if we're
+		// just adding an album to the collection via find file) then finally see if the ttid being added
+		// already exists and take its rating (so we don't alter it) or just set rating to 0 to unhide
+		// a hidden track via the trigger. Rmember that trigger also sets the justUpdated flag
+		// and sets isSearchResult to 1 (where necessary) so we always need to do something at this point.
+		if (count($data['attributes']) == 0) {
+			if (count($ttids) > 0) {
+				$rat_test = $this->simple_query('Rating', 'Ratingtable', 'TTindex', $ttids[0], 0);
+			} else {
+				$rat_test = 0;
+			}
+			$data['attributes'] = [['attribute' => 'Rating', 'value'=> $rat_test]];
 		}
 
 		if (count($ttids) == 0) {
@@ -112,36 +289,42 @@ class metaDatabase extends playlistCollection {
 			logger::log("SET", "Created New Track with TTindex ".$ttids[0]);
 		}
 
-		if (count($ttids) > 0 && $this->doTheSetting($ttids, $data['attributes'], $data['file'])) {
+		if (count($data['attributes']) == 0) {
+			logger::error('SET', 'No attributes to set!');
+			return;
+		}
+
+		if (count($ttids) > 0 && $ttids[0] !== null && $this->doTheSetting($ttids, $data['attributes'], $data['file'])) {
 			logger::debug('SET', 'Set command success');
 		} else {
-			logger::warn("SET", "Set Command failed", print_r($ttids, true));
-			header('HTTP/1.1 417 Expectation Failed');
+			logger::warn("SET", "Set Command failed");
 			$this->returninfo['error'] = 'TTindex not found';
+			logger::log('SET', $this->returninfo['error']);
+			header('HTTP/1.1 417 Expectation Failed');
 		}
 	}
 
-	public function seturi($data) {
-		// ONLY for updating the URI of a track via eg unplayabletracks
-		$ttindex = $data['reqid'];
-		$uri = $data['file'];
-		logger::log('HACKETY', 'Updating URI of TTindex',$ttindex,'to',$uri);
-		prefs::$database->sql_prepare_query(true, null, null, null,
-			"UPDATE Tracktable SET Uri = ?, Hidden = 0, LinkChecked = 0 WHERE TTindex = ?",
-			$uri,
-			$ttindex
-		);
-		$albumindex = prefs::$database->simple_query('Albumindex', 'Tracktable', 'TTindex', $ttindex, null);
-		$domain = prefs::$database->simple_query('Domain', 'Albumtable', 'Albumindex', $albumindex, null);
-		if ($domain != getDomain($uri)) {
-			prefs::$database->sql_prepare_query(true, null, null, null,
-				"UPDATE Albumtable SET AlbumUri = ?, Domain = ? WHERE Albumindex = ?",
-				null,
-				'local',
-				$albumindex
-			);
-		}
-	}
+	// public function seturi($data) {
+	// 	// ONLY for updating the URI of a track via eg unplayabletracks
+	// 	$ttindex = $data['reqid'];
+	// 	$uri = $data['file'];
+	// 	logger::log('HACKETY', 'Updating URI of TTindex',$ttindex,'to',$uri);
+	// 	prefs::$database->sql_prepare_query(true, null, null, null,
+	// 		"UPDATE Tracktable SET Uri = ?, Hidden = 0, LinkChecked = 0 WHERE TTindex = ?",
+	// 		$uri,
+	// 		$ttindex
+	// 	);
+	// 	$albumindex = prefs::$database->simple_query('Albumindex', 'Tracktable', 'TTindex', $ttindex, null);
+	// 	$domain = prefs::$database->simple_query('Domain', 'Albumtable', 'Albumindex', $albumindex, null);
+	// 	if ($domain != getDomain($uri)) {
+	// 		prefs::$database->sql_prepare_query(true, null, null, null,
+	// 			"UPDATE Albumtable SET AlbumUri = ?, Domain = ? WHERE Albumindex = ?",
+	// 			null,
+	// 			'local',
+	// 			$albumindex
+	// 		);
+	// 	}
+	// }
 
 	public function inc($data) {
 
@@ -338,12 +521,19 @@ class metaDatabase extends playlistCollection {
 			exit(0);
 		}
 		$ttids = $this->find_item($data, $this->forced_uri_only(false, $data['domain']));
-		if (count($ttids) > 0) {
-			$ttid = array_shift($ttids);
+
+		$tempinfo = self::NODATA;
+		foreach ($ttids as $ttid) {
 			$this->returninfo = $this->get_all_data($ttid);
-		} else {
-			$this->returninfo = self::NODATA;
+			$tempinfo['Rating'] = max($tempinfo['Rating'], $this->returninfo['Rating']);
+			$tempinfo['Playcount'] = max($tempinfo['Playcount'], $this->returninfo['Playcount']);
+			$tempinfo['Tags'] = (count($tempinfo['Tags']) > count($this->returninfo['Tags'])) ? $tempinfo['Tags'] : $this->returninfo['Tags'];
 		}
+
+		$this->returninfo['Rating'] = $tempinfo['Rating'];
+		$this->returninfo['Playcount'] = $tempinfo['Playcount'];
+		$this->returninfo['Tags'] = $tempinfo['Tags'];
+
 		if ($item !== false)
 			return array_key_exists($item, $this->returninfo) ? $this->returninfo[$item] : 0;
 	}
@@ -499,13 +689,6 @@ class metaDatabase extends playlistCollection {
 		// In that case we look for a match where there is something in the album field and then for
 		// where album is NULL
 
-		// FIXME! There is one scenario where the above fails.
-		// If you tag or rate a track, and then add it to the collection again from another backend
-		// later on, the rating doesn't get picked up by the new copy.
-		// Looking everything up by name/album/artist (i.e. ignoring the URI in $this->find_item)
-		// doesn't fix this because the collection display still doesn't show the rating as that's
-		// looked up by TTindex
-
 		// $start_time = time();
 		logger::mark("FIND ITEM", "Looking for item ".$data['Title']);
 		$ttids = array();
@@ -522,98 +705,86 @@ class metaDatabase extends playlistCollection {
 		}
 
 		if (count($ttids) == 0) {
-			if ($data['Album']) {
-				if ($data['albumartist'] !== null && $data['Track'] != 0) {
-					logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['Album'],"title",$data['Title'],"track number",$data['Track']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
-						"SELECT
-							TTindex
-						FROM
-							Tracktable JOIN Albumtable USING (Albumindex)
-							JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-						WHERE
-							Title = ?
-							AND Artistname = ?
-							AND Albumname = ?
-							AND TrackNo = ?",
-						$data['Title'], $data['albumartist'], $data['Album'], $data['Track']);
-					$ttids = array_merge($ttids, $t);
-				}
+			// In this one ignore search results - we might have a search result with a track number which will override
+			// a hidden track without one, and we don't want to do that.
+			if ($data['albumartist'] !== null && $data['Track'] != 0) {
+				logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['Album'],"title",$data['Title'],"track number",$data['Track']);
+				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
+					"SELECT
+						TTindex
+					FROM
+						Tracktable JOIN Albumtable USING (Albumindex)
+						JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+					WHERE
+						Title = ?
+						AND Artistname = ?
+						AND Albumname = ?
+						AND TrackNo = ?
+						AND isSearchResult < 2",
+					$data['Title'], $data['albumartist'], $data['Album'], $data['Track']);
+				$ttids = array_merge($ttids, $t);
+			}
 
-				if (count($ttids) == 0 && $data['albumartist'] !== null) {
-					logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['Album'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
-						"SELECT
-							TTindex
-						FROM
-							Tracktable JOIN Albumtable USING (Albumindex)
-							JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-						WHERE
-							Title = ?
-							AND Artistname = ?
-							AND Albumname = ?",
-						$data['Title'], $data['albumartist'], $data['Album']);
-					$ttids = array_merge($ttids, $t);
-				}
+			if (count($ttids) == 0 && $data['albumartist'] !== null) {
+				logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['Album'],"and title",$data['Title']);
+				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
+					"SELECT
+						TTindex
+					FROM
+						Tracktable JOIN Albumtable USING (Albumindex)
+						JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+					WHERE
+						Title = ?
+						AND Artistname = ?
+						AND Albumname = ?",
+					$data['Title'], $data['albumartist'], $data['Album']);
+				$ttids = array_merge($ttids, $t);
+			}
 
-				if (count($ttids) == 0 && ($data['albumartist'] == null || $data['albumartist'] == $data['trackartist'])) {
-					logger::log("FIND ITEM", "  Trying by artist",$data['trackartist'],",album",$data['Album'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
-						"SELECT
-							TTindex
-						FROM
-							Tracktable JOIN Artisttable USING (Artistindex)
-							JOIN Albumtable USING (Albumindex)
-						WHERE
-							Title = ?
-							AND Artistname = ?
-							AND Albumname = ?", $data['Title'], $data['trackartist'], $data['Album']);
-					$ttids = array_merge($ttids, $t);
-				}
-
-				// Finally look for Uri NULL which will be a wishlist item added via a radio station
-				if (count($ttids) == 0) {
-					logger::log("FIND ITEM", "  Trying by (wishlist) artist",$data['trackartist'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
-						"SELECT
-							TTindex
-						FROM
-							Tracktable JOIN Artisttable USING (Artistindex)
-						WHERE
-							Title = ?
-							AND Artistname = ?
-							AND Uri IS NULL",
-						$data['Title'], $data['trackartist']);
-					$ttids = array_merge($ttids, $t);
-				}
-			} else {
-				// No album supplied - ie this is from a radio stream. First look for a match where
-				// there is something in the album field
-				logger::log("FIND ITEM", "  Trying by artist",$data['trackartist'],"Uri NOT NULL and title",$data['Title']);
+			if (count($ttids) == 0 && ($data['albumartist'] == null || $data['albumartist'] == $data['trackartist'])) {
+				logger::log("FIND ITEM", "  Trying by trackartist",$data['trackartist'],",album",$data['Album'],"and title",$data['Title']);
 				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
 					"SELECT
 						TTindex
 					FROM
 						Tracktable JOIN Artisttable USING (Artistindex)
-					 WHERE
+						JOIN Albumtable USING (Albumindex)
+					WHERE
 						Title = ?
 						AND Artistname = ?
-						AND Uri IS NOT NULL", $data['Title'], $data['trackartist']);
+						AND Albumname = ?", $data['Title'], $data['trackartist'], $data['Album']);
 				$ttids = array_merge($ttids, $t);
+			}
 
-				if (count($ttids) == 0) {
-					logger::log("FIND ITEM", "  Trying by (wishlist) artist",$data['trackartist'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
-						"SELECT
-							TTindex
-						FROM
-							Tracktable JOIN Artisttable USING (Artistindex)
-						WHERE
-							Title = ?
-							AND Artistname = ?
-							AND Uri IS NULL", $data['Title'], $data['trackartist']);
-					$ttids = array_merge($ttids, $t);
-				}
+			if (count($ttids) == 0 && !$data['Album']) {
+				logger::log("FIND ITEM", "  Trying by trackartist",$data['trackartist'],"and title",$data['Title']);
+				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
+					"SELECT
+						TTindex
+					FROM
+						Tracktable JOIN Artisttable USING (Artistindex)
+					WHERE
+						Title = ?
+						AND Artistname = ?
+						AND Uri IS NOT NULL",
+					$data['Title'], $data['trackartist']);
+				$ttids = array_merge($ttids, $t);
+			}
+
+			// Finally look for Uri NULL which will be a wishlist item added via a radio station
+			if (count($ttids) == 0) {
+				logger::log("FIND ITEM", "  Trying by (wishlist) artist",$data['trackartist'],"and title",$data['Title']);
+				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
+					"SELECT
+						TTindex
+					FROM
+						Tracktable JOIN Artisttable USING (Artistindex)
+					WHERE
+						Title = ?
+						AND Artistname = ?
+						AND Uri IS NULL",
+					$data['Title'], $data['trackartist']);
+				$ttids = array_merge($ttids, $t);
 			}
 		}
 
@@ -711,6 +882,7 @@ class metaDatabase extends playlistCollection {
 				}
 				$this->check_audiobook_status($ttid);
 				if ($uri) {
+					logger::log('METADATA', 'Creating Return Info');
 					$this->returninfo['metadata'] = $this->get_all_data($ttid);
 				}
 			}
@@ -851,12 +1023,12 @@ class metaDatabase extends playlistCollection {
 	}
 
 	private function forced_uri_only($u,$d) {
-		// Some mopidy backends - YouTube and SoundCloud - can return the same artist/album/track info
+		// Some mopidy backends - SoundCloud - can return the same artist/album/track info
 		// for multiple different tracks.
 		// This gives us a problem because $this->find_item will think they're the same.
 		// So for those backends we always force urionly to be true
 		logger::core("USERRATINGS", "Checking domain : ".$d);
-		if ($u || $d == "youtube" || $d == "soundcloud") {
+		if ($u || $d == "soundcloud") {
 			return true;
 		} else {
 			return false;
@@ -877,18 +1049,20 @@ class metaDatabase extends playlistCollection {
 			$meta = $this->get_all_data($ttid);
 			$retval = [
 				['attribute' => 'Rating', 'value' => $meta['Rating']],
-				['attribute' => 'Tags', 'value' => $meta['Tags']]
+				['attribute' => 'Tags', 'value' => $meta['Tags']],
+				['attribute' => 'Playcount', 'value' => $meta['Playcount']]
 			];
+			$this->returninfo['deletedwishlist'][] = $ttid;
 			$this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex=".$ttid, true);
 			$this->generic_sql_query("DELETE FROM Tracktable WHERE TTindex=".$ttid, true);
 		}
 		return $retval;
 	}
 
-	// private function track_is_hidden($ttid) {
-	// 	$h = $this->simple_query('Hidden', 'Tracktable', 'TTindex', $ttid, 0);
-	// 	return ($h != 0) ? true : false;
-	// }
+	private function track_is_hidden($ttid) {
+		$h = $this->simple_query('Hidden', 'Tracktable', 'TTindex', $ttid, 0);
+		return ($h != 0) ? true : false;
+	}
 
 	// private function track_is_searchresult($ttid) {
 	// 	// This is for detecting tracks that were added as part of a search, or un-hidden as part of a search
@@ -914,12 +1088,27 @@ class metaDatabase extends playlistCollection {
 			$meta = $this->get_all_data($obj['TTindex']);
 			$retval = [
 				['attribute' => 'Rating', 'value' => $meta['Rating']],
-				['attribute' => 'Tags', 'value' => $meta['Tags']]
+				['attribute' => 'Tags', 'value' => $meta['Tags']],
+				['attribute' => 'Playcount', 'value' => $meta['Playcount']]
 			];
+			$this->returninfo['deletedwishlist'][] = $obj['TTindex'];
 			$this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex=".$obj['TTindex'], true);
 			$this->generic_sql_query("DELETE FROM Tracktable WHERE TTindex=".$obj['TTindex'], true);
 		}
 		return $retval;
+	}
+
+	private function check_for_hidden_track($ttid) {
+		if ($this->track_is_hidden($ttid)) {
+			logger::log('SETADATA', 'TTindex',$ttid,'is a hidden track. Copying its playcount then junking it');
+			$playcount = $this->simple_query('Playcount', 'Playcounttable', 'TTindex', $ttid, 0);
+			$this->sql_prepare_query(true, null, null, null,
+				"DELETE FROM Tracktable WHERE TTindex = ?",
+				$ttid
+			);
+			return [['attribute' => 'Playcount', 'value' => $playcount]];
+		}
+		return false;
 	}
 
 	private function get_all_data($ttid) {
@@ -1031,26 +1220,21 @@ class metaDatabase extends playlistCollection {
 		// This is used by the metadata functions for adding new tracks. It is NOT used
 		// when doing a search or updating the collection, for reasons explained below.
 
-		// This copes with backends like youtube and soundcloud where 2 actual different tracks
-		// might fall foul of our UNiQUE KEY constraint because those backends don't really have
-		// the concept of an album or a track number.
+		// IMPORTANT NOTE
+		// The indices
+		// albumartist_index, trackartist_index, album_index
+		// come through from the frontend via get_extra_track_info() but using them
+		// is DANGEROUS because the album and / or artist might no longer exist if the track is
+		// the result of a search and another search has been performed since.
 
-		// If it gets to the stage where that's a problem, we'll just drop support for those backends.
-		// Fuck knows it'll make my life easier. I quite like having youtube support, but only because
-		// I've implemented the download audio option.
-
-		if ($data['albumartist_index'] == null) {
-			// Does the albumartist exist?
-			$data['albumartist_index'] = $this->check_artist($data['albumartist']);
-		}
+		// Does the albumartist exist?
+		$data['albumartist_index'] = $this->check_artist($data['albumartist']);
 
 		// Does the track artist exist?
-		if ($data['trackartist_index'] == null) {
-			if ($data['trackartist'] != $data['albumartist']) {
-				$data['trackartist_index'] = $this->check_artist($data['trackartist']);
-			} else {
-				$data['trackartist_index'] = $data['albumartist_index'];
-			}
+		if ($data['trackartist'] != $data['albumartist']) {
+			$data['trackartist_index'] = $this->check_artist($data['trackartist']);
+		} else {
+			$data['trackartist_index'] = $data['albumartist_index'];
 		}
 
 		if ($data['albumartist_index'] === null || $data['trackartist_index'] === null) {
@@ -1058,16 +1242,17 @@ class metaDatabase extends playlistCollection {
 			return null;
 		}
 
-		if ($data['album_index'] == null) {
-			// Does the album exist?
-			if ($data['Album'] == null) {
+		if ($data['Album'] == null) {
+			if ($data['domain'] == 'ytmusic' || $data['domain'] == 'youtube') {
+				logger::warn('BACKEND', 'Album name is not set for',$data['Title'],'- seeing what happens if we allow this');
+			} else {
 				$data['Album'] = 'rompr_wishlist_'.microtime('true');
 			}
-			$data['album_index'] = $this->check_album($data);
-			if ($data['album_index'] === null) {
-				logger::warn('BACKEND', "Trying to create new track but failed to get an album index");
-				return null;
-			}
+		}
+		$data['album_index'] = $this->check_album($data);
+		if ($data['album_index'] === null) {
+			logger::warn('BACKEND', "Trying to create new track but failed to get an album index");
+			return null;
 		}
 
 		$data['sourceindex'] = null;
@@ -1080,7 +1265,7 @@ class metaDatabase extends playlistCollection {
 		// lastUpdateId() does not return the TTindex of the updated track but rather the current AUTO_INCREMENT value of the table
 		// which is about as useful as giving me a forwarding address that only contains the correct continent.
 
-		// We also have to cope with youtube and soundcloud, where the same combination of unique keys can actually refer to
+		// We also have to cope with soundcloud, where the same combination of unique keys can actually refer to
 		// different tracks. In those circumstances we will have looked up using uri only. As urionly did NOT find a track this
 		// means the track we're trying to add must be different. In this case we increment the disc number until we have a unique track.
 
@@ -1156,134 +1341,228 @@ class metaDatabase extends playlistCollection {
 		exit(0);
 	}
 
+	public function youtubedl_album($data) {
+		$urilist = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, [],
+				"SELECT Uri FROM Tracktable
+				WHERE Albumindex = ?
+				AND isAudiobook = ?
+				AND Uri LIKE '%:video:%'",
+			$data['who'],
+			($data['why'] == 'a') ? 0 : 1
+		);
+		$pfile = $this->youtubedl([
+			'urilist' => $urilist,
+			'pfile' => 'prefs/youtubedl/dlprogress_'.md5($data['who'])
+		]);
+		return $pfile;
+	}
+
 	public function youtubedl($data) {
-		$ytdl_path = find_executable('youtube-dl');
-		if ($ytdl_path === false)
-			$this->youtubedl_error('youtube-dl binary could not be found', null);
+
+		//
+		// Important. This function returns the ath of its progress file.
+		// If you call this with a list of Uris to download you MUST also pass
+		// a progress file. Downloading a list using multiple progress files
+		// will break everything.
+		//
+
+		$pfile = null;
+		$downloader = 'yt-dlp';
+		$ytdl_path = find_executable($downloader);
+		if ($ytdl_path === false) {
+			$downloader = 'youtube-dl';
+			$ytdl_path = find_executable($downloader);
+			if ($ytdl_path === false)
+				$this->youtubedl_error('youtube-dl binary could not be found', null);
+		}
 
 		logger::core('YOUTUBEDL', 'youtube-dl is at',$ytdl_path);
-		$avconv_path = find_executable('avconv');
+		$avconv_path = find_executable('ffmpeg');
 		if ($avconv_path === false) {
-			$avconv_path = find_executable('ffmpeg');
+			if ($downloader == 'yt-dlp')
+				$this->youtubedl_error('Could not find ffmpeg - this is required for use with yt-dlp', null);
+
+			$avconv_path = find_executable('avconv');
 			if ($avconv_path === false)
-				$this->youtubedl_error('Could not find avconv or ffmpeg', null);
+				$this->youtubedl_error('Could not find ffmpeg or avconv', null);
 
 		}
 
-		$a = preg_match('/:video\/.*\.(.+)$/', $data['file'], $matches);
-		if (!$a)
-			$a = preg_match('/:video:(.+)$/', $data['file'], $matches);
+		$stufftoget = [];
 
-		if (!$a)
-			$this->youtubedl_error('Could not match URI '.$data['file'], null);
+		foreach ($data['urilist'] as $mopidy_uri) {
+			$a = preg_match('/:video\/.*\.(.+)$/', $mopidy_uri, $matches);
+			if (!$a)
+				$a = preg_match('/:video:(.+)$/', $mopidy_uri, $matches);
 
-		$uri_to_get = 'https://youtu.be/'.$matches[1];
-		logger::log('YOUTUBEDL', 'Downloading',$uri_to_get);
+			if (!$a)
+				$this->youtubedl_error('Could not match URI '.$mopidy_uri, null);
 
-		$info = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
-			"SELECT
-				Title,
-				TrackNo,
-				ta.Artistname AS trackartist,
-				aa.Artistname AS albumartist,
-				Albumname
-				FROM
-				Tracktable
-				JOIN Artisttable AS ta USING (Artistindex)
-				JOIN Albumtable USING (Albumindex)
-				JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
-				WHERE Uri = ?
-			ORDER BY isSearchResult ASC",
-			$data['file']
-		);
-		if (is_array($info) && count($info) > 0) {
-			logger::log('YOUTUBEDL', '  Title is',$info[0]['Title']);
-			logger::log('YOUTUBEDL', '  Track Number is',$info[0]['TrackNo']);
-			logger::log('YOUTUBEDL', '  Album is',$info[0]['Albumname']);
-			logger::log('YOUTUBEDL', '  Track Artist is',$info[0]['trackartist']);
-			logger::log('YOUTUBEDL', '  Album Artist is',$info[0]['albumartist']);
-		} else {
-			logger::log('YOUTUBEDL', '  Could not find title and artist from collection');
+			if ($downloader == 'yt-dlp') {
+				logger::log('YOUTUBEDL', 'Using yt-dlp so passing youtube music URI so we can get HQ downlaods');
+				$uri_to_get = 'https://music.youtube.com/watch/?v='.$matches[1];
+			} else {
+				$uri_to_get = 'https://youtu.be/'.$matches[1];
+			}
+			logger::log('YOUTUBEDL', 'Downloading',$uri_to_get);
+
+			$info = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+				"SELECT
+					Title,
+					TrackNo,
+					ta.Artistname AS trackartist,
+					aa.Artistname AS albumartist,
+					Albumname
+					FROM
+					Tracktable
+					JOIN Artisttable AS ta USING (Artistindex)
+					JOIN Albumtable USING (Albumindex)
+					JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
+					WHERE Uri = ?
+				ORDER BY isSearchResult ASC",
+				$mopidy_uri
+			);
+			if (is_array($info) && count($info) > 0) {
+				logger::log('YOUTUBEDL', '  Title is',$info[0]['Title']);
+				logger::log('YOUTUBEDL', '  Track Number is',$info[0]['TrackNo']);
+				logger::log('YOUTUBEDL', '  Album is',$info[0]['Albumname']);
+				logger::log('YOUTUBEDL', '  Track Artist is',$info[0]['trackartist']);
+				logger::log('YOUTUBEDL', '  Album Artist is',$info[0]['albumartist']);
+			} else {
+				logger::log('YOUTUBEDL', '  Could not find title and artist from collection');
+			}
+
+			$ttindex = $this->simple_query('TTindex', 'Tracktable', 'Uri', $mopidy_uri, null);
+			if ($ttindex === null)
+				$this->youtubedl_error('Could not locate that track in the database!', null);
+
+			if ($data['pfile']) {
+				$progress_file = $data['pfile'];
+			} else {
+				$progress_file = 'prefs/youtubedl/dlprogress_'.md5($mopidy_uri);
+			}
+
+			if (!file_put_contents($progress_file, "Download Of ".(count($data['urilist']))." Files Starting...\n", FILE_APPEND)) {
+				$this->youtubedl_error('Could not open progress file. Possible permissions error', null);
+			}
+
+			$stufftoget[] = [
+				'mopidy_uri' 	=> $mopidy_uri,
+				'uri_to_get' 	=> $uri_to_get,
+				'info'		 	=> $info,
+				'ttindex'		=> $ttindex,
+				'progress_file'	=> $progress_file
+			];
 		}
-
-		$ttindex = $this->simple_query('TTindex', 'Tracktable', 'Uri', $data['file'], null);
-		if ($ttindex === null)
-			$this->youtubedl_error('Could not locate that track in the database!', null);
-
-		$progress_file = 'prefs/youtubedl/dlprogress_'.md5($data['file']);
-		if (!file_put_contents($progress_file, '    Downloading '.$uri_to_get."\n")) {
-			$this->youtubedl_error('Could not open progress file. Possible permissions error', null);
-		}
-
-		$target_dir = 'prefs/youtubedl/'.$ttindex;
-		while (is_dir($target_dir))
-			$target_dir .= '1';
-
-		logger::log('YOUTUBEDL', 'Making Directory ',$target_dir);
-		mkdir($target_dir);
 
 		// At this point, terminate the request so the download can run in the background.
 		// If we don't do this the browser will retry after 3 minutes and there's nothing we
 		// can do about that.
-		close_browser_connection();
 		logger::log('YOUTUBEDL', 'OK now we start the fun');
-		file_put_contents($target_dir.'/original.uri', $uri_to_get);
-		exec($ytdl_path.'youtube-dl -o "'.$target_dir.'/%(title)s-%(id)s.%(ext)s" --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> '.$progress_file.' 2>&1', $output, $retval);
-		if ($retval != 0 && $retval != 1) {
-			$this->youtubedl_error('youtube-dl returned error code '.$retval, $progress_file);
-		}
-		$files = glob($target_dir.'/*.flac');
-		if (count($files) == 0) {
-			$this->youtubedl_error('Could not find downloaded flac file in '.$target_dir, $progress_file);
-		} else {
-			logger::log('YOUTUBEDL', print_r($files, true));
-		}
+		close_browser_connection();
 
-		if (is_array($info) && count($info) > 0) {
-			logger::log('YOUTUBEDL', 'Writing ID3 tags to',$files[0]);
+		foreach ($stufftoget as $stuff) {
 
-			$getID3 = new getID3;
-			$getID3->setOption(array('encoding'=>'UTF-8'));
+			file_put_contents($stuff['progress_file'], '    Downloading '.$stuff['uri_to_get']."\n", FILE_APPEND);
 
-			getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
+			$target_dir = 'prefs/youtubedl/'.$stuff['ttindex'];
+			while (is_dir($target_dir))
+				$target_dir .= '1';
 
-			$tagwriter = new getid3_writetags;
-			$tagwriter->filename       = $files[0];
-			$tagwriter->tagformats     = array('metaflac');
-			$tagwriter->overwrite_tags = true;
-			$tagwriter->tag_encoding   = 'UTF-8';
-			$tagwriter->remove_other_tags = true;
-			$tags = array(
-				'artist' => array(html_entity_decode($info[0]['trackartist'])),
-				'albumartist' => array(html_entity_decode($info[0]['albumartist'])),
-				'album' => array(html_entity_decode($info[0]['Albumname'])),
-				'title' => array(html_entity_decode($info[0]['Title'])),
-				'tracknumber' => array($info[0]['TrackNo'])
-			);
-			$tagwriter->tag_data = $tags;
-			if ($tagwriter->WriteTags()) {
-				logger::log('YOUTTUBEDL', 'Successfully wrote tags');
-				if (!empty($tagwriter->warnings)) {
-					logger::log('YOUTUBEDL', 'There were some warnings'.implode(' ', $tagwriter->warnings));
-				}
-			} else {
-				logger::error('YOUTUBEDL', 'Failed to write tags!', implode(' ', $tagwriter->errors));
+			logger::log('YOUTUBEDL', 'Making Directory ',$target_dir);
+			mkdir($target_dir);
+
+			$switches = [
+				'-o "'.$target_dir.'/%(title)s-%(id)s.%(ext)s"',
+				'--ffmpeg-location "'.$avconv_path.'"',
+				'--extract-audio',
+				'--write-thumbnail',
+				'--restrict-filenames',
+				'--newline',
+				'--audio-format flac',
+				'--audio-quality 0'
+			];
+			if ($downloader == 'yt-dlp') {
+				$switches[] = '--embed-thumbnail';
+				$switches[] = '--format bestvideo*+bestaudio/best';
 			}
-		}
+			$cmdline = $ytdl_path.$downloader.' '.implode(' ', $switches).' '.$stuff['uri_to_get'];
+			logger::log('YOUTUBEDL', 'Command line is',$cmdline);
+			file_put_contents($stuff['progress_file'], $cmdline."\n", FILE_APPEND);
+			exec($cmdline.' >> '.$stuff['progress_file'].' 2>&1', $output, $retval);
+			if ($retval != 0 && $retval != 1) {
+				$this->youtubedl_error('youtube-dl returned error code '.$retval, $stuff['progress_file']);
+			}
+			$files = glob($target_dir.'/*.flac');
+			if (count($files) == 0) {
+				$this->youtubedl_error('Could not find downloaded flac file in '.$target_dir, $stuff['progress_file']);
+			} else {
+				logger::log('YOUTUBEDL', print_r($files, true));
+			}
 
-		$new_uri = dirname(dirname(get_base_url())).'/'.$files[0];
-		logger::log('YOUTUBEDL', 'New URI is', $new_uri);
-		$this->sql_prepare_query(true, null, null, null,
-			"UPDATE Tracktable SET Uri = ? WHERE Uri = ?",
-			$new_uri,
-			$data['file']
-		);
-		$albumindex = $this->simple_query('Albumindex', 'Tracktable', 'Uri', $new_uri, null);
-		$this->sql_prepare_query(true, null, null, null,
-			"UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = ?",
-			$albumindex
-		);
-		return $progress_file;
+			$info = $stuff['info'];
+
+			if (is_array($info) && count($info) > 0) {
+				logger::log('YOUTUBEDL', 'Writing ID3 tags to',$files[0]);
+
+				$getID3 = new getID3;
+				$getID3->setOption(array('encoding'=>'UTF-8'));
+
+				getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
+
+				$tagwriter = new getid3_writetags;
+				$tagwriter->filename       = $files[0];
+				$tagwriter->tagformats     = array('metaflac');
+				$tagwriter->overwrite_tags = true;
+				$tagwriter->tag_encoding   = 'UTF-8';
+				$tagwriter->remove_other_tags = true;
+				$tags = array(
+					'artist' => array(html_entity_decode($info[0]['trackartist'])),
+					'albumartist' => array(html_entity_decode($info[0]['albumartist'])),
+					'album' => array(html_entity_decode($info[0]['Albumname'])),
+					'title' => array(html_entity_decode($info[0]['Title'])),
+					'tracknumber' => array($info[0]['TrackNo'])
+				);
+				$tagwriter->tag_data = $tags;
+				if ($tagwriter->WriteTags()) {
+					logger::log('YOUTTUBEDL', 'Successfully wrote tags');
+					if (!empty($tagwriter->warnings)) {
+						logger::log('YOUTUBEDL', 'There were some warnings'.implode(' ', $tagwriter->warnings));
+					}
+				} else {
+					logger::error('YOUTUBEDL', 'Failed to write tags!', implode(' ', $tagwriter->errors));
+				}
+
+				$newname = format_for_disc(html_entity_decode($info[0]['albumartist'])).
+					'/'.format_for_disc(html_entity_decode($info[0]['Albumname']));
+				logger::log('YOUTUBEDL', 'Trying to mkdir','prefs/youtubedl/'.$newname);
+				$newfile = $info[0]['TrackNo'].' - '.format_for_disc(html_entity_decode($info[0]['Title'])).'.flac';
+				mkdir('prefs/youtubedl/'.$newname, 0777, true);
+				if (is_dir('prefs/youtubedl/'.$newname)) {
+					$target_dir = 'prefs/youtubedl/'.$newname;
+					logger::log('YOUTUBEDL', 'Moving',$files[0],'to',$target_dir.'/'.$newfile);
+					rename($files[0], $target_dir.'/'.$newfile);
+					$files[0] = $target_dir.'/'.$newfile;
+				}
+			}
+
+			copy($stuff['progress_file'], $target_dir.'/download_log.txt');
+
+			$new_uri = dirname(dirname(get_base_url())).'/'.$files[0];
+			logger::log('YOUTUBEDL', 'New URI is', $new_uri);
+			$this->sql_prepare_query(true, null, null, null,
+				"UPDATE Tracktable SET Uri = ? WHERE Uri = ?",
+				$new_uri,
+				$stuff['mopidy_uri']
+			);
+			$albumindex = $this->simple_query('Albumindex', 'Tracktable', 'Uri', $new_uri, null);
+			$this->sql_prepare_query(true, null, null, null,
+				"UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = ?",
+				$albumindex
+			);
+			$pfile = $stuff['progress_file'];
+		}
+		return $pfile;
 	}
 
 }

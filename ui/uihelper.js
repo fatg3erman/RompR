@@ -280,11 +280,11 @@ jQuery.fn.addCustomScrollBar = function() {
 		if (!uiHelper.is_touch_ui) {
 			$(this).mCustomScrollbar({
 				theme: "light-thick",
-				scrollInertia: 250,
+				scrollInertia: 300,
 				// contentTouchScroll: 25,
 				mouseWheel: {
 					scrollAmount: parseInt(prefs.wheelscrollspeed),
-					normalizeDelta: false
+					// normalizeDelta: false
 				},
 				alwaysShowScrollbar: 1,
 				advanced: {
@@ -651,7 +651,6 @@ var uiHelper = function() {
 				setDraggable("#audiobooks");
 				setDraggable("#somafmlist");
 				setDraggable("#communityradiolist");
-				setDraggable("#icecastlist");
 				setDraggable("#tuneinlist");
 				setDraggable('#artistinformation');
 				setDraggable('#albuminformation');
@@ -669,10 +668,10 @@ var uiHelper = function() {
 				$(document).on('mouseenter', '.combobox-entry', makeHoverWork);
 				$(document).on('mouseleave', '.combobox-entry', makeHoverWork);
 				$(document).on('mousemove', '.combobox-entry', makeHoverWork);
-				// shortcuts.load();
+				shortcuts.load();
 			}
 			$("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
-			$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
+			$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup playersearch', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
 			$('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add, placeholder: language.gettext('lastfm_addtagslabel')});
 			$(window).on('resize', uiHelper.adjustLayout);
 			layoutProcessor.initialise();
@@ -680,24 +679,12 @@ var uiHelper = function() {
 			bindClickHandlers();
 			setPlayClickHandlers();
 			bindPlaylistClicks();
-			// showUpdateWindow();
+			showUpdateWindow();
+			uiHelper.set_rounded_corner_buffer_size();
 		},
 
-		changePanel: function(e) {
-			e.preventDefault();
-      		e.stopPropagation();
-      		e.cancelBubble = true;
-      		e.returnValue = false;
+		changePanel: function() {
 			uiHelper.sourceControl($(this).attr('name'));
-		    return false;
-		},
-
-		absorbTouch: function(e) {
-			e.preventDefault();
-      		e.stopPropagation();
-      		e.cancelBubble = true;
-      		e.returnValue = false;
-		    return false;
 		},
 
 		sourceControl: function(panel) {
@@ -742,6 +729,10 @@ var uiHelper = function() {
 				});
 
 			}
+		},
+
+		set_rounded_corner_buffer_size: function() {
+			set_css_variable('--stupid-rounded-corner-buffer-size', prefs.stupid_rounded_corner_buffer_size.toString()+'px');
 		},
 
 		ui_config_header: function(options) {

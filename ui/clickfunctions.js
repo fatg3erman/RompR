@@ -289,6 +289,7 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('clicktrackmenu', makeTrackMenu);
 	// clickRegistry.addClickHandlers('clickremovebookmark', removeBookmark);
 	clickRegistry.addClickHandlers('addtollviabrowse', browseAndAddToListenLater);
+	clickRegistry.addClickHandlers('removefromll', removeFromListenLater);
 	clickRegistry.addClickHandlers('addtocollectionviabrowse', browseAndAddToCollection);
 	clickRegistry.addClickHandlers('amendalbum', amendAlbumDetails);
 	clickRegistry.addClickHandlers('setasaudiobook', setAsAudioBook);
@@ -305,6 +306,7 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('removealbum', metaHandlers.fromUiElement.removeAlbumFromDb);
 	// clickRegistry.addClickHandlers('resetresume', metaHandlers.fromUiElement.resetResumePosition);
 	clickRegistry.addClickHandlers('youtubedl', metaHandlers.fromUiElement.downloadYoutubeTrack);
+	clickRegistry.addClickHandlers('youtubedl_all', metaHandlers.fromUiElement.downloadAllYoutubeTracks);
 	clickRegistry.addClickHandlers('clickdeleteplaylisttrack', playlistManager.deletePlaylistTrack);
 	clickRegistry.addClickHandlers('clickdeleteplaylist', playlistManager.deletePlaylist);
 	clickRegistry.addClickHandlers('clickdeleteuserplaylist', playlistManager.deleteUserPlaylist);
@@ -333,6 +335,7 @@ function bindClickHandlers() {
 	$('#addtoplaylist').on('click', addToPlaylist.show);
 	$('.close-pladd').on('click', addToPlaylist.close);
 	$('#bookmark').on('click', bookmarkAdder.show);
+	$('#ban').on('click', nowplaying.ban);
 	$('.close-bookmark').on('click', bookmarkAdder.close);
 	$(document).on('click', ".clickaddtoplaylist", addToPlaylist.close);
 	$(document).on('change', ".saveotron", prefs.saveTextBoxes);
@@ -433,6 +436,8 @@ function playPlayable(event, clickedElement) {
 	if (clickedElement.hasClass('clickdisc')) {
 		discSelect(event, clickedElement);
 		playlist.addItems($('.selected'),null);
+	} else if (clickedElement.hasClass('clicktracksearch')) {
+		playlist.search_and_add(clickedElement);
 	} else {
 		playlist.addItems(clickedElement, null);
 	}
@@ -1076,13 +1081,19 @@ function makeAlbumMenu(e, element) {
 	if ($(element).hasClass('clickaddtollviabrowse')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem addtollviabrowse closepopup',
-			spalbumid: $(element).attr('spalbumid')
+			name: $(element).attr('uri')
 		}).html(language.gettext('label_addtolistenlater')));
+	}
+	if ($(element).hasClass('clickllremove')) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem removefromll closepopup',
+			name: $(element).attr('rompr_index')
+		}).html(language.gettext('label_removefromlistenlater')));
 	}
 	if ($(element).hasClass('clickaddtocollectionviabrowse')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem addtocollectionviabrowse closepopup',
-			spalbumid: $(element).attr('spalbumid')
+			name: $(element).attr('uri')
 		}).html(language.gettext('label_addtocollection')));
 	}
 	if ($(element).hasClass('clickusetrackimages')) {
@@ -1097,6 +1108,15 @@ function makeAlbumMenu(e, element) {
 			name: $(element).attr('who')
 		}).html(language.gettext('label_unusetrackimages')));
 	}
+	if ($(element).hasClass('clickytdownloadall')) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem youtubedl_all closepopup',
+			who: $(element).attr('who'),
+			why: $(element).attr('why'),
+			aname: $(element).attr('aname')
+		}).html(language.gettext('label_youtubedl_all')));
+	}
+
 	menu.open();
 }
 
@@ -1203,29 +1223,48 @@ function actuallyAmendAlbumDetails(albumindex) {
 }
 
 function browseAndAddToListenLater(event, clickedElement) {
-	var albumid = clickedElement.attr('spalbumid')
-	spotify.album.getInfo(
-		albumid,
-		function(data) {
-			debug.debug('ADDLL', 'Success', data);
-			metaHandlers.addToListenLater(data);
-		},
-		function(data) {
-			debug.error('ADDLL', 'Failed', data);
-		}, false
-	);
+	var albumuri = decodeURIComponent(clickedElement.attr('name'));
+	var isspot = albumuri.match(/spotify:album:(.+)/);
+	if (isspot == null) {
+		debug.log('ADLL', 'Adding',albumuri,'via backend browse');
+		metaHandlers.addToListenLater(
+			{
+				action: 'browsetoll',
+				uri: albumuri
+			}
+		);
+	} else {
+		spotify.album.getInfo(
+			isspot[1],
+			function(data) {
+				debug.debug('ADDLL', 'Success', data);
+				metaHandlers.addToListenLater(
+					{
+						action: 'addtolistenlater',
+						json: data
+					}
+				);
+			},
+			function(data) {
+				debug.error('ADDLL', 'Failed', data);
+			},
+			false
+		);
+	}
 }
 
+function removeFromListenLater(event, clickedElement) {
+	if (typeof('albumstolistento') == 'undefined') {
+		debug.error('WHOOPS', 'Asking to remove an album from listen later when that plugin is not loaded');
+		return;
+	}
+	albumstolistento.removeId(clickedElement.attr('name'));
+}
+
+// Adds an album to the Music Collection by using MPD's find file on the album Uri.
+// Called in response to a click on an element with a class of clickaddtocollectionviabrowse
+// The element's name attribute should be the rawurlencode-d Album Uri
+
 function browseAndAddToCollection(event, clickedElement) {
-	var albumid = clickedElement.attr('spalbumid')
-	spotify.album.getInfo(
-		albumid,
-		function(data) {
-			debug.debug('ADDALBUM', 'Success', joinartists(data.artists), data);
-			metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, joinartists(data.artists))
-		},
-		function(data) {
-			debug.error('ADDALBUM', 'Failed', data);
-		}, false
-	);
+	metaHandlers.addAlbumUriToCollection(decodeURIComponent(clickedElement.attr('name')));
 }

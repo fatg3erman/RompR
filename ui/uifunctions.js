@@ -723,7 +723,7 @@ function doMopidyCollectionOptions() {
 		spotify: [{dir: "Spotify Playlists", label: "Spotify Playlists"},
 				  {dir: "Spotify/Your music/Your tracks", label: "Spotify 'Your Tracks'"},
 				  {dir: "Spotify/Your music/Your albums", label: "Spotify 'Your Albums'"}],
-		gmusic: [{dir: "Google Music/Albums", label: "Google Music"}],
+		// gmusic: [{dir: "Google Music/Albums", label: "Google Music"}],
 		soundcloud: [{dir: "SoundCloud/Liked", label: "SoundCloud Liked"},
 					 {dir: "SoundCloud/Sets", label: "SoundCloud Sets"},
 					 {dir: "SoundCloud/Stream", label: "SoundCloud Stream"}],
@@ -853,22 +853,54 @@ function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 	return false;
 }
 
-function spotifyTrackListing(data) {
+function combine_spotify_artists(artists) {
+	let poop = [];
+	artists.forEach(function(v) {
+		poop.push(v.name);
+	});
+	return concatenate_artist_names(poop);
+}
+
+function spotifyTrackListing(data, show_add_button) {
 	var h = '';
 	for(var i in data.tracks.items) {
-		if (player.canPlay('spotify')) {
+		if (player.canPlay(data.domain)) {
 			h += '<div class="playable draggable clickable clicktrack fullwidth" name="'+rawurlencode(data.tracks.items[i].uri)+'">';
+		} else if (player.canPlay('youtube') || player.canPlay('ytmusic')) {
+			h += '<div class="fullwidth playable clicktracksearch">';
+			h += '<input type="hidden" class="search_param" name="trackartist" value="'+escapeHtml(combine_spotify_artists(data.artists))+'" />';
+			if (data.name)
+				h += '<input type="hidden" class="search_param" name="Album" value="'+escapeHtml(data.name)+'" />';
+			h += '<input type="hidden" class="search_param" name="Title" value="'+escapeHtml(data.tracks.items[i].name)+'" />';
 		} else {
 			h += '<div class="fullwidth">';
 		}
+		if (data.tracks.items[i].track_number == 0)
+			data.tracks.items[i].track_number = '';
+
 		h += '<div class="containerbox line">'+
+			'<div class="fixed">'+speccyDomainIcon(data.tracks.items[i].uri)+'</div>'+
 			'<div class="tracknumber fixed">'+data.tracks.items[i].track_number+'</div>'+
 			'<div class="expand">'+data.tracks.items[i].name+'</div>'+
-			'<div class="fixed playlistrow2 tracktime">'+formatTimeString(data.tracks.items[i].duration_ms/1000)+'</div>'+
-			'</div>'+
+			'<div class="fixed playlistrow2 tracktime">'+formatTimeString(data.tracks.items[i].duration_ms/1000)+'</div>';
+
+		if (show_add_button && data.domain != 'local' && player.canPlay(data.domain))
+			h += '<i class="inline-icon icon-music clickspotifywidget infoclick plugclickable clickimporttrack" name="'+i+'"></i>';
+
+		h+=	'</div>' +
 			'</div>';
 	}
 	return h;
+}
+
+// Return a domain icon only if the player can play that domain
+function speccyDomainIcon(uri) {
+	var s = uri.split(':');
+	var d = s.shift();
+	if (player.canPlay(d))
+		return playlist.getDomainIcon({file: uri}, '');
+
+	return '';
 }
 
 function ratingCalc(element, event) {

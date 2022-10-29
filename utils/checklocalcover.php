@@ -10,7 +10,7 @@ logger::log('PLONKINGTON', 'Checking file',$_REQUEST['file']);
 
 if ($_REQUEST['type'] == 'podcast') {
 	prefs::$database = new poDatabase();
-	$image = prefs::$database->check_trackimage($_REQUEST['file']);
+	$image = prefs::$database->check_podcast_trackimage($_REQUEST['file']);
 	if ($image) {
 		logger::log('PLONKINGTON', 'Found Podcast Track Image', $image);
 		$image = 'getRemoteImage.php?url='.rawurlencode($image);

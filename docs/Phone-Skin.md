@@ -30,7 +30,7 @@ And here's an album being browsed
 
 The Play Options icons do the following:
 
-* Play the whole album. For albums from Spotify/GMusic etc this will always play the entire album, no matter if only a selection of tracks from it are in the display.
+* Play the whole album. For albums from online sources that return Album URIs (this is Mopidy backend dependant) this will always play the entire album, no matter if only a selection of tracks from it are in the display.
 * Play only tracks that are in the display. This button will not be visible for sources where it is not relevant (eg local files).
 * Play only tracks with Ratings
 * Play Only tracks with Tags

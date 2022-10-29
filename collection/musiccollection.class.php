@@ -1,8 +1,9 @@
 <?php
 class musicCollection extends collection_base {
 
-	private $albums = [];
+	protected $albums = [];
 	protected $find_track;
+	protected $force_keys = [];
 
 	public function __construct($opts = []) {
 		$this->options = array_merge($this->options, $opts);
@@ -16,7 +17,8 @@ class musicCollection extends collection_base {
 
 	public function newTrack(&$filedata) {
 		static $current_folder = null;
-		if ($this->options['dbterms'] === true || $this->check_url_against_database($filedata['file'], $this->options['dbterms']['tag'], $this->options['dbterms']['rating'])) {
+		if ($this->options['dbterms'] === true
+			|| $this->check_url_against_database($filedata['file'], $this->options['dbterms']['tag'], $this->options['dbterms']['rating'])) {
 			if ($this->options['doing_search']) {
 				// If we're doing a search, we check to see if that track is in the database
 				// because the user might have set the AlbumArtist to something different
@@ -24,6 +26,15 @@ class musicCollection extends collection_base {
 			}
 
 			$track = new track($filedata);
+			if ($this->options['searchterms'] !== false && !$this->check_track_against_terms($track)) {
+				return;
+			}
+
+			// Anything we want to force to a specific value - see do_update_with_command()
+			foreach ($this->force_keys as $k => $v) {
+				$filedata[$k] = $v;
+			}
+
 			if ($this->options['trackbytrack']) {
 				if ($track->tags['albumartist'] !== null && $track->tags['Disc'] !== null) {
 					//
@@ -90,21 +101,16 @@ class musicCollection extends collection_base {
 
 	public function tracks_as_array() {
 		$c = true;
+		$player = new player();
 		print '[';
 		foreach($this->albums as $album) {
-			$image = $album->getImage('asdownloaded');
-			logger::log("COLLECTION", "Doing Album",$album->tracks[0]->tags['Album']);
-			$album->sortTracks();
-			foreach($album->tracks as $trackobj) {
-				if ($c) {
-					$c = false;
-				} else {
-					print ', ';
-				}
-				$trackobj->tags['X-AlbumImage'] = $image;
-				logger::trace("COLLECTION", "Title - ".$trackobj->tags['Title']);
-				print json_encode($trackobj->tags);
+			if ($c) {
+				$c = false;
+			} else {
+				print ', ';
 			}
+			$album->sortTracks();
+			print $album->dump_json($player);
 		}
 		print ']';
 	}
@@ -124,10 +130,67 @@ class musicCollection extends collection_base {
 	}
 
 	public function replace_album_in_database($who, $new) {
+
+		// This gets pretty messy. The easy case, with well-behaved backends, is we just delete
+		// the old album and set the new one as its replacement.
+		// BUT
+		// If the album is the result of a search for 'Artist Name' but the Album Artist is Various Artists (or any other, different artist probably)
+		// AND if only one track came back from the search, the original album will have Album Artist = 'Artist Name'. Sometimes. (youtube)
+		// When we then look that up (at least with Youtube) it comes back with Artist = 'Various Artists' and NO Album Artist
+		// EXCEPT for the track that exists which has Artist = 'Artist Name'. So that one ends up being added to the original album
+		// which we immediately delete.
+		// So we have to check what tracks exist on the original album then create or update tracks in the new album.
+		// Note also that with Youtube the original track almost certainly doesn't have a Track Number, which means the lookup
+		// has added a second version of it to the original album, which does have a track number. This doesn't matter though -
+		// our first pass through the $tracks_now loop creates the original track with no track number but the second pass updates it.
+
+		$tracks_now = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
+			"SELECT * FROM Tracktable JOIN Artisttable USING (Artistindex) WHERE Albumindex = ? AND Title NOT LIKE 'Album:%'",
+			$who
+		);
 		$this->generic_sql_query("DELETE FROM Tracktable WHERE Albumindex = ".$who, true);
 		$this->generic_sql_query("DELETE FROM Albumtable WHERE Albumindex = ".$who, true);
 		$this->generic_sql_query('UPDATE Albumtable SET Albumindex = '.$who.' WHERE Albumindex = '.$new);
 		$this->generic_sql_query('UPDATE Tracktable SET Albumindex = '.$who.' WHERE Albumindex = '.$new);
+		foreach ($tracks_now as $track) {
+			$ttids = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
+				"SELECT TTindex FROM Tracktable WHERE Albumindex = ? AND Title = ?",
+				$who,
+				$track['Title']
+			);
+			logger::log('PRAP', 'Checking',$track['Title'],$track['Artistname'],$track['TTindex']);
+			if (count($ttids) > 1) {
+				logger::log("BACKEND", 'Ambiguous track',$track["Title"],'could not have trackartist reset');
+			} else if (count($ttids) == 0) {
+				logger::log("BACKEND", 'Could not find track',$track["Title"],'in newly created album. Ceating it.');
+				$this->sql_prepare_query(true, null, null, null,
+					"INSERT INTO Tracktable (Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, Hidden, DateAdded, isSearchResult, isAudiobook, Genreindex, TYear)
+					  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+					$track['Title'],
+					$who,
+					$track['TrackNo'],
+					$track['Duration'],
+					$track['Artistindex'],
+					$track['Disc'],
+					$track['Uri'],
+					$track['LastModified'],
+					$track['Hidden'],
+					$track['DateAdded'],
+					$track['isSearchResult'],
+					$track['isAudiobook'],
+					$track['Genreindex'],
+					$track['TYear']
+				);
+			} else {
+				logger::log("BACKEND", 'Setting trackartist to',$track['Artistname'],'on TTindex',$ttids[0]['TTindex']);
+				$this->sql_prepare_query(true, null, null, null,
+					"UPDATE Tracktable SET Artistindex = ?, TrackNo = ? WHERE TTindex = ?",
+					$track['Artistindex'],
+					$track['TrackNo'],
+					$ttids[0]['TTindex']
+				);
+			}
+		}
 	}
 
 	public function add_browse_artist($artist) {
@@ -164,6 +227,7 @@ class musicCollection extends collection_base {
 	public function check_album_browse($index) {
 		$this->options['doing_search'] = true;
 		$this->options['trackbytrack'] = true;
+
 		$album_details = $this->get_album_details($index);
 		$uri = $album_details['AlbumUri'];
 
@@ -173,20 +237,69 @@ class musicCollection extends collection_base {
 		}
 
 		logger::log('COLLECTION', 'Browsing for album',$uri);
-		$this->do_update_with_command('find file "'.$uri.'"', array(), false);
-		// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
-		// When we browse the album the new tracks therefore get added to a new album.
-		// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
-		// (otherwise the GUI doesn't work)
+		$this->create_foundtracks();
+		$this->do_update_with_command('find file "'.$uri.'"', array(), false, ['AlbumArtist' => $album_details['Artistname']]);
 		$just_added = $this->find_justadded_albums();
-		if (is_array($just_added) && count($just_added) > 0 && $just_added[0] != $index) {
-			logger::log('BROWSEALBUM', 'New album',$just_added[0],'was created. Setting it to',$index);
-			if ($album_details['Image'] != null) {
-				$this->set_image_for_album($just_added[0], $album_details['Image']);
+		if (is_array($just_added) && count($just_added) > 0) {
+			logger::log('BROWSEALBUM', 'We got a just modded response');
+			$modded_album = array_pop($just_added);
+			if ($modded_album == $index) {
+				logger::log('BROWSEALBUM', 'We Modified existing album',$index);
+				$this->rescan_zero_tracks($index);
+				return $index;
+			} else {
+				// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
+				// When we browse the album the new tracks therefore get added to a new album.
+				// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
+				// (otherwise the GUI doesn't work)
+				logger::log('BROWSEALBUM', 'New album',$modded_album,'was created. Setting it to',$index);
+				if ($album_details['Image'] != null) {
+					$this->set_image_for_album($modded_album, $album_details['Image']);
+				}
+				$this->replace_album_in_database($index, $modded_album);
+				$this->rescan_zero_tracks($index);
 			}
-			$this->replace_album_in_database($index, $just_added[0]);
 		}
-		return false;
+
+		return $index;
+	}
+
+	private function rescan_zero_tracks($index) {
+		// This is a HACK. When browsing yt:playlist URIs we often end up getting details of an album that already exists
+		// because it was returned as an album by search. Those tracks might not have track numbers and so they
+		// get duplicated. But also sometimes for reasons beyond the realms of comprehension, sometimes this
+		// browse DOESN't return all the tracks. I think we get two playlists that combine to one album because it's
+		// a multi-disc set and Youtube can't just have one playlist for that can it, oh no, that would helpful.
+		$tracks = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, [],
+			"SELECT Title FROM Tracktable WHERE Albumindex = ? AND TrackNo > 0 AND isSearchResult > 0",
+			$index
+		);
+		foreach ($tracks as $title) {
+			$dumbass = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'TTindex', null,
+				"SELECT TTindex FROM Tracktable WHERE Albumindex = ? AND Title = ? AND TrackNo = 0 AND isSearchResult = 2",
+				$index,
+				$title
+			);
+			if ($dumbass) {
+				logger::log('BROWSEALBUM', 'Deleting TTindex',$dumbass,'because it now has a better copy with a track number');
+				$this->sql_prepare_query(true, null, null, null,
+					"DELETE FROM Tracktable WHERE TTindex = ?",
+					$dumbass
+				);
+			}
+		}
+		$count = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0,
+			"SELECT COUNT(TTindex) AS num FROM Tracktable WHERE Albumindex = ? AND Title NOT LIKE 'Album:%'",
+			$index
+		);
+		if ($count > 0) {
+			logger::log('BROWSEALBUM', 'Deleting Album link track because there are others');
+			$this->sql_prepare_query(true, null, null, null,
+				"DELETE FROM Tracktable WHERE Albumindex = ? AND Title LIKE 'Album:%'",
+				$index
+			);
+		}
+
 	}
 
 	public function check_artist_browse($index) {
@@ -204,8 +317,15 @@ class musicCollection extends collection_base {
 		}
 	}
 
-	public function do_update_with_command($cmd, $dirs, $domains) {
+	public function do_update_with_command($cmd, $dirs, $domains, $force_keys = []) {
 		logger::log('COLLECTION', 'Doing update with',$cmd);
+		// In cases where we're browsing search results from eg youtube, the initial
+		// Album Artist can sometimes be wrong, but we want it to be the same otherwise
+		// the UI doesn't work, so force it.
+		foreach ($force_keys as $k => $v) {
+			logger::log('COLLECTION', 'Forcing',$k,'to',$v);
+		}
+		$this->force_keys = $force_keys;
 		$this->open_transaction();
 		$this->prepareCollectionUpdate();
 		$player = new player();
@@ -235,7 +355,7 @@ class musicCollection extends collection_base {
 				$wishtrack['artistindex']
 			);
 			foreach ($newtrack AS $track) {
-				logger::log('COLLECTION', "We have found wishlist track",$wishtrack['Title'],'by',$wishtrack['albumartist'],'as TTindex',$newtrack['TTindex']);
+				logger::log('COLLECTION', "We have found wishlist track",$wishtrack['Title'],'by',$wishtrack['trackartist'],'as TTindex',$newtrack['TTindex']);
 				$this->sql_prepare_query(true, null, null, null,
 					'UPDATE Ratingtable SET TTindex = ? WHERE TTindex = ?',
 					$newtrack['TTindex'],
@@ -355,6 +475,9 @@ class musicCollection extends collection_base {
 			$trackartistindex = $trackobj->tags['trackartist_index'];
 			$current_trackartist = null;
 		}
+
+		// logger::log('PARP','Albumindex',$trackobj->tags['album_index'],'Title',$trackobj->tags['Title']);
+
 		if ($this->find_track->execute([
 			$trackobj->tags['Title'],
 			$trackobj->tags['album_index'],

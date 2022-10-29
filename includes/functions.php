@@ -145,7 +145,6 @@ function find_executable($prog) {
 	// Try to find an executable program by testing various paths until we find it.
 	// EXECUTABLES_PATHS will prioritise Homebrew (on macOS) over builtin utilities.
 	// Returns boolean false if the program is not found, or the path (not including the program name)
-	logger::debug("BITS", "  Looking for executable",$prog);
 	$retval = false;
 	foreach (EXECUTABLES_PATHS as $c) {
 		if (is_executable($c.$prog)) {
@@ -154,9 +153,9 @@ function find_executable($prog) {
 		}
 	}
 	if ($retval === false) {
-		logger::warn("BITS", "  Executable",$prog,"Not Found!");
+		logger::warn("BITS", "Executable",$prog,"Not Found!");
 	} else {
-		logger::debug("BITS", "  ..Found at",$retval.$prog);
+		logger::log("BITS", "Found",$prog,"at",$retval.$prog);
 	}
 	return $retval;
 
@@ -327,17 +326,22 @@ function domainCheck($default, $domain) {
 	switch ($domain) {
 		case 'soundcloud':
 		case 'spotify':
-		case 'gmusic':
 		case 'vkontakte':
+		case 'ytmusic':
 		case 'internetarchive':
 		case 'podcast':
 		case 'dirble':
 		case 'youtube':
+		case 'bandcamp':
 			return 'icon-'.$domain.'-circled';
 			break;
 
 		case 'tunein':
 			return 'icon-tunein';
+			break;
+
+		case "yt":
+			return 'icon-youtube-circled';
 			break;
 
 		default:
@@ -414,13 +418,15 @@ function domainIcon($d, $c) {
 	$h = '';
 	switch($d) {
 		case "spotify":
-		case "gmusic":
+		case "ytmusic":
 		case "youtube":
+		case "yt":
 		case "internetarchive":
 		case "soundcloud":
 		case "podcast":
 		case "dirble":
 		case "tunein":
+		case "bandcamp":
 			$h = '<i class="'.domainCheck('icon-music', $d).' '.$c.' fixed"></i>';
 			break;
 
@@ -445,8 +451,18 @@ function domainHtml($uri) {
 
 function artistNameHtml($obj) {
 	$h = '<div class="artistnamething">'.$obj['Albumname'];
-	if ($obj['Year'] && prefs::get_pref('sortbydate'))
-		$h .= ' <span class="notbold">('.$obj['Year'].')</span>';
+	if ($obj['Year'] && (prefs::get_pref('sortbydate') || $obj['year_always'])) {
+		$h .= ' <span class="notbold">';
+		if (!$obj['year_always'])
+			$h .= '(';
+
+		$h .= $obj['Year'];
+
+		if (!$obj['year_always'])
+			$h .= ')';
+
+		'</span>';
+	}
 
 	if ($obj['Artistname'])
 		$h .= '<br /><span class="notbold">'.$obj['Artistname'].'</span>';
@@ -1035,6 +1051,70 @@ function create_body_tag($base_class) {
 		print ' mouseclick';
 	}
 	print '">'."\n";
+}
+
+function strip_track_name($thing) {
+	if (!$thing)
+		return $thing;
+
+	// Convert to lower case, change & to and, and remove punctuation
+	// Don't remove brackety stuff because this is used for preventing duplicate
+	// tracks in the smart_uri table, and we want all the versions that () might denote
+	$thing = strtolower($thing);
+	$thing = preg_replace('/\s+\&\s+/', ' and ', $thing);
+	$thing = preg_replace("/\pP/", '', $thing);
+	return trim($thing);
+}
+
+// Remove any of our 'Ignore this prefix' values from the start of a string.
+// TYhis is for comparing eg Back Doors and The Back Doors, which is a
+// a common type of problem.
+function strip_prefixes($name) {
+	$pf = array_map('strtolower', prefs::get_pref('nosortprefixes'));
+	$stripname = strtolower($name);
+	foreach ($pf as $prefix) {
+		if (strpos($stripname, $prefix.' ') === 0) {
+			return substr($name, strlen($prefix)+1);
+		}
+	}
+	return $name;
+}
+
+function metaphone_compare($search_term, $found_term, $match_distance = null) {
+	// Metaphones were an experiment. They were a bit too fuzzy for our porpoises.
+	// This is a fuzzy compare function for comparing album names, artist names, etc.
+	// Search term should be first, to ensure accuracy of the percentage measurement.
+	// https://www.php.net/manual/en/function.levenshtein.php
+
+	// The smaller the value of $match_distance the more exact the comparison.
+	// If match_distance is not supplied we use a value calculated as 10% of the length
+	// of search_term or 1, whichever is higher.
+	// You will probably want to tune this value by trial and error depending on the use case.
+	// A value of 0 seems best for artists.
+
+	// mb_detect_encdoing is VeRY slow, but we don't know what encoding the source
+	// material is.
+
+	$new_search = mb_convert_encoding($search_term, 'ASCII', mb_detect_encoding($search_term));
+	$new_found = mb_convert_encoding($found_term, 'ASCII', mb_detect_encoding($found_term));
+
+	$new_search = preg_replace('/ \(.+?\)$/', '', $new_search);
+	$new_found = preg_replace('/ \(.+?\)$/', '', $new_found);
+
+	$new_search = strip_track_name($new_search);
+	$new_found = strip_track_name($new_found);
+
+	$dist = levenshtein($new_search, $new_found);
+	if ($match_distance === null)
+		$match_distance = max(1, (strlen($new_search) * 0.10));
+
+	if ($dist <= $match_distance) {
+		logger::trace('METAPHONE', $found_term,'matches',$search_term);
+		return true;
+	} else {
+		logger::core('METAPHONE', $new_found,'does not match',$new_search);
+		return false;
+	}
 }
 
 ?>

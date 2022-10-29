@@ -132,34 +132,64 @@ If you haven't done this right, then your music collection update will just hang
 
 Note that only Mopidy-Local seems to return Genres, so Genre-based Collection functions will not work as your might expect if you use Spotify, Soundcloud, etc.
 
-## Mopidy-Youtube
 
-This version of Rompr works best wuth the fork of Mopidy-Youtube [here](https://github.com/natumbri/mopidy-youtube)
+## Note on Mopidy-YTMusic and Mopidy-Youtube
+
+Mopidy-YTMusic cannot accept a URI it has not seen before. This gives RompR problems if you add YTMusic tracks to your collection and then restart
+Mopidy, because all the tracks in your collection will no longer work. I have suggested a fix for this that works for RompR but as yet there has
+been no movement on it. https://github.com/OzymandiasTheGreat/mopidy-ytmusic/pull/69. If you run that version then you can add tracks to your collection
+safely.
+
+Mopidy-Youtube also supports the Youtube Music API. I've worked with the developer to bring the functionality more in line with what
+Spotify used to provide and in general it works well. At the time of writing (October 2022) the development version contains
+all the functionality RompR requires.
+
+I've put a lot of effort into these backends to replace a lot of what RompR used to rely on Mopidy-Spotify for but bear in mind
+Youtbe Music does not have a proper API and there is some information - like track numbers - that is extremely unreliable.
+RompR likes track numbers because they make Playcounts more accurate, and RompR will try very hard indeed to get
+Youtube to give it a track number when it needs one. Mopidy-Youtube is better than Mopidy-YTMusic in this respect.
+Mopidy-YTMusic often doesn't even return an Album name, which messes up Playcounts and Ratings and a lot of stuff. If that's important
+to you then you shouldn't use Mopidy-YTMusic.
+
+
+## Downloading Youtube Tracks
 
 If you add Youtube tracks to your Music Collection, you'll be given an option to download the audio.
 
 ![](images/youtubedl.png)
 
-In order for this to work you must have the programs youtube-dl and either avconv or ffmpeg installed on your system. On macOS you can get youtube-dl and ffmpeg using HomeBrew,
-on Linux there are probably packages for both of these. (avconv is simply the new name for ffmpeg, so install whichever your distribution provides)
+In order for this to work you must have the programs youtube-dl or yt-dlp, and either avconv or ffmpeg installed on your system.
+On macOS you can get youtube-dl and ffmpeg using HomeBrew, on Linux there are probably packages for both of these, or yt-dlp can be installed using pip.
+Note that yt-dlp is preferred over youtube-dl, and yt-dlp requires ffmpeg, avconv will not work. So if you have yt-dlp installed you must also have ffmpeg.
 
-If you're trying to use this feature and you keep getting an error, enable debug logging and look at the output. If all the binaries are installed then the debug log
-will tell you the uri it is trying to download, you should try that from the command line using
+The binaries must be installed so that they can be executed by your webserver. RompR will look under the following paths, in this order:
+/usr/local/bin/, /opt/local/bin/, /opt/homebrew/bin/, /usr/bin/
 
-	youtube-dl --ffmpeg-location path/to/your/ffmpeg/binary -x --newline --audio-format flac --audio-quality 0 uri/from/debug/log
-
-and see what error messages you get.
+If you're trying to use this feature and you keep getting an error, enable debug logging and look at the output.
+If all the binaries are installed then the debug log will tell you the command line it is using, you should try that from a console to look for error messages.
 
 Assuming it works, the YoutTube video will be downloaded and the audio will be extracted to a FLAC file which will be streamed from your webserver
 using Mopidy's Stream backend the next time you add the track to the play queue.
 
+The file will be downloaded to a subdirectory under rompr/prefs/youtubedl/. Assuming the download actually started there will be a log file
+in that directory which includes the complete command line that was used and all of the downloader's text output. (Note, these files will
+be cleaned up at regular intervals).
+
 If you have the flac packages installed (sudo apt install flac) then the downloaded file will be tagged with the artist and track name.
 Tagged tracks can be moved into your 'normal' music collection. Provided you have the option to 'Prefer Local Music to Internet Sources' enabled,
-the collection will simply update with the new location. Moving the files to your music collection means they can be played using the 'local' backend
-which support seeking and pausing much better than the stream backend.
+a Collection Update will discover the file. Moving the files to your music collection means they can be played using the 'local' backend
+which supports seeking and pausing much better than the stream backend.
 
 One way is to move the downloaded files from rompr/prefs/youtubedl into an appropriate folder, do 'mopidy local scan' and rescan your collection.
 
-Another approach is to symlink rompr/prefs/youtubedl into your Music Directory and make sure the webserver has write permissions.
+Another approach is to symlink rompr/prefs/youtubedl into a youtubedl subdirectory off your Music Directory and make sure the webserver has write permissions.
 When you download a track you simply need to 'mopidy local scan' and then Update your Music Collection.
+**Note though, that RompR is "in control" of the prefs/youtubedl directory and WILL DELETE anything that it doesn't recognise. Also the directory
+you symlink to MUST be called youtubedl or everything in it will get deleted.**
 
+### Youtube Music Premium Subscribers
+
+Youtube Music Premium subscribers have the ability to stream audio at a higher quality. To ensure your downloads use the highest quality streams
+you need to install yt-dlp and edit your /etc/yt-dlp.conf and set the --cookies option so it points to your cookie file.
+The cookie file must also be writeable by your webserver.
+This is the same cookie file you reference in the musicapi_cookiefile option for moidy-youtube. See Mopidy-Youtube's documentation for more info.

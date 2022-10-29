@@ -13,10 +13,35 @@ var infobar = function() {
 	var current_duration = 0;
 
 	function showLove(flag) {
-		if (lastfm.isLoggedIn() && flag) {
+		if (flag && lastfm.isLoggedIn() && playlistinfo.type == 'local') {
 			$("#lastfm").removeClass('invisible');
 		} else {
-			$("#lastfm").addClass('invisible');
+			$("#lastfm").not('.invisible').addClass('invisible');
+		}
+	}
+
+	function showBookmarkButton(flag) {
+		// Show bookmark button for podcasts and anything in the Collection
+		if (flag
+			&& (playlistinfo.type == 'podcast'
+			|| (playlistinfo.TTindex !== null
+			&& playlistinfo.isSearchResult < 2))
+		) {
+			$("#bookmark").removeClass('invisible');
+		} else {
+			$("#bookmark").not('.invisible').addClass('invisible');
+		}
+	}
+
+	function showBanButton(flag) {
+		if (flag
+			&& playlistinfo.type == 'local'
+			&& playlist.radioManager.is_running()
+			&& playlist.radioManager.get_mode() != 'starRadios'
+		) {
+			$('#ban').removeClass('invisible');
+		} else {
+			$("#ban").not('.invisible').addClass('invisible');
 		}
 	}
 
@@ -100,6 +125,8 @@ var infobar = function() {
 				if (npinfo.Artist && npinfo.Album) {
 					lines[1].text = '<i>'+frequentLabels.by+'</i>'+' '+npinfo.Artist+" "
 						+'<i>'+frequentLabels.on+'</i>'+" "+npinfo.Album;
+				} else if (npinfo.Artist && !npinfo.Album && npinfo.Title) {
+					lines[1].text = '<i>'+frequentLabels.by+'</i>'+' '+npinfo.Artist;
 				} else if (npinfo.stream) {
 					if (npinfo.stream != 'No Title') {
 						lines[1].text = npinfo.stream;
@@ -215,22 +242,6 @@ var infobar = function() {
 				// debug.log('BIGGER_DOWN','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
 			}
 
-			// var increment = final_fontsize / 4;
-			// // debug.log('BIGGER-UP', 'Increment is',increment);
-			// while (increment > 1) {
-			// 	fontsize = Math.floor(fontsize + increment);
-			// 	increment = increment / 2;
-			// 	// debug.log('BIGGER-UP', 'Increase font size to',fontsize);
-			// 	nptext.css('font-size', fontsize+'px');
-			// 	if (nptext.outerHeight(true) < maxheight && nptext.outerWidth(true) < maxwidth) {
-			// 		// debug.log('BIGGER_UP','Font Size',fontsize,nptext.outerHeight(true),nptext.outerWidth(true));
-			// 		final_fontsize = fontsize
-			// 	} else {
-			// 		break;
-			// 	}
-			// }
-
-			// debug.log('BIGGEROZE', 'Final font size is',final_fontsize);
 			nptext.css('font-size', final_fontsize+'px');
 
 			if (npinfo.Title && npinfo.Album && npinfo.Artist) {
@@ -476,27 +487,33 @@ var infobar = function() {
 				$("#ptagadd").removeClass('invisible');
 				$("#playcount").removeClass('invisible');
 				showLove(true);
+				showBookmarkButton(true);
+				showBanButton(true);
 			} else {
 				$("#stars").not('.invisible').addClass('invisible');
 				$("#dbtags").not('.invisible').addClass('invisible');
 				$("#ptagadd").not('.invisible').addClass('invisible');
 				$("#playcount").not('.invisible').addClass('invisible');
 				showLove(false);
+				showBookmarkButton(false);
+				showBanButton(false);
 			}
+
 			if (info.type != 'stream') {
 				$("#addtoplaylist").removeClass('invisible');
-				$("#bookmark").removeClass('invisible');
 			} else {
 				$("#addtoplaylist").not('.invisible').addClass('invisible');
-				$("#bookmark").not('.invisible').addClass('invisible');
 			}
+
 			if (info.Id === -1) {
+				// Basically this happens if there's no track playing
 				$("#stars").not('.invisible').addClass('invisible');
 				$("#dbtags").not('.invisible').addClass('invisible');
 				$("#playcount").not('.invisible').addClass('invisible');
 				$("#addtoplaylist").not('.invisible').addClass('invisible');
 				$("#ptagadd").not('.invisible').addClass('invisible');
 				$("#bookmark").not('.invisible').addClass('invisible');
+				$("#ban").not('.invisible').addClass('invisible');
 				showLove(false);
 			} else {
 				infobar.albumImage.setKey(info.ImgKey);

@@ -1,6 +1,6 @@
 <?php
 
-class playlistCollection extends collection_base {
+class playlistCollection extends musicCollection {
 
 	private $foundartists;
 
@@ -39,6 +39,7 @@ class playlistCollection extends collection_base {
 		$track->tags['images'] = $albumimage->get_images();
 		$track->tags['metadata']['track']['name'] = trim($track->tags['Title']);
 		$track->tags['metadata']['track']['musicbrainz_id'] = trim($track->tags['MUSICBRAINZ_TRACKID']);
+		$track->tags['metadata']['track']['artist'] = trim($track->tags['trackartist']);
 		$track->tags['metadata']['album']['name'] = trim($track->tags['Album']);
 		$track->tags['metadata']['album']['artist'] = trim($track->tags['albumartist']);
 		$track->tags['metadata']['album']['musicbrainz_id'] = trim($track->tags['MUSICBRAINZ_ALBUMID']);

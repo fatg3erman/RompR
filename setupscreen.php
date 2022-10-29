@@ -89,10 +89,7 @@ print '><label for="mopscan">'.language::gettext('setup_mopidy_scan').'</label><
 print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy#scanning-local-files" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
 
 print '<div class="styledinputs"><input id="spotifyunplayable" type="checkbox" name="spotify_mark_unplayable" ';
-print '><label for="spotifyunplayable">Mark All Spotify Tracks as Unplayable</label></div>';
-
-print '<div class="styledinputs"><input id="spotifyplayable" type="checkbox" name="spotify_mark_playable" ';
-print '><label for="spotifyplayable">Mark All Spotify Tracks as Playable</label></div>';
+print '><label for="spotifyunplayable">Mark All Spotify Tracks as Unplayable and add them to Your Wishlist</label></div>';
 
 
 print '<hr class="setup_screen_options" />';

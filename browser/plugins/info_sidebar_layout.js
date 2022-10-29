@@ -34,6 +34,7 @@ function info_sidebar_layout(options) {
 		self.mainbit.empty();
 		self.widebit.children().not('.holdingcell').remove();
 		self.html.children().not('.info-detail-layout').remove();
+		self.holder.show();
 	}
 
 	this.remove_expand_icon = function() {
@@ -89,7 +90,8 @@ function info_sidebar_layout(options) {
 	}
 
 	this.display_error = function(error) {
-		self.holder.remove();
+		self.clear_out();
+		self.holder.hide();
 		self.html.append($('<h3>', {align: 'center'}).html(error));
 	}
 
@@ -287,6 +289,8 @@ function info_layout_empty() {
 
 	this.clear_out = function() { }
 
+	this.display_error = function() { }
+
 	this.make_possibility_chooser = function() { }
 
 	this.get_title = function() {
@@ -298,6 +302,8 @@ function info_layout_empty() {
 	}
 
 	this.detach_contents = function() { }
+
+	this.finish = function() {}
 
 }
 

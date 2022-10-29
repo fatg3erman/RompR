@@ -9,8 +9,8 @@ var albumstolistento = function() {
 		metaHandlers.genericQuery('getlistenlater', gotListenLater, notGotListenLater);
 	}
 
-	function notGotListenLater() {
-		debug.error("LISTENLATER","Failed to get list");
+	function notGotListenLater(data) {
+		debug.error("LISTENLATER","Failed to get list",data);
 	}
 
 	function gotListenLater(data) {
@@ -21,7 +21,6 @@ var albumstolistento = function() {
 			holder.spotifyAlbumThing({
 				classes: 'brick spotify_album_masonry selecotron',
 				itemselector: 'brick',
-				sub: 'album',
 				showbiogs: true,
 				maxwidth: maxwidth,
 				is_plugin: true,
@@ -75,6 +74,7 @@ var albumstolistento = function() {
 		},
 
 		removeId: function(id) {
+			holder.find('div.albumwidget[rompr_index="'+id+'"]').fadeOut('fast', browser.rePoint);
 			metaHandlers.genericQuery({action: 'removelistenlater', index: id}, function() {
 				debug.log("LISTENLATER", "Listen Later ID",id,"removed");
 			}, function() {
@@ -85,6 +85,7 @@ var albumstolistento = function() {
 	}
 
 }();
+
 
 pluginManager.setAction(language.gettext("label_albumstolistento"), albumstolistento.open);
 albumstolistento.open();

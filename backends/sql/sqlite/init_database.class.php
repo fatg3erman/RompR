@@ -1298,6 +1298,18 @@ class init_database extends init_generic {
 					$this->generic_sql_query("UPDATE Statstable SET Value = 94 WHERE Item = 'SchemaVer'", true);
 					break;
 
+				case 94:
+					logger::log("SQL", "Updating FROM Schema version 94 TO Schema version 95");
+					prefs::upgrade_host_defs(95);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 95 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 95:
+					logger::log("SQL", "Updating FROM Schema version 95 TO Schema version 96");
+					$this->create_tracktable_indexes();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 96 WHERE Item = 'SchemaVer'", true);
+					break;
+
 			}
 			$sv++;
 		}
@@ -1341,6 +1353,12 @@ class init_database extends init_generic {
 			} else {
 				return array(false, "Error Creating Tracktable Index : ".$err);
 			}
+
+		}
+
+		if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS track_uri ON Tracktable (Uri)", true)) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error Creating Tracktable Uri Index : ".$err);
 		}
 
 		return array(true, '');

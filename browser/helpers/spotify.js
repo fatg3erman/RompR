@@ -38,75 +38,73 @@ var spotify = function() {
 		var d;
 		throttle = (c == "From Cache") ? 50 : rate;
 		debug.debug("SPOTIFY","Request success",c,req,data,jqxhr);
-		if (data === null) {
-			debug.warn("SPOTIFY","No data in response");
-			data = {error: language.gettext("spotify_error")};
-		}
-		if (req.reqid != '') {
-			data.reqid = req.reqid;
-		}
 		debug.log('SPOTIFY', data);
-		var root = objFirst(data);
-		if (data[root].next) {
-			debug.debug("SPOTIFY","Got a response with a next page!");
-			if (data[root].previous == null) {
-				collectedobj = data;
-				pages = 0;
-			} else {
+		try {
+			var root = objFirst(data);
+			if (data[root].next) {
+				debug.debug("SPOTIFY","Got a response with a next page!");
+				if (data[root].previous == null) {
+					collectedobj = data;
+					pages = 0;
+				} else {
+					collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
+					pages++;
+				}
+				if (pages > 10) {
+					req.success(collectedobj);
+				} else {
+					queue.unshift({
+						reqid: '',
+						data: {
+							module: 'spotify',
+							method: 'get_url',
+							params: {
+								url: data[root].next
+							}
+						},
+						success: req.success,
+						fail: req.fail
+					});
+				}
+			} else if (data[root].previous) {
 				collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
-				pages++;
-			}
-			if (pages > 10) {
+				debug.trace("SPOTIFY","Returning concatenated multi-page result");
 				req.success(collectedobj);
-			} else {
-				queue.unshift({
-					reqid: '',
-					data: {
-						module: 'spotify',
-						method: 'get_url',
-						params: {
-							url: data[root].next
-						}
-					},
-					success: req.success,
-					fail: req.fail
-				});
-			}
-		} else if (data[root].previous) {
-			collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
-			debug.trace("SPOTIFY","Returning concatenated multi-page result");
-			req.success(collectedobj);
-		} else if (data.next) {
-			debug.debug("SPOTIFY","Got a response with a next page!");
-			if (data.previous == null) {
-				collectedobj = data;
-				pages = 0;
-			} else {
+			} else if (data.next) {
+				debug.debug("SPOTIFY","Got a response with a next page!");
+				if (data.previous == null) {
+					collectedobj = data;
+					pages = 0;
+				} else {
+					collectedobj.items = collectedobj.items.concat(data.items);
+					pages++;
+				}
+				if (pages > 10) {
+					req.success(collectedobj);
+				} else {
+					queue.unshift({
+						reqid: '',
+						data: {
+							module: 'spotify',
+							method: 'get_url',
+							params: {
+								url: data.next
+							}
+						},
+						success: req.success,
+						fail: req.fail
+					});
+				}
+			} else if (data.previous) {
 				collectedobj.items = collectedobj.items.concat(data.items);
-				pages++;
-			}
-			if (pages > 10) {
+				debug.trace("SPOTIFY","Returning concatenated multi-page result");
 				req.success(collectedobj);
 			} else {
-				queue.unshift({
-					reqid: '',
-					data: {
-						module: 'spotify',
-						method: 'get_url',
-						params: {
-							url: data.next
-						}
-					},
-					success: req.success,
-					fail: req.fail
-				});
+				req.success(data);
 			}
-		} else if (data.previous) {
-			collectedobj.items = collectedobj.items.concat(data.items);
-			debug.trace("SPOTIFY","Returning concatenated multi-page result");
-			req.success(collectedobj);
-		} else {
-			req.success(data);
+		} catch(err) {
+			debug.warn('SPOTIFY', 'Summit went wrong', err);
+			req.fail({error: language.gettext("spotify_error")});
 		}
 		return throttle;
 	}
@@ -165,6 +163,19 @@ var spotify = function() {
 					params: {
 						id: id,
 						cache: false
+					}
+				};
+				spotify.request('', data, success, fail, prio);
+			},
+
+			search: function(name, success, fail, prio) {
+				var data = {
+					method: 'search',
+					params: {
+						q: name,
+						type: 'track',
+						limit: 50,
+						cache: true
 					}
 				};
 				spotify.request('', data, success, fail, prio);
@@ -243,6 +254,17 @@ var spotify = function() {
 						q: name,
 						type: 'artist',
 						limit: 50,
+						cache: true
+					}
+				};
+				spotify.request('', data, success, fail, prio);
+			},
+
+			find_possibilities(name, success, fail, prio) {
+				var data = {
+					method: 'find_possibilities',
+					params: {
+						name: name,
 						cache: true
 					}
 				};

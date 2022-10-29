@@ -95,11 +95,18 @@ var info_soundcloud = function() {
 			this.populate = function() {
 
 				parent.updateData({
-					soundcloud: { }
+					soundcloud: {
+						id: ''
+					},
+					tirggers: {
+						soundcloud: {
+							id: self.artist.populate
+						}
+					}
 				}, artistmeta);
 
 				parent.updateData({
-					soundcloud: { layout: new info_layout_empty() }
+					soundcloud: { }
 				}, albummeta);
 
 				parent.updateData({
@@ -109,8 +116,14 @@ var info_soundcloud = function() {
 				if (typeof trackmeta.soundcloud.layout == 'undefined')
 					self.track.populate();
 
-				if (typeof artistmeta.soundcloud.layout == 'undefined')
+				if (typeof artistmeta.soundcloud.layout == 'undefined') {
+					artistmeta.soundcloud.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me})
 					self.artist.populate();
+				}
+
+				if (typeof albummeta.soundcloud.layout == 'undefined')
+					albummeta.soundcloud.layout = new info_layout_empty();
+
 			}
 
 			this.progressUpdate = function(percent) {
@@ -128,11 +141,8 @@ var info_soundcloud = function() {
 				return {
 
 					populate: async function() {
-						artistmeta.soundcloud.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me})
-						while (retries > 0 && typeof artistmeta.soundcloud.id == 'undefined') {
-							await new Promise(t => setTimeout(t, 250));
-							retries--;
-						}
+						if (artistmeta.soundcloud.id == '')
+							return;
 						// Slightly hacky, but if we have an 'artist switch' in a SoundCloud track that makes no sense
 						// - and as the tarck will already be populated the artist id never gets updated.
 						if (artistmeta.soundcloud.id === null || typeof artistmeta.soundcloud.id == 'undefined') {
@@ -175,7 +185,13 @@ var info_soundcloud = function() {
 							soundcloud.getTrackInfo(sc[1], self.track.scResponseHandler);
 						} else {
 							trackmeta.soundcloud.track = {error: language.gettext("soundcloud_not")};
-							artistmeta.soundcloud.id = null;
+							parent.updateData({
+									soundcloud: {
+										id: null
+									}
+								},
+								artistmeta
+							);
 							self.track.doBrowserUpdate();
 						}
 					},
@@ -183,7 +199,13 @@ var info_soundcloud = function() {
 				   scResponseHandler: function(data) {
 						debug.debug("SOUNDCLOUD PLUGIN","Got SoundCloud Track Data:",data);
 						trackmeta.soundcloud.track = data;
-						artistmeta.soundcloud.id = data.user_id;
+						parent.updateData({
+								soundcloud: {
+									id: data.user_id
+								}
+							},
+							artistmeta
+						);
 						self.track.doBrowserUpdate();
 					},
 

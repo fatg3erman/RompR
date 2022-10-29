@@ -69,9 +69,9 @@ function start_userinterface() {
 }
 
 function open_discoverator() {
-	if (prefs.auto_discovembobulate) {
-		pluginManager.autoOpen(language.gettext('button_infoyou'));
-	}
+	// if (prefs.auto_discovembobulate) {
+	// 	pluginManager.autoOpen(language.gettext('button_infoyou'));
+	// }
 	startBackgroundInitTasks.doNextTask();
 }
 
@@ -145,7 +145,7 @@ function set_mouse_touch_flags() {
 	// If we have a touch-UI the body should have a class of touchclick.
 	// (If it doesn't then it should have mouseclick)
 	// Note that the historical reasons the Phone skin uses a caless of phone as well as touchclick
-	if ($('body').hasClass('touchclick') || $('body').hasClass('phone')) {
+	if ($('body').hasClass('touchclick')) {
 		// Adjust desktop-oriented skins to run on touch devices
 		uiHelper.is_touch_ui = true;
 	}
@@ -202,8 +202,8 @@ function carry_on_starting() {
 	//
 	if (prefs.player_backend == 'mopidy') {
 		$('#pluginplaylists_spotify').prev().hide();
-		$('#pluginplaylists_everywhere').prev().hide();
-		$('#pluginplaylists_everywhere').prev().prev().hide();
+		// $('#pluginplaylists_everywhere').prev().hide();
+		// $('#pluginplaylists_everywhere').prev().prev().hide();
 	}
 	searchManager.setup_categories();
 }

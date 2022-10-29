@@ -316,6 +316,8 @@ create_body_tag('phone');
 	</div>
 </div>
 
+<div id="stupidroundedcorners"></div>
+
 <!-- Floating Add Tags Dropdown -->
 
 <div id="tagadder" class="top_drop_menu dropmenu dropshadow">

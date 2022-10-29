@@ -46,30 +46,49 @@ var info_lyrics = function() {
 
 			this.populate = async function() {
 
+				// info.file will populate the lyrics metadata. Don't do it here
 				parent.updateData({
-					lyrics: { layout: new info_layout_empty() }
-				}, albummeta);
-
-				parent.updateData({
-					lyrics: { layout: new info_layout_empty() }
-				}, artistmeta);
-
-				parent.updateData({
-					lyrics: {  }
+					lyrics: {
+						lyrics: ''
+					},
+					triggers: {
+						lyrics: {
+							lyrics: self.do_lyrics
+						}
+					}
 				}, trackmeta);
+
+				parent.updateData({
+						lyrics: {}
+					},
+					artistmeta
+				);
+
+				parent.updateData({
+						lyrics: {}
+					},
+					albummeta
+				);
+
+				if (typeof artistmeta.lyrics.layout == 'undefined')
+					artistmeta.lyrics.layout = new info_layout_empty();
+
+				if (typeof albummeta.lyrics.layout == 'undefined')
+					albummeta.lyrics.layout = new info_layout_empty();
 
 				if (typeof trackmeta.lyrics.layout == 'undefined')
 					trackmeta.lyrics.layout = new info_html_layout({title: trackmeta.name, type: 'track', source: me});
 
-				while (typeof trackmeta.lyrics.lyrics === 'undefined') {
-					await new Promise(t => setTimeout(t, 500));
-				}
+				self.do_lyrics();
+
+			}
+
+			this.do_lyrics = function() {
 				if (trackmeta.lyrics.lyrics === null) {
 					self.tryReadingTags();
 				} else {
 					self.doBrowserUpdate();
 				}
-
 			}
 
 			this.doBrowserUpdate = function() {

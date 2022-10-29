@@ -155,6 +155,7 @@ async function checkProgress() {
 				debug.core('MOPIDY', 'Doing poll');
 				await player.controller.do_command_list([]);
 				updateStreamInfo();
+				playlist.radioManager.checkStatus();
 			}
 			if (player.status.state == 'play') {
 				player.status.progress = (Date.now()/1000) - player.controller.trackstarttime;

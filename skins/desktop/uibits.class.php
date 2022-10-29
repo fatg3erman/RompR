@@ -15,8 +15,12 @@ class uibits extends ui_elements {
 		$h = '';
 		if ($obj['playable'] === false) {
 			$h .= '<div class="containerbox menuitem">';
-		} else if ($obj['AlbumUri'] && strtolower(pathinfo($obj['AlbumUri'], PATHINFO_EXTENSION)) == "cue") {
-			$h .= '<div class="clickcue playable draggable containerbox menuitem '.$obj['class'].'" name="'.rawurlencode($obj['AlbumUri']).'">';
+		} else if ($obj['AlbumUri']) {
+			if (strtolower(pathinfo($obj['AlbumUri'], PATHINFO_EXTENSION)) == "cue") {
+				$h .= '<div class="clickcue playable draggable containerbox menuitem '.$obj['class'].'" name="'.rawurlencode($obj['AlbumUri']).'">';
+			} else {
+				$h .= '<div class="clicktrack playable draggable containerbox menuitem '.$obj['class'].'" name="'.rawurlencode($obj['AlbumUri']).'">';
+			}
 		} else if ($obj['streamuri']) {
 			$h .= '<div class="clickstream playable draggable containerbox menuitem '.$obj['class'].'" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
 		} else if ($obj['userplaylist']) {

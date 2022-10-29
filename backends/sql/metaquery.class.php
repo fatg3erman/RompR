@@ -49,32 +49,17 @@ class metaquery extends collection_base {
 		return $artists;
 	}
 
-	public function getfaveartists() {
-		// Can we have a tuning slider to increase the 'Playcount > x' value?
-		$this->generic_sql_query(
-			"CREATE TEMPORARY TABLE aplaytable AS SELECT SUM(Playcount) AS playtotal, Artistindex FROM
-			(SELECT Playcount, Artistindex FROM Playcounttable JOIN Tracktable USING (TTindex) WHERE
-			Playcount > 10) AS derived GROUP BY Artistindex", true);
-
-		$artists = array();
-		$result = $this->generic_sql_query(
-			"SELECT playtot, Artistname FROM (SELECT SUM(Playcount) AS playtot, Artistindex FROM
-			(SELECT Playcount, Artistindex FROM Playcounttable JOIN Tracktable USING (TTindex)) AS
-			derived GROUP BY Artistindex) AS alias JOIN Artisttable USING (Artistindex) WHERE
-			playtot > (SELECT AVG(playtotal) FROM aplaytable) ORDER BY ".database::SQL_RANDOM_SORT, false, PDO::FETCH_OBJ);
-		foreach ($result as $obj) {
-			logger::debug("FAVEARTISTS", "Artist :",$obj->Artistname);
-			$artists[] = array( 'name' => $obj->Artistname, 'plays' => $obj->playtot);
-		}
-		return $artists;
-	}
-
 	public function getlistenlater() {
+		// The data we put in this table might have { album: { the data we want}}
+		// or it might have {the data we want}
+		// Munge it so it's all the same
 		$result = $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
 		$retval =  array();
 		foreach ($result as $r) {
-			$d = json_decode($r['JsonData']);
-			$d->rompr_index = $r['Listenindex'];
+			$d = json_decode($r['JsonData'], true);
+			if (array_key_exists('album', $d))
+				$d = $d['album'];
+			$d['rompr_index'] = $r['Listenindex'];
 			$retval[] = $d;
 		}
 		return $retval;
@@ -160,7 +145,8 @@ class metaquery extends collection_base {
 			FROM Playcounttable JOIN Tracktable USING (TTindex)
 			JOIN Artisttable USING (Artistindex)
 			WHERE ".$this->sql_two_weeks_include($days).
-			" AND Uri IS NOT NULL GROUP BY Artistname, Title ORDER BY playtotal DESC LIMIT ".$limit);
+			" AND Uri IS NOT NULL AND Uri NOT LIKE 'http%' AND isAudiobook = 0
+			GROUP BY Artistname, Title ORDER BY playtotal DESC LIMIT ".$limit);
 
 		// 2. Get a list of recently played tracks, ignoring popularity
 		// $result = generic_sql_query(
@@ -172,7 +158,7 @@ class metaquery extends collection_base {
 		// $resultset = array_merge($resultset, $result);
 
 		// 3. Get the top tracks overall
-		$tracks = $this->get_track_charts(intval($top));
+		$tracks = $this->get_track_charts(intval($top), CHARTS_MUSIC_ONLY);
 		foreach ($tracks as $track) {
 			if ($track->Uri) {
 				$resultset[] = [
@@ -222,52 +208,74 @@ class metaquery extends collection_base {
 		}
 	}
 
-	private function get_artist_charts() {
-		$query = "SELECT
-			Artistname AS label_artist,
-			SUM(Playcount) AS soundcloud_plays
-			FROM
-			Tracktable JOIN Playcounttable USING (TTindex)
-			JOIN Artisttable USING (Artistindex)
-			".$this->charts_include_option()."
-			GROUP BY label_artist ORDER BY soundcloud_plays DESC LIMIT 40";
-		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
-	}
-
-	private function get_album_charts() {
-		$query = "SELECT
-			Artistname AS label_artist,
-			Albumname AS label_album,
-			SUM(Playcount) AS soundcloud_plays,
-			AlbumUri AS Uri
-			FROM Playcounttable JOIN Tracktable USING (TTindex)
-			JOIN Albumtable USING (Albumindex)
-			JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-			".$this->charts_include_option()."
-			GROUP BY label_artist, label_album ORDER BY soundcloud_plays DESC LIMIT 40";
-		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
-	}
-
-	private function get_track_charts($limit = 40) {
+	private function get_track_charts($limit = 40, $include = null) {
+		// MIN(Uri) is simply because I needed an aggregate function and SQLite doesn't support ANY_VALUE.
+		// Use MAX(Playcount) because we can have multiple copies of the same track -
+		// they *should* all have the same Playcount but we can't be certain because of
+		// the vaguaries of track numbers with Youtube
 		$query = "SELECT
 			Artistname AS label_artist,
 			Albumname AS label_album,
 			Title AS label_track,
-			SUM(Playcount) AS soundcloud_plays,
-			Uri
+			MAX(Playcount) AS soundcloud_plays,
+			MIN(Uri) AS Uri
 			FROM
 			Tracktable
 			JOIN Playcounttable USING (TTIndex)
 			JOIN Albumtable USING (Albumindex)
 			JOIN Artisttable USING (Artistindex)
-			".$this->charts_include_option()."
+			".$this->charts_include_option($include)."
 			GROUP BY label_artist, label_album, label_track
 			ORDER BY soundcloud_plays DESC LIMIT ".$limit;
 		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
 	}
 
-	private function charts_include_option() {
-		switch (prefs::get_pref('chartoption')) {
+	private function get_artist_charts() {
+		// This uses the track charts query as a subquery to remove duplicate
+		// tracks - ensures we only count each track once.
+		$query = "SELECT
+			Artistname AS label_artist,
+			SUM(Playcount) AS soundcloud_plays
+			FROM (
+				SELECT Title, Artistname, Albumname, MAX(Playcount) AS Playcount, MIN(AlbumUri) AS AlbumUri
+				FROM Tracktable
+				JOIN Playcounttable USING (TTindex)
+				JOIN Albumtable USING (albumindex)
+				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+				".$this->charts_include_option()."
+				GROUP BY Artistname, Albumname, Title
+			) AS nodupes
+			GROUP BY label_artist
+			ORDER BY soundcloud_plays DESC LIMIT 40";
+		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
+	}
+
+	private function get_album_charts() {
+		// This uses the track charts query as a subquery to remove duplicate
+		// tracks - ensures we only count each track once.
+		$query = "SELECT
+			Artistname AS label_artist,
+			Albumname AS label_album,
+			SUM(Playcount) AS soundcloud_plays,
+			MIN(AlbumUri) AS Uri
+			FROM (
+				SELECT Title, Artistname, Albumname, MAX(Playcount) AS Playcount, MIN(AlbumUri) AS AlbumUri
+				FROM Tracktable
+				JOIN Playcounttable USING (TTindex)
+				JOIN Albumtable USING (albumindex)
+				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+				".$this->charts_include_option()."
+				GROUP BY Artistname, Albumname, Title
+			) AS nodupes
+			GROUP BY label_artist, label_album
+			ORDER BY soundcloud_plays DESC LIMIT 40";
+		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
+	}
+
+	private function charts_include_option($include = null) {
+		if ($include == null)
+			$include = prefs::get_pref('chartoption');
+		switch ($include) {
 			case CHARTS_INCLUDE_ALL:
 				return '';
 				break;

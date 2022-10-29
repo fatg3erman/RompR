@@ -33,61 +33,12 @@ class collection_base extends database {
 	protected $options = [
 		'doing_search' => false,
 		'trackbytrack' => true,
-		'dbterms' => ['tag' => null, 'rating' => null]
+		'dbterms' => ['tag' => null, 'rating' => null],
+		'searchterms' => false
 	];
-
-	// protected $collection_lastmodified = 0;
-	// protected $thisrun_lastmodified = 0;
 
 	private $find_album = true;
 	private $find_album2;
-
-	// public function check_lastmodified(&$filedata) {
-	// 	if ($this->options['doing_search'])
-	// 		return true;
-
-	// 	if ($filedata['Last-Modified'] == null)
-	// 		return true;
-
-	// 	$time = strtotime($filedata['Last-Modified']);
-
-	// 	if ($time > $this->collection_lastmodified) {
-	// 		if ($time > $this->thisrun_lastmodified)
-	// 			$this->thisrun_lastmodified = $time;
-
-	// 		$this->sql_prepare_query(true, null, null, null,
-	// 			"UPDATE Tracktable SET justAdded = 1, Hidden = 0 WHERE Uri = ?",
-	// 			$filedata['file']
-	// 		);
-
-	// 		return false;
-	// 	}
-
-	// 	return true;
-	// }
-
-	// public function read_collection_lastmodified() {
-	// 	$this->collection_lastmodified = $this->simple_query('Value', 'Statstable', 'Item', 'ColLastMod', 0);
-	// 	logger::log('COLLECTION', 'Collection LastMod is',$this->collection_lastmodified);
-	// }
-
-	// public function save_collection_lastmodified() {
-	// 	logger::log('COLLECTION', 'Setting Collection LastMod to',$this->thisrun_lastmodified);
-	// 	$cheese = $this->simple_query('Value', 'Statstable', 'Item', 'ColLastMod', 'NOTHING');
-	// 	if ($cheese === 'NOTHING') {
-	// 		$this->sql_prepare_query(true, null, null, null,
-	// 			"INSERT INTO Statstable (Item, Value) VALUES (?, ?)",
-	// 			'ColLastMod',
-	// 			$this->thisrun_lastmodified
-	// 		);
-	// 	} else {
-	// 		$this->sql_prepare_query(true, null, null, null,
-	// 			"UPDATE Statstable SET Value = ? WHERE Item = ?",
-	// 			$this->thisrun_lastmodified,
-	// 			'ColLastMod'
-	// 		);
-	// 	}
-	// }
 
 	public function get_option($option) {
 		return $this->options[$option];
@@ -100,11 +51,11 @@ class collection_base extends database {
 		// We could also just not return the album index, but doing it this way speeds it up
 		// and I don't *think* it'll cause a problem.
 		$data = array();;
-
 		$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 			'SELECT
 				Uri,
 				TTindex,
+				isSearchResult,
 				Disc,
 				Artistname AS AlbumArtist,
 				Albumtable.Image AS "X-AlbumImage",
@@ -130,8 +81,56 @@ class collection_base extends database {
 			ORDER BY isSearchResult ASC',
 			$filedata['Title'], $filedata['Track'], $filedata['Album'], $filedata['domain']
 		);
+
 		foreach ($result as $tinfo) {
 			if ($tinfo['Uri'] == $filedata['file']) {
+				if ($tinfo['isAudiobook'] > 0) {
+					$tinfo['type'] = 'audiobook';
+				}
+				$tinfo['isAudiobook'] = null;
+				$data = array_filter($tinfo, function($v) {
+					if ($v === null || $v == '') {
+						return false;
+					}
+					return true;
+				});
+				break;
+			}
+		}
+
+		// This is a fallback and I don't like having to do this, but YTMusic and Youtube sometimes don't
+		// return the same data they did last time.
+		// CASE WHEN because the track might already be in the database with a TrackNo of 0
+		if (count($data) == 0) {
+			$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
+				'SELECT
+					TTindex,
+					isSearchResult,
+					Disc,
+					CASE WHEN TrackNo = 0 THEN NULL ELSE TrackNo END AS Track,
+					Artistname AS AlbumArtist,
+					Albumtable.Image AS "X-AlbumImage",
+					mbid AS MUSICBRAINZ_ALBUMID,
+					Searched,
+					IFNULL(Playcount, 0) AS Playcount,
+					isAudiobook,
+					Albumindex AS album_index,
+					AlbumArtistindex AS albumartist_index,
+					useTrackIms AS usetrackimages,
+					Tracktable.Artistindex AS trackartist_index
+				FROM
+					Tracktable
+					JOIN Albumtable USING (Albumindex)
+					JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+					LEFT JOIN Playcounttable USING (TTindex)
+				WHERE
+				Hidden = 0
+				AND Uri = ?
+				ORDER BY isSearchResult ASC',
+				$filedata['file']
+			);
+
+			foreach ($result as $tinfo) {
 				if ($tinfo['isAudiobook'] > 0) {
 					$tinfo['type'] = 'audiobook';
 				}
@@ -174,12 +173,12 @@ class collection_base extends database {
 			}
 		}
 
-		if ($filedata['domain'] == 'youtube' && array_key_exists('AlbumArtist', $data)) {
-			// Workaround a mopidy-youtube bug where sometimes it reports incorrect Artist info
-			// if the item being added to the queue is not the result of a search. In this case we will
-			// (almost) always have AlbumArtist info, so use that and it'll then stay consistent with the collection
-			$data['Artist'] = $data['AlbumArtist'];
-		}
+		// if ($filedata['domain'] == 'youtube' && array_key_exists('AlbumArtist', $data)) {
+		// 	// Workaround a mopidy-youtube bug where sometimes it reports incorrect Artist info
+		// 	// if the item being added to the queue is not the result of a search. In this case we will
+		// 	// (almost) always have AlbumArtist info, so use that and it'll then stay consistent with the collection
+		// 	$data['Artist'] = $data['AlbumArtist'];
+		// }
 
 		foreach (MPD_ARRAY_PARAMS as $p) {
 			if (array_key_exists($p, $data) && $data[$p] !== null) {
@@ -743,6 +742,17 @@ class collection_base extends database {
 
 	}
 
+	public function num_youtube_tracks($albumindex) {
+		return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0,
+			"SELECT COUNT(TTindex) AS num FROM Tracktable
+				WHERE Albumindex = ?
+				AND Hidden = 0
+				AND isSearchResult < 2
+				AND (Uri LIKE 'youtube%' OR Uri LIKE 'ytmusic%' OR Uri LIKE 'yt%')",
+			$albumindex
+		);
+	}
+
 	public function album_is_audiobook($albumindex) {
 		// Returns the maxiumum value of isAudiobook for a given album
 		return $this->generic_sql_query("SELECT MAX(isAudiobook) AS cnt FROM Tracktable WHERE Albumindex = ".$albumindex." AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2", false, null, 'cnt', 0);
@@ -895,7 +905,8 @@ class collection_base extends database {
 			tr.Title AS title,
 			tr.Duration AS time,
 			tr.Albumindex AS albumindex,
-			a.Artistname AS albumartist,
+			a.Artistname AS trackartist,
+			CASE WHEN al.Albumname LIKE 'rompr_wish%' THEN NULL ELSE al.Albumname END AS Album,
 			a.Artistindex AS artistindex,
 			tr.DateAdded AS DateAdded,
 			ws.SourceName AS SourceName,
@@ -903,6 +914,7 @@ class collection_base extends database {
 			ws.SourceUri AS SourceUri
 			FROM
 			Tracktable AS tr
+			JOIN Albumtable AS al USING (Albumindex)
 			LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
 			LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
 			LEFT JOIN Tagtable AS t USING (Tagindex)
@@ -916,18 +928,18 @@ class collection_base extends database {
 		switch ($sortby) {
 			case 'artist':
 				foreach (prefs::get_pref('artistsatstart') as $a) {
-					$qstring .= "CASE WHEN LOWER(albumartist) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
+					$qstring .= "CASE WHEN LOWER(trackartist) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
 				}
 				if (count(prefs::get_pref('nosortprefixes')) > 0) {
 					$qstring .= "(CASE ";
 					foreach(prefs::get_pref('nosortprefixes') AS $p) {
 						$phpisshitsometimes = strlen($p)+2;
-						$qstring .= "WHEN LOWER(albumartist) LIKE '".strtolower($p)." %' THEN LOWER(SUBSTR(albumartist,".
+						$qstring .= "WHEN LOWER(trackartist) LIKE '".strtolower($p)." %' THEN LOWER(SUBSTR(trackartist,".
 							$phpisshitsometimes.")) ";
 					}
-					$qstring .= "ELSE LOWER(albumartist) END)";
+					$qstring .= "ELSE LOWER(trackartist) END)";
 				} else {
-					$qstring .= "LOWER(albumartist)";
+					$qstring .= "LOWER(trackartist)";
 				}
 				$qstring .= ", DateAdded, SourceName";
 				break;
@@ -956,6 +968,137 @@ class collection_base extends database {
 		);
 	}
 
-}
+	public function do_raw_search($domains, $rawterms, $command) {
+		logger::core("RAW SEARCH", "domains are ".print_r($domains, true));
+		logger::core("RAW SEARCH", "terms are   ".print_r($rawterms, true));
+		foreach ($rawterms as $key => $term) {
+			$command .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
+		}
+		logger::trace("RAW SEARCH", "Search command : ".$command);
+		$player = new player();
+		$dirs = array();
+		foreach ($player->parse_list_output($command, $dirs, $domains) as $filedata) {
+			$this->newTrack($filedata);
+		}
+	}
 
+	// rawterms, while you could pass anything, the only things that actually get
+	// checked are Title, Album, trackartist, and we do actually ony use those
+	// because we get all kinds of crud passed in from elsewhere
+	public function fave_finder($domains, $checkdb, $all_terms, $return_data) {
+		$rawterms = [
+			'Title' => $all_terms['Title'],
+			'trackartist' => $all_terms['trackartist'],
+			'Album' => $all_terms['Album']
+		];
+		// $this->options['searchterms'] = array_map('strip_track_name', $rawterms);
+		$this->options['searchterms'] = $rawterms;
+		$this->options['doing_search'] = true;
+		$this->options['trackbytrack'] = false;
+
+		logger::trace('FAVEFINDER', 'Search Terms', $this->options['searchterms']);
+		$found = false;
+		if ($checkdb){
+			logger::log('FAVEFINDER', 'Checking database first');
+			$collection = new db_collection();
+			$t = $collection->doDbCollection($rawterms, $domains, true);
+			foreach ($t as $filedata) {
+				$this->newTrack($filedata);
+				$found = true;
+			}
+		}
+		if (!$found) {
+			$this->do_raw_search($domains, ['any' => [implode(' ', $rawterms)]], 'search');
+		}
+
+		if (!$return_data)
+			return;
+
+		$best_matches = [];
+		$middle_matches = [];
+		$worst_matches = [];
+		$player = new player();
+		foreach ($this->albums as $album) {
+			// If it's a ytmusic track we really really want to get the track number, which we don't get
+			// without doing a lookup. It's quick enough if we do it now. The other mechanism we have, in do-command_list
+			// doesn't work because the album isn't in the database
+			$uri = $album->check_ytmusic_lookup();
+			if ($uri)
+				$player->do_command_list(['find file "'.$uri.'"']);
+
+			$album->sortTracks();
+			foreach($album->tracks as $trackobj) {
+				if ($rawterms['Album'] && !$rawterms['Title']) {
+					// In this case we're looking for an Album link
+					if ($this->is_album($trackobj->tags['file'])) {
+						logger::log('FAVEFINDER', 'Found album',$trackobj->tags['trackartist'],$trackobj->tags['Album']);
+						$best_matches[] = $trackobj->tags;
+					}
+				} else if ($this->is_artist_or_album($trackobj->tags['file'])) {
+					// Always ignore 'tracks' which are albumuris if we're not looking for an album
+					continue;
+				} else {
+					logger::log('FAVEFINDER', 'Found',$trackobj->tags['trackartist'],$trackobj->tags['Album'],$trackobj->tags['Title']);
+					if ($trackobj->tags['Album']) {
+						if ($rawterms['Album'] && metaphone_compare($rawterms['Album'], $trackobj->tags['Album'])) {
+							// Prioritse tracks where the Album title matches what we're looking for
+							$best_matches[] = $trackobj->tags;
+						} else {
+							$middle_matches[] = $trackobj->tags;
+						}
+					} else {
+						$worst_matches[] = $trackobj->tags;
+					}
+				}
+			}
+		}
+		$this->albums = [];
+		return array_merge($best_matches, $middle_matches, $worst_matches);
+	}
+
+	protected function is_artist_or_album($file) {
+		if (
+			strpos($file, ':album:') !== false
+			|| strpos($file, ':playlist:') !== false
+			|| strpos($file, ':artist:') !== false
+		) {
+			return true;
+		}
+		return false;
+	}
+
+	protected function is_album($file) {
+		if (
+			strpos($file, ':album:') !== false
+			|| strpos($file, ':playlist:') !== false
+		) {
+			return true;
+		}
+		return false;
+	}
+
+	protected function check_track_against_terms(&$track) {
+		$filedata = $track->tags;
+		$lookingfor = $this->options['searchterms'];
+
+		if ($filedata['Title'] == null && $filedata['trackartist'] == null)
+			return false;
+
+		if ($lookingfor['trackartist'] && $lookingfor['Title']) {
+			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'], 0)
+				&& metaphone_compare($lookingfor['Title'], $filedata['Title'])) {
+				return true;
+			}
+		} else if ($lookingfor['trackartist']) {
+			if (metaphone_compare($lookingfor['trackartist'], $filedata['trackartist'], 0)) {
+				return true;
+			}
+		} else if ($lookingfor['Title']) {
+			if (metaphone_compare($lookingfor['Title'], $filedata['Title'])) {
+				return true;
+			}
+		}
+		return false;
+	}
+}
 ?>
