@@ -116,6 +116,7 @@
 .icon-bookmark { background-image: var(--icon-bookmark); }
 .icon-padlock { background-image: var(--icon-padlock); }
 .icon-padlock-open { background-image: var(--icon-padlock-open); }
+.icon-instagram { background-image: var(--icon-instagram); }
 
 .icon-snapcast {
     background-image: var(--icon-snapcast);
