@@ -59,7 +59,8 @@ class baseAlbumImage {
 
 	private function image_exists($image) {
 		logger::core("ALBUMIMAGE", "Checking for existence of file ".$image);
-		return file_exists($image);
+		// is_file() is way quicker than file_exists()
+		return is_file($image);
 	}
 
 	public function get_image_if_exists($size = 'small') {
@@ -252,7 +253,7 @@ class baseAlbumImage {
 		if (substr($this->images['small'], 0, 4) == 'http' || substr($this->images['small'], 0, 14) == 'getRemoteImage')
 			return false;
 
-		if (!file_exists($this->images['small']))
+		if (!is_file($this->images['small']))
 			return true;
 
 		return false;
