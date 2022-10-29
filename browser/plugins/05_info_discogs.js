@@ -281,6 +281,7 @@ var info_discogs = function() {
 			return;
 
 		var u = layout.add_sidebar_list(language.gettext('discogs_external'));
+		u.addClass('info-links-column');
 		var links = [];
 		urls.reverse();
 		urls.forEach(function(url) {

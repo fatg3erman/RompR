@@ -124,7 +124,7 @@ function info_sidebar_layout(options) {
 	this.add_sidebar_list = function(label, value) {
 		var list = $('<ul>').appendTo(self.sidebar);
 		value = value ? ' '+value : '';
-		list.append($('<li>').html('<b>'+label+'</b>'+value));
+		list.append($('<li class="info-list-title">').html('<b>'+label+'</b>'+value));
 		return list;
 	}
 

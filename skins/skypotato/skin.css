@@ -858,3 +858,19 @@ div.helpfulalbum>div.tagh.albumthing {
 	display:none;
 }
 
+ul.info-links-column>li:not(.info-list-title) {
+	margin-top: 2px;
+	/*position:  relative;*/
+}
+
+ul.info-links-column>li:not(.info-list-title)>i {
+	position: absolute;
+	left: -2px;
+}
+
+ul.info-links-column>li:not(.info-list-title)>a {
+	position: relative;
+	left: calc(var(--small-icon-size) + 2px);
+	top: 2px;
+	margin-right: 8px;
+}

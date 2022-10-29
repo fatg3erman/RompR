@@ -136,6 +136,7 @@ var info_musicbrainz = function() {
 			return "";
 
 		var list = layout.add_sidebar_list(language.gettext("discogs_external"));
+		list.addClass('info-links-column');
 		var links = [];
 		relations.reverse();
 		relations.forEach(function(rel) {
