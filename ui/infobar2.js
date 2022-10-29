@@ -620,8 +620,7 @@ var infobar = function() {
 		},
 
 		smartradio: function(message) {
-			var div = doNotification(message, 'icon-wifi');
-			setTimeout($.proxy(infobar.removenotify, div, notifycounter), 5000);
+			var div = doNotification(message, 'icon-spin6 spinner');
 			return notifycounter;
 		},
 

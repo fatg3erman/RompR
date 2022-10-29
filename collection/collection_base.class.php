@@ -50,7 +50,11 @@ class collection_base extends database {
 		// and that can make eg spotify search results be put under local albums
 		// We could also just not return the album index, but doing it this way speeds it up
 		// and I don't *think* it'll cause a problem.
-		$data = array();;
+		$data = array();
+		// Have seen Mopidy get confused and we get here with $filedata == null;
+		if (!is_array($filedata))
+			return $data;
+
 		$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 			'SELECT
 				Uri,

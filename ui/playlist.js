@@ -27,7 +27,7 @@ var playlist = function() {
 	var timeleft = 0;
 	var remainingtime = null;
 	var totaltime = 0;
-
+	var smart_notify = null;
 	var add_proxy_command = null;
 
 	// Minimal set of information - just what infobar requires to make sure
@@ -140,7 +140,7 @@ var playlist = function() {
 					radios[radiomode].func.initialise(radiomode, radioparam);
 					if (!from_remote) {
 						// This is us, starting it off
-						infobar.smartradio(language.gettext('label_preparing'));
+						smart_notify = infobar.smartradio(language.gettext('label_preparing'));
 						if (await radios[radiomode].func.getURIs()) {
 							setHeader();
 						} else {
@@ -394,6 +394,10 @@ var playlist = function() {
 			current_queue_request++;
 			if (playlist.radioManager.is_running() && finaltrack < (prefs.smartradio_chunksize-1)) {
 				playlist.waiting();
+			}
+			if (smart_notify !== null && finaltrack > -1) {
+				infobar.removenotify(smart_notify);
+				smart_notify = null;
 			}
 		},
 
