@@ -84,6 +84,9 @@ var info_lyrics = function() {
 			}
 
 			this.do_lyrics = function() {
+				if (trackmeta.lyrics.lyrics == '')
+					return;
+
 				if (trackmeta.lyrics.lyrics === null) {
 					self.tryReadingTags();
 				} else {
@@ -92,7 +95,11 @@ var info_lyrics = function() {
 			}
 
 			this.doBrowserUpdate = function() {
-				trackmeta.lyrics.layout.finish(null, null, formatLyrics(trackmeta.lyrics.lyrics));
+				if (trackmeta.name) {
+					trackmeta.lyrics.layout.finish(null, trackmeta.name, formatLyrics(trackmeta.lyrics.lyrics));
+				} else {
+					trackmeta.lyrics.layout.finish(null, 'No Track');
+				}
 			}
 		}
 

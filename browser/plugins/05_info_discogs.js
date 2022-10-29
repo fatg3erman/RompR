@@ -553,30 +553,7 @@ var info_discogs = function() {
 					trackmeta
 				);
 
-				if (typeof trackmeta.discogs.layout == 'undefined') {
-					if (trackmeta.name == '') {
-						trackmeta.discogs.populated = true;
-						trackmeta.discogs.layout = new info_layout_empty();
-					} else {
-						trackmeta.discogs.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
-					}
-				}
-
-				if (typeof albummeta.discogs.layout == 'undefined') {
-					if (parent.playlistinfo.type == 'stream') {
-						albummeta.discogs.layout = new info_layout_empty();
-					} else {
-						albummeta.discogs.layout = new info_sidebar_layout({title: albummeta.name, type: 'album', source: me});
-					}
-				}
-
-				if (typeof artistmeta.discogs.layout == 'undefined') {
-					artistmeta.discogs.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
-					if (artistmeta.name == '' && trackmeta.name == '') {
-						artistmeta.discogs.populated = true;
-						self.artist.doBrowserUpdate({error: 'There is no Artist to display information for'});
-					}
-				}
+				browser.setup_radio_nondisplay_panel(self, artistmeta, albummeta, trackmeta, me, parent.playlistinfo);
 
 				// At this point, we may already have link data from musicbrainz or we may not.
 				self.verify_data();

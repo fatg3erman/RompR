@@ -98,6 +98,11 @@ var info_videos = function() {
 			this.track = function() {
 				return {
 					populate: async function() {
+						if (artistmeta.name == '' && trackmeta.name == '') {
+							trackmeta.videos.layout.finish(null, 'No Videos');
+							return;
+						}
+
 						if (trackmeta.discogs.releaseid == '')
 							return;
 

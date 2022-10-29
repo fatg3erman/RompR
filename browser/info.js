@@ -331,6 +331,35 @@ var browser = function() {
 				panel.masonry(params);
 				panel.addClass('masonry-initialised');
 			}
+		},
+
+		setup_radio_nondisplay_panel: function(collection, artistmeta, albummeta, trackmeta, me, playlistinfo) {
+			if (typeof artistmeta[me].layout == 'undefined') {
+				artistmeta[me].layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
+				if (artistmeta.name == '' && trackmeta.name == '') {
+					artistmeta[me].populated = true;
+					collection.artist.doBrowserUpdate({error: 'There is no Artist to display information for'});
+					artistmeta[me].layout.finish(null, 'No Artist');
+				}
+			}
+
+			if (typeof albummeta[me].layout == 'undefined') {
+				if (playlistinfo.type == 'stream') {
+					albummeta[me].layout = new info_layout_empty();
+					albummeta[me].populated = true;
+				} else {
+					albummeta[me].layout = new info_sidebar_layout({title: albummeta.name, type: 'album', source: me});
+				}
+			}
+
+			if (typeof trackmeta[me].layout == 'undefined') {
+				if (trackmeta.name == '') {
+					trackmeta[me].populated = true;
+					trackmeta[me].layout = new info_layout_empty();
+				} else {
+					trackmeta[me].layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
+				}
+			}
 		}
 	}
 }();

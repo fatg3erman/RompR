@@ -493,6 +493,13 @@ var info_spotify = function() {
 				return {
 
 					populate: function() {
+
+						if (artistmeta.name == '' && trackmeta.name == '' && !artistmeta.spotify.populated) {
+							artistmeta.spotify.populated = true;
+							artistmeta.spotify.layout.display_error('There is no Artist to display information for');
+							artistmeta.spotify.layout.finish(null, 'No Artist');
+						}
+
 						if (artistmeta.spotify.id == '' || artistmeta.spotify.populated)
 							return;
 
