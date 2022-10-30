@@ -966,6 +966,13 @@ div.podtitle>div.fixed {
 	width: 100%;
 }
 
+div.podcast-item-image-holder {
+	float: left;
+	margin-top: 4px;
+	margin-right: 0.5em;
+	display: flex;
+}
+
 .resumebar
 {
 	height: 0.15em;

@@ -1470,17 +1470,10 @@ span.timer-time {
 	.mainpane {
 		width: 44%;
 	}
-
 }
 
 #infopane:visible ~ div {
 	display: none !important;
-}
-
-div.podcast-item-image-holder {
-	float: left;
-	margin-top: 4px;
-	margin-right: 0.5em;
 }
 
 /*

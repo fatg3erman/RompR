@@ -743,16 +743,16 @@ class player extends base_mpd_player {
 				'method' => 'core.get_version'
 			)
 		);
-		if ($result !== false) {
+		if ($result === false) {
+			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');
+			prefs::set_player_param(['websocket' => false]);
+		} else {
 			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
+			logger::trace('MOPIDYHTTP', $result);
 			$http_server = nice_server_address($this->ip);
 			prefs::set_player_param(['websocket' => $http_server.':'.prefs::get_pref('http_port_for_mopidy').self::WEBSOCKET_SUFFIX]);
 			logger::log('MOPIDYHTTP', 'Using',prefs::get_player_param('websocket'),'for Mopidy HTTP');
-		} else {
-			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');
-			prefs::set_player_param(['websocket' => false]);
 		}
-
 	}
 
 	private function mopidy_http_request($port, $data) {
