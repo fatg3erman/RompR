@@ -46,6 +46,10 @@ relative volumes as you want them, then make the whole lot louder if you need to
 case checking statements, which speeds things up.
 * All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.
 * All Personal Radio stations are now populated by the Backend Daemon, so there is no longer any need to keep a browser open.
+* If Mopidy's HTTP interface is available and you do a search in RompR and limit the search to specific backends the search will be performed
+using Mopidy's HTTP interface instead of the MPD interface. This can provide significantly improved search performance and better
+quality information but it can use a lot of RAM and in certain setups it might be a lot slower. You can disable this behaviour
+by unchcking 'Use Mopidy HTTP interface for Search' on the rompr/?setup screen.
 * The usual collection of undocumented bugfixes.
 * **Youtube Music as a Spotify Replacement**
 * Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix,

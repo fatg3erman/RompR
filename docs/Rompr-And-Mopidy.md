@@ -96,6 +96,15 @@ You need to make sure that your browser can access your Beets server for this to
 
 Otherwise beets will not allow RompЯ to talk to it. Your configuration for beets in mopidy must also contain this IP address as Beets will only communicate via the supplied IP address.
 
+
+## Search
+
+If Mopidy's HTTP interface is available and you do a search in RompR and limit the search to specific backends the search will be performed
+using Mopidy's HTTP interface instead of the MPD interface. This can provide significantly improved search performance and better
+quality information and really helps when running 'Music From Anywhere' personalised radio, but it can use a lot of RAM and in certain setups
+it might be a lot slower. You can disable this behaviour by unchcking 'Use Mopidy HTTP interface for Search' on the rompr/?setup screen.
+
+
 ## Scanning Local Files
 
 Where MPD provides an 'update' command that RompЯ can use to update MPD's music database, Mopidy does not and so RompЯ can not easily make

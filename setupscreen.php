@@ -91,6 +91,11 @@ print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy#scanning-
 print '<div class="styledinputs"><input id="spotifyunplayable" type="checkbox" name="spotify_mark_unplayable" ';
 print '><label for="spotifyunplayable">Mark All Spotify Tracks as Unplayable and add them to Your Wishlist</label></div>';
 
+print '<div class="styledinputs"><input id="mopidysearch" type="checkbox" name="use_mopidy_search" ';
+if (prefs::get_pref('use_mopidy_search')) {
+	print " checked";
+}
+print '><label for="mopidysearch">Use Mopidy HTTP interface for search</label></div>';
 
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("setup_mpd_special").'</h3>';

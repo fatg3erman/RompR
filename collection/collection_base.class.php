@@ -979,11 +979,18 @@ class collection_base extends database {
 		foreach ($rawterms as $key => $term) {
 			$command .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
 		}
-		logger::trace("RAW SEARCH", "Search command : ".$command);
 		$player = new player();
 		$dirs = array();
-		foreach ($player->parse_list_output($command, $dirs, $domains) as $filedata) {
-			$this->newTrack($filedata);
+		if ($player->has_specific_search_function($rawterms, $domains)) {
+			logger::trace('RAW SEARCH', 'Using Mopidy Search');
+			foreach ($player->search_function($rawterms, $domains) as $filedata) {
+				$this->newTrack($filedata);
+			}
+		} else {
+			logger::trace("RAW SEARCH", "Search command : ".$command);
+			foreach ($player->parse_list_output($command, $dirs, $domains) as $filedata) {
+				$this->newTrack($filedata);
+			}
 		}
 	}
 

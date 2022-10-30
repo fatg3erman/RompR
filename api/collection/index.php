@@ -29,13 +29,16 @@ switch (true) {
 		break;
 
 	case array_key_exists('mpdsearch', $_REQUEST):
+
+		logger::log('COLLECTION', print_r($_REQUEST['mpdsearch'], true));
+
 		// Handle an mpd-style search request
 		logit('mpdsearch');
 		list($cmd, $dbterms) = check_dbterms($_REQUEST['command']);
 		if ($_REQUEST['resultstype'] == "tree") {
 			mpd_file_search($cmd, checkDomains($_REQUEST), $dbterms);
 		} else {
-			mpd_search($cmd, checkDomains($_REQUEST), $dbterms);
+			mpd_search($cmd, checkDomains($_REQUEST), $dbterms, $_REQUEST['mpdsearch']);
 		}
 		break;
 
@@ -73,6 +76,7 @@ function logit($key) {
 
 function checkDomains($d) {
 	if (array_key_exists('domains', $d)) {
+		logger::log('COLLECTION', 'Search domains are', print_r($d['domains'], true));
 		return $d['domains'];
 	}
 	logger::log("SEARCH", "No search domains in use");
@@ -106,7 +110,7 @@ function mpd_file_search($cmd, $domains, $dbterms) {
 	$player->doFileSearch($cmd, $domains);
 }
 
-function mpd_search($cmd, $domains, $dbterms) {
+function mpd_search($cmd, $domains, $dbterms, $mpdsearch) {
 	// If we're searching for tags or ratings it would seem sensible to only search the database
 	// HOWEVER - we could be searching for genre or performer or composer - which will not match in the database
 	// For those cases ONLY, controller.js will call into this instead of database_search, and we set $dbterms
@@ -118,11 +122,16 @@ function mpd_search($cmd, $domains, $dbterms) {
 	if (count($dbterms) > 0) {
 		$options['dbterms'] = $dbterms;
 	}
+	global $performance;
+	$timer = microtime(true);
 	prefs::$database = new musicCollection($options);
 	prefs::$database->cleanSearchTables();
-	prefs::$database->do_update_with_command($cmd, array(), $domains);
+	prefs::$database->do_update_with_command($cmd, array(), $domains, [], $mpdsearch);
 	prefs::$database->dumpAlbums($_REQUEST['dump']);
 	prefs::$database->dumpArtistSearchResults($_REQUEST['dump']);
+    $performance['total'] = microtime(true) - $timer;
+	print_performance_measurements();
+
 }
 
 function database_search() {

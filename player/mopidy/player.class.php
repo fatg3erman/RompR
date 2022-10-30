@@ -5,6 +5,17 @@ class player extends base_mpd_player {
 
 	private const WEBSOCKET_SUFFIX = '/mopidy/ws';
 
+	private const SPECIFIC_SEARCH_TERMS = [
+		'any' => 'any',
+		'title' => 'track_name',
+		'album' => 'album',
+		'artist' => 'artist',
+		'albumartist' => 'albumartist',
+		'composer' => 'composer',
+		'performer' => 'performer',
+		'genre' => 'genre'
+	];
+
 	public function check_track_load_command($uri) {
 		return 'add';
 	}
@@ -54,6 +65,306 @@ class player extends base_mpd_player {
 		return $dir;
 	}
 
+	public function has_specific_search_function($mpdsearch, $domains) {
+
+		if (prefs::get_pref('use_mopidy_search') == false) {
+			logger::log('MOPIDY', 'Mopidy Search is disabled');
+			return false;
+		}
+
+		if (count($mpdsearch) == 0) {
+			logger::log('MOPIDY', 'Command is not search, not using websocket');
+			return false;
+		}
+
+		if (prefs::get_player_param('websocket') === false) {
+			logger::log('MOPIDY', 'Websocket not available, using standard search');
+			return false;
+		}
+
+		if (count($domains) == 0) {
+			logger::log('MOPIDY', 'No search domains in use, using standard search');
+			return false;
+		}
+
+		$allowed_terms = array_keys(self::SPECIFIC_SEARCH_TERMS);
+		$used_terms = array_keys($mpdsearch);
+
+		$diff = array_diff($used_terms, $allowed_terms);
+		if (count($diff) > 0) {
+			logger::log('MOPIDY', 'Mopidy Search not permitted due to disallowed search terms');
+			return false;
+		}
+		return true;
+	}
+
+	public function search_function($terms, $domains) {
+		$search = [];
+		$domains = array_map(function($a) {return $a.':'; }, $domains);
+
+		logger::log('MOPIDY', 'Search Backends are',print_r($domains, true));
+
+		foreach ($terms as $term => $value) {
+			$search[self::SPECIFIC_SEARCH_TERMS[$term]] = $value;
+		}
+
+		logger::log('MOPIDY', 'Search Params are',print_r($search, true));
+
+		$result = $this->mopidy_http_request(
+			$this->strip_http_port(),
+			array(
+				'method' => 'core.library.search',
+				'params' => [
+					'query' => $search,
+					'uris' => $domains
+				]
+			)
+		);
+
+		if ($result === false) {
+			logger::warn('MOPIDY', 'HTTP search request did not work');
+			return;
+		}
+
+		$json = json_decode($result, true);
+		// logger::log('MOPIDY', print_r($json, true));
+		if (array_key_exists('error', $json)) {
+			logger::error('MOPIDY', 'HTTP request error', $json['error']['data']['message']);
+			return;
+		}
+
+		if (!array_key_exists('result', $json) || !is_array($json['result'])) {
+			logger::warn('MOPIDY', 'Did not get array result for search!');
+			return;
+		}
+
+		foreach ($json['result'] as $uri_search) {
+			$domain = getDomain($uri_search['uri']);
+			if (array_key_exists('tracks', $uri_search)) {
+				foreach ($uri_search['tracks'] as $track) {
+					$filedata = $this->parse_mopidy_track($track, $domain);
+					if ($this->sanitize_data($filedata)) {
+						yield $filedata;
+					}
+				}
+			}
+			if (array_key_exists('albums', $uri_search)) {
+				foreach ($uri_search['albums'] as $track) {
+					$filedata = $this->parse_mopidy_album($track, $domain);
+					if ($this->sanitize_data($filedata)) {
+						yield $filedata;
+					}
+				}
+			}
+		}
+
+
+	}
+
+
+	// (
+	//     [jsonrpc] => 2.0
+	//     [id] => 1
+	//     [result] => Array
+	//         (
+	//             [0] => Array
+	//                 (
+	//                     [__model__] => SearchResult
+	//                     [uri] => ytmusic:search
+	//                     [tracks] => Array
+	//                         (
+	//                             [0] => Array
+	//                                 (
+	//                                     [__model__] => Track
+	//                                     [uri] => ytmusic:track:LTBeAXo9iBc
+	//                                     [name] => A Galaxy Of Scars
+	//                                     [artists] => Array
+	//                                         (
+	//                                             [0] => Array
+	//                                                 (
+	//                                                     [__model__] => Artist
+	//                                                     [uri] => ytmusic:artist:UCSdpLrznEqa8XUES6qHtWig
+	//                                                     [name] => The Third Eye Foundation
+	//                                                     [sortname] => The Third Eye Foundation
+	//                                                     [musicbrainz_id] =>
+	//                                                 )
+
+	//                                         )
+
+	//                                     [album] => Array
+	//                                         (
+	//                                             [__model__] => Album
+	//                                             [uri] => ytmusic:album:MPREb_cthDNAOfKAL
+	//                                             [name] => You Guys Kill Me
+	//                                             [artists] => Array
+	//                                                 (
+	//                                                     [0] => Array
+	//                                                         (
+	//                                                             [__model__] => Artist
+	//                                                             [uri] => ytmusic:artist:UCSdpLrznEqa8XUES6qHtWig
+	//                                                             [name] => The Third Eye Foundation
+	//                                                             [sortname] => The Third Eye Foundation
+	//                                                             [musicbrainz_id] =>
+	//                                                         )
+
+	//                                                 )
+
+	//                                             [date] => 1998
+	//                                             [musicbrainz_id] =>
+	//                                         )
+
+	//                                     [genre] =>
+	//                                     [date] => 0000
+	//                                     [bitrate] => 0
+	//                                     [comment] =>
+	//                                     [musicbrainz_id] =>
+	//                                 )
+
+	private function parse_mopidy_track(&$track, $domain) {
+		$filedata = MPD_FILE_MODEL;
+		$candidate_date = $filedata['Date'];
+		// file
+		$filedata['file'] = $track['uri'];
+		// domain
+		$filedata['domain'] = $domain;
+		// Title
+		$filedata['Title'] = $track['name'];
+		// Artist and MUSICBRAINZ_ARTISTID
+		if (array_key_exists('artists', $track)) {
+			list($artists, $amb) = $this->parse_mopidy_artists($track['artists']);
+			if (count($artists) > 0)
+				$filedata['Artist'] = $artists;
+			if (count($amb) > 0)
+				$filedata['MUSICBRAINZ_ARTISTID'] = $amb;
+		}
+		// Album, X-AlbumUri, AlbumArtist, MUSICBRAINZ_ALBUMID, and MUSICBrAINZ_ALBUMARTISTID
+		if (array_key_exists('album', $track)) {
+			if (array_key_exists('name', $track['album']) && $track['album']['name'])
+				$filedata['Album'] = $track['album']['name'];
+			if (array_key_exists('uri', $track['album']) && $track['album']['uri'])
+				$filedata['X-AlbumUri'] = $track['album']['uri'];
+			if (array_key_exists('date', $track['album']) && $track['album']['date'] && $track['album']['date'] != '0000')
+				$candidate_date = $track['album']['date'];
+			if (array_key_exists('musicbrainz_id', $track['album']) && $track['album']['musicbrainz_id'])
+				$filedata['MUSICBRAINZ_ALBUMID'] = $track['album']['musicbrainz_id'];
+			if (array_key_exists('artists', $track['album'])) {
+				list($artists, $amb) = $this->parse_mopidy_artists($track['album']['artists']);
+				if (count($artists) > 0)
+					$filedata['AlbumArtist'] = $artists;
+				if (count($amb) > 0)
+					$filedata['MUSICBRAINZ_ALBUMARTISTID'] = $amb[0];
+			}
+		}
+		// Track
+		if (array_key_exists('track_no', $track) && $track['track_no'])
+			$filedata['Track'] = $track['track_no'];
+		// Time
+		if (array_key_exists('length', $track) && $track['length'])
+			$filedata['Time'] = intval($track['length'] / 1000);
+		// Date - prioritise album date as this is often set when track data isn't
+		if ($candidate_date !== null && array_key_exists('date', $track) && $track['date'] && $track['date'] != '0000')
+			$candidate_date = $track['date'];
+		// Last-Modified
+		if (array_key_exists('last_modified', $track) && $track['last_modified'])
+			$filedata['Last-Modified'] = $track['last_modified'];
+		// Disc
+		if (array_key_exists('disc_no', $track) && $track['disc_no'])
+			$filedata['Disc'] = $track['disc_no'];
+		// Comment
+		if (array_key_exists('comment', $track) && $track['comment'])
+			$filedata['Comment'] = $track['comment'];
+		// Composer
+		if (array_key_exists('composers', $track)) {
+			list($artists, $amb) = $this->parse_mopidy_artists($track['composers']);
+			if (count($artists) > 0)
+				$filedata['Composer'] = $artists;
+		}
+		// Performer
+		if (array_key_exists('performers', $track)) {
+			list($artists, $amb) = $this->parse_mopidy_artists($track['performers']);
+			if (count($artists) > 0)
+				$filedata['Performer'] = $artists;
+		}
+		// Genre
+		if (array_key_exists('genre', $track) && $track['genre'])
+			$filedata['Genre'] = $track['genre'];
+		// MUSICBRAINZ_TRACKID
+		if (array_key_exists('musicbrainz_id', $track) && $track['musicbrainz_id'])
+			$filedata['MUSICBRAINZ_TRACKID'] = $track['musicbrainz_id'];
+
+		$filedata['Date'] = $candidate_date;
+
+		return $filedata;
+
+	}
+
+	private function parse_mopidy_artists(&$data) {
+		$artists = [];
+		$amb = [];
+		foreach ($data as $artist) {
+			if ($artist['name'])
+				$artists[] = $artist['name'];
+			if ($artist['musicbrainz_id'])
+				$amb[] = $artist['musicbrainz_id'];
+		}
+		return array($artists, $amb);
+	}
+
+	// [albums] => Array
+	//     (
+	//         [0] => Array
+	//             (
+	//                 [__model__] => Album
+	//                 [uri] => ytmusic:album:MPREb_OVwt7A2TE3t
+	//                 [name] => The Mess We Made
+	//                 [artists] => Array
+	//                     (
+	//                         [0] => Array
+	//                             (
+	//                                 [__model__] => Artist
+	//                                 [uri] => ytmusic:artist:UCSI2myt7tP_R8RJKw6bbNig
+	//                                 [name] => Matt Elliott
+	//                                 [sortname] => Matt Elliott
+	//                                 [musicbrainz_id] =>
+	//                             )
+
+	//                     )
+
+	//                 [date] => 2003
+	//                 [musicbrainz_id] =>
+	//             )
+
+
+	private function parse_mopidy_album(&$track, $domain) {
+		$filedata = MPD_FILE_MODEL;
+		// file
+		$filedata['file'] = $track['uri'];
+		// domain
+		$filedata['domain'] = $domain;
+		// Title
+		$filedata['Title'] = 'Album: '.$track['name'];
+		// Artist and MUSICBRAINZ_ARTISTID
+		// We don't set AlbumArtist for albums, that's consistent with what Mopidy-MPD does
+		if (array_key_exists('artists', $track)) {
+			list($artists, $amb) = $this->parse_mopidy_artists($track['artists']);
+			if (count($artists) > 0)
+				$filedata['Artist'] = $artists;
+			if (count($amb) > 0)
+				$filedata['MUSICBRAINZ_ALBUMARTISTID'] = $amb[0];
+		}
+		// Album
+		$filedata['Album'] = $track['name'];
+		// X-AlbumUri
+		$filedata['X-AlbumUri'] = $track['uri'];
+		// Date
+		if (array_key_exists('date', $track) && $track['date'] && $track['date'] != '0000')
+			$filedata['Date'] = $track['date'];
+
+		return $filedata;
+
+	}
+
+
 	protected function player_specific_fixups(&$filedata) {
 		if (strpos($filedata['file'], 'spotify:artist:') !== false) {
 			$this->to_browse[] = [
@@ -70,17 +381,31 @@ class player extends base_mpd_player {
 
 		switch($filedata['domain']) {
 			case 'local':
-				// mopidy-local-sqlite sets album URIs for local albums, but sometimes it gets it very wrong
-				// We don't need Album URIs for local tracks, since we can already add an entire album
-				$filedata['X-AlbumUri'] = null;
-				$this->check_undefined_tags($filedata);
-				$filedata['folder'] = dirname($filedata['unmopfile']);
-				if (prefs::get_pref('audiobook_directory') != '') {
-					$f = rawurldecode($filedata['folder']);
-					if (strpos($f, prefs::get_pref('audiobook_directory')) === 0) {
-						$filedata['type'] = 'audiobook';
-					}
-				}
+				$this->preprocess_local($filedata);
+				break;
+
+			case "soundcloud":
+				$this->preprocess_soundcloud($filedata);
+				break;
+
+			case "youtube":
+				$this->preprocess_youtube($filedata);
+				break;
+
+			case "ytmusic":
+				$this->preprocess_ytmusic($filedata);
+				break;
+
+			case "spotify":
+				$filedata['folder'] = $filedata['X-AlbumUri'];
+				break;
+
+			case "internetarchive":
+				$this->preprocess_internetarchive($filedata);
+				break;
+
+			case "podcast":
+				$this->preprocess_podcast($filedata);
 				break;
 
 			case 'http':
@@ -104,48 +429,6 @@ class player extends base_mpd_player {
 				$this->preprocess_stream($filedata);
 				break;
 
-			case "soundcloud":
-				$this->preprocess_soundcloud($filedata);
-				break;
-
-			case "youtube":
-				$this->preprocess_youtube($filedata);
-				break;
-
-			case "ytmusic":
-				$this->preprocess_ytmusic($filedata);
-				break;
-
-			case "spotify":
-				$filedata['folder'] = $filedata['X-AlbumUri'];
-				break;
-
-			case "internetarchive":
-				$this->check_undefined_tags($filedata);
-				$filedata['X-AlbumUri'] = $filedata['file'];
-				$filedata['folder'] = $filedata['file'];
-				$filedata['AlbumArtist'] = "Internet Archive";
-				break;
-
-			case "podcast":
-				$filedata['folder'] = $filedata['X-AlbumUri'];
-				if ($filedata['Artist'] !== null) {
-					$filedata['AlbumArtist'] = $filedata['Artist'];
-				}
-				if ($filedata['AlbumArtist'] === null) {
-					$filedata['AlbumArtist'] = array("Podcasts");
-				}
-				if (is_array($filedata['Artist']) &&
-					($filedata['Artist'][0] == "http" ||
-					$filedata['Artist'][0] == "https" ||
-					$filedata['Artist'][0] == "ftp" ||
-					$filedata['Artist'][0] == "file" ||
-					substr($filedata['Artist'][0],0,7) == "podcast")) {
-					$filedata['Artist'] = $filedata['AlbumArtist'];
-				}
-				$filedata['type'] = 'podcast';
-				break;
-
 			default:
 				$this->check_undefined_tags($filedata);
 				$filedata['folder'] = dirname($filedata['unmopfile']);
@@ -154,6 +437,46 @@ class player extends base_mpd_player {
 
 		return true;
 
+	}
+
+	private function preprocess_local(&$filedata) {
+		// mopidy-local sets album URIs for local albums, but sometimes it gets it very wrong.
+		// We don't need Album URIs for local tracks, since we can already add an entire album
+		$filedata['X-AlbumUri'] = null;
+		$this->check_undefined_tags($filedata);
+		$filedata['folder'] = dirname($filedata['unmopfile']);
+		if (prefs::get_pref('audiobook_directory') != '') {
+			$f = rawurldecode($filedata['folder']);
+			if (strpos($f, prefs::get_pref('audiobook_directory')) === 0) {
+				$filedata['type'] = 'audiobook';
+			}
+		}
+	}
+
+	private function preprocess_internetarchive(&$filedata) {
+		$this->check_undefined_tags($filedata);
+		$filedata['X-AlbumUri'] = $filedata['file'];
+		$filedata['folder'] = $filedata['file'];
+		$filedata['AlbumArtist'] = "Internet Archive";
+	}
+
+	private function preprocess_podcast(&$filedata) {
+		$filedata['folder'] = $filedata['X-AlbumUri'];
+		if ($filedata['Artist'] !== null) {
+			$filedata['AlbumArtist'] = $filedata['Artist'];
+		}
+		if ($filedata['AlbumArtist'] === null) {
+			$filedata['AlbumArtist'] = array("Podcasts");
+		}
+		if (is_array($filedata['Artist']) &&
+			($filedata['Artist'][0] == "http" ||
+			$filedata['Artist'][0] == "https" ||
+			$filedata['Artist'][0] == "ftp" ||
+			$filedata['Artist'][0] == "file" ||
+			substr($filedata['Artist'][0],0,7) == "podcast")) {
+			$filedata['Artist'] = $filedata['AlbumArtist'];
+		}
+		$filedata['type'] = 'podcast';
 	}
 
 	private function preprocess_stream(&$filedata) {
@@ -238,6 +561,7 @@ class player extends base_mpd_player {
 		// I think this is a good idea. I'm not really sure, but if we're building the collection
 		// from YTMusic Liked Songs, none of them have an album so they all appear under a nameless
 		// album under Various Artists.
+		// I think these ones that come back without Album info are Youtube Videos, as for Youtube.
 		if ($filedata['Title'] && !$filedata['Album'])
 			$filedata['Album'] = $filedata['Title'];
 

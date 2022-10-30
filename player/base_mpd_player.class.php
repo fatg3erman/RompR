@@ -524,6 +524,9 @@ class base_mpd_player {
 		if (prefs::get_pref('use_original_releasedate') && $filedata['OriginalDate'])
 			$filedata['Date'] = $filedata['OriginalDate'];
 
+		// Mopidy-YTMusic usually sends this, especially in the play queue
+		if ($filedata['Date'] == '0000')
+			$filedata['Date'] = null;
 
 		$filedata['year'] = getYear($filedata['Date']);
 

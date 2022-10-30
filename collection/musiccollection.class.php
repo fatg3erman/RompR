@@ -243,7 +243,7 @@ class musicCollection extends collection_base {
 		// so we force the values of AlbumArtist and Album to be the same as the one we're browsing
 		// whatever comes back from Mopidy. This isn't ideal but ytmusicapi seems very inconsistent
 		// in what information it returns so we need to tidy it up.
-		$this->do_update_with_command('find file "'.$uri.'"', array(), false, ['AlbumArtist' => $album_details['Artistname'], 'Album' => $album_details['Albumname']]);
+		$this->do_update_with_command('find file "'.$uri.'"', array(), false, ['AlbumArtist' => $album_details['Artistname'], 'Album' => $album_details['Albumname']], []);
 		$just_added = $this->find_justadded_albums();
 		if (is_array($just_added) && count($just_added) > 0) {
 			logger::log('BROWSEALBUM', 'We got a just modded response');
@@ -315,7 +315,7 @@ class musicCollection extends collection_base {
 			$this->options['doing_search'] = true;
 			$this->options['trackbytrack'] = true;
 			logger::log('COLLECTION', 'Browsing for artist',$uri);
-			$this->do_update_with_command('find file "'.$uri.'"', array(), false);
+			$this->do_update_with_command('find file "'.$uri.'"', array(), false, [], []);
 			$this->unbrowse_artist($index);
 			return true;
 		} else {
@@ -323,7 +323,7 @@ class musicCollection extends collection_base {
 		}
 	}
 
-	public function do_update_with_command($cmd, $dirs, $domains, $force_keys = []) {
+	public function do_update_with_command($cmd, $dirs, $domains, $force_keys, $mpdsearch) {
 		logger::log('COLLECTION', 'Doing update with',$cmd);
 		// In cases where we're browsing search results from eg youtube, the initial
 		// Album Artist can sometimes be wrong, but we want it to be the same otherwise
@@ -336,8 +336,14 @@ class musicCollection extends collection_base {
 		$this->prepareCollectionUpdate();
 		$player = new player();
 		$player->initialise_search();
-		foreach ($player->parse_list_output($cmd, $dirs, $domains) as $filedata) {
-			$this->newTrack($filedata);
+		if ($player->has_specific_search_function($mpdsearch, $domains)) {
+			foreach ($player->search_function($mpdsearch, $domains) as $filedata) {
+				$this->newTrack($filedata);
+			}
+		} else {
+			foreach ($player->parse_list_output($cmd, $dirs, $domains) as $filedata) {
+				$this->newTrack($filedata);
+			}
 		}
 		$this->tracks_to_database();
 		foreach ($player->to_browse as $artist) {

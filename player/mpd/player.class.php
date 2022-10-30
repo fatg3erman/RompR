@@ -43,6 +43,10 @@ class player extends base_mpd_player {
 		fclose($this->monitor);
 	}
 
+	public function has_specific_search_function($mpdsearch, $domains) {
+		return false;
+	}
+
 	protected function player_specific_fixups(&$filedata) {
 		switch($filedata['domain']) {
 			case 'local':
