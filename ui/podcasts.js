@@ -36,8 +36,7 @@ var podcasts = function() {
 	function podcastDownloadMonitor(track, channel) {
 
 		var self = this;
-		var progressdiv = $('i[name="poddownload_'+track+'"]').parent();
-		progressdiv.html('<div class="fullwidth"></div>');
+		var progressdiv = $('<div>', {class: 'podcast-download-bar'}).insertAfter($('i[name="poddownload_'+track+'"]').parent().parent());
 		progressdiv.rangechooser({range: 100, startmax: 0, interactive: false});
 		var timer;
 		var running = true;
@@ -53,8 +52,12 @@ var podcasts = function() {
 				// Sometimes we refesh just before this fires, and the content has been
 				// reloaded, which makes this throw an error
 				debug.debug("PODCAST DOWNLOAD","Download status is",data);
-				if (progressdiv.hasClass('rangechooser')) {
-					progressdiv.rangechooser('setProgress', data.percent);
+				try {
+					if (progressdiv.hasClass('rangechooser')) {
+						progressdiv.rangechooser('setProgress', data.percent);
+					}
+				} catch (err) {
+
 				}
 				if (running) {
 					timer = setTimeout(self.checkProgress, 500);
@@ -201,7 +204,7 @@ var podcasts = function() {
 			clickRegistry.loadContentIntoTarget({
 				target: $('#podcast_'+channel),
 				clickedElement: $('.openmenu[name="podcast_'+channel+'"]'),
-				scoot: false,
+				scoot: true,
 				data: {configvisible: configvisible ? 1 : 0}
 			});
 		},

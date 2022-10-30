@@ -962,6 +962,10 @@ div.podtitle>div.fixed {
 	margin-bottom: 0.75em;
 }
 
+.podcast-download-bar {
+	width: 100%;
+}
+
 .resumebar
 {
 	height: 0.15em;

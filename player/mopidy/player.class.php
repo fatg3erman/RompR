@@ -157,10 +157,7 @@ class player extends base_mpd_player {
 				}
 			}
 		}
-
-
 	}
-
 
 	// (
 	//     [jsonrpc] => 2.0
