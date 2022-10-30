@@ -80,7 +80,7 @@ class everywhere_radio extends musicCollection {
 				logger::log('EVRADIO',$uri['trackartist'], $uri['Title'],'is BANNED');
 			} else {
 				logger::log('EVRADIO', 'Got Uri ',$uri['trackartist'], $uri['Title']);
-				$this->add_smart_uri($uri['file'], $uri['trackartist'], $uri['Title']);
+				$this->add_smart_uri($uri['file'], $uri['trackartist'], $uri['Title'], $uri['X-AlbumUri']);
 			}
 		}
 	}

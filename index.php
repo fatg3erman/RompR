@@ -81,8 +81,6 @@ if (array_key_exists('cacheclean', $_REQUEST)) {
 	exit(0);
 }
 
-
-
 //
 // Set the country code from the browser (though this may not be accurate)
 // - unless the user has already set it. Note, this is the lastfm country
@@ -137,6 +135,10 @@ $player = new player();
 // Always probe the websocket every time we load. This is a saved preference
 // and it might have changed since last time we opened the page
 $player->probe_websocket();
+
+// This table has to exist because it's used in get_album_uri() but we
+// can't create it until we know which player we're connected to.
+prefs::$database->create_radio_uri_table(false);
 
 //
 // Check that the Backend Daemon is running and (re)start if it necessary.

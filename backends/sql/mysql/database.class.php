@@ -59,10 +59,27 @@ class database extends data_base {
 	}
 
 	public function get_album_uri($trackuri) {
-		return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
-			"SELECT AlbumUri FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Uri = ?",
+		$nipples = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
+			"SELECT
+				AlbumUri
+			FROM
+				Albumtable
+			JOIN Tracktable USING (Albumindex)
+			WHERE Uri = ?",
 			$trackuri
 		);
+		if ($nipples == null) {
+			$table = everywhere_radio::get_uri_table_name();
+			$nipples = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
+				"SELECT
+					AlbumUri
+				FROM
+					".$table."
+				WHERE Uri = ?",
+				$trackuri
+			);
+		}
+		return $nipples;
 	}
 
 	protected function init_random_albums() {
@@ -495,7 +512,7 @@ class database extends data_base {
 		);
 	}
 
-	public function create_radio_uri_table() {
+	public function create_radio_uri_table($truncate = true) {
 		$name = everywhere_radio::get_uri_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"uriindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
@@ -503,6 +520,7 @@ class database extends data_base {
 			"trackartist VARCHAR(100) NOT NULL, ".
 			"Title VARCHAR(255) NOT NULL, ".
 			"Uri VARCHAR(2000), ".
+			"AlbumUri VARCHAR(2000), ".
 			"UNIQUE INDEX(trackartist, Title), ".
 			"PRIMARY KEY (uriindex)) ENGINE=InnoDB", true))
 		{
@@ -511,7 +529,8 @@ class database extends data_base {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking ".$name." : ".$err);
 		}
-		$this->generic_sql_query("TRUNCATE TABLE ".$name);
+		if ($truncate)
+			$this->generic_sql_query("TRUNCATE TABLE ".$name);
 	}
 
 	public function create_radio_ban_table() {
@@ -536,13 +555,14 @@ class database extends data_base {
 	// Blood, Sweat & Tears
 	// Blood, Sweat And Tears
 	// all come back in response to a search for Blood Sweat & Tears
-	public function add_smart_uri($uri, $artist, $title) {
+	public function add_smart_uri($uri, $artist, $title, $albumuri) {
 		$name = everywhere_radio::get_uri_table_name();
 		$this->sql_prepare_query(true, null, null, null,
-			"INSERT IGNORE INTO ".$name." (trackartist, Title, Uri) VALUES (?, ? ,?)",
+			"INSERT IGNORE INTO ".$name." (trackartist, Title, Uri, AlbumUri) VALUES (?, ? ,?, ?)",
 			strip_track_name($artist),
 			strip_track_name($title),
-			$uri
+			$uri,
+			$albumuri
 		);
 	}
 
