@@ -1477,6 +1477,12 @@ span.timer-time {
 	display: none !important;
 }
 
+div.podcast-item-image-holder {
+	float: left;
+	margin-top: 4px;
+	margin-right: 0.5em;
+}
+
 /*
 =====================================================================
 =

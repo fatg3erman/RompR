@@ -793,7 +793,17 @@ class poDatabase extends database {
 		if ($y->DisplayMode == DISPLAYMODE_DOWNLOADED && $item->Downloaded == 0)
 			return;
 
+
 		print '<div class="item podcastitem">';
+
+		if ($item->Image) {
+			print '<div class="podcast-item-image-holder">';
+			print '<img class="podcast-item-image lazy" data-src="getRemoteImage.php?rompr_resize_size=small&url='.rawurlencode($item->Image).'" />';
+			print '</div>';
+		}
+
+		print '<div class="podcast-item-details">';
+
 		if ($item->Downloaded == 1 && $y->Version > 1) {
 			$uri_to_use = rawurlencode(dirname(dirname(get_base_url())).$item->Localfilename);
 		} else {
@@ -869,6 +879,9 @@ class poDatabase extends database {
 			}
 			print '</div>';
 		}
+
+		print '</div>';
+
 		print '</div>';
 	}
 
