@@ -164,11 +164,11 @@ class everywhere_radio extends musicCollection {
 				$cmds = [join_command_string(array('add', $uri))];
 				$player->do_command_list($cmds);
 				$numtracks--;
+				// Trying this here because Mopidy on Pi4 seems to get
+				// annoyed at us at this point.
+				sleep(1);
 			}
 		}
-		// Trying this here because Mopidy on Pi4 seems to get
-		// annoyed at us at this point.
-		sleep(1);
 		return true;
 	}
 

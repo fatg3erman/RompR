@@ -305,7 +305,7 @@ class base_mpd_player {
 	// It's a tad convoluted
 	private function check_set_resume_bookmark($cmds) {
 		$temp_status = $this->get_status();
-		if (is_array($temp_status) && ($temp_status['state'] == 'play' || $temp_status['state'] == 'pause')) {
+		if (is_array($temp_status) && array_key_exists('state', $temp_status) && ($temp_status['state'] == 'play' || $temp_status['state'] == 'pause')) {
 			foreach ($cmds as $c) {
 				if ($c == 'stop' || $c == 'next' || $c == 'previous' || strpos($c, 'play') === 0 || $c == 'clear') {
 					$this->set_resume($temp_status);
