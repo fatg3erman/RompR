@@ -711,28 +711,7 @@ function doMopidyCollectionOptions() {
 
 	// Mopidy Folders to browse when building the collection
 
-	// spotifyweb folders are SLOW, but that's to be expected.
-	// We use 'Albums' to get 'Your Music' because, although it requires more requests than 'Songs',
-	// each response will be small enough to handle easily and there's less danger of timeouts or
-	// running into memory issues or pagination.
-
-	var domains = {
-		local: [{dir: "Local media", label: "Local Media"}],
-		beetslocal: [{dir: "Local (beets)", label: "Local (beets)"}],
-		beets: [{dir: "Beets library/Albums by Artist", label: "Beets Library"}],
-		spotify: [{dir: "Spotify/Your music/Your tracks", label: "Spotify 'Your Tracks'"},
-				  {dir: "Spotify/Your music/Your albums", label: "Spotify 'Your Albums'"}],
-		soundcloud: [{dir: "SoundCloud/Liked", label: "SoundCloud Liked"},
-					 {dir: "SoundCloud/Sets", label: "SoundCloud Sets"},
-					 {dir: "SoundCloud/Stream", label: "SoundCloud Stream"}],
-		vkontakte: [{dir: "VKontakte", label: "VKontakte" }],
-		ytmusic: [
-			{dir: "YouTube Music/Liked Songs", label: "YouTube Music Liked Songs"},
-			{dir: "YouTube Music/Albums", label: "YouTube Music Albums"},
-			{dir: "YouTube Music/Subscriptions", label: "YouTube Music Subscriptions"},
-		]
-	}
-
+	var domains = data_from_source('mopidy_collection_folders');
 	for (var i in domains) {
 		if (player.canPlay(i)) {
 			for (var j in domains[i]) {

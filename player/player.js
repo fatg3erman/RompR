@@ -1,12 +1,7 @@
 var player = function() {
 
-    var jsonNode = document.querySelector("script[name='default_player']");
-    var jsonText = jsonNode.textContent;
-    const default_player = JSON.parse(jsonText);
-
-    jsonNode = document.querySelector("script[name='player_connection_params']");
-    jsonText = jsonNode.textContent;
-    const player_connection_params = JSON.parse(jsonText);
+    const default_player = data_from_source('default_player');
+    const player_connection_params = data_from_source('player_connection_params');
 
 	function playerEditor() {
 

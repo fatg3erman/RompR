@@ -15,6 +15,8 @@ while (true) {
     prefs::load();
     $players = array_keys(prefs::get_pref('multihosts'));
 
+    // Check that romonitor daemons are running for all our hosts
+
     foreach ($players as $player) {
         $cmd = $pwd.'/romonitor.php --currenthost '.rawurlencode($player);
         $mon_running = false;
@@ -30,11 +32,9 @@ while (true) {
                 $mon_running = true;
             }
         } else if (($pid = get_pid($cmd)) !== false) {
-            // If it's already running but we didn't start it
             logger::warn('DAEMON', "Monitor for",$player,"already started, but not by this Daemon. This may lead to problems.");
             $mon_running = true;
             $monitors[$player] = $pid;
-            // kill_process($pid);
         }
 
         if (!$mon_running) {

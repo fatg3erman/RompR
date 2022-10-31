@@ -344,6 +344,29 @@ class base_mpd_player {
 		}
 	}
 
+	private function check_youtube_lookup($cmds) {
+		// HACKETY HACK
+		// ytmusic can't add a track unless the album has been looked up. Youtube often doesn't know the track number
+		// If we've added a track to the collection and then restarted Mopidy our collection is buggered.
+		// This'll work in some instances, but not all. What a rigmarole. Can't believe ytmusicapi regards track numbers
+		// as optional. We do it for youtube:video too because that has the track number problem but not the
+		// lookup problem. If it's in the collection or smart_radio_uri we should have the album uri.
+		foreach ($cmds as $cmd) {
+			if (preg_match('/add "([ytmusic:track:|youtube:video:].+)"/', $cmd, $matches)) {
+				if (prefs::$database === null) {
+					prefs::$database = new database();
+				}
+				$albumuri = prefs::$database->get_album_uri($matches[1]);
+				if ($albumuri) {
+					logger::log('PLAYER', 'Making Mopidy lookup album',$albumuri);
+					$this->send_command('find file "'.$albumuri.'"');
+				} else {
+					logger::warn('PLAYER', 'Cannot make Mopidy lookup album for',$matches[1]);
+				}
+			}
+		}
+	}
+
 	public function do_command_list($cmds) {
 		$done = 0;
 		$cmd_status = null;
@@ -357,23 +380,7 @@ class base_mpd_player {
 			$this->translate_commands_for_remote($cmds);
 		}
 
-		// HACKETY HACK
-		// ytmusic can't add a track unless the album has been looked up. Youtube often doesn't know the track number
-		// If we've added a track to the collection and then restarted Mopidy our collection is buggered.
-		// This'll work in some instances, but not all. What a rigmarole. Can't believe ytmusicapi regards track numbers
-		// as optional.
-		foreach ($cmds as $cmd) {
-			if (preg_match('/add "([ytmusic:track:|youtube:video:].+)"/', $cmd, $matches)) {
-				if (prefs::$database === null) {
-					prefs::$database = new database();
-				}
-				$albumuri = prefs::$database->get_album_uri($matches[1]);
-				if ($albumuri) {
-					logger::log('PLAYER', 'Making Mopidy lookup album',$albumuri);
-					$this->send_command('find file "'.$albumuri.'"');
-				}
-			}
-		}
+		$this->check_youtube_lookup($cmds);
 
 		$retries = 3;
 		if (count($cmds) > 1) {

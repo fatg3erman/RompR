@@ -42,6 +42,7 @@ class everywhere_radio extends musicCollection {
 		$uris = [];
 		$gotseeds = false;
 		$query_params = [];
+		prefs::load();
 		$rp = prefs::get_radio_params();
 		$qstring = "SELECT * FROM ".self::get_seed_table_name()." WHERE ";
 		if ($type) {

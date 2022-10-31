@@ -8,7 +8,7 @@
 
 // Initial seeds - either Top Tracks or Top Artists (from Last.FM) - get added to TopTracks as TYPE_TOP_TRACK
 // When we select a seed we use one that's marked as TYPE_TOP_TRACK and NOT TYPE_USED_AS_SEED
-//  then we set it to TYPE_TOP_TRACK + TYPE_USED_AS SEED
+// then we set it to TYPE_TOP_TRACK + TYPE_USED_AS SEED
 // Then we use that to look up similar tracks or similar artists which get set as TYPE_RELATED_TRACK
 // Finally we pick a track to search for using the criteria TYPE_TOP_TRACK or TYPE_RELATED_TRACK
 // and that gets marked as TYPE_USED_FOR_SEARCH - so if it's a TOP_TRACK that hasnt been USED_AS_SEED it

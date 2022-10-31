@@ -181,6 +181,7 @@ print '<script type="application/json" name="cover_sizes">'."\n".json_encode(COV
 print '<script type="application/json" name="default_player">'."\n".json_encode(prefs::DEFAULT_PLAYER)."\n</script>\n";
 print '<script type="application/json" name="player_connection_params">'."\n".json_encode(prefs::PLAYER_CONNECTION_PARAMS)."\n</script>\n";
 print '<script type="application/json" name="browser_prefs">'."\n".json_encode(array_keys(prefs::BROWSER_PREFS))."\n</script>\n";
+print '<script type="application/json" name="mopidy_collection_folders">'."\n".json_encode(MOPIDY_COLLECTION_FOLDERS)."\n</script>\n";
 print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string."&skin=".prefs::skin().'" />'."\n";
 print '<link rel="stylesheet" type="text/css" href="css/scrollbars/jquery.mCustomScrollbar.css?version='.$version_string.'" />'."\n";
 

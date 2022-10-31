@@ -1,12 +1,7 @@
 var customRadioManager = function() {
 
-	var jsonNode = document.querySelector("script[name='custom_radio_items']");
-	var jsonText = jsonNode.textContent;
-	const custom_radio_items = JSON.parse(jsonText);
-
-	jsonNode = document.querySelector("script[name='radio_combine_options']");
-	jsonText = jsonNode.textContent;
-	const radio_combine_options = JSON.parse(jsonText);
+	const custom_radio_items = data_from_source('custom_radio_items');
+	const radio_combine_options = data_from_source('radio_combine_options');
 
 	var default_rule = {
 		db_key: 'Nothing',

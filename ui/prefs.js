@@ -132,9 +132,7 @@ var prefs = function() {
 	var deferredPrefs = null;
 	var uichangetimer = null;
 
-    jsonNode = document.querySelector("script[name='browser_prefs']");
-    jsonText = jsonNode.textContent;
-    const prefsInLocalStorage = JSON.parse(jsonText);
+    const prefsInLocalStorage = data_from_source('browser_prefs');
 
 	const menus_to_save_state_for = [
 		'podcastbuttons',
@@ -435,9 +433,7 @@ var prefs = function() {
 		try {
 			var test = prefs.fontsize.match(/\d\d-(.+)\.css/);
 			if (test !== null) {
-				var jsonNode = document.querySelector("script[name='font_sizes']");
-	    		var jsonText = jsonNode.textContent;
-	    		var font_sizes = JSON.parse(jsonText);
+	    		var font_sizes = data_from_source('font_sizes');
 	    		if (font_sizes.hasOwnProperty(test[1])) {
 		    		debug.log('PREFS', 'Updating old font size from',prefs.fontsize,'to',font_sizes[test[1]]);
 	    			prefs.fontsize = font_sizes[test[1]];
@@ -454,9 +450,7 @@ var prefs = function() {
 		try {
 			var test = prefs.coversize.match(/\d\d-(.+)\.css/);
 			if (test !== null) {
-				var jsonNode = document.querySelector("script[name='cover_sizes']");
-	    		var jsonText = jsonNode.textContent;
-	    		var cover_sizes = JSON.parse(jsonText);
+	    		var cover_sizes = data_from_source('cover_sizes');
 	    		if (cover_sizes.hasOwnProperty(test[1])) {
 		    		debug.log('PREFS', 'Updating old cover size from',prefs.coversize,'to',cover_sizes[test[1]]);
 	    			prefs.coversize = cover_sizes[test[1]];

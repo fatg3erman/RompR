@@ -970,6 +970,8 @@ function close_browser_connection() {
 
 }
 
+// Check that the backend daemon is running and start it if it isn't
+// or if it's an older version, restart it.
 function check_backend_daemon() {
 	global $version_string;
 	$pwd = getcwd();
@@ -1008,6 +1010,8 @@ function check_backend_daemon() {
 	}
 }
 
+// Start a process that is detached and will keep running when we exit
+// and also detahced from the php-fpm process so it frees that up too.
 function start_process($cmd, $exe='php') {
     logger::trace('DAEMON', 'Starting Process', $cmd);
     $os = php_uname();

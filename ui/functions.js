@@ -324,6 +324,10 @@ function unset_css_variable(name) {
 	document.documentElement.style.removeProperty(name);
 }
 
+function data_from_source(script_name) {
+    return JSON.parse($('script[name="'+script_name+'"]').text());
+}
+
 // Warn if overriding existing method
 if(Array.prototype.equals)
     debug.warn('INIT', "Overriding existing Array.prototype.equals.");
