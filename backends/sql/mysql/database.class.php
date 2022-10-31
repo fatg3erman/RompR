@@ -68,17 +68,19 @@ class database extends data_base {
 			WHERE Uri = ?",
 			$trackuri
 		);
-		if ($nipples == null) {
-			$table = everywhere_radio::get_uri_table_name();
-			$nipples = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
-				"SELECT
-					AlbumUri
-				FROM
-					".$table."
-				WHERE Uri = ?",
-				$trackuri
-			);
-		}
+		// Too much load for Mopidy, this is when we're doing smart radio and it
+		// just locks up and we start getting rubbish back from the MPD interface.
+		// if ($nipples == null) {
+		// 	$table = everywhere_radio::get_uri_table_name();
+		// 	$nipples = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
+		// 		"SELECT
+		// 			AlbumUri
+		// 		FROM
+		// 			".$table."
+		// 		WHERE Uri = ?",
+		// 		$trackuri
+		// 	);
+		// }
 		return $nipples;
 	}
 

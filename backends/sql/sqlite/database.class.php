@@ -361,17 +361,18 @@ class database extends data_base {
 			WHERE Uri = ?",
 			$trackuri
 		);
-		if ($nipples == null) {
-			$table = everywhere_radio::get_uri_table_name();
-			$nipples = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
-				"SELECT
-					AlbumUri
-				FROM
-					".$table."
-				WHERE Uri = ?",
-				$trackuri
-			);
-		}
+		// This is too heavy a load for Mopidy. We're just going to have to live without it.
+		// if ($nipples == null) {
+		// 	$table = everywhere_radio::get_uri_table_name();
+		// 	$nipples = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
+		// 		"SELECT
+		// 			AlbumUri
+		// 		FROM
+		// 			".$table."
+		// 		WHERE Uri = ?",
+		// 		$trackuri
+		// 	);
+		// }
 		return $nipples;
 	}
 

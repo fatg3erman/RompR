@@ -5,6 +5,9 @@ class playlistCollection extends musicCollection {
 	private $foundartists;
 
 	public function doNewPlaylistFile(&$filedata) {
+		if (!is_array($filedata))
+			return array_replace(MPD_FILE_MODEL, ROMPR_FILE_MODEL);
+
 		// Translate from MPD_FILE_MODEL to ROMPR_FILE_MODEL
 		$filedata = array_replace(MPD_FILE_MODEL, ROMPR_FILE_MODEL, $filedata, $this->get_extra_track_info($filedata));
 

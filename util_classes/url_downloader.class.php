@@ -115,7 +115,7 @@ class url_downloader {
 		if ($this->file === null && $this->options['cache'] === null) {
 			return $this->get_data_to_string();
 		} else if ($this->options['cache'] !== null) {
-			logger::log("URL_DOWNLOADER", "Downloading",$this->options['url'],'to file');
+			logger::log("URL_DOWNLOADER", "Downloading",$this->options['url'],'to file', $this->file);
 			$this->file = $this->get_cache_file($this->options['cache'], $this->options['url']);
 			if (file_exists($this->file)) {
 				logger::debug("URL_DOWNLOADER", "    Returning cached data ".$this->file);
