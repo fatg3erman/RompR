@@ -21,6 +21,11 @@ class player extends base_mpd_player {
 	}
 
 	public function musicCollectionUpdate() {
+		// Note, using lsinfo is way better than using Mopidy's HTTP interface.
+		// For one thing it's faster.
+		// For another thing, some directores only return Mopidy's retarded Ref models
+		// (a name and nothing else) but if you lsinfo them you get all the info
+		// the backend has, which is usually a lot more than that.
 		logger::mark("MOPIDY", "Starting Music Collection Update");
 		if (prefs::get_pref('use_mopidy_scan')) {
 			logger::mark('MOPIDY', 'Using mopidy local scan');
@@ -755,6 +760,26 @@ class player extends base_mpd_player {
 			$http_server = nice_server_address($this->ip);
 			prefs::set_player_param(['websocket' => $http_server.':'.prefs::get_pref('http_port_for_mopidy').self::WEBSOCKET_SUFFIX]);
 			logger::log('MOPIDYHTTP', 'Using',prefs::get_player_param('websocket'),'for Mopidy HTTP');
+		}
+	}
+
+	public function api_test() {
+		$result = $this->mopidy_http_request(
+			$this->ip.':'.prefs::get_pref('http_port_for_mopidy'),
+			array(
+				'method' => 'core.library.browse',
+				'params' => [
+					'uri' => 'ytmusic:liked'
+
+				]
+			)
+		);
+		if ($result === false) {
+			return ['error' => 'Mopidy HTTP API Not Available'];
+		} else {
+			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
+			logger::trace('MOPIDYHTTP', $result);
+			return json_decode($result, true);
 		}
 	}
 
