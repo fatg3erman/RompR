@@ -112,7 +112,7 @@ class musicbrainz {
 
 	public static function verify_data($params, $print_data) {
 
-		logger::log('MUSICBRAINZ', print_r($params, true));
+		// logger::debug('MUSICBRAINZ', print_r($params, true));
 
 		if ($params['artist']['name'] == '' && $params['album']['artist'] == 'Radio' && $params['track']['name'] == '') {
 			print json_encode(self::$retval);
@@ -126,7 +126,7 @@ class musicbrainz {
 		}
 
 		if (self::$retval['artistmeta']['musicbrainz']['musicbrainz_id']) {
-			logger::log('MUISCBRAINZ', 'Getting artist info for', self::$retval['artistmeta']['musicbrainz']['musicbrainz_id']);
+			logger::debug('MUISCBRAINZ', 'Getting artist info for', self::$retval['artistmeta']['musicbrainz']['musicbrainz_id']);
 			self::$retval['metadata']['artist'][self::$retval['artistmeta']['musicbrainz']['musicbrainz_id']] =
 				json_decode(self::artist_getinfo(['mbid' => self::$retval['artistmeta']['musicbrainz']['musicbrainz_id']], false), true);
 			self::$retval['albummeta']['musicbrainz']['releasegroup_id'] =
@@ -134,7 +134,7 @@ class musicbrainz {
 		}
 
 		if (self::$retval['albummeta']['musicbrainz']['releasegroup_id']) {
-			logger::log('MUSICBRAINZ', 'Getting Release Group info for', self::$retval['albummeta']['musicbrainz']['releasegroup_id']);
+			logger::debug('MUSICBRAINZ', 'Getting Release Group info for', self::$retval['albummeta']['musicbrainz']['releasegroup_id']);
 			self::$retval['metadata']['album']['release_group'] =
 				json_decode(self::releasegroup_getinfo(['mbid' => self::$retval['albummeta']['musicbrainz']['releasegroup_id']], false), true);
 		}
@@ -146,7 +146,7 @@ class musicbrainz {
 
 		self::$retval['albummeta']['musicbrainz']['musicbrainz_id'] = $params['album']['musicbrainz_id'];
 		if (self::$retval['albummeta']['musicbrainz']['musicbrainz_id']) {
-			logger::log('MUSICBRAINZ', 'Getting Album Release info for',self::$retval['albummeta']['musicbrainz']['musicbrainz_id']);
+			logger::debug('MUSICBRAINZ', 'Getting Album Release info for',self::$retval['albummeta']['musicbrainz']['musicbrainz_id']);
 			self::$retval['metadata']['album']['release'][self::$retval['albummeta']['musicbrainz']['musicbrainz_id']] =
 				json_decode(self::album_getinfo(['mbid' => self::$retval['albummeta']['musicbrainz']['musicbrainz_id']], false), true);
 		}
@@ -161,7 +161,7 @@ class musicbrainz {
 
 		self::$retval['trackmeta']['musicbrainz']['musicbrainz_id'] = $params['track']['musicbrainz_id'];
 		if (self::$retval['trackmeta']['musicbrainz']['musicbrainz_id']) {
-			logger::log('MUSICBRAINZ', 'Getting recording info for',self::$retval['trackmeta']['musicbrainz']['musicbrainz_id']);
+			logger::debug('MUSICBRAINZ', 'Getting recording info for',self::$retval['trackmeta']['musicbrainz']['musicbrainz_id']);
 			self::$retval['metadata']['track']['recording'] =
 				json_decode(self::track_getinfo(['mbid' => self::$retval['trackmeta']['musicbrainz']['musicbrainz_id']], false), true);
 			self::find_work_data();
@@ -177,7 +177,7 @@ class musicbrainz {
 
 	private static function scrape_artist_links($language) {
 		if (self::$retval['artistmeta']['musicbrainz']['musicbrainz_id'] !== null) {
-			logger::log('MUSICBRAINZ', 'Scraping artst data');
+			logger::debug('MUSICBRAINZ', 'Scraping artst data');
 			self::scan_for_links(
 				self::$retval['artistmeta'],
 				self::$retval['metadata']['artist'][self::$retval['artistmeta']['musicbrainz']['musicbrainz_id']],
@@ -190,7 +190,7 @@ class musicbrainz {
 	private static function scrape_album_links($language) {
 		// Prioritise releasegroup over release, but scan both
 		if (self::$retval['metadata']['album']['release'] !== null) {
-			logger::log('MUSICBRAINZ', 'Scraping Album Release Info');
+			logger::debug('MUSICBRAINZ', 'Scraping Album Release Info');
 			self::scan_for_links(
 				self::$retval['albummeta'],
 				self::$retval['metadata']['album']['release'][self::$retval['albummeta']['musicbrainz']['musicbrainz_id']],
@@ -200,7 +200,7 @@ class musicbrainz {
 		}
 
 		if (self::$retval['metadata']['album']['release_group'] !== null) {
-			logger::log('MUSICBRAINZ', 'Scraping Album Release Group Info');
+			logger::debug('MUSICBRAINZ', 'Scraping Album Release Group Info');
 			self::scan_for_links(
 				self::$retval['albummeta'],
 				self::$retval['metadata']['album']['release_group'],
@@ -212,7 +212,7 @@ class musicbrainz {
 
 	private static function scrape_track_links($language) {
 		if (self::$retval['metadata']['track']['recording'] !== null) {
-			logger::log('MUSICBRAINZ', 'Scraping Track Recording Info');
+			logger::debug('MUSICBRAINZ', 'Scraping Track Recording Info');
 			self::scan_for_links(
 				self::$retval['trackmeta'],
 				self::$retval['metadata']['track']['recording'],
@@ -221,7 +221,7 @@ class musicbrainz {
 			);
 		}
 		if (self::$retval['metadata']['track']['work'] !== null) {
-			logger::log('MUSICBRAINZ', 'Scraping Track Work Info');
+			logger::debug('MUSICBRAINZ', 'Scraping Track Work Info');
 			self::scan_for_links(
 				self::$retval['trackmeta'],
 				self::$retval['metadata']['track']['work'],
@@ -233,7 +233,7 @@ class musicbrainz {
 
 	private static function scan_for_links(&$destination, &$data, $language, $type) {
 
-		logger::log('MUSICBRAINZ', 'Scanning For Links For', $type);
+		logger::debug('MUSICBRAINZ', 'Scanning For Links For', $type);
 
 		if ($data['disambiguation'])
 			$destination['disambiguation'] = $data['disambiguation'];
@@ -247,19 +247,19 @@ class musicbrainz {
 			if ($relation['type'] == 'discogs' && $relation['target-type'] == 'url') {
 				// We want a discogs ID, not a name
 				if ($type != 'artist' && $destination['discogs']['masterlink'] == null && preg_match('/\/masters*\/\d+/', $relation['url']['resource'])) {
-					logger::log('MUSICBRAINZ', 'Found Discogs Master link',$relation['url']['resource']);
+					logger::debug('MUSICBRAINZ', 'Found Discogs Master link',$relation['url']['resource']);
 					$destination['discogs']['masterlink'] = $relation['url']['resource'];
 				} else if ($type != 'artist' && $destination['discogs']['releaselink'] == null && preg_match('/\/releases*\/\d+/', $relation['url']['resource'])) {
-					logger::log('MUSICBRAINZ', 'Found Discogs Release link',$relation['url']['resource']);
+					logger::debug('MUSICBRAINZ', 'Found Discogs Release link',$relation['url']['resource']);
 					$destination['discogs']['releaselink'] = $relation['url']['resource'];
 				} else if ($type == 'artist' && $destination['discogs']['artistlink'] == null && preg_match('/\/artists*\/\d+/', $relation['url']['resource'])) {
-					logger::log('MUSICBRAINZ', 'Found Discogs Artist link',$relation['url']['resource']);
+					logger::debug('MUSICBRAINZ', 'Found Discogs Artist link',$relation['url']['resource']);
 					$destination['discogs']['artistlink'] = $relation['url']['resource'];
 				}
 			}
 
 			if ($relation['type'] == 'allmusic' && $relation['target-type'] == 'url') {
-				logger::log('MUSICBRAINZ', 'Found Allmusic Link',$relation['url']['resource']);
+				logger::debug('MUSICBRAINZ', 'Found Allmusic Link',$relation['url']['resource']);
 				$destination['allmusic']['link'] = $relation['url']['resource'];
 			}
 
@@ -267,7 +267,7 @@ class musicbrainz {
 				&& $relation['target-type'] == 'url'
 				&& preg_match('/open\.spotify\.com\/.+?\/(.+)/', $relation['url']['resource'], $matches)) {
 				$destination['spotify']['id'] = $matches[1];
-				logger::log('MUSICBRAINZ', 'Found Spotify ID', $destination['spotify']['id']);
+				logger::debug('MUSICBRAINZ', 'Found Spotify ID', $destination['spotify']['id']);
 			}
 
 			if ($relation['type'] == 'wikidata')
@@ -284,37 +284,37 @@ class musicbrainz {
 			))
 		{
 			if (preg_match('/(Q\d+)/', $wikidata, $matches)) {
-				logger::log('MUSICBRAINZ', 'Using Wikidata link to get more info',$matches[1]);
+				logger::debug('MUSICBRAINZ', 'Using Wikidata link to get more info',$matches[1]);
 
 				$links = wikidata::get_links($matches[1], $type, $language);
 
 				if ($destination['wikipedia']['link'] == null) {
-					logger::log('MUSICBRAINZ', 'Updating Wikipedia Link', $links['wikipedia']);
+					logger::debug('MUSICBRAINZ', 'Updating Wikipedia Link', $links['wikipedia']);
 					$destination['wikipedia']['link'] = $links['wikipedia'];
 				}
 
 				if ($destination['allmusic']['link'] == null) {
-					logger::log('MUSICBRAINZ', 'Updating Allmusic Link', $links['allmusic']);
+					logger::debug('MUSICBRAINZ', 'Updating Allmusic Link', $links['allmusic']);
 					$destination['allmusic']['link'] = $links['allmusic'];
 				}
 
 				if ($type == 'artist' && $destination['spotify']['id'] == null) {
-					logger::log('MUSICBRAINZ', 'Updating Spotify ID', $links['spotify'][$type]);
+					logger::debug('MUSICBRAINZ', 'Updating Spotify ID', $links['spotify'][$type]);
 					$destination['spotify']['id'] = $links['spotify'][$type];
 				}
 
 				if ($type == 'artist' && $destination['discogs']['artistlink'] == null) {
-					logger::log('MUSICBRAINZ', 'Updating Discogs Artist Link', $links['discogs']['artist']);
+					logger::debug('MUSICBRAINZ', 'Updating Discogs Artist Link', $links['discogs']['artist']);
 					$destination['discogs']['artistlink'] = $links['discogs']['artist'];
 				}
 
 				if ($type != 'artist' && $destination['discogs']['releaselink'] == null) {
-					logger::log('MUSICBRAINZ', 'Updating Discogs Release Link', $links['discogs']['release']);
+					logger::debug('MUSICBRAINZ', 'Updating Discogs Release Link', $links['discogs']['release']);
 					$destination['discogs']['releaselink'] = $links['discogs']['release'];
 				}
 
 				if ($type != 'artist' && $destination['discogs']['masterlink'] == null) {
-					logger::log('MUSICBRAINZ', 'Updating Discogs Master Link', $links['discogs']['master']);
+					logger::debug('MUSICBRAINZ', 'Updating Discogs Master Link', $links['discogs']['master']);
 					$destination['discogs']['masterlink'] = $links['discogs']['master'];
 				}
 
@@ -326,7 +326,7 @@ class musicbrainz {
 	private static function find_first_non_null($w) {
 		foreach ($w as $k => $v) {
 			if ($v !== null) {
-				logger::log('MUSICBRAINZ', 'Using',$k,$v,'as wikipedia link');
+				logger::debug('MUSICBRAINZ', 'Using',$k,$v,'as wikipedia link');
 				return $v;
 			}
 		}
@@ -359,7 +359,7 @@ class musicbrainz {
 			if ($aname =='Radio')
 				continue;
 
-			logger::log('MYUSICBRAINZ', 'Searching for Artist', $aname);
+			logger::debug('MYUSICBRAINZ', 'Searching for Artist', $aname);
 			$artist_list = self::artist_search($aname);
 			// self::$retval['artistsearch'] = $artist_list;
 			if (!array_key_exists('artists', $artist_list))
@@ -372,7 +372,7 @@ class musicbrainz {
 					if ($album) {
 						$releasegroup = self::releasegroup_search($artist['id'], $album);
 						if ($releasegroup !== null) {
-							logger::log('MUSICBRAINZ', 'Found ID for',$aname,'with matching release group',$album, $artist['id']);
+							logger::debug('MUSICBRAINZ', 'Found ID for',$aname,'with matching release group',$album, $artist['id']);
 							self::$retval['artistmeta']['musicbrainz']['musicbrainz_id'] = $artist['id'];
 							return;
 						}
@@ -380,10 +380,10 @@ class musicbrainz {
 						if ($candidate == null)
 							$candidate = $artist['id'];
 
-						logger::log('MUSICBRAINZ', 'Checking artist ID by matching recordings');
+						logger::debug('MUSICBRAINZ', 'Checking artist ID by matching recordings');
 						$check = self::recording_search($track, $artist['id']);
 						if ($check !== null) {
-							logger::log('MUSICBRAINZ', 'Found ID for artist by checking recordings', $artist['id']);
+							logger::debug('MUSICBRAINZ', 'Found ID for artist by checking recordings', $artist['id']);
 							self::$retval['artistmeta']['musicbrainz']['musicbrainz_id'] = $artist['id'];
 							return;
 						}
@@ -392,7 +392,7 @@ class musicbrainz {
 			}
 		}
 		// Return the first one we found, if anything.
-		logger::log('MUSIBRAINZ', 'Returning first candidate match', $candidate);
+		logger::debug('MUSIBRAINZ', 'Returning first candidate match', $candidate);
 		self::$retval['artistmeta']['musicbrainz']['musicbrainz_id'] = $candidate;
 	}
 
@@ -409,7 +409,7 @@ class musicbrainz {
 
 		// self::$retval['tracksearch'] = [];
 
-		logger::log('MUSICBRAINZ', 'Searching for recording',$title,'by artist',$artistid);
+		logger::debug('MUSICBRAINZ', 'Searching for recording',$title,'by artist',$artistid);
 		do {
 			$r = json_decode(self::request(self::create_url('recording', $params), false), true);
 
@@ -421,9 +421,9 @@ class musicbrainz {
 				if (metaphone_compare($title, $recording['title'])) {
 					if (!array_key_exists('video', $recording) || $recording['video'] !== true) {
 						foreach ($recording['artist-credit'] as $credit) {
-							// logger::log('MUSICBRAINZ', 'Artist is',$credit['artist']['id'],$credit['artist']['name']);
+							// logger::debug('MUSICBRAINZ', 'Artist is',$credit['artist']['id'],$credit['artist']['name']);
 							if ($credit['artist']['id'] == $artistid) {
-								logger::log('MUSICBRAINZ', 'Found recording id',$recording['id']);
+								logger::debug('MUSICBRAINZ', 'Found recording id',$recording['id']);
 								return $recording['id'];
 							}
 						}
@@ -432,7 +432,7 @@ class musicbrainz {
 			}
 			$params['offset'] += count($r['recordings']);
 			$tries--;
-			// logger::log('MUSICBRAINZ', 'Count is',$gcount,'Current is',count($retval['release-groups']));
+			// logger::debug('MUSICBRAINZ', 'Count is',$gcount,'Current is',count($retval['release-groups']));
 		} while ($tries >= 0 && $params['offset'] < $gcount);
 		return null;
 	}
@@ -452,7 +452,7 @@ class musicbrainz {
 		if (array_key_exists('release-groups', $release_groups)) {
 			foreach ($release_groups['release-groups'] as $release) {
 				if (metaphone_compare($album, $release['title'])) {
-					logger::log('MUSICBRAINZ', 'Found Release Group for',$album,$release['id']);
+					logger::debug('MUSICBRAINZ', 'Found Release Group for',$album,$release['id']);
 					return $release['id'];
 					break;
 				}
@@ -473,7 +473,7 @@ class musicbrainz {
 		foreach (self::$retval['metadata']['album']['release'][self::$retval['albummeta']['musicbrainz']['musicbrainz_id']]['media'] as $medium) {
 			foreach ($medium['tracks'] as $track) {
 				if (metaphone_compare($name, $track['title'])) {
-					logger::log('MUSICBRAINZ', 'Found recording ID for', $name, $track['recording']['id']);
+					logger::debug('MUSICBRAINZ', 'Found recording ID for', $name, $track['recording']['id']);
 					return $track['recording']['id'];
 				}
 			}
@@ -488,7 +488,7 @@ class musicbrainz {
 
 		foreach (self::$retval['metadata']['track']['recording']['relations'] as $relation) {
 			if ($relation['target-type'] == 'work') {
-				logger::log('MUSICBRAINZ', 'Found Work ID for track',$relation['work']['id']);
+				logger::debug('MUSICBRAINZ', 'Found Work ID for track',$relation['work']['id']);
 				self::$retval['metadata']['track']['work'] = json_decode(self::work_getinfo(['mbid' => $relation['work']['id']], false), true);
 				break;
 			}
@@ -526,7 +526,7 @@ class musicbrainz {
 			$retval['release-groups'] = array_merge($retval['release-groups'], $r['release-groups']);
 			$params['offset'] += count($r['release-groups']);
 			$tries--;
-			// logger::log('MUSICBRAINZ', 'Count is',$gcount,'Current is',count($retval['release-groups']));
+			// logger::debug('MUSICBRAINZ', 'Count is',$gcount,'Current is',count($retval['release-groups']));
 		} while ($tries >= 0 && count($retval['release-groups']) < $gcount);
 
 		if ($print_data) {

@@ -1113,7 +1113,7 @@ function metaphone_compare($search_term, $found_term, $match_distance = null) {
 		$match_distance = max(1, (strlen($new_search) * 0.10));
 
 	if ($dist <= $match_distance) {
-		logger::trace('METAPHONE', $found_term,'matches',$search_term);
+		logger::core('METAPHONE', $found_term,'matches',$search_term);
 		return true;
 	} else {
 		logger::core('METAPHONE', $new_found,'does not match',$new_search);
