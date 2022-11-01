@@ -913,7 +913,8 @@ class base_mpd_player {
 	}
 
 	public function get_status_value($status) {
-		$mpd_status = $this->do_command_list(['status']);
+		// $mpd_status = $this->do_command_list(['status']);
+		$mpd_status = $this->get_status();
 		return array_key_exists($status, $mpd_status) ? $mpd_status[$status] : null;
 	}
 
@@ -1320,7 +1321,18 @@ class base_mpd_player {
 					}
 				}
 
-				$this->check_idle_status($idle_status);
+				if (!is_array($idle_status) || array_key_exists('state', $idle_status)) {
+					// Mopidy is sometimes sending us a full status in response to an idle command
+					// This should never happen, we should only get 'changed', so ignore these.
+					logger::warn(prefs::currenthost(), '!!! Got bad idle status. Ignoring it !!!');
+					logger::trace(prefs::currenthost(), 'Idle Status is',print_r($idle_status, true));
+				} else {
+					if ($this->check_changed_module($idle_status, 'player'))
+						$this->check_idle_status($idle_status);
+
+					if ($this->check_changed_module($idle_status, 'playlist'))
+						$this->check_radiomode();
+				}
 
 			}
 			$this->close_mpd_connection();
@@ -1397,7 +1409,7 @@ class base_mpd_player {
 		if (!array_key_exists('changed', $idle_status))
 			return false;
 
-		if (is_array($idle_status['changed']) && in_array($module, $idle_atatus['changed']))
+		if (is_array($idle_status['changed']) && in_array($module, $idle_status['changed']))
 			return true;
 
 		if ($idle_status['changed'] == $module)
@@ -1407,52 +1419,38 @@ class base_mpd_player {
 	}
 
 	private function check_idle_status($idle_status) {
-		logger::trace(prefs::currenthost(), 'Idle Status is',print_r($idle_status, true));
+		$status = $this->get_status();
+		// So we only get here if we were playing a song before we sent the idle command
+		logger::mark(prefs::currenthost(),"Player State Has Changed from",$this->current_status['state'],"to", $status['state']);
+		if ($status['state'] != 'pause' && array_key_exists('Time', $this->current_song)) {
+			if ($status['state'] == 'stop') {
+				// Ensure, if we go from paused to stop, that we use only the value of 'elapsed' to calculate how much we played.
+				if ($this->current_status['state'] == 'pause')
+					$this->current_song['readtime'] = time();
 
-		if (!is_array($idle_status) || array_key_exists('state', $idle_status)) {
-			// Mopidy is sometimes sending us a full status in response to an idle command
-			// This should never happen, we should only get 'changed', so ignore these.
-			logger::warn(prefs::currenthost(), '!!! Got bad idle status. Ignoring it !!!');
-			return;
-		}
-
-		if ($this->check_changed_module($idle_status, 'player')) {
-			$status = $this->get_status();
-			// So we only get here if we were playing a song before we sent the idle command
-			logger::mark(prefs::currenthost(),"Player State Has Changed from",$this->current_status['state'],"to", $status['state']);
-			if ($status['state'] != 'pause' && array_key_exists('Time', $this->current_song)) {
-				if ($status['state'] == 'stop') {
-					// Ensure, if we go from paused to stop, that we use only the value of 'elapsed' to calculate how much we played.
-					if ($this->current_status['state'] == 'pause')
-						$this->current_song['readtime'] = time();
-
+				$this->check_playcount_increment();
+			} else if ($status['state'] == 'play') {
+				if ($this->current_status['state'] == 'pause' && $this->current_status['songid'] == $status['songid']) {
+					logger::log(prefs::currenthost(), 'Song is being restarted after being paused');
+				} else if ($this->current_status['songid'] == $status['songid']) {
+					logger::log(prefs::currenthost(), 'Same track being played. Must have been restarted or seeked');
 					$this->check_playcount_increment();
-				} else if ($status['state'] == 'play') {
-					if ($this->current_status['state'] == 'pause' && $this->current_status['songid'] == $status['songid']) {
-						logger::log(prefs::currenthost(), 'Song is being restarted after being paused');
-					} else if ($this->current_status['songid'] == $status['songid']) {
-						logger::log(prefs::currenthost(), 'Same track being played. Must have been restarted or seeked');
-						$this->check_playcount_increment();
-					} else {
-						$this->check_playcount_increment();
-					}
-				}
-			}
-
-			prefs::load();
-			if ($this->get_consume(0) && array_key_exists('songid', $this->current_status)) {
-				if (
-					($status['state'] == 'stop' && $this->current_status['state'] !== 'stop') ||
-					($status['songid'] != $this->current_status['songid'])
-				) {
-					logger::log(prefs::currenthost(), 'Consuming track ID',$this->current_status['songid']);
-					$this->do_command_list(['deleteid "'.$this->current_status['songid'].'"']);
+				} else {
+					$this->check_playcount_increment();
 				}
 			}
 		}
 
-		if ($this->check_changed_module($idle_status, 'playlist'))
-			$this->check_radiomode();
+		prefs::load();
+		if ($this->get_consume(0) && array_key_exists('songid', $this->current_status)) {
+			if (
+				($status['state'] == 'stop' && $this->current_status['state'] !== 'stop') ||
+				($status['songid'] != $this->current_status['songid'])
+			) {
+				logger::log(prefs::currenthost(), 'Consuming track ID',$this->current_status['songid']);
+				$this->do_command_list(['deleteid "'.$this->current_status['songid'].'"']);
+			}
+		}
 
 		$this->get_current_song_status();
 	}
@@ -1518,34 +1516,32 @@ class base_mpd_player {
 		if ($rp['radiomode'] == '')
 			return;
 
-		// Need to recheck the playlist length, because $this->current_status *might* have the value
-		// from *before* the last track was consumed. Plus, when we initially call in to set the radio
-		// up, $this->current_status isn't initialised anyway.
 		$playlistlength = $this->get_status_value('playlistlength');
 
-		logger::trace(prefs::currenthost(), 'Radio Params Are',$rp['radiomode'], $rp['radioparam'],'Playlist Length is',$playlistlength);
+		logger::trace(prefs::currenthost(), 'Radio Params Are',$rp['radiomode'], $rp['radioparam']);
+		logger::trace(prefs::currenthost(), 'Playlist Length is',$playlistlength,'Chunk Size is',prefs::get_pref('smartradio_chunksize'));
 
-		if ($playlistlength >= prefs::get_pref('smartradio_chunksize'))
-			return;
-
-		$tracksneeded = prefs::get_pref('smartradio_chunksize') - $playlistlength;
-		logger::trace(prefs::currenthost(), "Adding",$tracksneeded,"tracks from",$rp['radiomode'],$rp['radioparam']);
-
-		$this->get_smartradio_database();
-		$this->do_smartradio($tracksneeded);
+		if ($playlistlength < prefs::get_pref('smartradio_chunksize')) {
+			// $tracksneeded = prefs::get_pref('smartradio_chunksize') - $playlistlength;
+			// Always add just one track to reduce the load on Mopidy, important when using youtube or ytmusic
+			// The idle callback will keep calling back here until we have nough tracks.
+			$this->get_smartradio_database();
+			$this->do_smartradio(1);
+		}
 	}
 
 	public function do_smartradio($tracksneeded) {
 		$rp = prefs::get_radio_params();
+		logger::log(prefs::currenthost(), "Adding",$tracksneeded,"tracks from",$rp['radiomode'],$rp['radioparam']);
 		$result = prefs::$database->doPlaylist($rp['radioparam'], $tracksneeded, $this);
 		prefs::$database->close_database();
 		if (!$result) {
-			logger::log('SMARTRADIO', 'Found no tracks. Stopping');
+			logger::mark('SMARTRADIO', 'Found no tracks. Stopping');
 			prefs::set_radio_params([
 				'radiomode' => '',
 				'radioparam' => ''
 			]);
-			$this->do_command_list($rp['radioconsume']);
+			$this->do_command_list(array_map('join_command_string', $rp['radioconsume']));
 			return false;
 		}
 		return true;
