@@ -46,7 +46,7 @@ class baseAlbumImage {
 			if ($this->key === null)
 				$this->key = $this->make_image_key();
 		} else if ($this->key !== null) {
-			logger::log('ALBUMIMAGE', 'Image Info From Database');
+			logger::debug('ALBUMIMAGE', 'Image Info From Database');
 			$this->image_info_from_database();
 		} else {
 			$this->images = $this->image_info_from_album_info();

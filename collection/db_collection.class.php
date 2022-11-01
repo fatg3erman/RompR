@@ -3,7 +3,7 @@
 class db_collection extends collection_base {
 
 	public function __construct() {
-		logger::log('DB_COLLECTION', 'Starting massive badger process');
+		logger::mark('DB_COLLECTION', 'Starting massive badger process');
 		parent::__construct();
 	}
 
@@ -108,8 +108,8 @@ class db_collection extends collection_base {
 			$qstring .= ")";
 		}
 
-		logger::mark("DB SEARCH", "String", $qstring);
-		logger::mark("DB SEARCH", "Parameters", $parameters);
+		logger::debug("DB SEARCH", "String", $qstring);
+		logger::debug("DB SEARCH", "Parameters", $parameters);
 
 		$result = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, null, $qstring, $parameters);
 		$fcount = count($result);

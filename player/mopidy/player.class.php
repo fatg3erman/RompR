@@ -106,15 +106,11 @@ class player extends base_mpd_player {
 	public function search_function($terms, $domains) {
 		$search = [];
 		$domains = array_map(function($a) {return $a.':'; }, $domains);
-
-		logger::log('MOPIDY', 'Search Backends are',print_r($domains, true));
-
+		logger::debug('MOPIDY', 'Search Backends are',$domains);
 		foreach ($terms as $term => $value) {
 			$search[self::SPECIFIC_SEARCH_TERMS[$term]] = $value;
 		}
-
-		logger::log('MOPIDY', 'Search Params are',print_r($search, true));
-
+		logger::log('MOPIDY', 'Search Params are',$search);
 		$result = $this->mopidy_http_request(
 			$this->strip_http_port(),
 			array(
@@ -132,7 +128,6 @@ class player extends base_mpd_player {
 		}
 
 		$json = json_decode($result, true);
-		// logger::log('MOPIDY', print_r($json, true));
 		if (array_key_exists('error', $json)) {
 			logger::error('MOPIDY', 'HTTP request error', $json['error']['data']['message']);
 			return;
@@ -605,7 +600,7 @@ class player extends base_mpd_player {
 
 		$result = prefs::$database->find_podcast_track_from_url($url);
 		foreach ($result as $obj) {
-			logger::log("STREAMHANDLER", "Found PODCAST",$obj->title);
+			logger::log("STREAMHANDLER", "Found Podcast",$obj->title);
 			return array(
 				($obj->title == '') ? $filedata['Title'] : $obj->title,
 				// Mopidy's estimate of the duration is frequently more accurate than that supplied in the RSS
@@ -640,7 +635,7 @@ class player extends base_mpd_player {
 				$album = $filedata['Title'];
 				$filedata['Title'] = null;
 			} else {
-				logger::log("STREAMHANDLER", "  No information to set Album field");
+				logger::warn("STREAMHANDLER", "  No information to set Album field");
 				$album = ROMPR_UNKNOWN_STREAM;
 			}
 			return array (
@@ -678,7 +673,7 @@ class player extends base_mpd_player {
 				prefs::$database->update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
 			}
 		} else {
-			logger::log("STREAMHANDLER", "  No information to set Album field");
+			logger::warn("STREAMHANDLER", "  No information to set Album field");
 			$album = ROMPR_UNKNOWN_STREAM;
 		}
 		return array(
@@ -709,10 +704,10 @@ class player extends base_mpd_player {
 
 	public function toggle_consume($value) {
 		if ($value == 0) {
-			logger::log('MOPIDY', 'Disabling local consume');
+			logger::info('MOPIDY', 'Disabling RompR consume');
 			prefs::set_player_param(['do_consume' => false]);
 		} else {
-			logger::log('POSTCOMMAND', 'Enabling local consume');
+			logger::info('POSTCOMMAND', 'Enabling RompR consume');
 			prefs::set_player_param(['do_consume' => true]);
 		}
 		return false;
@@ -741,7 +736,7 @@ class player extends base_mpd_player {
 	}
 
 	public function probe_websocket() {
-		logger::log('MOPIDYHTTP', 'Probing HTTP API');
+		logger::info('MOPIDYHTTP', 'Probing HTTP API');
 		$result = $this->mopidy_http_request(
 			$this->ip.':'.prefs::get_pref('http_port_for_mopidy'),
 			array(
@@ -843,10 +838,10 @@ class player extends base_mpd_player {
 		if ($result !== false) {
 			$biggest = 0;
 			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
-			logger::log('MOPIDYHTTP', $result);
+			logger::debug('MOPIDYHTTP', $result);
 			$json = json_decode($result, true);
 			if (array_key_exists('error', $json)) {
-				logger::warn('MOPIDYHTTP', 'Summit went awry');
+				logger::warn('MOPIDYHTTP', 'Summit went awry', $json);
 			} else if (array_key_exists($uri, $json['result']) && is_array($json['result'][$uri])) {
 				foreach ($json['result'][$uri] as $image) {
 					if (!array_key_exists('width', $image)) {

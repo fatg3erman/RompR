@@ -20,7 +20,6 @@ class lastfm_radio extends everywhere_radio {
 
 	public function search_for_track() {
 		$rp = prefs::get_radio_params();
-		logger::log('LASTFM', $rp['radiomode'], $rp['radioparam']);
 		$uris = [];
 		$gotseeds = true;
 		$retval = null;
@@ -64,7 +63,6 @@ class lastfm_radio extends everywhere_radio {
 
 	private function get_top_tracks($options) {
 		$tracks = lastfm::user_get_top_tracks($options);
-		// logger::log('LASTFM', print_r($tracks, true));
 		if (array_key_exists('toptracks', $tracks)) {
 			$d = $tracks['toptracks'];
 			if (array_key_exists('@attr', $d)) {
@@ -81,7 +79,7 @@ class lastfm_radio extends everywhere_radio {
 						&& array_key_exists('artist', $track)
 						&& array_key_exists('name', $track['artist'])
 					) {
-						logger::log('LASTFM', 'Top Track',$track['name'],$track['artist']['name']);
+						logger::debug('LASTFM', 'Top Track',$track['name'],$track['artist']['name']);
 						$this->add_toptrack(
 							self::TYPE_TOP_TRACK,
 							$track['artist']['name'],
@@ -180,7 +178,7 @@ class lastfm_radio extends everywhere_radio {
 						&& array_key_exists('artist', $track)
 						&& array_key_exists('name', $track['artist'])
 					) {
-						logger::log('LASTFM', 'Related Track',$track['name'],$track['artist']['name']);
+						logger::debug('LASTFM', 'Related Track',$track['name'],$track['artist']['name']);
 						$this->add_toptrack(
 							self::TYPE_RELATED_TRACK,
 							$track['artist']['name'],
@@ -206,7 +204,7 @@ class lastfm_radio extends everywhere_radio {
 					if (
 						array_key_exists('name', $artist)
 					) {
-						logger::log('LASTFM', 'Related Artist',$artist['name']);
+						logger::debug('LASTFM', 'Related Artist',$artist['name']);
 						$this->add_toptrack(
 							self::TYPE_RELATED_TRACK,
 							$artist['name'],

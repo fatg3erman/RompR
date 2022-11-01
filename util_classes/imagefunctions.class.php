@@ -21,7 +21,7 @@ class imageFunctions {
 	}
 
 	public static function scan_for_local_images($albumpath) {
-		logger::log("LOCAL IMAGE SCAN", "Album Path Is ".$albumpath);
+		logger::info("LOCAL IMAGE SCAN", "Album Path Is ".$albumpath);
 		logger::log("LOCAL IMAGE SCAN", getcwd());
 		$result = array();
 		if ((is_dir("prefs/MusicFolders") || is_link('prefs/MusicFolders')) && $albumpath != ".") {
@@ -84,14 +84,14 @@ class imageFunctions {
 	private static function get_images($dir_path) {
 		$funkychicken = array();
 		$a = basename($dir_path);
-		logger::trace("GET_IMAGES", "    Scanning :",$dir_path);
+		logger::debug("GET_IMAGES", "Scanning :",$dir_path);
 		$globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $dir_path);
-		logger::trace("GET_IMAGES", "      Glob Path is",$globpath);
+		logger::trace("GET_IMAGES", "Glob Path is",$globpath);
 		$funkychicken = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,webp,JPEG,JPG,BMP,GIF,PNG,WEBP}", GLOB_BRACE);
 		foreach($funkychicken as $egg) {
 			logger::trace('GET_IMAGES', $egg);
 		}
-		logger::trace("GET_IMAGES", "    Checking for embedded images");
+		logger::trace("GET_IMAGES", "Checking for embedded images");
 		$files = glob($globpath."/*.{mp3,MP3,mp4,MP4,flac,FLAC,ogg,OGG}", GLOB_BRACE);
 		$testfile = array_shift($files);
 		if ($testfile) {

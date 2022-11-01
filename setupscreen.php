@@ -1,7 +1,7 @@
 <?php
 $currenthost = prefs::currenthost();
 $pdef = prefs::get_player_def();
-logger::log('SETUP', 'Initial currenthost is', $currenthost);
+logger::mark('SETUP', 'Initial currenthost is', $currenthost);
 // Calling set_pref(['currenthost' => null]) sets currenthost back to the Default value
 // of Default. This means that when we load and do check_setup_values() it doesn't
 // get changed to what we set it to here. We need to actually clear the cookie completely
@@ -9,7 +9,7 @@ logger::log('SETUP', 'Initial currenthost is', $currenthost);
 setcookie('currenthost', '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
 prefs::set_pref(['player_backend' => null]);
 prefs::set_pref(['skin' => 'desktop']);
-logger::log("SETUP", "Displaying Setup Screen");
+logger::info("SETUP", "Displaying Setup Screen");
 print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">

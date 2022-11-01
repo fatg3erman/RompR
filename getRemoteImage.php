@@ -10,7 +10,7 @@ if (!$url) {
 } else {
 	$outfile = 'prefs/imagecache/'.md5($url);
 	if (!is_file($outfile)) {
-		logger::log("GETREMOTEIMAGE", "Downloading Remote Image ".$url);
+		logger::debug("GETREMOTEIMAGE", "Downloading Remote Image ".$url);
 		if (download_image_file($url, $outfile)) {
 			output_file($outfile);
 		} else {
@@ -34,7 +34,7 @@ function output_file($outfile) {
 function download_image_file($url, $outfile) {
 
 	if (substr($url, 0, 10) == 'data:image') {
-		logger::trace("GETREMOTEIMAGE", "  ... Decoding Base64 Data");
+		logger::core("GETREMOTEIMAGE", "  ... Decoding Base64 Data");
 		imageFunctions::create_image_from_base64($url, $outfile);
 	} else {
 		logger::core("GETREMOTEIMAGE", "  ... Downloading it");
@@ -44,7 +44,7 @@ function download_image_file($url, $outfile) {
 			$content_type = $d->get_content_type();
 			logger::core("GETREMOTEIMAGE", "  ... Content Type is ".$content_type);
 			if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
-				logger::warn("GETREMOTEIMAGE", "      Not an image file! ",$url);
+				logger::warn("GETREMOTEIMAGE", $url,"is not an image file! ");
 				unlink($outfile);
 				return false;
 			}
@@ -59,7 +59,7 @@ function send_backup_image() {
 	if (array_key_exists('rompr_backup_type', $_REQUEST)) {
 		switch ($_REQUEST['rompr_backup_type']) {
 			case 'stream':
-				logger::trace("GETREMOTEIMAGE","Sending backup image for stream");
+				logger::debug("GETREMOTEIMAGE","Sending backup image for stream");
 				header('Content-type: image/svg+xml');
 				readfile('newimages/broadcast.svg');
 				break;

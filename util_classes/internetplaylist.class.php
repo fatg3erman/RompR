@@ -143,7 +143,7 @@ class internetPlaylist {
 							break;
 
 						default;
-							logger::info("RADIO_PLAYLIST", "Unknown Playlist Type - treating as stream URL");
+							logger::warn("RADIO_PLAYLIST", "Unknown Playlist Type - treating as stream URL");
 							$playlist = new possibleStreamUrl($url, $station, $image);
 							break;
 					}
@@ -154,7 +154,7 @@ class internetPlaylist {
 					break;
 
 				default:
-					logger::info("RADIO_PLAYLIST", "Unexpected cURL status ".$d->get_status()." - treating as stream URL");
+					logger::warn("RADIO_PLAYLIST", "Unexpected cURL status ".$d->get_status()." - treating as stream URL");
 					$playlist = new possibleStreamUrl($url, $station, $image);
 			}
 

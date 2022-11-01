@@ -8,7 +8,7 @@ set_version_string();
 prefs::set_pref(['backend_version' => $version_string]);
 prefs::save();
 $pwd = getcwd();
-logger::log('DAEMON', "Running From",$pwd);
+logger::mark('DAEMON', "Running From",$pwd);
 
 while (true) {
 
@@ -22,7 +22,7 @@ while (true) {
         $mon_running = false;
         if (array_key_exists($player, $monitors) && posix_getpgid($monitors[$player]) !== false) {
             // If we started it and it's still running
-            logger::core('DAEMON', "Monitor for",$player,"already running");
+            logger::debug('DAEMON', "Monitor for",$player,"already running");
             $def_now = prefs::get_def_for_player($player);
             if (array_key_exists($player, $players_now) && player_def_changed($def_now, $players_now[$player])) {
                 // If we started it, it's still running, and the definition has changed since we started it
@@ -40,7 +40,7 @@ while (true) {
         if (!$mon_running) {
             logger::log('DAEMON', "Starting Monitor For",$player);
             $monitors[$player] = start_process($cmd);
-            logger::debug('DAEMON', "Started PID", $monitors[$player]);
+            logger::trace('DAEMON', "Started PID", $monitors[$player]);
             check_alarms($player, true);
         }
 
@@ -119,7 +119,7 @@ function check_lastfm_sync() {
             $options['page'] = $page;
             $tracks = lastfm::get_recent_tracks($options);
             if (count($tracks) == 0) {
-                logger::log('LASTFM-SYNC', 'No Tracks in page',$page);
+                logger::debug('LASTFM-SYNC', 'No Tracks in page',$page);
                 $page = 0;
             } else {
                 foreach ($tracks as $track) {
@@ -136,7 +136,7 @@ function check_lastfm_sync() {
                             if (array_key_exists('mbid', $track['album']) && $track['album']['mbid'] != '') {
                                 $data['MUSICBRAINZ_ALBUMID'] = $track['album']['mbid'];
                             }
-                            logger::log('LASTFM-SYNC', 'Syncing', $data['Title']);
+                            logger::debug('LASTFM-SYNC', 'Syncing', $data['Title']);
                             prefs::$database->syncinc($data);
                         }
                     } catch (Exception $e) {

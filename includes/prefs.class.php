@@ -266,7 +266,7 @@ class prefs {
 					// The frontend sesms to be able to set cookies to '' but not expire them
 					setcookie($cookie, '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
 					$cp[$cookie] = $default;
-					logger::core('COOKIEPREFS',"Pref",$cookie,"is expired and set to default of",$default);
+					logger::trace('COOKIEPREFS',"Pref",$cookie,"is expired and set to default of",$default);
 				} else {
 					if ($cookie_val === 'false') { $cookie_val = false; }
 					if ($cookie_val === 'true') { $cookie_val = true; }
@@ -457,7 +457,7 @@ class prefs {
 	}
 
 	public static function set_music_directory($dir) {
-		logger::mark("SAVEPREFS", "Creating Album Art SymLink to ".$dir);
+		logger::info("SAVEPREFS", "Creating Album Art SymLink to ".$dir);
 		if (is_link("prefs/MusicFolders")) {
 			system ("unlink prefs/MusicFolders");
 		}
@@ -597,7 +597,7 @@ class prefs {
 				'pirate' => 'pirate'
 			];
 			self::$prefs['interface_language'] = $newlangs[self::$prefs['language']];
-			logger::mark('INIT', 'Upgrading interface language from',self::$prefs['language'],'to',self::$prefs['interface_language']);
+			logger::info('INIT', 'Upgrading interface language from',self::$prefs['language'],'to',self::$prefs['interface_language']);
 			unset(self::$prefs['language']);
 		}
 		// Change old object prefs into new associative arrays prefs
@@ -637,7 +637,7 @@ class prefs {
 				}
 			}
 			foreach ($_POST as $i => $value) {
-				logger::mark("INIT", "Setting Pref ".$i." to ".$value);
+				logger::info("INIT", "Setting Pref ".$i." to ".$value);
 				self::set_pref([$i => $value]);
 			}
 

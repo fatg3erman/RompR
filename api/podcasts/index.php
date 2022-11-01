@@ -69,7 +69,7 @@ if ($podid === false) {
 		logger::log('PODCASTS', 'Returning No Content for array return');
 		header('HTTP/1.1 204 No Content');
 	} else {
-		logger::log('PODCASTS', 'Returning podid');
+		logger::debug('PODCASTS', 'Returning podid');
 		header('Content-Type: application/json');
 		print json_encode($podid);
 	}

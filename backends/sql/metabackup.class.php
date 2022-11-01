@@ -40,7 +40,7 @@ class metabackup extends metaDatabase {
 		$dirname = $this->check_backup_dir();
 
 		foreach (self::BACKUP_MAP as $title => $file) {
-			logger::log("BACKEND", "Backing up",$title);
+			logger::mark("BACKEND", "Backing up",$title);
 			$fn = 'get_'.str_replace(' ', '', $title);
 			$stats[$title] = $this->$fn($dirname.$file);
 		}
@@ -525,7 +525,7 @@ class metabackup extends metaDatabase {
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			if ($trackdata['Downloaded'] == 1 && !file_exists('.'.$trackdata['Localfilename'])) {
-				logger::log('BACKUPS', 'Podcast track',$trackdata['Title'],'has been removed');
+				logger::trace('BACKUPS', 'Podcast track',$trackdata['Title'],'has been removed');
 				$trackdata['Downloaded'] = 0;
 				$trackdata['Localfilename'] = null;
 			}
@@ -578,7 +578,7 @@ class metabackup extends metaDatabase {
 			if (file_exists($trackdata['Filename'])) {
 				$this->generic_restore($trackdata, 'BackgroundImageTable');
 			} else {
-				logger::log('BACKUPS', 'Background Image',$trackdata['Filename'],'has been removed');
+				logger::trace('BACKUPS', 'Background Image',$trackdata['Filename'],'has been removed');
 			}
 			$progress = round(($i/count($tracks))*100);
 			fwrite($monitor, "\n<b>Restoring Background Images : </b>".$progress."%\n");

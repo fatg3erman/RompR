@@ -113,7 +113,7 @@ class sortby_genre extends sortby_base {
 		$result = prefs::$database->generic_sql_query('SELECT DISTINCT Genreindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->genre_albumcount($mod['Genreindex']);
-			logger::mark("SORTBY_ARTIST", "  Genre",$mod['Genreindex'],"has",$atc,$this->why,"albums we need to consider");
+			logger::log("SORTBY_ARTIST", "  Genre",$mod['Genreindex'],"has",$atc,$this->why,"albums we need to consider");
 			if ($atc == 0) {
 				prefs::$database->returninfo['deletedartists'][] = $this->why.'genre'.$mod['Genreindex'];
 			} else {
@@ -126,7 +126,7 @@ class sortby_genre extends sortby_base {
 		$result = prefs::$database->generic_sql_query('SELECT DISTINCT Albumindex, Genreindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->album_genre_trackcount($mod['Albumindex'], $mod['Genreindex']);
-			logger::mark("SORTBY_ARTIST", "  Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
+			logger::log("SORTBY_ARTIST", "  Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
 			if ($atc == 0) {
 				prefs::$database->returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
 			} else {

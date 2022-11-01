@@ -142,7 +142,7 @@ class lastfm {
 		// params:
 		//		period: valid value fo period - eg 7day
 		//		page: page to get (starts at 1)
-		logger::log('TOPTRACKS', 'Getting page',$params['page'],'for period',$params['period']);
+		logger::info('LFMTOPTRACKS', 'Getting page',$params['page'],'for period',$params['period']);
 		$params['method'] = 'user.getTopTracks';
 		$params['user'] = prefs::get_pref('lastfm_user');
 		$params['limit'] = 100;
@@ -157,7 +157,7 @@ class lastfm {
 		// params:
 		//		period: valid value fo period - eg 7day
 		//		page: page to get (starts at 1)
-		logger::log('TOPARTISTS', 'Getting page',$params['page'],'for period',$params['period']);
+		logger::info('LFMTOPARTISTS', 'Getting page',$params['page'],'for period',$params['period']);
 		$params['method'] = 'user.getTopArtists';
 		$params['user'] = prefs::get_pref('lastfm_user');
 		$params['limit'] = 100;
@@ -173,7 +173,7 @@ class lastfm {
 		//		track: Track Title
 		//		artist: Artist name
 		//		limit: Max number of tracks to return
-		logger::log('GETSIMILAR', 'Getting similar tracks for',$params['artist'],$params['track']);
+		logger::info('LFMGETSIMILAR', 'Getting similar tracks for',$params['artist'],$params['track']);
 		$params['method'] = 'track.getSimilar';
 		$params['cache'] = true;
 		$data = self::get_request($params, false);
@@ -186,7 +186,7 @@ class lastfm {
 		// params:
 		//		artist: Artist name
 		//		limit: Max number of tracks to return
-		logger::log('GETSIMILAR', 'Getting similar artists for',$params['artist']);
+		logger::info('LFMGETSIMILAR', 'Getting similar artists for',$params['artist']);
 		$params['method'] = 'artist.getSimilar';
 		$params['cache'] = true;
 		$data = self::get_request($params, false);

@@ -12,7 +12,7 @@ class data_base {
 		// the database type. This does mean we get some duplicate code but this is
 		// so much better for the user.
 		logger::mark("SQL_CONNECT", "Probing Database Type");
-		logger::log("SQL_CONNECT", "Attempting to connect to MYSQL Server");
+		logger::info("SQL_CONNECT", "Attempting to connect to MYSQL Server");
 		$retval = false;
 		$mysqlc = null;
 		try {
@@ -33,7 +33,7 @@ class data_base {
 			$mysqlc = null;
 		}
 		if ($mysqlc == null) {
-			logger::log("SQL_CONNECT", "Attempting to use SQLite Database");
+			logger::info("SQL_CONNECT", "Attempting to use SQLite Database");
 			try {
 				$dsn = "sqlite:prefs/collection.sq3";
 				$mysqlc = new PDO($dsn);
@@ -162,7 +162,7 @@ class data_base {
 				}
 			} catch (Exception $e) {
 				$this->show_sql_error("SQL Statement Error", $stmt);
-				logger::log('SQL','PDO rasied exception', $e);
+				logger::warn('SQL','PDO rasied exception', $e);
 			}
 		}
 		if ($return_value !== null) {
@@ -265,7 +265,7 @@ class data_base {
 					return false;
 
 				case '1':
-					logger::mark('DATABASE', 'Collection Is Locked. Waiting...');
+					logger::log('DATABASE', 'Collection Is Locked. Waiting...');
 					if ($return)
 						return true;
 

@@ -24,15 +24,15 @@ class metaDatabase extends playlistCollection {
 
 		$data = array_replace(MPD_FILE_MODEL, ROMPR_FILE_MODEL, $data);
 		if ($data['albumartist'] === null) {
-			logger::core('METADATA', 'WARNING : albumartist is not set!');
+			logger::core('METADATA', 'albumartist is not set!');
 			$data['albumartist'] = $data['trackartist'];
 		}
 		if ($data['Disc'] === null) {
-			logger::core('METADATA', 'WARNING : Disc is not set!');
+			logger::core('METADATA', 'Disc is not set!');
 			$data['Disc'] = 1;
 		}
 		if ($data['Genre'] === null) {
-			logger::core('METADATA', 'WARNING : Genre is not set!');
+			logger::core('METADATA', 'Genre is not set!');
 			$data['Genre'] = 'None';
 		}
 		if ($data['X-AlbumImage'] && substr($data['X-AlbumImage'],0,4) == "http") {
@@ -63,7 +63,7 @@ class metaDatabase extends playlistCollection {
 			$dirs = [];
 			foreach ($player->parse_list_output('find file "'.$data['X-AlbumUri'].'"', $dirs, false) as $filedata) {
 				if ($filedata['Title'] == $data['Title']) {
-					logger::log('METADATA', 'Setting Track Number to', $filedata['Track']);
+					logger::trace('METADATA', 'Setting Track Number to', $filedata['Track']);
 					$data['Track'] = $filedata['Track'];
 				}
 			}
@@ -78,7 +78,7 @@ class metaDatabase extends playlistCollection {
 	// We pass it through the
 	//
 	public function addalbumtocollection($data) {
-		logger::log('METADATA', 'Adding album',$data['albumuri'],'to collection');
+		logger::info('METADATA', 'Adding album',$data['albumuri'],'to collection');
 		$this->options['doing_search'] = true;
 		$this->options['trackbytrack'] = false;
 		$player = new player();
@@ -117,11 +117,11 @@ class metaDatabase extends playlistCollection {
 		);
 		$best_match = array_shift($matches);
 		if ($best_match) {
-			logger::log('FINDAANDSET', 'Found', print_r($best_match, true));
+			logger::info('FINDAANDSET', 'Found', print_r($best_match, true));
 			$track = $this->doNewPlaylistFile($best_match);
 			$this->sanitise_data($track);
 		} else {
-			logger::log('FINDAANDSET', 'Did Not Find');
+			logger::info('FINDAANDSET', 'Did Not Find',$data['Title']);
 			$track = $data;
 			$track['file'] = null;
 		}
@@ -153,7 +153,7 @@ class metaDatabase extends playlistCollection {
 	}
 
 	public function browsetoll($uri) {
-		logger::log('METADATA', 'Adding album',$uri,'to listen later');
+		logger::info('METADATA', 'Adding album',$uri,'to listen later');
 		$this->options['doing_search'] = true;
 		$this->options['trackbytrack'] = false;
 		$player = new player();
@@ -180,7 +180,7 @@ class metaDatabase extends playlistCollection {
 	}
 
 	public function ban($data) {
-		logger::log('METADATA', 'Banning',$data['trackartist'],$data['Title']);
+		logger::info('METADATA', 'Banning',$data['trackartist'],$data['Title']);
 		$this->add_ban_track($data['trackartist'], $data['Title']);
 	}
 
@@ -343,7 +343,7 @@ class metaDatabase extends playlistCollection {
 
 		$ttids = $this->find_item($data, $this->forced_uri_only(false, $data['domain']));
 		if (count($ttids) == 0) {
-			logger::trace("INC", "Doing an INCREMENT action - Found NOTHING so creating hidden track");
+			logger::log("INC", "Doing an INCREMENT action - Found NOTHING so creating hidden track");
 			$data['hidden'] = 1;
 			$ttids[0] = $this->create_new_track($data);
 		}
@@ -363,7 +363,7 @@ class metaDatabase extends playlistCollection {
 	}
 
 	private function up_next_hack_for_audiobooks($ttid) {
-		logger::log('METADATA', 'Doing Audiobook Up Next Hack for TTID',$ttid);
+		logger::trace('METADATA', 'Doing Audiobook Up Next Hack for TTID',$ttid);
 		$this->sql_prepare_query(true, null, null, null,
 			"UPDATE Bookmarktable SET Bookmark = 0 WHERE TTindex = ? AND Name = ?",
 			$ttid,
@@ -554,7 +554,7 @@ class metaDatabase extends playlistCollection {
 		$ttids = $this->find_item($data, $this->forced_uri_only(false, $data['domain']));
 		if (count($ttids) > 0) {
 			foreach ($ttids as $ttid) {
-				logger::log('SQL', 'Setting Audiobooks state for TTIndex',$ttid,'to',$data['isaudiobook']);
+				logger::log('SQL', 'Setting Audiobook state for TTIndex',$ttid,'to',$data['isaudiobook']);
 				$this->sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET isAudiobook = ? WHERE TTindex = ?', $data['isaudiobook'], $ttid);
 			}
 		}
@@ -619,7 +619,7 @@ class metaDatabase extends playlistCollection {
 	}
 
 	public function clearwishlist() {
-		logger::log("MONKEYS", "Removing Wishlist Tracks");
+		logger::info("MONKEYS", "Removing Wishlist Tracks");
 		if ($this->clear_wishlist()) {
 			logger::debug("MONKEYS", " ... Success!");
 		} else {
@@ -653,9 +653,9 @@ class metaDatabase extends playlistCollection {
 
 	private function print_debug_ttids($ttids) {
 		if (count($ttids) > 0) {
-			logger::info("TIMINGS", "  Found TTindex",implode(',', $ttids));
+			logger::info("METADATA", "Found TTindex",implode(',', $ttids));
 		} else {
-			logger::info("TIMINGS", "  Did not find a match");
+			logger::info("METADATA", "Did not find a match");
 		}
 	}
 
@@ -694,7 +694,7 @@ class metaDatabase extends playlistCollection {
 		$ttids = array();
 
 		if ($urionly && $data['file']) {
-			logger::log("FIND ITEM", "  Trying by URI ".$data['file']);
+			logger::log("FIND ITEM", "Trying by URI Only", $data['file']);
 			$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $data['file']);
 			$ttids = array_merge($ttids, $t);
 		}
@@ -882,7 +882,7 @@ class metaDatabase extends playlistCollection {
 				}
 				$this->check_audiobook_status($ttid);
 				if ($uri) {
-					logger::log('METADATA', 'Creating Return Info');
+					logger::info('METADATA', 'Creating Return Info after Setting');
 					$this->returninfo['metadata'] = $this->get_all_data($ttid);
 				}
 			}
@@ -932,7 +932,7 @@ class metaDatabase extends playlistCollection {
 				}
 			} else {
 				// Doesn't matter, we have a UNIQUE constraint on both columns to prevent us adding the same tag twice
-				logger::debug("ADD TAGS", "  .. Failed but that's OK if it's because of a duplicate entry or UNQIUE constraint");
+				logger::core("ADD TAGS", "  .. Failed but that's OK if it's because of a duplicate entry or UNQIUE constraint");
 			}
 		}
 		return true;
@@ -944,7 +944,7 @@ class metaDatabase extends playlistCollection {
 		//		Creates a new entry in Tagtable
 		//		Returns: Tagindex
 
-		logger::mark("CREATE TAG", "Creating new tag",$tag);
+		logger::log("CREATETAG", "Creating new tag",$tag);
 		$tagindex = null;
 		if ($this->sql_prepare_query(true, null, null, null, "INSERT INTO Tagtable (Name) VALUES (?)", $tag)) {
 			$tagindex = $this->mysqlc->lastInsertId();
@@ -1045,7 +1045,7 @@ class metaDatabase extends playlistCollection {
 		$retval = false;
 		$u = $this->simple_query('Uri', 'Tracktable', 'TTindex', $ttid, null);
 		if ($u == null) {
-			logger::mark('BACKEND', "Track",$ttid,"is wishlist. Discarding");
+			logger::info('BACKEND', "Track",$ttid,"is wishlist. Discarding");
 			$meta = $this->get_all_data($ttid);
 			$retval = [
 				['attribute' => 'Rating', 'value' => $meta['Rating']],
@@ -1084,7 +1084,7 @@ class metaDatabase extends playlistCollection {
 			WHERE Artistname = ? AND Title = ? AND Uri IS NULL",
 		$data['trackartist'],$data['Title']);
 		foreach ($result as $obj) {
-			logger::mark('BACKEND', "Wishlist Track",$obj['TTindex'],"matches the one we're adding");
+			logger::info('BACKEND', "Wishlist Track",$obj['TTindex'],"matches the one we're adding");
 			$meta = $this->get_all_data($obj['TTindex']);
 			$retval = [
 				['attribute' => 'Rating', 'value' => $meta['Rating']],
@@ -1100,7 +1100,7 @@ class metaDatabase extends playlistCollection {
 
 	private function check_for_hidden_track($ttid) {
 		if ($this->track_is_hidden($ttid)) {
-			logger::log('SETADATA', 'TTindex',$ttid,'is a hidden track. Copying its playcount then junking it');
+			logger::info('SETADATA', 'TTindex',$ttid,'is a hidden track. Copying its playcount then junking it');
 			$playcount = $this->simple_query('Playcount', 'Playcounttable', 'TTindex', $ttid, 0);
 			$this->sql_prepare_query(true, null, null, null,
 				"DELETE FROM Tracktable WHERE TTindex = ?",
@@ -1163,7 +1163,7 @@ class metaDatabase extends playlistCollection {
 		// then deleted, if someone tried to then re-add it it doesn't appear in the display because all manually-added tracks go to
 		// the Collection not Spoken Word, but this doesn't work oh god it's horrible just leave it.
 
-		logger::log('BACKEND', "Removing track ".$ttid);
+		logger::info('BACKEND', "Removing track ".$ttid);
 		$result = false;
 		if ($this->generic_sql_query("DELETE FROM Tracktable WHERE isSearchResult != 1 AND TTindex = '".$ttid."'",true)) {
 			if ($this->generic_sql_query("UPDATE Tracktable SET isSearchResult = 2, isAudiobook = 0 WHERE isSearchResult = 1 AND TTindex = '".$ttid."'", true)) {
@@ -1174,7 +1174,7 @@ class metaDatabase extends playlistCollection {
 	}
 
 	public function prepare_returninfo() {
-		logger::log("USERRATINGS", "Preparing Return Info");
+		logger::info("USERRATINGS", "Preparing Return Info");
 		$t = microtime(true);
 
 		$sorter = choose_sorter_by_key('aartistroot');
@@ -1275,7 +1275,7 @@ class metaDatabase extends playlistCollection {
 			} else {
 				$track = $bollocks[0];
 				$cock = false;
-				logger::mark('BACKEND', 'Track being added already exists', $data['file'], $track['Uri']);
+				logger::warn('BACKEND', 'Track being added already exists', $data['file'], $track['Uri']);
 				$this->sql_prepare_query(true, null, null, null,
 					"UPDATE Tracktable SET Uri = ?, Duration = ?, Hidden = ?, Sourceindex = ?, isAudiobook = ?, Genreindex = ?, TYear = ?, LinkChecked = ?, justAdded = ? WHERE TTindex = ?",
 					$data['file'],
@@ -1399,7 +1399,7 @@ class metaDatabase extends playlistCollection {
 				$this->youtubedl_error('Could not match URI '.$mopidy_uri, null);
 
 			if ($downloader == 'yt-dlp') {
-				logger::log('YOUTUBEDL', 'Using yt-dlp so passing youtube music URI so we can get HQ downlaods');
+				logger::info('YOUTUBEDL', 'Using yt-dlp so passing youtube music URI so we can get HQ downlaods');
 				$uri_to_get = 'https://music.youtube.com/watch/?v='.$matches[1];
 			} else {
 				$uri_to_get = 'https://youtu.be/'.$matches[1];
@@ -1429,7 +1429,7 @@ class metaDatabase extends playlistCollection {
 				logger::log('YOUTUBEDL', '  Track Artist is',$info[0]['trackartist']);
 				logger::log('YOUTUBEDL', '  Album Artist is',$info[0]['albumartist']);
 			} else {
-				logger::log('YOUTUBEDL', '  Could not find title and artist from collection');
+				logger::info('YOUTUBEDL', '  Could not find title and artist from collection');
 			}
 
 			$ttindex = $this->simple_query('TTindex', 'Tracktable', 'Uri', $mopidy_uri, null);
@@ -1458,8 +1458,8 @@ class metaDatabase extends playlistCollection {
 		// At this point, terminate the request so the download can run in the background.
 		// If we don't do this the browser will retry after 3 minutes and there's nothing we
 		// can do about that.
-		logger::log('YOUTUBEDL', 'OK now we start the fun');
 		close_browser_connection();
+	    logger::log('YOUTUBEDL', 'Process is now detached from the browser');
 
 		foreach ($stufftoget as $stuff) {
 
@@ -1487,7 +1487,7 @@ class metaDatabase extends playlistCollection {
 				$switches[] = '--format bestvideo*+bestaudio/best';
 			}
 			$cmdline = $ytdl_path.$downloader.' '.implode(' ', $switches).' '.$stuff['uri_to_get'];
-			logger::log('YOUTUBEDL', 'Command line is',$cmdline);
+			logger::info('YOUTUBEDL', 'Command line is',$cmdline);
 			file_put_contents($stuff['progress_file'], $cmdline."\n", FILE_APPEND);
 			exec($cmdline.' >> '.$stuff['progress_file'].' 2>&1', $output, $retval);
 			if ($retval != 0 && $retval != 1) {
@@ -1527,7 +1527,7 @@ class metaDatabase extends playlistCollection {
 				if ($tagwriter->WriteTags()) {
 					logger::log('YOUTTUBEDL', 'Successfully wrote tags');
 					if (!empty($tagwriter->warnings)) {
-						logger::log('YOUTUBEDL', 'There were some warnings'.implode(' ', $tagwriter->warnings));
+						logger::warn('YOUTUBEDL', 'There were some warnings'.implode(' ', $tagwriter->warnings));
 					}
 				} else {
 					logger::error('YOUTUBEDL', 'Failed to write tags!', implode(' ', $tagwriter->errors));

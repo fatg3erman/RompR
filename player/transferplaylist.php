@@ -12,7 +12,7 @@ class transferCollection {
 	}
 
 	public function doNewPlaylistFile(&$filedata) {
-		logger::trace("TRANSFER", "    Track ".$filedata['Pos']." ".$filedata['type']." ".$filedata['file']);
+		logger::trace("TRANSFER", "Track ".$filedata['Pos']." ".$filedata['type']." ".$filedata['file']);
 		array_push($this->tracks, array('type' => $filedata['type'], 'uri' => $filedata['file']));
 		return true;
 	}
@@ -59,7 +59,7 @@ if ($target_player->is_connected()) {
 	}
 	$target_player->do_command_list($cmds);
 
-	logger::log("TRANSFER", "  State is ".$mpd_status['state']);
+	logger::log("TRANSFER", "State is ".$mpd_status['state']);
 	if (array_key_exists('state', $mpd_status) && $mpd_status['state'] == 'play') {
 		$target_player->do_command_list(array(join_command_string(array('play', $mpd_status['song']))));
 		// Work around Mopidy bug where it doesn't update the 'state' variable properly

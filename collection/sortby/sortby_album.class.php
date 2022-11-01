@@ -78,7 +78,7 @@ class sortby_album extends sortby_base {
 		$result = prefs::$database->generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->album_trackcount($mod['Albumindex']);
-			logger::mark("SORTBY_ALBUM", "  Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
+			logger::log("SORTBY_ALBUM", "Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
 			if ($atc == 0) {
 				prefs::$database->returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
 			} else {

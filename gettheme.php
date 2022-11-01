@@ -21,9 +21,9 @@ $theme = array_key_exists('theme', $_REQUEST) ? $_REQUEST['theme'] : 'Numismatis
 $icontheme = array_key_exists('icontheme', $_REQUEST) ? $_REQUEST['icontheme'] : 'New-Dark-Circled';
 // For older-style requests before we could have spaces
 $fontfamily = preg_replace('/_/', ' ', $fontfamily);
-logger::log('THEME','Theme       :',$theme);
-logger::log('THEME','Font        :',$fontfamily);
-logger::log('THEME','Icons       :',$icontheme);
+logger::info('GETTHEME','Theme       :',$theme);
+logger::info('GETTHEME','Font        :',$fontfamily);
+logger::info('GETTHEME','Icons       :',$icontheme);
 
 //We need to put any @imports first, so we must read the font
 readfile('fonts/'.$fontfamily);

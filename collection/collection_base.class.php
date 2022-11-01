@@ -310,11 +310,10 @@ class collection_base extends database {
 			$result = $this->find_album2->fetchAll(PDO::FETCH_OBJ);
 			$obj = array_shift($result);
 			if ($obj) {
-				logger::mark('BACKEND', "Album ".$data['Album']." was found on domain ".$obj->Domain.". Changing to local");
+				logger::info('BACKEND', "Album ".$data['Album']." was found on domain ".$obj->Domain.". Changing to local");
 				$index = $obj->Albumindex;
 				if ($this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET AlbumUri = NULL, Domain = ?, justUpdated = ? WHERE Albumindex = ?", 'local', 1, $index)) {
 					$obj->AlbumUri = null;
-					logger::debug('BACKEND', "   ...Success");
 				} else {
 					logger::warn('BACKEND', "   Album ".$data['Album']." update FAILED");
 					return false;
@@ -349,7 +348,6 @@ class collection_base extends database {
 					WHERE
 						Albumindex = ?",
 					$year, $img, $uri, $mbid, $index)) {
-					logger::debug('BACKEND', "   ...Success");
 				} else {
 					logger::warn('BACKEND', "   Album ".$data['album']." update FAILED");
 					return false;
@@ -367,7 +365,7 @@ class collection_base extends database {
 		//		Creates an album
 		//		Returns: Albumindex
 
-		logger::trace('COLLECTION', 'Creating Album',$data['Album'],'with year',$data['year']);
+		logger::info('COLLECTION', 'Creating Album',$data['Album'],'with year',$data['year']);
 
 		$retval = null;
 		if ($this->sql_prepare_query(true, null, null, null,
@@ -422,7 +420,7 @@ class collection_base extends database {
 	}
 
 	protected function update_track_stats() {
-		logger::mark('BACKEND', "Updating Track Stats");
+		logger::log('BACKEND', "Updating Track Stats");
 		$t = microtime(true);
 		$this->update_stat('ArtistCount',$this->get_artist_count(ADDED_ALL_TIME, 0));
 		$this->update_stat('AlbumCount',$this->get_album_count(ADDED_ALL_TIME, 0));
@@ -668,7 +666,7 @@ class collection_base extends database {
 
 	public function update_radio_station_name($info) {
 		if ($info['streamid']) {
-			logger::mark('BACKEND', "Updating Stationindex",$info['streamid'],"with new name",$info['name']);
+			logger::info('BACKEND', "Updating Stationindex",$info['streamid'],"with new name",$info['name']);
 			$this->sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ? WHERE Stationindex = ?",$info['name'],$info['streamid']);
 		} else {
 			$stationid = $this->check_radio_station($info['uri'], $info['name'], '');
@@ -680,7 +678,7 @@ class collection_base extends database {
 		$index = null;
 		$index = $this->sql_prepare_query(false, null, 'Stationindex', false, "SELECT Stationindex FROM RadioStationtable WHERE PlaylistUrl = ?", $playlisturl);
 		if ($index === false) {
-			logger::mark('BACKEND', "Adding New Radio Station");
+			logger::info('BACKEND', "Adding New Radio Station");
 			logger::log('BACKEND', "  Name  :",$stationname);
 			logger::log('BACKEND', "  Image :",$image);
 			logger::log('BACKEND', "  URL   :",$playlisturl);
@@ -692,7 +690,7 @@ class collection_base extends database {
 		} else {
 			$this->sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ?, Image = ? WHERE Stationindex = ?",
 				trim($stationname), trim($image), $index);
-			logger::mark('BACKEND', "Found radio station",$stationname,"with index",$index);
+			logger::info('BACKEND', "Found radio station",$stationname,"with index",$index);
 		}
 		return $index;
 	}
@@ -730,7 +728,7 @@ class collection_base extends database {
 
 	public function add_fave_station($info) {
 		if (array_key_exists('streamid', $info) && $info['streamid']) {
-			logger::mark('BACKEND', "Updating StationIndex",$info['streamid'],"to be fave");
+			logger::info('BACKEND', "Updating StationIndex",$info['streamid'],"to be fave");
 			$this->generic_sql_query("UPDATE RadioStationtable SET IsFave = 1 WHERE Stationindex = ".$info['streamid'], true);
 			return true;
 		}
@@ -827,7 +825,7 @@ class collection_base extends database {
 				if ($retval['dbimage'] == null) {
 					$retval['dbimage'] = $obj->Image;
 				}
-				logger::log('BACKEND', "Found album",$retval['album'],"in database");
+				logger::trace('BACKEND', "Found album",$retval['album'],"in database");
 			}
 		}
 		return $retval;
@@ -845,7 +843,7 @@ class collection_base extends database {
 					$retval = preg_replace('#^local:track:#', '', $retval);
 					$retval = preg_replace('#^file://#', '', $retval);
 					$retval = preg_replace('#^beetslocal:\d+:'.prefs::get_pref('music_directory_albumart').'/#', '', $retval);
-					logger::log('BACKEND', "Got album directory using track Uri :",$retval);
+					logger::debug('BACKEND', "Got album directory using track Uri :",$retval);
 				}
 			}
 		}
@@ -855,9 +853,9 @@ class collection_base extends database {
 	public function update_image_db($key, $found, $imagefile) {
 		$val = ($found) ? $imagefile : null;
 		if ($this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Image = ?, Searched = 1 WHERE ImgKey = ?", $val, $key)) {
-			logger::log('BACKEND', "    Database Image URL Updated");
+			logger::debug('BACKEND', "Database Image URL Updated");
 		} else {
-			logger::warn('BACKEND', "    Failed To Update Database Image URL",$val,$key);
+			logger::warn('BACKEND', "Failed To Update Database Image URL",$val,$key);
 		}
 	}
 
@@ -982,12 +980,12 @@ class collection_base extends database {
 		$player = new player();
 		$dirs = array();
 		if ($player->has_specific_search_function($rawterms, $domains)) {
-			logger::trace('RAW SEARCH', 'Using Mopidy Search');
+			logger::info('RAW SEARCH', 'Using Mopidy Search');
 			foreach ($player->search_function($rawterms, $domains) as $filedata) {
 				$this->newTrack($filedata);
 			}
 		} else {
-			logger::trace("RAW SEARCH", "Search command : ".$command);
+			logger::info("RAW SEARCH", "MPD Search command : ".$command);
 			foreach ($player->parse_list_output($command, $dirs, $domains) as $filedata) {
 				$this->newTrack($filedata);
 			}
@@ -1008,7 +1006,7 @@ class collection_base extends database {
 		$this->options['doing_search'] = true;
 		$this->options['trackbytrack'] = false;
 
-		logger::trace('FAVEFINDER', 'Search Terms', $this->options['searchterms']);
+		logger::debug('FAVEFINDER', 'Search Terms', print_r($this->options['searchterms'], true));
 		$found = false;
 		if ($checkdb){
 			logger::log('FAVEFINDER', 'Checking database first');

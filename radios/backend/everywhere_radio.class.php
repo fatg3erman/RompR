@@ -80,7 +80,7 @@ class everywhere_radio extends musicCollection {
 			if ($banned !== null) {
 				logger::log('EVRADIO',$uri['trackartist'], $uri['Title'],'is BANNED');
 			} else {
-				logger::log('EVRADIO', 'Got Uri ',$uri['trackartist'], $uri['Title']);
+				logger::log('EVRADIO', 'Got Uri',$uri['trackartist'], $uri['Title']);
 				$this->add_smart_uri($uri['file'], $uri['trackartist'], $uri['Title'], $uri['X-AlbumUri']);
 			}
 		}
@@ -216,7 +216,7 @@ class everywhere_radio extends musicCollection {
 		logger::log('FAVEARTISTS', 'Found',count($artists),'fave artists');
 
 		foreach ($artists as $artist) {
-			logger::log('FARTIST', "Adding Fave Artist", $artist['Artistname']);
+			logger::debug('FARTIST', "Adding Fave Artist", $artist['Artistname']);
 			$this->add_toptrack(
 				$type,
 				$artist['Artistname'],

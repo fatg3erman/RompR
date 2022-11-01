@@ -28,7 +28,7 @@ class spotify {
 	private static function check_spotify_token() {
 		// Note for when you're confused by this. time() is always > null
 		if (prefs::get_pref('spotify_token') == null || time() > prefs::get_pref('spotify_token_expires')) {
-			logger::trace("SPOTIFY", "Getting Spotify Credentials");
+			logger::log("SPOTIFY", "Getting Spotify Credentials");
 			$d = new url_downloader(array(
 				'url' => 'https://accounts.spotify.com/api/token',
 				'header' => array('Authorization: Basic '.SELF::AUTH_KEY),
@@ -43,9 +43,8 @@ class spotify {
 				]);
 				prefs::save();
 			} else {
-				logger::warn("SPOTIFY", "Getting credentials FAILED!" );
 				$stuff = json_decode($d->get_data());
-				logger::log('SPOTIFY', print_r($stuff, true));
+				logger::warn("SPOTIFY", "Getting credentials FAILED!",print_r($stuff, true));
 				return array(false, $stuff->{'error'}, $d->get_status());
 			}
 		}

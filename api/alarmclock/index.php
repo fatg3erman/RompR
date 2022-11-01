@@ -8,7 +8,7 @@ set_time_limit(10);
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 prefs::$database = new timers();
-logger::mark("ALARMS", "Using Player ".prefs::currenthost());
+logger::debug("ALARMS", "Using Player ".prefs::currenthost());
 
 if (array_key_exists('enable', $_REQUEST)) {
 	prefs::$database->toggle_alarm($_REQUEST['index'], $_REQUEST['enable']);

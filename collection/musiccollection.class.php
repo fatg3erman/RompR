@@ -158,7 +158,7 @@ class musicCollection extends collection_base {
 				$who,
 				$track['Title']
 			);
-			logger::log('PRAP', 'Checking',$track['Title'],$track['Artistname'],$track['TTindex']);
+			logger::log('BACKEND', 'Checking',$track['Title'],$track['Artistname'],$track['TTindex']);
 			if (count($ttids) > 1) {
 				logger::log("BACKEND", 'Ambiguous track',$track["Title"],'could not have trackartist reset');
 			} else if (count($ttids) == 0) {
@@ -217,10 +217,10 @@ class musicCollection extends collection_base {
 	}
 
 	private function browse_podcast_search_result($uri) {
-		logger::trace("COLLECTION", "Browsing For Podcast ".substr($uri, 9));
+		logger::info("COLLECTION", "Browsing For Podcast ".substr($uri, 9));
 		$podatabase = new poDatabase();
 		$podid = $podatabase->getNewPodcast(substr($uri, 8), 0, false);
-		logger::log("ALBUMS", "Ouputting Podcast ID ".$podid);
+		logger::trace("ALBUMS", "Ouputting Podcast ID ",$podid);
 		$podatabase->outputPodcast($podid, false);
 	}
 
@@ -236,7 +236,7 @@ class musicCollection extends collection_base {
 			return true;
 		}
 
-		logger::log('COLLECTION', 'Browsing for album',$uri);
+		logger::info('COLLECTION', 'Browsing for album',$uri);
 		$this->create_foundtracks();
 		// We want the tracks we're browsing to appear under the same album. Sometimes Mopidy-YTMusic hasn't returned an album name
 		// or some tracks have an album name and some haven't. It gets very confusing in the UI and for the backend
@@ -314,7 +314,7 @@ class musicCollection extends collection_base {
 		if ($uri) {
 			$this->options['doing_search'] = true;
 			$this->options['trackbytrack'] = true;
-			logger::log('COLLECTION', 'Browsing for artist',$uri);
+			logger::info('COLLECTION', 'Browsing for artist',$uri);
 			$this->do_update_with_command('find file "'.$uri.'"', array(), false, [], []);
 			$this->unbrowse_artist($index);
 			return true;
@@ -324,7 +324,7 @@ class musicCollection extends collection_base {
 	}
 
 	public function do_update_with_command($cmd, $dirs, $domains, $force_keys, $mpdsearch) {
-		logger::log('COLLECTION', 'Doing update with',$cmd);
+		logger::info('COLLECTION', 'Doing update with',$cmd);
 		// In cases where we're browsing search results from eg youtube, the initial
 		// Album Artist can sometimes be wrong, but we want it to be the same otherwise
 		// the UI doesn't work, so force it.
@@ -356,7 +356,7 @@ class musicCollection extends collection_base {
 		// Find tracks that have been removed
 		logger::mark('BACKEND', "Starting Cruft Removal");
 		$now = time();
-		logger::trace('BACKEND', "Checking Wishlist");
+		logger::log('BACKEND', "Checking Wishlist");
 		$wishlist = $this->pull_wishlist('date');
 		foreach ($wishlist as $wishtrack) {
 			$newtrack = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
@@ -367,7 +367,7 @@ class musicCollection extends collection_base {
 				$wishtrack['artistindex']
 			);
 			foreach ($newtrack AS $track) {
-				logger::log('COLLECTION', "We have found wishlist track",$wishtrack['Title'],'by',$wishtrack['trackartist'],'as TTindex',$newtrack['TTindex']);
+				logger::trace('COLLECTION', "We have found wishlist track",$wishtrack['Title'],'by',$wishtrack['trackartist'],'as TTindex',$newtrack['TTindex']);
 				$this->sql_prepare_query(true, null, null, null,
 					'UPDATE Ratingtable SET TTindex = ? WHERE TTindex = ?',
 					$newtrack['TTindex'],
@@ -385,10 +385,10 @@ class musicCollection extends collection_base {
 			}
 		}
 
-		logger::trace('BACKEND', "Finding tracks that have been deleted");
+		logger::log('BACKEND', "Finding tracks that have been deleted");
 		$this->generic_sql_query("DELETE FROM Tracktable WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0", true);
 
-		logger::trace('BACKEND', "Making Sure Local Tracks Are Not Unplayable");
+		logger::log('BACKEND', "Making Sure Local Tracks Are Not Unplayable");
 		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked > 0 AND Uri LIKE 'local:%'", true);
 
 		$this->remove_cruft();
@@ -396,8 +396,7 @@ class musicCollection extends collection_base {
 		$this->update_stat('ListVersion',ROMPR_COLLECTION_VERSION);
 		$this->update_track_stats();
 		$dur = format_time(time() - $now);
-		logger::info('BACKEND', "Cruft Removal Took ".$dur);
-		logger::info('BACKEND', "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		logger::trace('BACKEND', "Cruft Removal Took ".$dur);
 	}
 
 	public function prepare_findtracks() {

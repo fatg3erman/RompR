@@ -26,13 +26,13 @@ check_php_installation();
 //
 
 if (array_key_exists('setup', $_REQUEST)) {
-	logger::log('INIT', 'User asked for Setup Screen');
+	logger::mark('INIT', 'User asked for Setup Screen');
 	$title = language::gettext("setup_request");
 	include("setupscreen.php");
 	exit(0);
 }
 
-logger::log('INIT', 'Got Past Setup Bit');
+logger::debug('INIT', 'Got Past Setup Bit');
 
 //
 // Check to see if a specific player has been requested in the URL
@@ -57,7 +57,7 @@ upgrade_old_collections();
 // See if we can use the SQL backend
 //
 
-logger::log('INIT', 'Checking Database Connection');
+logger::mark('INIT', 'Checking Database Connection');
 
 if (prefs::get_pref('collection_type') === null) {
 	$success = data_base::probe_database();
@@ -101,9 +101,9 @@ logger::debug("INIT", $_SERVER['PHP_SELF']);
 
 logger::mark('INIT','Attempting to connect to player',prefs::currenthost());
 if (array_key_exists('player_backend', $_COOKIE) && $_COOKIE['player_backend'] != '') {
-	logger::mark('INIT','Player backend cookie is',$_COOKIE['player_backend']);
+	logger::info('INIT','Player backend cookie is',$_COOKIE['player_backend']);
 } else {
-	logger::mark('INIT','Player backend cookie is not set');
+	logger::info('INIT','Player backend cookie is not set');
 }
 $player = new base_mpd_player();
 if ($player->is_connected()) {
@@ -269,7 +269,7 @@ foreach($inc as $i) {
 if (prefs::get_pref('load_plugins_at_loadtime')) {
 	$inc = glob("plugins/code/*.js");
 	foreach($inc as $i) {
-		logger::log("INIT", "DEVELOPMENT MODE : Including Plugin ".$i);
+		logger::info("INIT", "DEVELOPMENT MODE : Including Plugin ".$i);
 		print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 	}
 }

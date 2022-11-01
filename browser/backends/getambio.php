@@ -22,7 +22,7 @@ function get_bio_link($url) {
 		'url' => $url,
 		'cache' => 'allmusic'
 	));
-	logger::log('AMBIO', 'Looking for bio link from', $url);
+	logger::debug('AMBIO', 'Looking for bio link from', $url);
 	if ($d->get_data_to_file()) {
 		$DOM = new DOMDocument;
 		@$DOM->loadHTML($d->get_data());
@@ -32,7 +32,7 @@ function get_bio_link($url) {
 			$links = $e->GetElementsByTagName('a');
 			for ($i = 0; $i < $links->length; $i++) {
 				$link = $links->item($i)->getAttribute('href');
-				logger::log("AMBIO", "Found Bio Link",$link);
+				logger::debug("AMBIO", "Found Bio Link",$link);
 			}
 			return 'http://www.allmusic.com'.$link;
 		} else {
@@ -44,7 +44,7 @@ function get_bio_link($url) {
 }
 
 function get_allmusic_page($url) {
-	logger::trace("AMBIO", "Getting allmusic Page",$url);
+	logger::debug("AMBIO", "Getting allmusic Page",$url);
 	$r = '<p></p>';
 	$d = new url_downloader(array(
 		'url' => $url,
@@ -55,12 +55,12 @@ function get_allmusic_page($url) {
 		@$DOM->loadHTML($d->get_data());
 		$els = getElementsByClass($DOM, 'section', 'biography');
 		foreach ($els as $el) {
-			logger::log("AMBIO", "Found Review Body");
+			logger::core("AMBIO", "Found Review Body");
 			if (mb_check_encoding($el->nodeValue, 'UTF-8')) {
-				logger::log('AMBIO', 'String seems to be valid UTF-8');
+				logger::core('AMBIO', 'String seems to be valid UTF-8');
 				$r = $el->nodeValue;
 			} else {
-				logger::log('AMBIO', 'String IS NOT valid UTF-8');
+				logger::core('AMBIO', 'String IS NOT valid UTF-8');
 				$r = mb_convert_encoding($el->nodeValue, 'UTF-8', mb_detect_encoding($el->nodeValue));
 			}
 		}

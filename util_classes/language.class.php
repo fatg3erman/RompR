@@ -5,7 +5,7 @@ class language {
 	private static $translations = array();
 
 	private static function load_translations() {
-		logger::log('LANGUAGE', 'Loading Translations');
+		logger::info('LANGUAGE', 'Loading Translations');
 		// Always load English, it provides defaults for anything missing in the translation
 		require_once('international/en-GB.php');
 		$interface_language = self::get_interface_language();

@@ -93,7 +93,7 @@ class metaquery extends collection_base {
 				$spoti_track = $spoti_data['tracks'][$i];
 				if ($spoti_track) {
 					if ($spoti_track['is_playable']) {
-						logger::log('RELINKING', 'Track',$spoti_track['name'],'is playable');
+						logger::debug('RELINKING', 'Track',$spoti_track['name'],'is playable');
 						if (array_key_exists('linked_from', $spoti_track)) {
 							logger::log('RELINKING', '  Track',$spoti_track['name'],'is relinked',$uri, $spoti_track['linked_from']['uri']);
 							$uri = $spoti_track['linked_from']['uri'];
@@ -104,11 +104,11 @@ class metaquery extends collection_base {
 					} else {
 						logger::log('RELINKING', 'Track',$spoti_track['name'],'is not playable');
 						if ($spoti_track['restrictions']) {
-							logger::log('RELINKING','  Restrictions',$spoti_track['restrictions']['reason']);
+							logger::debug('RELINKING','  Restrictions',$spoti_track['restrictions']['reason']);
 						}
 					}
 				} else {
-					logger::log('RELINKING', 'No data from spotify for TTindex',$my_track['TTindex']);
+					logger::debug('RELINKING', 'No data from spotify for TTindex',$my_track['TTindex']);
 				}
 				$this->updateCheckedLink($my_track['TTindex'], $uri, $status);
 			}
@@ -195,7 +195,7 @@ class metaquery extends collection_base {
 	}
 
 	public function updateCheckedLink($ttindex, $uri, $status) {
-		logger::trace("METADATA", "Updating Link Check For TTindex",$ttindex,$uri);
+		logger::debug("METADATA", "Updating Link Check For TTindex",$ttindex,$uri);
 		$this->sql_prepare_query(true, null, null, null,
 			"UPDATE Tracktable SET LinkChecked = ?, Uri = ? WHERE TTindex = ?", $status, $uri, $ttindex);
 	}

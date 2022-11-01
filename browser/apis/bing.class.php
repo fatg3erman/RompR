@@ -33,7 +33,7 @@ class bing {
 		$url = bing::BASE_URL.'images/search';
 		$params['safeSearch'] = 'Off';
 		$url .= '?'.http_build_query($params);
-		logger::log('BING', $url);
+		logger::log('BINGSEARCH', $url);
 		return bing::request($url, $print_data);
 	}
 }

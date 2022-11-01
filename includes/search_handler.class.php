@@ -34,7 +34,7 @@ class search_handler {
 	private $search_holders = [];
 
 	public function __construct() {
-		logger::log('SEARCHHANDLER', 'initiating Blomquist Transfusion');
+		logger::mark('SEARCHHANDLER', 'Initiating Blomquist Transfusion');
 	}
 
 	public function create_search_panel() {
@@ -59,7 +59,7 @@ class search_handler {
 
 		$plugins = glob('search/*.php');
 		foreach ($plugins as $plugin) {
-			logger::log('INIT', 'Including', $plugin);
+			logger::info('INIT', 'Including', $plugin);
 			$classname = pathinfo(pathinfo($plugin, PATHINFO_FILENAME), PATHINFO_FILENAME);
 			$s = new $classname($this);
 		}

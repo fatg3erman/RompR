@@ -4,7 +4,7 @@ class cache_cleaner extends database {
 	public function check_clean_time() {
 		$last_clean = $this->simple_query('Value', 'Statstable', 'Item', 'LastCache', time() + 90000);
 		if ($last_clean + 86400 <= time()) {
-			logger::log('CACHE CLEANER', 'Time To Clean The Cache');
+			logger::mark('CACHE CLEANER', 'Time To Clean The Cache');
 			$this->sql_prepare_query(true, null, null, null,
 				"UPDATE Statstable SET Value = ? WHERE Item = 'LastCache'",
 				time()

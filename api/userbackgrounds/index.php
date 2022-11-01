@@ -6,7 +6,7 @@ include ("includes/functions.php");
 prefs::$database = new backgroundImages();
 
 foreach($_REQUEST as $i => $r) {
-	logger::log("BACKIMAGE", $i,'=',$r);
+	logger::trace("BACKIMAGE", $i,'=',$r);
 }
 
 $retval = array();

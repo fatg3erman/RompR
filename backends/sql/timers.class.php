@@ -48,7 +48,7 @@ class timers extends database {
 	private function kill_sleep_timer() {
 		$pid = $this->simple_query('Pid', 'Sleeptimers', 'Player', $this->player, null);
 		if ($pid !== null) {
-			logger::log($this->player, 'Cancelling Sleep Timer');
+			logger::info($this->player, 'Cancelling Sleep Timer');
 			kill_process($pid);
 		}
 		$this->sleep_timer_finished();
@@ -131,7 +131,7 @@ class timers extends database {
 	}
 
 	public function toggle_snooze($alarmindex, $enable) {
-		logger::log('ALARMCLOCK', 'Toggling Snooze',$alarmindex,'New State is',$enable);
+		logger::info('ALARMCLOCK', 'Toggling Snooze',$alarmindex,'New State is',$enable);
 		$alarm = $this->get_alarm($alarmindex);
 		if ($alarm['SnoozePid'] !== null && $enable == 1) {
 			logger::error('ALARMCLOCK', 'Request to snooze already-snoozing alarm', $alarmindex);

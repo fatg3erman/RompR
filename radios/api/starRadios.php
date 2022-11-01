@@ -2,10 +2,9 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-// prefs::set_pref(['currenthost' => prefs::currenthost()]);
 $params = json_decode(file_get_contents('php://input'), true);
 foreach ($params as $k => $v) {
-	logger::log('SMARTRADIO', $k,'=',$v);
+	logger::info('SMARTRADIO', $k,'=',$v);
 }
 $pwd = getcwd();
 prefs::set_radio_params($params);

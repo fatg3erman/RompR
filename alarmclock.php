@@ -24,7 +24,7 @@ while (true) {
 
 	alarm_sleep_time();
 
-	logger::log($alarm['Player'], 'Running Alarm',$alarm['Alarmindex'],$alarm['Name']);
+	logger::info($alarm['Player'], 'Running Alarm',$alarm['Alarmindex'],$alarm['Name']);
 
 	prefs::$database = new timers();
 	prefs::$database->mark_alarm_running($alarm['Alarmindex'], true);
@@ -54,7 +54,7 @@ while (true) {
 	if ($mpd_status['state'] == 'play' && ($alarm['Interrupt'] == 0 || $play_item === false)) {
 		logger::log($alarm['Player'], 'Player is already playing. Alarm will not interrupt');
 	} else if ($mpd_status['playlistlength'] == 0 && $play_item === false) {
-		logger::log($alarm['Player'], 'There is nothing to play');
+		logger::info($alarm['Player'], 'Alarm: There is nothing to play');
 	} else {
 		$seek_workaround = false;
 		// There's a bug in Mopidy - if you set the volume to 0 while paused it reports
@@ -162,11 +162,11 @@ function alarm_sleep_time() {
 	if ($alarm['Rpt'] == 0)
 		$alarm['Days'] = date('l').','.date('l', time()+86400);
 
-	logger::trace('ALARMCLOCK', 'Alarm Days are',trim($alarm['Days']));
+	logger::debug('ALARMCLOCK', 'Alarm Days are',trim($alarm['Days']));
 	$alarmdays = array_map('trim', explode(',', $alarm['Days']));
 
 	$today = date('l');
-	logger::log('ALARMCLOCK', 'Today is',$today);
+	logger::debug('ALARMCLOCK', 'Today is',$today);
 
 	// Create an ordered list of days of the week that starts at today
 	while ($days[0] != $today) {

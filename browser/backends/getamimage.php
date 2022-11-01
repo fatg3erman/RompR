@@ -31,7 +31,7 @@ function get_bio_link($url) {
 			$links = $e->GetElementsByTagName('img');
 			for ($i = 0; $i < $links->length; $i++) {
 				$link = $links->item($i)->getAttribute('src');
-				logger::log("AMIMAGE", "Found Image",$link);
+				logger::debug("AMIMAGE", "Found Image",$link);
 			}
 			return $link;
 		} else {

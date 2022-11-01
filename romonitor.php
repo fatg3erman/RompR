@@ -13,7 +13,7 @@ prefs::set_pref(['currenthost' => $opts['currenthost']]);
 logger::mark("ROMONITOR", "Using Player ".prefs::currenthost());
 // Probe the player type
 while (prefs::get_pref('player_backend') == null) {
-	logger::warn('ROMONITOR', 'Probing Player type for player',prefs::currenthost());
+	logger::info('ROMONITOR', 'Probing Player type for player',prefs::currenthost());
 	$player = new base_mpd_player();
 	if (prefs::get_pref('player_backend') == null) {
 		logger::warn('ROMONITOR', 'Could not connect to player',prefs::currenthost(),'sleeping for 5 minutes');

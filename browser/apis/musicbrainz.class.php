@@ -233,7 +233,7 @@ class musicbrainz {
 
 	private static function scan_for_links(&$destination, &$data, $language, $type) {
 
-		logger::debug('MUSICBRAINZ', 'Scanning For Links For', $type);
+		logger::log('MUSICBRAINZ', 'Scanning For Links For', $type);
 
 		if ($data['disambiguation'])
 			$destination['disambiguation'] = $data['disambiguation'];
@@ -289,32 +289,32 @@ class musicbrainz {
 				$links = wikidata::get_links($matches[1], $type, $language);
 
 				if ($destination['wikipedia']['link'] == null) {
-					logger::debug('MUSICBRAINZ', 'Updating Wikipedia Link', $links['wikipedia']);
+					logger::trace('MUSICBRAINZ', 'Updating Wikipedia Link', $links['wikipedia']);
 					$destination['wikipedia']['link'] = $links['wikipedia'];
 				}
 
 				if ($destination['allmusic']['link'] == null) {
-					logger::debug('MUSICBRAINZ', 'Updating Allmusic Link', $links['allmusic']);
+					logger::trace('MUSICBRAINZ', 'Updating Allmusic Link', $links['allmusic']);
 					$destination['allmusic']['link'] = $links['allmusic'];
 				}
 
 				if ($type == 'artist' && $destination['spotify']['id'] == null) {
-					logger::debug('MUSICBRAINZ', 'Updating Spotify ID', $links['spotify'][$type]);
+					logger::trace('MUSICBRAINZ', 'Updating Spotify ID', $links['spotify'][$type]);
 					$destination['spotify']['id'] = $links['spotify'][$type];
 				}
 
 				if ($type == 'artist' && $destination['discogs']['artistlink'] == null) {
-					logger::debug('MUSICBRAINZ', 'Updating Discogs Artist Link', $links['discogs']['artist']);
+					logger::trace('MUSICBRAINZ', 'Updating Discogs Artist Link', $links['discogs']['artist']);
 					$destination['discogs']['artistlink'] = $links['discogs']['artist'];
 				}
 
 				if ($type != 'artist' && $destination['discogs']['releaselink'] == null) {
-					logger::debug('MUSICBRAINZ', 'Updating Discogs Release Link', $links['discogs']['release']);
+					logger::trace('MUSICBRAINZ', 'Updating Discogs Release Link', $links['discogs']['release']);
 					$destination['discogs']['releaselink'] = $links['discogs']['release'];
 				}
 
 				if ($type != 'artist' && $destination['discogs']['masterlink'] == null) {
-					logger::debug('MUSICBRAINZ', 'Updating Discogs Master Link', $links['discogs']['master']);
+					logger::trace('MUSICBRAINZ', 'Updating Discogs Master Link', $links['discogs']['master']);
 					$destination['discogs']['masterlink'] = $links['discogs']['master'];
 				}
 
