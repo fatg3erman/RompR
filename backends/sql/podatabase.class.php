@@ -249,7 +249,7 @@ class poDatabase extends database {
 				if ($m && $m->image) {
 					try {
 						$track['Image'] = (string) $m->image->attributes()->href;
-						logger::log('PODCASTS', '  Episode has an image', $track['Image']);
+						logger::core('PODCASTS', '  Episode has an image', $track['Image']);
 					} catch (Exception $e) {
 						logger::warn('PODCASTS', '  Episode has an image but could not parse the href');
 					}

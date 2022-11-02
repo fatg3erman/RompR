@@ -117,13 +117,10 @@ class url_downloader {
 		} else if ($this->options['cache'] !== null) {
 			logger::debug("URL_DOWNLOADER", "Downloading",$this->options['url'],'to file', $this->file);
 			$this->file = $this->get_cache_file($this->options['cache'], $this->options['url']);
-			if (file_exists($this->file)) {
-				logger::debug("URL_DOWNLOADER", "    Returning cached data ".$this->file);
-				$this->from_cache = true;
+			if ($this->check_cache($this->file))
 				return true;
-			}
 		}
-		logger::core("URL_DOWNLOADER", "  Downloading to",$this->file);
+		logger::core("URL_DOWNLOADER", "Downloading to",$this->file);
 		if (file_exists($this->file))
 			unlink ($this->file);
 
@@ -139,7 +136,8 @@ class url_downloader {
 	}
 
 	private function check_cache($file) {
-		if (file_exists($file)) {
+		if (is_file($file)) {
+			logger::debug("URL_DOWNLOADER", "Returning cached data ".$file);
 			$this->from_cache = true;
 			return true;
 		} else {
