@@ -141,6 +141,11 @@ $player->probe_websocket();
 prefs::$database->create_radio_uri_table(false);
 
 //
+// Do some initialisation of the backend directories
+//
+include ("includes/firstrun.php");
+
+//
 // Check that the Backend Daemon is running and (re)start if it necessary.
 // Add ?force_restart=1 to the URL to force the Daemon to Restart
 //
@@ -150,11 +155,6 @@ check_backend_daemon();
 prefs::save();
 
 prefs::refresh_cookies();
-
-//
-// Do some initialisation of the backend directories
-//
-include ("includes/firstrun.php");
 
 logger::log("INIT", "Initialisation done. Let's Boogie!");
 logger::mark("CREATING PAGE", "******++++++======------******------======++++++******");
