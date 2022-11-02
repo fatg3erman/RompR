@@ -46,7 +46,7 @@ class init_database extends init_generic {
 			"Genreindex INT UNSIGNED DEFAULT 0, ".
 			"TYear YEAR, ".
 			"UNIQUE INDEX(Albumindex, Artistindex, TrackNo, Disc, Title), ".
-			"INDEX(Uri)) ENGINE=InnoDB", true))
+			"INDEX(Uri (768))) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  Tracktable OK");
 		} else {
@@ -1285,7 +1285,7 @@ class init_database extends init_generic {
 
 				case 95:
 					logger::log("SQL", "Updating FROM Schema version 95 TO Schema version 96");
-					$this->generic_sql_query("CREATE INDEX track_uri ON Tracktable (Uri)");
+					$this->generic_sql_query("CREATE INDEX track_uri ON Tracktable (Uri(768))");
 					$this->generic_sql_query("UPDATE Statstable SET Value = 96 WHERE Item = 'SchemaVer'", true);
 					break;
 
