@@ -1348,6 +1348,7 @@ class init_database extends init_generic {
 
 	protected function create_tracktable_indexes() {
 		$retries = 2;
+		$success = false;
 		while ($retries > 0) {
 			try {
 				$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true);
@@ -1357,11 +1358,12 @@ class init_database extends init_generic {
 				$retries--;
 			} finally {
 				logger::log('SQLITE', 'Tracktable Indexes created OK');
-				break;
+				$retries = 0;
+				$success = true;
 			}
 		}
 
-		if ($retries == 0) {
+		if (!$success) {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, 'Error creating unique index on Tracktable : '.$err);
 		}
