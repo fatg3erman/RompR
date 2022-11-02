@@ -1317,43 +1317,53 @@ class init_database extends init_generic {
 		return array(true, "");
 	}
 
-	protected function create_tracktable_indexes() {
-		if (!$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true)) {
-
-			//
-			// If creating the unique index fails, it's probably because we have some duplicates. This can happen with YouTube
-			// because, you know, it doesn't really have albums etc. So we try to correct the duplicates and then try to create the index again
-			//
-
-			$err = $this->mysqlc->errorInfo()[2];
-			$duplicates = $this->generic_sql_query(
-				"SELECT GROUP_CONCAT(TTindex, ',') AS ttids, Albumindex, Artistindex, TrackNo, Disc, Title
-				FROM Tracktable
-				GROUP BY Albumindex, Artistindex, TrackNo, Disc, Title
-				HAVING COUNT(*) > 1"
-			);
-			if (count($duplicates) > 0) {
-				logger::warn('SQLITE', 'Duplicates found. Attempting to correct');
-				foreach ($duplicates as $duplicate) {
-					$disc = $duplicate['Disc'];
-					$ttids = explode(',', $duplicate['ttids']);
-					foreach ($ttids as $ttid) {
-						logger::log('SQLITE', 'Setting Disc to',$disc,'on TTindex',$ttid);
-						$this->sql_prepare_query(true, null, null, null,
-							"UPDATE Tracktable SET Disc = ? WHERE TTindex = ?",
-							$disc, $ttid
-						);
-						$disc++;
-					}
+	private function duplicate_track_check() {
+		//
+		// If creating the unique index fails, it's probably because we have some duplicates. This can happen with YouTube
+		// because, you know, it doesn't really have albums etc. So we try to correct the duplicates and then try to create the index again
+		//
+		logger::mark('SQLITE', 'Performing duplicate track check to try to fix this error');
+		$duplicates = $this->generic_sql_query(
+			"SELECT GROUP_CONCAT(TTindex, ',') AS ttids, Albumindex, Artistindex, TrackNo, Disc, Title
+			FROM Tracktable
+			GROUP BY Albumindex, Artistindex, TrackNo, Disc, Title
+			HAVING COUNT(*) > 1"
+		);
+		if (count($duplicates) > 0) {
+			logger::warn('SQLITE', 'Duplicates found. Attempting to correct');
+			foreach ($duplicates as $duplicate) {
+				$disc = $duplicate['Disc'];
+				$ttids = explode(',', $duplicate['ttids']);
+				foreach ($ttids as $ttid) {
+					logger::log('SQLITE', 'Setting Disc to',$disc,'on TTindex',$ttid);
+					$this->sql_prepare_query(true, null, null, null,
+						"UPDATE Tracktable SET Disc = ? WHERE TTindex = ?",
+						$disc, $ttid
+					);
+					$disc++;
 				}
-				if (!$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true)) {
-					$err = $this->mysqlc->errorInfo()[2];
-					return array(false, "Error Creating Tracktable Index : ".$err);
-				}
-			} else {
-				return array(false, "Error Creating Tracktable Index : ".$err);
 			}
+		}
+	}
 
+	protected function create_tracktable_indexes() {
+		$retries = 2;
+		while ($retries > 0) {
+			try {
+				$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true);
+			} catch (PDOException $e) {
+				logger::warn('SQLITE', 'Caught exception while trying to create unique index on tracktable.');
+				$this->duplicate_track_check();
+				$retries--;
+			} finally {
+				logger::log('SQLITE', 'Tracktable Indexes created OK');
+				break;
+			}
+		}
+
+		if ($retries == 0) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, 'Error creating unique index on Tracktable : '.$err);
 		}
 
 		if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS track_uri ON Tracktable (Uri)", true)) {
