@@ -807,7 +807,7 @@ class init_database extends init_generic {
 
 		if ($this->key_not_exists('RadioTracktable', 'Stationindex', 'RadioStationtable')) {
 			logger::info('MYSQL', 'Creating RadioStationtable Foreign Key For Stationindex');
-			$this->generic_sql_query("ALTER TABLE PodBookmarktable ADD CONSTRAINT fk_radiotrack FOREIGN KEY (Stationindex) REFERENCES RadioStationtable (Stationindex) ON DELETE CASCADE", true);
+			$this->generic_sql_query("ALTER TABLE RadioTracktable ADD CONSTRAINT fk_radiotrack FOREIGN KEY (Stationindex) REFERENCES RadioStationtable (Stationindex) ON DELETE CASCADE", true);
 		}
 
 	}
@@ -819,7 +819,7 @@ class init_database extends init_generic {
 			AND REFERENCED_COLUMN_NAME = ?
 			AND REFERENCED_TABLE_NAME = ?",
 			$table,
-			$columns,
+			$ref_column,
 			$ref_table
 		);
 		return ($count == 0);
