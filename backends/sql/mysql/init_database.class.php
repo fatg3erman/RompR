@@ -135,7 +135,7 @@ class init_database extends init_generic {
 			TTindex INT UNSIGNED NOT NULL,
 			Bookmark INT UNSIGNED,
 			Name VARCHAR(128) NOT NULL,
-			CONSTRAINT fk_bookmark FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE
+			CONSTRAINT fk_bookmark FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE,
 			PRIMARY KEY (TTindex, Name)) ENGINE=InnoDB", true))
 		{
 			logger::log("SQLITE", "  Bookmarktable OK");
