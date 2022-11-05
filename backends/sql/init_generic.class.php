@@ -31,7 +31,7 @@ class init_generic extends database {
 			return array(false, "Your database has version number ".$sver." but this version of rompr only handles version ".ROMPR_SCHEMA_VERSION);
 		}
 
-		if ($sver < ROMPR_MIN_SCHEMA_VERSION) {
+		if ($ver > 0 && $sver < ROMPR_MIN_SCHEMA_VERSION) {
 			logger::warn("MYSQL", "Schema Mismatch! We can only upgrade from version ".ROMPR_MIN_SCHEMA_VERSION." but database is version ".$sver);
 			return array(false, "Your database is too old to upgrade (schema version ".$sver."). You cannot upgrade from that version to this version. The oldest version of RompR you can upgrade from is 1.40");
 		}
