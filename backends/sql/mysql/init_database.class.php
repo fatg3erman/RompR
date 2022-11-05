@@ -775,37 +775,37 @@ class init_database extends init_generic {
 		$this->generic_sql_query("DELETE FROM PodBookmarktable WHERE PODTrackindex NOT IN (SELECT PODTrackindex FROM PodcastTracktable)", true);
 		$this->generic_sql_query("DELETE FROM RadioTracktable WHERE Stationindex NOT IN (SELECT Stationindex FROM RadioStationtable)", true);
 
-		if ($this->key_not_exists('Ratingtable', 'TTindex', 'Tracktable') {
+		if ($this->key_not_exists('Ratingtable', 'TTindex', 'Tracktable')) {
 			logger::info('MYSQL', 'Creating Ratingtable Foreign Key For TTindex');
 			$this->generic_sql_query("ALTER TABLE Ratingtable ADD CONSTRAINT fk_rating FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE", true);
 		}
 
-		if ($this->key_not_exists('Bookmarktable', 'TTindex', 'Tracktable') {
+		if ($this->key_not_exists('Bookmarktable', 'TTindex', 'Tracktable')) {
 			logger::info('MYSQL', 'Creating Bookmarktable Foreign Key For TTindex');
 			$this->generic_sql_query("ALTER TABLE Bookmarktable ADD CONSTRAINT fk_bookmark FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE", true);
 		}
 
-		if ($this->key_not_exists('TagListtable', 'Tagindex', 'Tagtable') {
+		if ($this->key_not_exists('TagListtable', 'Tagindex', 'Tagtable')) {
 			logger::info('MYSQL', 'Creating TagListtable Foreign Key For Tagindex');
 			$this->generic_sql_query("ALTER TABLE Bookmarktable ADD CONSTRAINT fk_taglist_tag FOREIGN KEY (Tagindex) REFERENCES Tagtable (Tagindex) ON DELETE CASCADE", true);
 		}
 
-		if ($this->key_not_exists('TagListtable', 'TTindex', 'Tracktable') {
+		if ($this->key_not_exists('TagListtable', 'TTindex', 'Tracktable')) {
 			logger::info('MYSQL', 'Creating TagListtable Foreign Key For TTindex');
 			$this->generic_sql_query("ALTER TABLE TagListtable ADD CONSTRAINT fk_taglist_track FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE", true);
 		}
 
-		if ($this->key_not_exists('Playcounttable', 'TTindex', 'Tracktable') {
+		if ($this->key_not_exists('Playcounttable', 'TTindex', 'Tracktable')) {
 			logger::info('MYSQL', 'Creating Playcounttable Foreign Key For TTindex');
 			$this->generic_sql_query("ALTER TABLE Playcounttable ADD CONSTRAINT fk_playcount FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE", true);
 		}
 
-		if ($this->key_not_exists('PodBookmarktable', 'PODTrackindex', 'PodcastTracktable') {
+		if ($this->key_not_exists('PodBookmarktable', 'PODTrackindex', 'PodcastTracktable')) {
 			logger::info('MYSQL', 'Creating PodBookmarktable Foreign Key For PODTrackindex');
 			$this->generic_sql_query("ALTER TABLE PodBookmarktable ADD CONSTRAINT fk_podbookmark FOREIGN KEY (PODTrackindex) REFERENCES PodcastTracktable (PODTrackindex) ON DELETE CASCADE", true);
 		}
 
-		if ($this->key_not_exists('RadioTracktable', 'Stationindex', 'RadioStationtable') {
+		if ($this->key_not_exists('RadioTracktable', 'Stationindex', 'RadioStationtable')) {
 			logger::info('MYSQL', 'Creating RadioStationtable Foreign Key For Stationindex');
 			$this->generic_sql_query("ALTER TABLE PodBookmarktable ADD CONSTRAINT fk_radiotrack FOREIGN KEY (Stationindex) REFERENCES RadioStationtable (Stationindex) ON DELETE CASCADE", true);
 		}
