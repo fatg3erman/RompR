@@ -359,15 +359,15 @@ class musicCollection extends collection_base {
 		logger::log('BACKEND', "Checking Wishlist");
 		$wishlist = $this->pull_wishlist('date');
 		foreach ($wishlist as $wishtrack) {
-			$newtrack = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			$newtrack = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, null, 0,
 				"SELECT TTindex FROM Tracktable WHERE
 					Hidden = 0 AND Title = ? AND Artistindex = ? AND justAdded = 1 "
 					.$this->track_date_check(ADDED_TODAY, false),
 				$wishtrack['title'],
 				$wishtrack['artistindex']
 			);
-			foreach ($newtrack AS $track) {
-				logger::trace('COLLECTION', "We have found wishlist track",$wishtrack['Title'],'by',$wishtrack['trackartist'],'as TTindex',$newtrack['TTindex']);
+			foreach ($newtrack as $track) {
+				logger::trace('COLLECTION', "We have found wishlist track",$wishtrack['Title'],'by',$wishtrack['trackartist'],'as TTindex',$track);
 
 				// Get the rating and tags from the wishlist track
 				$rating = $this->simple_query('Rating', 'Ratingtable', 'TTindex', $wishtrack['ttid'], null);
@@ -386,15 +386,15 @@ class musicCollection extends collection_base {
 				if ($rating != null) {
 					$this->sql_prepare_query(true, null, null, null,
 						"REPLACE INTO Ratingtable (TTindex, Rating) VALUES (?, ?)",
-						$newtrack['TTindex'],
+						$track,
 						$rating
 					);
 				}
 				foreach ($taglist as $tagindex) {
 					$this->sql_prepare_query(true, null, null, null,
-						"REPLACE INTO Ratingtable (Tagindex, TTindex) VALUES (?, ?)",
+						"REPLACE INTO TagListtable (Tagindex, TTindex) VALUES (?, ?)",
 						$tagindex,
-						$newtrack['TTindex']
+						$track
 					);
 				}
 			}
