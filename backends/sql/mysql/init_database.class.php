@@ -812,7 +812,7 @@ class init_database extends init_generic {
 
 	}
 
-	private function key_not_exists($table, $ref_column, $ref_table)
+	private function key_not_exists($table, $ref_column, $ref_table) {
 		$count = $this->sql_prepare_query(false, null, 'num', 0,
 			"SELECT COUNT(CONSTRAINT_NAME) AS num FROM information_schema.KEY_COLUMN_USAGE
 			WHERE TABLE_NAME = ?
