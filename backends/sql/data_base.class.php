@@ -47,7 +47,7 @@ class data_base {
 			}
 		}
 		$mysqlc = null;
-		return array($retval, $e);
+		return array($retval, $error);
 	}
 
 	public function close_database() {
@@ -113,7 +113,9 @@ class data_base {
 			}
 			$result->closeCursor();
 		} catch (PDOException $e) {
-			logger::warn("GENERIC_SQL", "Command Failed :", $qstring);
+			logger::error("GENERIC_SQL", "Command Failed :", $qstring);
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			// Default return value
 			if ($return_value !== null) {
 				$retval = $value_default;
@@ -132,7 +134,9 @@ class data_base {
 			$result = $this->mysqlc->query($qstring);
 			$retval = $result->fetchAll(PDO::FETCH_COLUMN, $column);
 		} catch (PDOException $e) {
-			logger::warn("GENERIC_SQL", "Command Failed :",$qstring);
+			logger::error("GENERIC_SQL", "Command Failed :", $qstring);
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			$retval = [];
 		}
 		return $retval;
@@ -154,8 +158,7 @@ class data_base {
 	}
 
 	public function test_error_handling() {
-		$lv = $this->simple_query('Value', 'StatsTable', null, null, 'Hello');
-		logger::log('THING', print_r($lv, true));
+		$this->generic_sql_query('SELET poo FROM jesus WHERE arthur = 1');
 	}
 
 	public function sql_prepare_query() {
@@ -228,7 +231,9 @@ class data_base {
 			}
 			$stmt->closeCursor();
 		} catch (PDOException $e) {
-			logger::warn("GENERIC_SQL", "Command Failed :",$query);
+			logger::error("GENERIC_SQL", "Command Failed :", $query);
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			if ($return_value !== null) {
 				$retval = $value_default;
 			} else if ($return_boolean) {
@@ -247,7 +252,9 @@ class data_base {
 		try {
 			$stmt = $this->mysqlc->prepare($query);
 		} catch (PDOException $e) {
-			logger::error('SQL', 'Failed to prepare statement',$query);
+			logger::error("GENERIC_SQL", "Prepare Failed :", $query);
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			$stmt = false;
 		}
 		return $stmt;
@@ -268,6 +275,8 @@ class data_base {
 			}
 		} catch (PDOException $e) {
 			logger::error('DATABASE', 'Caught PDO exception when opening transaction. Data may be lost.');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			$this->transaction_open = false;
 		}
 	}
@@ -292,6 +301,8 @@ class data_base {
 			}
 		} catch (PDOException $e) {
 			logger::error('DATABASE', 'Caught PDO exception when closing transaction. Data may be lost.');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 		} finally {
 			$this->transaction_open = false;
 		}

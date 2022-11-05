@@ -24,6 +24,8 @@ class database extends data_base {
 			$this->generic_sql_query('PRAGMA threads=4', true);
 		} catch (PDOException $e) {
 			logger::error("SQLITE", "Couldn't Connect To SQLite ");
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			sql_init_fail($e->getMessage());
 		}
 	}
@@ -176,6 +178,8 @@ class database extends data_base {
 			logger::log('SQLITE', 'Prepared find_track query successfully');
 		} catch (PDOException $e) {
 			logger::error('SQL', 'Failed to prepare find_track statement');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			logger::error('SQL', $e);
 			exit(1);
 		}
@@ -208,6 +212,8 @@ class database extends data_base {
 			logger::log('SQLITE', 'Prepared find_track query successfully');
 		} catch (PDOException $e) {
 			logger::error('SQL', 'Failed to prepare find_track statement');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			logger::error('SQL', $e);
 			exit(1);
 		}

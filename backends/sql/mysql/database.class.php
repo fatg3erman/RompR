@@ -25,6 +25,8 @@ class database extends data_base {
 			$this->generic_sql_query('SET SESSION sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"', true);
 		} catch (PDOException $e) {
 			logger::warn("MYSQL", "Database connect failure");
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			sql_init_fail($e->getMessage());
 		}
 	}
@@ -212,6 +214,8 @@ class database extends data_base {
 			logger::log('MYSQL', 'Prepared old-style update query successfully');
 		} catch (PDOException $e) {
 			logger::error('SQL', 'Failed to prepare old style find_track statement');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			exit(1);
 		}
 	}
@@ -236,6 +240,8 @@ class database extends data_base {
 			logger::log('MYSQL', 'Prepared new-style update query successfully');
 		} catch (PDOException $e) {
 			logger::error('SQL', 'Failed to prepare new style find_track statement');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			exit(1);
 		}
 	}
@@ -275,6 +281,8 @@ class database extends data_base {
 			logger::log('MYSQL', 'Prepared old-style update query successfully');
 		} catch (PDOException $e) {
 			logger::error('SQL', 'Failed to prepare old style find_track statement');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			exit(1);
 		}
 	}
@@ -299,6 +307,8 @@ class database extends data_base {
 			logger::log('MYSQL', 'Prepared new-style update query successfully');
 		} catch (PDOException $e) {
 			logger::error('SQL', 'Failed to prepare new style find_track statement');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			exit(1);
 		}
 	}

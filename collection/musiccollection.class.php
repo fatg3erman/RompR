@@ -368,20 +368,35 @@ class musicCollection extends collection_base {
 			);
 			foreach ($newtrack AS $track) {
 				logger::trace('COLLECTION', "We have found wishlist track",$wishtrack['Title'],'by',$wishtrack['trackartist'],'as TTindex',$newtrack['TTindex']);
-				$this->sql_prepare_query(true, null, null, null,
-					'UPDATE Ratingtable SET TTindex = ? WHERE TTindex = ?',
-					$newtrack['TTindex'],
+
+				// Get the rating and tags from the wishlist track
+				$rating = $this->simple_query('Rating', 'Ratingtable', 'TTindex', $wishtrack['ttid'], null);
+				logger::log('COLLECTION', 'Track has Rating',$rating);
+				$taglist = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, null, 0,
+					"SELECT Tagindex FROM TagListtable WHERE TTindex = ?",
 					$wishtrack['ttid']
 				);
-				$this->sql_prepare_query(true, null, null, null,
-					'UPDATE TagListtable SET TTindex = ? WHERE TTindex = ?',
-					$newtrack['TTindex'],
-					$wishtrack['ttid']
-				);
+				logger::log('COLLECTION', 'Track has',(count($taglist)),'Tags');
+				// Delete the wishlist track
 				$this->sql_prepare_query(true, null, null, null,
 					'DELETE FROM Tracktable WHERE TTindex = ?',
 					$wishtrack['ttid']
 				);
+				// Put the Rating and Tags onto the new track we just found
+				if ($rating != null) {
+					$this->sql_prepare_query(true, null, null, null,
+						"REPLACE INTO Ratingtable (TTindex, Rating) VALUES (?, ?)",
+						$newtrack['TTindex'],
+						$rating
+					);
+				}
+				foreach ($taglist as $tagindex) {
+					$this->sql_prepare_query(true, null, null, null,
+						"REPLACE INTO Ratingtable (Tagindex, TTindex) VALUES (?, ?)",
+						$tagindex,
+						$newtrack['TTindex']
+					);
+				}
 			}
 		}
 
@@ -487,8 +502,6 @@ class musicCollection extends collection_base {
 			$current_trackartist = null;
 		}
 
-		// logger::log('PARP','Albumindex',$trackobj->tags['album_index'],'Title',$trackobj->tags['Title']);
-
 		try {
 			$this->find_track->execute([
 				$trackobj->tags['Title'],
@@ -505,7 +518,8 @@ class musicCollection extends collection_base {
 			]);
 		} catch (PDOException $e) {
 			logger::error('SQL', 'find_track execution failed');
-			logger::error('SQL', $e);
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			exit(1);
 		}
 
