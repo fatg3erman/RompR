@@ -787,7 +787,7 @@ class init_database extends init_generic {
 
 		if ($this->key_not_exists('TagListtable', 'Tagindex', 'Tagtable')) {
 			logger::info('MYSQL', 'Creating TagListtable Foreign Key For Tagindex');
-			$this->generic_sql_query("ALTER TABLE Bookmarktable ADD CONSTRAINT fk_taglist_tag FOREIGN KEY (Tagindex) REFERENCES Tagtable (Tagindex) ON DELETE CASCADE", true);
+			$this->generic_sql_query("ALTER TABLE TagListtable ADD CONSTRAINT fk_taglist_tag FOREIGN KEY (Tagindex) REFERENCES Tagtable (Tagindex) ON DELETE CASCADE", true);
 		}
 
 		if ($this->key_not_exists('TagListtable', 'TTindex', 'Tracktable')) {
