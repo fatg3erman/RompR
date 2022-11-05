@@ -70,17 +70,13 @@ function playerController() {
 
 	this.initialise = async function() {
 		debug.mark('PLAYER', 'Initialising');
+		let urischemes = data_from_source('player_uri_schemes');
+		for (var i in urischemes) {
+			var h = urischemes[i].replace(/\:\/\/$/,'');
+			debug.log("PLAYER","URI Handler : ",h);
+			player.urischemes[h] = true;
+		}
 		try {
-			var urischemes = await $.ajax({
-				type: 'GET',
-				url: 'player/utils/geturlhandlers.php',
-				dataType: 'json'
-			});
-			for (var i in urischemes) {
-				var h = urischemes[i].replace(/\:\/\/$/,'');
-				debug.log("PLAYER","URI Handler : ",h);
-				player.urischemes[h] = true;
-			}
 			if (!player.canPlay('spotify')) {
 				$('div.textcentre.textunderline:contains("Music From Spotify")').remove();
 			}
@@ -97,7 +93,7 @@ function playerController() {
 			checkProgress();
 			searchManager.add_search_plugin('playersearch', player.controller.search, player.get_search_uri_schemes());
 		} catch(err) {
-			debug.error("MPD","Failed to get URL Handlers",err);
+			debug.error("MPD","Failed to connect to player",err);
 			infobar.permerror(language.gettext('error_noplayer'));
 		}
 	}
@@ -186,7 +182,11 @@ function playerController() {
 				$('i.menu.openmenu.playlist.icon-toggle-closed[name="'+openplaylists[i]+'"]').click();
 			}
 
-			data = await $.get('player/utils/loadplaylists.php?addtoplaylistmenu');
+			var data = await $.ajax({
+				url: 'player/utils/loadplaylists.php?addtoplaylistmenu=1',
+				type: 'GET',
+				cache: false
+			});
 			$('#addtoplaylistmenu').empty();
 			data.forEach(function(p) {
 				var h = $('<div>', {class: "containerbox backhi clickicon menuitem clickaddtoplaylist", name: p.name }).appendTo($('#addtoplaylistmenu'));

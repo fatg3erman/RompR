@@ -912,7 +912,7 @@ function popupMenu(event, element) {
 
 }
 
-function makeTrackMenu(e, element) {
+async function makeTrackMenu(e, element) {
 	if (prefs.clickmode == 'single') {
 		if ($(element).parent().hasClass('selected')) {
 			$(element).parent().removeFromSelection();
@@ -983,10 +983,13 @@ function makeTrackMenu(e, element) {
 	}).html(language.gettext("button_addtoplaylist")).appendTo(d);
 	var plssub = $('<div>', {class:'submenu invisible submenuspacer'}).appendTo(d);
 
-	$.get('player/utils/loadplaylists.php?addtoplaylistmenu', function(data) {
-		data.forEach(function(p) {
-			var h = $('<div>', {class: "backhi clickable menuitem clickpltrack closepopup", name: p.name }).html(p.html).appendTo(plssub);
-		});
+	var data = await $.ajax({
+		url: 'player/utils/loadplaylists.php?addtoplaylistmenu=1',
+		type: 'GET',
+		cache: false
+	});
+	data.forEach(function(p) {
+		var h = $('<div>', {class: "backhi clickable menuitem clickpltrack closepopup", name: p.name }).html(p.html).appendTo(plssub);
 	});
 
 	var banana = $(element).parent().next();
