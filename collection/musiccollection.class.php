@@ -356,18 +356,27 @@ class musicCollection extends collection_base {
 		// Find tracks that have been removed
 		logger::mark('BACKEND', "Starting Cruft Removal");
 		$now = time();
-		logger::log('BACKEND', "Checking Wishlist");
 		$wishlist = $this->pull_wishlist('date');
-		foreach ($wishlist as $wishtrack) {
+		logger::log('BACKEND', "Checking",(count($wishlist)),"Wishlist Tracks");
+		foreach ($wishlist as $i => $wishtrack) {
+			logger::debug('BACKEND', 'Wishlist Track',$i);
 			$newtrack = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, null, 0,
-				"SELECT TTindex FROM Tracktable WHERE
-					Hidden = 0 AND Title = ? AND Artistindex = ? AND justAdded = 1 "
+				"SELECT TTindex FROM Tracktable
+				WHERE
+					Hidden = 0
+					AND Uri IS NOT NULL
+					AND Title = ?
+					AND Artistindex = ?
+					AND justAdded = 1 "
 					.$this->track_date_check(ADDED_TODAY, false),
 				$wishtrack['title'],
 				$wishtrack['artistindex']
 			);
 			foreach ($newtrack as $track) {
-				logger::trace('COLLECTION', "We have found wishlist track",$wishtrack['Title'],'by',$wishtrack['trackartist'],'as TTindex',$track);
+				if (!$wishtrack['title'] || !$wishtrack['trackartist'] || !$wishtrack['ttid'] || !$wishtrack['artistindex'])
+					continue;
+
+				logger::trace('COLLECTION', "We have found wishlist track",$wishtrack['title'],'by',$wishtrack['trackartist'],'as TTindex',$track);
 
 				// Get the rating and tags from the wishlist track
 				$rating = $this->simple_query('Rating', 'Ratingtable', 'TTindex', $wishtrack['ttid'], null);

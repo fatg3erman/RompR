@@ -927,8 +927,10 @@ class metaDatabase extends playlistCollection {
 				return false;
 			}
 
+			// Use REPLACE INTO - it's a bit slower but INSERT INTO throws an exception if the
+			// tag relation alrady exists, and that spemas the error logs when restoring backups
 			if ($this->sql_prepare_query(true, null, null, null,
-					"INSERT INTO TagListtable (TTindex, Tagindex) VALUES (?, ?)",
+					"REPLACE INTO TagListtable (TTindex, Tagindex) VALUES (?, ?)",
 						$ttid,
 						$tagindex
 					)
@@ -939,9 +941,6 @@ class metaDatabase extends playlistCollection {
 					$albumindex = $this->simple_query('Albumindex', 'Tracktable', 'TTindex', $ttid, null);
 					$this->set_as_audiobook($albumindex, 2);
 				}
-			} else {
-				// Doesn't matter, we have a UNIQUE constraint on both columns to prevent us adding the same tag twice
-				logger::core("ADD TAGS", "  .. Failed but that's OK if it's because of a duplicate entry or UNQIUE constraint");
 			}
 		}
 		return true;

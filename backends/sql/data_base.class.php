@@ -274,7 +274,7 @@ class data_base {
 				logger::warn('DATABASE', 'open_transaction called when transaction already open!');
 			}
 		} catch (PDOException $e) {
-			logger::error('DATABASE', 'Caught PDO exception when opening transaction. Data may be lost.');
+			logger::error('DATABASE', 'Caught PDO exception when opening transaction.');
 			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
 			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			$this->transaction_open = false;
@@ -300,7 +300,7 @@ class data_base {
 				logger::warn("DATABASE", "WARNING! close_transaction called when transaction not open!");
 			}
 		} catch (PDOException $e) {
-			logger::error('DATABASE', 'Caught PDO exception when closing transaction. Data may be lost.');
+			logger::warn('DATABASE', 'Caught PDO exception when closing transaction. This might not be bad');
 			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
 			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 		} finally {

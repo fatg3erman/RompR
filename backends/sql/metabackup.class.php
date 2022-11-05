@@ -100,6 +100,7 @@ class metabackup extends metaDatabase {
 				$this->$fn($filename, $monitor, $translate);
 			}
 		}
+		$this->close_transaction();
 
 		fwrite($monitor, "\n<b>Cleaning Up...</b>\n");
 		// Now... we may have restored data on tracks that were previously local and now aren't there any more.
@@ -111,11 +112,9 @@ class metabackup extends metaDatabase {
 		}
 
 		$this->generic_sql_query("UPDATE Albumtable SET domain = 'spotify' WHERE AlbumUri LIKE 'spotify:%'", true);
-		$this->check_transaction();
 		$this->resetallsyncdata();
 		$this->remove_cruft();
 		$this->update_track_stats();
-		$this->close_transaction();
 		fwrite($monitor, "\n \n");
 		fclose($monitor);
 	}
