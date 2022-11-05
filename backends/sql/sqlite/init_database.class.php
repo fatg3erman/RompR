@@ -156,7 +156,7 @@ class init_database extends init_generic {
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS TagListtable(
-			Tagindex INTEGER NOT NULL REFERENCES Tagtable(Tagindex),
+			Tagindex INTEGER NOT NULL REFERENCES Tagtable(Tagindex) ON DELETE CASCADE,
 			TTindex INTEGER NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
 			PRIMARY KEY (Tagindex, TTindex))", true))
 		{
@@ -845,6 +845,12 @@ class init_database extends init_generic {
 					// At this point we do want the Uri index, because Youtube
 					$this->create_tracktable_indexes();
 					$this->set_admin_value('SchemaVer', 96);
+					break;
+
+				case 96:
+					logger::log("SQL", "Updating FROM Schema version 96 TO Schema version 97");
+					// This was adding foreign keys in MySQL
+					$this->set_admin_value('SchemaVer', 97);
 					break;
 
 			}

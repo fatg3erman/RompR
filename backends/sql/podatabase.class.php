@@ -19,8 +19,6 @@ class poDatabase extends database {
 			logger::warn('PODCASTS', 'Re-parsing previous feed for podcast', $id);
 			$data = file_get_contents('prefs/podcasts/'.$id.'/feed.xml');
 		} else {
-			// header('HTTP/1.1 404 Not Found');
-			// print "Feed Not Found";
 			logger::warn("PARSE_RSS", "Failed to Download ".$url);
 			return null;
 		}

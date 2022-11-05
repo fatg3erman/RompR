@@ -120,9 +120,10 @@ class init_database extends init_generic {
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Ratingtable(
-			TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
+			TTindex INT UNSIGNED NOT NULL,
 			PRIMARY KEY(TTindex),
-			Rating TINYINT(1) UNSIGNED) ENGINE=InnoDB", true))
+			Rating TINYINT(1) UNSIGNED,
+			CONSTRAINT fk_rating FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  Ratingtable OK");
 		} else {
@@ -131,9 +132,10 @@ class init_database extends init_generic {
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Bookmarktable(
-			TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
+			TTindex INT UNSIGNED NOT NULL,
 			Bookmark INT UNSIGNED,
 			Name VARCHAR(128) NOT NULL,
+			CONSTRAINT fk_bookmark FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE
 			PRIMARY KEY (TTindex, Name)) ENGINE=InnoDB", true))
 		{
 			logger::log("SQLITE", "  Bookmarktable OK");
@@ -154,8 +156,10 @@ class init_database extends init_generic {
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS TagListtable(
-			Tagindex INT UNSIGNED NOT NULL REFERENCES Tagtable(Tagindex),
-			TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
+			Tagindex INT UNSIGNED NOT NULL,
+			TTindex INT UNSIGNED NOT NULL,
+			CONSTRAINT fk_taglist_tag FOREIGN KEY (Tagindex) REFERENCES Tagtable (Tagindex) ON DELETE CASCADE,
+			CONSTRAINT fk_taglist_track FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE,
 			PRIMARY KEY (Tagindex, TTindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  TagListtable OK");
@@ -165,10 +169,11 @@ class init_database extends init_generic {
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Playcounttable(
-			TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
+			TTindex INT UNSIGNED NOT NULL,
 			Playcount INT UNSIGNED NOT NULL,
 			SyncCount INT UNSIGNED DEFAULT 0,
 			LastPlayed TIMESTAMP,
+			CONSTRAINT fk_playcount FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE,
 			PRIMARY KEY (TTindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  Playcounttable OK");
@@ -237,9 +242,10 @@ class init_database extends init_generic {
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS PodBookmarktable(
-			PODTrackindex INT UNSIGNED NOT NULL REFERENCES PodcastTracktable(PODTrackindex) ON DELETE CASCADE,
+			PODTrackindex INT UNSIGNED NOT NULL,
 			Bookmark INT UNSIGNED,
 			Name VARCHAR(128) NOT NULL,
+			CONSTRAINT fk_podbookmark FOREIGN KEY (PODTrackindex) REFERENCES PodcastTracktable (PODTrackindex) ON DELETE CASCADE,
 			PRIMARY KEY (PODTrackIndex, Name)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  PodBookmarktable OK");
@@ -265,9 +271,10 @@ class init_database extends init_generic {
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS RadioTracktable(
 			Trackindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
-			Stationindex INT UNSIGNED REFERENCES RadioStationtable(Stationindex),
+			Stationindex INT UNSIGNED,
 			TrackUri TEXT,
 			PrettyStream TEXT,
+			CONSTRAINT fk_radiotrack FOREIGN KEY (Stationindex) REFERENCES RadioStationtable (Stationindex) ON DELETE CASCADE,
 			PRIMARY KEY (Trackindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  RadioTracktable OK");
@@ -740,11 +747,82 @@ class init_database extends init_generic {
 					$this->set_admin_value('SchemaVer', 96);
 					break;
 
+				case 96:
+					logger::log("SQL", "Updating FROM Schema version 96 TO Schema version 97");
+					$this->check_foreign_keys();
+					$this->set_admin_value('SchemaVer', 97);
+					break;
+
+
 			}
 			$sv++;
 		}
 
 		return array(true, "");
+	}
+
+	private function check_foreign_keys() {
+
+		// At some point the REFERENCES definitions in the table creation statements stopped working
+		// without throwing an error. So now we don't know if they exist and if they do we don't know
+		// what they're called. So we have to do our best to check for them and create them if they're not there.
+
+		$this->generic_sql_query("DELETE FROM Ratingtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+		$this->generic_sql_query("DELETE FROM Bookmarktable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+		$this->generic_sql_query("DELETE FROM TagListtable WHERE Tagindex NOT IN (SELECT Tagindex FROM Tagtable)", true);
+		$this->generic_sql_query("DELETE FROM TagListtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+		$this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+		$this->generic_sql_query("DELETE FROM PodBookmarktable WHERE PODTrackindex NOT IN (SELECT PODTrackindex FROM PodcastTracktable)", true);
+		$this->generic_sql_query("DELETE FROM RadioTracktable WHERE Stationindex NOT IN (SELECT Stationindex FROM RadioStationtable)", true);
+
+		if ($this->key_not_exists('Ratingtable', 'TTindex', 'Tracktable') {
+			logger::info('MYSQL', 'Creating Ratingtable Foreign Key For TTindex');
+			$this->generic_sql_query("ALTER TABLE Ratingtable ADD CONSTRAINT fk_rating FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE", true);
+		}
+
+		if ($this->key_not_exists('Bookmarktable', 'TTindex', 'Tracktable') {
+			logger::info('MYSQL', 'Creating Bookmarktable Foreign Key For TTindex');
+			$this->generic_sql_query("ALTER TABLE Bookmarktable ADD CONSTRAINT fk_bookmark FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE", true);
+		}
+
+		if ($this->key_not_exists('TagListtable', 'Tagindex', 'Tagtable') {
+			logger::info('MYSQL', 'Creating TagListtable Foreign Key For Tagindex');
+			$this->generic_sql_query("ALTER TABLE Bookmarktable ADD CONSTRAINT fk_taglist_tag FOREIGN KEY (Tagindex) REFERENCES Tagtable (Tagindex) ON DELETE CASCADE", true);
+		}
+
+		if ($this->key_not_exists('TagListtable', 'TTindex', 'Tracktable') {
+			logger::info('MYSQL', 'Creating TagListtable Foreign Key For TTindex');
+			$this->generic_sql_query("ALTER TABLE TagListtable ADD CONSTRAINT fk_taglist_track FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE", true);
+		}
+
+		if ($this->key_not_exists('Playcounttable', 'TTindex', 'Tracktable') {
+			logger::info('MYSQL', 'Creating Playcounttable Foreign Key For TTindex');
+			$this->generic_sql_query("ALTER TABLE Playcounttable ADD CONSTRAINT fk_playcount FOREIGN KEY (TTindex) REFERENCES Tracktable (TTindex) ON DELETE CASCADE", true);
+		}
+
+		if ($this->key_not_exists('PodBookmarktable', 'PODTrackindex', 'PodcastTracktable') {
+			logger::info('MYSQL', 'Creating PodBookmarktable Foreign Key For PODTrackindex');
+			$this->generic_sql_query("ALTER TABLE PodBookmarktable ADD CONSTRAINT fk_podbookmark FOREIGN KEY (PODTrackindex) REFERENCES PodcastTracktable (PODTrackindex) ON DELETE CASCADE", true);
+		}
+
+		if ($this->key_not_exists('RadioTracktable', 'Stationindex', 'RadioStationtable') {
+			logger::info('MYSQL', 'Creating RadioStationtable Foreign Key For Stationindex');
+			$this->generic_sql_query("ALTER TABLE PodBookmarktable ADD CONSTRAINT fk_radiotrack FOREIGN KEY (Stationindex) REFERENCES RadioStationtable (Stationindex) ON DELETE CASCADE", true);
+		}
+
+	}
+
+	private function key_not_exists($table, $ref_column, $ref_table)
+		$count = $this->sql_prepare_query(false, null, 'num', 0,
+			"SELECT COUNT(CONSTRAINT_NAME) AS num FROM information_schema.KEY_COLUMN_USAGE
+			WHERE TABLE_NAME = ?
+			AND REFERENCED_COLUMN_NAME = ?
+			AND REFERENCED_TABLE_NAME = ?",
+			$table,
+			$columns,
+			$ref_table
+		);
+		return ($count == 0);
 	}
 
 }
