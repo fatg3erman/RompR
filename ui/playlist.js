@@ -738,9 +738,9 @@ var playlist = function() {
 
 		preventControlClicks: function(t) {
 			if (t) {
-				$('#random').on('click', player.controller.toggleRandom).removeClass('notenabled');
-				$('#repeat').on('click', player.controller.toggleRepeat).removeClass('notenabled');
-				$('#consume').on('click', player.controller.toggleConsume).removeClass('notenabled');
+				$('#random').off('click').on('click', player.controller.toggleRandom).removeClass('notenabled');
+				$('#repeat').off('click').on('click', player.controller.toggleRepeat).removeClass('notenabled');
+				$('#consume').off('click').on('click', player.controller.toggleConsume).removeClass('notenabled');
 			} else {
 				$('#random').off('click').addClass('notenabled');
 				$('#repeat').off('click').addClass('notenabled');
