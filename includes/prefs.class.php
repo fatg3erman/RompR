@@ -51,7 +51,7 @@ class prefs {
 		"composergenre" => false,
 		"composergenrename" => array("Classical"),
 		"preferlocalfiles" => false,
-		"mopidy_collection_folders" => array("Spotify Playlists","Local media","SoundCloud/Liked"),
+		"mopidy_collection_folders" => array("Local media"),
 		"lastfm_country_code" => "GB",
 		"country_userset" => false,
 		"debug_enabled" => 0,
