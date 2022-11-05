@@ -110,7 +110,7 @@ class metabackup extends metaDatabase {
 			$this->generic_sql_query("DELETE FROM Tracktable WHERE Uri LIKE 'local:%' AND LastModified IS NULL AND Hidden = 0", true);
 		}
 
-		$this->generic_sql_query("UPDATE Albumtable SET domain = 'spotify' WHERE AlbumUri LIKE 'spotify:%'");
+		$this->generic_sql_query("UPDATE Albumtable SET domain = 'spotify' WHERE AlbumUri LIKE 'spotify:%'", true);
 		$this->check_transaction();
 		$this->resetallsyncdata();
 		$this->remove_cruft();
@@ -235,7 +235,7 @@ class metabackup extends metaDatabase {
 
 		$tracks = $this->generic_sql_query(
 			"SELECT
-				".database::SQL_TAG_CONCAT."AS tag,
+				{$this->get_constant('self::SQL_TAG_CONCAT')} AS tag,
 				tr.Title AS Title,
 				tr.TrackNo AS Track,
 				tr.Duration AS Time,
@@ -256,7 +256,8 @@ class metabackup extends metaDatabase {
 				JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
 				JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex
 			WHERE tr.Hidden = 0 AND tr.isSearchResult < 2
-			GROUP BY tr.TTindex");
+			GROUP BY tr.TTindex"
+		);
 
 		file_put_contents($file, json_encode($tracks));
 
@@ -495,7 +496,7 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_Bookmarks($file, &$monitor, $translate) {
-		$this->generic_sql_query('DELETE FROM Bookmarktable WHERE Bookmark >= 0');
+		$this->generic_sql_query('DELETE FROM Bookmarktable WHERE Bookmark >= 0', true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			if ($translate)
@@ -510,8 +511,8 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_Podcasts($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM PodcastTracktable WHERE PODTrackindex IS NOT NULL");
-		$this->generic_sql_query("DELETE FROM Podcasttable WHERE PODindex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM PodcastTracktable WHERE PODTrackindex IS NOT NULL", true);
+		$this->generic_sql_query("DELETE FROM Podcasttable WHERE PODindex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			if (array_key_exists('LastUpdate', $trackdata))
@@ -553,8 +554,8 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_Radio($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM RadioStationtable WHERE Stationindex IS NOT NULL");
-		$this->generic_sql_query("DELETE FROM RadioTracktable WHERE Trackindex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM RadioStationtable WHERE Stationindex IS NOT NULL", true);
+		$this->generic_sql_query("DELETE FROM RadioTracktable WHERE Trackindex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			$this->generic_restore($trackdata, 'RadioStationtable');
@@ -572,7 +573,7 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_Images($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM BackgroundImageTable WHERE BgImageIndex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM BackgroundImageTable WHERE BgImageIndex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			if (file_exists($trackdata['Filename'])) {
@@ -586,7 +587,7 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_WishlistSources($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			$this->generic_restore($trackdata, 'WishlistSourcetable');
@@ -596,7 +597,7 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_AlbumsToListenTo($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM AlbumsToListenTotable WHERE Listenindex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM AlbumsToListenTotable WHERE Listenindex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			$this->generic_restore($trackdata, 'AlbumsToListenTotable');
@@ -606,7 +607,7 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_Alarms($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM Alarms WHERE Alarmindex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM Alarms WHERE Alarmindex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			$this->generic_restore($trackdata, 'Alarms');

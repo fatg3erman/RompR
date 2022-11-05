@@ -122,8 +122,8 @@ class metaquery extends collection_base {
 
 	public function resetlinkcheck() {
 		if (!prefs::get_pref('link_checker_is_running')) {
-			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2 OR LinkChecked = 4");
-			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3");
+			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2 OR LinkChecked = 4", true);
+			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3", true);
 			prefs::set_pref(['link_checker_is_running' => true]);
 			prefs::save();
 		}
@@ -144,8 +144,8 @@ class metaquery extends collection_base {
 			"SELECT SUM(Playcount) AS playtotal, Artistname, Title, Uri
 			FROM Playcounttable JOIN Tracktable USING (TTindex)
 			JOIN Artisttable USING (Artistindex)
-			WHERE ".$this->sql_two_weeks_include($days).
-			" AND Uri IS NOT NULL AND Uri NOT LIKE 'http%' AND isAudiobook = 0
+			WHERE {$this->sql_two_weeks_include($days)}
+			AND Uri IS NOT NULL AND Uri NOT LIKE 'http%' AND isAudiobook = 0
 			GROUP BY Artistname, Title ORDER BY playtotal DESC LIMIT ".$limit);
 
 		// 2. Get a list of recently played tracks, ignoring popularity
@@ -191,7 +191,7 @@ class metaquery extends collection_base {
 	}
 
 	public function removeListenLater($id) {
-		$this->generic_sql_query("DELETE FROM AlbumsToListenTotable WHERE Listenindex = ".$id, true);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM AlbumsToListenTotable WHERE Listenindex = ?", $id);
 	}
 
 	public function updateCheckedLink($ttindex, $uri, $status) {
@@ -224,7 +224,7 @@ class metaquery extends collection_base {
 			JOIN Playcounttable USING (TTIndex)
 			JOIN Albumtable USING (Albumindex)
 			JOIN Artisttable USING (Artistindex)
-			".$this->charts_include_option($include)."
+			{$this->charts_include_option($include)}
 			GROUP BY label_artist, label_album, label_track
 			ORDER BY soundcloud_plays DESC LIMIT ".$limit;
 		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
@@ -242,7 +242,7 @@ class metaquery extends collection_base {
 				JOIN Playcounttable USING (TTindex)
 				JOIN Albumtable USING (albumindex)
 				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-				".$this->charts_include_option()."
+				{$this->charts_include_option()}
 				GROUP BY Artistname, Albumname, Title
 			) AS nodupes
 			GROUP BY label_artist
@@ -264,7 +264,7 @@ class metaquery extends collection_base {
 				JOIN Playcounttable USING (TTindex)
 				JOIN Albumtable USING (albumindex)
 				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-				".$this->charts_include_option()."
+				{$this->charts_include_option()}
 				GROUP BY Artistname, Albumname, Title
 			) AS nodupes
 			GROUP BY label_artist, label_album

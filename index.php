@@ -60,14 +60,23 @@ upgrade_old_collections();
 logger::mark('INIT', 'Checking Database Connection');
 
 if (prefs::get_pref('collection_type') === null) {
-	$success = data_base::probe_database();
+	list($success, $error_message) = data_base::probe_database();
 	if ($success) {
 		set_include_path('backends/sql/'.prefs::get_pref('collection_type').PATH_SEPARATOR.get_include_path());
 	} else {
-		sql_init_fail("No Database Connection Was Possible");
+		sql_init_fail($error_message);
 	}
 }
 prefs::$database = new init_database();
+
+// if (prefs::$database->test_error_handling() === false) {
+// 	logger::info('INIT', 'Got database error');
+// 	exit(0);
+// } else {
+// 	logger::info('INIT', 'Did NOT Got database error');
+// 	exit(0);
+// }
+
 list($result, $message) = prefs::$database->check_sql_tables();
 if ($result == false) {
 	sql_init_fail($message);

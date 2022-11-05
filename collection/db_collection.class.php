@@ -134,7 +134,7 @@ class db_collection extends collection_base {
 			$filedata = array_replace(MPD_FILE_MODEL, $filedata);
 			logger::trace("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
 			if ($tree === false) {
-				$this->generic_sql_query("UPDATE Tracktable SET isSearchResult = 1 WHERE TTindex = ".$obj->TTindex, true);
+				$this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET isSearchResult = 1 WHERE TTindex = ?", $obj->TTindex);
 				$this->check_transaction();
 			} else if ($tree === true) {
 				// Slightly hacky, tree == true means "don't do a tree but also don't use the database"

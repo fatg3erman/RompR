@@ -15,6 +15,7 @@ class data_base {
 		logger::info("SQL_CONNECT", "Attempting to connect to MYSQL Server");
 		$retval = false;
 		$mysqlc = null;
+		$error = '';
 		try {
 			if (is_numeric(prefs::get_pref('mysql_port'))) {
 				logger::trace("SQL_CONNECT", "Connecting using hostname and port");
@@ -28,8 +29,9 @@ class data_base {
 			prefs::set_pref(['collection_type' => 'mysql']);
 			$retval = true;
 			$mysqlc = null;
-		} catch (Exception $e) {
-			logger::warn("SQL_CONNECT", "Couldn't connect to MySQL - ".$e);
+		} catch (PDOException $e) {
+			logger::warn("SQL_CONNECT", "Couldn't connect to MySQL");
+			$error = $e->getMessage();
 			$mysqlc = null;
 		}
 		if ($mysqlc == null) {
@@ -41,12 +43,13 @@ class data_base {
 				prefs::set_pref(['collection_type' => 'sqlite']);
 				$retval = true;
 				$mysqlc = null;
-			} catch (Exception $e) {
-				logger::warn("SQL_CONNECT", "Couldn't use SQLite Either - ".$e);
+			} catch (PDOException $e) {
+				logger::warn("SQL_CONNECT", "Couldn't use SQLite Either");
+				$error .= '<br />'.$e->getMessage();
 				$mysqlc = null;
 			}
 		}
-		return $retval;
+		return array($retval, $e);
 	}
 
 	public function close_database() {
@@ -63,25 +66,57 @@ class data_base {
 		$return_type = PDO::FETCH_ASSOC,
 		$return_value = null,
 		$value_default = null,
-		$return_rowcount = false )
+		$return_rowcount = false)
 	{
+
+		// Handle a statement that does not need preparing.
+		// sql_prepare_query() requires parameters. This does not.
+
+		// This function returns default values if the command fails:
+		// if $return_value is set, return $value_default
+		// else if $return_boolean is true, return false
+		// else return an empty array
+
+		// $returan_value overrides
+		// $return_boolean, which overrides
+		// $return_rowcount, which overrides
+		// $return_type - $return_value must be null and $return_boolean and $return_rowcount must be false
+		// $return type is ignored in the first 3 cases
+
+		// Parameters after $qstring are the same as for sql_prepare_query()
+		// with the addition of $return_rowcount which makes it return the affected row count
+
+		// IMPORTANT if your query does not return a results set you must call this with return_boolean or return_rowcount set to true
+
 		logger::core("GENERIC_SQL", $qstring);
-		$retval = true;
-		if (($result = @$this->mysqlc->query($qstring)) !== false) {
-			// logger::debug("GENERIC_SQL", "Done : ".($result->rowCount())." rows affected");
+		try {
+			$result = $this->mysqlc->query($qstring);
 			if ($return_value !== null) {
+				//
+				// Return a value from the named column $return_value, or return $value_default if no results
+				//
 				$arr = $result->fetch(PDO::FETCH_ASSOC);
-				$retval = ($arr) ? $arr[$return_value] : $value_default;
+				$retval = (is_array($arr) && array_key_exists($return_value, $arr)) ? $arr[$return_value] : $value_default;
 			} else if ($return_boolean) {
+				//
+				// Return success / fail
+				//
 				$retval = true;
 			} else if ($return_rowcount) {
+				//
+				// Return the row count
+				//
 				$retval = $result->rowCount();
 			} else {
+				//
+				// Return the results set
+				//
 				$retval = $result->fetchAll($return_type);
 			}
-		} else {
-			logger::warn("GENERIC_SQL", "Command Failed :",$qstring);
-			$this->show_sql_error();
+			$result->closeCursor();
+		} catch (PDOException $e) {
+			logger::warn("GENERIC_SQL", "Command Failed :", $qstring);
+			// Default return value
 			if ($return_value !== null) {
 				$retval = $value_default;
 			} else if ($return_boolean) {
@@ -90,44 +125,68 @@ class data_base {
 				$retval = array();
 			}
 		}
-		$result = null;
 		return $retval;
 	}
 
 	protected function sql_get_column($qstring, $column) {
 		logger::core("SQL_GET_COLUMN", "Get column",$column,"from",$qstring);
-		$retval = array();
-		if (($result = $this->mysqlc->query($qstring)) !== false) {
+		try {
+			$result = $this->mysqlc->query($qstring);
 			$retval = $result->fetchAll(PDO::FETCH_COLUMN, $column);
+		} catch (PDOException $e) {
+			logger::warn("GENERIC_SQL", "Command Failed :",$qstring);
+			$retval = [];
 		}
 		return $retval;
 	}
 
 	public function simple_query($select, $from, $where, $item, $default) {
+		// This function isn't very useful without a WHERE clause,
+		// sql_get_column returns data in a more useful form if you
+		// just want a list of values
 		$retval = $default;
-		$qstring = "SELECT ".$select." AS TheThingToFind FROM ".$from;
+		$qstring = "SELECT $select AS TheThingToFind FROM $from";
 		if ($where != null) {
-			$qstring .= " WHERE ".$where." = ?";
+			$qstring .= " WHERE $where = ?";
+			$retval = $this->sql_prepare_query(false, null, 'TheThingToFind', $default, $qstring, $item);
+		} else {
+			$retval = $this->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		}
-		$retval = $this->sql_prepare_query(false, null, 'TheThingToFind', $default, $qstring, $item);
 		return $retval;
 	}
 
-	protected function sql_prepare_query() {
-		// Variable arguments but at least 5 are required:
-		// 1. flag for whether to just return a boolean
-		// 2. return type
-		// 3. field name
-		// 4. default value for field name
-		// 5. query string
-		// ... parameters for query
-		// return type of PDO::FETCH_COLUMN returns an array of the values
-		//  from the column identified by field name, which should be an integeer for column number
-		// --**-- NO PARAMETER CHECKING IS DONE BY THIS FUNCTION! --**--
-		//   because we want to make it fast, so make sure you call it right!
+	public function test_error_handling() {
+		$lv = $this->simple_query('Value', 'StatsTable', null, null, 'Hello');
+		logger::log('THING', print_r($lv, true));
+	}
 
-		// This doesn't appear to work with MySQL when one of the args has to be an integer
-		// eg LIMIT ? doesn't work.
+	public function sql_prepare_query() {
+		// Variable arguments
+
+		// sql_prepare_query(return_boolean, return_type, field_name, default, query_string, query_parameters ...)
+
+		// return_boolean: flag for whether to just return a boolean
+		// return_type: a PDO:: return type constant
+		// field name: a valid column name from the results set
+		// default: default value to return if field name is set
+		// query_string: the query string
+		// query parameters: the parameters for substitution with ? in the query
+
+		// return type of PDO::FETCH_COLUMN returns an array of the values
+		// from the column identified by field name, which should be an integeer for column number
+
+		// return_type of FETCH_COLUMN overrides
+		// returan_value, which overrides
+		// return_boolean, which overrides
+		// return_type - return_value must be null and return_boolean must be false
+		// return type is ignored in the second two cases
+
+		// query parameters can be multiple arguments or an array of values
+
+		// This function returns default values if the command fails:
+		// if return_value is set, return value_default
+		// else if return_boolean is true, return false
+		// else return an empty array
 
 		$allargs = func_get_args();
 		logger::core("SQL_PREPARE",$allargs);
@@ -142,37 +201,44 @@ class data_base {
 			$args = array_slice($allargs, 5);
 		}
 
-		if (($stmt = $this->sql_prepare_query_later($query)) !== false) {
-			try {
-				if ($stmt->execute($args)) {
-					if ($return_type == PDO::FETCH_COLUMN) {
-						$retval = $stmt->fetchAll(PDO::FETCH_COLUMN, $return_value);
-					} else if ($return_value !== null) {
-						$arr = $stmt->fetch(PDO::FETCH_ASSOC);
-						$retval = ($arr) ? $arr[$return_value] : $value_default;
-					} else if ($return_boolean) {
-						$retval = true;
-					} else {
-						$retval = $stmt->fetchAll($return_type);
-					}
-					$stmt = null;
-					return $retval;
-				} else {
-					$this->show_sql_error("SQL Statement Error", $stmt);
-				}
-			} catch (Exception $e) {
-				$this->show_sql_error("SQL Statement Error", $stmt);
-				logger::warn('SQL','PDO rasied exception', $e);
+		try {
+			$stmt = $this->mysqlc->prepare($query);
+			$stmt->execute($args);
+			if ($return_type == PDO::FETCH_COLUMN) {
+				//
+				// For fetching a column (specify column NUMBER as $return_value)
+				//
+				$retval = $stmt->fetchAll(PDO::FETCH_COLUMN, $return_value);
+			} else if ($return_value !== null) {
+				//
+				// For fetching the first value from a NAMED column $return_value, or return $value_default if no results are returned
+				//
+				$arr = $stmt->fetch(PDO::FETCH_ASSOC);
+				// Note we use fetch() which fetches one row at a time so makes $arr[$return_value] correct.
+				// If we used returnAll() we'd need $arr[0][$return_value]
+				$retval = (is_array($arr) && array_key_exists($return_value, $arr)) ? $arr[$return_value] : $value_default;
+			} else if ($return_boolean) {
+				//
+				// For returning boolean success/fail
+				//
+				$retval = true;
+			} else {
+				//
+				// For returning the entire results set
+				//
+				$retval = $stmt->fetchAll($return_type);
+			}
+			$stmt->closeCursor();
+		} catch (PDOException $e) {
+			logger::warn("GENERIC_SQL", "Command Failed :",$query);
+			if ($return_value !== null) {
+				$retval = $value_default;
+			} else if ($return_boolean) {
+				$retval = false;
+			} else {
+				$retval = array();
 			}
 		}
-		if ($return_value !== null) {
-			$retval = $value_default;
-		} else if ($return_boolean) {
-			$retval = false;
-		} else {
-			$retval = array();
-		}
-		$stmt = null;
 		return $retval;
 	}
 
@@ -180,18 +246,13 @@ class data_base {
 		//
 		// Prepare a statement for use later
 		//
-		$stmt = $this->mysqlc->prepare($query);
-		if ($stmt === false) {
-			$this->show_sql_error();
+		try {
+			$stmt = $this->mysqlc->prepare($query);
+		} catch (PDOException $e) {
+			logger::error('SQL', 'Failed to prepare statement',$query);
+			$stmt = false;
 		}
 		return $stmt;
-	}
-
-	protected function show_sql_error($text = "", $stmt = null) {
-		logger::error("MYSQL ERROR", $text,":",$this->mysqlc->errorInfo()[1],":",$this->mysqlc->errorInfo()[2]);
-		if ($stmt) {
-			logger::error("STMT ERROR", $text,":",$stmt->errorInfo()[1],":",$stmt->errorInfo()[2]);
-		}
 	}
 
 	//
@@ -199,11 +260,17 @@ class data_base {
 	//
 
 	public function open_transaction() {
-		if (!$this->transaction_open) {
-			if ($this->mysqlc->beginTransaction()) {
+		try {
+			if (!$this->transaction_open) {
+				$this->mysqlc->beginTransaction();
 				$this->transaction_open = true;
 				$this->numdone = 0;
+			} else {
+				logger::warn('DATABASE', 'open_transaction called when transaction already open!');
 			}
+		} catch (PDOException $e) {
+			logger::error('DATABASE', 'Caught PDO exception when opening transaction. Data may be lost.');
+			$this->transaction_open = false;
 		}
 	}
 
@@ -219,20 +286,21 @@ class data_base {
 	}
 
 	public function close_transaction() {
-		if ($this->transaction_open) {
-			if ($this->mysqlc->commit()) {
-				$this->transaction_open = false;
+		try {
+			if ($this->transaction_open) {
+				$this->mysqlc->commit();
 			} else {
-				logger::warn('DATABASE', "WARNING! Transaction commit failed!");
-				$this->show_sql_error();
+				logger::warn("DATABASE", "WARNING! close_transaction called when transaction not open!");
 			}
-		} else {
-			logger::warn("DATABASE", "WARNING! close_transaction called when transaction not open!");
+		} catch (PDOException $e) {
+			logger::error('DATABASE', 'Caught PDO exception when closing transaction. Data may be lost.');
+		} finally {
+			$this->transaction_open = false;
 		}
 	}
 
 	public function checkCollectionStatus() {
-		$lv = $this->generic_sql_query("SELECT Value FROM Statstable WHERE Item = 'ListVersion'", false, null, 'Value', null);
+		$lv = $this->get_admin_value('ListVersion', null);
 		if ($lv == ROMPR_COLLECTION_VERSION) {
 			logger::log("DATABASE", "Collection version is correct");
 			return "0";
@@ -248,7 +316,10 @@ class data_base {
 	}
 
 	public function checkAlbumArt() {
-		$oa = $this->generic_sql_query("SELECT COUNT(ImgVersion) AS NumOldAlbums FROM Albumtable WHERE Image LIKE 'albumart/small/%' AND ImgVersion < ".ROMPR_IMAGE_VERSION, false, null, 'NumOldAlbums', 0);
+		$oa = $this->sql_prepare_query(false, null, 'NumOldAlbums', 0,
+			"SELECT COUNT(ImgVersion) AS NumOldAlbums FROM Albumtable WHERE Image LIKE 'albumart/small/%' AND ImgVersion < ?",
+			ROMPR_IMAGE_VERSION
+		);
 		logger::log("DATABASE", "There are ".$oa." albums with old-style album art");
 		return $oa;
 	}
@@ -256,12 +327,12 @@ class data_base {
 	public function collectionUpdateRunning($return = false) {
 		$count = 200;
 		while ($count > 0) {
-			$cur = $this->simple_query('Value', 'Statstable', 'Item', 'Updating', null);
+			$cur = $this->get_admin_value('Updating', null);
 			switch ($cur) {
 				case null:
 					logger::warn('DATABASE', 'Got null response to update lock check');
 				case '0':
-					$this->generic_sql_query("UPDATE Statstable SET Value = 1 WHERE Item = 'Updating'", true);
+					$this->set_admin_value('Updating', 1);
 					return false;
 
 				case '1':
@@ -273,15 +344,26 @@ class data_base {
 					$count--;
 			}
 		}
-		logger::warn('DATABASE', 'Collection Was Not Unlocked After 1000 Seconds. Giving Up.');
+		logger::warn('DATABASE', 'Collection Was Not Unlocked After 200 Seconds. Giving Up.');
 		return true;
 	}
 
 	public function clearUpdateLock() {
 		logger::log('DATABASE', 'Clearing update lock');
-		$this->generic_sql_query("UPDATE Statstable SET Value = 0 WHERE Item = 'Updating'", true);
+		$this->set_admin_value('Updating', 0);
 	}
 
+	public function get_admin_value($item, $default) {
+		return $this->simple_query('Value', 'Statstable', 'Item', $item, $default);
+	}
+
+	public function set_admin_value($item, $value) {
+		$this->sql_prepare_query(true, null, null, null,
+			"REPLACE INTO Statstable (Item, Value) VALUES (?, ?)",
+			$item,
+			$value
+		);
+	}
 
 }
 

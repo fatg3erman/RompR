@@ -146,20 +146,19 @@ Note that only Mopidy-Local seems to return Genres, so Genre-based Collection fu
 
 Mopidy-YTMusic cannot accept a URI it has not seen before. This gives RompR problems if you add YTMusic tracks to your collection and then restart
 Mopidy, because all the tracks in your collection will no longer work. I have suggested a fix for this that works for RompR but as yet there has
-been no movement on it. https://github.com/OzymandiasTheGreat/mopidy-ytmusic/pull/69. If you run that version then you can add tracks to your collection
-safely.
+been no movement on it. https://github.com/OzymandiasTheGreat/mopidy-ytmusic/pull/69.
 
 My fork of Mopidy-YTMusic is here, and I recommend you use this until the above chnage is merged into the main version.
 
 https://github.com/fatg3erman/mopidy-ytmusic/tree/feature/browse-album
 
-Mopidy-Youtube also supports the Youtube Music API.
+Mopidy-Youtube also supports the Youtube Music API and does not have the same issues as Mopidy-YTMusic.
 
 I've put a lot of effort into using these backends to replace a lot of what RompR used to rely on Mopidy-Spotify for but bear in mind
 Youtbe Music does not have a proper API and there is some information - like track numbers - that is extremely unreliable.
 RompR likes track numbers because they make Playcounts more accurate, and RompR will try very hard indeed to get
 Youtube to give it a track number when it needs one. The best functionality with RompR and Youtube Music comes by using
-my fork of Mopidy-YTMusic. RompR's Mopidy-Youtube support is based on using it for starndard YouTube, not Youtube Music.
+my fork of Mopidy-YTMusic. RompR's Mopidy-Youtube support is based on using it for standard YouTube, not Youtube Music.
 
 
 

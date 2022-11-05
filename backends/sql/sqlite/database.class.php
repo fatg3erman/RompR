@@ -2,10 +2,13 @@
 
 class database extends data_base {
 
-	const SQL_RANDOM_SORT = 'RANDOM()';
-	const SQL_TAG_CONCAT = "GROUP_CONCAT(t.Name,', ') ";
-	const SQL_URI_CONCAT = "GROUP_CONCAT(Uri,',') ";
-	const STUPID_CONCAT_THING = "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR ? LIKE '%' || Localfilename";
+	public const SQL_RANDOM_SORT = 'RANDOM()';
+	public const SQL_TAG_CONCAT = "GROUP_CONCAT(t.Name,', ') ";
+	public const STUPID_CONCAT_THING = "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR ? LIKE '%' || Localfilename";
+
+	public function get_constant($c) {
+		return constant($c);
+	}
 
 	public function __construct() {
 		try {
@@ -14,15 +17,15 @@ class database extends data_base {
 			$this->mysqlc = new PDO($dsn);
 			logger::core("SQLITE", "Connected to SQLite");
 			// This increases performance
+			$this->mysqlc->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->generic_sql_query('PRAGMA journal_mode=DELETE', true);
 			$this->generic_sql_query('PRAGMA cache_size=-4000', true);
 			$this->generic_sql_query('PRAGMA synchronous=OFF', true);
 			$this->generic_sql_query('PRAGMA threads=4', true);
-		} catch (Exception $e) {
-			logger::error("SQLITE", "Couldn't Connect To SQLite - ".$e);
+		} catch (PDOException $e) {
+			logger::error("SQLITE", "Couldn't Connect To SQLite ");
 			sql_init_fail($e->getMessage());
 		}
-
 	}
 
 	protected function hide_played_tracks() {
@@ -150,28 +153,30 @@ class database extends data_base {
 	}
 
 	public function delete_orphaned_artists() {
-		$this->generic_sql_query("DELETE FROM Artisttable WHERE Artistindex NOT IN (SELECT DISTINCT Artistindex FROM Tracktable UNION SELECT DISTINCT AlbumArtistindex AS Artistindex FROM Albumtable)");
+		$this->generic_sql_query("DELETE FROM Artisttable WHERE Artistindex NOT IN (SELECT DISTINCT Artistindex FROM Tracktable UNION SELECT DISTINCT AlbumArtistindex AS Artistindex FROM Albumtable)", true);
 	}
 
 	protected function prepare_findtrack_for_update() {
-		if ($this->find_track = $this->sql_prepare_query_later(
-			"INSERT INTO Tracktable
-				(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isAudiobook, Genreindex, TYear)
-			VALUES
-				(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-			ON CONFLICT(Albumindex, Artistindex, TrackNo, Disc, Title) DO UPDATE SET
-				Duration = excluded.Duration,
-				Uri = excluded.Uri,
-				LastModified = excluded.LastModified,
-				Hidden = 0,
-				justAdded = 1,
-				isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE excluded.isAudiobook END,
-				Genreindex = excluded.Genreindex,
-				TYear = excluded.TYear"
-		)) {
-			logger::log('SQLITE', 'Prepared new-style update query successfully');
-		} else {
-			$this->show_sql_error();
+		try {
+			$this->find_track = $this->mysqlc->prepare(
+				"INSERT INTO Tracktable
+					(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isAudiobook, Genreindex, TYear)
+				VALUES
+					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				ON CONFLICT(Albumindex, Artistindex, TrackNo, Disc, Title) DO UPDATE SET
+					Duration = excluded.Duration,
+					Uri = excluded.Uri,
+					LastModified = excluded.LastModified,
+					Hidden = 0,
+					justAdded = 1,
+					isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE excluded.isAudiobook END,
+					Genreindex = excluded.Genreindex,
+					TYear = excluded.TYear"
+			);
+			logger::log('SQLITE', 'Prepared find_track query successfully');
+		} catch (PDOException $e) {
+			logger::error('SQL', 'Failed to prepare find_track statement');
+			logger::error('SQL', $e);
 			exit(1);
 		}
 	}
@@ -184,24 +189,26 @@ class database extends data_base {
 	//
 
 	protected function prepare_findtrack_for_search() {
-		if ($this->find_track = $this->sql_prepare_query_later(
-			"INSERT INTO Tracktable
-				(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
-			VALUES
-				(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?)
-			ON CONFLICT(Albumindex, Artistindex, TrackNo, Disc, Title) DO UPDATE SET
-				Duration = excluded.Duration,
-				Uri = excluded.Uri,
-				isSearchResult = CASE WHEN isSearchResult > 0 THEN isSearchResult ELSE CASE WHEN Hidden = 0 THEN 1 ELSE 3 END END,
-				Hidden = 0,
-				justAdded = 1,
-				isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE excluded.isAudiobook END,
-				Genreindex = excluded.Genreindex,
-				TYear = excluded.TYear"
-		)) {
-			logger::log('SQLITE', 'Prepared old-style update query successfully');
-		} else {
-			$this->show_sql_error();
+		try {
+			$this->find_track = $this->mysqlc->prepare(
+				"INSERT INTO Tracktable
+					(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
+				VALUES
+					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?)
+				ON CONFLICT(Albumindex, Artistindex, TrackNo, Disc, Title) DO UPDATE SET
+					Duration = excluded.Duration,
+					Uri = excluded.Uri,
+					isSearchResult = CASE WHEN isSearchResult > 0 THEN isSearchResult ELSE CASE WHEN Hidden = 0 THEN 1 ELSE 3 END END,
+					Hidden = 0,
+					justAdded = 1,
+					isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE excluded.isAudiobook END,
+					Genreindex = excluded.Genreindex,
+					TYear = excluded.TYear"
+			);
+			logger::log('SQLITE', 'Prepared find_track query successfully');
+		} catch (PDOException $e) {
+			logger::error('SQL', 'Failed to prepare find_track statement');
+			logger::error('SQL', $e);
 			exit(1);
 		}
 	}
@@ -243,7 +250,7 @@ class database extends data_base {
 		$triggers = $this->generic_sql_query("SELECT * FROM sqlite_master WHERE type = 'trigger'");
 		foreach ($triggers as $trigger) {
 			logger::debug('MYSQL', 'Dropping Trigger', $trigger['name']);
-			$this->generic_sql_query('DROP TRIGGER '.$trigger['name']);
+			$this->generic_sql_query('DROP TRIGGER '.$trigger['name'], true);
 		}
 	}
 
@@ -259,14 +266,16 @@ class database extends data_base {
 	// an older schema version.
 
 	protected function create_conditional_triggers() {
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS track_insert_trigger AFTER INSERT ON Tracktable
+		$r = $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS track_insert_trigger AFTER INSERT ON Tracktable
 							FOR EACH ROW
 							WHEN NEW.Hidden=0
 							BEGIN
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = NEW.Albumindex;
 							END;", true);
 
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS track_update_trigger AFTER UPDATE ON Tracktable
+		if (!$r) return false;
+
+		return $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS track_update_trigger AFTER UPDATE ON Tracktable
 							FOR EACH ROW
 							WHEN (NEW.Hidden<>OLD.Hidden OR NEW.isAudiobook<>OLD.isAudiobook)
 							BEGIN
@@ -276,7 +285,7 @@ class database extends data_base {
 	}
 
 	protected function create_update_triggers() {
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS rating_update_trigger AFTER UPDATE ON Ratingtable
+		$r = $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS rating_update_trigger AFTER UPDATE ON Ratingtable
 							FOR EACH ROW
 							BEGIN
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
@@ -284,7 +293,9 @@ class database extends data_base {
 							UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
 							END;", true);
 
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS rating_insert_trigger AFTER INSERT ON Ratingtable
+		if (!$r) return false;
+
+		$r = $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS rating_insert_trigger AFTER INSERT ON Ratingtable
 							FOR EACH ROW
 							BEGIN
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
@@ -292,13 +303,17 @@ class database extends data_base {
 							UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
 							END;", true);
 
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS tag_delete_trigger AFTER DELETE ON Tagtable
+		if (!$r) return false;
+
+		$r = $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS tag_delete_trigger AFTER DELETE ON Tagtable
 							FOR EACH ROW
 							BEGIN
 							DELETE FROM TagListtable WHERE Tagindex = OLD.Tagindex;
 							END;", true);
 
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS tag_insert_trigger AFTER INSERT ON TagListtable
+		if (!$r) return false;
+
+		$r = $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS tag_insert_trigger AFTER INSERT ON TagListtable
 							FOR EACH ROW
 							BEGIN
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
@@ -306,13 +321,15 @@ class database extends data_base {
 							UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
 							END;", true);
 
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS tag_remove_trigger AFTER DELETE ON TagListtable
+		if (!$r) return false;
+
+		$r = $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS tag_remove_trigger AFTER DELETE ON TagListtable
 							FOR EACH ROW
 							BEGIN
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = OLD.TTindex);
 							END;", true);
 
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS track_delete_trigger AFTER DELETE ON Tracktable
+		return $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS track_delete_trigger AFTER DELETE ON Tracktable
 							FOR EACH ROW
 							BEGIN
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = OLD.Albumindex;
@@ -321,14 +338,16 @@ class database extends data_base {
 	}
 
 	protected function create_playcount_triggers() {
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS syncupdatetrigger AFTER UPDATE ON Playcounttable
+		$r = $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS syncupdatetrigger AFTER UPDATE ON Playcounttable
 							FOR EACH ROW
 							WHEN NEW.Playcount > OLD.Playcount
 							BEGIN
 								UPDATE Playcounttable SET SyncCount = OLD.SyncCount + 1 WHERE TTindex = New.TTindex;
 							END;", true);
 
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS syncinserttrigger AFTER INSERT ON Playcounttable
+		if (!$r) return false;
+
+		return $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS syncinserttrigger AFTER INSERT ON Playcounttable
 							FOR EACH ROW
 							BEGIN
 								UPDATE Playcounttable SET SyncCount = 1 WHERE TTindex = NEW.TTindex;
@@ -337,13 +356,15 @@ class database extends data_base {
 	}
 
 	protected function create_progress_triggers() {
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS progress_update_trigger AFTER UPDATE ON Bookmarktable
+		$r = $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS progress_update_trigger AFTER UPDATE ON Bookmarktable
 							FOR EACH ROW
 							BEGIN
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
 							END;", true);
 
-		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS progress_insert_trigger AFTER INSERT ON Bookmarktable
+		if (!$r) return false;
+
+		return $this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS progress_insert_trigger AFTER INSERT ON Bookmarktable
 							FOR EACH ROW
 							BEGIN
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
@@ -388,8 +409,8 @@ class database extends data_base {
 			"Title VARCHAR(255) NOT NULL COLLATE NOCASE)", true))
 		{
 			logger::log("SQLITE",$name,"OK");
-			$this->generic_sql_query("DELETE FROM ".$name);
-			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (trackartist, Title)");
+			$this->generic_sql_query("DELETE FROM ".$name, true);
+			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (trackartist, Title)", true);
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking ".$name." : ".$err);
@@ -420,9 +441,9 @@ class database extends data_base {
 			"Uri TEXT)", true))
 		{
 			logger::log("SQLITE",$name,"OK");
-			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (trackartist, Title)");
+			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (trackartist, Title)", true);
 			if ($truncate)
-				$this->generic_sql_query("DELETE FROM ".$name);
+				$this->generic_sql_query("DELETE FROM ".$name, true);
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking ".$name." : ".$err);
@@ -437,7 +458,7 @@ class database extends data_base {
 			"Title VARCHAR(255) NOT NULL COLLATE NOCASE)", true))
 		{
 			logger::log("SQLITE",$name,"OK");
-			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (trackartist, Title)");
+			$this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS nodupes_".$name." ON ".$name." (trackartist, Title)", true);
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking ".$name." : ".$err);

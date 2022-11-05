@@ -3,7 +3,7 @@
 class collection_radio extends musicCollection {
 
 	public function preparePlaylist() {
-		$this->generic_sql_query('UPDATE Tracktable SET usedInPlaylist = 0 WHERE usedInPlaylist = 1');
+		$this->generic_sql_query('UPDATE Tracktable SET usedInPlaylist = 0 WHERE usedInPlaylist = 1', true);
 		$this->init_random_albums();
 	}
 

@@ -148,10 +148,10 @@ class musicCollection extends collection_base {
 			"SELECT * FROM Tracktable JOIN Artisttable USING (Artistindex) WHERE Albumindex = ? AND Title NOT LIKE 'Album:%'",
 			$who
 		);
-		$this->generic_sql_query("DELETE FROM Tracktable WHERE Albumindex = ".$who, true);
-		$this->generic_sql_query("DELETE FROM Albumtable WHERE Albumindex = ".$who, true);
-		$this->generic_sql_query('UPDATE Albumtable SET Albumindex = '.$who.' WHERE Albumindex = '.$new);
-		$this->generic_sql_query('UPDATE Tracktable SET Albumindex = '.$who.' WHERE Albumindex = '.$new);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM Tracktable WHERE Albumindex = ?", $who);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM Albumtable WHERE Albumindex = ?", $who);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Albumindex = ? WHERE Albumindex = ?", $who, $new);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET Albumindex = ? WHERE Albumindex = ?", $who, $new);
 		foreach ($tracks_now as $track) {
 			$ttids = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
 				"SELECT TTindex FROM Tracktable WHERE Albumindex = ? AND Title = ?",
@@ -393,7 +393,7 @@ class musicCollection extends collection_base {
 
 		$this->remove_cruft();
 		logger::log('COLLECTION', 'Updating collection version to', ROMPR_COLLECTION_VERSION);
-		$this->update_stat('ListVersion',ROMPR_COLLECTION_VERSION);
+		$this->set_admin_value('ListVersion', ROMPR_COLLECTION_VERSION);
 		$this->update_track_stats();
 		$dur = format_time(time() - $now);
 		logger::trace('BACKEND', "Cruft Removal Took ".$dur);
@@ -489,22 +489,23 @@ class musicCollection extends collection_base {
 
 		// logger::log('PARP','Albumindex',$trackobj->tags['album_index'],'Title',$trackobj->tags['Title']);
 
-		if ($this->find_track->execute([
-			$trackobj->tags['Title'],
-			$trackobj->tags['album_index'],
-			$trackobj->tags['Track'],
-			$trackobj->tags['Time'],
-			$trackartistindex,
-			$trackobj->tags['Disc'],
-			$trackobj->tags['file'],
-			$trackobj->tags['Last-Modified'],
-			$trackobj->tags['type'] == 'audiobook' ? 1 : 0,
-			$genreindex,
-			$trackobj->tags['year']
-		])) {
-
-		} else {
-			$this->show_sql_error('AAAGH!', $this->find_track);
+		try {
+			$this->find_track->execute([
+				$trackobj->tags['Title'],
+				$trackobj->tags['album_index'],
+				$trackobj->tags['Track'],
+				$trackobj->tags['Time'],
+				$trackartistindex,
+				$trackobj->tags['Disc'],
+				$trackobj->tags['file'],
+				$trackobj->tags['Last-Modified'],
+				$trackobj->tags['type'] == 'audiobook' ? 1 : 0,
+				$genreindex,
+				$trackobj->tags['year']
+			]);
+		} catch (PDOException $e) {
+			logger::error('SQL', 'find_track execution failed');
+			logger::error('SQL', $e);
 			exit(1);
 		}
 

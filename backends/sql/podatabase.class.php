@@ -423,7 +423,7 @@ class poDatabase extends database {
 		$this->check_refresh_pid();
 		logger::mark("PODCASTS", "---------------------------------------------------");
 		logger::mark("PODCASTS", "Refreshing podcast",$podid);
-		$result = $this->generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
+		$result = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, [], "SELECT * FROM Podcasttable WHERE PODindex = ?", $podid);
 		if (count($result) > 0) {
 			$podetails = $result[0];
 			logger::trace("PODCASTS", "Podcast title is ".$podetails->Title);
@@ -443,7 +443,7 @@ class poDatabase extends database {
 			if (prefs::get_pref('podcast_mark_new_as_unlistened')) {
 				// Mark New As Unlistened, if required, on all subscribed podcasts - this option makes thi happen
 				// even if no new episodes have been published.
-				$this->generic_sql_query("UPDATE PodcastTracktable SET New = 0 WHERE PODindex = ".$podetails->PODindex);
+				$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New = 0 WHERE PODindex = ?", $podetails->PODindex);
 			}
 		}
 		if ($podcast === false) {
@@ -466,7 +466,8 @@ class poDatabase extends database {
 			$podcast['RefreshOption'] = $podetails->RefreshOption;
 			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New = ?, JustUpdated = ? WHERE PODindex = ?", 0, 0, $podid);
 		}
-		$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET FeedURL = ?, Description = ?, DaysLive = ?, RefreshOption = ?, NextUpdate = ?, LastPubDate = ?, UpRetry = ? WHERE PODindex = ?",
+		$this->sql_prepare_query(true, null, null, null,
+			"UPDATE Podcasttable SET FeedURL = ?, Description = ?, DaysLive = ?, RefreshOption = ?, NextUpdate = ?, LastPubDate = ?, UpRetry = ? WHERE PODindex = ?",
 			$podcast['FeedURL'],
 			$podcast['Description'],
 			$podcast['DaysLive'],
@@ -552,11 +553,12 @@ class poDatabase extends database {
 			if ($podetails->DaysToKeep > 0) {
 				$oldesttime = time() - ($podetails->DaysToKeep * 86400);
 				$numthen = $this->simple_query("COUNT(PODTrackindex)", "PodcastTracktable", 'Deleted = 0 AND PODindex', $podid, 0);
-				$qstring = "UPDATE PodcastTracktable SET Deleted=1 WHERE PODindex = ".$podid." AND PubDate < ".$oldesttime." AND Deleted = 0";
-				if ($podetails->KeepDownloaded == 1) {
+				$qstring = "UPDATE PodcastTracktable SET Deleted = 1 WHERE PODindex = ? AND PubDate < ? AND Deleted = 0";
+				if ($podetails->KeepDownloaded == 1)
 					$qstring .= " AND Downloaded = 0";
-				}
-				$this->generic_sql_query($qstring, true);
+
+				$this->sql_prepare_query(true, null, null, null, $qstring, $podid, $oldesttime);
+
 				$numnow = $this->simple_query("COUNT(PODTrackindex)", "PodcastTracktable", 'Deleted = 0 AND PODindex', $podid, 0);
 				if ($numnow != $numthen) {
 					logger::info("PODCASTS", "Old episodes were removed from podcast ID ".$podid);
@@ -567,11 +569,11 @@ class poDatabase extends database {
 			// Remove tracks where there are more than NumToKeep - honoring KeepDownloaded
 			if ($podetails->NumToKeep > 0) {
 				$getrid = 0;
-				$qstring = "SELECT COUNT(PODTrackindex) AS num FROM PodcastTracktable WHERE PODindex=".$podid." AND Deleted = 0";
-				if ($podetails->KeepDownloaded == 1) {
+				$qstring = "SELECT COUNT(PODTrackindex) AS num FROM PodcastTracktable WHERE PODindex = ? AND Deleted = 0";
+				if ($podetails->KeepDownloaded == 1)
 					$qstring .= " AND Downloaded = 0";
-				}
-				$num = $this->generic_sql_query($qstring, false, null, 'num', 0);
+
+				$this->sql_prepare_query(true, null, null, null, $qstring, $podid);
 				$getrid = $num - $podetails->NumToKeep;
 				logger::trace("PODCASTS", "  Num To Keep is ".$podetails->NumToKeep." and there are ".$num." episodes that can be pruned. Removing ".$getrid);
 				if ($getrid > 0) {
@@ -583,7 +585,7 @@ class poDatabase extends database {
 					$pods = $this->sql_get_column($qstring, 0);
 					foreach ($pods as $i) {
 						logger::debug("PODCASTS", "  Removing Track ".$i);
-						$this->generic_sql_query("UPDATE PodcastTracktable SET Deleted=1 WHERE PODTrackindex=".$i, true);
+						$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Deleted = 1 WHERE PODTrackindex = ?", $i);
 						$retval = true;
 					}
 				}
@@ -593,7 +595,7 @@ class poDatabase extends database {
 	}
 
 	public function outputPodcast($podid, $do_searchbox = true) {
-		$result = $this->generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
+		$result = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, [], "SELECT * FROM Podcasttable WHERE PODindex = ?", $podid);
 		foreach ($result as $obj) {
 			$this->doPodcast($obj, $do_searchbox);
 		}
@@ -604,7 +606,7 @@ class poDatabase extends database {
 		if ($y->Subscribed == 0) {
 			logger::mark("PODCASTS", "Getting feed for unsubscribed podcast ".$y->FeedURL);
 			$this->refreshPodcast($y->PODindex);
-			$a = $this->generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$y->PODindex, false, PDO::FETCH_OBJ);
+			$a = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, [], "SELECT * FROM Podcasttable WHERE PODindex = ?", $y->PODindex);
 			if (count($a) > 0) {
 				$y = $a[0];
 			} else {
@@ -761,14 +763,14 @@ class poDatabase extends database {
 		} else {
 			$extrabit = '';
 		}
-		$qstring = 'SELECT * FROM PodcastTracktable WHERE PODindex = '.$y->PODindex.' AND Deleted = 0'.$extrabit.' ORDER BY PubDate ';
+		$qstring = "SELECT * FROM PodcastTracktable WHERE PODindex = ? AND Deleted = 0 $extrabit ORDER BY PubDate ";
 		if ($y->SortMode == SORTMODE_OLDESTFIRST) {
 			$qstring .= "ASC";
 		} else {
 			$qstring .= "DESC";
 		}
 		logger::core("PODCASTS", $qstring);
-		$result = $this->generic_sql_query($qstring, false, PDO::FETCH_OBJ);
+		$result = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, [], $qstring, $y->PODindex);
 		foreach ($result as $episode) {
 			$this->format_episode($y, $episode, $pm);
 		}
@@ -823,7 +825,7 @@ class poDatabase extends database {
 		// print '<i class="fixed icon-no-response-playbutton inline-icon"></i>';
 		print '</div>';
 
-		$bookmarks = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, array(),
+		$bookmarks = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, [],
 			"SELECT * FROM PodBookmarktable WHERE PODTrackindex = ? AND Bookmark > 0 ORDER BY
 			CASE WHEN Name = 'Resume' THEN 0 ELSE Bookmark END ASC",
 			$item->PODTrackindex
@@ -932,8 +934,8 @@ class poDatabase extends database {
 		if (is_dir('prefs/podcasts/'.$podid)) {
 			rrmdir('prefs/podcasts/'.$podid);
 		}
-		$this->generic_sql_query("DELETE FROM Podcasttable WHERE PODindex = ".$podid, true);
-		$this->generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex = ".$podid, true);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM Podcasttable WHERE PODindex = ?", $podid);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM PodcastTracktable WHERE PODindex = ?", $podid);
 	}
 
 	public function markAsListened($url) {
@@ -951,7 +953,7 @@ class poDatabase extends database {
 
 	public function deleteTrack($trackid, $channel) {
 		logger::info("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as deleted");
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Deleted = 1 WHERE PODTrackindex = ".$trackid, true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Deleted = 1 WHERE PODTrackindex = ?", $trackid);
 		if (is_dir('prefs/podcasts/'.$channel.'/'.$trackid)) {
 			rrmdir('prefs/podcasts/'.$channel.'/'.$trackid);
 		}
@@ -960,21 +962,21 @@ class poDatabase extends database {
 
 	public function markKeyAsListened($trackid, $channel) {
 		logger::info("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as listened");
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex = ".$trackid, true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex = ?", $trackid);
 		$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex = ? AND Name = ?", $trackid, 'Resume');
 		return $channel;
 	}
 
 	public function markKeyAsUnlistened($trackid, $channel) {
 		logger::info("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as unlistened");
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 0, New = 0 WHERE PODTrackindex = ".$trackid, true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 0, New = 0 WHERE PODTrackindex = ?", $trackid);
 		$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex = ? AND Name = ?", $trackid, 'Resume');
 		return $channel;
 	}
 
 	public function undownloadTrack($trackid, $channel) {
 		logger::info("PODCASTS", "un-Downloading track",$trackid,"from podcast",$channel);
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Localfilename = NULL, Downloaded = 0 WHERE PODTrackindex = ".$trackid, true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Localfilename = NULL, Downloaded = 0 WHERE PODTrackindex = ?", $trackid);
 		if (is_dir('prefs/podcasts/'.$channel.'/'.$trackid)) {
 			rrmdir('prefs/podcasts/'.$channel.'/'.$trackid);
 		}
@@ -994,7 +996,7 @@ class poDatabase extends database {
 			$this->refreshPodcast($channel);
 		}
 		if ($option == 'RefreshOption') {
-			$podcast = $this->generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$channel, false, PDO::FETCH_ASSOC);
+			$podcast = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, [], "SELECT * FROM Podcasttable WHERE PODindex = ?", $channel);
 			$this->sql_prepare_query(true, null, null, null,
 				"UPDATE Podcasttable SET NextUpdate = ? WHERE PODindex = ?",
 				calculate_best_update_time($podcast[0]),
@@ -1005,20 +1007,20 @@ class poDatabase extends database {
 	}
 
 	public function markChannelAsListened($channel) {
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODindex = ".$channel, true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODindex = ?", $channel);
 		$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex IN (SELECT PODTrackindex FROM PodcastTracktable WHERE PODindex = ?) AND Name = ?", $channel, 'Resume');
 		return $channel;
 	}
 
 	public function mark_all_episodes_listened() {
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 1)");
+		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 1)", true);
 		$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE Name = ?", 'Resume');
 		return false;
 	}
 
 	public function undeleteFromChannel($channel) {
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Downloaded=0 WHERE PODindex=".$channel." AND Deleted=1", true);
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Deleted=0 WHERE PODindex=".$channel." AND Deleted=1", true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded = 0 WHERE PODindex = ? AND Deleted = 1", $channel);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Deleted = 0 WHERE PODindex = ? AND Deleted = 1", $channel);
 		return $channel;
 	}
 
@@ -1045,7 +1047,7 @@ class poDatabase extends database {
 				}
 			}
 		}
-		$this->generic_sql_query("UPDATE PodcastTracktable SET Downloaded=0, Localfilename=NULL WHERE PODindex=".$channel, true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded = 0, Localfilename = NULL WHERE PODindex = ?", $channel);
 		return $channel;
 	}
 
@@ -1053,8 +1055,8 @@ class poDatabase extends database {
 		logger::mark("PODCASTS", "Downloading track",$key,"from podcast",$channel);
 		$url = null;
 		$filesize = 0;
-		$result = $this->generic_sql_query("
-			SELECT Link,
+		$result = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, [],
+			"SELECT Link,
 			FileSize,
 			WriteTags,
 			Duration,
@@ -1064,7 +1066,10 @@ class poDatabase extends database {
 			PodcastTracktable.Image AS image
 			FROM PodcastTracktable
 			JOIN Podcasttable USING (PODindex)
-			WHERE PODTrackindex = " . intval($key), false, PDO::FETCH_OBJ);
+			WHERE PODTrackindex = ?",
+			intval($key)
+		);
+
 		foreach ($result as $obj) {
 			$url = $obj->Link;
 			$filesize = $obj->FileSize;
@@ -1322,7 +1327,7 @@ class poDatabase extends database {
 
 	public function subscribe($index) {
 		$this->refreshPodcast($index);
-		$this->generic_sql_query("UPDATE Podcasttable SET Subscribed = 1 WHERE PODindex = ".$index, true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Subscribed = 1 WHERE PODindex = ?", $index);
 	}
 
 	private function check_if_podcast_is_subscribed($podcast) {
@@ -1416,11 +1421,11 @@ class poDatabase extends database {
 		//     header('HTTP/1.1 412 Precondition Failed');
 		//     exit(0);
 		// }
-		// $this->generic_sql_query("UPDATE Statstable SET Value = '.$pid.' WHERE Item = 'PodUpPid'");
+		// $this->set_admin_value('PodUpPid', '.$pid.');
 	}
 
 	private function clear_refresh_pid() {
-		// $this->generic_sql_query("UPDATE Statstable SET Value = 0 WHERE Item = 'PodUpPid'");
+		// $this->set_admin_value('PodUpPid', 0);
 	}
 }
 ?>

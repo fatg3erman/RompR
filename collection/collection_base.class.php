@@ -282,6 +282,11 @@ class collection_base extends database {
 				AND AlbumArtistindex = ?"
 		);
 
+		if ($this->find_album === false || $this->find_album2 === false) {
+			logger::error('SQL', 'Could not prepare find_album statement');
+			exit(1);
+		}
+
 	}
 
 	public function check_album(&$data) {
@@ -422,20 +427,16 @@ class collection_base extends database {
 	protected function update_track_stats() {
 		logger::log('BACKEND', "Updating Track Stats");
 		$t = microtime(true);
-		$this->update_stat('ArtistCount',$this->get_artist_count(ADDED_ALL_TIME, 0));
-		$this->update_stat('AlbumCount',$this->get_album_count(ADDED_ALL_TIME, 0));
-		$this->update_stat('TrackCount',$this->get_track_count(ADDED_ALL_TIME, 0));
-		$this->update_stat('TotalTime',$this->get_duration_count(ADDED_ALL_TIME, 0));
-		$this->update_stat('BookArtists',$this->get_artist_count(ADDED_ALL_TIME, 1));
-		$this->update_stat('BookAlbums',$this->get_album_count(ADDED_ALL_TIME, 1));
-		$this->update_stat('BookTracks',$this->get_track_count(ADDED_ALL_TIME, 1));
-		$this->update_stat('BookTime',$this->get_duration_count(ADDED_ALL_TIME, 1));
+		$this->set_admin_value('ArtistCount',$this->get_artist_count(ADDED_ALL_TIME, 0));
+		$this->set_admin_value('AlbumCount',$this->get_album_count(ADDED_ALL_TIME, 0));
+		$this->set_admin_value('TrackCount',$this->get_track_count(ADDED_ALL_TIME, 0));
+		$this->set_admin_value('TotalTime',$this->get_duration_count(ADDED_ALL_TIME, 0));
+		$this->set_admin_value('BookArtists',$this->get_artist_count(ADDED_ALL_TIME, 1));
+		$this->set_admin_value('BookAlbums',$this->get_album_count(ADDED_ALL_TIME, 1));
+		$this->set_admin_value('BookTracks',$this->get_track_count(ADDED_ALL_TIME, 1));
+		$this->set_admin_value('BookTime',$this->get_duration_count(ADDED_ALL_TIME, 1));
 		$at = microtime(true) - $t;
 		logger::info('BACKEND', "Updating Track Stats took ".$at." seconds");
-	}
-
-	protected function update_stat($item, $value) {
-		$this->generic_sql_query("UPDATE Statstable SET Value='".$value."' WHERE Item='".$item."'", true);
 	}
 
 	protected function get_artist_count($range, $iab) {
@@ -478,7 +479,7 @@ class collection_base extends database {
 	}
 
 	protected function get_stat($item) {
-		return $this->simple_query('Value', 'Statstable', 'Item', $item, 0);
+		return $this->get_admin_value($item, 0);
 	}
 
 	public function collectionStats() {
@@ -696,7 +697,7 @@ class collection_base extends database {
 	}
 
 	public function check_radio_tracks($stationid, $tracks) {
-		$this->generic_sql_query("DELETE FROM RadioTracktable WHERE Stationindex = ".$stationid, true);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM RadioTracktable WHERE Stationindex = ?", $stationid);
 		foreach ($tracks as $track) {
 			$index = $this->sql_prepare_query(false, null, 'Stationindex', false, "SELECT Stationindex FROM RadioTracktable WHERE TrackUri = ?", trim($track['TrackUri']));
 			if ($index !== false) {
@@ -716,20 +717,20 @@ class collection_base extends database {
 	}
 
 	public function remove_user_radio_stream($x) {
-		$this->generic_sql_query("UPDATE RadioStationtable SET IsFave = 0, Number = 65535 WHERE Stationindex = ".$x, true);
+		$this->sql_prepare_queryp(true, null, null, null, "UPDATE RadioStationtable SET IsFave = 0, Number = 65535 WHERE Stationindex = ?", $x);
 	}
 
 	public function save_radio_order($order) {
 		foreach ($order as $i => $o) {
 			logger::trace('RADIO ORDER', 'Station',$o,'index',$i);
-			$this->generic_sql_query("UPDATE RadioStationtable SET Number = ".$i." WHERE Stationindex = ".$o, true);
+			$this->sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Number = ? WHERE Stationindex = ?", $i, $o);
 		}
 	}
 
 	public function add_fave_station($info) {
 		if (array_key_exists('streamid', $info) && $info['streamid']) {
 			logger::info('BACKEND', "Updating StationIndex",$info['streamid'],"to be fave");
-			$this->generic_sql_query("UPDATE RadioStationtable SET IsFave = 1 WHERE Stationindex = ".$info['streamid'], true);
+			$this->sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET IsFave = 1 WHERE Stationindex = ?", $info['streamid']);
 			return true;
 		}
 		$stationindex = $this->check_radio_station($info['location'],$info['album'],$info['image']);
@@ -741,7 +742,10 @@ class collection_base extends database {
 		// Returns the number of tracks this album contains that were added by a collection update
 		// (i.e. not added manually). We do this because editing year or album artist for those albums
 		// won't hold across a collection update, so we just forbid it.
-		return $this->generic_sql_query("SELECT COUNT(TTindex) AS cnt FROM Tracktable WHERE Albumindex = ".$albumindex." AND LastModified IS NOT NULL AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2", false, null, 'cnt', 0);
+		return $this->sql_prepare_query(false, null, 'cnt', 0,
+			"SELECT COUNT(TTindex) AS cnt FROM Tracktable WHERE Albumindex = ? AND LastModified IS NOT NULL AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2",
+			$albumindex
+		);
 
 	}
 
@@ -758,7 +762,10 @@ class collection_base extends database {
 
 	public function album_is_audiobook($albumindex) {
 		// Returns the maxiumum value of isAudiobook for a given album
-		return $this->generic_sql_query("SELECT MAX(isAudiobook) AS cnt FROM Tracktable WHERE Albumindex = ".$albumindex." AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2", false, null, 'cnt', 0);
+		return $this->sql_prepare_query(false, null, 'cnt', 0,
+			"SELECT MAX(isAudiobook) AS cnt FROM Tracktable WHERE Albumindex = ? AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2",
+			$albumindex
+		);
 	}
 
 	public function get_imagesearch_info($key) {
@@ -825,7 +832,7 @@ class collection_base extends database {
 				if ($retval['dbimage'] == null) {
 					$retval['dbimage'] = $obj->Image;
 				}
-				logger::trace('BACKEND', "Found album",$retval['album'],"in database");
+				logger::debug('BACKEND', "Found album",$retval['album'],"in database");
 			}
 		}
 		return $retval;
@@ -835,16 +842,13 @@ class collection_base extends database {
 		$retval = null;
 		// Get album directory by using the Uri of one of its tracks, making sure we choose only local tracks
 		if (getDomain($uri) == 'local') {
-			$result = $this->generic_sql_query("SELECT Uri FROM Tracktable WHERE Albumindex = ".$albumindex);
-			while (count($result) > 0 && $retval === null) {
-				$obj2 = array_shift($result);
-				if ($obj2['Uri']) {
-					$retval = dirname($obj2['Uri']);
-					$retval = preg_replace('#^local:track:#', '', $retval);
-					$retval = preg_replace('#^file://#', '', $retval);
-					$retval = preg_replace('#^beetslocal:\d+:'.prefs::get_pref('music_directory_albumart').'/#', '', $retval);
-					logger::debug('BACKEND', "Got album directory using track Uri :",$retval);
-				}
+			$result = $this->sql_prepare_query(false, null, 'Uri', null, "SELECT Uri FROM Tracktable WHERE Albumindex = ? AND Uri IS NOT NULL", $albumindex);
+			if ($result !== null) {
+				$retval = dirname($result);
+				$retval = preg_replace('#^local:track:#', '', $retval);
+				$retval = preg_replace('#^file://#', '', $retval);
+				$retval = preg_replace('#^beetslocal:\d+:'.prefs::get_pref('music_directory_albumart').'/#', '', $retval);
+				logger::debug('BACKEND', "Got album directory using track Uri :",$retval);
 			}
 		}
 		return $retval;
@@ -903,7 +907,7 @@ class collection_base extends database {
 	public function pull_wishlist($sortby) {
 		$qstring = "SELECT
 			IFNULL(r.Rating, 0) AS rating,
-			".database::SQL_TAG_CONCAT." AS tags,
+			{$this->get_constant('self::SQL_TAG_CONCAT')} AS tags,
 			tr.TTindex AS ttid,
 			tr.Title AS title,
 			tr.Duration AS time,

@@ -572,7 +572,7 @@ var prefs = function() {
 			for (var i in options) {
 				prefs[i] = options[i];
 				if (prefsInLocalStorage.indexOf(i) > -1) {
-					debug.trace("PREFS", "Setting",i,"to",options[i],"in local storage");
+					debug.debug("PREFS", "Setting",i,"to",options[i],"in local storage");
 					localStorage.setItem("prefs."+i, JSON.stringify(options[i]));
 				} else {
 					debug.debug("PREFS", "Setting",i,"to",options[i],"on backend");
@@ -580,7 +580,7 @@ var prefs = function() {
 				}
 			}
 			if (Object.keys(prefsToSave).length > 0) {
-				debug.trace("PREFS",'Saving to backend', JSON.stringify(prefsToSave));
+				debug.debug("PREFS",'Saving to backend', JSON.stringify(prefsToSave));
 				await $.post('api/saveprefs/', {prefs: JSON.stringify(prefsToSave)});
 			}
 			if (callback) callback();

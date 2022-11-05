@@ -18,7 +18,7 @@ include ("includes/functions.php");
 <meta name="mobile-web-app-capable" content="yes" />
 <link rel="stylesheet" id="theme" type="text/css" />
 <?php
-// print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.time().'&skin=desktop" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.time().'&skin=desktop" />'."\n";
 print '</head>';
 print '<body>';
 
@@ -28,10 +28,10 @@ $player = new player();
 $player->probe_websocket();
 
 
-print '<pre>';
+// print '<pre>';
 $result = $player->api_test();
 print_r($result);
-print '</pre>';
+// print '</pre>';
 
 
 print '</body>';

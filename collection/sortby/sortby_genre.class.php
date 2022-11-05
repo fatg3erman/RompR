@@ -3,24 +3,25 @@
 class sortby_genre extends sortby_base {
 
 	public function root_sort_query() {
-		$sflag = $this->filter_root_on_why();
+		$db = &prefs::$database;
 		// This query gives us album artists only. It also makes sure we only get artists for whom we
 		// have actual tracks (no album artists who appear only on the wishlist or who have only hidden tracks)
 		// Using GROUP BY is faster than using SELECT DISTINCT
 		// USING IN is faster than the double JOIN
-		$qstring =
-		"SELECT Genre, Genreindex
-			FROM Genretable AS g
-			WHERE
-			Genreindex IN
-				(SELECT Genreindex FROM Tracktable
-				WHERE Uri IS NOT NULL
-				AND Hidden = 0
-				".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
-				".$sflag."
-				)
-			ORDER BY Genre ASC";
-		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
+		$result = prefs::$database->generic_sql_query(
+			"SELECT Genre, Genreindex
+				FROM Genretable AS g
+				WHERE
+				Genreindex IN
+					(SELECT Genreindex FROM Tracktable
+					WHERE Uri IS NOT NULL
+					AND Hidden = 0
+					{$db->track_date_check(prefs::get_pref('collectionrange'), $this->why)}
+					{$this->filter_root_on_why()}
+					)
+				ORDER BY Genre ASC",
+			false, PDO::FETCH_ASSOC
+		);
 		foreach ($result as $genre) {
 			yield $genre;
 		}
@@ -152,31 +153,35 @@ class sortby_genre extends sortby_base {
 	}
 
 	private function genre_albumcount($genreindex) {
-		$qstring =
-		"SELECT COUNT(Albumindex) AS num
-		FROM
-		Albumtable LEFT JOIN Tracktable USING (Albumindex)
-		WHERE
-			Genreindex = ".$genreindex.
-			" AND Hidden = 0
-			AND Uri IS NOT NULL ".
-			$this->filter_track_on_why();
-		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->sql_prepare_query(false, null, 'num', 0,
+			"SELECT
+				COUNT(Albumindex) AS num
+			FROM
+				Albumtable LEFT JOIN Tracktable USING (Albumindex)
+			WHERE
+				Genreindex = ?
+				AND Hidden = 0
+				AND Uri IS NOT NULL
+				{$this->filter_track_on_why()}",
+			$genreindex
+		);
 	}
 
 	private function album_genre_trackcount($albumindex, $genreindex) {
-		$qstring =
-		"SELECT
-			COUNT(TTindex) AS num
-		FROM
-			Tracktable
-		WHERE
-			Albumindex = ".$albumindex.
-			" AND Genreindex = ".$genreindex.
-			" AND Hidden = 0
-			AND Uri IS NOT NULL ".
-			$this->filter_track_on_why();
-		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->sql_prepare_query(false, null, 'num', 0,
+			"SELECT
+				COUNT(TTindex) AS num
+			FROM
+				Tracktable
+			WHERE
+				Albumindex = ?
+				AND Genreindex = ?
+				AND Hidden = 0
+				AND Uri IS NOT NULL
+				{$this->filter_track_on_why()}",
+			$albumindex,
+			$genreindex
+		);
 	}
 
 }

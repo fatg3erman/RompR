@@ -85,7 +85,7 @@ var sleepTimer = function() {
 
 		pollState: async function() {
 			clearTimeout(polltimer);
-			debug.log('SLEEPTIMER', 'Polling');
+			debug.debug('SLEEPTIMER', 'Polling');
 			let state = await $.ajax({
 				type: 'GET',
 				url: 'api/sleeptimer/?poll=1'

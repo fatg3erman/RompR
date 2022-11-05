@@ -2,13 +2,10 @@
 class cache_cleaner extends database {
 
 	public function check_clean_time() {
-		$last_clean = $this->simple_query('Value', 'Statstable', 'Item', 'LastCache', time() + 90000);
+		$last_clean = $this->get_admin_value('LastCache', time() + 90000);
 		if ($last_clean + 86400 <= time()) {
 			logger::mark('CACHE CLEANER', 'Time To Clean The Cache');
-			$this->sql_prepare_query(true, null, null, null,
-				"UPDATE Statstable SET Value = ? WHERE Item = 'LastCache'",
-				time()
-			);
+			$this->set_admin_value('LastCache', time());
 			return true;
 		}
 		return false;
@@ -202,7 +199,7 @@ class cache_cleaner extends database {
 	}
 
 	private function tidy_wishlist() {
-		$this->generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex NOT IN (SELECT DISTINCT Sourceindex FROM Tracktable WHERE Sourceindex IS NOT NULL)");
+		$this->generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex NOT IN (SELECT DISTINCT Sourceindex FROM Tracktable WHERE Sourceindex IS NOT NULL)", true);
 	}
 
 	private function tidy_ratings_and_playcounts() {

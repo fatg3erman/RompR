@@ -156,7 +156,7 @@ var playlist = function() {
 			checkStatus: async function() {
 				// clearTimeout(status_check_timer);
 				// status_check_timer = setTimeout(playlist.radioManager.checkRemoteChanges, 1000);
-				debug.log('RADIOMANAGER', 'Status Check',player.status.smartradio.radiomode, this_radio, player.status.smartradio.radioparam, this_param);
+				debug.debug('RADIOMANAGER', 'Status Check',player.status.smartradio.radiomode, this_radio, player.status.smartradio.radioparam, this_param);
 				if (player.status.smartradio.radiomode != this_radio || player.status.smartradio.radioparam != this_param) {
 					await playlist.radioManager.load(player.status.smartradio.radiomode, player.status.smartradio.radioparam, true);
 					setHeader();

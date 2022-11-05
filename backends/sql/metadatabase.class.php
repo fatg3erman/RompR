@@ -468,7 +468,10 @@ class metaDatabase extends playlistCollection {
 
 	public function resetSyncCounts($ttids) {
 		foreach ($ttids as $ttid) {
-			$this->generic_sql_query("UPDATE Playcounttable SET SyncCount = 0 WHERE TTindex = ".$ttid, true);
+			$this->sql_prepare_query(true, null, null, null,
+				"UPDATE Playcounttable SET SyncCount = 0 WHERE TTindex = ?",
+				$ttid
+			);
 		}
 	}
 
@@ -563,7 +566,7 @@ class metaDatabase extends playlistCollection {
 	public function cleanup($data) {
 		logger::info("CLEANUP", "Doing Database Cleanup And Stats Update");
 		$this->remove_cruft();
-		$this->generic_sql_query("DELETE FROM Bookmarktable WHERE Bookmark = 0");
+		$this->generic_sql_query("DELETE FROM Bookmarktable WHERE Bookmark = 0", true);
 		$this->update_track_stats();
 		$this->doCollectionHeader();
 	}
@@ -891,13 +894,19 @@ class metaDatabase extends playlistCollection {
 	}
 
 	private function check_audiobook_status($ttid) {
-		$albumindex = $this->generic_sql_query("SELECT Albumindex FROM Tracktable WHERE TTindex = ".$ttid, false, null, 'Albumindex', null);
+		$albumindex = $this->sql_prepare_query(false, null, 'Albumindex', null,
+			"SELECT Albumindex FROM Tracktable WHERE TTindex = ?",
+			$ttid
+		);
 		if ($albumindex !== null) {
 			$sorter = choose_sorter_by_key('zalbum'.$albumindex);
 			$lister = new $sorter('zalbum'.$albumindex);
 			if ($lister->album_trackcount($albumindex) > 0) {
 				logger::log('USERRATING', 'Album '.$albumindex.' is an audiobook, updating track audiobook state');
-				$this->generic_sql_query("UPDATE Tracktable SET isAudiobook = 2 WHERE TTindex = ".$ttid);
+				$this->sql_prepare_query(true, null, null, null,
+					"UPDATE Tracktable SET isAudiobook = 2 WHERE TTindex = ?",
+					$ttid
+				);
 			}
 		}
 	}
@@ -918,12 +927,12 @@ class metaDatabase extends playlistCollection {
 				return false;
 			}
 
-			if ($result = $this->sql_prepare_query(true, null, null, null,
+			if ($this->sql_prepare_query(true, null, null, null,
 					"INSERT INTO TagListtable (TTindex, Tagindex) VALUES (?, ?)",
 						$ttid,
 						$tagindex
 					)
-				) {
+			) {
 				logger::debug("ADD TAGS", "Success");
 				if (in_array($t, prefs::get_pref('auto_audiobook'))) {
 					logger::log('ADD TAGS', 'Setting TTindex',$ttid,'as audiobook due to tag',$t);
@@ -960,7 +969,11 @@ class metaDatabase extends playlistCollection {
 		logger::log("REMOVE TAG", "Removing Tag",$tag,"from TTindex",$ttid);
 		$retval = false;
 		if ($tagindex = $this->simple_query('Tagindex', 'Tagtable', 'Name', $tag, false)) {
-			$retval = $this->generic_sql_query("DELETE FROM TagListtable WHERE TTindex = '".$ttid."' AND Tagindex = '".$tagindex."'", true);
+			$retval = $this->sql_prepare_query(true, null, null, null,
+				"DELETE FROM TagListtable WHERE TTindex = ? AND Tagindex = ?",
+				$ttid,
+				$tagindex
+			);
 		} else {
 			logger::warn("REMOVE TAG", "  ..  Could not find tag",$tag);
 		}
@@ -1008,7 +1021,10 @@ class metaDatabase extends playlistCollection {
 	}
 
 	private function delete_album($albumindex) {
-		$result = $this->generic_sql_query('DELETE FROM Tracktable WHERE Albumindex = '.$albumindex);
+		$this->sql_prepare_query(true, null, null, null,
+			"DELETE FROM Tracktable WHERE Albumindex = ?",
+			$albumindex
+		);
 		return true;
 	}
 
@@ -1053,8 +1069,14 @@ class metaDatabase extends playlistCollection {
 				['attribute' => 'Playcount', 'value' => $meta['Playcount']]
 			];
 			$this->returninfo['deletedwishlist'][] = $ttid;
-			$this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex=".$ttid, true);
-			$this->generic_sql_query("DELETE FROM Tracktable WHERE TTindex=".$ttid, true);
+			$this->sql_prepare_query(true, null, null, null,
+				"DELETE FROM Playcounttable WHERE TTindex = ?",
+				$ttid
+			);
+			$this->sql_prepare_query(true, null, null, null,
+				"DELETE FROM Tracktable WHERE TTindex = ?",
+				$ttid
+			);
 		}
 		return $retval;
 	}
@@ -1092,8 +1114,14 @@ class metaDatabase extends playlistCollection {
 				['attribute' => 'Playcount', 'value' => $meta['Playcount']]
 			];
 			$this->returninfo['deletedwishlist'][] = $obj['TTindex'];
-			$this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex=".$obj['TTindex'], true);
-			$this->generic_sql_query("DELETE FROM Tracktable WHERE TTindex=".$obj['TTindex'], true);
+			$this->sql_prepare_query(true, null, null, null,
+				"DELETE FROM Playcounttable WHERE TTindex = ?",
+				$obj['TTindex']
+			);
+			$this->sql_prepare_query(true, null, null, null,
+				"DELETE FROM Tracktable WHERE TTindex = ?",
+				$obj['TTindex']
+			);
 		}
 		return $retval;
 	}
@@ -1116,12 +1144,13 @@ class metaDatabase extends playlistCollection {
 		// Misleadingly named function which should be used to get ratings and tags
 		// (and whatever else we might add) based on a TTindex
 		$data = self::NODATA;
-		$result = $this->generic_sql_query("SELECT
+		$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
+			"SELECT
 				IFNULL(r.Rating, 0) AS Rating,
 				IFNULL(p.Playcount, 0) AS Playcount,
-				".$this->sql_to_unixtime('p.LastPlayed')." AS LastTime,
-				".$this->sql_to_unixtime('tr.DateAdded')." AS DateAdded,
-				IFNULL(".database::SQL_TAG_CONCAT.", '') AS Tags,
+				{$this->sql_to_unixtime('p.LastPlayed')} AS LastTime,
+				{$this->sql_to_unixtime('tr.DateAdded')} AS DateAdded,
+				IFNULL({$this->get_constant('self::SQL_TAG_CONCAT')}, '') AS Tags,
 				tr.isSearchResult,
 				tr.Hidden
 			FROM
@@ -1130,9 +1159,10 @@ class metaDatabase extends playlistCollection {
 				LEFT JOIN Playcounttable AS p ON tr.TTindex = p.TTindex
 				LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
 				LEFT JOIN Tagtable AS t USING (Tagindex)
-			WHERE tr.TTindex = ".$ttid."
+			WHERE tr.TTindex = ?
 			GROUP BY tr.TTindex
-			ORDER BY t.Name"
+			ORDER BY t.Name",
+			$ttid
 		);
 		if (count($result) > 0) {
 			$data = array_shift($result);
@@ -1164,13 +1194,13 @@ class metaDatabase extends playlistCollection {
 		// the Collection not Spoken Word, but this doesn't work oh god it's horrible just leave it.
 
 		logger::info('BACKEND', "Removing track ".$ttid);
-		$result = false;
-		if ($this->generic_sql_query("DELETE FROM Tracktable WHERE isSearchResult != 1 AND TTindex = '".$ttid."'",true)) {
-			if ($this->generic_sql_query("UPDATE Tracktable SET isSearchResult = 2, isAudiobook = 0 WHERE isSearchResult = 1 AND TTindex = '".$ttid."'", true)) {
-				$result = true;
-			}
+		if (
+			$this->sql_prepare_query(true, null, null, null, "DELETE FROM Tracktable WHERE isSearchResult != 1 AND TTindex = ?", $ttid)
+			&& $this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET isSearchResult = 2, isAudiobook = 0 WHERE isSearchResult = 1 AND TTindex = ?", $ttid)
+		) {
+			return true;
 		}
-		return $result;
+		return false;
 	}
 
 	public function prepare_returninfo() {

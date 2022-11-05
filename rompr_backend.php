@@ -22,11 +22,11 @@ while (true) {
         $mon_running = false;
         if (array_key_exists($player, $monitors) && posix_getpgid($monitors[$player]) !== false) {
             // If we started it and it's still running
-            logger::debug('DAEMON', "Monitor for",$player,"already running");
+            logger::core('DAEMON', "Monitor for",$player,"already running");
             $def_now = prefs::get_def_for_player($player);
             if (array_key_exists($player, $players_now) && player_def_changed($def_now, $players_now[$player])) {
                 // If we started it, it's still running, and the definition has changed since we started it
-                logger::trace('DAEMON', "Player",$player,"definition has changed - restarting monitor");
+                logger::info('DAEMON', "Player",$player,"definition has changed - restarting monitor");
                 kill_process($monitors[$player]);
             } else {
                 $mon_running = true;

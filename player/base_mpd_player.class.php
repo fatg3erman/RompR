@@ -1501,17 +1501,34 @@ class base_mpd_player {
 		if ($rp['radiomode'] == '')
 			return;
 
-		$playlistlength = $this->get_status_value('playlistlength');
+		// We need to get playlistlength again as our current status values might be wrong
+		$mpd_status = $this->get_status();
+		$playlistlength = array_key_exists('playlistlength', $mpd_status) ? $mpd_status['playlistlength'] : null;
+		if ($playlistlength === null) {
+			logger::log(prefs::currenthost(), 'Could not get playlistlength. Trying again next time');
+			return;
+		}
+		$song = array_key_exists('song', $mpd_status) ? $mpd_status['song'] : null;
+		logger::log(prefs::currenthost(), 'Song position is',$song);
+		// Always add just one track to reduce the load on Mopidy, important when using youtube or ytmusic
+		// The idle callback will keep calling back here until we have nough tracks.
+		// The excpetion is the edge case where Mopidy skips over an unplayable track. This leaves us playing
+		// track 2. We can remove track 1 but we then need to add 2 tracks otherwise we never catch up
+		// if we only add one at a time.
+		$tracksneeded = 1;
+		while ($song !== null && $song > 0) {
+			$song--;
+			$tracksneeded++;
+			$playlistlength--;
+			$this->do_mpd_command('delete '.$song);
+		}
 
 		logger::log(prefs::currenthost(), 'Radio Params Are',$rp['radiomode'], $rp['radioparam']);
 		logger::trace(prefs::currenthost(), 'Playlist Length is',$playlistlength,'Chunk Size is',prefs::get_pref('smartradio_chunksize'));
 
 		if ($playlistlength < prefs::get_pref('smartradio_chunksize')) {
-			// $tracksneeded = prefs::get_pref('smartradio_chunksize') - $playlistlength;
-			// Always add just one track to reduce the load on Mopidy, important when using youtube or ytmusic
-			// The idle callback will keep calling back here until we have nough tracks.
 			$this->get_smartradio_database();
-			$this->do_smartradio(1);
+			$this->do_smartradio($tracksneeded);
 		}
 	}
 

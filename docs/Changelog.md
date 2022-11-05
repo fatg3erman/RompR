@@ -7,6 +7,7 @@
 
 * This bump in version number reflects a big change in how RompR works internally. This has allowed me to improve
 a lot of the functionality, but I cannot possibly test it on every system.
+* **You must be running RompR version 1.40 or newer to upgrade to this version**
 * **It is strongly reccommended that you [back up your entire database](/Backing-Up-Your-Metadata#Backing-Up-Your-Entire_database)
 before updating to this version, as if it does not work for you then rolling back will be impossible without a database backup.**
 * **In order to upgrade to this version from an earlier version you must delete everything from your installation except your prefs and albumart directories,
@@ -59,7 +60,10 @@ added to Your Wishlist. Note that selecting this option will force a rescan of y
  I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
  If you have enabled Youtube Music support in Mopidy the Wishlist Viewer will permit you to search for tracks on Youtube Music
  and import them into your Collection in place of your Spotify tracks, preserving the tags, ratings, and playcounts.
-* For YouTube Music support in RompR, the best results come with my fork of Mopidy-YTMusic : https://github.com/fatg3erman/mopidy-ytmusic/tree/feature/browse-album
+* For YouTube Music support in RompR you can use Mopidy-Youtube with musicapi_enabled set to true,
+or my fork of Mopidy-YTMusic : https://github.com/fatg3erman/mopidy-ytmusic/tree/feature/browse-album
+* The standard release of Mopidy-YTMusic cannot add tracks from your Colllection to the play queue if it has not seen them
+before. My fork fixes that issue along with a few other issues it has as regards working with RompR.
 * For Mopidy users, all Personalised Radio stations that relied on Spotify support have been removed and are not coming back.
 * The other Mopidy-specific Personal radio stations have been adjusted so that they work with Mopidy-Youtube and Mopidy-YTMusic.
  For best results with Mopidy-Youtube you should ensure you have a Youtube Music account and enable it in the youtube section of
