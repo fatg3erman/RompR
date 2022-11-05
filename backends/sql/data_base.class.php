@@ -28,7 +28,6 @@ class data_base {
 			logger::mark("SQL_CONNECT", "Connected to MySQL");
 			prefs::set_pref(['collection_type' => 'mysql']);
 			$retval = true;
-			$mysqlc = null;
 		} catch (PDOException $e) {
 			logger::warn("SQL_CONNECT", "Couldn't connect to MySQL");
 			$error = $e->getMessage();
@@ -42,13 +41,12 @@ class data_base {
 				logger::log("SQL_CONNECT", "Connected to SQLite");
 				prefs::set_pref(['collection_type' => 'sqlite']);
 				$retval = true;
-				$mysqlc = null;
 			} catch (PDOException $e) {
 				logger::warn("SQL_CONNECT", "Couldn't use SQLite Either");
 				$error .= '<br />'.$e->getMessage();
-				$mysqlc = null;
 			}
 		}
+		$mysqlc = null;
 		return array($retval, $e);
 	}
 
