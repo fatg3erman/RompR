@@ -2467,6 +2467,10 @@ div.top_drop_menu button.notenabled,
 	pointer-events: none !important;
 }
 
+div.smartradio.lastfmlogin-required.notenabled {
+	display: none;
+}
+
 .top_drop_menu .top_drop_menu {
 	position: relative;
 }

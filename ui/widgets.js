@@ -1705,6 +1705,10 @@ function popup(opts) {
 		win.css({display: ''});
 	}
 
+	this.scrollTo = function(target) {
+		contentholder.romprScrollTo(target);
+	}
+
 }
 
 /*

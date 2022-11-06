@@ -32,9 +32,8 @@ They use your Last.FM scrobbles and Last.FM's suggestion engine to create playli
 
 The Music From Everywhere stations will search your Mopidy sources for music to play.
 
-If you're using Mopidy-YTMusic and you're not a paid subscriber it wil work but some tracks will not play. Also tracks from
-Mopidy-YTMusic cannot be added to the Music Collection because Mopidy-YTMusic cannot accept a URI it has not seen before. If you attempt to add a YTMusic track to the
-Collection it will instead be added to the Wishlist.
+If you're using Mopidy-YTMusic and you're not a paid subscriber it wil work but some tracks will not play. Also read the notes [here](/RompR/Rompr-And-Mopidy)
+because YTMusic works best if you use my fork, which allows you to add tracks the Music Collection.
 
 If you're using Mopidy-Youtube these stations work best if you enable the Music API. See the Mopidy-Youtube documentation for how to do that.
 
@@ -42,8 +41,7 @@ If you're using Mopidy-Youtube these stations work best if you enable the Music 
 
 When listening to internet radio, if the station you're listening to provides Artist and Title information, this will be displayed in the now-playing panel.
 If you hear a track you like you can give it rating or a tag.
-RompЯ will then search for it using your Mopidy backends and will add it into your collection if it finds it. Note that due to the Mopidy-YTMusic limitation
-mentioned above that backend will not be used for this search.
+RompЯ will then search for it using your Mopidy backends and will add it into your collection if it finds it.
 It the track is already in your collection, the rating or tag will be added to that track instead.
 
 If the track can't be found it will be added to your [Wishlist](/RompR/The-Wishlist)

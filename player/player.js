@@ -42,7 +42,10 @@ var player = function() {
 			$('<div>', {class: 'expand'}).appendTo(remove_row);
 			$('<i>', {class: 'fixed icon-cancel-circled smallicon clickicon clickremhost', name: name}).on('click', removePlayerDef).appendTo(remove_row);
 			numhosts++;
-			playerpu.adjustCSS(true, true);
+			if (is_new) {
+				playerpu.adjustCSS(true, true);
+				playerpu.scrollTo(holder);
+			}
 		}
 
 		function updatePlayerChoices() {
