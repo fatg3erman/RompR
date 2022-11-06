@@ -10,14 +10,7 @@ The Websocket Server is written in Python, because PHP isn't very good at that k
 	python3-asyncio
 	python3-websockets
 
-Python probably needs to be at least version 3.9. asyncio is normally installed as part of a base python3 install.
-Websockets probably isn't installed and needs to be at least Version 10. At the time of writing you will have to install this from
-pip on most current distributions as even Ubuntu 22.04 is only shipping version 9.
-
-	sudo pip3 install websockets
-
-* Note the use of sudo above. The Websocket Server will be started by the webserver, hence the websockets package needs to be
-globally available. On most systems using pip3 without sudo will install it only for the user you're logged in as.
+Python probably needs to be at least version 3.9.
 
 * Note that there is also a package for python3 called 'websocket'. This is NOT the same package as websockets and will not work.
 
@@ -51,4 +44,3 @@ If you're using a UNIX socket instead of Host and Port use:
 If you need a password, add a --mpdpassword= parameter to the end
 
 You MUST specify the parameters in that order or RompR will attempt to kill the process when it starts up, and will not be able to.
-

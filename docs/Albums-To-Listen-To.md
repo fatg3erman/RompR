@@ -6,11 +6,8 @@ The Albums To Listen To plugin is a place where you can keep a record of Spotify
 
 You can add albums to this list from the [Spotify Info Panel](/RompR/The-Info-Panel). You can then come back and listen at your leisure.
 
-You can also add albums to this list from search results if those albums are from Youtube Music.
+You can also add albums to this list from search results and from the Play Queue if those albums are from Youtube.
 
-If you have Mopidy with Youtube Music support (using either mopidy-youtube or mopidy-ytmusic) then you can click the track names in the
-album and RompR will attempt to find that track on Youtube Music and play it.
+If you have Mopidy with Youtube Music support (using either mopidy-youtube or mopidy-ytmusic) then you can click the track names in the album and RompR will attempt to find that track on Youtube Music and play it.
 
 All of the albums can be expanded to show a full track listing and a biography of the artist.
-
-Albums To Listen To is different from The Wishlist. The Wishlist contains a list of tracks you heard on the radio that you wanted in your Music Collection but which could *not* be located on Spotify. Albums To Listen To contains albums that *are* on Spotify that you've not yet decided you want in your Music Collection.

@@ -1,6 +1,6 @@
 # Music Discovery
 
-RompЯ contains many features to help you discover new music based on your listening habits. These will work best if you are using RompЯ with Mopidy and a Spotify Premium subscription and I'll be assuming that is the case. If you don't have Spotify then you can still get suggestions of albums you might like but you will not be able to add tracks to the playlist.
+RompЯ contains many features to help you discover new music based on your listening habits. These will work best if you are using RompЯ with Mopidy and an onlue music source such as Youtube Music and I'll be assuming that is the case. If you don't have this then you can still get suggestions of albums you might like but you will not be able to add tracks to the play queue.
 
 ## More Personalised Radio
 
@@ -10,6 +10,7 @@ with Spotify, Youtube, or YTMusic.
 ### Music From Everywhere
 
 ![](images/musicfromeverywhere.png)
+
 This panel allows you to make use of all your Mopidy sources - Soundcloud, Youtube, Youtube Music, etc to create playlists.
 
 Recommendations For You uses your Favourite Artists as determined by your RompR playcounts and then uses Spotify's API to get recommended tracks based on

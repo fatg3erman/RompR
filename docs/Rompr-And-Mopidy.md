@@ -69,6 +69,9 @@ You will only see options for backends that are enabled in Mopidy. The complete 
 * **SoundCloud 'Liked'** ('soundcloud' backend must be enabled)
 * **SoundCloud 'Sets'** ('soundcloud' backend must be enabled)
 * **VKontakte** ('vkontakte' backend must be enabled)
+* **Youtube Music Liked Songs** ('ytmusic' backend must be enabled)
+* **YouTube Music Albums** ('ytmusic' backend must be enabled)
+* **YouTube Music Subscription** ('ytmusic' backend must be enabled)
 
 
 If you don't want to build a collection this way, tracks from anywhere can be added to the collection by tagging or rating them at any time.
@@ -96,7 +99,7 @@ Otherwise beets will not allow RompЯ to talk to it. Your configuration for beet
 If Mopidy's HTTP interface is available and you do a search in RompR and limit the search to specific backends the search will be performed
 using Mopidy's HTTP interface instead of the MPD interface. This can provide significantly improved search performance and better
 quality information and really helps when running 'Music From Anywhere' personalised radio, but it can use a lot of RAM and in certain setups
-it might be a lot slower. You can disable this behaviour by unchcking 'Use Mopidy HTTP interface for Search' on the rompr/?setup screen.
+it might be a lot slower. You can disable this behaviour by unchecking 'Use Mopidy HTTP interface for Search' on the rompr/?setup screen.
 
 
 ## Scanning Local Files
@@ -142,7 +145,7 @@ Mopidy-YTMusic cannot accept a URI it has not seen before. This gives RompR prob
 Mopidy, because all the tracks in your collection will no longer work. I have suggested a fix for this that works for RompR but as yet there has
 been no movement on it. https://github.com/OzymandiasTheGreat/mopidy-ytmusic/pull/69.
 
-My fork of Mopidy-YTMusic is here, and I recommend you use this until the above chnage is merged into the main version.
+My fork of Mopidy-YTMusic is here, and I recommend you use this until the above change is merged into the main version.
 
 https://github.com/fatg3erman/mopidy-ytmusic/tree/feature/browse-album
 
@@ -172,7 +175,7 @@ The binaries must be installed so that they can be executed by your webserver. R
 If you're trying to use this feature and you keep getting an error, enable debug logging and look at the output.
 If all the binaries are installed then the debug log will tell you the command line it is using, you should try that from a console to look for error messages.
 
-Assuming it works, the YoutTube video will be downloaded and the audio will be extracted to a FLAC file which will be streamed from your webserver
+Assuming it works, the YouTube video will be downloaded and the audio will be extracted to a FLAC file which will be streamed from your webserver
 using Mopidy's Stream backend the next time you add the track to the play queue.
 
 The file will be downloaded to a subdirectory under rompr/prefs/youtubedl/. Assuming the download actually started there will be a log file
