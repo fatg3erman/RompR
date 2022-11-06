@@ -63,6 +63,7 @@ body.desktop #headerbar
 {
     background-color: var(--top_drop_menu-bg-colour);
     background-image: var(--top_drop_menu-bg-image);
+    z-index: 50000;
 }
 
 div.notification {
@@ -2368,9 +2369,15 @@ div.plugin_backi_drop-images {
 }
 
 .popupcontents {
-	padding-left: 2px;
-	padding-right: 2px;
-	padding-top: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	padding-top: 4px;
+	padding-bottom: 8px;
+}
+
+.popupbuttons {
+	padding-top: 8px;
+	border-top: 1px solid var(--border-colour);
 }
 
 /*
@@ -2439,8 +2446,25 @@ div.top_drop_menu div:not(.canbefaded) {
 	opacity: 1 !important;
 }
 
-div.top_drop_menu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols i.notenabled, div.top_drop_menu button.notenabled {
+div.top_drop_menu div.notenabled,
+div.togglecontainer.notenabled,
+div#flowcontrols i.notenabled,
+div.top_drop_menu button.notenabled,
+.lastfmlogin-required.notenabled
+{
 	opacity: 0.2 !important;
+	cursor: not-allowed !important;
+}
+
+.notenabled input,
+.notenabled label,
+.notenabled select,
+.notenabled input:hover
+.notenabled label:hover
+.notenabled select:hover
+{
+	cursor: not-allowed !important;
+	pointer-events: none !important;
 }
 
 .top_drop_menu .top_drop_menu {

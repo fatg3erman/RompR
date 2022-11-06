@@ -1530,6 +1530,7 @@ function popup(opts) {
 	var modal_screen = null;
 	var button_holder;
 	var has_scrollbar = false;
+	var win_width = 400;
 
 	var options = {
 		width: 100,
@@ -1570,9 +1571,6 @@ function popup(opts) {
 		// Div to hold the window
 		win = $('<div>', { id: winid, class: "popupwindow dropshadow noselection" }).appendTo($('body'));
 
-		// inner container
-		// var container = $('<div>', {class: 'containerbox vertical popupcontentcontainer'}).appendTo(win);
-
 		//titlebar
 		var tit_options = {
 			title_class: 'dragmenu fixed',
@@ -1590,7 +1588,7 @@ function popup(opts) {
 		// actual content holder. We need this so we can add a scrollbar to the above
 		contents = $('<div>',{class: 'popupcontents'}).appendTo(contentholder);
 
-		button_holder = $('<div>', {class: 'clearfix'}).appendTo(win);
+		button_holder = $('<div>', {class: 'popupbuttons clearfix'}).appendTo(win);
 
 		win.floatingMenu({
 			handleshow: false,
@@ -1598,6 +1596,11 @@ function popup(opts) {
 			addClassTo: (options.hasclosebutton) ? 'configtitle' : false
 		});
 		titlebar.find('.closemenu').on('click',  function() {self.close(false)});
+		// MUST set the width before putting content in it otherwise if text wraps
+		// when we set the width later on our height will be wrong
+		var w = getWindowSize();
+		win_width = Math.min(w.x-16, options.width);
+		win.css({width: win_width+'px'});
 		return contents;
 	}
 
@@ -1607,6 +1610,7 @@ function popup(opts) {
 		var titlebar_height = titlebar.outerHeight(true);
 		var button_height = button_holder.outerHeight(true);
 		var content_height = contents.outerHeight(true);
+
 		// We have to use this 16 pixel fudge factor or the browser will
 		// add a scrollbar to it.
 		var content_holder_height = content_height + 16;
@@ -1622,7 +1626,6 @@ function popup(opts) {
 		contentholder.css({height: content_holder_height+'px'});
 
 		win_height = titlebar_height + button_height + content_holder_height;
-		var win_width = Math.min(w.x-16, options.width);
 
 		var css = {height: win_height, width: win_width};
 
@@ -1652,7 +1655,11 @@ function popup(opts) {
 	}
 
 	this.open = function() {
-		win.css({opacity: 1});
+		if (button_holder.is(':empty')) {
+			button_holder.remove();
+			contents.css({'padding-bottom': '0px'});
+		}
+
 		self.adjustCSS(true, true);
 		win.css({opacity: 1});
 	}

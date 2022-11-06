@@ -625,21 +625,21 @@ var infobar = function() {
 		},
 
 		removenotify: function(data) {
-			if ($('#notifications>div').length == 1) {
-				debug.debug("INFOBAR","Removing single notification");
-				if ($('#notifications').is(':visible')) {
-					$('#notifications').slideToggle('fast', function() {
-						$('#notifications').empty();
-					});
-				} else {
-					$('#notifications').empty();
-				}
-			} else {
+			// if ($('#notifications>div').length == 1) {
+			// 	debug.debug("INFOBAR","Removing single notification");
+			// 	if ($('#notifications').is(':visible')) {
+			// 		$('#notifications').slideToggle('fast', function() {
+			// 			$('#notifications').empty();
+			// 		});
+			// 	} else {
+			// 		$('#notifications').empty();
+			// 	}
+			// } else {
 				debug.debug("INFOBAR","Removing notification", data);
 				$('#notify_'+data).fadeOut('fast', function() {
 					$('#notify_'+data).remove();
 				});
-			}
+			// }
 		},
 
 		createProgressBar: function() {

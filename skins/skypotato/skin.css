@@ -191,7 +191,6 @@ input[type=text],input[type="number"] {
 	padding:8px;
 	top:0px;
 	display:none;
-	z-index:2000;
 	left: 0;
 	right: 0;
 	margin: 0 auto;

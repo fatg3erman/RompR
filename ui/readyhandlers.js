@@ -83,7 +83,8 @@ var startBackgroundInitTasks = function() {
 		collectionHelper.checkCollection,
 		load_podcasts,
 		open_discoverator,
-		load_playlists
+		load_playlists,
+		uiLoginBind
 	];
 
 	return {

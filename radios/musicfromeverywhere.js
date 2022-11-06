@@ -68,7 +68,7 @@ var lastFMTrackRadio = function() {
 				//
 				var holder = $("#pluginplaylists_everywhere");
 				['7day', '1month', '12month', 'overall'].forEach(function(l) {
-					holder.append(playlist.radioManager.standardBox('lastFMTrackRadio', l, 'icon-lastfm-1', language.gettext('label_lastfm_mix_'+l)));
+					holder.append(playlist.radioManager.standardBox('lastFMTrackRadio', l, 'icon-lastfm-1', language.gettext('label_lastfm_mix_'+l), 'lastfmlogin-required notenabled'));
 				});
 			}
 		}
@@ -86,7 +86,7 @@ var lastFMArtistRadio = function() {
 				//
 				var holder = $("#pluginplaylists_everywhere");
 				['7day', '1month', '12month', 'overall'].forEach(function(l) {
-					holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', l, 'icon-lastfm-1', language.gettext('label_lastfm_dip_'+l)));
+					holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', l, 'icon-lastfm-1', language.gettext('label_lastfm_dip_'+l), 'lastfmlogin-required notenabled'));
 				});
 			}
 		}

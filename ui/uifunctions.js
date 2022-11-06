@@ -554,6 +554,7 @@ function showUpdateWindow() {
 			debug.warn('INIT','Upgrade Check Failed',xhr,status,err);
 		});
 	}
+
 }
 
 function showNewVersionWindow(version) {
@@ -563,10 +564,9 @@ function showNewVersionWindow(version) {
 			hasclosebutton: false
 		});
 		var mywin = fnarkle.create();
-		var d1 = $('<div>', {class: 'textcentre'}).appendTo(mywin);
-		d1.html('Version '+version+' is now available. You have version '+rompr_version);
-		var d2 = $('<div>', {class: 'textcentre'}).appendTo(mywin);
-		d2.html('<a href="https://github.com/fatg3erman/RompR/releases" target="_blank">Download The Latest Release Here</a>');
+		mywin.addClass('textcentre');
+		mywin.append($('<p>').html('Version '+version+' is now available. You have version '+rompr_version));
+		mywin.append($('<a>', {href: "https://github.com/fatg3erman/RompR/releases", target: '_blank'}).html('Download The Latest Release Here'));
 		fnarkle.addCloseButton('Remind Me Later', updateRemindLater);
 		fnarkle.addCloseButton('Never Remind Me', function() {
 			prefs.save({lastversionchecked: version, lastversionchecktime: Date.now()});

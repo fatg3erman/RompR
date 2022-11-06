@@ -14,11 +14,11 @@ function LastFM() {
 	//
 	// --------------------------------------------------------------------------------------------------
 
-	function startlogin() {
+	this.startlogin = function() {
 		self.login($('#configpanel input[name="lfmuser"]').val());
 	}
 
-	function logout() {
+	this.logout = function() {
 		prefs.save({
 			lastfm_session_key: '',
 			lastfm_user: '',
@@ -42,12 +42,12 @@ function LastFM() {
 					cache: false
 				}
 			},
-			startLogin,
+			do_login,
 			loginError
 		);
 	}
 
-	function startLogin(data) {
+	function do_login(data) {
 		token = data.token;
 		debug.core("LASTFM","Token",token);
 		var lfmlog = new popup({
@@ -55,13 +55,11 @@ function LastFM() {
 			title: language.gettext("lastfm_loginwindow")
 		});
 		var mywin = lfmlog.create();
-		let table = $('<table>', {align: 'center', cellpadding: '2', width: '90%', id: 'lfmlogintable'}).appendTo(mywin);
-		table.append($('<tr>').append($('<td>')).html(language.gettext("lastfm_login1")));
-		table.append($('<tr>').append($('<td>')).html(language.gettext("lastfm_login2")));
-		let loginbutton = $('<button>').appendTo($('<td>', {align: 'center'}).appendTo($('<tr>').appendTo(table)));
-		loginbutton.html(language.gettext("lastfm_loginbutton"));
-		loginbutton.wrap($('<a>', {href: data.url, target: '_blank'}));
-		table.append($('<tr>').append($('<td>')).html(language.gettext("lastfm_login3")));
+		mywin.addClass('textcentre');
+		mywin.append($('<p>').html(language.gettext("lastfm_login1")));
+		mywin.append($('<p>').html(language.gettext("lastfm_login2")));
+		mywin.append($('<a>', {href: data.url, target: '_blank'}).html(language.gettext("lastfm_loginbutton")));
+		mywin.append($('<p>').html(language.gettext("lastfm_login3")));
 		lfmlog.addCloseButton('OK',lastfm.finishlogin);
 		lfmlog.open();
 	}
@@ -93,19 +91,6 @@ function LastFM() {
 		);
 		return true;
 	}
-
-	function uiLoginBind() {
-		if (!prefs.lastfm_logged_in) {
-			$('.lastfmlogin-required').removeClass('notenabled').addClass('notenabled');
-			$('input[name="lfmuser"]').val('');
-			$('#lastfmloginbutton').off('click').on('click', startlogin).html(language.gettext('config_loginbutton')).removeClass('notenabled').addClass('notenabled');
-		} else {
-			$('.lastfmlogin-required').removeClass('notenabled');
-			$('#lastfmloginbutton').off('click').on('click', logout).html(language.gettext('button_logout')).removeClass('notenabled');
-		}
-	}
-
-	uiLoginBind();
 
 	// --------------------------------------------------------------------------------------------------
 	//

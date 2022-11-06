@@ -135,6 +135,7 @@ var playlist = function() {
 						} catch (err) {
 							debug.error("RADIO MANAGER","Failed to Load Script",err);
 							infobar.error(language.gettext('label_general_error'));
+							return;
 						}
 					}
 					radios[radiomode].func.initialise(radiomode, radioparam);
@@ -144,10 +145,12 @@ var playlist = function() {
 						if (await radios[radiomode].func.getURIs()) {
 							setHeader();
 						} else {
+							infobar.error(language.gettext('label_general_error'));
 							debug.error("RADIO MANAGER","Failed to Initialise Script");
 							playlist.radioManager.stop();
-							infobar.error(language.gettext('label_general_error'));
-
+							infobar.removenotify(smart_notify);
+							smart_notify = null;
+							$('#waiter').empty();
 						}
 					}
 				}
@@ -164,15 +167,6 @@ var playlist = function() {
 						playlist.radioManager.was_stopped();
 				}
 			},
-
-			// checkRemoteChanges: function() {
-			// 	if (player.status.smartradio.radiomode != this_radio || player.status.smartradio.radioparam != this_param) {
-			// 		playlist.radioManager.load(player.status.smartradio.radiomode, player.status.smartradio.radioparam, true);
-			// 		setHeader();
-			// 		if (this_radio == '')
-			// 			playlist.radiomanager.was_stopped();
-			// 	}
-			// },
 
 			// This is a user request to stop the smart radio and return to manual
 			stop: async function() {
@@ -202,9 +196,11 @@ var playlist = function() {
 				playlist.radioManager.load(params[0], params[1] ? params[1] : null);
 			},
 
-			standardBox: function(station, param, icon, label) {
+			standardBox: function(station, param, icon, label, cls) {
+				if (cls)
+					cls = ' '+cls;
 				var container = $('<div>', {
-					class: 'menuitem containerbox playable smartradio collectionitem',
+					class: 'menuitem containerbox playable smartradio collectionitem'+cls,
 					name: station + (param ? '+'+param : '')
 				});
 				container.append('<div class="svg-square fixed '+icon+'"></div>');
@@ -561,8 +557,8 @@ var playlist = function() {
 			var tracks = new Array();
 			$.each(elements, function (index, element) {
 				var uri = $(element).attr("name");
-				debug.log("PLAYLIST","Adding",uri);
-				if (uri) {
+				if (uri && !$(element).hasClass('notenabled')) {
+					debug.log("PLAYLIST","Adding",uri);
 					if ($(element).hasClass('searchdir')) {
 						var s = addSearchDir($(element));
 						tracks = tracks.concat(s);

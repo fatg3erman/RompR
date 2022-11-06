@@ -219,7 +219,7 @@ language::add_translations([
 
 	// Last.FM
 	"lastfm_loginwindow" =>					"Log In to Last.FM",
-	"lastfm_login1" =>						"Please click the button below to open the Last.FM website in a new tab. Enter your Last.FM login details if required then give RompЯ permission to access your account",
+	"lastfm_login1" =>						"Please click the link below to open the Last.FM website in a new tab. Enter your Last.FM login details if required then give RompЯ permission to access your account",
 	"lastfm_login2" =>						"You can close the new tab when you have finished but do not close this dialog!",
 	"lastfm_loginbutton" =>					"Click Here To Log In",
 	"lastfm_login3" =>						"Once you have logged in to Last.FM, click the OK button below to complete the process",
