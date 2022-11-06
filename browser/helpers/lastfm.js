@@ -51,11 +51,7 @@ function LastFM() {
 		token = data.token;
 		debug.core("LASTFM","Token",token);
 		var lfmlog = new popup({
-			css: {
-				width: 600,
-				height: 400
-			},
-			fitheight: true,
+			width: 600,
 			title: language.gettext("lastfm_loginwindow")
 		});
 		var mywin = lfmlog.create();
@@ -67,7 +63,6 @@ function LastFM() {
 		loginbutton.wrap($('<a>', {href: data.url, target: '_blank'}));
 		table.append($('<tr>').append($('<td>')).html(language.gettext("lastfm_login3")));
 		lfmlog.addCloseButton('OK',lastfm.finishlogin);
-		lfmlog.setWindowToContentsSize();
 		lfmlog.open();
 	}
 

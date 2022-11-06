@@ -494,7 +494,7 @@ function get_player_ip() {
 	logger::log("INIT", "Prefs for mpd host is ".$pdef['host']);
 	$pip = '';
 	if ($pdef['socket'] != '') {
-		$pip = $_SERVER['SERVER_ADDR'];
+		$pip = nice_server_address($pdef['host']);
 	} else {
 		$pip = nice_server_address($pdef['host']).':'.$pdef['port'];
 	}

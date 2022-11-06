@@ -296,7 +296,7 @@ jQuery.fn.addCustomScrollBar = function() {
 			});
 			// 4 pixel high fudge div to prevent mCustomScrollbar putting scroll bars
 			// on divs that don't need them
-			$(this).find('.mCustomScrollBox').append('<div style="height:4px"></div>');
+			// $(this).find('.mCustomScrollBox').append('<div style="height:4px"></div>');
 		}
 	});
 }

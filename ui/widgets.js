@@ -1528,12 +1528,11 @@ function popup(opts) {
 	var contents;
 	var contentholder;
 	var modal_screen = null;
+	var button_holder;
+	var has_scrollbar = false;
 
 	var options = {
-		css: {
-			width: 100,
-			height: 100
-		},
+		width: 100,
 		title: "Popup",
 		helplink: null,
 		atmousepos: false,
@@ -1542,10 +1541,7 @@ function popup(opts) {
 		id: null,
 		toggleable: false,
 		hasclosebutton: true,
-		fitheight: false,
-		hasscrollbar: false,
 		closecallbacks: {},
-		buttons: null,
 		button_min_width: '1em',
 		modal: false
 	}
@@ -1571,35 +1567,93 @@ function popup(opts) {
 		if (options.modal)
 			modal_screen = $('<div>', {class: 'modal-blackout'}).appendTo($('body'));
 
+		// Div to hold the window
 		win = $('<div>', { id: winid, class: "popupwindow dropshadow noselection" }).appendTo($('body'));
-		var container = $('<div>', {class: 'containerbox vertical popupcontentcontainer'}).appendTo(win);
+
+		// inner container
+		// var container = $('<div>', {class: 'containerbox vertical popupcontentcontainer'}).appendTo(win);
+
+		//titlebar
 		var tit_options = {
-			title_class: 'dragmenu',
+			title_class: 'dragmenu fixed',
 			label_text: options.title,
 			icon_size: 'smallicon'
 		}
-
-		container.append(uiHelper.ui_config_header(tit_options));
-		titlebar = container.children('.configtitle');
+		win.append(uiHelper.ui_config_header(tit_options));
+		titlebar = win.children('.configtitle');
 		if (options.helplink)
-			container.append($('<input>', {class: 'helplink', value: options.helplink, type: 'hidden'}));
-		contentholder = $('<div>', {class: 'popupcontentholder expand'}).appendTo(container);
-		contents = $('<div>',{class: 'popupcontents clearfix'}).appendTo(contentholder);
+			win.append($('<input>', {class: 'helplink', value: options.helplink, type: 'hidden'}));
+
+		//holder for content
+		contentholder = $('<div>', {class: 'popupcontentholder'}).appendTo(win);
+
+		// actual content holder. We need this so we can add a scrollbar to the above
+		contents = $('<div>',{class: 'popupcontents'}).appendTo(contentholder);
+
+		button_holder = $('<div>', {class: 'clearfix'}).appendTo(win);
 
 		win.floatingMenu({
 			handleshow: false,
 			handleclass: 'configtitle',
-			movecallback: self.moved,
 			addClassTo: (options.hasclosebutton) ? 'configtitle' : false
 		});
 		titlebar.find('.closemenu').on('click',  function() {self.close(false)});
 		return contents;
 	}
 
+	this.adjustCSS = function(setleft, settop) {
+		var w = getWindowSize();
+		var win_height = w.y - 16;
+		var titlebar_height = titlebar.outerHeight(true);
+		var button_height = button_holder.outerHeight(true);
+		var content_height = contents.outerHeight(true);
+		// We have to use this 16 pixel fudge factor or the browser will
+		// add a scrollbar to it.
+		var content_holder_height = content_height + 16;
+
+		if ((titlebar_height + button_height + content_holder_height) > win_height) {
+			content_holder_height = win_height - titlebar_height - button_height;
+			if (!has_scrollbar) {
+				contentholder.addCustomScrollBar();
+				has_scrollbar = true;
+			}
+		}
+
+		contentholder.css({height: content_holder_height+'px'});
+
+		win_height = titlebar_height + button_height + content_holder_height;
+		var win_width = Math.min(w.x-16, options.width);
+
+		var css = {height: win_height, width: win_width};
+
+		if (options.atmousepos) {
+			css.top = Math.min(options.mousevent.clientY+8, w.y - css.height);
+			switch (options.mouseside) {
+				case 'left':
+					css.left = Math.min(options.mousevent.clientX-8, w.x - css.width);
+					break;
+
+				case 'right':
+					css.right = Math.max(options.mousevent.clientX+8, css.width);
+					break;
+			}
+		} else {
+			if (setleft) {
+				css.left = Math.max(0, (w.x/2 - css.width/2));
+			}
+			if (settop) {
+				css.top =  Math.max(0, (w.y/2 - css.height/2));
+			}
+		}
+		for (var i in css) {
+			debug.debug("POPUP","Setting CSS",i,'to',css[i]);
+			win.css(i, css[i]+'px');
+		}
+	}
+
 	this.open = function() {
 		win.css({opacity: 1});
 		self.adjustCSS(true, true);
-		self.setCSS();
 		win.css({opacity: 1});
 	}
 
@@ -1620,56 +1674,8 @@ function popup(opts) {
 			modal_screen.remove();
 	}
 
-	this.moved = function(pos) {
-		options.css.top = pos.top;
-		options.css.left = pos.left;
-	}
-
-	this.adjustCSS = function(setleft, settop) {
-		var contentheight = contents.outerHeight(true) + titlebar.outerHeight(true);
-		if (options.fitheight) {
-			options.css.height = contentheight+8;
-		} else if (contentheight < options.css.height) {
-			options.css.height = contentheight+8;
-		}
-		var w = getWindowSize();
-		options.css.width = Math.min(w.x-16, options.css.width);
-		options.css.height = Math.min(w.y-16, options.css.height);
-		if (options.atmousepos) {
-			options.css.top = Math.min(options.mousevent.clientY+8, w.y - options.css.height);
-			switch (options.mouseside) {
-				case 'left':
-					options.css.left = Math.min(options.mousevent.clientX-8, w.x - options.css.width);
-					break;
-
-				case 'right':
-					options.css.right = Math.max(options.mousevent.clientX+8, options.css.width);
-					break;
-			}
-		} else {
-			if (setleft) {
-				options.css.left = Math.max(0, (w.x/2 - options.css.width/2));
-			}
-			if (settop) {
-				options.css.top =  Math.max(0, (w.y/2 - options.css.height/2));
-			}
-			options.css.height = Math.min(options.css.height, (w.y - options.css.top));
-		}
-		if (!options.hasscrollbar && (options.css.height - titlebar.outerHeight(true)) < contents.outerHeight(true)) {
-			contentholder.addCustomScrollBar();
-			options.hasscrollbar = true;
-		}
-	}
-
-	this.setCSS = function() {
-		for (var i in options.css) {
-			debug.debug("POPUP","Setting CSS",i,'to',options.css[i]);
-			win.css(i, options.css[i]+'px');
-		}
-	}
-
 	this.addCloseButton = function(text, callback) {
-		var button = $('<button>',{class: 'tright'}).appendTo(contents);
+		var button = $('<button>',{class: 'tright'}).appendTo(button_holder);
 		button.html(text);
 		options.closecallbacks[text] = callback;
 		button.on('click', self.close);
@@ -1680,16 +1686,8 @@ function popup(opts) {
 		elem.on('click', self.close);
 	}
 
-	this.setWindowToContentsSize = function() {
-		self.adjustCSS(false, false);
-		self.setCSS();
-	}
-
 	this.add_button = function(side, label) {
-		if (options.buttons == null)
-			options.buttons = $('<div>', {class: 'clearfix'}).appendTo(contents);
-
-		return $('<button>', {class: 't'+side, style: 'min-width: '+options.button_min_width}).html(language.gettext(label)).appendTo(options.buttons);
+		return $('<button>', {class: 't'+side, style: 'min-width: '+options.button_min_width}).html(language.gettext(label)).appendTo(button_holder);
 	}
 
 	this.hide = function() {

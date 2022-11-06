@@ -194,11 +194,7 @@ var shortcuts = function() {
 		edit: function() {
 			$("#configpanel").slideToggle('fast');
 			var fnarkle = new popup({
-				css: {
-					width: 500,
-					height: 1024
-				},
-				fitheight: true,
+				width: 500,
 				helplink: 'https://fatg3erman.github.io/RompR/Keyboard-Shortcuts',
 				title: language.gettext("title_keybindings")
 			});

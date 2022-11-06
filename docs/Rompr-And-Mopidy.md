@@ -19,8 +19,8 @@ In mopidy.conf, your mpd section needs to contain
 ### Using the HTTP Frontend for Improved Responsiveness
 
 If your Mopidy has its HTTP frontend enabled, RompR can use that *in addition to* the MPD interface. This is optional, it makes RompR a little more
-responsive when things change within Mopidy. RompR can also use this connection to query Mopidy for album art, which is very handy if the Mopidy backend supports
-it. Currently, local, spotify, and youtube definitely do.
+responsive when things change within Mopidy. RompR can also use this connection to query Mopidy for album art - which is very handy if the Mopidy backend supports
+it - and when searching for tracks, which is more efficient than using the MPD interface.
 
 You will, however, have to configure a couple of things.
 
@@ -39,12 +39,6 @@ or
 
 If RompR is able to connect to Mopidy in this way, you will see a connection message that displays two port numbers when you first open RompR.
 
-If you get a permanent message saying 'Player has stopped responding' this means the backend (web server) is able to connect to the MPD interface  but your browser is not able to connect to the HTTP interface.
-Try not using 'localhost' in your player definition. If that doesn't work then Mopidy is blocking the connection from the browser and you need to check
-the settings above. If you're having problems and you just can't get rid of that message then either disable Mopidy's HTTP frontend, or change the port from the setup page
-in RompR so that RompR is using the 'wrong' port.
-
-![](images/httport.png)
 
 ### Fixing Mopidy's Consume Bug
 

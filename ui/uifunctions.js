@@ -365,11 +365,7 @@ function show_albumart_update_window() {
 		return true;
 	}
 	var fnarkle = new popup({
-		css: {
-			width: 600,
-			height: 400
-		},
-		fitheight: true,
+		width: 600,
 		title: "Album Art Update",
 		hasclosebutton: false
 	});
@@ -385,7 +381,6 @@ function show_albumart_update_window() {
 		range: 100
 	});
 	fnarkle.open();
-	fnarkle.setWindowToContentsSize();
 	$('.open_albumart').hide();
 	do_albumart_update();
 	return true;
@@ -511,11 +506,8 @@ function displayRating(where, what) {
 function showUpdateWindow() {
 	if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
 		var fnarkle = new popup({
-			css: {
-				width: 1200,
-				height: 1600
-			},
-			fitheight: true,
+			width: 800,
+			modal: true,
 			title: 'RompЯ Version '+rompr_version,
 			hasclosebutton: false
 		});
@@ -566,11 +558,7 @@ function showUpdateWindow() {
 
 function showNewVersionWindow(version) {
 		var fnarkle = new popup({
-			css: {
-				width: 400,
-				height: 200
-			},
-			fitheight: true,
+			width: 400,
 			title: 'A New Version Is Available',
 			hasclosebutton: false
 		});

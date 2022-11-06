@@ -282,10 +282,7 @@ var customRadioManager = function() {
 
 		this.save = function(e) {
 			var fnarkle = new popup({
-				css: {
-					width: 400,
-					height: 300
-				},
+				width: 400,
 				title: language.gettext("button_createplaylist"),
 				atmousepos: true,
 				mousevent: e

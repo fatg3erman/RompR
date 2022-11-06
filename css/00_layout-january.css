@@ -2032,7 +2032,9 @@ div.selectholder.snapcast_select
 	margin-right: 1em;
 }
 
-.snapcastgroup input[type="text"].expand {
+.snapcastgroup input[type="text"].expand,
+.player-def input[type="text"].expand
+ {
 	font-size: 120%;
 	font-weight: bold;
 	background-color: transparent !important;
@@ -2360,10 +2362,6 @@ div.plugin_backi_drop-images {
     border-top: var(--bordered-top);
 }
 
-.popupcontentcontainer {
-	height: 100%;
-}
-
 .popupcontentholder {
 	overflow-y: auto;
 	overflow-x: auto;
@@ -2504,3 +2502,6 @@ div.top_drop_menu div.notenabled, div.togglecontainer.notenabled, div#flowcontro
 	display:none;
 }
 
+.single-player .divlabel {
+	width: 30%;
+}

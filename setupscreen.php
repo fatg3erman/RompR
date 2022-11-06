@@ -30,7 +30,7 @@ print '<link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png
 <link rel="shortcut icon" sizes="16x16" href="newimages/favicon-16.png" />
 <script type="text/javascript" src="jquery/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="jquery/jquery-migrate-3.3.2.min.js"></script>
-<script type="text/javascript" src="ui/setupbits.js"></script>
+<script type="text/javascript" src="ui/setupbits.js?setupversion='.time().'"></script>
 <style>
 input[type=text] { width: 50% }
 input[type=submit] { width: 40% }
@@ -73,13 +73,11 @@ print '<p>'.language::gettext("setup_password").'<br>';
 print '<input type="text" name="mpd_password" value="'.$pdef['password'].'" /></p>';
 print '<p>'.language::gettext("setup_unixsocket").'<br>';
 print '<input type="text" name="unix_socket" value="'.$pdef['socket'].'" /></p>';
+print '<p>'.language::gettext("setup_websocket_port").'<br>';
+print '<input type="text" name="websocket_port" value="'.$pdef['websocket_port'].'" /></p>';
 
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("setup_mopidy_scan_title").'</h3>';
-
-print '<p>'.language::gettext("label_mopidy_http").'</p>';
-print '<p class="tiny">'.language::gettext("info_mopidy_http").'</p>';
-print '<input type="text" name="http_port_for_mopidy" value="'.prefs::get_pref('http_port_for_mopidy').'" /></p>';
 
 print '<div class="styledinputs"><input id="mopscan" type="checkbox" name="use_mopidy_scan" ';
 if (prefs::get_pref('use_mopidy_scan')) {
@@ -98,16 +96,8 @@ if (prefs::get_pref('use_mopidy_search')) {
 print '><label for="mopidysearch">Use Mopidy HTTP interface for search</label></div>';
 
 print '<hr class="setup_screen_options" />';
-print '<h3>'.language::gettext("setup_mpd_special").'</h3>';
-
-print '<p>'.language::gettext("label_mpd_websocket").'</p>';
-print '<p class="tiny">'.language::gettext("info_mpd_websocket").'</p>';
-print '<input type="text" name="mpd_websocket_port" value="'.prefs::get_pref('mpd_websocket_port').'" /></p>';
-print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-MPD" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
-
-
-print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("label_generalsettings").'</h3>';
+
 print '<div class="styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
 if (prefs::get_pref('cleanalbumimages')) {
 	print " checked";

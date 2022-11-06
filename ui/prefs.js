@@ -151,13 +151,9 @@ var prefs = function() {
 
 	function offerToTransferPlaylist() {
 		var fnarkle = new popup({
-			css: {
-				width: 360,
-				height: 800
-			},
+			width: 360,
 			title: language.gettext('label_transferplaylist'),
 			hasclosebutton: false,
-			fitheight: true,
 			button_min_width: '4em',
 			modal: true
 		});
@@ -169,7 +165,6 @@ var prefs = function() {
 		fnarkle.useAsCloseButton(yes, transferPlaylist);
 		fnarkle.useAsCloseButton(no, dontTransferPlaylist);
 		fnarkle.open();
-		fnarkle.setWindowToContentsSize();
 	}
 
 	function dontTransferPlaylist() {

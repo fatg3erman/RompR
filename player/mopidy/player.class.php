@@ -736,31 +736,35 @@ class player extends base_mpd_player {
 	}
 
 	public function probe_websocket() {
-		logger::info('MOPIDYHTTP', 'Probing HTTP API');
-		$result = $this->mopidy_http_request(
-			$this->ip.':'.prefs::get_pref('http_port_for_mopidy'),
-			array(
-				'method' => 'core.get_version'
-				// 'method' => 'core.tracklist.get_tl_tracks'
-			)
-		);
-		if ($result === false) {
-			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');
-			prefs::set_player_param(['websocket' => false]);
+		if ($this->websocket_port != '') {
+			logger::info('MOPIDYHTTP', 'Probing HTTP API for',prefs::currenthost());
+			$result = $this->mopidy_http_request(
+				$this->ip.':'.$this->websocket_port,
+				array(
+					'method' => 'core.get_version'
+				)
+			);
+			if ($result === false) {
+				logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available for',prefs::currenthost());
+				prefs::set_player_param(['websocket' => false]);
+			} else {
+				logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully on',prefs::currenthost());
+				logger::trace('MOPIDYHTTP', $result);
+				// $r = json_decode($result, true);
+				// logger::log('MOPIDY', print_r($r, true));
+				$http_server = nice_server_address($this->ip);
+				prefs::set_player_param(['websocket' => $http_server.':'.$this->websocket_port.self::WEBSOCKET_SUFFIX]);
+				logger::log('MOPIDYHTTP', 'Using',prefs::get_player_param('websocket'),'for Mopidy HTTP on',prefs::currenthost());
+			}
 		} else {
-			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
-			logger::trace('MOPIDYHTTP', $result);
-			// $r = json_decode($result, true);
-			// logger::log('MOPIDY', print_r($r, true));
-			$http_server = nice_server_address($this->ip);
-			prefs::set_player_param(['websocket' => $http_server.':'.prefs::get_pref('http_port_for_mopidy').self::WEBSOCKET_SUFFIX]);
-			logger::log('MOPIDYHTTP', 'Using',prefs::get_player_param('websocket'),'for Mopidy HTTP');
+			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Configured for',prefs::currenthost());
+			prefs::set_player_param(['websocket' => false]);
 		}
 	}
 
 	public function api_test() {
 		$result = $this->mopidy_http_request(
-			$this->ip.':'.prefs::get_pref('http_port_for_mopidy'),
+			$this->ip.':'.$this->websocket_port,
 			array(
 				'method' => 'core.library.browse',
 				'params' => [

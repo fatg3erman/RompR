@@ -254,12 +254,8 @@ var alarmclock = function() {
 				alarm_editor.close(null);
 
 			alarm_editor = new popup({
-				css: {
-					width: 500,
-				},
+				width: 500,
 				title: 'Alarm For Player '+prefs.currenthost,
-				fitheight: true,
-				hasscrollbar: true,
 				atmousepos: true,
 				mousevent: event
 			});

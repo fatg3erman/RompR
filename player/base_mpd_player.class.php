@@ -8,6 +8,7 @@ class base_mpd_player {
 	protected $socket;
 	protected $password;
 	protected $player_type;
+	protected $websocket_port;
 	private $is_remote;
 	public $playlist_error;
 	private $debug_id;
@@ -59,6 +60,7 @@ class base_mpd_player {
 		} else {
 			$this->is_remote = $pdef['mopidy_remote'];
 		}
+		$this->websocket_port = $pdef['websocket_port'];
 		logger::core("MPDPLAYER", "Creating Player for",$this->ip.':'.$this->port);
 		$this->open_mpd_connection();
 

@@ -753,6 +753,11 @@ class init_database extends init_generic {
 					$this->set_admin_value('SchemaVer', 97);
 					break;
 
+				case 97:
+					logger::log("SQL", "Updating FROM Schema version 97 TO Schema version 98");
+					prefs::upgrade_host_defs(98);
+					$this->set_admin_value('SchemaVer', 98);
+					break;
 
 			}
 			$sv++;

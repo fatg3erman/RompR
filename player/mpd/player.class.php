@@ -271,7 +271,7 @@ class player extends base_mpd_player {
 	private function websocket_command() {
 		$retval = 	'/player/mpd/mpd_websocket.py'
 					.' --currenthost='.prefs::currenthost()
-					.' --wsport='.prefs::get_pref('mpd_websocket_port');
+					.' --wsport='.$this->websocket_port;
 
 		if ($this->socket) {
 			$retval .= ' --unix='.$this->socket;
@@ -287,17 +287,18 @@ class player extends base_mpd_player {
 	}
 
 	public function probe_websocket() {
-		if (prefs::get_pref('mpd_websocket_port') !== '') {
+		if ($this->websocket_port != '') {
+			logger::info('MPDSOCKET', 'Probing HTTP API for',prefs::currenthost());
 			if (get_pid($this->websocket_command()) === false) {
 				if (($pid = get_pid('mpd_websocket.py --currenthost='.prefs::currenthost())) !== false) {
-					logger::info('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config');
+					logger::info('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config for',prefs::currenthost());
 					kill_process($pid);
 				}
-				logger::log('MPDSOCKET', 'Starting MPD Websocket Server');
+				logger::log('MPDSOCKET', 'Starting MPD Websocket Server for',prefs::currenthost());
 				$pwd = getcwd();
 				$pid = start_process($pwd.$this->websocket_command(), 'python3');
 				if (get_pid($this->websocket_command()) === false) {
-					logger::warn('MPDSOCKET', 'Failed to start MPD Websocket Server');
+					logger::warn('MPDSOCKET', 'Failed to start MPD Websocket Server for',prefs::currenthost());
 					prefs::set_player_param(['websocket' => false]);
 					return false;
 				}
@@ -305,12 +306,12 @@ class player extends base_mpd_player {
 				logger::log('MPDSOCKET', 'MPD Websocket Server already running');
 			}
 			$http_server = nice_server_address($this->ip);
-			prefs::set_player_param(['websocket' => $http_server.':'.prefs::get_pref('mpd_websocket_port').'/']);
-			logger::log('MPDSOCKET', 'Using',prefs::get_player_param('websocket'),'for MPD websocket');
+			prefs::set_player_param(['websocket' => $http_server.':'.$this->websocket_port.'/']);
+			logger::log('MPDSOCKET', 'Using',prefs::get_player_param('websocket'),'for MPD websocket on',prefs::currenthost());
 		} else {
 			logger::log('MPDSOCKET', 'MPD websocket Not Configured');
 			if (($pid = get_pid('mpd_websocket.py --currenthost='.prefs::currenthost())) !== false) {
-				logger::info('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config');
+				logger::info('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config for',prefs::currenthost());
 				kill_process($pid);
 			}
 			prefs::set_player_param(['websocket' => false]);

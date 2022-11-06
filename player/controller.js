@@ -249,10 +249,7 @@ function playerController() {
 		oldplname = decodeURIComponent(name);
 		debug.log("MPD","Renaming Playlist",name,e);
 		var fnarkle = new popup({
-			css: {
-				width: 400,
-				height: 300
-			},
+			width: 400,
 			title: language.gettext("label_renameplaylist"),
 			atmousepos: true,
 			mousevent: e

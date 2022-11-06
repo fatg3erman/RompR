@@ -1158,10 +1158,7 @@ function amendAlbumDetails(e, element) {
 	$(element).parent().remove();
 	var albumindex = $(element).attr('name');
 	var fnarkle = new popup({
-		css: {
-			width: 400,
-			height: 300
-		},
+		width: 400,
 		title: language.gettext("label_amendalbum"),
 		atmousepos: true,
 		mousevent: e,

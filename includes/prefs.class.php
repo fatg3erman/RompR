@@ -14,6 +14,7 @@ class prefs {
 		'mopidy_remote' => false,
 		'do_consume' => false,
 		'websocket' => false,
+		'websocket_port' => '6680',
 		'radioparams' => [
 			"radiomode" => "",
 			"radioparam" => "",
@@ -27,11 +28,12 @@ class prefs {
 	// These are the keys from the above array that we check
 	// to see if a player definition has changed
 	const PLAYER_CONNECTION_PARAMS = [
-		'HOST' => 'host',
-		'PORT' => 'port',
-		'PASSWORD' => 'password',
-		'SOCKET' => 'socket',
-		'REMOTE' => 'mopidy_remote'
+		'Host' => 'host',
+		'Port' => 'port',
+		'Password' => 'password',
+		'Socket' => 'socket',
+		'Websocket' => 'websocket_port',
+		'Remote' => 'mopidy_remote',
 	];
 
 	private static $prefs = [];
@@ -74,8 +76,8 @@ class prefs {
 		"snapcast_server" => '',
 		"snapcast_port" => '1705',
 		"snapcast_http" => '1780',
+		// We don't need this any more except to update the player defs to schema 97
 		"http_port_for_mopidy" => "6680",
-		"mpd_websocket_port" => "",
 		"multihosts" => [
 			'Default' => self::DEFAULT_PLAYER
 		],
@@ -515,6 +517,7 @@ class prefs {
 	}
 
 	public static function upgrade_host_defs($ver) {
+		$websocket = prefs::get_pref('http_port_for_mopidy');
 		foreach (self::$prefs['multihosts'] as $key => $value) {
 			switch ($ver) {
 				case 45:
@@ -572,14 +575,12 @@ class prefs {
 						self::$prefs['multihosts'][$key]['radioparams']['radiodomains'] = ['local', 'spotify', 'youtube', 'ytmusic'];
 						break;
 
-				case 96:
-					if (!array_key_exists('radio_process', self::$prefs['multihosts'][$key]['radioparams']))
-						self::$prefs['multihosts'][$key]['radioparams']['radio_process'] = [
-							"mode" => '',
-							"param" => '',
-							"pid" => ''
-						];
-						break;
+				case 98:
+					if (!array_key_exists('websocket_port', self::$prefs['multihosts'][$key]))
+						self::$prefs['multihosts'][$key]['websocket_port'] = ''.$websocket;
+
+					$websocket += 2;
+					break;
 			}
 		}
 		self::save();
@@ -649,7 +650,8 @@ class prefs {
 				'host' => self::$prefs['mpd_host'],
 				'port' => self::$prefs['mpd_port'],
 				'password' => self::$prefs['mpd_password'],
-				'socket' => self::$prefs['unix_socket']
+				'socket' => self::$prefs['unix_socket'],
+				'websocket_port' => self::$prefs['websocket_port']
 			];
 			$current_player = self::get_player_def();
 

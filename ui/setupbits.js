@@ -4,4 +4,5 @@ function displaySettings(event) {
 	$('[name="mpd_port"]').val(multihosts[host].port);
 	$('[name="mpd_password"]').val(multihosts[host].password);
 	$('[name="unix_socket"]').val(multihosts[host].socket);
+	$('[name="websocket_port"]').val(multihosts[host].websocket_port);
 }

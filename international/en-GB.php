@@ -213,6 +213,7 @@ language::add_translations([
 	"setup_advanced" =>						"Advanced options",
 	"setup_password" =>						"Password",
 	"setup_unixsocket" =>					"UNIX-domain socket",
+	"setup_websocket_port" =>				"Websocket Port",
 
 	// Intro Window
 
@@ -708,8 +709,6 @@ language::add_translations([
 	"label_youtubedl" =>					"Download Audio",
 	"label_youtubedl_all" =>				"Download All Youtube Tracks",
 	"error_playergone" =>					"Player '%s' has stopped resonding!",
-	"label_mopidy_http" =>					"Mopidy HTTP Interface Port",
-	"info_mopidy_http" =>					"Optional, provides extra functionality with Mopidy",
 	"label_collinfo" =>						"Collection Information",
 	"label_incoll" =>						"This track is in the Music Collection",
 	"label_notincoll" =>					"This track is not in the Music Collection. Click to add it",
@@ -745,8 +744,6 @@ language::add_translations([
 	"label_name" =>							'Name',
 	"play_even_if_playing" =>				'Even If Already Playing',
 	"setup_mpd_special"	=>					'MPD Special Options',
-	"info_mpd_websocket" =>					"Optional, provides extra functionality with MPD",
-	"label_mpd_websocket" =>				'Port for MPD Websocket Server',
 	"label_ui_defaults" =>					'Defaults',
 	"button_save_defaults" =>				'Save As Default For All Browsers',
 	"label_recommenddesc" =>				'A Radio Station of recommendations based on your listening',
