@@ -188,6 +188,18 @@ class poDatabase extends database {
 			$podcast['Description'] = $d1;
 		}
 
+		$feed_pubdate = 0;
+		if ($lastpubdate !== null) {
+			$pub1 = 0;
+			if ($feed->channel->pubDate) {
+				$pub1 = strtotime((string) $feed->channel->pubDate);
+			}
+			if ($pub1 === false)
+				$pub1 = 0;
+			$feed_pubdate = max($pub1, $feed_pubdate);
+			if ($feed_pubdate > $lastpubdate)
+				logger::log('PODCASTS', 'Feed indicates it has been published since we last refreshed');
+		}
 		// Tracks
 		$podcast['tracks'] = array();
 		$podcast['LastPubDate'] = $lastpubdate;
@@ -282,9 +294,11 @@ class poDatabase extends database {
 				logger::debug("PARSE_RSS", "Track PubDate is ",(string) $item->pubDate,"(".$t.")");
 				if ($t === false) {
 					logger::warn("PARSE_RSS", "  ERROR - Could not parse episode Publication Date",(string) $item->pubDate);
-				} else if ($t > $podcast['LastPubDate']) {
+				} else if (is_numeric($t) && $t > $podcast['LastPubDate']) {
 					logger::log("PARSE_RSS", "Found a new episode",$track['Title']);
 				}
+				// Becasue of this $podcat['LastUpdate'] will either be false or a time value
+				// equal to or greater than the pubdate we started with
 				if ($t === false || $podcast['LastPubDate'] === null || $t > $podcast['LastPubDate']) {
 					$podcast['LastPubDate'] = $t;
 				}
@@ -307,23 +321,34 @@ class poDatabase extends database {
 			}
 		}
 
-		if ($lastpubdate !== null) {
-		    if ($podcast['LastPubDate'] !== false && $podcast['LastPubDate'] == $lastpubdate) {
-		        logger::mark("PARSE_RSS", "Podcast has not been updated since last refresh");
-		        if ($id) {
-		        	// If we're returning false then we're not returning the FeedURL so we need
-		        	// to update it here.
-		        	$this->sql_prepare_query(true, null, null, null,
-		        		"UPDATE Podcasttable SET FeedURL = ? WHERE PODindex = ?",
-		        		$podcast['FeedURL'],
-		        		$id
-		        	);
-		        }
-		        return false;
-		    }
+		// If we didn't know that last pub date when we got here, return everything
+		if ($lastpubdate === null || $podcast['LastPubDate'] === false) {
+			logger::info('PODCASTS', "Returning feed since we don't have a lastpubdate to compare with");
+			return $podcast;
 		}
 
-		return $podcast;
+		if ($feed_pubdate > $lastpubdate) {
+			logger::info('PODCASTS', "Returning feed since feed pubdate indicates it has been updated");
+			$podcast['LastPubDate'] = $feed_pubdate;
+			return $podcast;
+		}
+
+		if ($podcast['LastPubDate'] > $lastpubdate) {
+			logger::info('PODCASTS', "Returning feed since most recent track pubdate indicates it has been updated");
+			return $podcast;
+		}
+
+        logger::info("PARSE_RSS", "Podcast has not been updated since last refresh");
+        if ($id) {
+        	// If we're returning false then we're not returning the FeedURL so we need
+        	// to update it here.
+        	$this->sql_prepare_query(true, null, null, null,
+        		"UPDATE Podcasttable SET FeedURL = ? WHERE PODindex = ?",
+        		$podcast['FeedURL'],
+        		$id
+        	);
+        }
+        return false;
 
 	}
 
@@ -994,7 +1019,7 @@ class poDatabase extends database {
 			$this->refreshPodcast($channel);
 		}
 		if ($option == 'RefreshOption') {
-			$podcast = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, [], "SELECT * FROM Podcasttable WHERE PODindex = ?", $channel);
+			$podcast = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [], "SELECT * FROM Podcasttable WHERE PODindex = ?", $channel);
 			$this->sql_prepare_query(true, null, null, null,
 				"UPDATE Podcasttable SET NextUpdate = ? WHERE PODindex = ?",
 				calculate_best_update_time($podcast[0]),
