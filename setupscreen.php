@@ -125,13 +125,14 @@ print '<div class="styledinputs"><input id="dblite" type="radio" name="collectio
 if (prefs::get_pref('collection_type') == "sqlite") {
 	print " checked";
 }
-print '><label for="dblite">Lite Database Collection</label></div>';
+print '><label for="dblite">SQLite Database Collection</label></div>';
 print '<div class="styledinputs"><input id="dbsql" type="radio" name="collection_type" value="mysql"';
 if (prefs::get_pref('collection_type') == "mysql") {
 	print " checked";
 }
-print '><label for="dbsql">Full Database Collection</input></label>';
-print '<p class="tiny">Requires MySQL Server:</p>';
+print '><label for="dbsql">MySQL Database Collection</input></label>';
+print '<p class="tiny">You almost certainly do not need this, SQLite is almost always faster</p>';
+print '<p>MySQL Server Connection Info</p>';
 print '<p>Server<br><input type="text" name="mysql_host" value="'.
 	prefs::get_pref('mysql_host').'" /></p>'."\n";
 print '<p>Port or UNIX Socket<br><input type="text" name="mysql_port" value="'.

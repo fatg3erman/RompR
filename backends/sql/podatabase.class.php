@@ -782,7 +782,7 @@ class poDatabase extends database {
 		}
 		print '<div class="clearfix bumpad"></div>';
 		if (array_key_exists('searchterm', $_REQUEST)) {
-			$extrabit = ' AND (Title LIKE "%'.urldecode($_REQUEST['searchterm']).'%" OR Description LIKE "%'.urldecode($_REQUEST['searchterm']).'%")';
+			$extrabit = " AND (Title LIKE '%".urldecode($_REQUEST['searchterm'])."%' OR Description LIKE '%".urldecode($_REQUEST['searchterm'])."%')";
 		} else {
 			$extrabit = '';
 		}
@@ -968,7 +968,7 @@ class poDatabase extends database {
 		foreach ($pods as $pod) {
 			$podid = $pod->PODindex;
 			logger::log("PODCASTS", "Marking track",$pod->PODTrackindex,"from podcast",$podid,"as listened");
-			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex=?",$pod->PODTrackindex);
+			$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex = ?",$pod->PODTrackindex);
 			$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex = ? AND Name = ?", $pod->PODTrackindex, 'Resume');
 		}
 		return $podid;
@@ -1359,7 +1359,11 @@ class poDatabase extends database {
 
 	public function setPlaybackProgress($progress, $uri, $name) {
 		$podid = false;
-		$pod = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR LocalFilename = ?", $uri, $uri);
+		$pod = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+			database::STUPID_CONCAT_THING,
+			$uri,
+			$uri
+		);
 		foreach ($pod as $podcast) {
 			$podid = $podcast->PODindex;
 			logger::info("PODCASTS", "Adding Bookmark",$name,"at",$progress,"for track",$podcast->PODTrackindex,"in podcast",$podid);
