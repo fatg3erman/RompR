@@ -112,6 +112,10 @@ if (prefs::get_pref('do_not_show_prefs')) {
 print '><label for="dsp">Do not show preferences panel on the interface</label></div>';
 print '<p class="tiny">This will stop people messing with your configuration, but also with theirs</p>';
 
+print '<div class="styledinputs"><input id="cul" type="checkbox" name="clear_update_lock" />';
+print '<label for="cul">Clear Update Lock</label></div>';
+print '<p class="tiny">If your Collection Update keeps saying Already Updating Collection, enable this, once</p>';
+
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext('config_google_credentials').'</h3>';
 print '<p class="tiny">To use Bing Image Search you need to create an API key</p>';

@@ -60,6 +60,7 @@ class prefs {
 		"custom_logfile" => "",
 		"cleanalbumimages" => true,
 		"do_not_show_prefs" => false,
+		"clear_update_lock" => false,
 		// This option for plugin debugging ONLY
 		"load_plugins_at_loadtime" => false,
 		"beets_server_location" => "",
@@ -630,7 +631,7 @@ class prefs {
 		//
 
 		if (array_key_exists('currenthost', $_POST)) {
-			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable', 'use_mopidy_search') as $p) {
+			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable', 'use_mopidy_search', 'clear_update_lock') as $p) {
 				if (array_key_exists($p, $_POST)) {
 					$_POST[$p] = true;
 				} else {

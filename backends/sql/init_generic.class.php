@@ -82,6 +82,11 @@ class init_generic extends database {
 			$this->set_admin_value('ListVersion', 1);
 			prefs::save();
 		}
+		if (prefs::get_pref('clear_update_lock')) {
+			$this->set_admin_value('Updating', 0);
+			prefs::set_pref(['clear_update_lock', false]);
+			prefs::save();
+		}
 	}
 
 }
