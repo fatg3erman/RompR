@@ -141,21 +141,16 @@ Note that only Mopidy-Local seems to return Genres, so Genre-based Collection fu
 
 ## Note on Mopidy-YTMusic and Mopidy-Youtube
 
-Mopidy-YTMusic cannot accept a URI it has not seen before. This gives RompR problems if you add YTMusic tracks to your collection and then restart
-Mopidy, because all the tracks in your collection will no longer work. I have suggested a fix for this that works for RompR but as yet there has
-been no movement on it. https://github.com/OzymandiasTheGreat/mopidy-ytmusic/pull/69.
-
-My fork of Mopidy-YTMusic is here, and I recommend you use this until the above change is merged into the main version.
-
-https://github.com/fatg3erman/mopidy-ytmusic/tree/feature/browse-album
-
-Mopidy-Youtube also supports the Youtube Music API and does not have the same issues as Mopidy-YTMusic.
+To work properly with RompR you need Mopidy-YTMusic 0.3.8 or later. This is the preferable solution as Mopidy-YTMusic supports
+artists and albums in a way that is the same as all the other Mopidy backends, whereas Mopidy-Youtube does not. You can use
+Mopidy-Youtube in parralel with Mopidy-YTMusic, to give you access to Youtube Videos and Youtube Music.
+RompR's Mopidy-Youtube support is based on using it for standard YouTube, not Youtube Music. You should use Mopidy-YTMusic
+for Youtube Music support.
 
 I've put a lot of effort into using these backends to replace a lot of what RompR used to rely on Mopidy-Spotify for but bear in mind
 Youtbe Music does not have a proper API and there is some information - like track numbers - that is extremely unreliable.
 RompR likes track numbers because they make Playcounts more accurate, and RompR will try very hard indeed to get
-Youtube to give it a track number when it needs one. The best functionality with RompR and Youtube Music comes by using
-my fork of Mopidy-YTMusic. RompR's Mopidy-Youtube support is based on using it for standard YouTube, not Youtube Music.
+Youtube to give it a track number when it needs one.
 
 
 
@@ -199,4 +194,4 @@ you symlink to MUST be called youtubedl or everything in it will get deleted.**
 Youtube Music Premium subscribers have the ability to stream audio at a higher quality. To ensure your downloads use the highest quality streams
 you need to install yt-dlp and edit your /etc/yt-dlp.conf and set the --cookies option so it points to your cookie file.
 The cookie file must also be writeable by your webserver.
-This is the same cookie file you reference in the musicapi_cookiefile option for moidy-youtube. See Mopidy-Youtube's documentation for more info.
+This is the same cookie file you reference in the musicapi_cookiefile option for mopidy-youtube. See Mopidy-Youtube's documentation for more info.

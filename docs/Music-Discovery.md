@@ -33,8 +33,7 @@ They use your Last.FM scrobbles and Last.FM's suggestion engine to create playli
 
 The Music From Everywhere stations will search your Mopidy sources for music to play.
 
-If you're using Mopidy-YTMusic and you're not a paid subscriber it wil work but some tracks will not play. Also read the notes [here](/RompR/Rompr-And-Mopidy)
-because YTMusic works best if you use my fork, which allows you to add tracks the Music Collection.
+If you're using Mopidy-YTMusic and you're not a paid subscriber it wil work but some tracks will not play.
 
 If you're using Mopidy-Youtube these stations work best if you enable the Music API. See the Mopidy-Youtube documentation for how to do that.
 

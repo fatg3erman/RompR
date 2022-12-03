@@ -388,18 +388,6 @@ class database extends data_base {
 			WHERE Uri = ?",
 			$trackuri
 		);
-		// This is too heavy a load for Mopidy. We're just going to have to live without it.
-		// if ($nipples == null) {
-		// 	$table = everywhere_radio::get_uri_table_name();
-		// 	$nipples = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
-		// 		"SELECT
-		// 			AlbumUri
-		// 		FROM
-		// 			".$table."
-		// 		WHERE Uri = ?",
-		// 		$trackuri
-		// 	);
-		// }
 		return $nipples;
 	}
 
@@ -436,6 +424,7 @@ class database extends data_base {
 	// We store AlbumUri in this table solely because Mopidy-YTMusic can't be trusted
 	// to return accurate track information and we need to lookup the album
 	// before we add a new track (see do_command_list() in base_mpd_player)
+	// Since ytmusic 0.3.8 we probably don't need to do this any more
 	public function create_radio_uri_table($truncate = true) {
 		$name = everywhere_radio::get_uri_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".

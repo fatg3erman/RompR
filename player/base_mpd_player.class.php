@@ -386,7 +386,7 @@ class base_mpd_player {
 			$this->translate_commands_for_remote($cmds);
 		}
 
-		$this->check_youtube_lookup($cmds);
+		// $this->check_youtube_lookup($cmds);
 
 		$retries = 3;
 		if (count($cmds) > 1) {
