@@ -397,15 +397,16 @@ var infobar = function() {
 
 			return {
 				clicked: function() {
-					switch (player.status.state) {
-						case "play":
-							player.controller.pause();
-							break;
-						case "pause":
-						case "stop":
-							player.controller.play();
-							break;
-					}
+					player.controller.toggle_playback_state();
+					// switch (player.status.state) {
+					// 	case "play":
+					// 		player.controller.pause();
+					// 		break;
+					// 	case "pause":
+					// 	case "stop":
+					// 		player.controller.play();
+					// 		break;
+					// }
 				},
 
 				setState: function(s) {

@@ -113,7 +113,7 @@ function playerController() {
 				timeout: 30000
 			});
 			// Clone the object so this thread can exit
-			debug.debug('PLAYER', 'Got response for',list,s);
+			debug.core('PLAYER', 'Got response for',list,s);
 			let last_state = player.status.state;
 			player.status = cloneObject(s);
 			$('#radiodomains').makeDomainChooser("setSelection", player.status.smartradio.radiodomains);
@@ -138,7 +138,6 @@ function playerController() {
 			} else if (player.status.db_updated != 'no') {
 				podcasts.loadPodcast(player.status.db_updated);
 			}
-
 		} catch (err) {
 			playlist.validate();
 			debug.error('CONTROLLER', 'Command List Failed', err);
@@ -329,6 +328,29 @@ function playerController() {
 	this.pause = function() {
 		alarmclock.pre_pause_actions();
 		self.do_command_list([['pause']]);
+	}
+
+	// play button calls this because our current state could be
+	// out of sync if we're a mobile device and we've just woken up.
+	// We don't call do_command_list because that initiates a bunch
+	// of async stuff that'll be triggered again as soon as this command
+	// executes.
+	this.toggle_playback_state = async function() {
+		var s = await $.ajax({
+			type: 'POST',
+			url: 'api/player/',
+			data: JSON.stringify([]),
+			contentType: false,
+			dataType: 'json',
+			timeout: 30000
+		});
+		debug.log('PLAYER', 'Toggling Playback State From',s.state);
+		player.status.state = s.state;
+		if (s.state == 'play') {
+			self.pause();
+		} else {
+			self.play();
+		}
 	}
 
 	this.stop = function() {
