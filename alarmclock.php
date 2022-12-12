@@ -64,11 +64,15 @@ while (true) {
 		// later on to start playback from where it was before you pressed stop.
 		if ($alarm['Ramp'] == 1) {
 			if (prefs::get_pref('player_backend') == 'mopidy' && $mpd_status['state'] == 'pause') {
+				// Need a database here in case it tries to set a resume position
+				prefs::$database = new music_loader();
 				$seek_workaround = [$mpd_status['songid'], $mpd_status['elapsed']];
 				$old_consume = $player->get_consume($mpd_status['consume']);
 				$player->force_consume_state(0);
 				$player->do_command_list(['stop']);
 				$player->force_consume_state($old_consume);
+				prefs::$database->close_database();
+				prefs::$database = null;
 			}
 			$player->do_command_list(['setvol 0']);
 		}
