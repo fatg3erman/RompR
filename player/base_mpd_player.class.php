@@ -1272,8 +1272,10 @@ class base_mpd_player {
 				'toptracks_total' => 1
 			]
 		);
-		$this->do_command_list(['stop']);
-		$this->do_command_list(['clear']);
+		if (prefs::get_pref('smartradio_clearfirst')) {
+			$this->do_command_list(['stop']);
+			$this->do_command_list(['clear']);
+		}
 		$this->do_command_list(['repeat 0']);
 		$this->do_command_list(['random 0']);
 		$this->force_consume_state(1);

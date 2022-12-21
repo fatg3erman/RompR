@@ -21,12 +21,13 @@ shouldn't need to do anything *except* if you were previously running romonitor,
 * Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin.
 As a result of this change though, you will need to recreate any Alarms you had previously configured.
 * There is now a [Websocket Server](/RompR-And-MPD) that makes the UI more responsive when you're using MPD - essentially it
-mimics the part of Mopidy's HTTP interface that RompR uses. It's not required but it is reccomended. There are some pre-requisistes you
+mimics the part of Mopidy's HTTP interface that RompR uses. It's not required but it is recommended. There are some pre-requisistes you
 need for this to work, please read the link.
 * Unified Search - everything you can search for in RompR is now available through the main Search Panel instead of being
 spread out in different places throughout the interface.
 * IceCast radio support has been removed, because the "API" really sucks and the station IDs keep changing.
 * Fix bug where album art might be partially downloaded when using MPD (Fix contributed by corubba)
+* New option to not clear the Play Queue before starting personalised radio.
 * Try to make RompR properly timezone aware, so the alarm clock works when Daylight Saving Time is enabled, for example.
 RompR will try to work out your timezone, but if you notice the alarm clock isn't going off at the right time you
 should set date.timezone in your php.ini.
@@ -47,7 +48,7 @@ relative volumes as you want them, then make the whole lot louder if you need to
 case checking statements, which speeds things up.
 * All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.
 * All Personal Radio stations are now populated by the Backend Daemon, so there is no longer any need to keep a browser open.
-* If Mopidy's HTTP interface is available and you do a search in RompR and limit the search to specific backends the search will be performed
+* If Mopidy's HTTP interface is available and you do a search in RompR and limit the search to specific backends the search can be performed
 using Mopidy's HTTP interface instead of the MPD interface. This can provide significantly improved search performance and better
 quality information but it can use a lot of RAM and in certain setups it might be a lot slower. You can disable this behaviour
 by unchcking 'Use Mopidy HTTP interface for Search' on the rompr/?setup screen.
@@ -60,12 +61,11 @@ added to Your Wishlist. Note that selecting this option will force a rescan of y
  I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
  If you have enabled Youtube Music support in Mopidy the Wishlist Viewer will permit you to search for tracks on Youtube Music
  and import them into your Collection in place of your Spotify tracks, preserving the tags, ratings, and playcounts.
-* For YouTube Music support in RompR you can use Mopidy-Youtube with musicapi_enabled set to true,
-or Mopidy-YTMusic 0.3.8 or later.
+* For YouTube Music support in RompR you can use Mopidy-Youtube with musicapi_enabled set to true, or Mopidy-YTMusic 0.3.8 or later.
+Mopidy-YTMusic is preferred for Youtube Music support because it handles artists, albums, and tracks whereas Mopidy-Youtube regards
+everything as either a playlist or a video. Using both backends together gives you access to all of Youtube and Youtube Music.
 * For Mopidy users, all Personalised Radio stations that relied on Spotify support have been removed and are not coming back.
 * The other Mopidy-specific Personal radio stations have been adjusted so that they work with Mopidy-Youtube and Mopidy-YTMusic.
- For best results with Mopidy-Youtube you should ensure you have a Youtube Music account and enable it in the youtube section of
- your mopidy.conf.
 * Where the Info Panel used to show lists of Spotify albums and allow you to play them it will still do this but now if you try
 to play tracks from them it will search for them using all your online sources and play whatever it can find. You can still add
 these albums to Albums To Listen To as well. You can also now add albums from Youtube that come up in search results to Albums To Listen To.

@@ -458,7 +458,12 @@ var playlist = function() {
 		},
 
 		clear: function() {
-			playlist.radioManager.stop().then(player.controller.clearPlaylist);
+			if (playlist.radioManager.is_running()) {
+				// If we do this when it's not running it might change the Consume mode
+				playlist.radioManager.stop().then(player.controller.clearPlaylist);
+			} else {
+				player.controller.clearPlaylist();
+			}
 		},
 
 		handleClick: function(event) {

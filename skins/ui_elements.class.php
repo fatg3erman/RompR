@@ -603,9 +603,12 @@ class ui_elements {
 	public static function pluginplaylists_base($opts) {
 		$opts = array_merge(self::DEFAULT_PLUGINPLAYLISTS, $opts);
 		print self::ui_config_header([
+			'lefticon' => 'icon-menu clickicon fixed openmenu',
+			'lefticon_name' => 'smartradiobuttons',
 			'label' => 'label_pluginplaylists',
 			'icon_size' => 'smallicon'
 		]);
+		uibits::smartradio_options_box();
 		if (prefs::get_pref('player_backend') == "mopidy") {
 			print self::ui_config_header([
 				'label' => 'label_mfyc'
@@ -665,6 +668,12 @@ class ui_elements {
 		self::ui_checkbox(['id' => 'notvabydate', 'label' => 'config_notvabydate']);
 		self::ui_config_button(['label' => 'config_updatenow', 'name' => 'donkeykong']);
 
+		print'</div>';
+	}
+
+	public static function smartradio_options_box() {
+		print '<div id="smartradiobuttons" class="invisible toggledown is-coverable">';
+		self::ui_checkbox(['id' => 'smartradio_clearfirst', 'label' => 'config_clearfirst']);
 		print'</div>';
 	}
 

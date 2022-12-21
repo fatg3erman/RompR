@@ -89,6 +89,7 @@ class prefs {
 		// Need these next two so the player defs can be updated
 		"consume_workaround" => false,
 		"we_do_consume" => false,
+		"smartradio_clearfirst" => true,
 
 		'interface_language' => null,
 		'collection_type' => null,
