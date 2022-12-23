@@ -23,6 +23,9 @@ As a result of this change though, you will need to recreate any Alarms you had 
 * There is now a [Websocket Server](/RompR-And-MPD) that makes the UI more responsive when you're using MPD - essentially it
 mimics the part of Mopidy's HTTP interface that RompR uses. It's not required but it is recommended. There are some pre-requisistes you
 need for this to work, please read the link.
+* The websocket port to use for Mopidy is now configurable for each player, to help those who use multiple players running on the
+same machine. Crazy people :) As a result of this though if you do have multiepl players you might find that the websocket port
+number is wrong after upgrading. It's easily fixed from the config panel.
 * Unified Search - everything you can search for in RompR is now available through the main Search Panel instead of being
 spread out in different places throughout the interface.
 * IceCast radio support has been removed, because the "API" really sucks and the station IDs keep changing.
