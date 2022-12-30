@@ -121,4 +121,6 @@
     --icon-padlock:  url('iconsets/Modern-Dark/padlock.svg');
     --icon-padlock-open: url('iconsets/Modern-Dark/padlock_open.svg');
     --icon-instagram: url('iconsets/Modern-Dark/instagram.svg');
+    --icon-rewind: url('iconsets/Modern-Dark/rewind.svg');
+    --icon-ffwd: url('iconsets/Modern-Dark/ffwd.svg');
 }

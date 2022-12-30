@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
+
+<svg
+   height="800px"
+   width="800px"
+   version="1.1"
+   id="Capa_1"
+   viewBox="0 0 20.465 20.465"
+   xml:space="preserve"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs12"><linearGradient
+   id="linearGradient2076"><stop
+     style="stop-color:#00d403;stop-opacity:1"
+     offset="0"
+     id="stop2072" /><stop
+     style="stop-color:#009a00;stop-opacity:1"
+     offset="1"
+     id="stop2074" /></linearGradient>
+	
+<radialGradient
+   xlink:href="#linearGradient2076"
+   id="radialGradient2144"
+   gradientUnits="userSpaceOnUse"
+   gradientTransform="matrix(1,0,0,0.99094968,0,0.09260701)"
+   cx="10.2325"
+   cy="10.232447"
+   fx="10.2325"
+   fy="10.232447"
+   r="10.2325" /><radialGradient
+   xlink:href="#linearGradient2076"
+   id="radialGradient2316"
+   gradientUnits="userSpaceOnUse"
+   gradientTransform="matrix(1,0,0,0.99094968,0,0.09260701)"
+   cx="10.2325"
+   cy="10.232447"
+   fx="10.2325"
+   fy="10.232447"
+   r="10.2325" /><radialGradient
+   xlink:href="#linearGradient2076"
+   id="radialGradient2318"
+   gradientUnits="userSpaceOnUse"
+   gradientTransform="matrix(1,0,0,0.99094968,0,0.09260701)"
+   cx="10.2325"
+   cy="10.232447"
+   fx="10.2325"
+   fy="10.232447"
+   r="10.2325" /></defs>
+<g
+   id="c90_rewind"
+   style="fill:url(#radialGradient2144);fill-opacity:1">
+		<path
+   style="fill:url(#radialGradient2316);fill-opacity:1"
+   d="M 11.354,1.373 C 11.213,1.304 11.05,1.324 10.929,1.417 L 0.152,9.918 C 0.059,9.996 0,10.11 0,10.231 c 0,0.121 0.059,0.24 0.152,0.316 l 10.776,8.5 c 0.073,0.057 0.163,0.086 0.249,0.086 l 0.176,-0.04 c 0.138,-0.064 0.225,-0.205 0.225,-0.36 v -17 c 0,-0.151 -0.087,-0.295 -0.224,-0.36 z"
+   id="path2" />
+		<path
+   style="fill:url(#radialGradient2318);fill-opacity:1"
+   d="M 20.242,1.373 C 20.1,1.304 19.937,1.324 19.816,1.417 L 9.039,9.918 c -0.094,0.078 -0.152,0.192 -0.152,0.313 0,0.121 0.059,0.24 0.152,0.316 l 10.777,8.5 c 0.072,0.057 0.162,0.086 0.248,0.086 l 0.178,-0.04 c 0.137,-0.064 0.223,-0.205 0.223,-0.36 v -17 c 0,-0.151 -0.086,-0.295 -0.223,-0.36 z"
+   id="path4" />
+	</g>
+</svg>

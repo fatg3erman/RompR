@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 2.01
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* By popular request there are now seek forwards/backwards buttons next to the progress bar. Click or press once for a 10 second skip.
+Click, or press, and hold for an incrementing skip.
+
 
 ## Version 2.00
 

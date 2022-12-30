@@ -193,8 +193,8 @@ class prefs {
 		'advsearchoptions_isopen' => false,
 		'podcastbuttons_isopen' => false,
 		"somafm_quality" => 'highest_available_quality',
-		"stupid_rounded_corner_buffer_size" => 0
-
+		"stupid_rounded_corner_buffer_size" => 0,
+		"skip_amount" => 10
 	];
 
 	// Prefs that should not be exposed to the browser for security reasons

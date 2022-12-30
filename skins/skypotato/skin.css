@@ -60,10 +60,24 @@ input[type=text],input[type="number"] {
 	width: 100%;
 }
 
+.skip-button {
+	height: 12px;
+	width: 14px;
+	cursor: pointer;
+}
+
+.skip-backwards {
+	margin-right: 4px;
+}
+
+.skip-forwards {
+	margin-left: 4px;
+}
+
 #playbackTime {
-	font-size:11px;
-	height:15px;
-	line-height:15px;
+	font-size:12px;
+	height:16px;
+	line-height:16px;
 }
 
 #albumcover {

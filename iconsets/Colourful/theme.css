@@ -121,4 +121,6 @@
     --icon-padlock:  url('iconsets/Colourful/padlock.svg');
     --icon-padlock-open: url('iconsets/Colourful/padlock_open.svg');
     --icon-instagram: url('iconsets/Colourful/instagram.svg');
+    --icon-rewind: url('iconsets/Colourful/rewind.svg');
+    --icon-ffwd: url('iconsets/Colourful/ffwd.svg');
 }

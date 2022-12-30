@@ -121,4 +121,6 @@
     --icon-padlock:  url('iconsets/Fiery/padlock.svg');
     --icon-padlock-open: url('iconsets/Fiery/padlock_open.svg');
     --icon-instagram: url('iconsets/Fiery/instagram.svg');
+    --icon-rewind: url('iconsets/Fiery/rewind.svg');
+    --icon-ffwd: url('iconsets/Fiery/ffwd.svg');
 }

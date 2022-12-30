@@ -117,6 +117,8 @@
 .icon-padlock { background-image: var(--icon-padlock); }
 .icon-padlock-open { background-image: var(--icon-padlock-open); }
 .icon-instagram { background-image: var(--icon-instagram); }
+.icon-rewind { background-image: var(--icon-rewind); }
+.icon-ffwd { background-image: var(--icon-ffwd); }
 
 .icon-snapcast {
     background-image: var(--icon-snapcast);

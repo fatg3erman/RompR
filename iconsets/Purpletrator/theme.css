@@ -121,4 +121,6 @@
     --icon-padlock:  url('iconsets/Purpletrator/padlock.svg');
     --icon-padlock-open: url('iconsets/Purpletrator/padlock_open.svg');
     --icon-instagram: url('iconsets/Purpletrator/instagram.svg');
+    --icon-rewind: url('iconsets/Purpletrator/rewind.svg');
+    --icon-ffwd: url('iconsets/Purpletrator/ffwd.svg');
 }

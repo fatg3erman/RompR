@@ -44,7 +44,21 @@ input[type=text],input[type="number"] {
 }
 
 #progress {
-	font-size:6pt;
+	height: 10px;
+}
+
+.skip-button {
+	height: 14px;
+	width: 14px;
+	cursor: pointer;
+}
+
+.skip-backwards {
+	margin-right: 4px;
+}
+
+.skip-forwards {
+	margin-left: 4px;
 }
 
 #playbackTime {
@@ -475,7 +489,7 @@ div.rightmenu
 	}
 }
 
-@media screen and (min-height: 800px) and (max-height: 939px) and (min-width: 649px) {
+@media screen and (min-height: 800px) and (max-height: 939px) {
 	.infobarlayout {
 		height:115px;
 	}
@@ -491,7 +505,7 @@ div.rightmenu
 	}
 }
 
-@media screen and (min-height: 940px) and (max-height: 1099px) and (min-width: 649px)  {
+@media screen and (min-height: 940px) and (max-height: 1099px) {
 	.infobarlayout {
 		height:140px;
 	}
@@ -507,7 +521,7 @@ div.rightmenu
 	}
 }
 
-@media screen and (min-height: 1100px) and (min-width: 649px)  {
+@media screen and (min-height: 1100px) {
 	.infobarlayout {
 		height:160px;
 	}

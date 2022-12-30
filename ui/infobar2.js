@@ -12,6 +12,25 @@ var infobar = function() {
 	var current_progress = 0;
 	var current_duration = 0;
 
+	var skip_inc_timer;
+	var skip_amount;
+	var skip_seek_value;
+	var do_skip_do;
+	var skipping = false;
+
+	function set_progress_indicators(progress, duration) {
+		$("#progress").rangechooser("setRange", {min: 0, max: progress});
+		var remain = duration - progress;
+		uiHelper.setProgressTime({
+			progress: progress,
+			duration: duration,
+			remain: remain,
+			progressString: formatTimeString(progress),
+			durationString: formatTimeString(duration),
+			remainString: '-'+formatTimeString(remain)
+		});
+	}
+
 	function showLove(flag) {
 		if (flag && lastfm.isLoggedIn() && playlistinfo.type == 'local') {
 			$("#lastfm").removeClass('invisible');
@@ -398,15 +417,6 @@ var infobar = function() {
 			return {
 				clicked: function() {
 					player.controller.toggle_playback_state();
-					// switch (player.status.state) {
-					// 	case "play":
-					// 		player.controller.pause();
-					// 		break;
-					// 	case "pause":
-					// 	case "stop":
-					// 		player.controller.play();
-					// 		break;
-					// }
 				},
 
 				setState: function(s) {
@@ -675,16 +685,9 @@ var infobar = function() {
 					podcasts.checkMarkPodcastAsListened(playlist.getCurrent('file'));
 					markedaslistened = true;
 				}
-				$("#progress").rangechooser("setRange", {min: 0, max: progress});
-				var remain = duration - progress;
-				uiHelper.setProgressTime({
-					progress: progress,
-					duration: duration,
-					remain: remain,
-					progressString: formatTimeString(progress),
-					durationString: formatTimeString(duration),
-					remainString: '-'+formatTimeString(remain)
-				});
+				if (!skipping)
+					set_progress_indicators(progress, duration);
+
 				nowplaying.progressUpdate(percent);
 				playlist.doTimeLeft();
 			}
@@ -696,6 +699,46 @@ var infobar = function() {
 				element.attr('name'),
 				[{uri: playlistinfo.file}]
 			);
+		},
+
+		startSkip: function(event) {
+			if (player.status.state == 'stop')
+				return;
+
+			clearTimeout(do_skip_do);
+			if (!skipping){
+				skipping = true;
+				skip_seek_value = parseFloat(current_progress);
+			}
+			skip_amount = prefs.skip_amount;
+			if ($(event.currentTarget).hasClass('skip-backwards'))
+				skip_amount = 0 - skip_amount;
+
+			infobar.increment_skip();
+		},
+
+		increment_skip: function() {
+			clearTimeout(skip_inc_timer);
+			skip_seek_value = Math.round(Math.max(0, Math.min(skip_seek_value+skip_amount, (current_duration - 1))));
+			set_progress_indicators(skip_seek_value, current_duration);
+			if (skip_seek_value == 0 || skip_seek_value == (current_duration - 1)) {
+				infobar.do_skip();
+			} else {
+				skip_amount += (skip_amount/10);
+				skip_inc_timer = setTimeout(infobar.increment_skip, 200);
+			}
+		},
+
+		stopSkip: function() {
+			clearTimeout(skip_inc_timer);
+			if (skipping)
+				do_skip_do = setTimeout(infobar.do_skip, 500);
+		},
+
+		do_skip: function() {
+			clearTimeout(do_skip_do);
+			skipping = false;
+			player.controller.seekcur(skip_seek_value);
 		}
 	}
 
