@@ -576,12 +576,6 @@ var infobar = function() {
 			infobar.albumImage.setSecondarySource(info);
 		},
 
-		seek: function(e) {
-			if (playlistinfo.type != "stream") {
-				player.controller.seek(e.max);
-			}
-		},
-
 		volumeKey: function(inc) {
 			var volume = parseInt(player.status.volume);
 			debug.trace("INFOBAR","Volume key with volume on",volume);
@@ -649,6 +643,7 @@ var infobar = function() {
 			$("#progress").rangechooser({
 				ends: ['max'],
 				onstop: infobar.seek,
+				whiledragging: infobar.progress_drag,
 				startmax: 0,
 				animate: false
 			});
@@ -658,6 +653,23 @@ var infobar = function() {
 				animate: false,
 				interactive: false
 			});
+		},
+
+		seek: function(e) {
+			if (player.status.state == 'stop' || playlistinfo.type == "stream")
+				return;
+			clearTimeout(do_skip_do);
+			skip_seek_value = Math.round(e.max);
+			do_skip_do = setTimeout(infobar.do_skip, 500);
+		},
+
+		progress_drag: function(e) {
+			if (player.status.state == 'stop' || playlistinfo.type == "stream")
+				return;
+
+			clearTimeout(do_skip_do);
+			skipping = true;
+			set_progress_indicators(Math.round(e.max), current_duration);
 		},
 
 		getProgress: function() {
@@ -702,7 +714,7 @@ var infobar = function() {
 		},
 
 		startSkip: function(event) {
-			if (player.status.state == 'stop')
+			if (player.status.state == 'stop' || playlistinfo.type == "stream")
 				return;
 
 			clearTimeout(do_skip_do);
