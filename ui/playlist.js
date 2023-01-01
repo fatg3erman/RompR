@@ -197,8 +197,11 @@ var playlist = function() {
 			},
 
 			standardBox: function(station, param, icon, label, cls) {
-				if (cls)
+				if (cls) {
 					cls = ' '+cls;
+				} else {
+					cls = '';
+				}
 				var container = $('<div>', {
 					class: 'menuitem containerbox playable smartradio collectionitem'+cls,
 					name: station + (param ? '+'+param : '')

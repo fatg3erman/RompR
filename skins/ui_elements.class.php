@@ -207,7 +207,7 @@ class ui_elements {
 		}
 		$html = '';
 		if ($det['buttons']) {
-			$html .= '<div class="containerbox wrap album-play-controls">';
+			$html .= '<div class="containerbox wrap album-play-controls vertical-centre">';
 			if ($det['AlbumUri']) {
 				$albumuri = rawurlencode($det['AlbumUri']);
 				if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
