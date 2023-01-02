@@ -19,7 +19,6 @@ var infobar = function() {
 	var skipping = false;
 
 	function set_progress_indicators(progress, duration) {
-		$("#progress").rangechooser("setRange", {min: 0, max: progress});
 		var remain = duration - progress;
 		uiHelper.setProgressTime({
 			progress: progress,
@@ -660,7 +659,7 @@ var infobar = function() {
 				return;
 			clearTimeout(do_skip_do);
 			skip_seek_value = Math.round(e.max);
-			do_skip_do = setTimeout(infobar.do_skip, 500);
+			do_skip_do = setTimeout(infobar.do_skip, 250);
 		},
 
 		progress_drag: function(e) {
@@ -697,8 +696,10 @@ var infobar = function() {
 					podcasts.checkMarkPodcastAsListened(playlist.getCurrent('file'));
 					markedaslistened = true;
 				}
-				if (!skipping)
+				if (!skipping) {
+					$("#progress").rangechooser("setRange", {min: 0, max: progress});
 					set_progress_indicators(progress, duration);
+				}
 
 				nowplaying.progressUpdate(percent);
 				playlist.doTimeLeft();
@@ -732,6 +733,7 @@ var infobar = function() {
 		increment_skip: function() {
 			clearTimeout(skip_inc_timer);
 			skip_seek_value = Math.round(Math.max(0, Math.min(skip_seek_value+skip_amount, (current_duration - 1))));
+			$("#progress").rangechooser("setRange", {min: 0, max: skip_seek_value});
 			set_progress_indicators(skip_seek_value, current_duration);
 			if (skip_seek_value == 0 || skip_seek_value == (current_duration - 1)) {
 				infobar.do_skip();
@@ -744,7 +746,7 @@ var infobar = function() {
 		stopSkip: function() {
 			clearTimeout(skip_inc_timer);
 			if (skipping)
-				do_skip_do = setTimeout(infobar.do_skip, 500);
+				do_skip_do = setTimeout(infobar.do_skip, 250);
 		},
 
 		do_skip: function() {
