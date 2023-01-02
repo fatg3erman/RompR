@@ -567,3 +567,7 @@ ul.info-links-column>li:not(.info-list-title)>a {
 	top: 2px;
 	margin-right: 8px;
 }
+
+#sortable i[class*="clickremove"] {
+	margin-right: 2px;
+}
