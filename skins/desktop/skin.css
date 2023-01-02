@@ -55,10 +55,12 @@ input[type=text],input[type="number"] {
 
 .skip-backwards {
 	margin-right: 4px;
+	margin-left: 4px;
 }
 
 .skip-forwards {
 	margin-left: 4px;
+	margin-right: 4px;
 }
 
 #playbackTime {
@@ -79,14 +81,14 @@ input[type=text],input[type="number"] {
 
 #albumpicture {
 	width: auto;
-	height: 82px;
+	height: 88px;
 }
 
 #nowplaying {
 	font-size:8pt;
 	padding-top:0px;
 	padding-bottom:0px;
-	height:60px;
+	height:66px;
 	width:100%;
 	overflow:hidden;
 	box-sizing:border-box;
@@ -222,7 +224,7 @@ button.spinable.icon-spin6 {
 	padding-bottom:2px;
 	padding-left:0px;
 	padding-right:0px;
-	height:90px;
+	height:96px;
 }
 
 .topstats {
