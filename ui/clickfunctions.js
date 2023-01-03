@@ -812,7 +812,11 @@ function popupMenu(event, element) {
 		closePopupMenu();
 		$(button).addClass('menu_opened');
 		justclosed = false;
-		maindiv = $('<div>', {id: 'popupmenu', class:'top_drop_menu dropshadow normalmenu albumbitsmenu', style: 'opacity:0;display:block'}).appendTo($('body'));
+		maindiv = $('<div>', {
+			id: 'popupmenu',
+			class:'top_drop_menu dropshadow normalmenu albumbitsmenu',
+			style: 'opacity:0 !important; display:block;'}
+		).appendTo($('body'));
 		holderdiv = $('<div>', {class: 'fullwidth'}).appendTo(maindiv);
 		// Copy the attributes from the button to a holder div so that .parent() still works
 		// and we don't have faffing with do we/don't we have custom scrollbars
