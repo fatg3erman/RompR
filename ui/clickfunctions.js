@@ -842,10 +842,10 @@ function popupMenu(event, element) {
 		maindiv.css({
 			left: left,
 			top: mouseY+'px',
-			opacity: 1,
 			'max-height': max_size.y
 		});
 		setTop();
+		maindiv.css({opacity: 1});
 	}
 
 	this.openSubMenu = function(e, element) {
