@@ -20,19 +20,19 @@ relevant for Spotify support.
 * This bump in version number reflects a big change in how RompR works internally. This has allowed me to improve
 a lot of the functionality, but I cannot possibly test it on every system.
 * **You must be running RompR version 1.40 or newer to upgrade to this version**
-* **It is strongly reccommended that you [back up your entire database](/Backing-Up-Your-Metadata#Backing-Up-Your-Entire_database)
+* **It is strongly reccommended that you [back up your entire database](/RompR/Backing-Up-Your-Metadata#Backing-Up-Your-Entire_database)
 before updating to this version, as if it does not work for you then rolling back will be impossible without a database backup.**
 * **In order to upgrade to this version from an earlier version you must delete everything from your installation except your prefs and albumart directories,
 then copy the new version in.**
 * If you do have problems after upgrading, please [raise a bug on the issue tracker](https://github.com/fatg3erman/RompR/issues)
 and I will attempt to fix it or assist you.
-* This version introduces the [RompR Backend Daemon](/Backend-Daemon) which replaces romonitor and is now a requirement.
+* This version introduces the [RompR Backend Daemon](/RompR/Backend-Daemon) which replaces romonitor and is now a requirement.
 The Daemon performs some tasks that are very difficult to do in the browser but very easy to do if you have a process running permanently on the server.
 It requires a POSIX operating system and therefore RompR is no longer supported on Windows. RompR will, on most systems, start this daemon itself so you
 shouldn't need to do anything *except* if you were previously running romonitor, in which case you **must** read the link above.
 * Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin.
 As a result of this change though, you will need to recreate any Alarms you had previously configured.
-* There is now a [Websocket Server](/RompR-And-MPD) that makes the UI more responsive when you're using MPD - essentially it
+* There is now a [Websocket Server](/RompR/RompR-And-MPD) that makes the UI more responsive when you're using MPD - essentially it
 mimics the part of Mopidy's HTTP interface that RompR uses. It's not required but it is recommended. There are some pre-requisistes you
 need for this to work, please read the link.
 * The websocket port to use for Mopidy is now configurable for each player, to help those who use multiple players running on the
