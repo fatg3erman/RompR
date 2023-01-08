@@ -160,7 +160,6 @@ function carry_on_starting() {
 	set_mouse_touch_flags();
 	sleepHelper.init();
 	$('#albumpicture').on('load', albumImageLoaded);
-	get_geo_country();
 	if (prefs.do_not_show_prefs) {
 		$('.choose_prefs').remove();
 	}
@@ -207,20 +206,4 @@ function carry_on_starting() {
 		// $('#pluginplaylists_everywhere').prev().prev().hide();
 	}
 	searchManager.setup_categories();
-}
-
-function get_geo_country() {
-	if (prefs.country_userset == false) {
-		// It's helpful and important to get the country code set, as many users won't see it
-		// and it's necessary for the Spotify info panel to return accurate data
-		$.getJSON("utils/getgeoip.php", function(result) {
-			debug.info("GET COUNTRY", 'Country:',result.country,'Code:',result.countryCode);
-			if (result.country != 'ERROR') {
-				$("#lastfm_country_codeselector").val(result.countryCode);
-				prefs.save({lastfm_country_code: result.countryCode, country_userset: true});
-			} else {
-				debug.error("GET COUNTRY","Country code error",result);
-			}
-		});
-	}
 }

@@ -621,6 +621,10 @@ div.rightmenu
 	margin-left: 0px;
 }
 
+.title-menu.containerbox.vertical-centre>i.svg-square {
+	margin-right:4px;
+}
+
 .minwidthed2.expand>.tagh.albumthing {
 	padding: 0px;
 }

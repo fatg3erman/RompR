@@ -60,7 +60,7 @@ class language {
 	public static function get_browser_country() {
 		// return the two-letter country code from the browser (eg GB, FR)
 		// This is the equivalent of the ISO3166-1 alpha-2 code required by Spotify
-		// fro making sure search results are appropriate for the user's market/country
+		// for making sure search results are appropriate for the user's market/country
 		// It is saved in the pref lastfm_country_code
 		if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER)) {
 			return substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 3, 2);

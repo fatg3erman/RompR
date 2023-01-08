@@ -6,6 +6,7 @@
 
 * By popular request there are now seek forwards/backwards buttons next to the progress bar. Click or press once for a 10 second skip.
 Click, or press, and hold for an incrementing skip.
+* Some minor display and layout fixes for bugs introduced in version 2.00
 
 
 ## Version 2.00

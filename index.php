@@ -94,11 +94,11 @@ if (array_key_exists('cacheclean', $_REQUEST)) {
 // Set the country code from the browser (though this may not be accurate)
 // - unless the user has already set it. Note, this is the lastfm country
 // code, not the interface language.
-// Later on we set it using geoip.
 //
 
 if (!prefs::get_pref('country_userset')) {
 	prefs::set_pref(['lastfm_country_code' => language::get_browser_country()]);
+	logger::info('INIT', 'Country code not set by user. Setting it to', prefs::get_pref('lastfm_country_code'));
 }
 
 logger::debug("INIT", $_SERVER['SCRIPT_FILENAME']);
