@@ -32,7 +32,7 @@ It requires a POSIX operating system and therefore RompR is no longer supported 
 shouldn't need to do anything *except* if you were previously running romonitor, in which case you **must** read the link above.
 * Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin.
 As a result of this change though, you will need to recreate any Alarms you had previously configured.
-* There is now a [Websocket Server](/RompR/RompR-And-MPD) that makes the UI more responsive when you're using MPD - essentially it
+* There is now a [Websocket Server](/RompR/Rompr-And-MPD) that makes the UI more responsive when you're using MPD - essentially it
 mimics the part of Mopidy's HTTP interface that RompR uses. It's not required but it is recommended. There are some pre-requisistes you
 need for this to work, please read the link.
 * The websocket port to use for Mopidy is now configurable for each player, to help those who use multiple players running on the
