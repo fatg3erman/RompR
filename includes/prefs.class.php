@@ -520,6 +520,10 @@ class prefs {
 
 	public static function upgrade_host_defs($ver) {
 		$websocket = prefs::get_pref('http_port_for_mopidy');
+		if (!is_numeric($websocket)) {
+			$websocket = 6680;
+		}
+
 		foreach (self::$prefs['multihosts'] as $key => $value) {
 			switch ($ver) {
 				case 45:

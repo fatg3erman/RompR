@@ -13,6 +13,19 @@ class baseAlbumImage {
 
 	// Remember to keep albumart_translator in uifunctions.js in step with this
 
+	// We can no longer use dynamicm properties so we have to declare all these here.
+	protected $artist;
+	protected $album;
+	protected $key;
+	protected $source;
+	protected $file;
+	protected $base64data;
+	protected $mbid;
+	protected $albumpath;
+	protected $albumuri;
+	protected $trackuri;
+	protected $dbimage;
+
 	public function __construct($params) {
 		foreach (array('artist', 'album', 'key', 'source', 'file', 'base64data', 'mbid', 'albumpath', 'albumuri', 'trackuri', 'dbimage') as $param) {
 			if (array_key_exists($param, $params) && $params[$param] != ''  && $params[$param] !== null) {
