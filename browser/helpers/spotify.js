@@ -54,7 +54,7 @@ var spotify = function() {
 					req.success(collectedobj);
 				} else {
 					queue.unshift({
-						reqid: '',
+						reqid: current_req.reqid,
 						data: {
 							module: 'spotify',
 							method: 'get_url',
@@ -69,6 +69,7 @@ var spotify = function() {
 			} else if (data[root].previous) {
 				collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
 				debug.trace("SPOTIFY","Returning concatenated multi-page result");
+				collectedobj.reqid = current_req.reqid;
 				req.success(collectedobj);
 			} else if (data.next) {
 				debug.debug("SPOTIFY","Got a response with a next page!");
@@ -80,10 +81,11 @@ var spotify = function() {
 					pages++;
 				}
 				if (pages > 10) {
+					collectedobj.reqid = current_req.reqid;
 					req.success(collectedobj);
 				} else {
 					queue.unshift({
-						reqid: '',
+						reqid: current_req.reqid,
 						data: {
 							module: 'spotify',
 							method: 'get_url',
@@ -98,8 +100,10 @@ var spotify = function() {
 			} else if (data.previous) {
 				collectedobj.items = collectedobj.items.concat(data.items);
 				debug.trace("SPOTIFY","Returning concatenated multi-page result");
+				collectedobj.reqid = current_req.reqid;
 				req.success(collectedobj);
 			} else {
+				data.reqid = current_req.reqid;
 				req.success(data);
 			}
 		} catch(err) {
