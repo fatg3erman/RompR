@@ -991,19 +991,20 @@ async function makeTrackMenu(e, element) {
 		function() { debug.error('SUBMENU', 'Failed to populate tag menu') }
 	);
 
-	// var pls = $('<div>', {
-	// 	class: 'backhi clickable menuitem clicksubmenu',
-	// }).html(language.gettext("button_addtoplaylist")).appendTo(d);
-	// var plssub = $('<div>', {class:'submenu invisible submenuspacer'}).appendTo(d);
+	var pls = $('<div>', {
+		class: 'backhi clickable menuitem clicksubmenu',
+	}).html(language.gettext("button_addtoplaylist")).appendTo(d);
+	var plssub = $('<div>', {class:'submenu invisible submenuspacer'}).appendTo(d);
 
-	// var data = await $.ajax({
-	// 	url: 'player/utils/loadplaylists.php?addtoplaylistmenu=1',
-	// 	type: 'GET',
-	// 	cache: false
-	// });
-	// data.forEach(function(p) {
-	// 	var h = $('<div>', {class: "backhi clickable menuitem clickpltrack closepopup", name: p.name }).html(p.html).appendTo(plssub);
-	// });
+	// Do this out of band because it can be slow with some backends
+	$.ajax({
+		url: 'player/utils/loadplaylists.php?addtoplaylistmenu=1',
+		type: 'GET',
+		cache: false
+	})
+	.done(function(data) {
+		finishPlaylistMenu(data, plssub);
+	})
 
 	var banana = $(element).parent().next();
 	while (banana.hasClass('podcastresume')) {
@@ -1022,6 +1023,12 @@ async function makeTrackMenu(e, element) {
 	menu.addAction('resetresume', metaHandlers.fromUiElement.resetResumePosition);
 
 	menu.open();
+}
+
+function finishPlaylistMenu(data, menu) {
+	data.forEach(function(p) {
+		var h = $('<div>', {class: "backhi clickable menuitem clickpltrack closepopup", name: p.name }).html(p.html).appendTo(menu);
+	});
 }
 
 function makeAlbumMenu(e, element) {
