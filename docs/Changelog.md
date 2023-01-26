@@ -10,6 +10,8 @@ Click, or press, and hold for an incrementing skip.
 Since people can't be trusted I've removed that functionality and disabled the account. RompR will now attempt to work out your contry code
 based on the limited information the browser gives it, which may be wrong. This doesn't matter much any more though since it was mainly
 relevant for Spotify support.
+* Fix bug where Player definition upgrade would fail if mopidy_http_port wasn't set.
+* Fix Info panel bug where 'Similar Artists' in the Spotify panel didn't work.
 * Some minor display and layout fixes for bugs introduced in version 2.00
 
 
