@@ -991,19 +991,19 @@ async function makeTrackMenu(e, element) {
 		function() { debug.error('SUBMENU', 'Failed to populate tag menu') }
 	);
 
-	var pls = $('<div>', {
-		class: 'backhi clickable menuitem clicksubmenu',
-	}).html(language.gettext("button_addtoplaylist")).appendTo(d);
-	var plssub = $('<div>', {class:'submenu invisible submenuspacer'}).appendTo(d);
+	// var pls = $('<div>', {
+	// 	class: 'backhi clickable menuitem clicksubmenu',
+	// }).html(language.gettext("button_addtoplaylist")).appendTo(d);
+	// var plssub = $('<div>', {class:'submenu invisible submenuspacer'}).appendTo(d);
 
-	var data = await $.ajax({
-		url: 'player/utils/loadplaylists.php?addtoplaylistmenu=1',
-		type: 'GET',
-		cache: false
-	});
-	data.forEach(function(p) {
-		var h = $('<div>', {class: "backhi clickable menuitem clickpltrack closepopup", name: p.name }).html(p.html).appendTo(plssub);
-	});
+	// var data = await $.ajax({
+	// 	url: 'player/utils/loadplaylists.php?addtoplaylistmenu=1',
+	// 	type: 'GET',
+	// 	cache: false
+	// });
+	// data.forEach(function(p) {
+	// 	var h = $('<div>', {class: "backhi clickable menuitem clickpltrack closepopup", name: p.name }).html(p.html).appendTo(plssub);
+	// });
 
 	var banana = $(element).parent().next();
 	while (banana.hasClass('podcastresume')) {
