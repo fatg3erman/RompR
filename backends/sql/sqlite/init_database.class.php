@@ -233,6 +233,16 @@ class init_database extends init_generic {
 				$err = $this->mysqlc->errorInfo()[2];
 				return array(false, "Error While Checking PodcastTracktable : ".$err);
 			}
+			if ($this->generic_sql_query("CREATE INDEX IF NOT EXISTS pod_guid ON PodcastTracktable (Guid)", true)) {
+			} else {
+				$err = $this->mysqlc->errorInfo()[2];
+				return array(false, "Error While Checking PodcastTracktable : ".$err);
+			}
+			if ($this->generic_sql_query("CREATE INDEX IF NOT EXISTS pod_parent ON PodcastTracktable (PODindex)", true)) {
+			} else {
+				$err = $this->mysqlc->errorInfo()[2];
+				return array(false, "Error While Checking PodcastTracktable : ".$err);
+			}
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking PodcastTracktable : ".$err);
@@ -859,6 +869,16 @@ class init_database extends init_generic {
 					$this->set_admin_value('SchemaVer', 98);
 					break;
 
+				case 98:
+					logger::log("SQL", "Updating FROM Schema version 98 TO Schema version 99");
+					$this->set_admin_value('SchemaVer', 99);
+					break;
+
+				case 99:
+					logger::log("SQL", "Updating FROM Schema version 99 TO Schema version 100");
+					$this->set_admin_value('SchemaVer', 100);
+					break;
+
 			}
 			$sv++;
 		}
@@ -905,8 +925,9 @@ class init_database extends init_generic {
 	protected function create_tracktable_indexes() {
 		$retries = 2;
 		$success = false;
+		$this->generic_sql_query("DROP INDEX IF EXISTS trackfinder", true);
 		while ($retries > 0) {
-			if ($this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true)) {
+			if ($this->generic_sql_query("CREATE UNIQUE INDEX IF NOT EXISTS trackfinder_new ON Tracktable (Title, Albumindex, TrackNo, Artistindex, Disc)", true)) {
 				logger::log('SQLITE', 'Tracktable Indexes created OK');
 				$retries = 0;
 				$success = true;
@@ -925,6 +946,21 @@ class init_database extends init_generic {
 		if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS track_uri ON Tracktable (Uri)", true)) {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error Creating Tracktable Uri Index : ".$err);
+		}
+
+		if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS title_idx ON Tracktable (Title)", true)) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error Creating Tracktable Title Index : ".$err);
+		}
+
+		if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS trackno_idx ON Tracktable (TrackNo)", true)) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error Creating Tracktable TrackNo Index : ".$err);
+		}
+
+		if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS hidden_idx ON Tracktable (Hidden)", true)) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error Creating Tracktable Hidden Index : ".$err);
 		}
 
 		return array(true, '');

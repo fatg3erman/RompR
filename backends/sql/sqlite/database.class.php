@@ -165,7 +165,7 @@ class database extends data_base {
 					(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isAudiobook, Genreindex, TYear)
 				VALUES
 					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-				ON CONFLICT(Albumindex, Artistindex, TrackNo, Disc, Title) DO UPDATE SET
+				ON CONFLICT(Title, Albumindex, TrackNo, Artistindex, Disc) DO UPDATE SET
 					Duration = excluded.Duration,
 					Uri = excluded.Uri,
 					LastModified = excluded.LastModified,
@@ -199,7 +199,7 @@ class database extends data_base {
 					(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
 				VALUES
 					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?)
-				ON CONFLICT(Albumindex, Artistindex, TrackNo, Disc, Title) DO UPDATE SET
+				ON CONFLICT(Title, Albumindex, TrackNo, Artistindex, Disc) DO UPDATE SET
 					Duration = excluded.Duration,
 					Uri = excluded.Uri,
 					isSearchResult = CASE WHEN isSearchResult > 0 THEN isSearchResult ELSE CASE WHEN Hidden = 0 THEN 1 ELSE 3 END END,

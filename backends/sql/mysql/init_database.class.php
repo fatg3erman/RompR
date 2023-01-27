@@ -71,7 +71,12 @@ class init_database extends init_generic {
 			usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0,
 			Genreindex INT UNSIGNED DEFAULT 0,
 			TYear YEAR,
-			UNIQUE INDEX(Albumindex, Artistindex, TrackNo, Disc, Title),
+			UNIQUE INDEX(Title, Albumindex, TrackNo, Artistindex, Disc),
+			INDEX (Title),
+			INDEX (TrackNo),
+			INDEX (Hidden),
+			INDEX (isSearchResult),
+			INDEX (Albumindex),
 			INDEX(Uri (768))) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  Tracktable OK");
@@ -233,7 +238,9 @@ class init_database extends init_generic {
 			Image VARCHAR(255) DEFAULT NULL,
 			INDEX (PODindex),
 			PRIMARY KEY (PODTrackindex),
-			INDEX (Title)) ENGINE=InnoDB", true))
+			INDEX (Title),
+			INDEX (Guid (768)),
+			INDEX (PODindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  PodcastTracktable OK");
 		} else {
@@ -758,6 +765,50 @@ class init_database extends init_generic {
 					prefs::upgrade_host_defs(98);
 					$this->set_admin_value('SchemaVer', 98);
 					break;
+
+				case 98:
+					logger::log("SQL", "Updating FROM Schema version 98 TO Schema version 99");
+					$this->generic_sql_query("DROP INDEX trackfinder ON Tracktable", true);
+					if (!$this->generic_sql_query("CREATE UNIQUE INDEX trackfinder_new ON Tracktable (Title, Albumindex, TrackNo, Artistindex, Disc)", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating Tracktable Index : ".$err);
+					}
+					if (!$this->generic_sql_query("CREATE INDEX title_idx ON Tracktable (Title)", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating Tracktable Index : ".$err);
+					}
+					if (!$this->generic_sql_query("CREATE INDEX trackno_idx ON Tracktable (TrackNo)", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating Tracktable Index : ".$err);
+					}
+					if (!$this->generic_sql_query("CREATE INDEX hidden_idx ON Tracktable (Hidden)", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating Tracktable Index : ".$err);
+					}
+					if (!$this->generic_sql_query("CREATE INDEX search_idx ON Tracktable (isSearchResult)", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating Tracktable Index : ".$err);
+					}
+					if (!$this->generic_sql_query("CREATE INDEX album_idx ON Tracktable (Albumindex)", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating Tracktable Index : ".$err);
+					}
+					$this->set_admin_value('SchemaVer', 99);
+					break;
+
+				case 99:
+					logger::log("SQL", "Updating FROM Schema version 99 TO Schema version 100");
+					if (!$this->generic_sql_query("CREATE INDEX pod_guid ON PodcastTracktable (Guid (768))", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating PodcastTracktable Index : ".$err);
+					}
+					if (!$this->generic_sql_query("CREATE INDEX pod_parent ON PodcastTracktable (PODindex)", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating PodcastTracktable Index : ".$err);
+					}
+					$this->set_admin_value('SchemaVer', 100);
+					break;
+
 
 			}
 			$sv++;
