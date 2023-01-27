@@ -198,7 +198,7 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isAudiobook, Genreindex, TYear)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isAudiobook, Genreindex, TYear)
 				VALUES
 					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
@@ -224,7 +224,7 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isAudiobook, Genreindex, TYear)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isAudiobook, Genreindex, TYear)
 				VALUES
 					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS new
 				ON DUPLICATE KEY UPDATE
@@ -265,7 +265,7 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
 				VALUES
 					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
@@ -291,7 +291,7 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
 				VALUES
 					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?) AS new
 				ON DUPLICATE KEY UPDATE

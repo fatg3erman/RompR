@@ -56,9 +56,9 @@ class init_database extends init_generic {
 			Title VARCHAR(255),
 			Albumindex INT UNSIGNED,
 			TrackNo SMALLINT UNSIGNED,
-			Duration INT UNSIGNED,
 			Artistindex INT UNSIGNED,
 			Disc TINYINT(3) UNSIGNED,
+			Duration INT UNSIGNED,
 			Uri VARCHAR(2000),
 			LastModified CHAR(32),
 			Hidden TINYINT(1) UNSIGNED DEFAULT 0,
@@ -771,6 +771,7 @@ class init_database extends init_generic {
 				case 98:
 					logger::log("SQL", "Updating FROM Schema version 98 TO Schema version 99");
 					$this->generic_sql_query("DROP INDEX trackfinder ON Tracktable", true);
+					$this->generic_sql_query("ALTER TABLE Tracktable MODIFY COLUMN Duration INT UNSIGNED AFTER Disc", true);
 					if (!$this->generic_sql_query("CREATE UNIQUE INDEX trackfinder_new ON Tracktable (Title, Albumindex, TrackNo, Artistindex, Disc)", true)) {
 						$err = $this->mysqlc->errorInfo()[2];
 						return array(false, "Error Creating Tracktable Index : ".$err);

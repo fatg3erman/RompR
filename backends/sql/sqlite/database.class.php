@@ -162,7 +162,7 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isAudiobook, Genreindex, TYear)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isAudiobook, Genreindex, TYear)
 				VALUES
 					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 				ON CONFLICT(Title, Albumindex, TrackNo, Artistindex, Disc) DO UPDATE SET
@@ -196,7 +196,7 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
 				VALUES
 					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?)
 				ON CONFLICT(Title, Albumindex, TrackNo, Artistindex, Disc) DO UPDATE SET
