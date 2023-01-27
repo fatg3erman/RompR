@@ -973,6 +973,16 @@ class init_database extends init_generic {
 			return array(false, "Error Creating Tracktable Hidden Index : ".$err);
 		}
 
+		if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS search_idx ON Tracktable (isSearchResult)", true)) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error Creating Tracktable Search Result Index : ".$err);
+		}
+
+		if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS album_idx ON Tracktable (Albumindex)", true)) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error Creating Tracktable Albumindex Index : ".$err);
+		}
+
 		return array(true, '');
 	}
 
