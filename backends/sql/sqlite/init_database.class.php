@@ -243,6 +243,16 @@ class init_database extends init_generic {
 				$err = $this->mysqlc->errorInfo()[2];
 				return array(false, "Error While Checking PodcastTracktable : ".$err);
 			}
+			if ($this->generic_sql_query("CREATE INDEX IF NOT EXISTS pod_pubdate ON PodcastTracktable (PubDate)", true)) {
+			} else {
+				$err = $this->mysqlc->errorInfo()[2];
+				return array(false, "Error While Checking PodcastTracktable : ".$err);
+			}
+			if ($this->generic_sql_query("CREATE INDEX IF NOT EXISTS pod_deleted ON PodcastTracktable (Deleted)", true)) {
+			} else {
+				$err = $this->mysqlc->errorInfo()[2];
+				return array(false, "Error While Checking PodcastTracktable : ".$err);
+			}
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking PodcastTracktable : ".$err);

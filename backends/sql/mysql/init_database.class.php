@@ -240,6 +240,8 @@ class init_database extends init_generic {
 			PRIMARY KEY (PODTrackindex),
 			INDEX (Title),
 			INDEX (Guid (768)),
+			INDEX (PubDate),
+			INDEX (Deleted),
 			INDEX (PODindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  PodcastTracktable OK");
@@ -803,6 +805,14 @@ class init_database extends init_generic {
 						return array(false, "Error Creating PodcastTracktable Index : ".$err);
 					}
 					if (!$this->generic_sql_query("CREATE INDEX pod_parent ON PodcastTracktable (PODindex)", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating PodcastTracktable Index : ".$err);
+					}
+					if (!$this->generic_sql_query("CREATE INDEX pod_pubdate ON PodcastTracktable (PubDate)", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating PodcastTracktable Index : ".$err);
+					}
+					if (!$this->generic_sql_query("CREATE INDEX pod_deleted ON PodcastTracktable (Deleted)", true)) {
 						$err = $this->mysqlc->errorInfo()[2];
 						return array(false, "Error Creating PodcastTracktable Index : ".$err);
 					}
