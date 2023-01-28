@@ -806,10 +806,11 @@ class player extends base_mpd_player {
 
 	public function search_for_album_image($albumimage) {
 		$retval = '';
-		if ($albumimage->albumuri) {
+		// yt:playlist just hangs every time and locks Mopidy completely
+		if ($albumimage->albumuri && strpos($albumimage->albumuri, ':playlist') === false) {
 			logger::log('GETALBUMCOVER', 'Trying Mopidy-Images. AlbumURI is', $albumimage->albumuri);
 			$retval = $this->find_album_image($albumimage->albumuri);
-		} else if ($albumimage->trackuri) {
+		} else if ($albumimage->trackuri && strpos($albumimage->trackuri, ':playlist') === false) {
 			logger::log('GETALBUMCOVER', 'Trying Mopidy-Images. TrackURI is', $albumimage->trackuri);
 			$retval = $this->find_album_image($albumimage->trackuri);
 		}

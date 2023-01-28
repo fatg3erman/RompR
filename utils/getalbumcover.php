@@ -24,11 +24,11 @@ $ignore_local = (array_key_exists('ignorelocal', $_REQUEST) && $_REQUEST['ignore
 // The requests are cached locally so it's only one request to Last.FM
 
 $searchfunctions = array(
+	'tryLocal',
 	'tryPlayer',
 	'trySoundcloud',
 	'tryLastFMForMBID',
-	'tryLocal',
-	'trySpotify',
+	// 'trySpotify',
 	'tryMusicBrainz',
 	'tryLastFM',
 	'tryBing'
