@@ -10,11 +10,16 @@ foreach ($_REQUEST as $k => $v) {
 	if ($k == 'base64data') {
 		logger::debug("GETALBUMCOVER", "We have base64 data");
 	} else {
-		logger::debug("GETALBUMCOVER", $k, '=', $v);
+		logger::trace("GETALBUMCOVER", $k, '=', $v);
 	}
 }
+$opts = $_REQUEST;
+if (array_key_exists('ufile', $_FILES)) {
+	logger::trace('GETALBUMCOVER', 'File', $_FILES['ufile']['tmp_name']);
+	$opts['file'] = basename($_FILES['ufile']['tmp_name']);
+}
 
-$albumimage = new albumImage($_REQUEST);
+$albumimage = new albumImage($opts);
 $delaytime = 1;
 $ignore_local = (array_key_exists('ignorelocal', $_REQUEST) && $_REQUEST['ignorelocal'] == 'true') ? true : false;
 
@@ -36,7 +41,7 @@ $searchfunctions = array(
 
 $player = new player();
 
-if (array_key_exists('source', $_REQUEST) || array_key_exists('base64data', $_REQUEST)) {
+if (array_key_exists('source', $opts) || array_key_exists('base64data', $opts) || array_key_exists('file', $opts)) {
 	$result = false;
 } else {
 	$result = $albumimage->check_archive_image_exists();
