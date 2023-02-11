@@ -717,7 +717,7 @@ class collection_base extends database {
 	}
 
 	public function remove_user_radio_stream($x) {
-		$this->sql_prepare_queryp(true, null, null, null, "UPDATE RadioStationtable SET IsFave = 0, Number = 65535 WHERE Stationindex = ?", $x);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET IsFave = 0, Number = 65535 WHERE Stationindex = ?", $x);
 	}
 
 	public function save_radio_order($order) {
