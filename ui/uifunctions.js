@@ -832,11 +832,13 @@ function combine_spotify_artists(artists) {
 }
 
 function spotifyTrackListing(data, show_add_button) {
+	debug.log('TRACKLIST', data);
 	var h = '';
 	for(var i in data.tracks.items) {
-		if (player.canPlay(data.domain)) {
+		var domain = playlist.getDomain(data.tracks.items[i].uri);
+		if (player.canPlay(domain)) {
 			h += '<div class="playable draggable clickable clicktrack fullwidth" name="'+rawurlencode(data.tracks.items[i].uri)+'">';
-		} else if (player.canPlay('youtube') || player.canPlay('ytmusic')) {
+		} else if (player.canPlay('youtube') || player.canPlay('ytmusic') || player.canPlay('spotify')) {
 			h += '<div class="fullwidth playable clicktracksearch">';
 			h += '<input type="hidden" class="search_param" name="trackartist" value="'+escapeHtml(combine_spotify_artists(data.artists))+'" />';
 			if (data.name)
@@ -854,7 +856,7 @@ function spotifyTrackListing(data, show_add_button) {
 			'<div class="expand">'+data.tracks.items[i].name+'</div>'+
 			'<div class="fixed playlistrow2 tracktime">'+formatTimeString(data.tracks.items[i].duration_ms/1000)+'</div>';
 
-		if (show_add_button && data.domain != 'local' && player.canPlay(data.domain))
+		if (show_add_button && domain != 'local' && player.canPlay(domain))
 			h += '<i class="inline-icon icon-music clickspotifywidget infoclick plugclickable clickimporttrack" name="'+i+'"></i>';
 
 		h+=	'</div>' +

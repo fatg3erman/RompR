@@ -903,9 +903,17 @@ var playlist = function() {
 			return currentalbum;
 		},
 
+		getDomain: function(u) {
+			var s = u.split(':');
+			if (s.length > 0) {
+				return s.shift();
+			} else {
+				return 'local';
+			}
+		},
+
 		getDomainIcon: function(track, def) {
-			var s = track.file.split(':');
-			var d = s.shift();
+			var d = playlist.getDomain(track.file);
 			switch (d) {
 				case "spotify":
 				case "ytmusic":

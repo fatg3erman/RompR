@@ -30,7 +30,6 @@ class baseAlbumImage {
 		foreach (array('artist', 'album', 'key', 'source', 'file', 'base64data', 'mbid', 'albumpath', 'albumuri', 'trackuri', 'dbimage') as $param) {
 			if (array_key_exists($param, $params) && $params[$param] != ''  && $params[$param] !== null) {
 				$this->{$param} = $params[$param];
-				logger::log('IMAGE', $param, $params[$param]);
 			} else {
 				$this->{$param} = null;
 			}

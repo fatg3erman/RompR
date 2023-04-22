@@ -87,7 +87,7 @@ class player extends base_mpd_player {
 			return false;
 		}
 
-		if (count($domains) == 0) {
+		if ($domains === false || count($domains) == 0) {
 			logger::log('MOPIDY', 'No search domains in use, using standard search');
 			return false;
 		}

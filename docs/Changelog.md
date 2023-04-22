@@ -8,11 +8,13 @@
 Click, or press, and hold for an incrementing skip.
 * RompR used to try to set your country code by using a web service. Sadly someone stole my API key and has been using my account.
 Since people can't be trusted I've removed that functionality and disabled the account. RompR will now attempt to work out your contry code
-based on the limited information the browser gives it, which may be wrong. This doesn't matter much any more though since it was mainly
-relevant for Spotify support.
+based on the limited information the browser gives it, which may be wrong.
 * Fix bug where Player definition upgrade would fail if mopidy_http_port wasn't set.
 * Fix Info panel bug where 'Similar Artists' in the Spotify panel didn't work.
 * Some minor display and layout fixes for bugs introduced in version 2.00
+* The Return of Mopidy-Spotify!
+* Mopidy-Spotify is well on the way to working again thanks to the efforts of its maintainer(s), so some of the functionality I pulled out
+of version 2.00 is back. This includes, but is not limited to, being able to play tracks directly from the Spotify Info panel and the Discoverator.
 
 
 ## Version 2.00
