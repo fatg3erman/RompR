@@ -25,7 +25,11 @@ function get_bio_link($url) {
 	logger::debug('AMBIO', 'Looking for bio link from', $url);
 	if ($d->get_data_to_file()) {
 		$DOM = new DOMDocument;
-		@$DOM->loadHTML($d->get_data());
+		try {
+			@$DOM->loadHTML($d->get_data());
+		} catch (ValueError $e) {
+			return false;
+		}
 		$els = getElementsByClass($DOM, 'li', 'biography');
 		if (count($els) > 0) {
 			$e = $els[0];

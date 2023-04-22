@@ -128,7 +128,7 @@ class mix_radio extends everywhere_radio {
 				foreach ($related['tracks'] as $bobbly) {
 					$anames = [];
 					foreach ($bobbly['artists'] as $artist) {
-						$anames = $artist['name'];
+						$anames[] = $artist['name'];
 					}
 					$this->add_toptrack(
 						self::TYPE_RELATED_TRACK,
