@@ -8,9 +8,8 @@ class spoti_rec_radio extends musicCollection {
 		$rp = prefs::get_radio_params();
 		$params = explode(';', $rp['radioparam']);
 		$rec_params = [
-			'limit' => 200,
 			'cache' => false,
-			'param' => []
+			'param' => ['limit' => 200]
 		];
 		foreach ($params as $p) {
 			list($parm, $value) = explode(':', $p);
