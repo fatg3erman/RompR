@@ -942,7 +942,7 @@ var layoutProcessor = function() {
 			// Don't append dummy spacers to the spotify panel, because we append
 			// saved crazy playlists here and it fucks up unless we do nasty skin-dependent
 			// shit in the crazy plugin, which is not nice.
-			$('#pluginplaylistslist .helpfulholder').not('#pluginplaylists_spotify').appendDummySpacers();
+			$('#pluginplaylistslist .helpfulholder').appendDummySpacers();
 			$('#pluginplaylistslist .fullwidth').not('.tagmenu').insertDummySpacers();
 		}
 

@@ -76,7 +76,7 @@ class url_downloader {
 		// It sets $this->content to the contents of the file, which can be retrievd by calling $this->get_data()
 		//
 
-		logger::core("URL_DOWNLOADER", "Downloading",$this->options['url'],'to string');
+		logger::debug("URL_DOWNLOADER", "Downloading",$this->options['url'],'to string');
 		curl_setopt($this->ch, CURLOPT_HEADER, true);
 		curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, function($curl, $header) {
 			$len = strlen($header);

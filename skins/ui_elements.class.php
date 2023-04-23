@@ -633,9 +633,6 @@ class ui_elements {
 		}
 		/* Music From Everywhere */
 		print '<div class="'.$opts['class'].'" id="pluginplaylists_everywhere"></div>';
-		/* Slidery stuff (to be moved) */
-		print '<div class="clearfix containerbox vertical" id="pluginplaylists_crazy"></div>';
-
 	}
 
 	public static function main_play_buttons() {

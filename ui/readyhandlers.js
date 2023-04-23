@@ -68,10 +68,25 @@ function start_userinterface() {
 	startBackgroundInitTasks.doNextTask();
 }
 
+function get_spotify_genreseeds() {
+	spotify.recommendations.getGenreSeeds(
+		function(data) {
+			debug.log('SEEDS', 'Got Spotify Genre Seeds', data);
+			if (data.genres) {
+				player.genreseeds = data.genres;
+			}
+		},
+		function() {
+			debug.warn('SEEDS', "Failed to get Spotify Genre Seeds");
+		}
+	);
+	startBackgroundInitTasks.doNextTask();
+}
+
 function open_discoverator() {
-	// if (prefs.auto_discovembobulate) {
-	// 	pluginManager.autoOpen(language.gettext('button_infoyou'));
-	// }
+	if (prefs.auto_discovembobulate) {
+		pluginManager.autoOpen(language.gettext('button_infoyou'));
+	}
 	startBackgroundInitTasks.doNextTask();
 }
 
@@ -79,6 +94,7 @@ var startBackgroundInitTasks = function() {
 
 	var stufftodo = [
 		connect_to_player,
+		get_spotify_genreseeds,
 		start_userinterface,
 		collectionHelper.checkCollection,
 		load_podcasts,
@@ -195,15 +211,10 @@ function carry_on_starting() {
 		$(this).attr('autocomplete', 'off');
 	});
 	//
-	// Hide the Music from Spotify Panels
-	// These are not currently used while we refactor those playlists
-	// And in the absence of SPotify support in Mopidy
-	// I'm not going to work on them
+	// Hide the Music from Spotify Panel if player can't play spotify
 	//
-	if (prefs.player_backend == 'mopidy') {
+	if (!player.canPlay('spotify')) {
 		$('#pluginplaylists_spotify').prev().hide();
-		// $('#pluginplaylists_everywhere').prev().hide();
-		// $('#pluginplaylists_everywhere').prev().prev().hide();
 	}
 	searchManager.setup_categories();
 }

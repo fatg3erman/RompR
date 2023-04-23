@@ -112,6 +112,19 @@ var helpfulThings = function() {
 						html += language.gettext('label_luckydipdesc', powers);
 						html += '</div></div>';
 					}
+				 	if (player.canPlay('spotify')) {
+						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="spotiRecRadio+mix">';
+						html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
+						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_spotify_mix")+'</b><br/>';
+						html += language.gettext('label_spotimixdesc', cloneObject(powers));
+						html += '</div></div>';
+
+						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="spotiRecRadio+surprise">';
+						html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
+						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_spottery_lottery")+'</b><br/>';
+						html += language.gettext('label_spotiswimdesc', powers);
+						html += '</div></div>';
+					}
 				} else if ((player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) && !lastfm.isLoggedIn()) {
 					var html = '<div class="fixed containerbox plugin_hpl_radio">';
 					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';

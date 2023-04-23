@@ -889,6 +889,12 @@ class init_database extends init_generic {
 					$this->set_admin_value('SchemaVer', 100);
 					break;
 
+				case 100:
+					logger::log("SQL", "Updating FROM Schema version 100 TO Schema version 101");
+					prefs::upgrade_host_defs(101);
+					$this->set_admin_value('SchemaVer', 101);
+					break;
+
 			}
 			$sv++;
 		}

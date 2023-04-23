@@ -125,15 +125,6 @@ var recommendationsRadio = function() {
 	}
 }();
 
-var spotiRecRadio = function() {
-
-	return {
-
-		setup: function() {
-
-		}
-	}
-}();
 
 playlist.radioManager.register("recommendationsRadio", recommendationsRadio, 'radios/code/recommendationsradio.js');
 playlist.radioManager.register("faveArtistRadio", faveArtistRadio, 'radios/code/faveartistradio.js');
@@ -142,4 +133,3 @@ playlist.radioManager.register("singleArtistRadio", singleArtistRadio, 'radios/c
 playlist.radioManager.register("genreRadio", genreRadio,'radios/code/genreradio.js');
 playlist.radioManager.register("lastFMTrackRadio", lastFMTrackRadio, 'radios/code/lastfmtrackradio.js');
 playlist.radioManager.register("lastFMArtistRadio", lastFMArtistRadio, 'radios/code/lastfmartistradio.js');
-playlist.radioManager.register("spotiRecRadio", spotiRecRadio, 'radios/code/spotirecradio.js');

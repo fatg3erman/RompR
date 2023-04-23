@@ -21,7 +21,8 @@ class prefs {
 			"radioconsume" => [],
 			"radiodomains" => ['local', 'spotify', 'youtube', 'ytmusic'],
 			"toptracks_current" => 1,
-			"toptracks_total" => 1
+			"toptracks_total" => 1,
+			"stationname" => ''
 		]
 	];
 
@@ -579,7 +580,7 @@ class prefs {
 				case 95:
 					if (!array_key_exists('radiodomains', self::$prefs['multihosts'][$key]['radioparams']))
 						self::$prefs['multihosts'][$key]['radioparams']['radiodomains'] = ['local', 'spotify', 'youtube', 'ytmusic'];
-						break;
+					break;
 
 				case 98:
 					if (!array_key_exists('websocket_port', self::$prefs['multihosts'][$key]))
@@ -587,6 +588,12 @@ class prefs {
 
 					$websocket += 2;
 					break;
+
+				case 101:
+					if (!array_key_exists('stationname', self::$prefs['multihosts'][$key]['radioparams']))
+						self::$prefs['multihosts'][$key]['radioparams']['stationname'] = '';
+					break;
+
 			}
 		}
 		self::save();

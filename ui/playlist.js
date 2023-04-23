@@ -145,8 +145,8 @@ var playlist = function() {
 						if (await radios[radiomode].func.getURIs()) {
 							setHeader();
 						} else {
-							infobar.error(language.gettext('label_general_error'));
-							debug.error("RADIO MANAGER","Failed to Initialise Script");
+							infobar.error(language.gettext('label_gotnotracks'));
+							debug.error("RADIO MANAGER","Got no tracks");
 							playlist.radioManager.stop();
 							infobar.removenotify(smart_notify);
 							smart_notify = null;

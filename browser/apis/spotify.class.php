@@ -1,7 +1,7 @@
 <?php
 
 class spotify {
-	const BASE_URL = 'https://api.spotify.com/';
+	const BASE_URL = 'https://api.spotify.com/v1';
 	const AUTH_KEY = "OThhZWE4M2QwZTJlNGYxMDhmM2U1YzZlOTkyOWRiMGY6NWViYmM2ZWJjODNmNDFkNzk3MzcwZThjMTE3NTIzYmU=";
 
 	private static function request($url, $print_data, $use_cache) {
@@ -70,7 +70,7 @@ class spotify {
 		// 		cache 	: boolean
 		//
 
-		$url = self::BASE_URL.'v1/tracks/'.$params['id'];
+		$url = self::BASE_URL.'/tracks/'.$params['id'];
 		return self::request($url, $print_data, $params['cache']);
 	}
 
@@ -83,9 +83,9 @@ class spotify {
 		//
 
 		if (is_array($params['id'])) {
-			$url = self::BASE_URL.'v1/tracks?ids='.implode(',', $params['id']).'&market='.prefs::get_pref('lastfm_country_code');
+			$url = self::BASE_URL.'/tracks?ids='.implode(',', $params['id']).'&market='.prefs::get_pref('lastfm_country_code');
 		} else {
-			$url = self::BASE_URL.'v1/tracks/'.$params['id'].'?market='.prefs::get_pref('lastfm_country_code');
+			$url = self::BASE_URL.'/tracks/'.$params['id'].'?market='.prefs::get_pref('lastfm_country_code');
 		}
 		return self::request($url, $print_data, $params['cache']);
 	}
@@ -99,9 +99,9 @@ class spotify {
 		//
 
 		if (is_array($params['id'])) {
-			$url = self::BASE_URL.'v1/albums?ids='.implode(',', $params['id']);
+			$url = self::BASE_URL.'/albums?ids='.implode(',', $params['id']);
 		} else {
-			$url = self::BASE_URL.'v1/albums/'.$params['id'];
+			$url = self::BASE_URL.'/albums/'.$params['id'];
 		}
 		return self::request($url, $print_data, $params['cache']);
 	}
@@ -114,7 +114,7 @@ class spotify {
 		// 		cache 	: boolean
 		//
 
-		$url = self::BASE_URL.'v1/artists/'.$params['id'];
+		$url = self::BASE_URL.'/artists/'.$params['id'];
 		return self::request($url, $print_data, $params['cache']);
 	}
 
@@ -126,7 +126,7 @@ class spotify {
 		// 		cache 	: boolean
 		//
 
-		$url = self::BASE_URL.'v1/artists/'.$params['id'].'/related-artists';
+		$url = self::BASE_URL.'/artists/'.$params['id'].'/related-artists';
 		return self::request($url, $print_data, $params['cache']);
 	}
 
@@ -138,7 +138,7 @@ class spotify {
 		// 		cache 	: boolean
 		//
 
-		$url = self::BASE_URL.'v1/artists/'.$params['id'].'/top-tracks';
+		$url = self::BASE_URL.'/artists/'.$params['id'].'/top-tracks';
 		return self::request($url, $print_data, $params['cache']);
 	}
 
@@ -154,7 +154,7 @@ class spotify {
 
 		$use_cache = $params['cache'];
 		unset($params['cache']);
-		$url = self::BASE_URL.'v1/artists/'.$params['id'].'/albums?';
+		$url = self::BASE_URL.'/artists/'.$params['id'].'/albums?';
 		unset($params['id']);
 		$params['country'] = prefs::get_pref('lastfm_country_code');
 		$url .= http_build_query($params);
@@ -173,7 +173,7 @@ class spotify {
 
 		$use_cache = $params['cache'];
 		unset($params['cache']);
-		$url = self::BASE_URL.'v1/search?';
+		$url = self::BASE_URL.'/search?';
 		$url .= http_build_query($params);
 		return self::request($url, $print_data, $use_cache);
 	}
@@ -218,17 +218,17 @@ class spotify {
 		];
 	}
 
-	// public static function get_genreseeds($params, $print_data) {
+	public static function get_genreseeds($params, $print_data) {
 
-	// 	//
-	// 	// params:
-	// 	// 		cache 	: boolean
-	// 	//
+		//
+		// params:
+		// 		cache 	: boolean
+		//
 
-	// 	$url = self::BASE_URL.'/v1/recommendations/available-genre-seeds';
-	// 	return self::request($url, $print_data, $params['cache']);
+		$url = self::BASE_URL.'/recommendations/available-genre-seeds';
+		return self::request($url, $print_data, $params['cache']);
 
-	// }
+	}
 
 	public static function get_recommendations($params, $print_data) {
 
@@ -238,7 +238,7 @@ class spotify {
 		// 		cache 		: boolean
 		//
 
-		$url = self::BASE_URL.'v1/recommendations?';
+		$url = self::BASE_URL.'/recommendations?';
 		$params['param']['market'] = prefs::get_pref('lastfm_country_code');
 		$url .= http_build_query($params['param']);
 		return self::request($url, $print_data, $params['cache']);

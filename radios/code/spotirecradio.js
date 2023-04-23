@@ -2,20 +2,32 @@ var spotiRecRadio = function() {
 
 	var mode;
 	var param;
-	var name;
+	var stationname;
 
 	return {
 		initialise: function(m, p) {
 			mode = m;
 			var pongothehorse = [];
-			for (var i in p) {
-				if (i.match(/seed_/)) {
-					pongothehorse.push(i+':'+p[i]);
-				} else if (i =='name') {
-					name = p[i];
-				}
+			switch (p) {
+				case 'mix':
+				case 'swim':
+				case 'surprise':
+					param = p;
+					break;
+
+				default:
+					for (var i in p) {
+						if (i.match(/seed_/)) {
+							pongothehorse.push(i+':'+p[i]);
+						} else if (i == 'name') {
+							stationname = p[i]+" "+language.gettext("label_radio");
+							prefs.save({stationname: stationname});
+						}
+					}
+					param = pongothehorse.join(';');
+					break;
+
 			}
-			param = pongothehorse.join(';');
 			debug.log('PONGO', mode, param);
 		},
 
@@ -36,7 +48,30 @@ var spotiRecRadio = function() {
 		},
 
 		modeHtml: function() {
-			return '<i class="icon-spotify modeimg"/></i><span class="alignmid bold ucfirst">'+name+" "+language.gettext("label_radio")+'</span>';
+			var name;
+			switch (param) {
+				case 'mix':
+					name = language.gettext('label_spotify_mix');
+					break;
+
+				case 'swim':
+					name = language.gettext('label_spotify_dj');
+					break;
+
+				case 'surprise':
+					name = language.gettext('label_spottery_lottery');
+					break;
+
+				default:
+					if (stationname) {
+						name = stationname;
+					} else {
+						name = player.status.smartradio.stationname;
+					}
+					break;
+
+			}
+			return '<i class="icon-spotify modeimg"/></i><span class="alignmid bold ucfirst">'+name+'</span>';
 		}
 
 	}

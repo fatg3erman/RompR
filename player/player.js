@@ -226,6 +226,7 @@ var player = function() {
 			progress: null
 		},
 
+		genreseeds: [],
 		urischemes: new Object(),
 		collectionLoaded: false,
 		updatingcollection: false,

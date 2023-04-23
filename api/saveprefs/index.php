@@ -9,6 +9,7 @@ foreach($p as $key => $value) {
 		case "radiomode":
 		case "radioparam":
 		case "radiodomains":
+		case "stationname":
 			prefs::set_radio_params([$key => $value]);
 			unset($p[$key]);
 			break;

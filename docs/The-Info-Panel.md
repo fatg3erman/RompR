@@ -4,8 +4,6 @@ The Info Panel will display information about the currently playing Artist, Albu
 
 ## Spotify
 
-Note - with Mopidy's Spotify Support being broken currently, some of the following will not work.
-
 The Spotify Info panel is another source of Music Discovery.
 
 ![](images/infopanel1.png)

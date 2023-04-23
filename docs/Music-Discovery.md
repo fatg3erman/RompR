@@ -7,6 +7,21 @@ RompЯ contains many features to help you discover new music based on your liste
 The Personalised Radio panel includes more radio stations designed to help you discover music. These are only available if you're using Mopidy
 with Spotify, Youtube, or YTMusic.
 
+### Use of Your Data
+
+Note that when you use 'Recommendations For You', 'Favourite Artists and Related Artists', or any of the 'Music From Spotify'
+stations, RompR will send information about your listening habits to Spotify's API. There is no information sent that could be used
+to identify you personally except perhaps your IP address. The information is limited to only the Spotify IDs of artists and tracks
+that you have listened to using RompR. This happens whether or not your player has Spotify support enabled.
+
+### Music From Spotify
+
+The three Music From Spotify stations use your listening habits from RompR's database to generate playlists of music based on tracks you've played
+recently (Weekly Mix and Swim) or your most-played tracks (Surprise!).
+
+In the Spotify Info Panel you will also be able to start a radio station of recommendations based on the Artist you're listening to, the Track you're
+listening ot (if it's a Spotify track) or sometimes on the Artists Genres - but Spotify only permits certain Genres to be used in this way.
+
 ### Music From Everywhere
 
 ![](images/musicfromeverywhere.png)

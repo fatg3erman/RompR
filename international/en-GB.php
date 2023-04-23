@@ -631,7 +631,7 @@ language::add_translations([
 	"label_dailymixdesc" =>					"A playlist just for you, a mix of tracks you know and new music you might love. Powered by Last.FM %s",
 	"label_luckydipdesc" =>					"A radio station just for you, playing a wider range of music by artists you know and artists you don't yet love. Powered by Last.FM %s",
 	"label_goonlogin" =>					"Log in to Last.FM and start scrobbling. RompЯ can then delight you with new music you're going to love!",
-	"label_nospotify" =>					"Use Mopidy with a Youtube Music subscription and start scrobbbling to Last.FM so RompЯ can delight you with new music you're going to love!",
+	"label_nospotify" =>					"Use Mopidy with a Spotify or Youtube Music subscription and start scrobbbling to Last.FM so RompЯ can delight you with new music you're going to love!",
 	"label_spotimixdesc" =>					"A radio station of suggestions based on your recent listening. Powered by RompЯ and Spotify",
 	"label_spotiswimdesc" =>				"Scanning the vastness of Spotify. Powered by RompЯ and Spotify",
 	"label_opmlexp" =>						"OPML Export",

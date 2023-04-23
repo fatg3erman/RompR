@@ -165,26 +165,6 @@ class mix_radio extends everywhere_radio {
 		}
 	}
 
-	private function get_spotify_id($artist) {
-		$params = [
-			'q' => $artist,
-			'type' => 'artist',
-			'limit' => 50,
-			'cache' => true
-		];
-		$candidates = json_decode(spotify::search($params, false), true);
-		if (array_key_exists('artists', $candidates) && array_key_exists('items', $candidates['artists'])) {
-			foreach ($candidates['artists']['items'] as $willies) {
-				if (metaphone_compare($artist, $willies['name'], 0)) {
-					logger::debug('MIXRADIO', 'Spotify Artist',$willies['id'],$willies['name'],'matches',$artist);
-					return $willies['id'];
-				}
-			}
-		}
-		logger::log('MIXRADIO', 'Could not find Spotify Id for',$artist);
-		return null;
-	}
-
 }
 
 ?>

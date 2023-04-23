@@ -137,44 +137,6 @@ class metaquery extends collection_base {
 		];
 	}
 
-	public function get_recommendation_seeds($days, $limit, $top) {
-
-		// 1. Get a list of tracks played in the last $days days, sorted by their OVERALL popularity
-		$resultset = $this->generic_sql_query(
-			"SELECT SUM(Playcount) AS playtotal, Artistname, Title, Uri
-			FROM Playcounttable JOIN Tracktable USING (TTindex)
-			JOIN Artisttable USING (Artistindex)
-			WHERE {$this->sql_two_weeks_include($days)}
-			AND Uri IS NOT NULL AND Uri NOT LIKE 'http%' AND isAudiobook = 0
-			GROUP BY Artistname, Title ORDER BY playtotal DESC LIMIT ".$limit);
-
-		// 2. Get a list of recently played tracks, ignoring popularity
-		// $result = generic_sql_query(
-		// 	"SELECT 0 AS playtotal, Artistname, Title, Uri
-		// 	FROM Playcounttable JOIN Tracktable USING (TTindex)
-		// 	JOIN Artisttable USING (Artistindex)
-		// 	WHERE ".sql_two_weeks_include(intval($days/2)).
-		// 	" AND Uri IS NOT NULL GROUP BY Artistindex ORDER BY ".database::SQL_RANDOM_SORT." LIMIT ".intval($limit/2));
-		// $resultset = array_merge($resultset, $result);
-
-		// 3. Get the top tracks overall
-		$tracks = $this->get_track_charts(intval($top), CHARTS_MUSIC_ONLY);
-		foreach ($tracks as $track) {
-			if ($track->Uri) {
-				$resultset[] = [
-					'playtotal' => $track->soundcloud_plays,
-					'Artistname' => $track->label_artist,
-					'Title' => $track->label_track,
-					'Uri' => $track->Uri
-				];
-			}
-		}
-
-		// 4. Randomise that list and return the first $top.
-		shuffle($resultset);
-		return array_slice($resultset,0,$top);
-	}
-
 	public function addToListenLater($album) {
 		$newid = $this->spotifyAlbumId($album);
 		$result = $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
@@ -206,28 +168,6 @@ class metaquery extends collection_base {
 		} else {
 			return $album['id'];
 		}
-	}
-
-	private function get_track_charts($limit = 40, $include = null) {
-		// MIN(Uri) is simply because I needed an aggregate function and SQLite doesn't support ANY_VALUE.
-		// Use MAX(Playcount) because we can have multiple copies of the same track -
-		// they *should* all have the same Playcount but we can't be certain because of
-		// the vaguaries of track numbers with Youtube
-		$query = "SELECT
-			Artistname AS label_artist,
-			Albumname AS label_album,
-			Title AS label_track,
-			MAX(Playcount) AS soundcloud_plays,
-			MIN(Uri) AS Uri
-			FROM
-			Tracktable
-			JOIN Playcounttable USING (TTIndex)
-			JOIN Albumtable USING (Albumindex)
-			JOIN Artisttable USING (Artistindex)
-			{$this->charts_include_option($include)}
-			GROUP BY label_artist, label_album, label_track
-			ORDER BY soundcloud_plays DESC LIMIT ".$limit;
-		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
 	}
 
 	private function get_artist_charts() {
@@ -270,28 +210,6 @@ class metaquery extends collection_base {
 			GROUP BY label_artist, label_album
 			ORDER BY soundcloud_plays DESC LIMIT 40";
 		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
-	}
-
-	private function charts_include_option($include = null) {
-		if ($include == null)
-			$include = prefs::get_pref('chartoption');
-		switch ($include) {
-			case CHARTS_INCLUDE_ALL:
-				return '';
-				break;
-
-			case CHARTS_MUSIC_ONLY:
-				return ' WHERE isAudiobook = 0 AND Hidden = 0 ';
-				break;
-
-			case CHARTS_AUDIOBOOKS_ONLY:
-				return ' WHERE isAudiobook > 0 AND Hidden = 0 ';
-				break;
-
-			case CHARTS_INTERNET_ONLY:
-				return ' WHERE Hidden = 1 ';
-				break;
-		}
 	}
 
 }
