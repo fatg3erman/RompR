@@ -74,6 +74,7 @@ var layoutProcessor = function() {
 		sortFaveRadios: true,
 		openOnImage: false,
 		playlist_scroll_parent: '#pscroller',
+		needs_playlist_help: false,
 
 		setPanelCss: function(widths) {
 			if (widths.sources) {

@@ -231,6 +231,7 @@ var layoutProcessor = function() {
 		sortFaveRadios: false,
 		openOnImage: true,
 		playlist_scroll_parent: '#pscroller',
+		needs_playlist_help: false,
 
 		changeCollectionSortMode: function() {
 			collectionHelper.forceCollectionReload();

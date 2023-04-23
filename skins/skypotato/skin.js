@@ -469,6 +469,11 @@ var layoutProcessor = function() {
 		sortFaveRadios: false,
 		openOnImage: true,
 		playlist_scroll_parent: '#phacker',
+		// This is here because the delegated events for clickalbummenu don't work in skypotato because
+		// the playlist is a JQuery UI FloatingMenu. Set layoutProcessor.needs_playlist_help = true
+		// and tha 'album menu' icon for an Album in the Play Queue will get a class of clickplaylist
+		// which send the click event to playlist.handleClick.
+		needs_playlist_help: true,
 
 		setPanelCss: function(widths) {
 			$("#sources").css("width", widths.sources+"%");

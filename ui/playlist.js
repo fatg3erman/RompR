@@ -488,6 +488,12 @@ var playlist = function() {
 				playlist.moveTrackUp(clickedElement.findPlParent(), event);
 			} else if (clickedElement.hasClass("playlistdown")) {
 				playlist.moveTrackDown(clickedElement.findPlParent(), event);
+			} else if (clickedElement.hasClass('clickalbummenu')) {
+				// This is here because the delegated events don't work in skypotato because
+				// the playlist is a JQuery UI FloatingMenu. Set layoutProcessor.needs_playlist_help = true
+				// and tha 'album menu' icon for an Album will get a class of clickplaylist, which brings
+				// the click event through here.
+				makeAlbumMenu(event, clickedElement);
 			}
 		},
 
@@ -1073,7 +1079,11 @@ function Album(artist, album, index, rolledup) {
 		controls.append('<i class="icon-cancel-circled inline-icon tooltip expand clickplaylist clickicon clickremovealbum" title="'+language.gettext('label_removefromplaylist')+'" name="'+self.index+'"></i>');
 
 		if (tracks[0]['X-AlbumUri'] && ['youtube', 'ytmusic', 'spotify'].indexOf(tracks[0]['domain']) >= 0) {
-			controls.append('<i class="expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse" uri="'+tracks[0]['X-AlbumUri']+'"></i>');
+			let menu = $('<i>', {class: "expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse", uri: tracks[0]['X-AlbumUri']}).appendTo(controls);
+			if (layoutProcessor.needs_playlist_help)
+				menu.addClass('clickplaylist');
+
+			// controls.append('<i class="expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse" uri="'+tracks[0]['X-AlbumUri']+'"></i>');
 		}
 
 		var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');
