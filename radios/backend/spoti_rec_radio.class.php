@@ -128,7 +128,7 @@ class spoti_rec_radio extends everywhere_radio {
 				logger::log('GETSEEDS', 'Found', $t['Uri']);
 				// In the case where this is a spotify track we put its ID directly in the seed
 				// table as Title and set Artistname to NONE.
-				$this->add_toptrack(self::TYPE_TRACK_URI, 'NONE', substr($t['Uri'], 14, null));
+				$this->add_toptrack(self::TYPE_TRACK_URI, 'NONE', substr($t['Uri'], 14));
 			} else {
 				logger::log('GETSEEDS', 'Found', $t['Artistname'], $t['Title']);
 				$this->add_toptrack(self::TYPE_SEED_TRACK, $t['Artistname'], $t['Title']);
@@ -167,7 +167,7 @@ class spoti_rec_radio extends everywhere_radio {
 					);
 					if (count($matches) > 0) {
 						logger::log('PONGO', 'Found', $matches[0]['file']);
-						$ids[] = substr($matches[0]['file'], 14, null);
+						$ids[] = substr($matches[0]['file'], 14);
 					}
 					break;
 			}
