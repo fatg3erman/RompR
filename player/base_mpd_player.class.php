@@ -1538,6 +1538,12 @@ class base_mpd_player {
 
 	public function do_smartradio($tracksneeded) {
 		$rp = prefs::get_radio_params();
+		// prepared is set to 0 when we first call starRadios.php and then to 1 AFTER everything has
+		// been prepared, which will include calling preparePlaylist() for the station being started.
+		// This prevents a race condition which is caused by us reacting to the stop and clear commands.
+		if ($rp['prepared'] == 0)
+			return true;
+
 		logger::info(prefs::currenthost(), "Adding",$tracksneeded,"tracks from",$rp['radiomode'],$rp['radioparam']);
 		$result = prefs::$database->doPlaylist($rp['radioparam'], $tracksneeded, $this);
 		prefs::$database->close_database();

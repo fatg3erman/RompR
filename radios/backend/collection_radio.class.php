@@ -8,15 +8,6 @@ class collection_radio extends musicCollection {
 	}
 
 	public function doPlaylist($playlist, $limit, &$player) {
-		$rp = prefs::get_radio_params();
-		// prepared is set to 0 when we first call starRadios.php
-		// and then to 1 AFTER everything has been prepared, which will
-		// include called preparePlaylist()
-		// This prevents a race condition between us and romonitor which is
-		// caused by it reacting to the stop and clear commands
-		if ($rp['prepared'] == 0)
-			return true;
-
 		logger::mark("SMARTRADIO", "Loading Playlist",$playlist,'limit',$limit);
 		$sqlstring = "";
 		$tags = null;

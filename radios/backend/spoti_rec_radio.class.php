@@ -67,15 +67,6 @@ class spoti_rec_radio extends everywhere_radio {
 	}
 
 	public function doPlaylist($param, $numtracks, &$player) {
-		$rp = prefs::get_radio_params();
-		// prepared is set to 0 when we first call starRadios.php
-		// and then to 1 AFTER everything has been prepared, which will
-		// include called preparePlaylist()
-		// This prevents a race condition between us and romonitor which is
-		// caused by it reacting to the stop and clear commands
-		if ($rp['prepared'] == 0)
-			return true;
-
 		$table = self::get_uri_table_name();
 		$num_tracks_remaining = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'numt', 0,
 			"SELECT COUNT(uriindex) AS numt FROM $table WHERE used = ?",
