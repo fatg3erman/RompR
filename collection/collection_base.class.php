@@ -1156,10 +1156,10 @@ class collection_base extends database {
 		return array_slice($resultset,0,$top);
 	}
 
-	public function get_most_recently_played_music($limit) {
+	public function get_most_recently_played_music($limit, $min_plays) {
 		// Get a list of the $limit most recently played music tracks, regardless
 		// of how recently "recent" actually is
-		$resultset = $this->generic_sql_query(
+		$resultset = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
 			"SELECT
 				 Artistname,
 				 Title,
@@ -1172,9 +1172,10 @@ class collection_base extends database {
 				Uri IS NOT NULL
 				AND Uri NOT LIKE 'http%'
 				AND isAudiobook = 0
-			ORDER BY LastPlayed DESC LIMIT $limit");
-
-		shuffle($resultset);
+				AND Playcount > ?
+			ORDER BY LastPlayed DESC LIMIT $limit",
+			$min_plays
+		);
 		return $resultset;
 	}
 
