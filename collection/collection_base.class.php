@@ -1147,7 +1147,7 @@ class collection_base extends database {
 		// 3. Combine the two, filtering out duplicates
 		foreach ($popular as $track) {
 			if (!in_array($track, $resultset)) {
-				$resultset[] = $trac;
+				$resultset[] = $track;
 			}
 		}
 

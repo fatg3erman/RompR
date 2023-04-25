@@ -12,11 +12,21 @@ var info_spotify = function() {
 	// }
 
 	function do_genres(layout, u, genres) {
-		for (var g of genres) {
-			// We get a list of acceptable genre seeds from spotify and only make those playable
-			if (player.canPlay('spotify') && player.genreseeds.indexOf(g) > -1) {
-				add_coll_button(u, 'clickstartgenreradio', 'icon-spotify-circled', language.gettext('label_genre')+': '+g, g);
-			} else {
+		if (player.canPlay('spotify')) {
+			for (var g of genres) {
+				// We get a list of acceptable genre seeds from spotify and only make those playable
+				// And we loop through twice so the playable ones come first otherwise it looks messy
+				if (player.genreseeds.indexOf(g) > -1) {
+					add_coll_button(u, 'clickstartgenreradio', 'icon-spotify-circled', language.gettext('label_genre')+': '+g, g);
+				}
+			}
+			for (var g of genres) {
+				if (player.genreseeds.indexOf(g) < 0) {
+					layout.append_to_list(u, language.gettext('label_genre')+': ', g);
+				}
+			}
+		} else {
+			for (var g of genres) {
 				layout.append_to_list(u, language.gettext('label_genre')+': ', g);
 			}
 		}
