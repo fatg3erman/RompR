@@ -224,13 +224,8 @@ var helpfulThings = function() {
 				helpfulThings.getMoreStuff();
 				return true;
 			}
-			if (current_seed.playtotal == 0) {
-				$('#helpful_spinner').before('<div class="textunderline containerbox menuitem" style="padding-left:12px;margin-top:1em"><h3 class="fixed">'
-				+language.gettext('because_listened',[current_seed.Artistname])+'</h3></div>');
-			} else {
-				$('#helpful_spinner').before('<div class="textunderline containerbox menuitem" style="padding-left:12px;margin-top:1em"><h3 class="fixed">'
-				+language.gettext('because_liked',[current_seed.Artistname])+'</h3></div>');
-			}
+			$('#helpful_spinner').before('<div class="textunderline containerbox menuitem" style="padding-left:12px;margin-top:1em"><h3 class="fixed">'
+			+language.gettext('because_liked',[current_seed.Artistname])+'</h3></div>');
 			var holder = $('<div>', {id: 'rec_'+current_seed.id, class: 'holdingcell medium_masonry_holder helpfulholder noselection'}).insertBefore($('#helpful_spinner'));
 
 			// Need to make sure all the album IDs are unique, since we do get duplicates

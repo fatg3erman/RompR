@@ -71,18 +71,26 @@ class everywhere_radio extends musicCollection {
 	}
 
 	protected function handle_multi_tracks($uris) {
-		$bantable = self::get_ban_table_name();
 		foreach ($uris as $uri) {
-			$banned = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'banindex', null,
-				"SELECT banindex FROM ".$bantable." WHERE trackartist = ? AND Title = ?",
-				$uri['trackartist'], $uri['Title']
-			);
-			if ($banned !== null) {
-				logger::log('EVRADIO',$uri['trackartist'], $uri['Title'],'is BANNED');
-			} else {
+			if (!$this->is_banned($uri['trackartist'], $uri['Title'])) {
 				logger::log('EVRADIO', 'Got Uri',$uri['trackartist'], $uri['Title']);
 				$this->add_smart_uri($uri['file'], $uri['trackartist'], $uri['Title'], $uri['X-AlbumUri']);
 			}
+		}
+	}
+
+	protected function is_banned($artist, $title) {
+		$bantable = self::get_ban_table_name();
+		$banned = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'banindex', null,
+			"SELECT banindex FROM $bantable WHERE trackartist = ? AND Title = ?",
+			$artist,
+			$title
+		);
+		if ($banned !== null) {
+			logger::log('EVRADIO',$artist, $title,'is BANNED');
+			return true;
+		} else {
+			return false;
 		}
 	}
 

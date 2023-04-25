@@ -1110,10 +1110,24 @@ class collection_base extends database {
 
 	public function get_recommendation_seeds($days, $limit, $top) {
 
-		// 1. Get a list of tracks played in the last $days days, sorted by their OVERALL popularity
-		$resultset = $this->generic_sql_query(
+		logger::log('RECSEEDS', 'Looking for', $top, 'seed tracks over', $days, 'days');
+		$resultset = [];
+		// 1. Get the top tracks overall
+		$tracks = $this->get_track_charts(intval($top), CHARTS_MUSIC_ONLY);
+		foreach ($tracks as $track) {
+			if ($track->Uri) {
+				$resultset[] = [
+					'Artistname' => $track->label_artist,
+					'Title' => $track->label_track,
+					'Uri' => $track->Uri
+				];
+			}
+		}
+		logger::log('RECSEEDS', 'Charts resultset has',(count($resultset)),'members');
+
+		// 2. Get a list of tracks played in the last $days days, sorted by their OVERALL popularity
+		$popular = $this->generic_sql_query(
 			"SELECT
-				SUM(Playcount) AS playtotal,
 				 Artistname,
 				 Title,
 				 Uri
@@ -1126,33 +1140,23 @@ class collection_base extends database {
 				AND Uri IS NOT NULL
 				AND Uri NOT LIKE 'http%'
 				AND isAudiobook = 0
-			GROUP BY Artistname, Title
-			ORDER BY playtotal DESC LIMIT $limit");
+			ORDER BY Playcount DESC LIMIT $limit");
 
-		// 2. Get a list of recently played tracks, ignoring popularity
-		// $result = generic_sql_query(
-		// 	"SELECT 0 AS playtotal, Artistname, Title, Uri
-		// 	FROM Playcounttable JOIN Tracktable USING (TTindex)
-		// 	JOIN Artisttable USING (Artistindex)
-		// 	WHERE ".sql_two_weeks_include(intval($days/2)).
-		// 	" AND Uri IS NOT NULL GROUP BY Artistindex ORDER BY ".database::SQL_RANDOM_SORT." LIMIT ".intval($limit/2));
-		// $resultset = array_merge($resultset, $result);
+		logger::log('RECSEEDS', 'Popular resultset has',(count($popular)),'members');
 
-		// 3. Get the top tracks overall
-		$tracks = $this->get_track_charts(intval($top), CHARTS_MUSIC_ONLY);
-		foreach ($tracks as $track) {
-			if ($track->Uri) {
-				$resultset[] = [
-					'playtotal' => $track->soundcloud_plays,
-					'Artistname' => $track->label_artist,
-					'Title' => $track->label_track,
-					'Uri' => $track->Uri
-				];
+		// 3. Combine the two, filtering out duplicates
+		foreach ($popular as $track) {
+			if (!in_array($track, $resultset)) {
+				$resultset[] = $trac;
 			}
 		}
 
+		logger::log('RECSEEDS', 'Final resultset has',(count($resultset)),'members');
+
 		// 4. Randomise that list and return the first $top.
 		shuffle($resultset);
+		logger::log('RECSEEDS', 'Returning', (min($top, count($resultset))), 'entries');
+
 		return array_slice($resultset,0,$top);
 	}
 

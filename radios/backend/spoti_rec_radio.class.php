@@ -14,7 +14,7 @@ class spoti_rec_radio extends everywhere_radio {
 	const MIN_TRACKS_IN_URI_TABLE = 100;
 
 	const TYPE_TRACK_URI = 0;
-	const TYPE_SEED_TRACK = 1;
+	const TYPE_SEARCH_TRACK = 1;
 	// NOTE: TYPE_USED_AS_SEED is defined as 2 in everywhere_radio
 
 	protected function prepare() {
@@ -47,18 +47,14 @@ class spoti_rec_radio extends everywhere_radio {
 		$bantable = self::get_ban_table_name();
 		if (array_key_exists('tracks', $recs)) {
 			foreach ($recs['tracks'] as $bobbly) {
+
 				$anames = [];
-				foreach ($bobbly['artists'] as $artist) {
-					$anames[] = $artist['name'];
+				foreach ($bobbly['artists'] as $a) {
+					$anames[] = $a['name'];
 				}
 				$artist = concatenate_artist_names($anames);
-				$banned = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'banindex', null,
-					"SELECT banindex FROM ".$bantable." WHERE trackartist = ? AND Title = ?",
-					$artist, $bobbly['name']
-				);
-				if ($banned !== null) {
-					logger::log('PONGO',$artist, $bobbly['name'],'is BANNED');
-				} else {
+
+				if (!$this->is_banned($artist, $bobbly['name'])) {
 					logger::log('PONGO', 'Got Uri',$artist, $bobbly['name']);
 					$this->add_smart_uri($bobbly['uri'], $artist, $bobbly['name'], $bobbly['album']['uri']);
 				}
@@ -98,8 +94,8 @@ class spoti_rec_radio extends everywhere_radio {
 	private function get_seeds($type) {
 		switch ($type) {
 			case 'mix':
-				// Mix gets the 20 most recently played tracks
-				$seed_tracks = $this->get_most_recently_played_music(20, 0);
+				// Mix gets the 25 most recently played tracks
+				$seed_tracks = $this->get_most_recently_played_music(25, 0);
 				break;
 
 			case 'swim':
@@ -122,7 +118,7 @@ class spoti_rec_radio extends everywhere_radio {
 				$this->add_toptrack(self::TYPE_TRACK_URI, 'NONE', substr($t['Uri'], 14));
 			} else {
 				logger::log('GETSEEDS', 'Found', $t['Artistname'], $t['Title']);
-				$this->add_toptrack(self::TYPE_SEED_TRACK, $t['Artistname'], $t['Title']);
+				$this->add_toptrack(self::TYPE_SEARCH_TRACK, $t['Artistname'], $t['Title']);
 			}
 		}
 	}
@@ -145,7 +141,7 @@ class spoti_rec_radio extends everywhere_radio {
 					$ids[] = $t['Title'];
 					break;
 
-				case self::TYPE_SEED_TRACK:
+				case self::TYPE_SEARCH_TRACK:
 					$matches = $this->fave_finder(
 						['spotify'],
 						false,
@@ -171,6 +167,8 @@ class spoti_rec_radio extends everywhere_radio {
 		if (count($ids) > 0) {
 			// Use a limit that depends on the number of seeds we have so we get a good mix
 			// of tracks if we have a lot of seeds but don't run out quickly if we have few seeds.
+			// Remember that to reduce the load on Mopidy we do one track at a time, so when $limit=25
+			// we will have used at least 16 seeds from the seed table by the time we've 'filled' the URI table.
 			if ($numseeds < 25) {
 				$limit = 100;
 			} else if ($numseeds < 50) {
