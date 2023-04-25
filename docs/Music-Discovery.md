@@ -9,10 +9,12 @@ with Spotify, Youtube, or YTMusic.
 
 ### Use of Your Data
 
-Note that when you use 'Recommendations For You', 'Favourite Artists and Related Artists', or any of the 'Music From Spotify'
-stations, RompR will send information about your listening habits to Spotify's API. There is no information sent that could be used
-to identify you personally except perhaps your IP address. The information is limited to only the Spotify IDs of artists and tracks
-that you have listened to using RompR. This happens whether or not your player has Spotify support enabled.
+Some of the Personalised Radio Stations use Spotify's Recommendations API to generate playlists.
+When you use 'Recommendations For You', 'Favourite Artists and Related Artists', or any of the 'Music From Spotify'
+stations, RompR will send information about music you have listened to using RompR to Spotify's API.
+There is no information sent that could be used to identify you personally except perhaps your IP address. RompR does not
+have access to your personal information on Spotify. The information sent is limited to only the Spotify IDs of artists and tracks
+that you have listened to using RompR. If you would prefer not to send this information to Spotify do not use these stations.
 
 ### Music From Spotify
 
@@ -37,7 +39,7 @@ This does not require Mopidy-Spotify to be enabled.
 
 Tracks by Artist will play a random selection of tracks by the artist you enter.
 
-In Genre you can enter up to 5 genres separated by commas. RompR uses Spotify's APIto get tracks based on those genres.
+In Genre you can enter up to 5 genres separated by commas. RompR uses Spotify's API to get tracks based on those genres.
 This does not require Mopidy-Spotify to be enabled.
 
 The Last.FM stations require you to be [logged in to Last.FM](/RompR/LastFM).
@@ -64,3 +66,10 @@ If the track can't be found it will be added to your [Wishlist](/RompR/The-Wishl
 ## The Info Panel
 
 Mopidy-Spotify users can get more suggestions about new music related to the currently playing track by using the Spotify [Info Panel](/RompR/The-Info-Panel)
+
+## The Discoverator
+
+The Discoverator (available as a plug-in on the Info Panel) uses your favourite music to generate suggestions of albums
+you might like. Note that, like the Spotify stations mentioned above, this will send information about music you have
+listened to to Spotify's API.
+
