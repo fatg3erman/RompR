@@ -1113,7 +1113,7 @@ class collection_base extends database {
 		logger::log('RECSEEDS', 'Looking for', $top, 'seed tracks over', $days, 'days');
 		$resultset = [];
 		// 1. Get the top tracks overall
-		$tracks = $this->get_track_charts(intval($top), CHARTS_MUSIC_ONLY);
+		$tracks = $this->get_track_charts(20, CHARTS_MUSIC_ONLY);
 		foreach ($tracks as $track) {
 			if ($track->Uri) {
 				$resultset[] = [
