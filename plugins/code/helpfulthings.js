@@ -13,7 +13,7 @@ var helpfulThings = function() {
 
 	function getRecommendationSeeds() {
 		debug.log(medebug, "Getting Seeds For Recommendations");
-		metaHandlers.genericQuery({action: 'getrecommendationseeds', days: 120, limit: 25, top: 10},
+		metaHandlers.genericQuery({action: 'getrecommendationseeds', days: 180, limit: 35, top: 15},
 			gotRecommendationSeeds,
 			function(data) {
 				debug.error(medebug,"Error Getting Seeds",data);
@@ -208,7 +208,7 @@ var helpfulThings = function() {
 		getMoreStuff: function() {
 			if (trackseeds.length > 0) {
 				current_seed = trackseeds.shift();
-				var params = { limit: 8 }
+				var params = { limit: 12 }
 				params.seed_tracks = current_seed.id;
 				spotify.recommendations.getRecommendations(params, helpfulThings.gotTrackRecommendations, helpfulThings.spotiError);
 			} else if (nonspotitracks.length == 0) {
