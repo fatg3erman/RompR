@@ -44,7 +44,11 @@ jQuery.fn.menuHide = async function() {
 }
 
 jQuery.fn.isOpen = function() {
-	if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
+	if (this.hasClass('icon-toggle-open')) {
+		return true;
+	} else if (this.hasClass('icon-toggle-closed')) {
+		return false;
+	} else if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
 		return true;
 	} else {
 		return false;
@@ -52,7 +56,11 @@ jQuery.fn.isOpen = function() {
 }
 
 jQuery.fn.isClosed = function() {
-	if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
+	if (this.hasClass('icon-toggle-open')) {
+		return false;
+	} else if (this.hasClass('icon-toggle-closed')) {
+		return true;
+	} else if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
 		return false;
 	} else {
 		return true;
