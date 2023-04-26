@@ -93,6 +93,10 @@ class metaquery extends collection_base {
 				if ($spoti_track) {
 					if ($spoti_track['is_playable']) {
 						logger::debug('RELINKING', 'Track',$spoti_track['name'],'is playable');
+						// If it's relinked I don't know if I'm supposed to use $spoti_track['uri']
+						// or $spoti_track['linked_from']['uri']. The latter is the same as the one
+						// we initially supplied, whereas the former is different BUT the docs say
+						// not to use the former.???
 						if (array_key_exists('linked_from', $spoti_track))
 							logger::log('RELINKING', '  Track',$spoti_track['name'],'is relinked',$uri, $spoti_track['uri']);
 

@@ -108,7 +108,7 @@ function check_lastfm_sync() {
 
     $next = prefs::get_pref('next_lastfm_synctime') - time();
     if ($next > 0) {
-        logger::trace('DAEMON', 'Next LastFM Sync Check is in',$next,'seconds');
+        logger::debug('DAEMON', 'Next LastFM Sync Check is in',$next,'seconds');
     } else {
         logger::mark('DAEMON', 'Syncing LastFM Playcounts');
         $page = 1;
@@ -172,7 +172,7 @@ function check_lastfm_sync() {
 function check_unplayable_tracks() {
     $next = prefs::get_pref('linkchecker_nextrun') - time();
     if ($next > 0) {
-        logger::trace('DAEMON', 'Next Spotify Relinking Check is in',$next,'seconds');
+        logger::debug('DAEMON', 'Next Spotify Relinking Check is in',$next,'seconds');
     } else {
         prefs::$database = new metaquery();
         if (!prefs::get_pref('link_checker_is_running')) {
