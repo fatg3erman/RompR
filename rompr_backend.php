@@ -103,7 +103,7 @@ function check_podcast_refresh() {
 
 function check_lastfm_sync() {
 
-    if (!prefs::get_pref('sync_lastfm_at_start') || prefs::get_pref('lastfm_session_key') != '')
+    if (!prefs::get_pref('sync_lastfm_at_start') || prefs::get_pref('lastfm_session_key') == '')
         return;
 
     $next = prefs::get_pref('next_lastfm_synctime') - time();
