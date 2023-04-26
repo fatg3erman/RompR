@@ -103,10 +103,13 @@ function check_podcast_refresh() {
 
 function check_lastfm_sync() {
 
-    if (prefs::get_pref('sync_lastfm_at_start') &&
-        prefs::get_pref('lastfm_session_key') != '' &&
-        time() >= prefs::get_pref('next_lastfm_synctime')
-    ) {
+    if (!prefs::get_pref('sync_lastfm_at_start') || prefs::get_pref('lastfm_session_key') != '')
+        return;
+
+    $next = prefs::get_pref('next_lastfm_synctime') - time();
+    if ($next > 0) {
+        logger::trace('DAEMON', 'Next LastFM Sync Check is in',$next,'seconds');
+    } else {
         logger::mark('DAEMON', 'Syncing LastFM Playcounts');
         $page = 1;
         $options = [
@@ -167,11 +170,21 @@ function check_lastfm_sync() {
 }
 
 function check_unplayable_tracks() {
-    if (time() >= prefs::get_pref('linkchecker_nextrun')) {
+    $next = prefs::get_pref('linkchecker_nextrun') - time();
+    if ($next > 0) {
+        logger::trace('DAEMON', 'Next Spotify Relinking Check is in',$next,'seconds');
+    } else {
         prefs::$database = new metaquery();
-        prefs::$database->resetlinkcheck();
+        if (!prefs::get_pref('link_checker_is_running')) {
+            prefs::$database->resetlinkcheck();
+            prefs::set_pref(['link_checker_is_running' => true]);
+            prefs::save();
+        }
         if (prefs::$database->getlinktocheck()) {
-            prefs::set_pref(['linkchecker_nextrun' => time() + prefs::get_pref('link_checker_frequency')]);
+            prefs::set_pref([
+                'linkchecker_nextrun' => time() + prefs::get_pref('link_checker_frequency'),
+                'link_checker_is_running' => false
+            ]);
             prefs::save();
         }
 

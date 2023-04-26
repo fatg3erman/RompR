@@ -84,7 +84,6 @@ class metaquery extends collection_base {
 		if (count($ids) > 0) {
 			logger::log('RELINKING', 'Got chunk of',count($ids),'spotify tracks to check');
 			$this->open_transaction();
-			$retval = true;
 			$trackinfo = spotify::track_checklinking(['id' => $ids, 'cache' => false], false);
 			$spoti_data = json_decode($trackinfo, true);
 			foreach ($tracks as $i => $my_track) {
@@ -113,19 +112,14 @@ class metaquery extends collection_base {
 			$this->close_transaction();
 		} else {
 			logger::log('RELINKING', 'Got no more spotify tracks to check');
-			prefs::set_pref(['link_checker_is_running' => false]);
-			prefs::save();
+			$retval = true;
 		}
 		return $retval;
 	}
 
 	public function resetlinkcheck() {
-		if (!prefs::get_pref('link_checker_is_running')) {
-			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2 OR LinkChecked = 4", true);
-			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3", true);
-			prefs::set_pref(['link_checker_is_running' => true]);
-			prefs::save();
-		}
+		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2 OR LinkChecked = 4", true);
+		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3", true);
 	}
 
 	public function getcharts($data) {
