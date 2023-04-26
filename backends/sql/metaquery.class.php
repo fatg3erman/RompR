@@ -95,11 +95,9 @@ class metaquery extends collection_base {
 					if ($spoti_track['is_playable']) {
 						logger::debug('RELINKING', 'Track',$spoti_track['name'],'is playable');
 						if (array_key_exists('linked_from', $spoti_track)) {
-							logger::log('RELINKING', '  Track',$spoti_track['name'],'is relinked',$uri, $spoti_track['linked_from']['uri']);
-							$uri = $spoti_track['linked_from']['uri'];
-						} else {
-							$uri = $spoti_track['uri'];
-						}
+							logger::log('RELINKING', '  Track',$spoti_track['name'],'is relinked',$uri, $spoti_track['uri']);
+
+						$uri = $spoti_track['uri'];
 						$status = 2;
 					} else {
 						logger::log('RELINKING', 'Track',$spoti_track['name'],'is not playable');
@@ -114,6 +112,7 @@ class metaquery extends collection_base {
 			}
 			$this->close_transaction();
 		} else {
+			logger::log('RELINKING', 'Got no more spotify tracks to check');
 			prefs::set_pref(['link_checker_is_running' => false]);
 			prefs::save();
 		}
