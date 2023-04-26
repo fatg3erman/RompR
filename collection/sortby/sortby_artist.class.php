@@ -151,6 +151,7 @@ class sortby_artist extends sortby_base {
 			$atc = $this->artist_albumcount($mod['AlbumArtistindex']);
 			logger::log("SORTBY_ARTIST", "Artist",$mod['AlbumArtistindex'],"has",$atc,$this->why,"albums we need to consider");
 			if ($atc == 0) {
+				logger::log('SORTER', $this->why.'artist'.$mod['AlbumArtistindex'],'has no albums');
 				prefs::$database->returninfo['deletedartists'][] = $this->why.'artist'.$mod['AlbumArtistindex'];
 			} else {
 				prefs::$database->returninfo['modifiedartists'][] = $this->output_root_fragment($mod['AlbumArtistindex']);

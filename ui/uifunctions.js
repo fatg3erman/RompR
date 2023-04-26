@@ -856,8 +856,10 @@ function spotifyTrackListing(data, show_add_button) {
 			'<div class="expand">'+data.tracks.items[i].name+'</div>'+
 			'<div class="fixed playlistrow2 tracktime">'+formatTimeString(data.tracks.items[i].duration_ms/1000)+'</div>';
 
-		if (show_add_button && domain != 'local' && player.canPlay(domain))
-			h += '<i class="inline-icon icon-music clickspotifywidget infoclick plugclickable clickimporttrack" name="'+i+'"></i>';
+		// Don't do this because 'plugclickable' only works with browser extra plugins
+		// so this dosn't work with the Spotify Info panel
+		// if (show_add_button && domain != 'local' && player.canPlay(domain))
+		// 	h += '<i class="inline-icon icon-music clickspotifywidget infoclick plugclickable clickimporttrack" name="'+i+'"></i>';
 
 		h+=	'</div>' +
 			'</div>';

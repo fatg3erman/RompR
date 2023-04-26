@@ -1215,6 +1215,14 @@ $.widget('rompr.spotifyAlbumThing', {
 			$('[name="'+this.options.id+'dropper_'+data.id+'"]').stopSpinner();
 		}
 		var e = $("#"+this.options.id+'dropper_'+data.id);
+
+		var album_holder = e;
+		while (!album_holder.hasClass('albumwidget')) {
+			album_holder = album_holder.parent();
+		}
+		let data_index = album_holder.attr('data_index');
+		this.options.data[data_index].tracks = data.tracks;
+
 		e.show();
 		this._openAlbum(e);
 		e.addClass("filled").html(spotifyTrackListing(data, true));
