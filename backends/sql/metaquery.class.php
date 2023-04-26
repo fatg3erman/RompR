@@ -94,7 +94,7 @@ class metaquery extends collection_base {
 				if ($spoti_track) {
 					if ($spoti_track['is_playable']) {
 						logger::debug('RELINKING', 'Track',$spoti_track['name'],'is playable');
-						if (array_key_exists('linked_from', $spoti_track)) {
+						if (array_key_exists('linked_from', $spoti_track))
 							logger::log('RELINKING', '  Track',$spoti_track['name'],'is relinked',$uri, $spoti_track['uri']);
 
 						$uri = $spoti_track['uri'];
