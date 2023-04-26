@@ -115,7 +115,7 @@ language::add_translations([
 	"label_wikipedia" =>					"Wikipedia",
 	"label_general_error" =>				"There was an error. Please refresh the page and try again",
 	"label_days" =>							"days",
-	"label_noalbums" =>						"No Individual Albums Returned By Search",
+	"label_noalbums" =>						"No Albums Found",
 	"label_duration" =>						"Duration",
 	"label_playererror" =>					"Player Error",
 	"button_playradio" =>					"Play",

@@ -1465,7 +1465,7 @@ class metaDatabase extends playlistCollection {
 			if ($ttindex === null)
 				$this->youtubedl_error('Could not locate that track in the database!', null);
 
-			if ($data['pfile']) {
+			if (array_key_exists('pfile', $data) && $data['pfile']) {
 				$progress_file = $data['pfile'];
 			} else {
 				$progress_file = 'prefs/youtubedl/dlprogress_'.md5($mopidy_uri);

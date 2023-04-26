@@ -88,7 +88,7 @@ class sortby_rating extends sortby_base {
 			$count++;
 		}
 		if ($count == 0 && $this->why != 'a') {
-			uibits::noAlbumsHaeder();
+			uibits::noAlbumsHeader();
 		}
 		return $count;
 	}
