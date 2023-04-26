@@ -1003,15 +1003,15 @@ class metaDatabase extends playlistCollection {
 				'MUSICBRAINZ_ALBUMID' => $obj->mbid,
 				'domain' => $obj->Domain);
 			$newalbumindex = $this->check_album($params);
+			foreach ([$albumindex, $newalbumindex] as $i) {
+				$this->sql_prepare_query(true, null, null, null,
+					"UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = ?",
+					$i
+				);
+			}
 			if ($albumindex != $newalbumindex) {
 				logger::log("AMEND ALBUM", "Moving all tracks from album",$albumindex,"to album",$newalbumindex);
 				if ($this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET Albumindex = ? WHERE Albumindex = ?", $newalbumindex, $albumindex)) {
-					foreach ([$albumindex, $newalbumindex] as $i) {
-						$this->sql_prepare_query(true, null, null, null,
-							"UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = ?",
-							$i
-						);
-					}
 					logger::debug("AMEND ALBUM", "...Success");
 				} else {
 					logger::warn("AMEND ALBUM", "Track move Failed!");
