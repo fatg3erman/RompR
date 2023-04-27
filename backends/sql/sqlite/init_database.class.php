@@ -902,8 +902,14 @@ class init_database extends init_generic {
 
 				case 102:
 					logger::log("SQL", "Updating FROM Schema version 102 TO Schema version 103");
-					prefs::set_pref(['linkchecker_nextrun' => time() + prefs::get_pref('link_checker_frequency')]);
 					$this->set_admin_value('SchemaVer', 103);
+					break;
+
+				case 103:
+					logger::log("SQL", "Updating FROM Schema version 103 TO Schema version 104");
+					prefs::set_pref(['linkchecker_nextrun' => time() + prefs::get_pref('link_checker_frequency')]);
+					prefs::save();
+					$this->set_admin_value('SchemaVer', 104);
 					break;
 
 			}
