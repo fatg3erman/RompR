@@ -97,8 +97,10 @@ class metaquery extends collection_base {
 						// or $spoti_track['linked_from']['uri']. The latter is the same as the one
 						// we initially supplied, whereas the former is different BUT the docs say
 						// not to use the former.???
-						if (array_key_exists('linked_from', $spoti_track))
-							logger::log('RELINKING', '  Track',$spoti_track['name'],'is relinked',$uri, $spoti_track['uri']);
+						if (array_key_exists('linked_from', $spoti_track)) {
+							logger::log('RELINKING', 'Track',$spoti_track['name'],'is relinked from',$uri, 'to', $spoti_track['uri']);
+							logger::log('RELINKING', 'What does this even mean?');
+						}
 
 						$uri = $spoti_track['uri'];
 						$status = 2;

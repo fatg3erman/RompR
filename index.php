@@ -91,14 +91,26 @@ if (array_key_exists('cacheclean', $_REQUEST)) {
 }
 
 //
+// Do some initialisation of the backend directories
+//
+include ("includes/firstrun.php");
+
+//
 // Set the country code from the browser (though this may not be accurate)
-// - unless the user has already set it. Note, this is the lastfm country
+// - unless the user has already set it. Note, this is the Spotify 'markets'
 // code, not the interface language.
 //
 
 if (!prefs::get_pref('country_userset')) {
-	prefs::set_pref(['lastfm_country_code' => language::get_browser_country()]);
-	logger::info('INIT', 'Country code not set by user. Setting it to', prefs::get_pref('lastfm_country_code'));
+	logger::info('INIT', 'Country Code not sent by user');
+	$browser_country = language::get_browser_country();
+	$markets = spotify::get_markets();
+	if (in_array($browser_country, $markets)) {
+		logger::info('INIT', 'Browser gave us',$browser_country,'which is valid for Spotify');
+		prefs::set_pref(['lastfm_country_code' => $browser_country]);
+	} else {
+		logger::info('INIT', 'Browser gave us',$browser_country,'which is NOT valid for Spotify');
+	}
 }
 
 logger::debug("INIT", $_SERVER['SCRIPT_FILENAME']);
@@ -148,11 +160,6 @@ $player->probe_websocket();
 // This table has to exist because it's used in get_album_uri() but we
 // can't create it until we know which player we're connected to.
 prefs::$database->create_radio_uri_table(false);
-
-//
-// Do some initialisation of the backend directories
-//
-include ("includes/firstrun.php");
 
 //
 // Check that the Backend Daemon is running and (re)start if it necessary.

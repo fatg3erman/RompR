@@ -138,7 +138,7 @@ class spotify {
 		// 		cache 	: boolean
 		//
 
-		$url = self::BASE_URL.'/artists/'.$params['id'].'/top-tracks';
+		$url = self::BASE_URL.'/artists/'.$params['id'].'/top-tracks/?market='.prefs::get_pref('lastfm_country_code');
 		return self::request($url, $print_data, $params['cache']);
 	}
 
@@ -156,7 +156,7 @@ class spotify {
 		unset($params['cache']);
 		$url = self::BASE_URL.'/artists/'.$params['id'].'/albums?';
 		unset($params['id']);
-		$params['country'] = prefs::get_pref('lastfm_country_code');
+		$params['market'] = prefs::get_pref('lastfm_country_code');
 		$url .= http_build_query($params);
 		return self::request($url, $print_data, $use_cache);
 	}
@@ -171,6 +171,7 @@ class spotify {
 		// 		cache 		: boolean
 		//
 
+		$params['market'] = prefs::get_pref('lastfm_country_code');
 		$use_cache = $params['cache'];
 		unset($params['cache']);
 		$url = self::BASE_URL.'/search?';
@@ -227,6 +228,17 @@ class spotify {
 
 		$url = self::BASE_URL.'/recommendations/available-genre-seeds';
 		return self::request($url, $print_data, $params['cache']);
+
+	}
+
+	public static function get_markets() {
+		$url = self::BASE_URL.'/markets';
+		$m = json_decode(self::request($url, false, true), true);
+		if (array_key_exists('markets', $m) && is_array($m['markets'])) {
+			return $m['markets'];
+		} else {
+			return [];
+		}
 
 	}
 
