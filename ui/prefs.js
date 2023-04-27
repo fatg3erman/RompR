@@ -252,10 +252,6 @@ var prefs = function() {
 		prefs.save(felakuti, callback);
 	}
 
-	function setscrob(e) {
-		prefs.save({scrobblepercent: e.max});
-	}
-
 	function loadBackgroundImages() {
 		clearTimeout(backgroundTimer);
 		if (typeof(prefs.bgimgparms[prefs.theme]) == 'undefined') {
@@ -709,14 +705,6 @@ var prefs = function() {
 		},
 
 		setPrefs: async function() {
-
-			$("#scrobwrangler").rangechooser({
-				range: 100,
-				ends: ['max'],
-				allowed_min: 0.5,
-				onstop: setscrob,
-				startmax: prefs.scrobblepercent/100
-			});
 
 			$.each($('.autoset'), function() {
 				debug.debug('SETPREFS','Checkbox',$(this).attr("id"), prefs[$(this).attr("id")]);

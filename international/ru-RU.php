@@ -60,7 +60,6 @@ language::add_translations([
 	"config_lastfmusername" =>				"Last.FM Пользователь",
 	"config_loginbutton" =>					"Логин",
 	"config_scrobbling" =>					"Scrobble треки в Last.FM",
-	"config_scrobblepercent" =>				"Процент дорожки, которую нужно сыграть перед сканированием",
 	"config_autocorrect" =>					"Используйте Last.FM для автоматического исправления имен исполнителей и т.д.",
 	"config_tagloved" =>					"Tag Loved Tracks With:",
 	"config_fontsize" =>					"ШРИФТ",

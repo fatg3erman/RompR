@@ -546,10 +546,6 @@ class prefspanel extends uibits {
 			]
 		]);
 
-		print '<div class="pref lastfmlogin-required">'.language::gettext('config_scrobblepercent').'<br/>
-		<div id="scrobwrangler"></div>
-		</div>';
-
 		self::ui_textentry([
 			'label' => 'config_tagloved',
 			'id' => 'autotagname',

@@ -134,7 +134,6 @@ class prefs {
 		"autotagname" => "",
 		"lastfm_logged_in" => false,
 		"lastfm_scrobbling" => false,
-		"scrobblepercent" => 50,
 		"use_mopidy_search" => true
 	];
 

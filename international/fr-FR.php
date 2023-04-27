@@ -57,7 +57,6 @@ language::add_translations([
 	"config_lastfmusername" =>				"Utilisateur Last.FM",
 	"config_loginbutton" =>					"Connexion",
 	"config_scrobbling" =>					"Scrobbling Last.FM Activé",
-	"config_scrobblepercent" =>				"Pourcentage de pistes à jouer avec de scrobbler",
 	"config_autocorrect" =>					"Auto-correction Last.FM Activée",
 	"config_tagloved" =>					"Tagguer Pistes Aimées Avec:",
 	"config_country" =>						"PAYS (pour Spotify)",

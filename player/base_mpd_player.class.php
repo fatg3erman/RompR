@@ -32,6 +32,8 @@ class base_mpd_player {
 	private $current_status = [];
 	public $current_song = [];
 
+	private const SCROBBLE_FRACTION = 0.95;
+
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_remote = null) {
 		$this->debug_id = microtime();
 		$pdef = prefs::get_player_def();
@@ -1447,7 +1449,7 @@ class base_mpd_player {
 	private function check_playcount_increment() {
 		$elapsed = time() - $this->current_song['readtime'] + $this->current_status['elapsed'];
 		$fraction_played = ($this->current_song['Time'] == 0) ? 0 : $elapsed / $this->current_song['Time'];
-		if ($fraction_played > 0.95) {
+		if ($fraction_played > self::SCROBBLE_FRACTION) {
 			logger::info(prefs::currenthost(), "Played more than 95% of song. Incrementing playcount");
 			prefs::$database = new metaDatabase();
 			$this->current_song['attributes'] = [['attribute' => 'Playcount', 'value' => $this->current_song['Playcount']+1]];
@@ -1460,12 +1462,9 @@ class base_mpd_player {
 				prefs::$database->markAsListened($this->current_song['file']);
 			}
 			prefs::$database->close_database();
-
-		}
-
-		prefs::load();
-		if (($fraction_played*100) > prefs::get_pref('scrobblepercent'))
+			prefs::load();
 			$this->scrobble_to_lastfm();
+		}
 	}
 
 	private function lastfm_update_nowplaying() {
