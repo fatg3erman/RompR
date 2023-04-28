@@ -249,7 +249,19 @@ class database extends data_base {
 			$uri,
 			0
 		);
-		return count($bacon);
+		if (count($bacon) > 0)
+			return true;
+
+		// If we've put it in the music directory and scanned it to Mopidy's database
+		// the Uri will have been url-encoded, except for /
+		$uri = implode("/", array_map("rawurlencode", explode("/", $uri)));
+		logger::trace('CLEANER', 'Checking for', $uri);
+		$bacon = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			"SELECT TTindex FROM Tracktable WHERE Uri LIKE '%' || ? AND Hidden = ?",
+			$uri,
+			0
+		);
+		return (count($bacon) > 0);
 	}
 
 	public function drop_triggers() {
