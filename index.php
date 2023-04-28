@@ -91,13 +91,15 @@ if (array_key_exists('cacheclean', $_REQUEST)) {
 }
 
 //
-// Do some initialisation of the backend directories
+// Do some initialisation of the backend directories. Must do this now,
+// since we almost immediately start calling spotify:: methods which require
+// cache_handler, so these directories need to exist
 //
 include ("includes/firstrun.php");
 
 //
 // Set the country code from the browser (though this may not be accurate)
-// - unless the user has already set it. Note, this is the Spotify 'markets'
+// - unless the user has already set it. Note, this is the Spotify 'market'
 // code, not the interface language.
 //
 

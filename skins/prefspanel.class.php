@@ -330,7 +330,7 @@ class prefspanel extends uibits {
 			'label' => language::gettext('config_lastfmlang')
 		]);
 
-		$countries = [];
+		$countries = ['' => 'Please Select'];
 		$x = simplexml_load_file('resources/iso3166.xml');
 		$markets = spotify::get_markets();
 		foreach($x->CountryEntry as $i => $c) {
@@ -342,7 +342,8 @@ class prefspanel extends uibits {
 		self::ui_select_box([
 			'id' => 'lastfm_country_code',
 			'options' => $countries,
-			'label' => language::gettext('config_country')
+			'label' => language::gettext('config_country'),
+			'disabled' => ['']
 		]);
 
 		// =======================================================

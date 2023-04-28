@@ -61,11 +61,13 @@ class language {
 		// return the two-letter country code from the browser (eg GB, FR)
 		// This is the equivalent of the ISO3166-1 alpha-2 code required by Spotify
 		// for making sure search results are appropriate for the user's market/country
-		// It is saved in the pref lastfm_country_code
+		// It is saved in the pref lastfm_country_code. Default return is '' which means
+		// we use the previously saved value, which might be '' in which case spotify.class.php
+		// will never send a market= parameter.
 		if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER)) {
 			return substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 3, 2);
 		} else {
-			return 'GB';
+			return '';
 		}
 	}
 
