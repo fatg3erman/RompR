@@ -137,7 +137,8 @@ class cache_cleaner extends database {
 			if ($f->isFile()) {
 				$numfiles++;
 				$fpath = $f->getPathname();
-				if ($this->check_youtube_uri_exists(substr($fpath, strpos($fpath, 'youtubedl/'))) == 0) {
+				$check_path = substr($fpath, strpos($fpath, 'youtubedl/'));
+				if (!$this->check_youtube_uri_exists($check_path)) {
 					logger::log('CACHE CLEANER', $fpath,'does not have an associated track');
 					unlink($fpath);
 				}
