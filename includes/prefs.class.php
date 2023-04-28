@@ -55,7 +55,7 @@ class prefs {
 		"composergenrename" => array("Classical"),
 		"preferlocalfiles" => false,
 		"mopidy_collection_folders" => array("Local media"),
-		"lastfm_country_code" => "GB",
+		"lastfm_country_code" => "",
 		"country_userset" => false,
 		"debug_enabled" => 0,
 		"custom_logfile" => "",

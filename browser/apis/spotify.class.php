@@ -81,11 +81,16 @@ class spotify {
 		// 		id 		: spotify track id or array[spotify track ids]
 		// 		cache 	: boolean
 		//
-
+		$market = prefs::get_pref('lastfm_country_code');
 		if (is_array($params['id'])) {
-			$url = self::BASE_URL.'/tracks?ids='.implode(',', $params['id']).'&market='.prefs::get_pref('lastfm_country_code');
+			$url = self::BASE_URL.'/tracks?ids='.implode(',', $params['id']);
+			if ($market != '')
+				$url .= '&market='.$market;
+
 		} else {
-			$url = self::BASE_URL.'/tracks/'.$params['id'].'?market='.prefs::get_pref('lastfm_country_code');
+			$url = self::BASE_URL.'/tracks/'.$params['id'];
+			if ($market != '')
+				$url .= '?market='.$market;
 		}
 		return self::request($url, $print_data, $params['cache']);
 	}
@@ -138,7 +143,11 @@ class spotify {
 		// 		cache 	: boolean
 		//
 
-		$url = self::BASE_URL.'/artists/'.$params['id'].'/top-tracks/?market='.prefs::get_pref('lastfm_country_code');
+		$url = self::BASE_URL.'/artists/'.$params['id'].'/top-tracks';
+		$market = prefs::get_pref('lastfm_country_code');
+		if ($market != '')
+			$url .= '?market='.$market;
+
 		return self::request($url, $print_data, $params['cache']);
 	}
 
@@ -156,7 +165,10 @@ class spotify {
 		unset($params['cache']);
 		$url = self::BASE_URL.'/artists/'.$params['id'].'/albums?';
 		unset($params['id']);
-		$params['market'] = prefs::get_pref('lastfm_country_code');
+		$market = prefs::get_pref('lastfm_country_code');
+		if ($market != '')
+			$params['market'] = $market;
+
 		$url .= http_build_query($params);
 		return self::request($url, $print_data, $use_cache);
 	}
@@ -170,8 +182,10 @@ class spotify {
 		//		limit 		: (int)
 		// 		cache 		: boolean
 		//
+		$market = prefs::get_pref('lastfm_country_code');
+		if ($market != '')
+			$params['market'] = $market;
 
-		$params['market'] = prefs::get_pref('lastfm_country_code');
 		$use_cache = $params['cache'];
 		unset($params['cache']);
 		$url = self::BASE_URL.'/search?';
@@ -251,7 +265,10 @@ class spotify {
 		//
 
 		$url = self::BASE_URL.'/recommendations?';
-		$params['param']['market'] = prefs::get_pref('lastfm_country_code');
+		$market = prefs::get_pref('lastfm_country_code');
+		if ($market != '')
+			$params['param']['market'] = $market;
+
 		$url .= http_build_query($params['param']);
 		return self::request($url, $print_data, $params['cache']);
 	}
