@@ -18,7 +18,7 @@ class database extends data_base {
 			logger::core("SQLITE", "Connected to SQLite");
 			// This increases performance
 			$this->mysqlc->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$this->generic_sql_query('PRAGMA journal_mode=DELETE', true);
+			$this->generic_sql_query('PRAGMA journal_mode=TRUNCATE', true);
 			$this->generic_sql_query('PRAGMA cache_size=-4000', true);
 			$this->generic_sql_query('PRAGMA synchronous=OFF', true);
 			$this->generic_sql_query('PRAGMA threads=4', true);
