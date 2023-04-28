@@ -104,6 +104,8 @@ class prefs {
 		"sync_lastfm_playcounts" => false,
 		"sync_lastfm_at_start" => false,
 		"next_lastfm_synctime" => 0,
+		// Although we can't init this to a value, it must be defined here or we can never save it
+		"last_lastfm_synctime" => 0,
 		"lastfm_sync_frequency" => 86400,
 		"lfm_importer_start_offset" => 0,
 		"lfm_importer_last_import" => 0,
@@ -250,6 +252,8 @@ class prefs {
 	public static function load() {
 
 		// Can't set a value in a constant using a function, so it has to be done here.
+		// Note that this key must still exist in BACKEND_PREFS otherwise we can't save it.
+		// This value will be overridden by the value from $sp if it exists
 		$cannot_init = ["last_lastfm_synctime" => time()];
 		$sp = self::load_prefs_file('prefs/prefs.var');
 		// Old prefs files might have values we've removed. This removes those values
