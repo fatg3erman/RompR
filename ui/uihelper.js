@@ -683,7 +683,7 @@ var uiHelper = function() {
 			uiHelper.set_rounded_corner_buffer_size();
 		},
 
-		changePanel: function() {
+		changePanel: function(event) {
 			uiHelper.sourceControl($(this).attr('name'));
 		},
 

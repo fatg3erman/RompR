@@ -1184,28 +1184,60 @@ class metaDatabase extends playlistCollection {
 		// Remove a track from the database.
 		// Doesn't do any cleaning up - call remove_cruft afterwards to remove orphaned artists and albums
 
-		// Deleting tracks will delete their associated playcounts. While it might seem like a good idea
-		// to hide them instead, in fact this results in a situation where we have tracks in our database
-		// that no longer exist in physical form - eg if local tracks are removed. This is really bad if we then
-		// later play those tracks from an online source and rate them. romprmetadata::find_item will return the hidden local track,
-		// which will get rated and appear back in the collection. So now we have an unplayable track in our collection.
-		// There's no real way round it, (without creating some godwaful lookup table of backends it's safe to do this with)
-		// so we just delete the track and lose the playcount information.
-
 		// If it's a search result, it must be a manually added track (we can't delete collection tracks)
 		// and we might still need it in the search, so set it to a 2 instead of deleting it.
-		// Also in this case, set isAudiobook to 0 because if it's a search result AND it's been moved to Spoken Word
-		// then deleted, if someone tried to then re-add it it doesn't appear in the display because all manually-added tracks go to
-		// the Collection not Spoken Word, but this doesn't work oh god it's horrible just leave it.
 
 		logger::info('BACKEND', "Removing track ".$ttid);
-		if (
-			$this->sql_prepare_query(true, null, null, null, "DELETE FROM Tracktable WHERE isSearchResult != 1 AND TTindex = ?", $ttid)
-			&& $this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET isSearchResult = 2, isAudiobook = 0 WHERE isSearchResult = 1 AND TTindex = ?", $ttid)
-		) {
+		// First, if it is a Search Result, set isSearchResult to 3 if it has a playcount (so it will get hidden on the next search)
+		// or to 2 it it doesn't (so it will get removed on the next search)
+		$isr = $this->simple_query('isSearchResult', 'Tracktable', 'TTindex', $ttid, 0);
+		$pc = $this->simple_query('Playcount', 'Playcounttable', 'TTindex', $ttid, 0);
+		// Set isAudiobook = 0 because there was an old comment here about not doing that breaking the UI
+		// if we ever re-add it because newly-added tracks go to the collection. Not sure if that's still true;
+		if ($isr == 1) {
+			if ($pc > 0) {
+				logger::log('BACKEND', 'Track is a search result with a playcount so setting isSearchResult to 3');
+				if ($this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET isSearchResult = 3, isAudiobook = 0 WHERE TTindex = ?", $ttid)) {
+					$this->tidy_ratings_and_tags($ttid);
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				logger::log('BACKEND', 'Track is an existing track search result without a playcount so setting isSearchResult to 2');
+				if ($this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET isSearchResult = 2, isAudiobook = 0 WHERE TTindex = ?", $ttid)) {
+					$this->tidy_ratings_and_tags($ttid);
+					return true;
+				} else {
+					return false;
+				}
+			}
+		} else if ($isr == 2 || $isr == 3) {
+			logger::log('BACKEND', 'Track is a search result without a playcount or a hidden track so how the hell did we get here?');
+			return false;
+		}
+		// Second, if it has a Playcount, hide it
+		if ($pc > 0) {
+			logger::log('BACKEND', 'Hiding Track because it has a playcount');
+			if ($this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET Hidden = 1, isAudiobook = 0 WHERE TTindex = ?", $ttid)) {
+				$this->tidy_ratings_and_tags($ttid);
+				return true;
+			} else {
+				return false;
+			}
+		}
+		// Finally, if none of the above, delete it
+		if ($this->sql_prepare_query(true, null, null, null, "DELETE FROM Tracktable WHERE TTindex = ?", $ttid)) {
+			$this->tidy_ratings_and_tags($ttid);
 			return true;
 		}
 		return false;
+	}
+
+	private function tidy_ratings_and_tags($ttid) {
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM Ratingtable WHERE TTindex = ?", $ttid);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM TagListtable WHERE TTindex = ?", $ttid);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM Bookmarktable WHERE TTindex = ?", $ttid);
 	}
 
 	public function prepare_returninfo() {

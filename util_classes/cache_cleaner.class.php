@@ -208,6 +208,18 @@ class cache_cleaner extends database {
 		// to create a new track
 		$this->generic_sql_query("DELETE FROM Ratingtable WHERE Rating = 0", true);
 		$this->generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = 0", true);
+		$this->generic_sql_query("DELETE FROM Bookmarktable WHERE Bookmark = 0", true);
+		$this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+		$this->generic_sql_query("DELETE FROM Ratingtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+		$this->generic_sql_query("DELETE FROM TagListtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+		$this->generic_sql_query("DELETE FROM Bookmarktable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+		// Uri IS NULL and Hidden = 0 is WISHLIST. These CAN have ratings and tags.
+		// Uri IS NULL and Hidden = 1 is hidden tracks with playcounts probably from Last.FM sync. These won't have ratings or tags.
+		// Uri is NOT NULL and Hidden = 1 is tracks we've deleted that had a playcount. We don't need their tags or ratings
+		// and we're not expecting them to be there if we ever unhide them.
+		$this->generic_sql_query("DELETE FROM Ratingtable WHERE TTindex IN (SELECT TTindex FROM Tracktable WHERE Hidden = 1 AND Uri IS NOT NULL)", true);
+		$this->generic_sql_query("DELETE FROM TagListtable WHERE TTindex IN (SELECT TTindex FROM Tracktable WHERE Hidden = 1 AND Uri IS NOT NULL)", true);
+		$this->generic_sql_query("DELETE FROM Bookmarktable WHERE TTindex IN (SELECT TTindex FROM Tracktable WHERE Hidden = 1 AND Uri IS NOT NULL)", true);
 	}
 
 	private function clean_cache_dir($dir, $time) {

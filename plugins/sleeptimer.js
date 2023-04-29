@@ -146,17 +146,10 @@ var sleepTimer = function() {
 			holder.html(html);
 			sleepTimer.pollState();
 			$('#sleepon').on('click', sleepTimer.toggle);
-			if (uiHelper.is_touch_ui) {
-				var inc_start = 'touchstart';
-				var inc_stop = 'touchend';
-			} else {
-				var inc_start = 'mousedown';
-				var inc_stop = 'mouseup';
-			}
-			$('#sleepinc').on(inc_start, function() { sleepTimer.startInc(1) });
-			$('#sleepinc').on(inc_stop, function() { sleepTimer.stopInc() });
-			$('#sleepdec').on(inc_start, function() { sleepTimer.startInc(-1) });
-			$('#sleepdec').on(inc_stop, function() { sleepTimer.stopInc() });
+			$('#sleepinc').on('pointerdown', function() { sleepTimer.startInc(1) });
+			$('#sleepinc').on('pointerup', function() { sleepTimer.stopInc() });
+			$('#sleepdec').on('pointerdown', function() { sleepTimer.startInc(-1) });
+			$('#sleepdec').on('pointerup', function() { sleepTimer.stopInc() });
 			if (typeof(shortcuts) != 'undefined')
 				shortcuts.add('button_sleep', sleepTimer.fakeClick, "Q");
 		}

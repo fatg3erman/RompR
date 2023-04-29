@@ -354,15 +354,10 @@ function bindClickHandlers() {
 	$(document).on('click', '.choosepanel', uiHelper.changePanel);
 	$(document).on('click', '.clickaddtoplaylist', infobar.addToPlaylist);
 	$(document).on('click', '.search-category', searchManager.save_categories);
-	if (uiHelper.is_touch_ui) {
-		var s_start = 'touchstart';
-		var s_end = 'touchend';
-	} else {
-		var s_start = 'mousedown';
-		var s_end = 'mouseup';
-	}
-	$('.skip-button').on(s_start, infobar.startSkip);
-	$('.skip-button').on(s_end, infobar.stopSkip);
+
+	// Using pointer events works for touch and mouse
+	$('.skip-button').on('pointerdown', infobar.startSkip);
+	$('.skip-button').on('pointerup', infobar.stopSkip);
 }
 
  function checkLfmUser() {

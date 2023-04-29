@@ -150,7 +150,7 @@ class ui_elements {
 		// Menu Button
 		if ($data['ttid']) {
 			$button_class = "icon-menu inline-icon fixed clickable clickicon invisibleicon clicktrackmenu spinable";
-			if ($data['lm'] === null) {
+			if ($data['lm'] === null && $data['isSearchResult'] < 2) {
 				$button_class .= ' clickremovedb';
 			}
 			// foreach ($bookmarks as $book) {

@@ -409,7 +409,15 @@ class musicCollection extends collection_base {
 			}
 		}
 
-		logger::log('BACKEND', "Finding tracks that have been deleted");
+		// Let's try to not lose playcounts from tracks that have been deleted, in case they
+		// ever come back or we start playing them from other sources.
+		logger::log('BACKEND', "Hiding tracks that have been deleted");
+		$this->generic_sql_query("UPDATE Tracktable SET Hidden = 1
+			WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0
+			AND TTindex IN (SELECT TTindex FROM Playcounttable)
+		", true);
+
+		logger::log('BACKEND', "Removing tracks that have been deleted");
 		$this->generic_sql_query("DELETE FROM Tracktable WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0", true);
 
 		logger::log('BACKEND', "Making Sure Local Tracks Are Not Unplayable");
