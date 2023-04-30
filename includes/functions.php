@@ -1045,12 +1045,12 @@ function get_pid($cmd) {
 }
 
 function create_body_tag($base_class) {
-	require_once('includes/Mobile_Detect.php');
+	require_once('includes/MobileDetect.php');
 	print '<body class="'.$base_class;
-	$md = new Mobile_Detect;
+	$md = new Detection\MobileDetect;
 	if ($md->isMobile() || $md->isTablet() || $md->isiOS()) {
 		logger::log('INIT', 'Mobile_Detect detected Mobile Browser');
-		print ' touchclick';
+		print ' touchclick mobiledevice';
 	} else {
 		logger::log('INIT', 'Mobile_Detect detected Desktop Browser');
 		print ' mouseclick';

@@ -28,9 +28,11 @@ print '<link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png
 <link rel="shortcut icon" sizes="48x48" href="newimages/favicon-48.png" />
 <link rel="shortcut icon" sizes="32x32" href="newimages/favicon-32.png" />
 <link rel="shortcut icon" sizes="16x16" href="newimages/favicon-16.png" />
-<script type="text/javascript" src="jquery/jquery-3.6.0.min.js"></script>
-<script type="text/javascript" src="jquery/jquery-migrate-3.3.2.min.js"></script>
-<script type="text/javascript" src="ui/setupbits.js?setupversion='.time().'"></script>
+<script type="text/javascript" src="jquery/jquery-3.6.4.min.js"></script>'."\n";
+
+// print '<script type="text/javascript" src="jquery/jquery-migrate-3.3.2.min.js"></script>'."\n";
+
+print '<script type="text/javascript" src="ui/setupbits.js?setupversion='.time().'"></script>
 <style>
 input[type=text] { width: 50% }
 input[type=submit] { width: 40% }

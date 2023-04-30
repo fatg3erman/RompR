@@ -209,9 +209,8 @@ print '<link rel="stylesheet" type="text/css" href="css/scrollbars/jquery.mCusto
 <?php
 logger::mark("INIT", "Reconfiguring the Forward Deflector Array");
 $scripts = array(
-	"jquery/jquery-3.6.0.min.js",
-	// "jquery/jquery-migrate-3.3.2.js",
-	"jquery/jquery-migrate-3.3.2.min.js",
+	"jquery/jquery-3.6.4.min.js",
+	// "jquery/jquery-migrate-3.3.2.min.js",
 	"ui/functions.js",
 	"ui/prefs.js",
 	"ui/language.php",

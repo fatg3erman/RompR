@@ -154,7 +154,7 @@ $(document).ready(function(){
 
 function set_mouse_touch_flags() {
 	// Work around iPadOS announcing itself as a desktop browser
-	if (navigator.userAgent.includes("Mac") && "ontouchend" in document && $('body').hasClass('mouseclick')) {
+	if (navigator.userAgent.includes("Mac") && "ontouchend" in document && !$('body').hasClass('touchclick')) {
 		$('body').removeClass('mouseclick').addClass('touchclick');
 	}
 	// Through a combination of the above hack (to catch the iPadOS stupidity case)
