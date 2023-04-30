@@ -559,11 +559,18 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 });
 
 $.widget("rompr.resizeHandle", $.ui.mouse, {
-	widgetEventPrefix: "resize",
+
 	options: {
 		side: 'left',
 		offset: 0
 	},
+
+	touch: null,
+	dragging: false,
+	startX: null,
+	elementStartX: null,
+	winsize: {},
+	widthadjust: null,
 
 	_create: function() {
 		this.dragging = false;
@@ -616,7 +623,10 @@ $.widget("rompr.resizeHandle", $.ui.mouse, {
 
 });
 
-$.widget("rompr.rangechooser", $.ui.mouse, {
+$.widget("rompr.rangechooser", $.Widget, {
+
+	// Rangechooser now uses pointer events so it *should* work on touch UIs, mouse UIs
+	// and UIs that are both touch and mouse. So it's no longer based on $.ui.mouse
 
 	options: {
 		range: 1,
@@ -657,79 +667,67 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 		this.min = this.options.startmin;
 		this.max = this.options.startmax;
 		if (this.options.interactive) {
-			if (uiHelper.is_touch_ui) {
-				// Use touch events if we're on a touch UI, otherwise
-				// dragging doesn't work
-				this.touch = null;
-				this.element.on('touchstart', $.proxy(this._touchStart, this));
-				this.element.on('touchmove', $.proxy(this._touchMove, this));
-				this.element.on('touchend', $.proxy(this._touchEnd, this));
-				this.element.on('touchcancel', $.proxy(this._touchEnd, this));
-			} else {
-				this._mouseInit();
-			}
+			this.touch = null;
+			this.element.on('pointerdown', $.proxy(this._touchStart, this));
+			this.element.on('pointermove', $.proxy(this._touchMove, this));
+			this.element.on('pointerup', $.proxy(this._touchEnd, this));
+			this.element.on('pointercancel', $.proxy(this._touchEnd, this));
+			this.element.on('pointerout', $.proxy(this._touchEnd, this));
 		}
 
 		this.fill();
 	},
 
-	_mouseCapture: function(event) {
-		this.dragging = true;
-		this.dragWhich(event);
-		this.update(event);
-		if (this.options.onstop) {
-			this.options.onstop(this.getRange());
-		}
-		return true;
-	},
+	_touchStart: function(e) {
 
-	_mouseDrag: function(event) {
-		if (this.dragging) {
+		if (this.touch == null) {
+			e.preventDefault();
+			this.touch = e.pointerId;
+			this.dragging = true;
+			this.dragWhich(event);
 			this.update(event);
-			if (this.options.whiledragging) {
-				this.options.whiledragging(this.getRange());
+			if (this.options.onstop) {
+				this.options.onstop(this.getRange());
 			}
 			return true;
 		}
-	},
 
-	_mouseStop: function(event) {
-		this.dragging = false;
-		if (this.options.onstop) {
-			this.options.onstop(this.getRange());
-		}
-		return true;
-	},
-
-	_touchStart: function(e) {
-		if (e.touches.length == 1 && this.touch == null) {
-			e.preventDefault();
-			this.touch = e.touches[0].identifier;
-			this._mouseCapture(e.touches[0]);
-		}
 	},
 
 	_touchMove: function(e) {
-		if (e.touches.length == 1 && this.touch == e.touches[0].identifier) {
+
+		if (this.touch == e.pointerId) {
 			e.preventDefault();
-			this._mouseDrag(e.touches[0]);
+			if (this.dragging) {
+				this.update(e, true);
+				if (this.options.whiledragging) {
+					this.options.whiledragging(this.getRange());
+				}
+				return true;
+			}
 		}
+
 	},
 
 	_touchEnd: function(e) {
-		if (e.changedTouches && typeof(e.changedTouches) == 'object') {
-			for (let ct of e.changedTouches) {
-				if (ct.identifier == this.touch) {
-					e.preventDefault();
-					this.touch = null;
-					this._mouseStop(ct);
-				}
+
+		if (this.touch == e.pointerId) {
+			e.preventDefault();
+			this.touch = null;
+			this.dragging = false;
+			if (this.options.onstop) {
+				this.options.onstop(this.getRange());
 			}
+			return true;
 		}
+
 	},
 
-	update: function(event) {
+	update: function(event, onmove) {
 		var position, fraction;
+		if (this.dragging && !onmove)
+			return;
+
 		if (this.options.orientation == "horizontal") {
 			position = event.clientX - this.element.offset().left;
 			fraction = position/this.element.width();
