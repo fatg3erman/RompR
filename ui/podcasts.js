@@ -275,7 +275,7 @@ var podcasts = function() {
 
 		downloadPodcastChannel: function(event, clickedElement) {
 			var channel = clickedElement.attr('name').replace(/podgroupload_/, '');
-			$("#podcast_"+channel).find('.poddownload').trigger('click');
+			$("#podcast_"+channel).find('.poddownload').trigger(prefs.click_event);
 		},
 
 		checkMarkPodcastAsListened: function(file) {

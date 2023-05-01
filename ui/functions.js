@@ -316,10 +316,10 @@ function uiLoginBind() {
 	if (!prefs.lastfm_logged_in) {
 		$('.lastfmlogin-required').removeClass('notenabled').addClass('notenabled');
 		$('input[name="lfmuser"]').val('');
-		$('#lastfmloginbutton').off('click').on('click', lastfm.startlogin).html(language.gettext('config_loginbutton')).removeClass('notenabled').addClass('notenabled');
+		$('#lastfmloginbutton').off(prefs.click_event).on(prefs.click_event, lastfm.startlogin).html(language.gettext('config_loginbutton')).removeClass('notenabled').addClass('notenabled');
 	} else {
 		$('.lastfmlogin-required').removeClass('notenabled');
-		$('#lastfmloginbutton').off('click').on('click', lastfm.logout).html(language.gettext('button_logout')).removeClass('notenabled');
+		$('#lastfmloginbutton').off(prefs.click_event).on(prefs.click_event, lastfm.logout).html(language.gettext('button_logout')).removeClass('notenabled');
 	}
 }
 

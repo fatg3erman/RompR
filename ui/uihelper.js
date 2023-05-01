@@ -114,7 +114,7 @@ jQuery.fn.makeTagMenu = function(options) {
 				style: "margin-left: 8px"}).appendTo($(this));
 			submitbutton.html(settings.buttontext);
 			if (settings.buttonfunc) {
-				submitbutton.on('click', function() {
+				submitbutton.on(prefs.click_event, function() {
 					settings.buttonfunc(textbox.val());
 				});
 			}
@@ -131,7 +131,7 @@ jQuery.fn.makeTagMenu = function(options) {
 			autoUpdateTimeout: 500,
 		}
 		});
-		textbox.on('click', function(ev) {
+		textbox.on(prefs.click_event, function(ev) {
 			ev.preventDefault();
 			ev.stopPropagation();
 			var position = getPosition(ev);
@@ -149,7 +149,7 @@ jQuery.fn.makeTagMenu = function(options) {
 						for (var i in data) {
 							var d = $('<div>', {class: "backhi"}).appendTo(menucontents);
 							d.html(data[i]);
-							d.on('click', function() {
+							d.on(prefs.click_event, function() {
 								var cv = textbox.val();
 								if (cv != "") {
 									cv += ",";
@@ -169,14 +169,23 @@ jQuery.fn.makeTagMenu = function(options) {
 }
 
 jQuery.fn.fanoogleMenus = function() {
+	debug.log('FANOOGLE', 'Doing menus');
 	return this.each( function() {
 		var self = $(this);
+		// var old_display = null;
+		// if (!self.is(':visible')) {
+		// 	old_display = self.css('display');
+		// 	self.css({opacity: 0, display: 'block'});
+		// }
+
 		if (self.is(':visible')) {
 			var top = self.offset().top;
 			var ws = getWindowSize();
 			var avheight = ws.y - top;
 			self.css('max-height', avheight+'px');
 		}
+		// if (old_display !== null)
+		// 	self.css({opacity: '', display: old_display});
 	});
 }
 
@@ -456,8 +465,8 @@ var uiHelper = function() {
 				return layoutProcessor.makeDropHolder(name, d, dontsteal, withscroll, wide);
 			} catch (err) {
 				var c = 'top_drop_menu dropshadow rightmenu stayopen';
-				if (dontsteal)
-					c += ' dontstealmyclicks';
+				// if (dontsteal)
+				// 	c += ' dontstealmyclicks';
 
 				if (!withscroll)
 					c += ' noscroll';
@@ -693,6 +702,7 @@ var uiHelper = function() {
 	                items: '.sortable',
 	                outsidedrop: playlist.dragstopped,
 	                insidedrop: playlist.dragstopped,
+	                allowdragout: true,
 	                scroll: true,
 	                scrollparent: layoutProcessor.playlist_scroll_parent,
 	                scrollspeed: 80,
@@ -703,10 +713,9 @@ var uiHelper = function() {
 	                ondrop: playlist.draggedToEmpty,
 	                coveredby: '#sortable'
 	            });
-				$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
-
+				// $(".stayopen").not('.dontstealmyclicks').on(prefs.click_event, function(ev) {ev.stopPropagation() });
 			}
-			$("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
+			$("#tracktimess").on(prefs.click_event, layoutProcessor.toggleRemainTime);
 			$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup playersearch', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
 			$('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add, placeholder: language.gettext('lastfm_addtagslabel')});
 			$(window).on('resize', uiHelper.adjustLayout);

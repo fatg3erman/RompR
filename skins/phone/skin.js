@@ -140,13 +140,13 @@ jQuery.fn.makeTagMenu = function(options) {
 				style: "margin-left: 8px"}).appendTo($(this));
 			submitbutton.html(settings.buttontext);
 			if (settings.buttonfunc) {
-				submitbutton.on('click', function() {
+				submitbutton.on(prefs.click_event, function() {
 					settings.buttonfunc(textbox.val());
 				});
 			}
 		}
 
-		dropbutton.on('click', function(ev) {
+		dropbutton.on(prefs.click_event, function(ev) {
 			ev.preventDefault();
 			ev.stopPropagation();
 			if (dropbox.is(':visible')) {
@@ -157,7 +157,7 @@ jQuery.fn.makeTagMenu = function(options) {
 					for (var i in data) {
 						var d = $('<div>', {class: "backhi"}).appendTo(menucontents);
 						d.html(data[i]);
-						d.on('click', function() {
+						d.on(prefs.click_event, function() {
 							var cv = textbox.val();
 							if (cv != "") {
 								cv += ",";
@@ -249,7 +249,6 @@ var layoutProcessor = function() {
 		sortFaveRadios: false,
 		openOnImage: true,
 		playlist_scroll_parent: '#pscroller',
-		needs_playlist_help: false,
 		my_scrollers: [ ".scroller", "#infopane", "#pscroller", ".top_drop_menu:not(.noscroll)", ".drop-box" ],
 
 		changeCollectionSortMode: function() {
@@ -376,15 +375,15 @@ var layoutProcessor = function() {
 
 		initialise: function() {
 			$(".dropdown").floatingMenu({ });
-			$('.topbarmenu').on('click', function(event) {
+			$('.topbarmenu').on(prefs.click_event, function(event) {
 				event.stopPropagation();
 				$('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
 				$('#'+$(this).attr('name')).slideToggle('fast');
 			});
-			$('.autohide').not('.notonclick').on('click', function() {
+			$('.autohide').not('.notonclick').on(prefs.click_event, function() {
 				$(this).slideToggle('fast');
 			});
-			$('#choose_history').on('click', showHistory);
+			$('#choose_history').on(prefs.click_event, showHistory);
 			$('#volume').volumeControl({
 				orientation: 'horizontal',
 				command: player.controller.volume

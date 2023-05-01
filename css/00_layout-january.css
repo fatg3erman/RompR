@@ -118,6 +118,10 @@ table#debuginfotable tr td:nth-child(2) {
 	padding: 4px;
 }
 
+.innerdragger {
+	z-index: 60200;
+}
+
 /* Used for styling all progress bars, volume controls, etc */
 
 .progressbar

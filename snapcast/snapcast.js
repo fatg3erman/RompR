@@ -409,10 +409,10 @@ function snapcastGroup() {
 		var sel = $('<div>', {class: 'selectholder snapcast_select expand'}).appendTo(title);
 		streammenu = $('<select>', {class: 'snapgroupstream'}).appendTo(sel);
 
-		lockbutton = $('<i>', {class: "inline-icon fixed clickicon", name: "groupvol-locked"}).appendTo(title).on('click', self.setVolumeLock);
+		lockbutton = $('<i>', {class: "inline-icon fixed clickicon", name: "groupvol-locked"}).appendTo(title).on(prefs.click_event, self.setVolumeLock);
 		self.set_lockbutton();
 
-		mutebutton = $('<i>', {class: "inline-icon fixed clickicon", name: "groupmuted"}).appendTo(title).on('click', self.setMute);
+		mutebutton = $('<i>', {class: "inline-icon fixed clickicon", name: "groupmuted"}).appendTo(title).on(prefs.click_event, self.setMute);
 	}
 
 	this.set_lockbutton = function() {
@@ -588,10 +588,10 @@ function snapcastClient() {
 
 		$('<div>', {class: 'fixed tag', name: 'notcon'}).appendTo(title);
 		var client = $('<div>', {class: 'containerbox'}).appendTo(holder);
-		var m = $('<i>', {class: "inline-icon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setGroup);
+		var m = $('<i>', {class: "inline-icon fixed icon-menu clickicon"}).appendTo(title).on(prefs.click_event, self.setGroup);
 		vc = $('<div>', {class: 'canbefaded invisible containerbox vertical-centre'}).appendTo(holder);
 		volume = $('<div>', {class: 'expand playlistrow2'}).appendTo(vc);
-		var m = $('<i>', {class: "inline-icon fixed clickicon", name :"clientmuted"}).appendTo(vc).on('click', self.setMute);
+		var m = $('<i>', {class: "inline-icon fixed clickicon", name :"clientmuted"}).appendTo(vc).on(prefs.click_event, self.setMute);
 		volume.volumeControl({
 			orientation: 'horizontal',
 			command: self.setVolume
@@ -609,7 +609,7 @@ function snapcastClient() {
 		lb = $('<input>', {type: 'text', class: 'fixed', name: "latency", style: "width:4em"}).appendTo(lholder);
 		lb.on('keyup', self.setLatency);
 
-		var rb = $('<i>', {class: "fixed inline-icon icon-cancel-circled clickicon"}).appendTo(lholder).on('click', self.deleteClient);
+		var rb = $('<i>', {class: "fixed inline-icon icon-cancel-circled clickicon"}).appendTo(lholder).on(prefs.click_event, self.deleteClient);
 
 		if ($('#snapcast-secondary').length > 0) {
 			// holder2 = $('<div>', {class: 'fixed'}).insertAfter('#snapcast-secondary');
@@ -622,7 +622,7 @@ function snapcastClient() {
 				orientation: 'vertical',
 				command: self.setVolume
 			});
-			second_mute.on('click', self.setMute);
+			second_mute.on(prefs.click_event, self.setMute);
 
 			label_holder2 = $('<div>', {class: 'fixed snap_vert_holder'}).insertAfter(holder2);
 			second_label = $('<div>', {class: 'snap_vert_text'}).appendTo(label_holder2);

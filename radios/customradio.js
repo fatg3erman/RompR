@@ -110,7 +110,7 @@ var customRadioManager = function() {
 			key_selector.val(params.db_key);
 			self.key_changed();
 			key_selector.on('change', self.key_changed);
-			delete_icon.on('click', self.delete);
+			delete_icon.on(prefs.click_event, self.delete);
 		}
 
 		this.key_changed = function(event) {
@@ -231,13 +231,13 @@ var customRadioManager = function() {
 				r.initialise();
 				rules.push(r);
 			});
-			add_button.on('click', self.addRule);
+			add_button.on(prefs.click_event, self.addRule);
 			if (params.name != language.gettext('label_createcustom')) {
-				delete_button.on('click', self.delete);
+				delete_button.on(prefs.click_event, self.delete);
 			}
-			save_button.on('click', self.save);
-			playbutton.on('click', self.play);
-			editbutton.on('click', self.edit);
+			save_button.on(prefs.click_event, self.save);
+			playbutton.on(prefs.click_event, self.play);
+			editbutton.on(prefs.click_event, self.edit);
 		}
 
 		this.addRule = function() {

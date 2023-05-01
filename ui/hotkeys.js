@@ -204,7 +204,7 @@ var shortcuts = function() {
 				$("#keybindtable").append('<tr><td width="50%" align="right">'+language.gettext(i).initcaps()+'</td><td>'+format_keyinput(i, hotkeys[i])+'</td></tr>');
 			}
 			$(".buttonchange").on('keydown', shortcuts.change );
-			$('.buttonchange').on('click',  shortcuts.remove );
+			$('.buttonchange').on(prefs.click_event,  shortcuts.remove );
 			fnarkle.open();
 		},
 

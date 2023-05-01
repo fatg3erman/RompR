@@ -337,10 +337,10 @@ var prefs = function() {
 
 		var ran = $('#cus_bg_random');
 		ran.prop('checked', prefs.bgimgparms[prefs.theme].random);
-		ran.off('click').on('click', changeRandomMode);
+		ran.off(prefs.click_event).on(prefs.click_event, changeRandomMode);
 
 		$('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
-		$('input[name="backgroundposition"]').off('click').on('click', changeBackgroundPosition);
+		$('input[name="backgroundposition"]').off(prefs.click_event).on(prefs.click_event, changeBackgroundPosition);
 	}
 
 	function doNothing() {
@@ -483,6 +483,11 @@ var prefs = function() {
 
 	return {
 
+		click_event: 'click',
+		use_mouse_interface: true,
+		use_touch_interface: false,
+		has_custom_scrollbars: true,
+
 		quickhack: function() {
 			updateCustomBackground();
 		},
@@ -594,8 +599,10 @@ var prefs = function() {
 			var prefobj = new Object;
 			var prefname = $(this).attr("id");
 			if (event === null) {
+				debug.warn('PREFS', 'Event is NULL');
 				// Event will be null if we've called into this through
 				// $.proxy - like we have to in a floatingMenu.
+				// UPDATE - actually not sure if this is true any more
 				prefobj[prefname] = !$(this).is(":checked");
 			} else {
 				prefobj[prefname] = $(this).is(":checked");
@@ -924,7 +931,7 @@ var prefs = function() {
 		},
 
 		clickBindType: function() {
-			return prefs.clickmode == 'double' ? 'dblclick' : 'click';
+			return prefs.clickmode == 'double' ? 'dblclick' : prefs.click_event;
 		},
 
 		save_prefs_for_open_menus: function(menu) {

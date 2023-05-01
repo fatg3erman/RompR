@@ -41,10 +41,10 @@ function getNewAlbumArt(div) {
 	if (running == false) {
 		running = true;
 		progress.fadeIn('slow');
-		$("#harold").off("click");
-		$("#harold").on("click", reset );
+		$("#harold").off(prefs.click_event);
+		$("#harold").on(prefs.click_event, reset );
 		$("#harold").html("Stop Download");
-		$('#doobag').off('click');
+		$('#doobag').off(prefs.click_event);
 	}
 
 }
@@ -64,7 +64,7 @@ function start() {
 
 function getsmall() {
 	$('#doobag').html(language.gettext('label_searching')).makeFlasher();
-	$("#doobag").off("click");
+	$("#doobag").off(prefs.click_event);
 	$.ajax({
 		type: 'GET',
 		url: 'utils/findsmallimages.php',
@@ -88,10 +88,10 @@ function getsmall() {
 function aADownloadFinished() {
 	if (running == true) {
 		running = false;
-		$("#harold").off("click");
-		$("#harold").on("click", start );
-		$("#doobag").off("click");
-		$("#doobag").on("click", getsmall );
+		$("#harold").off(prefs.click_event);
+		$("#harold").on(prefs.click_event, start );
+		$("#doobag").off(prefs.click_event);
+		$("#doobag").on(prefs.click_event, getsmall );
 		$("#harold").html("Get Missing Covers");
 	}
 	$("#status").html("");
@@ -216,9 +216,9 @@ function carry_on_loading() {
 	progress = $('#progress');
 	progress.rangechooser({range: 100, startmax: 0, interactive: false});
 	$(window).on('resize', wobbleMyBottom );
-	$("#harold").on('click',  start );
-	$("#doobag").on('click',  getsmall );
-	$("#finklestein").on('click',  boogerbenson );
+	$("#harold").on(prefs.click_event,  start );
+	$("#doobag").on(prefs.click_event,  getsmall );
+	$("#finklestein").on(prefs.click_event,  boogerbenson );
 	wobblebottom = $('#wobblebottom');
 	wobbleMyBottom();
 	$('#artistcoverslist').mCustomScrollbar({
@@ -252,7 +252,7 @@ function carry_on_loading() {
 	document.body.addEventListener('drop', function(e) {
 		e.preventDefault();
 	}, false);
-	wobblebottom.on('click', onWobblebottomClicked);
+	wobblebottom.on(prefs.click_event, onWobblebottomClicked);
 	$('.droppable').on('dragenter', dragEnter);
 	$('.droppable').on('dragover', dragOver);
 	$('.droppable').on('dragleave', dragLeave);
@@ -260,7 +260,7 @@ function carry_on_loading() {
 	$(document).on('mouseenter', '.clearbox', makeHoverWork);
 	$(document).on('mouseleave', '.clearbox', makeHoverWork);
 	$(document).on('mousemove', '.clearbox', makeHoverWork);
-	$(document).on('click', '.clearbox.enter', makeClearWork);
+	$(document).on(prefs.click_event, '.clearbox.enter', makeClearWork);
 
 };
 
@@ -350,7 +350,7 @@ var imageEditor = function() {
 			}
 			currname = where.attr('name');
 			bigdiv = $('<div>', {id: "imageeditor", class: "containerbox highlighted dropshadow"}).appendTo(newpos);
-			bigdiv.on('click', imageEditor.onGoogleSearchClicked);
+			bigdiv.on(prefs.click_event, imageEditor.onGoogleSearchClicked);
 			offset = 0;
 			currhighlight = where.parent();
 			currhighlight.addClass('highlighted');
@@ -401,7 +401,7 @@ var imageEditor = function() {
 			var lab =                   $('<label>', { for: 'ufile' }).appendTo(fb);
 			lab.html(language.gettext('label_choosefile'));
 			var but =                   $('<input>', { type: 'button', class: 'invisible fixed', value: language.gettext("albumart_uploadbutton") }).appendTo(uform);
-			but.on('click', imageEditor.uploadFile);
+			but.on(prefs.click_event, imageEditor.uploadFile);
 
 			$("#usearch").append(      '<div class="holdingcell"><p>'+language.gettext("albumart_dragdrop")+'</p></div>');
 

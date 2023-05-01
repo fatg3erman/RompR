@@ -28,7 +28,7 @@ var opmlImporter = function() {
 					'</a>'+
 					'</div>'
 				);
-				$('#opmlsubmit').on('click', opmlImporter.uploadFile);
+				$('#opmlsubmit').on(prefs.click_event, opmlImporter.uploadFile);
 				opmlv.slideToggle('fast', function() {
 					browser.goToPlugin("opmlv");
 				});
@@ -90,9 +90,9 @@ var opmlImporter = function() {
 			}
 			html += '</table>';
 			$('#opmllist').html(html);
-			$('[name="opml_selectall"]').on('click', opmlImporter.selectAll);
-			$('[name="opml_selectnone"]').on('click', opmlImporter.selectNone);
-			$('[name="opml_import"]').on('click', opmlImporter.Import);
+			$('[name="opml_selectall"]').on(prefs.click_event, opmlImporter.selectAll);
+			$('[name="opml_selectnone"]').on(prefs.click_event, opmlImporter.selectNone);
+			$('[name="opml_import"]').on(prefs.click_event, opmlImporter.Import);
 			opmlImporter.selectAll();
 		},
 
@@ -105,12 +105,12 @@ var opmlImporter = function() {
 		},
 
 		Import: function() {
-			$('[name="opml_import"]').off('click');
+			$('[name="opml_import"]').off(prefs.click_event);
 			var s = $('#opmllist input[type="checkbox"]:checked');
 			if (s.length > 0) {
 				opmlImporter.subscribeToNext(s.first());
 			} else {
-				$('[name="opml_import"]').on('click', opmlImporter.Import);
+				$('[name="opml_import"]').on(prefs.click_event, opmlImporter.Import);
 				podcasts.doNewCount();
 			}
 		},

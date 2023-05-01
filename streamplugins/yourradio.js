@@ -90,7 +90,7 @@ var yourRadioPlugin = {
 
 }
 
-$(document).on('click', '[name="spikemilligan"]', yourRadioPlugin.loadSuppliedStation);
+$(document).on(prefs.click_event, '[name="spikemilligan"]', yourRadioPlugin.loadSuppliedStation);
 $(document).on("drop", "#anaconda", yourRadioPlugin.handleDropRadio);
 clickRegistry.addClickHandlers('yourradio', yourRadioPlugin.handleClick);
 clickRegistry.addMenuHandlers('yourradioroot', yourRadioPlugin.loadStations);

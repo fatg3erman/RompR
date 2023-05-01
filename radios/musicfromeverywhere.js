@@ -8,7 +8,7 @@ var genreRadio = function() {
 			//
 			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
 				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-music', language.gettext('label_genre'), 'genre_radio'));
-				$('button[name="genre_radio"]').on('click', function() {
+				$('button[name="genre_radio"]').on(prefs.click_event, function() {
 					var v = $('#genre_radio').val();
 					if (v != '') {
 						playlist.radioManager.load('genreRadio', v);
@@ -47,7 +47,7 @@ var singleArtistRadio = function() {
 			//
 			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
 				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-artist', language.gettext('label_singleartistradio'), 'singart_radio'));
-				$('button[name="singart_radio"]').on('click', function() {
+				$('button[name="singart_radio"]').on(prefs.click_event, function() {
 					var v = $('#singart_radio').val();
 					if (v != '') {
 						playlist.radioManager.load('faveArtistRadio', v);

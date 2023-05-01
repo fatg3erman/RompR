@@ -447,7 +447,7 @@ var layoutProcessor = function() {
 					.removeClass('containerbox wrap collectionpanel').css('display', '')
 					.addClass('noborder')
 					.appendTo($('#audiobooklist'));
-				$('#collection, #audiobooks').off('click').off('dblclick');
+				$('#collection, #audiobooks').off(prefs.click_event).off('dblclick');
 			}
 		}
 		if (prefs.actuallysortresultsby.substr(0,5) == 'album') {
@@ -466,7 +466,7 @@ var layoutProcessor = function() {
 				if (prefs.chooser == 'searcher') {
 					$('#searchresultholder').show();
 				}
-				$('#searchresultholder').off('click').off('dblclick');
+				$('#searchresultholder').off(prefs.click_event).off('dblclick');
 			}
 		}
 	}
@@ -476,11 +476,6 @@ var layoutProcessor = function() {
 		sortFaveRadios: false,
 		openOnImage: true,
 		playlist_scroll_parent: '#phacker',
-		// This is here because the delegated events for clickalbummenu don't work in skypotato because
-		// the playlist is a JQuery UI FloatingMenu. Set layoutProcessor.needs_playlist_help = true
-		// and tha 'album menu' icon for an Album in the Play Queue will get a class of clickplaylist
-		// which send the click event to playlist.handleClick.
-		needs_playlist_help: true,
 		my_scrollers: [ "#sources", "#infopane", ".top_drop_menu:not(.noscroll)", ".drop-box" ],
 
 		setPanelCss: function(widths) {
@@ -546,7 +541,7 @@ var layoutProcessor = function() {
 			if (!$("#playlistbuttons").is(':visible')) {
 				togglePlaylistButtons()
 			}
-			$("#"+button).trigger('click');
+			$("#"+button).trigger(prefs.click_event);
 		},
 
 		hideBrowser: function() {

@@ -72,7 +72,6 @@ var layoutProcessor = function() {
 		sortFaveRadios: true,
 		openOnImage: false,
 		playlist_scroll_parent: '#pscroller',
-		needs_playlist_help: false,
 		my_scrollers: [ "#sources", "#infopane", "#pscroller", ".top_drop_menu:not(.noscroll)", ".drop-box" ],
 
 		setPanelCss: function(widths) {
@@ -109,7 +108,7 @@ var layoutProcessor = function() {
 			if (!$("#playlistbuttons").is(':visible')) {
 				togglePlaylistButtons()
 			}
-			$("#"+button).trigger('click');
+			$("#"+button).trigger(prefs.click_event);
 		},
 
 		hidePanel: function(panel, is_hidden, new_state) {

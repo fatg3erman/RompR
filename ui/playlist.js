@@ -83,7 +83,6 @@ var playlist = function() {
 		}
 
 		return {
-
 			register: function(name, fn, script) {
 				debug.log("RADIO MANAGER","Registering Plugin",name);
 				radios[name] = {func: fn, script: script, loaded: false};
@@ -109,7 +108,7 @@ var playlist = function() {
 							}
 					});
 					$("#radiodomains").find('input.topcheck').each(function() {
-						$(this).on('click', function() {
+						$(this).on(prefs.click_event, function() {
 							prefs.save({radiodomains: $("#radiodomains").makeDomainChooser("getSelection")});
 						});
 					});
@@ -279,7 +278,7 @@ var playlist = function() {
 
 			debug.log('PLAYLIST', 'Starting update request',my_queue_id);
 			coverscraper.clearCallbacks();
-			$('.clear_playlist').off('click').makeSpinner();
+			$('.clear_playlist').off(prefs.click_event).makeSpinner();
 			try {
 				var list = await $.ajax({
 					type: "GET",
@@ -388,7 +387,7 @@ var playlist = function() {
 			playlist.doUpcomingCrap();
 			player.controller.postLoadActions();
 			uiHelper.postPlaylistLoad();
-			$('.clear_playlist').on('click', playlist.clear).stopSpinner();
+			$('.clear_playlist').on(prefs.click_event, playlist.clear).stopSpinner();
 			playlist.radioManager.checkStatus();
 			current_queue_request++;
 			if (playlist.radioManager.is_running() && finaltrack < (prefs.smartradio_chunksize-1)) {
@@ -488,12 +487,6 @@ var playlist = function() {
 				playlist.moveTrackUp(clickedElement.findPlParent(), event);
 			} else if (clickedElement.hasClass("playlistdown")) {
 				playlist.moveTrackDown(clickedElement.findPlParent(), event);
-			} else if (clickedElement.hasClass('clickalbummenu')) {
-				// This is here because the delegated events don't work in skypotato because
-				// the playlist is a JQuery UI FloatingMenu. Set layoutProcessor.needs_playlist_help = true
-				// and tha 'album menu' icon for an Album will get a class of clickplaylist, which brings
-				// the click event through here.
-				makeAlbumMenu(event, clickedElement);
 			}
 		},
 
@@ -748,15 +741,15 @@ var playlist = function() {
 
 		preventControlClicks: function(t) {
 			if (t) {
-				$('#random').off('click').on('click', player.controller.toggleRandom).removeClass('notenabled');
-				$('#repeat').off('click').on('click', player.controller.toggleRepeat).removeClass('notenabled');
-				$('#consume').off('click').on('click', player.controller.toggleConsume).removeClass('notenabled');
+				$('#random').off(prefs.click_event).on(prefs.click_event, player.controller.toggleRandom).removeClass('notenabled');
+				$('#repeat').off(prefs.click_event).on(prefs.click_event, player.controller.toggleRepeat).removeClass('notenabled');
+				$('#consume').off(prefs.click_event).on(prefs.click_event, player.controller.toggleConsume).removeClass('notenabled');
 			} else {
-				$('#random').off('click').addClass('notenabled');
-				$('#repeat').off('click').addClass('notenabled');
-				$('#consume').off('click').addClass('notenabled');
+				$('#random').off(prefs.click_event).addClass('notenabled');
+				$('#repeat').off(prefs.click_event).addClass('notenabled');
+				$('#consume').off(prefs.click_event).addClass('notenabled');
 			}
-			$('#crossfade').off('click').on('click', player.controller.toggleCrossfade);
+			$('#crossfade').off(prefs.click_event).on(prefs.click_event, player.controller.toggleCrossfade);
 		},
 
 		delete: function(id) {
@@ -1080,9 +1073,6 @@ function Album(artist, album, index, rolledup) {
 
 		if (tracks[0]['X-AlbumUri'] && ['youtube', 'ytmusic', 'spotify'].indexOf(tracks[0]['domain']) >= 0) {
 			let menu = $('<i>', {class: "expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse", uri: tracks[0]['X-AlbumUri']}).appendTo(controls);
-			if (layoutProcessor.needs_playlist_help)
-				menu.addClass('clickplaylist');
-
 			// controls.append('<i class="expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse" uri="'+tracks[0]['X-AlbumUri']+'"></i>');
 		}
 

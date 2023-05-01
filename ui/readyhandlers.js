@@ -6,7 +6,7 @@
 function rendered() {
 	debug.debug('ALBUMPICTURE', 'Rendered');
 	$('#albumpicture').fadeIn('fast');
-	$('#albumpicture').removeClass('clickicon').addClass('clickicon').off('click').on('click', infobar.albumImage.displayOriginalImage);
+	$('#albumpicture').removeClass('clickicon').addClass('clickicon').off(prefs.click_event).on(prefs.click_event, infobar.albumImage.displayOriginalImage);
 	// uiHelper.adjustLayout();
 	infobar.rejigTheText();
 }
@@ -172,15 +172,18 @@ function set_mouse_touch_flags() {
 		prefs.use_touch_interface = true;
 		prefs.use_mouse_interface = false;
 		prefs.has_custom_scrollbars = false;
+		prefs.click_event = 'pointerup';
 	} else if ('ontouchend' in document) {
 		prefs.use_touch_interface = true;
 		prefs.use_mouse_interface = true;
 		prefs.has_custom_scrollbars = true;
+		prefs.click_event = prefs.click_event;
 		$('body').addClass('customscroll');
 	} else {
 		prefs.use_touch_interface = false;
 		prefs.use_mouse_interface = true;
 		prefs.has_custom_scrollbars = true;
+		prefs.click_event = prefs.click_event;
 		$('body').addClass('customscroll');
 	}
 	if (prefs.use_touch_interface)

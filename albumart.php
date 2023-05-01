@@ -53,7 +53,7 @@ foreach ($scripts as $i) {
 javascript_globals::print_globals();
 ?>
 </head>
-<body class="desktop">
+<body class="desktop customscroll">
 <div class="albumcovers">
 <div class="infosection">
 <table width="100%">

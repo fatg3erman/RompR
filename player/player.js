@@ -40,7 +40,7 @@ var player = function() {
 			});
 			let remove_row = $('<div>', {class: 'pref containerbox vertical-centre'}).appendTo(holder);
 			$('<div>', {class: 'expand'}).appendTo(remove_row);
-			$('<i>', {class: 'fixed icon-cancel-circled smallicon clickicon clickremhost', name: name}).on('click', removePlayerDef).appendTo(remove_row);
+			$('<i>', {class: 'fixed icon-cancel-circled smallicon clickicon clickremhost', name: name}).on(prefs.click_event, removePlayerDef).appendTo(remove_row);
 			numhosts++;
 			if (is_new) {
 				playerpu.adjustCSS(true, true);
@@ -140,7 +140,7 @@ var player = function() {
 			}
 
 			var add = playerpu.add_button('left', 'button_add');
-			add.on('click', function() {
+			add.on(prefs.click_event, function() {
 				addNewPlayerRow('New', default_player, true);
 			});
 
@@ -150,8 +150,8 @@ var player = function() {
 			var d = playerpu.add_button('right', 'button_OK');
 			playerpu.useAsCloseButton(d, updatePlayerChoices);
 
-			$('.clickremhost').off('click');
-			$('.clickremhost').on('click', removePlayerDef);
+			$('.clickremhost').off(prefs.click_event);
+			$('.clickremhost').on(prefs.click_event, removePlayerDef);
 
 			playerpu.open();
 		}
@@ -168,7 +168,7 @@ var player = function() {
 						'<label for="host_'+escape(i)+index+'">'+i+'</label>');
 				}
 			});
-			$('[name="playerdefs"] > .savulon').off('click').on('click', prefs.toggleRadio);
+			// $('[name="playerdefs"] > .savulon').off(prefs.click_event).on(prefs.click_event, prefs.toggleRadio);
 			if (numhosts == 1) {
 				$('[name="playerdefs"]').hide();
 				$('.player-title').hide();

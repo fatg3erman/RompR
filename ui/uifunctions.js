@@ -190,7 +190,7 @@ var pluginManager = function() {
 					}
 				}
 			}
-			$('.open-plugin').on('click', plugin_open);
+			$('.open-plugin').on(prefs.click_event, plugin_open);
 		},
 
 		setAction: function(label, action) {
@@ -235,7 +235,7 @@ var imagePopup = function() {
 				return;
 
 			waiting_spinner = $('<i>', {class: 'icon-spin6 svg-square spinner notthere', style: 'position: absolute'}).appendTo($('body'));
-			waiting_spinner.on('click', imagePopup.close)
+			waiting_spinner.on(prefs.click_event, imagePopup.close)
 			var spinw = waiting_spinner.outerWidth(true) / 2;
 			var spinh = waiting_spinner.outerHeight(true) / 2;
 
@@ -265,7 +265,7 @@ var imagePopup = function() {
 			}).appendTo($('body'));
 
 			var border_size = parseInt(popup_image.css('border-width')) * 2;
-			popup_image.on('click', imagePopup.close)
+			popup_image.on(prefs.click_event, imagePopup.close)
 
 			// We could just set width and height to auto and max-width and max-height to 100vw and 100vh
 			// but I want to calculate the specific size because (a) this method would lose the borders
@@ -392,7 +392,7 @@ function do_albumart_update() {
 		if (data.percent < 100 && albumart_update) {
 			setTimeout(do_albumart_update, 100);
 		} else {
-			$('#artclosebutton').trigger('click');
+			$('#artclosebutton').trigger(prefs.click_event);
 		}
 	});
 }
@@ -689,7 +689,7 @@ function checkSearchDomains() {
 		default_domains: prefs.mopidy_search_domains,
 	});
 	$("#mopidysearchdomains").find('input.topcheck').each(function() {
-		$(this).on('click', function() {
+		$(this).on(prefs.click_event, function() {
 			prefs.save({mopidy_search_domains: $("#mopidysearchdomains").makeDomainChooser("getSelection")});
 		});
 	});
@@ -718,7 +718,7 @@ function doMopidyCollectionOptions() {
 			}
 		}
 	}
-	$('.mopocol').on('click', function() {
+	$('.mopocol').on(prefs.click_event, function() {
 		var opts = new Array();
 		$('.mopocol:checked').each(function() {
 			opts.push($(this).next().next().attr('name'));

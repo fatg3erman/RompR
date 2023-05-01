@@ -164,7 +164,7 @@ $.widget("rompr.acceptDroppedTracks", {
 		if (prefs.use_mouse_interface) {
 			this.element.addClass('trackacceptor');
 		} else if (this.options.useclick) {
-			this.element.on('click', $.proxy(this.useClick, this));
+			this.element.on(prefs.click_event, $.proxy(this.useClick, this));
 		}
 		this.dragger_is_over = false;
 	},
@@ -405,9 +405,9 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 		if (this.dragger) this.dragger.remove();
 		var dragged = self._findDraggable(event);
 		if (dragged.first().is('tr')) {
-			this.dragger = $('<table>').appendTo('body');
+			this.dragger = $('<table>', {class: 'innerdragger'}).appendTo('body');
 		} else {
-			this.dragger = $('<div>').appendTo('body');
+			this.dragger = $('<div>', {class: 'innerdragger'}).appendTo('body');
 		}
 		this.dragger.css({
 			position: 'absolute',
@@ -848,7 +848,11 @@ $.widget("rompr.rangechooser", $.Widget, {
 
 });
 
-$.widget("rompr.floatingMenu", $.ui.mouse, {
+$.widget("rompr.floatingMenu", $.Widget, {
+
+	// This is using pointer events, so it kind of works on iPads, but you can't really drag up and down
+	// hence I've disabled it unless the mouse interface is also in use.
+
 	options: {
 		handleClass: null,
 		addClassTo: null,
@@ -858,11 +862,16 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 	},
 
 	resizetimer: null,
+	touch: null,
+	dragging: false,
+	drag_x_offset: 0,
+	drag_y_offset: 0,
+	handle: null,
 
 	_create: function() {
 		var self = this;
-		this.dragging = false;
-		this._mouseInit();
+		// this.dragging = false;
+		// this._mouseInit();
 		if (this.options.addClassTo) {
 			var act = this.element.find('.'+this.options.addClassTo).first();
 			var close = act.find('.right-icon').addClass('icon-cancel-circled clickicon closemenu');
@@ -874,69 +883,73 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 			}
 		}
 
+		if (this.options.handleClass !== null && prefs.use_mouse_interface) {
+			this.handle = this.element.find('.'+this.options.handleClass).first();
+			this.handle.on('pointerdown', $.proxy(this._touchStart, this));
+			this.handle.on('pointermove', $.proxy(this._touchMove, this));
+			this.handle.on('pointerup', $.proxy(this._touchEnd, this));
+			this.handle.on('pointercancel', $.proxy(this._touchEnd, this));
+		}
+
+		// This means we are responsible for showing and hiding the menu.
 		if (self.options.handleshow) {
 			this._parent = this.element.parent();
-			this.element.find('.closemenu').on('click', $.proxy(self.toggleMenu, self));
-			this._parent.on('click', function(event) {
-				debug.debug("FRUITBAT",event);
-				if (!event.target.className.match('progressbar')) {
+			this._parent.addClass('menu-toggler');
+			this.element.find('.closemenu').on(prefs.click_event, $.proxy(self.toggleMenu, self));
+			this._parent.on(prefs.click_event, function(event) {
+				// debug.debug("FRUITBAT",event);
+				// We need to only respond to clicks that originate on the open button,
+				// otherwise we close in response to a click on any elements bubbling upwards.
+				var target = $(event.target);
+				if (target.hasClass('menu-toggler') ||
+					(target.is('i') && target.parent().hasClass('menu-toggler'))
+				) {
 					$.proxy(self.toggleMenu, self)();
 				}
 			});
 		}
 	},
 
-	_mouseCapture: function(event) {
-		// Seemingly this is crucial to stop the event bubbling up the tree
-		// to the parent icon and closing the menu. Didn't used to be a problem.
-		if ($(event.target).hasClass('openmenu')) {
-			$.proxy(clickRegistry.doMenu, $(event.target), event).call();
+	_touchStart: function(e) {
+		if ($(e.target).hasClass('closemenu') || $(e.target).hasClass('smallicon'))
 			return false;
-		} else {
-			event.stopPropagation();
+
+		if (this.touch == null) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.dragging = true;
+			this.touch = e.pointerId;
+			this.drag_x_offset = e.pageX - this.element.offset().left;
+			this.drag_y_offset = e.pageY - this.element.offset().top;
+			this.element.detach().appendTo('body');
+			this.handle.get()[0].setPointerCapture(this.touch);
+			this._touchMove(e);
 			return true;
 		}
 	},
 
-	_findSourceElement: function(event) {
-		var el = $(event.target);
-		while (!el.hasClass(this.options.handleClass) && !el.hasClass('top_drop_menu') && el != this.element)
-		{
-			el = el.parent();
-		}
-		if (el.hasClass(this.options.handleClass)) {
-			return true;
-		} else {
-			return false;
-		}
-	},
-
-	_mouseStart: function(event) {
-		if (this.options.handleClass && this._findSourceElement(event) === false) {
-			return false;
-		}
-		this.dragging = true;
-		this.drag_x_offset = event.pageX - this.element.offset().left;
-		this.drag_y_offset = event.pageY - this.element.offset().top;
-		this.element.detach().appendTo('body');
-		this._mouseDrag(event);
-		return true;
-	},
-
-	_mouseDrag: function(event) {
-		if (this.dragging) {
-			var pos = {top: event.pageY - this.drag_y_offset, left: event.pageX - this.drag_x_offset};
-			this.element.css({top: pos.top+"px", left: pos.left+"px"});
-			if (this.options.movecallback) {
-				this.options.movecallback(pos);
+	_touchMove: function(e) {
+		if (this.touch == e.pointerId) {
+			e.preventDefault();
+			if (this.dragging) {
+				var pos = {top: e.pageY - this.drag_y_offset, left: e.pageX - this.drag_x_offset};
+				this.element.css({top: pos.top+"px", left: pos.left+"px"});
+				if (this.options.movecallback) {
+					this.options.movecallback(pos);
+				}
+				return true;
 			}
 		}
-		return true;
 	},
 
-	_mouseStop: function(event) {
-		this.dragging = false;
-		return true;
+	_touchEnd: function(e) {
+		if (this.touch == e.pointerId) {
+			e.preventDefault();
+			this.handle.get()[0].releasePointerCapture(this.touch);
+			this.touch = null;
+			this.dragging = false;
+			return true;
+		}
 	},
 
 	toggleMenu: function() {
@@ -1553,6 +1566,7 @@ function popup(opts) {
 	var button_holder;
 	var has_scrollbar = false;
 	var win_width = 400;
+	var initialised = false;
 
 	var options = {
 		width: 100,
@@ -1612,12 +1626,6 @@ function popup(opts) {
 
 		button_holder = $('<div>', {class: 'popupbuttons clearfix'}).appendTo(win);
 
-		win.floatingMenu({
-			handleshow: false,
-			handleclass: 'configtitle',
-			addClassTo: (options.hasclosebutton) ? 'configtitle' : false
-		});
-		titlebar.find('.closemenu').on('click',  function() {self.close(false)});
 		// MUST set the width before putting content in it otherwise if text wraps
 		// when we set the width later on our height will be wrong
 		var w = getWindowSize();
@@ -1682,6 +1690,16 @@ function popup(opts) {
 			contents.css({'padding-bottom': '0px'});
 		}
 
+		if (!initialised) {
+			win.floatingMenu({
+				handleshow: false,
+				handleClass: 'configtitle',
+				addClassTo: (options.hasclosebutton) ? 'configtitle' : false
+			});
+			titlebar.find('.closemenu').on(prefs.click_event,  function() {self.close(false)});
+			initialised = true;
+		}
+
 		self.adjustCSS(true, true);
 		win.css({opacity: 1});
 	}
@@ -1707,12 +1725,12 @@ function popup(opts) {
 		var button = $('<button>',{class: 'tright'}).appendTo(button_holder);
 		button.html(text);
 		options.closecallbacks[text] = callback;
-		button.on('click', self.close);
+		button.on(prefs.click_event, self.close);
 	}
 
 	this.useAsCloseButton = function(elem, callback) {
 		options.closecallbacks[elem.html()] = callback;
-		elem.on('click', self.close);
+		elem.on(prefs.click_event, self.close);
 	}
 
 	this.add_button = function(side, label) {
@@ -1829,6 +1847,7 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 			clearTimeout(longpresstimer);
 			this.removeEventListener('touchmove', onTouchMove);
 			this.removeEventListener('touchend', onTouchEnd);
+			setTimeout(bindPlaylistClicks, 250);
 			startX = null;
 			startY = null;
 			isMoving = false;
@@ -1838,22 +1857,24 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 		function onTouchEnd(e) {
 			var time = Date.now();
 			clearTimeout(longpresstimer);
+			e.stopImmediatePropagation();
+			e.stopPropagation();
+			e.preventDefault();
 			if (pressing) {
-				e.stopImmediatePropagation();
-				e.stopPropagation();
-				e.preventDefault();
-				pressing = false;
-				setTimeout(bindPlaylistClicks, 500);
+				cancelTouch();
 			} else if (isMoving) {
 				var dx = touchesX.pop();
 				touchesX.push(dx);
+
 				if (time - starttime < config.swipeSpeed && dx > config.swipeDistance) {
+					// If we've swiped it fast, animate it off the end then call doAction
 					touchesX.push($(self).outerWidth(true));
 					if ($(self).hasClass('item')) {
 						$(self).next().animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing');
 					}
 					$(self).animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing', doAction);
 				} else {
+					// Else call doAction
 					doAction();
 				}
 			}
@@ -1865,12 +1886,14 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 			dxFinal = touchesX.pop();
 			touchesX = [];
 			if (dxFinal > ($(self).outerWidth(true)*0.75)) {
+				// We've swiped it far enough
 				if ($(self).hasClass('track')) {
 					playlist.delete($(self).attr('romprid'));
 				} else if ($(self).hasClass('item')) {
 					playlist.deleteGroup($(self).attr('name'));
 				}
 			} else {
+				// We havent' swiped it far enough, so put it back
 				$(self).animate({left: 0}, 'fast', 'swing');
 				if ($(self).hasClass('item')) {
 					$(self).next().animate({left: 0}, 'fast', 'swing');
@@ -1896,6 +1919,12 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 					if (config.preventDefaultEventsX) {
 						e.preventDefault();
 					}
+					// Once we've started a swipe, unbind the playlist pointer
+					// event handler, otherwise the touchend event makes it start
+					// playing the clicked track - becasue that event handler is bound
+					// to the playid element that is one of our children so we can't
+					// stop it propagating because it already has.
+					unbindPlaylistClicks();
 					var newpos = 0 - dx;
 					if (newpos < 0) {
 						$(self).css('left', newpos.toString()+'px');
@@ -1915,7 +1944,6 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 			pressing = true;
 			// Unbind click handler from playlist, otherwise the touchend
 			// event makes it start playing the clicked track.
-			// Don't seem to be able to prevent the event propagating.
 			$(self).addBunnyEars();
 			playlist.startBunnyTimeout($(self));
 			unbindPlaylistClicks();

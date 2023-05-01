@@ -274,9 +274,9 @@ var info_lastfm = function() {
 				if (parent.isCurrentTrack()) {
 					$('#love').stopSpinner();
 					if (flag) {
-						$('#love').removeClass('notloved').attr('title', language.gettext("lastfm_unlove")).off('click').on('click', nowplaying.unlove);
+						$('#love').removeClass('notloved').attr('title', language.gettext("lastfm_unlove")).off(prefs.click_event).on(prefs.click_event, nowplaying.unlove);
 					} else {
-						$('#love').removeClass('notloved').addClass('notloved').attr('title', language.gettext("lastfm_lovethis")).off('click').on('click', nowplaying.love);
+						$('#love').removeClass('notloved').addClass('notloved').attr('title', language.gettext("lastfm_lovethis")).off(prefs.click_event).on(prefs.click_event, nowplaying.love);
 					}
 				}
 				if (trackmeta.user_loved) {

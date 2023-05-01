@@ -8,7 +8,7 @@
 Click, or press, and hold for an incrementing skip.
 * RompR used to try to set your country code by using a web service. Sadly someone stole my API key and has been using my account.
 Since people can't be trusted I've removed that functionality and disabled the account. RompR will now attempt to work out your contry code
-based on the limited information the browser gives it, which may be wrong. This might affect your ability to play Spotoify tracks, so go to the
+based on the limited information the browser gives it, which may be wrong. This might affect your ability to play Spotify tracks, so go to the
 preferences panel and make sure it is set correctly (you only need to do this once).
 * Fix bug where Player definition upgrade would fail if mopidy_http_port wasn't set.
 * Fix Info panel bug where 'Similar Artists' in the Spotify panel didn't work.
@@ -16,6 +16,11 @@ preferences panel and make sure it is set correctly (you only need to do this on
 * Mopidy-Spotify is well on the way to working again thanks to the efforts of its maintainers, so some of the functionality I pulled out
 of version 2.00 is back. This includes being able to play tracks directly from the Spotify Info panel and the Discoverator as well as the
 Spotify Personalised Radio stations, which have had a revamp and work better than they used to.
+* All skins should now display and work correctly on touch devices and devices with mice, though drag-and-drop is only supported
+if you are using a mouse. Laptops with touchscreens should repond to touch events on all elements, but whether drag-and-drop works on a
+laptop touchscreen will depend on your OS and browser. I don't have one to test it out on, if anybody does plese tell me how well it works.
+* On devices with only touchscreens all clickable elements now respond when you remove your finger from the screen instead of the old
+behaviour which was to use a browser's emulated mouse-click - this required you to 'jab' at the icons which many people found difficult.
 
 
 ## Version 2.00
