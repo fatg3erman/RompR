@@ -907,6 +907,9 @@ $.widget("rompr.floatingMenu", $.Widget, {
 					$.proxy(self.toggleMenu, self)();
 				}
 			});
+			if (!this.element.hasClass('stayopen')) {
+				this.element.on(prefs.click_event, $.proxy(self.toggleMenu, self));
+			}
 		}
 	},
 
