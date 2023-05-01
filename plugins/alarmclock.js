@@ -313,7 +313,7 @@ var alarmclock = function() {
 			var alarmdropper = $('<div>', {id: 'alarmdropper', rompr_index: ourindex, class: 'alarmdropempty canbefaded'}).appendTo(ropebox);
 
 			if (alarm.ItemToPlay == '') {
-				let text_key = (uiHelper.is_touch_ui) ? 'label_alarm_to_play_click' : 'label_alarm_to_play';
+				let text_key = (prefs.use_mouse_interface) ? 'label_alarm_to_play' : 'label_alarm_to_play_click';
 				alarmdropper.html('<div class="containerbox menuitem fullwidth" style="height:100%"><div class="expand textcentre">'+language.gettext(text_key)+'</div></div>');
 			} else {
 				putAlarmDropPlayItem(alarm.ItemToPlay, alarmdropper);

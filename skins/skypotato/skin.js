@@ -316,7 +316,6 @@ function showHistory() {
 
 var layoutProcessor = function() {
 
-	var my_scrollers = [ "#sources", "#infopane", ".top_drop_menu:not(.noscroll)", ".drop-box" ];
 	var rtime = '';
 	var ptime = '';
 	var headers = Array();
@@ -403,16 +402,16 @@ var layoutProcessor = function() {
 		return t;
 	}
 
-	function findParentScroller(jq) {
-		var p = jq.parent();
-		while (!p.is('body') && !p.hasClass('mCustomScrollbar') && !p.hasClass('collectionpanel')) {
-			p = p.parent();
-		}
-		if (p.is('body')) {
-			return false;
-		}
-		return p;
-	}
+	// function findParentScroller(jq) {
+	// 	var p = jq.parent();
+	// 	while (!p.is('body') && !p.hasClass('mCustomScrollbar') && !p.hasClass('collectionpanel')) {
+	// 		p = p.parent();
+	// 	}
+	// 	if (p.is('body')) {
+	// 		return false;
+	// 	}
+	// 	return p;
+	// }
 
 	function setupCollectionDisplay() {
 		$('.collectionpanel.albumlist').remove();
@@ -482,6 +481,7 @@ var layoutProcessor = function() {
 		// and tha 'album menu' icon for an Album in the Play Queue will get a class of clickplaylist
 		// which send the click event to playlist.handleClick.
 		needs_playlist_help: true,
+		my_scrollers: [ "#sources", "#infopane", ".top_drop_menu:not(.noscroll)", ".drop-box" ],
 
 		setPanelCss: function(widths) {
 			$("#sources").css("width", widths.sources+"%");
@@ -807,34 +807,11 @@ var layoutProcessor = function() {
 
 		initialise: function() {
 			$("#sortable").disableSelection();
-			if (uiHelper.is_touch_ui) {
-
+			if (prefs.use_touch_interface) {
 				$(document).touchStretch({});
+			}
 
-			} else {
-	            $("#sortable").acceptDroppedTracks({
-	                scroll: true,
-	                scrollparent: '#phacker'
-	            });
-	            $("#sortable").sortableTrackList({
-	                items: '.sortable',
-	                outsidedrop: playlist.dragstopped,
-	                insidedrop: playlist.dragstopped,
-	                scroll: true,
-	                scrollparent: '#phacker',
-	                scrollspeed: 80,
-	                scrollzone: 120
-	            });
-
-	            $("#pscroller").acceptDroppedTracks({
-	                ondrop: playlist.draggedToEmpty,
-	                coveredby: '#sortable'
-	            });
-	        }
 			animatePanels();
-			for (let value of my_scrollers) {
-				$(value).addCustomScrollBar();
-			};
 			$(".top_drop_menu").floatingMenu({
 				handleClass: 'dragmenu',
 				addClassTo: 'configtitle',
@@ -852,12 +829,6 @@ var layoutProcessor = function() {
 				handleClass: 'configtitle',
 				handleshow: false
 			});
-			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
-			$("#sources").find('.mCSB_draggerRail').resizeHandle({
-				side: 'left',
-				donefunc: setBottomPanelWidths,
-				offset: $('#headerbar').outerWidth(true)
-			});
 			$('#plmode').detach().appendTo('#nowplaying_icons').addClass('tright');
 			$('#volume').volumeControl({
 				orientation: 'vertical',
@@ -866,6 +837,14 @@ var layoutProcessor = function() {
 			setupCollectionDisplay();
 			sleepHelper.addSleepHelper(layoutProcessor.stopHeaderTimer);
 			sleepHelper.addWakeHelper(layoutProcessor.doFancyHeaderStuff);
+		},
+
+		postInit: function() {
+			$("#sources").find('.mCSB_draggerRail').resizeHandle({
+				side: 'left',
+				donefunc: setBottomPanelWidths,
+				offset: $('#headerbar').outerWidth(true)
+			});
 		},
 
 		stopHeaderTimer: function() {

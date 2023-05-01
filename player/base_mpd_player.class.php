@@ -1000,7 +1000,7 @@ class base_mpd_player {
 			$cmds[] = join_command_string(array('playlistmove', $this->playlist_moving_within, $this->playlist_movefrom, $this->playlist_moveto));
 			$this->playlist_moveto++;
 			$this->playlist_movefrom++;
-			$this->playlist_trackadded--;
+			$this->playlist_tracksadded--;
 		}
 
 		//

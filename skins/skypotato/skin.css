@@ -473,17 +473,17 @@ button.spinable.icon-spin6 {
 	margin-top:2px;
 }
 
-body.touchclick .outhack {
+body.mobilebrowser .outhack {
 	width:18px;
 	height:18px;
 	margin-top:2px;
 }
 
-body.touchclick #volumecontrol {
+body.mobilebrowser #volumecontrol {
 	width: 18px;
 }
 
-body.touchclick .progressbar_v {
+body.mobilebrowser .progressbar_v {
 	width: 16px;
 }
 
@@ -492,11 +492,11 @@ body.touchclick .progressbar_v {
 	margin-right: 0px;
 }
 
-body.touchclick .snap_vert_holder {
+body.mobilebrowser .snap_vert_holder {
 	margin-right: 4px;
 }
 
-body.touchclick .snap_vert_holder:last-child {
+body.mobilebrowser .snap_vert_holder:last-child {
 	margin-right: 0px;
 }
 

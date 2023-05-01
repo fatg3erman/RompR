@@ -161,7 +161,7 @@ $.widget("rompr.acceptDroppedTracks", {
 	},
 
 	_create: function() {
-		if (!uiHelper.is_touch_ui) {
+		if (prefs.use_mouse_interface) {
 			this.element.addClass('trackacceptor');
 		} else if (this.options.useclick) {
 			this.element.on('click', $.proxy(this.useClick, this));
@@ -348,19 +348,19 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 	},
 
 	_checkScroll: function(event) {
-		// Custom Scrollbars ONLY
 		var scrolled = false;
 		if (this.options.scroll) {
 			if (event.pageY < this.bbox.top + this.options.scrollzone) {
-				$(this.options.scrollparent).mCustomScrollbar('scrollTo', '+='+this.options.scrollspeed, {scrollInertia: 100, scrollEasing: "easeOut"});
+				$(this.options.scrollparent).romprScrollTo('+='+this.options.scrollspeed, 100, 'easeOut', false);
+				// $(this.options.scrollparent).mCustomScrollbar('scrollTo', '+='+this.options.scrollspeed, {scrollInertia: 100, scrollEasing: "easeOut"});
 				scrolled = true;
 			} else if (event.pageY > this.bbox.bottom - this.options.scrollzone) {
-				$(this.options.scrollparent).mCustomScrollbar('scrollTo', '-='+this.options.scrollspeed, {scrollInertia: 100, scrollEasing: "easeOut"});
+				$(this.options.scrollparent).romprScrollTo('-='+this.options.scrollspeed, 100, 'easeOut', false);
+				// $(this.options.scrollparent).mCustomScrollbar('scrollTo', '-='+this.options.scrollspeed, {scrollInertia: 100, scrollEasing: "easeOut"});
 				scrolled = true;
 			}
 		}
 		return scrolled;
-
 	},
 
 	_checkMouseHover: function() {
@@ -642,6 +642,7 @@ $.widget("rompr.rangechooser", $.Widget, {
 	},
 
 	touch: null,
+	dragging: false,
 
 	_create: function() {
 		this.dragging = false;
@@ -671,48 +672,61 @@ $.widget("rompr.rangechooser", $.Widget, {
 			this.element.on('pointerdown', $.proxy(this._touchStart, this));
 			this.element.on('pointermove', $.proxy(this._touchMove, this));
 			this.element.on('pointerup', $.proxy(this._touchEnd, this));
-			this.element.on('pointercancel', $.proxy(this._touchEnd, this));
-			this.element.on('pointerout', $.proxy(this._touchEnd, this));
+			this.element.on('pointercancel', $.proxy(this._touchCancel, this));
+			// this.element.on('pointerout', $.proxy(this._touchEnd, this));
 		}
 
 		this.fill();
 	},
 
 	_touchStart: function(e) {
-
 		if (this.touch == null) {
 			e.preventDefault();
 			this.touch = e.pointerId;
 			this.dragging = true;
-			this.dragWhich(event);
-			this.update(event);
-			if (this.options.onstop) {
-				this.options.onstop(this.getRange());
-			}
+			this.dragWhich(e);
+			this.update(e);
+			this.element.get()[0].setPointerCapture(this.touch);
 			return true;
 		}
-
 	},
 
 	_touchMove: function(e) {
-
 		if (this.touch == e.pointerId) {
 			e.preventDefault();
 			if (this.dragging) {
-				this.update(e, true);
+				this.update(e);
 				if (this.options.whiledragging) {
 					this.options.whiledragging(this.getRange());
 				}
 				return true;
 			}
 		}
-
 	},
 
 	_touchEnd: function(e) {
-
 		if (this.touch == e.pointerId) {
 			e.preventDefault();
+			this.element.get()[0].releasePointerCapture(this.touch);
+			this.touch = null;
+			this.dragging = false;
+			this.update(e);
+			if (this.options.onstop) {
+				this.options.onstop(this.getRange());
+			}
+			return true;
+		}
+	},
+
+	// Cancel is called when using touch if your finger moves down or up and causes the
+	// display to do that slide up/down thing. There doesn't seem to be anything we can do
+	// to stop that. The only difference between this and touchEnd is that here we don't call
+	// update() because for some reason this event includes an incorrect position value,
+	// at least in Safari - it might be the value we started dragging from.
+	_touchCancel: function(e) {
+		if (this.touch == e.pointerId) {
+			e.preventDefault();
+			this.element.get()[0].releasePointerCapture(this.touch);
 			this.touch = null;
 			this.dragging = false;
 			if (this.options.onstop) {
@@ -720,14 +734,10 @@ $.widget("rompr.rangechooser", $.Widget, {
 			}
 			return true;
 		}
-
 	},
 
-	update: function(event, onmove) {
+	update: function(event) {
 		var position, fraction;
-		if (this.dragging && !onmove)
-			return;
-
 		if (this.options.orientation == "horizontal") {
 			position = event.clientX - this.element.offset().left;
 			fraction = position/this.element.width();
@@ -807,6 +817,9 @@ $.widget("rompr.rangechooser", $.Widget, {
 	},
 
 	setRange: function(r) {
+		if (this.dragging)
+			return;
+
 		var malarkey = {min: r.min / this.options.range, max: r.max / this.options.range}
 		if (malarkey.min != this.min || malarkey.max != this.max) {
 			this.min = malarkey.min;
@@ -822,6 +835,9 @@ $.widget("rompr.rangechooser", $.Widget, {
 	},
 
 	setProgress: function(p) {
+		if (this.dragging)
+			return;
+
 		var malarkey = {min: 0, max: p / this.options.range}
 		if (malarkey.max != this.max) {
 			this.min = 0;

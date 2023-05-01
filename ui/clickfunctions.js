@@ -591,7 +591,7 @@ var playlistManager = function() {
 }();
 
 function setDraggable(selector) {
-	if (!uiHelper.is_touch_ui) {
+	if (prefs.use_mouse_interface) {
 		$(selector).trackdragger();
 	}
 }

@@ -10,6 +10,7 @@ jQuery.fn.menuReveal = async function() {
 		}
 		self.makeTimerSpan();
 		await self.show(0).promise();
+		self.addCustomScrollBar();
 	}
 	return this;
 }
@@ -76,9 +77,13 @@ jQuery.fn.findParentScroller = function() {
 }
 
 jQuery.fn.saveScrollPos = function() {
-	this.prepend('<input type="hidden" name="restorescrollpos" value="'+this.scrollTop()+'" />');
-	this.scrollTo(0);
+	this.prepend('<input type="hidden" name="restorescrollpos" value="'+this.getScrollPos()+'" />');
+	if (prefs.has_custom_scrollbars)
+		this.mCustomScrollbar('destroy');
+
+	this.romprScrollTo(0, 1, 'swing', false);
 	this.css('overflow-y', 'hidden');
+
 	// Backmenu with position of sticky: if we don't reset that the parent backmenu sits above the child one
 	// meaning we can't go back in appropriate steps. Note '.children' is essential - '.find' will reset the css
 	// for all the submenus too
@@ -90,9 +95,14 @@ jQuery.fn.saveScrollPos = function() {
 jQuery.fn.restoreScrollPos = function() {
 	var a = this.find('input[name="restorescrollpos"]');
 	if (a.length > 0) {
-		this.css('overflow-y', 'scroll');
-		this.scrollTop(a.val());
 		this.children('.backmenu').css({position: ''});
+		if (prefs.has_custom_scrollbars) {
+			this.css('overflow-y', '');
+			this.addCustomScrollBar();
+		} else {
+			this.css('overflow-y', 'scroll');
+		}
+		this.romprScrollTo(parseInt(a.val()), 1, 'swing', true);
 		// this.children('.menu-covered').removeClass('menu-covered');
 		this.removeClass('menu-opened');
 		a.remove();
@@ -240,6 +250,7 @@ var layoutProcessor = function() {
 		openOnImage: true,
 		playlist_scroll_parent: '#pscroller',
 		needs_playlist_help: false,
+		my_scrollers: [ ".scroller", "#infopane", "#pscroller", ".top_drop_menu:not(.noscroll)", ".drop-box" ],
 
 		changeCollectionSortMode: function() {
 			collectionHelper.forceCollectionReload();
@@ -381,7 +392,25 @@ var layoutProcessor = function() {
 			$('#infobar').get().forEach(d => infobarObserver.observe(d));
 		},
 
+		postInit: function() {
+
+		},
+
 		makeSortablePlaylist: function(id) {
+			$('#'+id).sortableTrackList({
+				items: '.playable',
+				outsidedrop: playlistManager.dropOnPlaylist,
+				insidedrop: playlistManager.dragInPlaylist,
+				allowdragout: true,
+				scroll: true,
+				scrollparent: '#playlistman',
+				scrollspeed: 80,
+				scrollzone: 120
+			});
+			$('#'+id).acceptDroppedTracks({
+				scroll: true,
+				scrollparent: '#playlistman'
+			});
 		},
 
 		maxAlbumMenuSize: function(element) {
@@ -414,13 +443,13 @@ var layoutProcessor = function() {
 // 	return this;
 // }
 
-jQuery.fn.sortableTrackList = function() {
-	return this;
-}
+// jQuery.fn.sortableTrackList = function() {
+// 	return this;
+// }
 
-jQuery.fn.trackDragger = function() {
-	return this;
-}
+// jQuery.fn.trackDragger = function() {
+// 	return this;
+// }
 
 var addToPlaylist = function() {
 	return {

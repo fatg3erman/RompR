@@ -1050,10 +1050,10 @@ function create_body_tag($base_class) {
 	$md = new Detection\MobileDetect;
 	if ($md->isMobile() || $md->isTablet() || $md->isiOS()) {
 		logger::log('INIT', 'Mobile_Detect detected Mobile Browser');
-		print ' touchclick mobiledevice';
+		print ' mobilebrowser';
 	} else {
 		logger::log('INIT', 'Mobile_Detect detected Desktop Browser');
-		print ' mouseclick';
+		print ' desktopbrowser';
 	}
 	print '">'."\n";
 }

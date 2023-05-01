@@ -21,7 +21,7 @@
 	--track-control-icon-size: var(--inline-clickable-icon-size);
 }
 
-body.mouseclick {
+body.desktopbrowser {
 	--inline-track-icon-size: 16px;
 	--inline-clickable-icon-size: 16px;
 	--inline-clickable-icon-border-width: none;
@@ -32,9 +32,9 @@ body.mouseclick {
 	--playlist-track-min-height: unset;
 }
 
-/* use body.phone here as well as touchclick, in case Mobile_Detect thinks
-it's a desktop browser. */
-body.touchclick, body.phone {
+/* use body.phone here as well as mobilebrowser in case Mobile_Detect thinks
+it's a desktop browser. This ensure the phone skin always gets these settings */
+body.mobilebrowser, body.phone {
 	--inline-track-icon-size: 20px;
 	--inline-clickable-icon-size: 28px;
 	--inline-clickable-icon-border-width: 6px;

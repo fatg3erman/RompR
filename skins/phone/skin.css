@@ -515,6 +515,10 @@ div.albumbitsmenu {
 	padding-bottom:0px;
 }
 
+body.customscroll .dropmenu {
+	overflow-y: hidden;
+}
+
 .popupcontents {
 	margin: 0px;
 }

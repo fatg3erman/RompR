@@ -153,19 +153,41 @@ $(document).ready(function(){
 });
 
 function set_mouse_touch_flags() {
-	// Work around iPadOS announcing itself as a desktop browser
-	if (navigator.userAgent.includes("Mac") && "ontouchend" in document && !$('body').hasClass('touchclick')) {
-		$('body').removeClass('mouseclick').addClass('touchclick');
+	// This is to work around the case where iOS and iPadOS use 'Request Desktop Site'
+	// - this will casue MobileDetect to set desktopbrowser. This attempts to work around that.
+	// iPadOS 13 'platform' is macIntel (!) - if Apple ever introuduce a touch macbook then we're
+	// probably OK because that'll be an Apple Silicon device and you'd hope it'll use a different string.
+	if (navigator.userAgent.includes("Mac")
+		&& window.navigator.platform.match(/iPhone|iPod|iPad|MacIntel/)
+		&& "ontouchend" in document
+		&& $('body').hasClass('desktopbrowser')) {
+		debug.mark('MOUSE', 'Seems we are on an apple Mobile Device', window.navigator.userAgent, window.navigator.platform, navigator.maxTouchPoints);
+		$('body').removeClass('desktopbrowser').addClass('mobilebrowser');
 	}
-	// Through a combination of the above hack (to catch the iPadOS stupidity case)
-	// and the initial setting done by Mobile_Detect when the body tag was created,
-	// If we have a touch-UI the body should have a class of touchclick.
-	// (If it doesn't then it should have mouseclick)
-	// Note that the historical reasons the Phone skin uses a class of phone as well as touchclick
-	if ($('body').hasClass('touchclick')) {
-		// Adjust desktop-oriented skins to run on touch devices
-		uiHelper.is_touch_ui = true;
+
+	// So by now, if we're on a mobile device body should have class 'mobilebrowser'.
+	// If we're on a desktop device it'll have 'desktopbrowser', in that case we also
+	// check to see if touch is supported so we can enable touch events and mouse events.
+	if ($('body').hasClass('mobilebrowser')) {
+		prefs.use_touch_interface = true;
+		prefs.use_mouse_interface = false;
+		prefs.has_custom_scrollbars = false;
+	} else if ('ontouchend' in document) {
+		prefs.use_touch_interface = true;
+		prefs.use_mouse_interface = true;
+		prefs.has_custom_scrollbars = true;
+		$('body').addClass('customscroll');
+	} else {
+		prefs.use_touch_interface = false;
+		prefs.use_mouse_interface = true;
+		prefs.has_custom_scrollbars = true;
+		$('body').addClass('customscroll');
 	}
+	if (prefs.use_touch_interface)
+		debug.mark('MOUSE', 'Touch interface is enabled');
+
+	if (prefs.use_mouse_interface)
+		debug.mark('MOUSE', 'Mouse interface is enabled');
 }
 
 function carry_on_starting() {
