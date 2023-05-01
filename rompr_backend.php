@@ -8,12 +8,14 @@ set_version_string();
 prefs::set_pref(['backend_version' => $version_string]);
 prefs::save();
 $pwd = getcwd();
-logger::log('DAEMON', "Running From",$pwd);
+logger::mark('DAEMON', "Running From",$pwd);
 
 while (true) {
 
     prefs::load();
     $players = array_keys(prefs::get_pref('multihosts'));
+
+    // Check that romonitor daemons are running for all our hosts
 
     foreach ($players as $player) {
         $cmd = $pwd.'/romonitor.php --currenthost '.rawurlencode($player);
@@ -24,23 +26,21 @@ while (true) {
             $def_now = prefs::get_def_for_player($player);
             if (array_key_exists($player, $players_now) && player_def_changed($def_now, $players_now[$player])) {
                 // If we started it, it's still running, and the definition has changed since we started it
-                logger::trace('DAEMON', "Player",$player,"definition has changed - restarting monitor");
+                logger::info('DAEMON', "Player",$player,"definition has changed - restarting monitor");
                 kill_process($monitors[$player]);
             } else {
                 $mon_running = true;
             }
         } else if (($pid = get_pid($cmd)) !== false) {
-            // If it's already running but we didn't start it
             logger::warn('DAEMON', "Monitor for",$player,"already started, but not by this Daemon. This may lead to problems.");
             $mon_running = true;
             $monitors[$player] = $pid;
-            // kill_process($pid);
         }
 
         if (!$mon_running) {
             logger::log('DAEMON', "Starting Monitor For",$player);
             $monitors[$player] = start_process($cmd);
-            logger::debug('DAEMON', "Started PID", $monitors[$player]);
+            logger::trace('DAEMON', "Started PID", $monitors[$player]);
             check_alarms($player, true);
         }
 
@@ -103,10 +103,13 @@ function check_podcast_refresh() {
 
 function check_lastfm_sync() {
 
-    if (prefs::get_pref('sync_lastfm_at_start') &&
-        prefs::get_pref('lastfm_session_key') != '' &&
-        time() >= prefs::get_pref('next_lastfm_synctime')
-    ) {
+    if (!prefs::get_pref('sync_lastfm_at_start') || prefs::get_pref('lastfm_session_key') == '')
+        return;
+
+    $next = prefs::get_pref('next_lastfm_synctime') - time();
+    if ($next > 0) {
+        logger::debug('DAEMON', 'Next LastFM Sync Check is in',$next,'seconds');
+    } else {
         logger::mark('DAEMON', 'Syncing LastFM Playcounts');
         $page = 1;
         $options = [
@@ -119,7 +122,7 @@ function check_lastfm_sync() {
             $options['page'] = $page;
             $tracks = lastfm::get_recent_tracks($options);
             if (count($tracks) == 0) {
-                logger::log('LASTFM-SYNC', 'No Tracks in page',$page);
+                logger::debug('LASTFM-SYNC', 'No Tracks in page',$page);
                 $page = 0;
             } else {
                 foreach ($tracks as $track) {
@@ -136,7 +139,7 @@ function check_lastfm_sync() {
                             if (array_key_exists('mbid', $track['album']) && $track['album']['mbid'] != '') {
                                 $data['MUSICBRAINZ_ALBUMID'] = $track['album']['mbid'];
                             }
-                            logger::log('LASTFM-SYNC', 'Syncing', $data['Title']);
+                            logger::debug('LASTFM-SYNC', 'Syncing', $data['Title']);
                             prefs::$database->syncinc($data);
                         }
                     } catch (Exception $e) {
@@ -167,11 +170,21 @@ function check_lastfm_sync() {
 }
 
 function check_unplayable_tracks() {
-    if (time() >= prefs::get_pref('linkchecker_nextrun')) {
+    $next = prefs::get_pref('linkchecker_nextrun') - time();
+    if ($next > 0) {
+        logger::debug('DAEMON', 'Next Spotify Relinking Check is in',$next,'seconds');
+    } else {
         prefs::$database = new metaquery();
-        prefs::$database->resetlinkcheck();
+        if (!prefs::get_pref('link_checker_is_running')) {
+            prefs::$database->resetlinkcheck();
+            prefs::set_pref(['link_checker_is_running' => true]);
+            prefs::save();
+        }
         if (prefs::$database->getlinktocheck()) {
-            prefs::set_pref(['linkchecker_nextrun' => time() + prefs::get_pref('link_checker_frequency')]);
+            prefs::set_pref([
+                'linkchecker_nextrun' => time() + prefs::get_pref('link_checker_frequency'),
+                'link_checker_is_running' => false
+            ]);
             prefs::save();
         }
 

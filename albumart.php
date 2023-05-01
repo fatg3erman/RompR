@@ -29,8 +29,8 @@ print '<link rel="stylesheet" type="text/css" href="css/albumartmanager/albumart
 <link type="text/css" href="css/scrollbars/jquery.mCustomScrollbar.css" rel="stylesheet" />
 <?php
 $scripts = array(
-	"jquery/jquery-3.6.0.min.js",
-	"jquery/jquery-migrate-3.3.2.min.js",
+	"jquery/jquery-3.6.4.min.js",
+	// "jquery/jquery-migrate-3.3.2.min.js",
 	"jshash-2.2/md5-min.js",
 	"ui/functions.js",
 	"ui/prefs.js",
@@ -53,7 +53,7 @@ foreach ($scripts as $i) {
 javascript_globals::print_globals();
 ?>
 </head>
-<body class="desktop">
+<body class="desktop customscroll">
 <div class="albumcovers">
 <div class="infosection">
 <table width="100%">

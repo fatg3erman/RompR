@@ -13,7 +13,7 @@ var helpfulThings = function() {
 
 	function getRecommendationSeeds() {
 		debug.log(medebug, "Getting Seeds For Recommendations");
-		metaHandlers.genericQuery({action: 'getrecommendationseeds', days: 30, limit: 20, top: 10},
+		metaHandlers.genericQuery({action: 'getrecommendationseeds', days: 180, limit: 35, top: 15},
 			gotRecommendationSeeds,
 			function(data) {
 				debug.error(medebug,"Error Getting Seeds",data);
@@ -112,6 +112,19 @@ var helpfulThings = function() {
 						html += language.gettext('label_luckydipdesc', powers);
 						html += '</div></div>';
 					}
+				 	if (player.canPlay('spotify')) {
+						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="spotiRecRadio+mix">';
+						html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
+						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_spotify_mix")+'</b><br/>';
+						html += language.gettext('label_spotimixdesc', cloneObject(powers));
+						html += '</div></div>';
+
+						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="spotiRecRadio+surprise">';
+						html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
+						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_spottery_lottery")+'</b><br/>';
+						html += language.gettext('label_spotiswimdesc', powers);
+						html += '</div></div>';
+					}
 				} else if ((player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) && !lastfm.isLoggedIn()) {
 					var html = '<div class="fixed containerbox plugin_hpl_radio">';
 					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
@@ -195,7 +208,7 @@ var helpfulThings = function() {
 		getMoreStuff: function() {
 			if (trackseeds.length > 0) {
 				current_seed = trackseeds.shift();
-				var params = { limit: 8 }
+				var params = { limit: 12 }
 				params.seed_tracks = current_seed.id;
 				spotify.recommendations.getRecommendations(params, helpfulThings.gotTrackRecommendations, helpfulThings.spotiError);
 			} else if (nonspotitracks.length == 0) {
@@ -211,13 +224,8 @@ var helpfulThings = function() {
 				helpfulThings.getMoreStuff();
 				return true;
 			}
-			if (current_seed.playtotal == 0) {
-				$('#helpful_spinner').before('<div class="textunderline containerbox menuitem" style="padding-left:12px;margin-top:1em"><h3 class="fixed">'
-				+language.gettext('because_listened',[current_seed.Artistname])+'</h3></div>');
-			} else {
-				$('#helpful_spinner').before('<div class="textunderline containerbox menuitem" style="padding-left:12px;margin-top:1em"><h3 class="fixed">'
-				+language.gettext('because_liked',[current_seed.Artistname])+'</h3></div>');
-			}
+			$('#helpful_spinner').before('<div class="textunderline containerbox menuitem" style="padding-left:12px;margin-top:1em"><h3 class="fixed">'
+			+language.gettext('because_liked',[current_seed.Artistname])+'</h3></div>');
 			var holder = $('<div>', {id: 'rec_'+current_seed.id, class: 'holdingcell medium_masonry_holder helpfulholder noselection'}).insertBefore($('#helpful_spinner'));
 
 			// Need to make sure all the album IDs are unique, since we do get duplicates

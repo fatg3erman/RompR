@@ -36,7 +36,7 @@ if (file_exists($fname)) {
 }
 
 if ($output == null) {
-	logger::info("LYRICS", "  Could not get lyrics from file");
+	logger::info("LYRICS", "Could not get lyrics from file");
 	$output = '<h3 align=center>'.language::gettext("lyrics_nonefound").'</h3><p>'.language::gettext("lyrics_info").'</p>';
 }
 

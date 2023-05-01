@@ -10,6 +10,7 @@ jQuery.fn.menuReveal = async function() {
 		}
 		self.makeTimerSpan();
 		await self.show(0).promise();
+		self.addCustomScrollBar();
 	}
 	return this;
 }
@@ -44,7 +45,11 @@ jQuery.fn.menuHide = async function() {
 }
 
 jQuery.fn.isOpen = function() {
-	if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
+	if (this.hasClass('icon-toggle-open')) {
+		return true;
+	} else if (this.hasClass('icon-toggle-closed')) {
+		return false;
+	} else if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
 		return true;
 	} else {
 		return false;
@@ -52,7 +57,11 @@ jQuery.fn.isOpen = function() {
 }
 
 jQuery.fn.isClosed = function() {
-	if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
+	if (this.hasClass('icon-toggle-open')) {
+		return false;
+	} else if (this.hasClass('icon-toggle-closed')) {
+		return true;
+	} else if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
 		return false;
 	} else {
 		return true;
@@ -68,9 +77,13 @@ jQuery.fn.findParentScroller = function() {
 }
 
 jQuery.fn.saveScrollPos = function() {
-	this.prepend('<input type="hidden" name="restorescrollpos" value="'+this.scrollTop()+'" />');
-	this.scrollTo(0);
+	this.prepend('<input type="hidden" name="restorescrollpos" value="'+this.getScrollPos()+'" />');
+	if (prefs.has_custom_scrollbars)
+		this.mCustomScrollbar('destroy');
+
+	this.romprScrollTo(0, 1, 'swing', false);
 	this.css('overflow-y', 'hidden');
+
 	// Backmenu with position of sticky: if we don't reset that the parent backmenu sits above the child one
 	// meaning we can't go back in appropriate steps. Note '.children' is essential - '.find' will reset the css
 	// for all the submenus too
@@ -82,9 +95,14 @@ jQuery.fn.saveScrollPos = function() {
 jQuery.fn.restoreScrollPos = function() {
 	var a = this.find('input[name="restorescrollpos"]');
 	if (a.length > 0) {
-		this.css('overflow-y', 'scroll');
-		this.scrollTop(a.val());
 		this.children('.backmenu').css({position: ''});
+		if (prefs.has_custom_scrollbars) {
+			this.css('overflow-y', '');
+			this.addCustomScrollBar();
+		} else {
+			this.css('overflow-y', 'scroll');
+		}
+		this.romprScrollTo(parseInt(a.val()), 1, 'swing', true);
 		// this.children('.menu-covered').removeClass('menu-covered');
 		this.removeClass('menu-opened');
 		a.remove();
@@ -122,13 +140,13 @@ jQuery.fn.makeTagMenu = function(options) {
 				style: "margin-left: 8px"}).appendTo($(this));
 			submitbutton.html(settings.buttontext);
 			if (settings.buttonfunc) {
-				submitbutton.on('click', function() {
+				submitbutton.on(prefs.click_event, function() {
 					settings.buttonfunc(textbox.val());
 				});
 			}
 		}
 
-		dropbutton.on('click', function(ev) {
+		dropbutton.on(prefs.click_event, function(ev) {
 			ev.preventDefault();
 			ev.stopPropagation();
 			if (dropbox.is(':visible')) {
@@ -139,7 +157,7 @@ jQuery.fn.makeTagMenu = function(options) {
 					for (var i in data) {
 						var d = $('<div>', {class: "backhi"}).appendTo(menucontents);
 						d.html(data[i]);
-						d.on('click', function() {
+						d.on(prefs.click_event, function() {
 							var cv = textbox.val();
 							if (cv != "") {
 								cv += ",";
@@ -231,6 +249,7 @@ var layoutProcessor = function() {
 		sortFaveRadios: false,
 		openOnImage: true,
 		playlist_scroll_parent: '#pscroller',
+		my_scrollers: [ ".scroller", "#infopane", "#pscroller", ".top_drop_menu:not(.noscroll)", ".drop-box" ],
 
 		changeCollectionSortMode: function() {
 			collectionHelper.forceCollectionReload();
@@ -356,15 +375,15 @@ var layoutProcessor = function() {
 
 		initialise: function() {
 			$(".dropdown").floatingMenu({ });
-			$('.topbarmenu').on('click', function(event) {
+			$('.topbarmenu').on(prefs.click_event, function(event) {
 				event.stopPropagation();
 				$('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
 				$('#'+$(this).attr('name')).slideToggle('fast');
 			});
-			$('.autohide').not('.notonclick').on('click', function() {
+			$('.autohide').not('.notonclick').on(prefs.click_event, function() {
 				$(this).slideToggle('fast');
 			});
-			$('#choose_history').on('click', showHistory);
+			$('#choose_history').on(prefs.click_event, showHistory);
 			$('#volume').volumeControl({
 				orientation: 'horizontal',
 				command: player.controller.volume
@@ -372,7 +391,25 @@ var layoutProcessor = function() {
 			$('#infobar').get().forEach(d => infobarObserver.observe(d));
 		},
 
+		postInit: function() {
+
+		},
+
 		makeSortablePlaylist: function(id) {
+			$('#'+id).sortableTrackList({
+				items: '.playable',
+				outsidedrop: playlistManager.dropOnPlaylist,
+				insidedrop: playlistManager.dragInPlaylist,
+				allowdragout: true,
+				scroll: true,
+				scrollparent: '#playlistman',
+				scrollspeed: 80,
+				scrollzone: 120
+			});
+			$('#'+id).acceptDroppedTracks({
+				scroll: true,
+				scrollparent: '#playlistman'
+			});
 		},
 
 		maxAlbumMenuSize: function(element) {
@@ -405,13 +442,13 @@ var layoutProcessor = function() {
 // 	return this;
 // }
 
-jQuery.fn.sortableTrackList = function() {
-	return this;
-}
+// jQuery.fn.sortableTrackList = function() {
+// 	return this;
+// }
 
-jQuery.fn.trackDragger = function() {
-	return this;
-}
+// jQuery.fn.trackDragger = function() {
+// 	return this;
+// }
 
 var addToPlaylist = function() {
 	return {

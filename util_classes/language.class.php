@@ -5,7 +5,7 @@ class language {
 	private static $translations = array();
 
 	private static function load_translations() {
-		logger::log('LANGUAGE', 'Loading Translations');
+		logger::info('LANGUAGE', 'Loading Translations');
 		// Always load English, it provides defaults for anything missing in the translation
 		require_once('international/en-GB.php');
 		$interface_language = self::get_interface_language();
@@ -60,12 +60,14 @@ class language {
 	public static function get_browser_country() {
 		// return the two-letter country code from the browser (eg GB, FR)
 		// This is the equivalent of the ISO3166-1 alpha-2 code required by Spotify
-		// fro making sure search results are appropriate for the user's market/country
-		// It is saved in the pref lastfm_country_code
+		// for making sure search results are appropriate for the user's market/country
+		// It is saved in the pref lastfm_country_code. Default return is '' which means
+		// we use the previously saved value, which might be '' in which case spotify.class.php
+		// will never send a market= parameter.
 		if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER)) {
 			return substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 3, 2);
 		} else {
-			return 'GB';
+			return '';
 		}
 	}
 

@@ -14,7 +14,11 @@ create_body_tag('desktop');
 				uibits::main_play_buttons();
 				?>
 			</div>
-			<div id="progress" class="fixed"></div>
+			<div class="fixed containerbox vertical-centre">
+				<i class="icon-rewind skip-button skip-backwards fixed"></i>
+				<div id="progress" class="expand"></div>
+				<i class="icon-ffwd skip-button skip-forwards fixed"></i>
+			</div>
 			<div id="playbackTime" class="fixed">
 			</div>
 		</div>

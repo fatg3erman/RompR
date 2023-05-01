@@ -5,8 +5,12 @@ class playlistCollection extends musicCollection {
 	private $foundartists;
 
 	public function doNewPlaylistFile(&$filedata) {
+		if (!is_array($filedata))
+			return array_replace(MPD_FILE_MODEL, ROMPR_FILE_MODEL);
+
 		// Translate from MPD_FILE_MODEL to ROMPR_FILE_MODEL
 		$filedata = array_replace(MPD_FILE_MODEL, ROMPR_FILE_MODEL, $filedata, $this->get_extra_track_info($filedata));
+
 		$track = new track($filedata);
 		if ($track->tags['albumartist'] === null)
 			$track->tags['albumartist'] = $track->get_sort_artist();
@@ -165,7 +169,7 @@ class playlistCollection extends musicCollection {
 			$astring = implode(', ',$artists);
 			$newartists = explode(',', $astring);
 			if (count($newartists) == count($mbids)) {
-				logger::trace("Trying splitting comma-separated artist string", "GETPLAYLIST");
+				logger::debug("Trying splitting comma-separated artist string", "GETPLAYLIST");
 				// In case AlbumArtist has that format too
 				$this->artist_not_found_yet($astring);
 				$artists = $newartists;

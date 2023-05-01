@@ -3,19 +3,19 @@
 class sortby_rating extends sortby_base {
 
 	public function root_sort_query() {
-		$sflag = $this->filter_root_on_why();
-		$qstring =
-		"SELECT DISTINCT Rating
-			FROM Ratingtable
-			JOIN Tracktable USING (TTindex)
-		WHERE
-			Uri IS NOT NULL
-			AND Hidden = 0
-			AND Rating > 0
-			".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
-			".$sflag."
-		ORDER BY Rating ASC";
-		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
+		$db = &prefs::$database;
+		$result = prefs::$database->generic_sql_query(
+			"SELECT DISTINCT Rating
+				FROM Ratingtable
+				JOIN Tracktable USING (TTindex)
+			WHERE
+				Uri IS NOT NULL
+				AND Hidden = 0
+				AND Rating > 0
+				{$db->track_date_check(prefs::get_pref('collectionrange'), $this->why)}
+				{$this->filter_root_on_why()}
+			ORDER BY Rating ASC",
+		false, PDO::FETCH_ASSOC);
 		foreach ($result as $rating) {
 			yield $rating;
 		}
@@ -88,7 +88,7 @@ class sortby_rating extends sortby_base {
 			$count++;
 		}
 		if ($count == 0 && $this->why != 'a') {
-			uibits::noAlbumsHaeder();
+			uibits::noAlbumsHeader();
 		}
 		return $count;
 	}
@@ -196,13 +196,15 @@ class sortby_rating extends sortby_base {
 	}
 
 	private function album_rating_trackcount($albumindex, $rating) {
-		$qstring =
-		"SELECT COUNT(TTindex) AS num
-		FROM Tracktable JOIN Ratingtable USING (TTindex)
-		WHERE Albumindex = ".$albumindex." AND Rating = ".$rating.
-		" AND Hidden = 0 AND Uri IS NOT NULL AND Rating > 0 ".
-		$this->filter_track_on_why();
-		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->sql_prepare_query(false, null, 'num', 0,
+			"SELECT COUNT(TTindex) AS num
+			FROM Tracktable JOIN Ratingtable USING (TTindex)
+			WHERE Albumindex = ? AND Rating = ?
+			AND Hidden = 0 AND Uri IS NOT NULL AND Rating > 0
+			{$this->filter_track_on_why()}",
+			$albumindex,
+			$rating
+		);
 	}
 
 	public function initial_album_insert() {

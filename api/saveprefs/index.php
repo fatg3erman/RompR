@@ -1,14 +1,15 @@
 <?php
 chdir('../..');
 include ("includes/vars.php");
-logger::log("SAVEPREFS", "Saving prefs");
+logger::mark("SAVEPREFS", "Saving prefs");
 $p = json_decode($_POST['prefs'], true);
 foreach($p as $key => $value) {
-	logger::log("SAVEPREFS", ' ',$key,"=",$value);
+	logger::trace("SAVEPREFS", $key,"=",$value);
 	switch ($key) {
 		case "radiomode":
 		case "radioparam":
 		case "radiodomains":
+		case "stationname":
 			prefs::set_radio_params([$key => $value]);
 			unset($p[$key]);
 			break;

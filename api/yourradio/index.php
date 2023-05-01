@@ -5,7 +5,7 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 prefs::$database = new collection_base();
 
-logger::log("USERSTREAMS", "Doing User Radio Stuff");
+logger::mark("USERSTREAMS", "Doing User Radio Stuff");
 if (array_key_exists('populate', $_REQUEST)) {
 	do_radio_header();
 } else if (array_key_exists('remove', $_REQUEST)) {
@@ -31,7 +31,7 @@ function do_radio_list() {
 
 	$playlists = prefs::$database->get_user_radio_streams();
 
-	logger::log("USERSTREAMS", "Doing User Radio List");
+	logger::info("USERSTREAMS", "Doing User Radio List");
 
 	foreach($playlists as $playlist) {
 

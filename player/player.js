@@ -1,53 +1,58 @@
 var player = function() {
 
-    var jsonNode = document.querySelector("script[name='default_player']");
-    var jsonText = jsonNode.textContent;
-    const default_player = JSON.parse(jsonText);
-
-    jsonNode = document.querySelector("script[name='player_connection_params']");
-    jsonText = jsonNode.textContent;
-    const player_connection_params = JSON.parse(jsonText);
+    const default_player = data_from_source('default_player');
+    const player_connection_params = data_from_source('player_connection_params');
 
 	function playerEditor() {
 
 		var self = this;
 		var playerpu;
 		var numhosts;
+		var playerholder;
 
 		function removePlayerDef(event) {
-			if (decodeURIComponent($(event.target).parent().parent().attr('name')) == prefs.currenthost) {
+			if (decodeURIComponent($(event.target).attr('name')) == prefs.currenthost) {
 				infobar.error(language.gettext('error_cantdeleteplayer'));
 			} else {
+				// Don't remove the element by name, in case we've got another
+				// element with the same name
 				$(event.target).parent().parent().remove();
-				playerpu.setWindowToContentsSize();
+				playerpu.setCSS(true, true);
 			}
 		}
 
-		function addNewPlayerRow(name, def) {
-			let row = $('<tr>', {class: 'hostdef', name: name}).appendTo($('#playertable'));
-			let td = $('<td>').appendTo(row);
-			$('<input>', {type: 'text', size: '30', name: 'name', class: 'notspecial'}).val(name).appendTo(td);
+		function addNewPlayerRow(name, def, is_new) {
+			name = encodeURIComponent(name);
+			let holder = $('<div>', {class: 'single-player', name: name}).appendTo(playerholder);
+			let title = $('<div>', {class: 'containerbox snapgrouptitle player-def vertical-centre'}).appendTo(holder);
+			$('<input>', {type: 'text', class: 'expand tag', name: 'name'}).val(name).appendTo(title);
 			$.each(player_connection_params, function(i,v) {
-				td = $('<td>').appendTo(row);
+				let row = $('<div>', {class: 'pref containerbox vertical-centre'}).appendTo(holder);
+				$('<div>', {class: 'divlabel fixed'}).html(i).appendTo(row);
 				if (typeof(default_player[v]) == 'string') {
-					$('<input>', {type: 'text', size: '30', name: v}).val(def[v]).appendTo(td);
+					$('<input>', {type: 'text', class: 'expand', name: v}).val(def[v]).appendTo(row);
 				} else {
-					td.addClass('styledinputs textcentre');
-					$('<input>', {type: 'checkbox', name: v, id: v+'_'+numhosts}).appendTo(td);
-					$('<label>', {for: v+'_'+numhosts}).html('&nbsp;').appendTo(td);
+					let ping = $('<div>', {class: 'styledinputs expand'}).appendTo(row);
+					$('<input>', {type: 'checkbox', name: v, id: v+'_'+numhosts}).appendTo(ping);
+					$('<label>', {for: v+'_'+numhosts}).html('&nbsp;').appendTo(ping);
 					$('#'+v+'_'+numhosts).prop('checked', def[v]);
 				}
 			});
-			td = $('<td>').appendTo(row);
-			$('<i>', {class: 'icon-cancel-circled smallicon clickicon clickremhost'}).on('click', removePlayerDef).appendTo(td);
+			let remove_row = $('<div>', {class: 'pref containerbox vertical-centre'}).appendTo(holder);
+			$('<div>', {class: 'expand'}).appendTo(remove_row);
+			$('<i>', {class: 'fixed icon-cancel-circled smallicon clickicon clickremhost', name: name}).on(prefs.click_event, removePlayerDef).appendTo(remove_row);
 			numhosts++;
+			if (is_new) {
+				playerpu.adjustCSS(true, true);
+				playerpu.scrollTo(holder);
+			}
 		}
 
 		function updatePlayerChoices() {
 			var newhosts = new Object();
 			var reloadNeeded = false;
 			var error = false;
-			$("#playertable").find('tr.hostdef').each(function() {
+			playerholder.find('div.single-player').each(function() {
 				var currentname = decodeURIComponent($(this).attr('name'));
 				var newname = "";
 				var temp = new Object();
@@ -82,7 +87,9 @@ var player = function() {
 						}
 					});
 				}
+
 			});
+
 			// If we've updated an existing one, overwrite the properties we've changed
 			// but keep the ones we don't reference in the table. Don't modify the existing
 			// definition, prefs will do that.
@@ -122,29 +129,19 @@ var player = function() {
 			await prefs.loadPrefs();
 			$("#configpanel").slideToggle('fast');
 			playerpu = new popup({
-				css: {
-					width: 900,
-					height: 800
-				},
-				fitheight: true,
+				width: 500,
 				title: language.gettext('config_players'),
 				helplink: "https://fatg3erman.github.io/RompR/Using-Multiple-Players"});
-			var mywin = playerpu.create();
+			playerholder = playerpu.create();
 			numhosts = 0;
-			mywin.append('<table align="center" cellpadding="2" id="playertable" width="100%"></table>');
-			let titlerow = $('<tr>').appendTo($('#playertable'));
-			$('<th>').html('NAME').appendTo(titlerow);
-			$.each(player_connection_params, function(i, v) {
-				$('<th>').html(i).appendTo(titlerow);
-			})
+
 			for (var i in prefs.multihosts) {
-				addNewPlayerRow(i, prefs.multihosts[i]);
+				addNewPlayerRow(i, prefs.multihosts[i], false);
 			}
 
 			var add = playerpu.add_button('left', 'button_add');
-			add.on('click', function() {
-				addNewPlayerRow('New', default_player);
-				playerpu.setWindowToContentsSize();
+			add.on(prefs.click_event, function() {
+				addNewPlayerRow('New', default_player, true);
 			});
 
 			var c = playerpu.add_button('right', 'button_cancel');
@@ -153,8 +150,8 @@ var player = function() {
 			var d = playerpu.add_button('right', 'button_OK');
 			playerpu.useAsCloseButton(d, updatePlayerChoices);
 
-			$('.clickremhost').off('click');
-			$('.clickremhost').on('click', removePlayerDef);
+			$('.clickremhost').off(prefs.click_event);
+			$('.clickremhost').on(prefs.click_event, removePlayerDef);
 
 			playerpu.open();
 		}
@@ -171,7 +168,7 @@ var player = function() {
 						'<label for="host_'+escape(i)+index+'">'+i+'</label>');
 				}
 			});
-			$('[name="playerdefs"] > .savulon').off('click').on('click', prefs.toggleRadio);
+			// $('[name="playerdefs"] > .savulon').off(prefs.click_event).on(prefs.click_event, prefs.toggleRadio);
 			if (numhosts == 1) {
 				$('[name="playerdefs"]').hide();
 				$('.player-title').hide();
@@ -229,6 +226,7 @@ var player = function() {
 			progress: null
 		},
 
+		genreseeds: [],
 		urischemes: new Object(),
 		collectionLoaded: false,
 		updatingcollection: false,

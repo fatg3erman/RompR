@@ -61,7 +61,6 @@ language::add_translations([
 	"config_lastfmusername" =>				"Last.FM Benutzername",
 	"config_loginbutton" =>					"Anmeldung",
 	"config_scrobbling" =>					"Last.FM Scrobbling einschalten",
-	"config_scrobblepercent" =>				"Wieviel Prozent des Titels müssen vor dem Scrobbeln abgespielt sein (Standard: 50%)",
 	"config_autocorrect" =>					"Last.FM Autokorrektur eingeschaltet",
 	"config_tagloved" =>					"Tagge Lieblingstitel mit:",
 	"config_country" =>						"LAND (für Spotify)",

@@ -5,14 +5,15 @@
 <ul>
 <li>This bump in version number reflects a big change in how RompR works internally. This has allowed me to improve
 a lot of the functionality, but I cannot possibly test it on every system.</li>
-<li><b>It is strongly reccommended that you back up your entire database before updating to this version</b>,
-as if it does not work for you then rolling back will be impossible without a database backup</li>
 <li>This version introduces the <a href="https://fatg3erman.github.io/RompR/Backend-Daemon">RompR Backend Daemon</a> which replaces romonitor and is now a requirement.
 The Daemon performs some tasks that are very difficult to do in the browser but very easy to do if you have a process running permanently on the server.
 It requires a POSIX operating system and therefore RompR is no longer supported on Windows. RompR will, on most systems, start this daemon itself so you
 shouldn't need to do anything *except* if you were previously running romonitor, in which case you **must** read the link above.</li>
 <li>Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin.
 As a result of this change though, you will need to recreate any Alarms you had previously configured.</li>
+<li>The websocket port to use for Mopidy is now configurable for each player, to help those who use multiple players running on the
+same machine. As a result of this though if you do have multiple players you might find that the websocket port
+number is wrong after upgrading. It's easily fixed from the config panel.</li>
 <li>There is now a <a href="https://fatg3erman.github.io/RompR/RompR-And-MPD">Websocket Server</a> that makes the UI more responsive when you're using MPD - essentially it
 mimics the part of Mopidy's HTTP interface that RompR uses. It's not required but it is reccomended. There are some pre-requisistes you
 need for this to work, please read the link.</li>
@@ -35,12 +36,12 @@ should set date.timezone in your php.ini.</li>
 people who prefer to run in private sessions - your UI settings will be saved to the backend when you push this button.
 This includes the skin and single/double click mode but some prefs that are stored as Cookies are not saved - this includes the
 current Player as well some of the collection sort options.</li>
+<li>People who use phones with silly rounded corners can now specify a padding to be applied to the bottom of the Phone skin so that
+the rounded corners or other bits that Apple decide to put in our way don't obscure my UI.</li>
 <li>Clients in a Snapcast Group can now have their volumes locked together, so that adjusting one adjusts them all. So you can now set the
 relative volumes as you want them, then make the whole lot louder if you need to.</li>
-<li>Make the SQLite collection case-insensitive, which makes it work the same way as MySQL and means I can remove a lot of
-case checking statements, which speeds things up. Note that in SQLite case-sensitivity only works with ASCII characters.
-I think MySQL is better at this, but I haven't checked.</li>
 <li>All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.</li>
+<li>All Personal Radio stations are now populated by the Backend Daemon, so there is no longer any need to keep a browser open.</li>
 <li>Fix bug where Spotify tracks restored from a metadata backup would wrongly be classed as local.</li>
 <li>Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix,
 the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection and will be
@@ -49,10 +50,7 @@ added to Your Wishlist. Note that selecting this option will force a rescan of y
  which ones you want to buy digital or physical copies of. I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
  If you have enabled Youtube Music support in Mopidy the Wishlist Viewer will permit you to search for tracks on Youtube Music
  and import them into your Collection in place of your Spotify tracks, preserving the tags, ratings, and playcounts.</li>
- <li>For Mopidy users, all Personalised Radio stations that relied on Spotify support have been disabled. I hope this is temporary, but with
- Mopidy's Spotify support being broken they serve no purpose and are impossible to test.</li>
- <li>The other Mopidy-specific Personal radio stations have been adjusted so that they work with Mopidy-Youtube and Mopidy-YTMusic.
- For best results with Mopidy-Youtube you should ensure you have a Youtube Music account and enable it in the youtube section of
- your mopidy.conf.</li>
-<li>All Personal Radio stations are now populated by the Backend Daemon, so there is no longer any need to keep a browser open.</li>
+ <li>For Mopidy users, all Personalised Radio stations that relied on Spotify support have been removed.</li>
+ <li>The other Mopidy-specific Personal radio stations have been adjusted so that they work with YouTube Music</li>
+<li>For YouTube Music support in RompR, the best results come with version 0.3.8 or later of Mopidy-YTMusic</li>
 </ul>

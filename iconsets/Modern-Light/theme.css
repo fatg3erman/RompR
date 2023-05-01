@@ -115,4 +115,6 @@
     --icon-padlock:  url('iconsets/Modern-Light/padlock.svg');
     --icon-padlock-open: url('iconsets/Modern-Light/padlock_open.svg');
     --icon-instagram: url('iconsets/Modern-Light/instagram.svg');
+    --icon-rewind: url('iconsets/Modern-Light/rewind.svg');
+    --icon-ffwd: url('iconsets/Modern-Light/ffwd.svg');
 }

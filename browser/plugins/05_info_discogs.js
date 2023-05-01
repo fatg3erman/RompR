@@ -14,6 +14,11 @@ var info_discogs = function() {
 		if (!expand)
 			layout.make_possibility_chooser(artistmeta.discogs.possibilities, artistmeta.discogs.currentposs, artistmeta.name);
 
+		if (!data.data) {
+			layout.finish(null, artistmeta.name);
+			return;
+		}
+
 		if (data.data.realname)
 			layout.add_sidebar_list(language.gettext("discogs_realname"), data.data.realname);
 
@@ -201,46 +206,54 @@ var info_discogs = function() {
 		}
 
 		for (var i in order) {
-			if (data[order[i]] && data[order[i]].data.styles && data[order[i]].data.styles.length > 0) {
+			try {
 				let u = layout.add_sidebar_list(language.gettext("discogs_styles"));
 				data[order[i]].data.styles.forEach(function(style) {
 					u.append($('<li>').html(style));
 				});
 				break;
+			} catch (err) {
+				debug.trace('DISCOGS', 'No album data for', order[i]);
 			}
 		}
 
 		for (var i in order) {
-			if (data[order[i]] && data[order[i]].data.genres && data[order[i]].data.genres.length > 0) {
+			try {
 				let u = layout.add_sidebar_list(language.gettext("discogs_genres"));
 				data[order[i]].data.genres.forEach(function(genre) {
 					u.append($('<li>').html(genre));
 				});
 				break;
+			} catch (err) {
+				debug.trace('DISCOGS', 'No album data for', order[i]);
 			}
 		}
 
-		if (data.release && data.release.data.companies && data.release.data.companies.length > 0) {
+		try {
 			let u = layout.add_sidebar_list(language.gettext("discogs_companies"));
 			data.release.data.companies.forEach(function(company) {
 				u.append($('<li>').html(company.entity_type_name+' '+company.name));
 			});
+		} catch (err) {
+			debug.trace('DISCOGS', 'No album data for release');
 		}
 
 		var image = null;
 		for (var i in order) {
-			if (data[order[i]] && data[order[i]].data.images) {
+			try {
 				image = getBestImage(data[order[i]].data.images);
 				if (image !== null) {
 					break;
 				}
+			} catch (err) {
+				debug.trace('DISCOGS', 'No album data for', order[i]);
 			}
 		}
 		if (image !== null)
 			layout.add_main_image(image);
 
 		for (var i in order) {
-			if (data[order[i]] && data[order[i]].data.images) {
+			try {
 				let others = get_other_images(data[order[i]].data.images, image);
 				others.forEach(function(image) {
 					if (!artist.images_used.includes(image)) {
@@ -248,16 +261,18 @@ var info_discogs = function() {
 						artist.images_used.push(image);
 					}
 				});
+			} catch (err) {
+				debug.trace('DISCOGS', 'No album data for', order[i]);
 			}
 		}
 
-		if (data.master && data.master.data.notes)
+		if (data.master && data.master.data && data.master.data.notes)
 			layout.add_profile(formatNotes(artist, artistmeta, data.master.data.notes));
 
-		if (data.release && data.release.data.notes)
+		if (data.release && data.release.data && data.release.data.notes)
 			layout.add_profile(formatNotes(artist, artistmeta, data.release.data.notes));
 
-		if (data.release && data.release.data.extraartists && data.release.data.extraartists.length > 0) {
+		if (data.release && data.release.data && data.release.data.extraartists && data.release.data.extraartists.length > 0) {
 			layout.add_flow_box_header({title: language.gettext("discogs_personnel")});
 			data.release.data.extraartists.forEach(function(artist) {
 				layout.add_flow_box(artist.role+' <b>'+artist.name+'</b>');
@@ -265,14 +280,24 @@ var info_discogs = function() {
 		}
 
 		for (var i in order) {
-			if (data[order[i]] && data[order[i]].data.tracklist && data[order[i]].data.tracklist.length > 0) {
+			try {
 				layout.add_flow_box_header({wide: true, title: language.gettext("discogs_tracklisting")});
 				layout.add_flow_box(getTracklist(data[order[i]].data.tracklist));
 				break;
+			} catch (err) {
+				debug.trace('DISCOGS', 'No album data for', order[i]);
 			}
 		}
 
-		layout.finish(data.master.data.uri, data.master.data.title);
+		try {
+			layout.finish(data.master.data.uri, data.master.data.title);
+		} catch (err) {
+			try {
+				layout.finish(data.release.uri, data.release.title);
+			} catch (err) {
+				layout.finish(null, 'No name');
+			}
+ 		}
 
 	}
 
@@ -281,6 +306,7 @@ var info_discogs = function() {
 			return;
 
 		var u = layout.add_sidebar_list(language.gettext('discogs_external'));
+		u.addClass('info-links-column');
 		var links = [];
 		urls.reverse();
 		urls.forEach(function(url) {
@@ -401,6 +427,10 @@ var info_discogs = function() {
 	}
 
 	function getReleaseHTML(data) {
+
+		if (!data.data)
+			return '';
+
 		if (data.data.releases.length == 0)
 			return '';
 
@@ -553,19 +583,7 @@ var info_discogs = function() {
 					trackmeta
 				);
 
-				if (typeof trackmeta.discogs.layout == 'undefined')
-					trackmeta.discogs.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
-
-				if (typeof albummeta.discogs.layout == 'undefined') {
-					if (parent.playlistinfo.type == 'stream') {
-						albummeta.discogs.layout = new info_layout_empty();
-					} else {
-						albummeta.discogs.layout = new info_sidebar_layout({title: albummeta.name, type: 'album', source: me});
-					}
-				}
-
-				if (typeof artistmeta.discogs.layout == 'undefined')
-					artistmeta.discogs.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
+				browser.setup_radio_nondisplay_panel(self, artistmeta, albummeta, trackmeta, me, parent.playlistinfo);
 
 				// At this point, we may already have link data from musicbrainz or we may not.
 				self.verify_data();

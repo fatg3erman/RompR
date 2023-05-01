@@ -121,4 +121,6 @@
     --icon-padlock:  url('iconsets/Slush-Dark/padlock.svg');
     --icon-padlock-open: url('iconsets/Slush-Dark/padlock_open.svg');
     --icon-instagram: url('iconsets/Slush-Dark/instagram.svg');
+    --icon-rewind: url('iconsets/Slush-Dark/rewind.svg');
+    --icon-ffwd: url('iconsets/Slush-Dark/ffwd.svg');
 }

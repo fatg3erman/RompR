@@ -40,21 +40,21 @@ var info_videos = function() {
 			}
 
 			function getVideosHtml() {
-				if (albummeta.discogs.album.master && parent.playlistinfo.type != 'stream') {
+				if (albummeta.discogs.master && albummeta.discogs.master.data && parent.playlistinfo.type != 'stream') {
 					debug.debug('VIDEOS', 'Doing videos from album master');
-					mungeDiscogsData(albummeta.discogs.album.master.data.videos);
+					mungeDiscogsData(albummeta.discogs.master.data.videos);
 				}
-				if (albummeta.discogs.album.release && parent.playlistinfo.type != 'stream') {
+				if (albummeta.discogs.release && albummeta.discogs.release.data && parent.playlistinfo.type != 'stream') {
 					debug.debug('VIDEOS', 'Doing videos from album release');
-					mungeDiscogsData(albummeta.discogs.album.release.data.videos);
+					mungeDiscogsData(albummeta.discogs.release.data.videos);
 				}
-				if (trackmeta.discogs.track.master) {
+				if (trackmeta.discogs.master && trackmeta.discogs.master.data) {
 					debug.debug('VIDEOS', 'Doing videos from track master');
-					mungeDiscogsData(trackmeta.discogs.track.master.data.videos);
+					mungeDiscogsData(trackmeta.discogs.master.data.videos);
 				}
-				if (trackmeta.discogs.track.release) {
+				if (trackmeta.discogs.release && trackmeta.discogs.release.data) {
 					debug.debug('VIDEOS', 'Doing videos from track release');
-					mungeDiscogsData(trackmeta.discogs.track.release.data.videos);
+					mungeDiscogsData(trackmeta.discogs.release.data.videos);
 				}
 				return doVideos();
 			}
@@ -71,6 +71,11 @@ var info_videos = function() {
 
 				parent.updateData({
 					videos: {},
+					triggers: {
+						discogs: {
+							releaseid: self.track.populate
+						}
+					}
 				}, trackmeta);
 
 				if (typeof artistmeta.videos.layout == 'undefined')
@@ -93,15 +98,14 @@ var info_videos = function() {
 			this.track = function() {
 				return {
 					populate: async function() {
-						while (!(
-							(trackmeta.discogs.track.master && albummeta.discogs.album.master) ||
-							(trackmeta.discogs.track.master && albummeta.discogs.album.error)  ||
-							(trackmeta.discogs.track.error  && albummeta.discogs.album.master) ||
-							(trackmeta.discogs.track.error  && albummeta.discogs.album.error)
-							))
-						{
-							await new Promise(t => setTimeout(t, 1000));
+						if (artistmeta.name == '' && trackmeta.name == '') {
+							trackmeta.videos.layout.finish(null, 'No Videos');
+							return;
 						}
+
+						if (trackmeta.discogs.releaseid == '')
+							return;
+
 						trackmeta.videos.layout.finish(null, artistmeta.name+' / '+trackmeta.name, getVideosHtml());
 					}
 

@@ -161,10 +161,10 @@ $.widget("rompr.acceptDroppedTracks", {
 	},
 
 	_create: function() {
-		if (!uiHelper.is_touch_ui) {
+		if (prefs.use_mouse_interface) {
 			this.element.addClass('trackacceptor');
 		} else if (this.options.useclick) {
-			this.element.on('click', $.proxy(this.useClick, this));
+			this.element.on(prefs.click_event, $.proxy(this.useClick, this));
 		}
 		this.dragger_is_over = false;
 	},
@@ -348,19 +348,19 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 	},
 
 	_checkScroll: function(event) {
-		// Custom Scrollbars ONLY
 		var scrolled = false;
 		if (this.options.scroll) {
 			if (event.pageY < this.bbox.top + this.options.scrollzone) {
-				$(this.options.scrollparent).mCustomScrollbar('scrollTo', '+='+this.options.scrollspeed, {scrollInertia: 100, scrollEasing: "easeOut"});
+				$(this.options.scrollparent).romprScrollTo('+='+this.options.scrollspeed, 100, 'easeOut', false);
+				// $(this.options.scrollparent).mCustomScrollbar('scrollTo', '+='+this.options.scrollspeed, {scrollInertia: 100, scrollEasing: "easeOut"});
 				scrolled = true;
 			} else if (event.pageY > this.bbox.bottom - this.options.scrollzone) {
-				$(this.options.scrollparent).mCustomScrollbar('scrollTo', '-='+this.options.scrollspeed, {scrollInertia: 100, scrollEasing: "easeOut"});
+				$(this.options.scrollparent).romprScrollTo('-='+this.options.scrollspeed, 100, 'easeOut', false);
+				// $(this.options.scrollparent).mCustomScrollbar('scrollTo', '-='+this.options.scrollspeed, {scrollInertia: 100, scrollEasing: "easeOut"});
 				scrolled = true;
 			}
 		}
 		return scrolled;
-
 	},
 
 	_checkMouseHover: function() {
@@ -405,9 +405,9 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 		if (this.dragger) this.dragger.remove();
 		var dragged = self._findDraggable(event);
 		if (dragged.first().is('tr')) {
-			this.dragger = $('<table>').appendTo('body');
+			this.dragger = $('<table>', {class: 'innerdragger'}).appendTo('body');
 		} else {
-			this.dragger = $('<div>').appendTo('body');
+			this.dragger = $('<div>', {class: 'innerdragger'}).appendTo('body');
 		}
 		this.dragger.css({
 			position: 'absolute',
@@ -559,11 +559,18 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 });
 
 $.widget("rompr.resizeHandle", $.ui.mouse, {
-	widgetEventPrefix: "resize",
+
 	options: {
 		side: 'left',
 		offset: 0
 	},
+
+	touch: null,
+	dragging: false,
+	startX: null,
+	elementStartX: null,
+	winsize: {},
+	widthadjust: null,
 
 	_create: function() {
 		this.dragging = false;
@@ -616,7 +623,10 @@ $.widget("rompr.resizeHandle", $.ui.mouse, {
 
 });
 
-$.widget("rompr.rangechooser", $.ui.mouse, {
+$.widget("rompr.rangechooser", $.Widget, {
+
+	// Rangechooser now uses pointer events so it *should* work on touch UIs, mouse UIs
+	// and UIs that are both touch and mouse. So it's no longer based on $.ui.mouse
 
 	options: {
 		range: 1,
@@ -632,6 +642,7 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 	},
 
 	touch: null,
+	dragging: false,
 
 	_create: function() {
 		this.dragging = false;
@@ -657,74 +668,71 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 		this.min = this.options.startmin;
 		this.max = this.options.startmax;
 		if (this.options.interactive) {
-			if (uiHelper.is_touch_ui) {
-				// Use touch events if we're on a touch UI, otherwise
-				// dragging doesn't work
-				this.touch = null;
-				this.element.on('touchstart', $.proxy(this._touchStart, this));
-				this.element.on('touchmove', $.proxy(this._touchMove, this));
-				this.element.on('touchend', $.proxy(this._touchEnd, this));
-				this.element.on('touchcancel', $.proxy(this._touchEnd, this));
-			} else {
-				this._mouseInit();
-			}
+			this.touch = null;
+			this.element.on('pointerdown', $.proxy(this._touchStart, this));
+			this.element.on('pointermove', $.proxy(this._touchMove, this));
+			this.element.on('pointerup', $.proxy(this._touchEnd, this));
+			this.element.on('pointercancel', $.proxy(this._touchCancel, this));
+			// this.element.on('pointerout', $.proxy(this._touchEnd, this));
 		}
 
 		this.fill();
 	},
 
-	_mouseCapture: function(event) {
-		this.dragging = true;
-		this.dragWhich(event);
-		this.update(event);
-		if (this.options.onstop) {
-			this.options.onstop(this.getRange());
+	_touchStart: function(e) {
+		if (this.touch == null) {
+			e.preventDefault();
+			this.touch = e.pointerId;
+			this.dragging = true;
+			this.dragWhich(e);
+			this.update(e);
+			this.element.get()[0].setPointerCapture(this.touch);
+			return true;
 		}
-		return true;
 	},
 
-	_mouseDrag: function(event) {
-		if (this.dragging) {
-			this.update(event);
-			if (this.options.whiledragging) {
-				this.options.whiledragging(this.getRange());
+	_touchMove: function(e) {
+		if (this.touch == e.pointerId) {
+			e.preventDefault();
+			if (this.dragging) {
+				this.update(e);
+				if (this.options.whiledragging) {
+					this.options.whiledragging(this.getRange());
+				}
+				return true;
+			}
+		}
+	},
+
+	_touchEnd: function(e) {
+		if (this.touch == e.pointerId) {
+			e.preventDefault();
+			this.element.get()[0].releasePointerCapture(this.touch);
+			this.touch = null;
+			this.dragging = false;
+			this.update(e);
+			if (this.options.onstop) {
+				this.options.onstop(this.getRange());
 			}
 			return true;
 		}
 	},
 
-	_mouseStop: function(event) {
-		this.dragging = false;
-		if (this.options.onstop) {
-			this.options.onstop(this.getRange());
-		}
-		return true;
-	},
-
-	_touchStart: function(e) {
-		if (e.touches.length == 1 && this.touch == null) {
+	// Cancel is called when using touch if your finger moves down or up and causes the
+	// display to do that slide up/down thing. There doesn't seem to be anything we can do
+	// to stop that. The only difference between this and touchEnd is that here we don't call
+	// update() because for some reason this event includes an incorrect position value,
+	// at least in Safari - it might be the value we started dragging from.
+	_touchCancel: function(e) {
+		if (this.touch == e.pointerId) {
 			e.preventDefault();
-			this.touch = e.touches[0].identifier;
-			this._mouseCapture(e.touches[0]);
-		}
-	},
-
-	_touchMove: function(e) {
-		if (e.touches.length == 1 && this.touch == e.touches[0].identifier) {
-			e.preventDefault();
-			this._mouseDrag(e.touches[0]);
-		}
-	},
-
-	_touchEnd: function(e) {
-		if (e.changedTouches && typeof(e.changedTouches) == 'object') {
-			for (let ct of e.changedTouches) {
-				if (ct.identifier == this.touch) {
-					e.preventDefault();
-					this.touch = null;
-					this._mouseStop(ct);
-				}
+			this.element.get()[0].releasePointerCapture(this.touch);
+			this.touch = null;
+			this.dragging = false;
+			if (this.options.onstop) {
+				this.options.onstop(this.getRange());
 			}
+			return true;
 		}
 	},
 
@@ -809,6 +817,9 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 	},
 
 	setRange: function(r) {
+		if (this.dragging)
+			return;
+
 		var malarkey = {min: r.min / this.options.range, max: r.max / this.options.range}
 		if (malarkey.min != this.min || malarkey.max != this.max) {
 			this.min = malarkey.min;
@@ -824,6 +835,9 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 	},
 
 	setProgress: function(p) {
+		if (this.dragging)
+			return;
+
 		var malarkey = {min: 0, max: p / this.options.range}
 		if (malarkey.max != this.max) {
 			this.min = 0;
@@ -834,7 +848,11 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 
 });
 
-$.widget("rompr.floatingMenu", $.ui.mouse, {
+$.widget("rompr.floatingMenu", $.Widget, {
+
+	// This is using pointer events, so it kind of works on iPads, but you can't really drag up and down
+	// hence I've disabled it unless the mouse interface is also in use.
+
 	options: {
 		handleClass: null,
 		addClassTo: null,
@@ -844,11 +862,16 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 	},
 
 	resizetimer: null,
+	touch: null,
+	dragging: false,
+	drag_x_offset: 0,
+	drag_y_offset: 0,
+	handle: null,
 
 	_create: function() {
 		var self = this;
-		this.dragging = false;
-		this._mouseInit();
+		// this.dragging = false;
+		// this._mouseInit();
 		if (this.options.addClassTo) {
 			var act = this.element.find('.'+this.options.addClassTo).first();
 			var close = act.find('.right-icon').addClass('icon-cancel-circled clickicon closemenu');
@@ -860,69 +883,73 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 			}
 		}
 
+		if (this.options.handleClass !== null && prefs.use_mouse_interface) {
+			this.handle = this.element.find('.'+this.options.handleClass).first();
+			this.handle.on('pointerdown', $.proxy(this._touchStart, this));
+			this.handle.on('pointermove', $.proxy(this._touchMove, this));
+			this.handle.on('pointerup', $.proxy(this._touchEnd, this));
+			this.handle.on('pointercancel', $.proxy(this._touchEnd, this));
+		}
+
+		// This means we are responsible for showing and hiding the menu.
 		if (self.options.handleshow) {
 			this._parent = this.element.parent();
-			this.element.find('.closemenu').on('click', $.proxy(self.toggleMenu, self));
-			this._parent.on('click', function(event) {
-				debug.debug("FRUITBAT",event);
-				if (!event.target.className.match('progressbar')) {
+			this._parent.addClass('menu-toggler');
+			this.element.find('.closemenu').on(prefs.click_event, $.proxy(self.toggleMenu, self));
+			this._parent.on(prefs.click_event, function(event) {
+				// debug.debug("FRUITBAT",event);
+				// We need to only respond to clicks that originate on the open button,
+				// otherwise we close in response to a click on any elements bubbling upwards.
+				var target = $(event.target);
+				if (target.hasClass('menu-toggler') ||
+					(target.is('i') && target.parent().hasClass('menu-toggler'))
+				) {
 					$.proxy(self.toggleMenu, self)();
 				}
 			});
 		}
 	},
 
-	_mouseCapture: function(event) {
-		// Seemingly this is crucial to stop the event bubbling up the tree
-		// to the parent icon and closing the menu. Didn't used to be a problem.
-		if ($(event.target).hasClass('openmenu')) {
-			$.proxy(clickRegistry.doMenu, $(event.target), event).call();
+	_touchStart: function(e) {
+		if ($(e.target).hasClass('closemenu') || $(e.target).hasClass('smallicon'))
 			return false;
-		} else {
-			event.stopPropagation();
+
+		if (this.touch == null) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.dragging = true;
+			this.touch = e.pointerId;
+			this.drag_x_offset = e.pageX - this.element.offset().left;
+			this.drag_y_offset = e.pageY - this.element.offset().top;
+			this.element.detach().appendTo('body');
+			this.handle.get()[0].setPointerCapture(this.touch);
+			this._touchMove(e);
 			return true;
 		}
 	},
 
-	_findSourceElement: function(event) {
-		var el = $(event.target);
-		while (!el.hasClass(this.options.handleClass) && !el.hasClass('top_drop_menu') && el != this.element)
-		{
-			el = el.parent();
-		}
-		if (el.hasClass(this.options.handleClass)) {
-			return true;
-		} else {
-			return false;
-		}
-	},
-
-	_mouseStart: function(event) {
-		if (this.options.handleClass && this._findSourceElement(event) === false) {
-			return false;
-		}
-		this.dragging = true;
-		this.drag_x_offset = event.pageX - this.element.offset().left;
-		this.drag_y_offset = event.pageY - this.element.offset().top;
-		this.element.detach().appendTo('body');
-		this._mouseDrag(event);
-		return true;
-	},
-
-	_mouseDrag: function(event) {
-		if (this.dragging) {
-			var pos = {top: event.pageY - this.drag_y_offset, left: event.pageX - this.drag_x_offset};
-			this.element.css({top: pos.top+"px", left: pos.left+"px"});
-			if (this.options.movecallback) {
-				this.options.movecallback(pos);
+	_touchMove: function(e) {
+		if (this.touch == e.pointerId) {
+			e.preventDefault();
+			if (this.dragging) {
+				var pos = {top: e.pageY - this.drag_y_offset, left: e.pageX - this.drag_x_offset};
+				this.element.css({top: pos.top+"px", left: pos.left+"px"});
+				if (this.options.movecallback) {
+					this.options.movecallback(pos);
+				}
+				return true;
 			}
 		}
-		return true;
 	},
 
-	_mouseStop: function(event) {
-		this.dragging = false;
-		return true;
+	_touchEnd: function(e) {
+		if (this.touch == e.pointerId) {
+			e.preventDefault();
+			this.handle.get()[0].releasePointerCapture(this.touch);
+			this.touch = null;
+			this.dragging = false;
+			return true;
+		}
 	},
 
 	toggleMenu: function() {
@@ -1215,6 +1242,14 @@ $.widget('rompr.spotifyAlbumThing', {
 			$('[name="'+this.options.id+'dropper_'+data.id+'"]').stopSpinner();
 		}
 		var e = $("#"+this.options.id+'dropper_'+data.id);
+
+		var album_holder = e;
+		while (!album_holder.hasClass('albumwidget')) {
+			album_holder = album_holder.parent();
+		}
+		let data_index = album_holder.attr('data_index');
+		this.options.data[data_index].tracks = data.tracks;
+
 		e.show();
 		this._openAlbum(e);
 		e.addClass("filled").html(spotifyTrackListing(data, true));
@@ -1528,12 +1563,13 @@ function popup(opts) {
 	var contents;
 	var contentholder;
 	var modal_screen = null;
+	var button_holder;
+	var has_scrollbar = false;
+	var win_width = 400;
+	var initialised = false;
 
 	var options = {
-		css: {
-			width: 100,
-			height: 100
-		},
+		width: 100,
 		title: "Popup",
 		helplink: null,
 		atmousepos: false,
@@ -1542,10 +1578,7 @@ function popup(opts) {
 		id: null,
 		toggleable: false,
 		hasclosebutton: true,
-		fitheight: false,
-		hasscrollbar: false,
 		closecallbacks: {},
-		buttons: null,
 		button_min_width: '1em',
 		modal: false
 	}
@@ -1571,35 +1604,103 @@ function popup(opts) {
 		if (options.modal)
 			modal_screen = $('<div>', {class: 'modal-blackout'}).appendTo($('body'));
 
+		// Div to hold the window
 		win = $('<div>', { id: winid, class: "popupwindow dropshadow noselection" }).appendTo($('body'));
-		var container = $('<div>', {class: 'containerbox vertical popupcontentcontainer'}).appendTo(win);
+
+		//titlebar
 		var tit_options = {
-			title_class: 'dragmenu',
+			title_class: 'dragmenu fixed',
 			label_text: options.title,
 			icon_size: 'smallicon'
 		}
-
-		container.append(uiHelper.ui_config_header(tit_options));
-		titlebar = container.children('.configtitle');
+		win.append(uiHelper.ui_config_header(tit_options));
+		titlebar = win.children('.configtitle');
 		if (options.helplink)
-			container.append($('<input>', {class: 'helplink', value: options.helplink, type: 'hidden'}));
-		contentholder = $('<div>', {class: 'popupcontentholder expand'}).appendTo(container);
-		contents = $('<div>',{class: 'popupcontents clearfix'}).appendTo(contentholder);
+			win.append($('<input>', {class: 'helplink', value: options.helplink, type: 'hidden'}));
 
-		win.floatingMenu({
-			handleshow: false,
-			handleclass: 'configtitle',
-			movecallback: self.moved,
-			addClassTo: (options.hasclosebutton) ? 'configtitle' : false
-		});
-		titlebar.find('.closemenu').on('click',  function() {self.close(false)});
+		//holder for content
+		contentholder = $('<div>', {class: 'popupcontentholder'}).appendTo(win);
+
+		// actual content holder. We need this so we can add a scrollbar to the above
+		contents = $('<div>',{class: 'popupcontents'}).appendTo(contentholder);
+
+		button_holder = $('<div>', {class: 'popupbuttons clearfix'}).appendTo(win);
+
+		// MUST set the width before putting content in it otherwise if text wraps
+		// when we set the width later on our height will be wrong
+		var w = getWindowSize();
+		win_width = Math.min(w.x-16, options.width);
+		win.css({width: win_width+'px'});
 		return contents;
 	}
 
+	this.adjustCSS = function(setleft, settop) {
+		var w = getWindowSize();
+		var win_height = w.y - 16;
+		var titlebar_height = titlebar.outerHeight(true);
+		var button_height = button_holder.outerHeight(true);
+		var content_height = contents.outerHeight(true);
+
+		// We have to use this 16 pixel fudge factor or the browser will
+		// add a scrollbar to it.
+		var content_holder_height = content_height + 16;
+
+		if ((titlebar_height + button_height + content_holder_height) > win_height) {
+			content_holder_height = win_height - titlebar_height - button_height;
+			if (!has_scrollbar) {
+				contentholder.addCustomScrollBar();
+				has_scrollbar = true;
+			}
+		}
+
+		contentholder.css({height: content_holder_height+'px'});
+
+		win_height = titlebar_height + button_height + content_holder_height;
+
+		var css = {height: win_height, width: win_width};
+
+		if (options.atmousepos) {
+			css.top = Math.min(options.mousevent.clientY+8, w.y - css.height);
+			switch (options.mouseside) {
+				case 'left':
+					css.left = Math.min(options.mousevent.clientX-8, w.x - css.width);
+					break;
+
+				case 'right':
+					css.right = Math.max(options.mousevent.clientX+8, css.width);
+					break;
+			}
+		} else {
+			if (setleft) {
+				css.left = Math.max(0, (w.x/2 - css.width/2));
+			}
+			if (settop) {
+				css.top =  Math.max(0, (w.y/2 - css.height/2));
+			}
+		}
+		for (var i in css) {
+			debug.debug("POPUP","Setting CSS",i,'to',css[i]);
+			win.css(i, css[i]+'px');
+		}
+	}
+
 	this.open = function() {
-		win.css({opacity: 1});
+		if (button_holder.is(':empty')) {
+			button_holder.remove();
+			contents.css({'padding-bottom': '0px'});
+		}
+
+		if (!initialised) {
+			win.floatingMenu({
+				handleshow: false,
+				handleClass: 'configtitle',
+				addClassTo: (options.hasclosebutton) ? 'configtitle' : false
+			});
+			titlebar.find('.closemenu').on(prefs.click_event,  function() {self.close(false)});
+			initialised = true;
+		}
+
 		self.adjustCSS(true, true);
-		self.setCSS();
 		win.css({opacity: 1});
 	}
 
@@ -1620,76 +1721,20 @@ function popup(opts) {
 			modal_screen.remove();
 	}
 
-	this.moved = function(pos) {
-		options.css.top = pos.top;
-		options.css.left = pos.left;
-	}
-
-	this.adjustCSS = function(setleft, settop) {
-		var contentheight = contents.outerHeight(true) + titlebar.outerHeight(true);
-		if (options.fitheight) {
-			options.css.height = contentheight+8;
-		} else if (contentheight < options.css.height) {
-			options.css.height = contentheight+8;
-		}
-		var w = getWindowSize();
-		options.css.width = Math.min(w.x-16, options.css.width);
-		options.css.height = Math.min(w.y-16, options.css.height);
-		if (options.atmousepos) {
-			options.css.top = Math.min(options.mousevent.clientY+8, w.y - options.css.height);
-			switch (options.mouseside) {
-				case 'left':
-					options.css.left = Math.min(options.mousevent.clientX-8, w.x - options.css.width);
-					break;
-
-				case 'right':
-					options.css.right = Math.max(options.mousevent.clientX+8, options.css.width);
-					break;
-			}
-		} else {
-			if (setleft) {
-				options.css.left = Math.max(0, (w.x/2 - options.css.width/2));
-			}
-			if (settop) {
-				options.css.top =  Math.max(0, (w.y/2 - options.css.height/2));
-			}
-			options.css.height = Math.min(options.css.height, (w.y - options.css.top));
-		}
-		if (!options.hasscrollbar && (options.css.height - titlebar.outerHeight(true)) < contents.outerHeight(true)) {
-			contentholder.addCustomScrollBar();
-			options.hasscrollbar = true;
-		}
-	}
-
-	this.setCSS = function() {
-		for (var i in options.css) {
-			debug.debug("POPUP","Setting CSS",i,'to',options.css[i]);
-			win.css(i, options.css[i]+'px');
-		}
-	}
-
 	this.addCloseButton = function(text, callback) {
-		var button = $('<button>',{class: 'tright'}).appendTo(contents);
+		var button = $('<button>',{class: 'tright'}).appendTo(button_holder);
 		button.html(text);
 		options.closecallbacks[text] = callback;
-		button.on('click', self.close);
+		button.on(prefs.click_event, self.close);
 	}
 
 	this.useAsCloseButton = function(elem, callback) {
 		options.closecallbacks[elem.html()] = callback;
-		elem.on('click', self.close);
-	}
-
-	this.setWindowToContentsSize = function() {
-		self.adjustCSS(false, false);
-		self.setCSS();
+		elem.on(prefs.click_event, self.close);
 	}
 
 	this.add_button = function(side, label) {
-		if (options.buttons == null)
-			options.buttons = $('<div>', {class: 'clearfix'}).appendTo(contents);
-
-		return $('<button>', {class: 't'+side, style: 'min-width: '+options.button_min_width}).html(language.gettext(label)).appendTo(options.buttons);
+		return $('<button>', {class: 't'+side, style: 'min-width: '+options.button_min_width}).html(language.gettext(label)).appendTo(button_holder);
 	}
 
 	this.hide = function() {
@@ -1698,6 +1743,10 @@ function popup(opts) {
 
 	this.unhide = function() {
 		win.css({display: ''});
+	}
+
+	this.scrollTo = function(target) {
+		contentholder.romprScrollTo(target);
 	}
 
 }
@@ -1798,6 +1847,7 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 			clearTimeout(longpresstimer);
 			this.removeEventListener('touchmove', onTouchMove);
 			this.removeEventListener('touchend', onTouchEnd);
+			setTimeout(bindPlaylistClicks, 250);
 			startX = null;
 			startY = null;
 			isMoving = false;
@@ -1807,22 +1857,24 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 		function onTouchEnd(e) {
 			var time = Date.now();
 			clearTimeout(longpresstimer);
+			e.stopImmediatePropagation();
+			e.stopPropagation();
+			e.preventDefault();
 			if (pressing) {
-				e.stopImmediatePropagation();
-				e.stopPropagation();
-				e.preventDefault();
-				pressing = false;
-				setTimeout(bindPlaylistClicks, 500);
+				cancelTouch();
 			} else if (isMoving) {
 				var dx = touchesX.pop();
 				touchesX.push(dx);
+
 				if (time - starttime < config.swipeSpeed && dx > config.swipeDistance) {
+					// If we've swiped it fast, animate it off the end then call doAction
 					touchesX.push($(self).outerWidth(true));
 					if ($(self).hasClass('item')) {
 						$(self).next().animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing');
 					}
 					$(self).animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing', doAction);
 				} else {
+					// Else call doAction
 					doAction();
 				}
 			}
@@ -1834,12 +1886,14 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 			dxFinal = touchesX.pop();
 			touchesX = [];
 			if (dxFinal > ($(self).outerWidth(true)*0.75)) {
+				// We've swiped it far enough
 				if ($(self).hasClass('track')) {
 					playlist.delete($(self).attr('romprid'));
 				} else if ($(self).hasClass('item')) {
 					playlist.deleteGroup($(self).attr('name'));
 				}
 			} else {
+				// We havent' swiped it far enough, so put it back
 				$(self).animate({left: 0}, 'fast', 'swing');
 				if ($(self).hasClass('item')) {
 					$(self).next().animate({left: 0}, 'fast', 'swing');
@@ -1865,6 +1919,12 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 					if (config.preventDefaultEventsX) {
 						e.preventDefault();
 					}
+					// Once we've started a swipe, unbind the playlist pointer
+					// event handler, otherwise the touchend event makes it start
+					// playing the clicked track - becasue that event handler is bound
+					// to the playid element that is one of our children so we can't
+					// stop it propagating because it already has.
+					unbindPlaylistClicks();
 					var newpos = 0 - dx;
 					if (newpos < 0) {
 						$(self).css('left', newpos.toString()+'px');
@@ -1884,7 +1944,6 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 			pressing = true;
 			// Unbind click handler from playlist, otherwise the touchend
 			// event makes it start playing the clicked track.
-			// Don't seem to be able to prevent the event propagating.
 			$(self).addBunnyEars();
 			playlist.startBunnyTimeout($(self));
 			unbindPlaylistClicks();

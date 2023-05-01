@@ -114,5 +114,3 @@ Then simply import the backup file
     mysql -u root -p romprdb < rompr_backup.sql
 
 Again, enter your mysql root password when prompted
-
-

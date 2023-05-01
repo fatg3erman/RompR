@@ -223,8 +223,9 @@ class sortby_base {
 
 	public function track_sort_query() {
 		// This is the generic query for sortby_artist, sortby_album, and sortby_albumbyartist
+		$db = &prefs::$database;
 		$qstring = "SELECT
-				".database::SQL_TAG_CONCAT." AS tags,
+				{$db->get_constant('self::SQL_TAG_CONCAT')} AS tags,
 				r.Rating AS rating,
 				tr.TTindex AS ttid,
 				tr.Title AS title,
@@ -248,16 +249,16 @@ class sortby_base {
 				LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
 				LEFT JOIN Playcounttable AS pt ON tr.TTindex = pt.TTindex
 				WHERE
-					tr.Albumindex = ".$this->who."
+					tr.Albumindex = ?
 					AND uri IS NOT NULL
 					AND tr.Hidden = 0
-					".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
-					".$this->filter_track_on_why()."
+					{$db->track_date_check(prefs::get_pref('collectionrange'), $this->why)}
+					{$this->filter_track_on_why()}
 					AND tr.Artistindex = ta.Artistindex
 					AND al.Albumindex = tr.Albumindex
 			GROUP BY tr.TTindex
 			ORDER BY CASE WHEN title LIKE 'Album: %' THEN 1 ELSE 2 END, disc, trackno, title";
-		return prefs::$database->generic_sql_query($qstring);
+		return prefs::$database->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [], $qstring, $this->who);
 	}
 
 	public function albums_for_artist() {
@@ -361,31 +362,33 @@ class sortby_base {
 	}
 
 	protected function artist_albumcount($artistindex) {
-		$qstring =
-		"SELECT
-			COUNT(Albumindex) AS num
-		FROM
-			Albumtable LEFT JOIN Tracktable USING (Albumindex)
-		WHERE
-			AlbumArtistindex = ".$artistindex.
-			" AND Hidden = 0
-			AND Uri IS NOT NULL ".
-			$this->filter_track_on_why();
-		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->sql_prepare_query(false, null, 'num', 0,
+			"SELECT
+				COUNT(Albumindex) AS num
+			FROM
+				Albumtable LEFT JOIN Tracktable USING (Albumindex)
+			WHERE
+				AlbumArtistindex = ?
+				AND Hidden = 0
+				AND Uri IS NOT NULL
+				{$this->filter_track_on_why()}",
+			$artistindex
+		);
 	}
 
 	public function album_trackcount($albumindex) {
-		$qstring =
-		"SELECT
-			COUNT(TTindex) AS num
-		FROM
-			Tracktable
-		WHERE
-			Albumindex = ".$albumindex.
-			" AND Hidden = 0
-			AND Uri IS NOT NULL ".
-			$this->filter_track_on_why();
-		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->sql_prepare_query(false, null, 'num', 0,
+			"SELECT
+				COUNT(TTindex) AS num
+			FROM
+				Tracktable
+			WHERE
+				Albumindex = ?
+				AND Hidden = 0
+				AND Uri IS NOT NULL
+				{$this->filter_track_on_why()}",
+			$albumindex
+		);
 	}
 
 	public function output_artist_search_results() {

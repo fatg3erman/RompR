@@ -44,7 +44,23 @@ input[type=text],input[type="number"] {
 }
 
 #progress {
-	font-size:6pt;
+	height: 10px;
+}
+
+.skip-button {
+	height: 14px;
+	width: 14px;
+	cursor: pointer;
+}
+
+.skip-backwards {
+	margin-right: 4px;
+	margin-left: 4px;
+}
+
+.skip-forwards {
+	margin-left: 4px;
+	margin-right: 4px;
 }
 
 #playbackTime {
@@ -65,14 +81,14 @@ input[type=text],input[type="number"] {
 
 #albumpicture {
 	width: auto;
-	height: 82px;
+	height: 88px;
 }
 
 #nowplaying {
 	font-size:8pt;
 	padding-top:0px;
 	padding-bottom:0px;
-	height:60px;
+	height:66px;
 	width:100%;
 	overflow:hidden;
 	box-sizing:border-box;
@@ -158,7 +174,6 @@ input[type=text],input[type="number"] {
 	padding:8px;
 	top:0px;
 	display:none;
-	z-index:2000;
 	right: 0px;
 }
 
@@ -209,7 +224,7 @@ button.spinable.icon-spin6 {
 	padding-bottom:2px;
 	padding-left:0px;
 	padding-right:0px;
-	height:90px;
+	height:96px;
 }
 
 .topstats {
@@ -342,17 +357,17 @@ i.topdrop
 	margin-top:2px;
 }
 
-body.touchclick .outhack {
+body.mobilebrowser .outhack {
 	width:18px;
 	height:18px;
 	margin-top:2px;
 }
 
-body.touchclick #volumecontrol {
+body.mobilebrowser #volumecontrol {
 	width: 18px;
 }
 
-body.touchclick .progressbar_v {
+body.mobilebrowser .progressbar_v {
 	width: 16px;
 }
 
@@ -361,11 +376,11 @@ body.touchclick .progressbar_v {
 	margin-right: 0px;
 }
 
-body.touchclick .snap_vert_holder {
+body.mobilebrowser .snap_vert_holder {
 	margin-right: 4px;
 }
 
-body.touchclick .snap_vert_holder:last-child {
+body.mobilebrowser .snap_vert_holder:last-child {
 	margin-right: 0px;
 }
 
@@ -476,7 +491,7 @@ div.rightmenu
 	}
 }
 
-@media screen and (min-height: 800px) and (max-height: 939px) and (min-width: 649px) {
+@media screen and (min-height: 800px) and (max-height: 939px) {
 	.infobarlayout {
 		height:115px;
 	}
@@ -492,7 +507,7 @@ div.rightmenu
 	}
 }
 
-@media screen and (min-height: 940px) and (max-height: 1099px) and (min-width: 649px)  {
+@media screen and (min-height: 940px) and (max-height: 1099px) {
 	.infobarlayout {
 		height:140px;
 	}
@@ -508,7 +523,7 @@ div.rightmenu
 	}
 }
 
-@media screen and (min-height: 1100px) and (min-width: 649px)  {
+@media screen and (min-height: 1100px) {
 	.infobarlayout {
 		height:160px;
 	}
@@ -536,3 +551,27 @@ div.rightmenu
 	display:none;
 }
 
+ul.info-links-column>li:not(.info-list-title) {
+	margin-top: 2px;
+	/*position:  relative;*/
+}
+
+ul.info-links-column>li:not(.info-list-title)>i {
+	position: absolute;
+	left: -2px;
+}
+
+ul.info-links-column>li:not(.info-list-title)>a {
+	position: relative;
+	left: calc(var(--small-icon-size) + 2px);
+	top: 2px;
+	margin-right: 8px;
+}
+
+#sortable i[class*="clickremove"] {
+	margin-right: 2px;
+}
+
+#sortable i[class*="clickadd"] {
+	margin-right: 2px;
+}

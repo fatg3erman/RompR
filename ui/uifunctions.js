@@ -190,7 +190,7 @@ var pluginManager = function() {
 					}
 				}
 			}
-			$('.open-plugin').on('click', plugin_open);
+			$('.open-plugin').on(prefs.click_event, plugin_open);
 		},
 
 		setAction: function(label, action) {
@@ -235,7 +235,7 @@ var imagePopup = function() {
 				return;
 
 			waiting_spinner = $('<i>', {class: 'icon-spin6 svg-square spinner notthere', style: 'position: absolute'}).appendTo($('body'));
-			waiting_spinner.on('click', imagePopup.close)
+			waiting_spinner.on(prefs.click_event, imagePopup.close)
 			var spinw = waiting_spinner.outerWidth(true) / 2;
 			var spinh = waiting_spinner.outerHeight(true) / 2;
 
@@ -265,7 +265,7 @@ var imagePopup = function() {
 			}).appendTo($('body'));
 
 			var border_size = parseInt(popup_image.css('border-width')) * 2;
-			popup_image.on('click', imagePopup.close)
+			popup_image.on(prefs.click_event, imagePopup.close)
 
 			// We could just set width and height to auto and max-width and max-height to 100vw and 100vh
 			// but I want to calculate the specific size because (a) this method would lose the borders
@@ -365,11 +365,7 @@ function show_albumart_update_window() {
 		return true;
 	}
 	var fnarkle = new popup({
-		css: {
-			width: 600,
-			height: 400
-		},
-		fitheight: true,
+		width: 600,
 		title: "Album Art Update",
 		hasclosebutton: false
 	});
@@ -385,7 +381,6 @@ function show_albumart_update_window() {
 		range: 100
 	});
 	fnarkle.open();
-	fnarkle.setWindowToContentsSize();
 	$('.open_albumart').hide();
 	do_albumart_update();
 	return true;
@@ -397,7 +392,7 @@ function do_albumart_update() {
 		if (data.percent < 100 && albumart_update) {
 			setTimeout(do_albumart_update, 100);
 		} else {
-			$('#artclosebutton').trigger('click');
+			$('#artclosebutton').trigger(prefs.click_event);
 		}
 	});
 }
@@ -511,11 +506,8 @@ function displayRating(where, what) {
 function showUpdateWindow() {
 	if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
 		var fnarkle = new popup({
-			css: {
-				width: 1200,
-				height: 1600
-			},
-			fitheight: true,
+			width: 800,
+			modal: true,
 			title: 'RompЯ Version '+rompr_version,
 			hasclosebutton: false
 		});
@@ -562,23 +554,19 @@ function showUpdateWindow() {
 			debug.warn('INIT','Upgrade Check Failed',xhr,status,err);
 		});
 	}
+
 }
 
 function showNewVersionWindow(version) {
 		var fnarkle = new popup({
-			css: {
-				width: 400,
-				height: 200
-			},
-			fitheight: true,
+			width: 400,
 			title: 'A New Version Is Available',
 			hasclosebutton: false
 		});
 		var mywin = fnarkle.create();
-		var d1 = $('<div>', {class: 'textcentre'}).appendTo(mywin);
-		d1.html('Version '+version+' is now available. You have version '+rompr_version);
-		var d2 = $('<div>', {class: 'textcentre'}).appendTo(mywin);
-		d2.html('<a href="https://github.com/fatg3erman/RompR/releases" target="_blank">Download The Latest Release Here</a>');
+		mywin.addClass('textcentre');
+		mywin.append($('<p>').html('Version '+version+' is now available. You have version '+rompr_version));
+		mywin.append($('<a>', {href: "https://github.com/fatg3erman/RompR/releases", target: '_blank'}).html('Download The Latest Release Here'));
 		fnarkle.addCloseButton('Remind Me Later', updateRemindLater);
 		fnarkle.addCloseButton('Never Remind Me', function() {
 			prefs.save({lastversionchecked: version, lastversionchecktime: Date.now()});
@@ -701,7 +689,7 @@ function checkSearchDomains() {
 		default_domains: prefs.mopidy_search_domains,
 	});
 	$("#mopidysearchdomains").find('input.topcheck').each(function() {
-		$(this).on('click', function() {
+		$(this).on(prefs.click_event, function() {
 			prefs.save({mopidy_search_domains: $("#mopidysearchdomains").makeDomainChooser("getSelection")});
 		});
 	});
@@ -711,25 +699,7 @@ function doMopidyCollectionOptions() {
 
 	// Mopidy Folders to browse when building the collection
 
-	// spotifyweb folders are SLOW, but that's to be expected.
-	// We use 'Albums' to get 'Your Music' because, although it requires more requests than 'Songs',
-	// each response will be small enough to handle easily and there's less danger of timeouts or
-	// running into memory issues or pagination.
-
-	var domains = {
-		local: [{dir: "Local media", label: "Local Media"}],
-		beetslocal: [{dir: "Local (beets)", label: "Local (beets)"}],
-		beets: [{dir: "Beets library/Albums by Artist", label: "Beets Library"}],
-		spotify: [{dir: "Spotify Playlists", label: "Spotify Playlists"},
-				  {dir: "Spotify/Your music/Your tracks", label: "Spotify 'Your Tracks'"},
-				  {dir: "Spotify/Your music/Your albums", label: "Spotify 'Your Albums'"}],
-		// gmusic: [{dir: "Google Music/Albums", label: "Google Music"}],
-		soundcloud: [{dir: "SoundCloud/Liked", label: "SoundCloud Liked"},
-					 {dir: "SoundCloud/Sets", label: "SoundCloud Sets"},
-					 {dir: "SoundCloud/Stream", label: "SoundCloud Stream"}],
-		vkontakte: [{dir: "VKontakte", label: "VKontakte" }]
-	}
-
+	var domains = data_from_source('mopidy_collection_folders');
 	for (var i in domains) {
 		if (player.canPlay(i)) {
 			for (var j in domains[i]) {
@@ -748,7 +718,7 @@ function doMopidyCollectionOptions() {
 			}
 		}
 	}
-	$('.mopocol').on('click', function() {
+	$('.mopocol').on(prefs.click_event, function() {
 		var opts = new Array();
 		$('.mopocol:checked').each(function() {
 			opts.push($(this).next().next().attr('name'));
@@ -862,11 +832,13 @@ function combine_spotify_artists(artists) {
 }
 
 function spotifyTrackListing(data, show_add_button) {
+	debug.log('TRACKLIST', data);
 	var h = '';
 	for(var i in data.tracks.items) {
-		if (player.canPlay(data.domain)) {
+		var domain = playlist.getDomain(data.tracks.items[i].uri);
+		if (player.canPlay(domain)) {
 			h += '<div class="playable draggable clickable clicktrack fullwidth" name="'+rawurlencode(data.tracks.items[i].uri)+'">';
-		} else if (player.canPlay('youtube') || player.canPlay('ytmusic')) {
+		} else if (player.canPlay('youtube') || player.canPlay('ytmusic') || player.canPlay('spotify')) {
 			h += '<div class="fullwidth playable clicktracksearch">';
 			h += '<input type="hidden" class="search_param" name="trackartist" value="'+escapeHtml(combine_spotify_artists(data.artists))+'" />';
 			if (data.name)
@@ -884,8 +856,10 @@ function spotifyTrackListing(data, show_add_button) {
 			'<div class="expand">'+data.tracks.items[i].name+'</div>'+
 			'<div class="fixed playlistrow2 tracktime">'+formatTimeString(data.tracks.items[i].duration_ms/1000)+'</div>';
 
-		if (show_add_button && data.domain != 'local' && player.canPlay(data.domain))
-			h += '<i class="inline-icon icon-music clickspotifywidget infoclick plugclickable clickimporttrack" name="'+i+'"></i>';
+		// Don't do this because 'plugclickable' only works with browser extra plugins
+		// so this dosn't work with the Spotify Info panel
+		// if (show_add_button && domain != 'local' && player.canPlay(domain))
+		// 	h += '<i class="inline-icon icon-music clickspotifywidget infoclick plugclickable clickimporttrack" name="'+i+'"></i>';
 
 		h+=	'</div>' +
 			'</div>';

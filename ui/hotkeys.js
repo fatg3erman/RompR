@@ -194,11 +194,7 @@ var shortcuts = function() {
 		edit: function() {
 			$("#configpanel").slideToggle('fast');
 			var fnarkle = new popup({
-				css: {
-					width: 500,
-					height: 1024
-				},
-				fitheight: true,
+				width: 500,
 				helplink: 'https://fatg3erman.github.io/RompR/Keyboard-Shortcuts',
 				title: language.gettext("title_keybindings")
 			});
@@ -208,7 +204,7 @@ var shortcuts = function() {
 				$("#keybindtable").append('<tr><td width="50%" align="right">'+language.gettext(i).initcaps()+'</td><td>'+format_keyinput(i, hotkeys[i])+'</td></tr>');
 			}
 			$(".buttonchange").on('keydown', shortcuts.change );
-			$('.buttonchange').on('click',  shortcuts.remove );
+			$('.buttonchange').on(prefs.click_event,  shortcuts.remove );
 			fnarkle.open();
 		},
 

@@ -114,7 +114,7 @@ jQuery.fn.makeTagMenu = function(options) {
 				style: "margin-left: 8px"}).appendTo($(this));
 			submitbutton.html(settings.buttontext);
 			if (settings.buttonfunc) {
-				submitbutton.on('click', function() {
+				submitbutton.on(prefs.click_event, function() {
 					settings.buttonfunc(textbox.val());
 				});
 			}
@@ -131,7 +131,7 @@ jQuery.fn.makeTagMenu = function(options) {
 			autoUpdateTimeout: 500,
 		}
 		});
-		textbox.on('click', function(ev) {
+		textbox.on(prefs.click_event, function(ev) {
 			ev.preventDefault();
 			ev.stopPropagation();
 			var position = getPosition(ev);
@@ -149,7 +149,7 @@ jQuery.fn.makeTagMenu = function(options) {
 						for (var i in data) {
 							var d = $('<div>', {class: "backhi"}).appendTo(menucontents);
 							d.html(data[i]);
-							d.on('click', function() {
+							d.on(prefs.click_event, function() {
 								var cv = textbox.val();
 								if (cv != "") {
 									cv += ",";
@@ -169,14 +169,23 @@ jQuery.fn.makeTagMenu = function(options) {
 }
 
 jQuery.fn.fanoogleMenus = function() {
+	debug.log('FANOOGLE', 'Doing menus');
 	return this.each( function() {
 		var self = $(this);
+		// var old_display = null;
+		// if (!self.is(':visible')) {
+		// 	old_display = self.css('display');
+		// 	self.css({opacity: 0, display: 'block'});
+		// }
+
 		if (self.is(':visible')) {
 			var top = self.offset().top;
 			var ws = getWindowSize();
 			var avheight = ws.y - top;
 			self.css('max-height', avheight+'px');
 		}
+		// if (old_display !== null)
+		// 	self.css({opacity: '', display: old_display});
 	});
 }
 
@@ -277,7 +286,8 @@ jQuery.fn.insertArtistAfter = function(html) {
 
 jQuery.fn.addCustomScrollBar = function() {
 	return this.each(function() {
-		if (!uiHelper.is_touch_ui) {
+		if (prefs.has_custom_scrollbars) {
+			$(this).css({overflow: 'auto'});
 			$(this).mCustomScrollbar({
 				theme: "light-thick",
 				scrollInertia: 300,
@@ -296,7 +306,7 @@ jQuery.fn.addCustomScrollBar = function() {
 			});
 			// 4 pixel high fudge div to prevent mCustomScrollbar putting scroll bars
 			// on divs that don't need them
-			$(this).find('.mCustomScrollBox').append('<div style="height:4px"></div>');
+			// $(this).find('.mCustomScrollBox').append('<div style="height:4px"></div>');
 		}
 	});
 }
@@ -319,22 +329,34 @@ jQuery.fn.doSomethingUseful = function(text) {
 	});
 }
 
-jQuery.fn.romprScrollTo = function(target, speed = 250) {
+jQuery.fn.romprScrollTo = function(target, speed = 250, easing = 'swing', update = true) {
 	return this.each(function() {
-		if (uiHelper.is_touch_ui) {
-			$(this).scrollTo(target, speed, {easing: 'swing'});
-		} else {
-			$(this).mCustomScrollbar('update');
+		if (prefs.has_custom_scrollbars) {
+			if (update)
+				$(this).mCustomScrollbar('update');
+
 			$(this).mCustomScrollbar(
 				'scrollTo',
 				target,
 				{
 					scrollInertia: speed,
-					easing: 'swing'
+					easing: easing
 				}
 			);
+		} else {
+			$(this).scrollTo(target, speed, {easing: easing});
 		}
 	});
+}
+
+jQuery.fn.getScrollPos = function() {
+	if (prefs.has_custom_scrollbars) {
+		let container = this.find('.mCSB_container');
+		let top = parseInt(container.css('top'));
+		return 0-top;
+	} else {
+		return this.scrollTop();
+	}
 }
 
 // Functions that could just be in layoutProcessor, but it makes maintenance easier
@@ -347,8 +369,6 @@ var uiHelper = function() {
 	}
 
 	return {
-
-		is_touch_ui: false,
 
 		adjustLayout: async function() {
 			if (startBackgroundInitTasks.readytogo) {
@@ -418,7 +438,7 @@ var uiHelper = function() {
 		},
 
 		postPlaylistLoad: function() {
-			if (uiHelper.is_touch_ui) {
+			if (prefs.use_touch_interface && !prefs.use_mouse_interface) {
 				$('#sortable .track').playlistTouchWipe({});
 				$('#sortable .item').playlistTouchWipe({});
 			}
@@ -445,8 +465,8 @@ var uiHelper = function() {
 				return layoutProcessor.makeDropHolder(name, d, dontsteal, withscroll, wide);
 			} catch (err) {
 				var c = 'top_drop_menu dropshadow rightmenu stayopen';
-				if (dontsteal)
-					c += ' dontstealmyclicks';
+				// if (dontsteal)
+				// 	c += ' dontstealmyclicks';
 
 				if (!withscroll)
 					c += ' noscroll';
@@ -581,7 +601,7 @@ var uiHelper = function() {
 		},
 
 		updateInfopaneScrollbars: function() {
-			if (!uiHelper.is_touch_ui)
+			if (prefs.has_custom_scrollbars)
 				$('#infopane').mCustomScrollbar('update');
 		},
 
@@ -616,15 +636,15 @@ var uiHelper = function() {
 		scrollPlaylistToCurrentTrack: function(scrollto, flag) {
 			if (flag && scrollto.length > 0) {
 				debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
-				if (uiHelper.is_touch_ui) {
-					var offset = 0 - ($(layoutProcessor.playlist_scroll_parent).outerHeight(true) / 2);
-					$(layoutProcessor.playlist_scroll_parent).scrollTo(scrollto, 250, {offset: {top: offset}, easing: 'swing'});
-				} else {
+				if (prefs.has_custom_scrollbars) {
 					$(layoutProcessor.playlist_scroll_parent).mCustomScrollbar("stop");
 					$(layoutProcessor.playlist_scroll_parent).mCustomScrollbar("update");
 					var pospixels = Math.round(scrollto.position().top - ($(layoutProcessor.playlist_scroll_parent).height()/2));
 					pospixels = Math.min($("#sortable").parent().height(), Math.max(pospixels, 0));
 					$(layoutProcessor.playlist_scroll_parent).romprScrollTo(pospixels);
+				} else {
+					var offset = 0 - ($(layoutProcessor.playlist_scroll_parent).outerHeight(true) / 2);
+					$(layoutProcessor.playlist_scroll_parent).scrollTo(scrollto, 250, {offset: {top: offset}, easing: 'swing'});
 				}
 			}
 		},
@@ -637,13 +657,17 @@ var uiHelper = function() {
 
 				}
 			}
-			if (uiHelper.is_touch_ui) {
+
+			if (prefs.use_touch_interface && !prefs.use_mouse_interface) {
 				// Remove the mouse/keyboard related options from Prefs
 				$('.kbdbits').remove();
 				$('.albumart-holder').remove();
 				doSwipeCss();
-			} else {
-				$('.touchbits').remove();
+			}
+			if (prefs.use_mouse_interface) {
+				if (!prefs.use_touch_interface)
+					$('.touchbits').remove();
+
 				setDraggable('#collection');
 				setDraggable('#filecollection');
 				setDraggable('#searchresultholder');
@@ -669,12 +693,37 @@ var uiHelper = function() {
 				$(document).on('mouseleave', '.combobox-entry', makeHoverWork);
 				$(document).on('mousemove', '.combobox-entry', makeHoverWork);
 				shortcuts.load();
+
+	            $("#sortable").acceptDroppedTracks({
+	                scroll: true,
+	                scrollparent: layoutProcessor.playlist_scroll_parent
+	            });
+	            $("#sortable").sortableTrackList({
+	                items: '.sortable',
+	                outsidedrop: playlist.dragstopped,
+	                insidedrop: playlist.dragstopped,
+	                allowdragout: true,
+	                scroll: true,
+	                scrollparent: layoutProcessor.playlist_scroll_parent,
+	                scrollspeed: 80,
+	                scrollzone: 120
+	            });
+
+	            $("#pscroller").acceptDroppedTracks({
+	                ondrop: playlist.draggedToEmpty,
+	                coveredby: '#sortable'
+	            });
+				// $(".stayopen").not('.dontstealmyclicks').on(prefs.click_event, function(ev) {ev.stopPropagation() });
 			}
-			$("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
+			$("#tracktimess").on(prefs.click_event, layoutProcessor.toggleRemainTime);
 			$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup playersearch', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
 			$('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add, placeholder: language.gettext('lastfm_addtagslabel')});
 			$(window).on('resize', uiHelper.adjustLayout);
 			layoutProcessor.initialise();
+			for (let value of layoutProcessor.my_scrollers) {
+				$(value).addCustomScrollBar();
+			};
+			layoutProcessor.postInit();
 			setControlClicks();
 			bindClickHandlers();
 			setPlayClickHandlers();
@@ -683,7 +732,7 @@ var uiHelper = function() {
 			uiHelper.set_rounded_corner_buffer_size();
 		},
 
-		changePanel: function() {
+		changePanel: function(event) {
 			uiHelper.sourceControl($(this).attr('name'));
 		},
 

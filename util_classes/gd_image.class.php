@@ -22,7 +22,7 @@ class gd_Image {
 		try {
 			$image_info = getimagesize($filename);
 			$image_type = $image_info[2];
-			logger::debug("GD-IMAGE", "Image Type is ".$image_type);
+			logger::core("GD-IMAGE", "Image Type is ".$image_type);
 		} catch (Exception $e) {
 			logger::warn("GD-IMAGE", "  GD threw an error when handling",$filename);
 			$image_type = false;

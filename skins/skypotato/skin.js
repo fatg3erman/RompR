@@ -185,7 +185,11 @@ jQuery.fn.menuHide = async function() {
 }
 
 jQuery.fn.isOpen = function() {
-	if ($('#'+this.attr('name')).is(':visible')) {
+	if (this.hasClass('icon-toggle-open')) {
+		return true;
+	} else if (this.hasClass('icon-toggle-closed')) {
+		return false;
+	} else if ($('#'+this.attr('name')).is(':visible')) {
 		return true;
 	} else {
 		return false;
@@ -193,7 +197,11 @@ jQuery.fn.isOpen = function() {
 }
 
 jQuery.fn.isClosed = function() {
-	if ($('#'+this.attr('name')).is(':visible')) {
+	if (this.hasClass('icon-toggle-open')) {
+		return false;
+	} else if (this.hasClass('icon-toggle-closed')) {
+		return true;
+	} else if ($('#'+this.attr('name')).is(':visible')) {
 		return false;
 	} else {
 		return true;
@@ -308,7 +316,6 @@ function showHistory() {
 
 var layoutProcessor = function() {
 
-	var my_scrollers = [ "#sources", "#infopane", ".top_drop_menu:not(.noscroll)", ".drop-box" ];
 	var rtime = '';
 	var ptime = '';
 	var headers = Array();
@@ -395,16 +402,16 @@ var layoutProcessor = function() {
 		return t;
 	}
 
-	function findParentScroller(jq) {
-		var p = jq.parent();
-		while (!p.is('body') && !p.hasClass('mCustomScrollbar') && !p.hasClass('collectionpanel')) {
-			p = p.parent();
-		}
-		if (p.is('body')) {
-			return false;
-		}
-		return p;
-	}
+	// function findParentScroller(jq) {
+	// 	var p = jq.parent();
+	// 	while (!p.is('body') && !p.hasClass('mCustomScrollbar') && !p.hasClass('collectionpanel')) {
+	// 		p = p.parent();
+	// 	}
+	// 	if (p.is('body')) {
+	// 		return false;
+	// 	}
+	// 	return p;
+	// }
 
 	function setupCollectionDisplay() {
 		$('.collectionpanel.albumlist').remove();
@@ -440,7 +447,7 @@ var layoutProcessor = function() {
 					.removeClass('containerbox wrap collectionpanel').css('display', '')
 					.addClass('noborder')
 					.appendTo($('#audiobooklist'));
-				$('#collection, #audiobooks').off('click').off('dblclick');
+				$('#collection, #audiobooks').off(prefs.click_event).off('dblclick');
 			}
 		}
 		if (prefs.actuallysortresultsby.substr(0,5) == 'album') {
@@ -459,7 +466,7 @@ var layoutProcessor = function() {
 				if (prefs.chooser == 'searcher') {
 					$('#searchresultholder').show();
 				}
-				$('#searchresultholder').off('click').off('dblclick');
+				$('#searchresultholder').off(prefs.click_event).off('dblclick');
 			}
 		}
 	}
@@ -469,6 +476,7 @@ var layoutProcessor = function() {
 		sortFaveRadios: false,
 		openOnImage: true,
 		playlist_scroll_parent: '#phacker',
+		my_scrollers: [ "#sources", "#infopane", ".top_drop_menu:not(.noscroll)", ".drop-box" ],
 
 		setPanelCss: function(widths) {
 			$("#sources").css("width", widths.sources+"%");
@@ -533,7 +541,7 @@ var layoutProcessor = function() {
 			if (!$("#playlistbuttons").is(':visible')) {
 				togglePlaylistButtons()
 			}
-			$("#"+button).trigger('click');
+			$("#"+button).trigger(prefs.click_event);
 		},
 
 		hideBrowser: function() {
@@ -794,34 +802,11 @@ var layoutProcessor = function() {
 
 		initialise: function() {
 			$("#sortable").disableSelection();
-			if (uiHelper.is_touch_ui) {
-
+			if (prefs.use_touch_interface) {
 				$(document).touchStretch({});
+			}
 
-			} else {
-	            $("#sortable").acceptDroppedTracks({
-	                scroll: true,
-	                scrollparent: '#phacker'
-	            });
-	            $("#sortable").sortableTrackList({
-	                items: '.sortable',
-	                outsidedrop: playlist.dragstopped,
-	                insidedrop: playlist.dragstopped,
-	                scroll: true,
-	                scrollparent: '#phacker',
-	                scrollspeed: 80,
-	                scrollzone: 120
-	            });
-
-	            $("#pscroller").acceptDroppedTracks({
-	                ondrop: playlist.draggedToEmpty,
-	                coveredby: '#sortable'
-	            });
-	        }
 			animatePanels();
-			for (let value of my_scrollers) {
-				$(value).addCustomScrollBar();
-			};
 			$(".top_drop_menu").floatingMenu({
 				handleClass: 'dragmenu',
 				addClassTo: 'configtitle',
@@ -839,12 +824,6 @@ var layoutProcessor = function() {
 				handleClass: 'configtitle',
 				handleshow: false
 			});
-			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
-			$("#sources").find('.mCSB_draggerRail').resizeHandle({
-				side: 'left',
-				donefunc: setBottomPanelWidths,
-				offset: $('#headerbar').outerWidth(true)
-			});
 			$('#plmode').detach().appendTo('#nowplaying_icons').addClass('tright');
 			$('#volume').volumeControl({
 				orientation: 'vertical',
@@ -853,6 +832,14 @@ var layoutProcessor = function() {
 			setupCollectionDisplay();
 			sleepHelper.addSleepHelper(layoutProcessor.stopHeaderTimer);
 			sleepHelper.addWakeHelper(layoutProcessor.doFancyHeaderStuff);
+		},
+
+		postInit: function() {
+			$("#sources").find('.mCSB_draggerRail').resizeHandle({
+				side: 'left',
+				donefunc: setBottomPanelWidths,
+				offset: $('#headerbar').outerWidth(true)
+			});
 		},
 
 		stopHeaderTimer: function() {
@@ -942,7 +929,7 @@ var layoutProcessor = function() {
 			// Don't append dummy spacers to the spotify panel, because we append
 			// saved crazy playlists here and it fucks up unless we do nasty skin-dependent
 			// shit in the crazy plugin, which is not nice.
-			$('#pluginplaylistslist .helpfulholder').not('#pluginplaylists_spotify').appendDummySpacers();
+			$('#pluginplaylistslist .helpfulholder').appendDummySpacers();
 			$('#pluginplaylistslist .fullwidth').not('.tagmenu').insertDummySpacers();
 		}
 

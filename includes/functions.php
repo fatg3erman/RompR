@@ -494,7 +494,7 @@ function get_player_ip() {
 	logger::log("INIT", "Prefs for mpd host is ".$pdef['host']);
 	$pip = '';
 	if ($pdef['socket'] != '') {
-		$pip = $_SERVER['SERVER_ADDR'];
+		$pip = nice_server_address($pdef['host']);
 	} else {
 		$pip = nice_server_address($pdef['host']).':'.$pdef['port'];
 	}
@@ -540,13 +540,13 @@ function nice_server_address($host) {
 
 function get_user_file($src, $fname, $tmpname) {
 	global $error;
-	logger::mark("GETALBUMCOVER", "  Uploading ".$src." ".$fname." ".$tmpname);
+	logger::info("GETALBUMCOVER", " Uploading ".$src." ".$fname." ".$tmpname);
 	$download_file = "prefs/temp/".$fname;
-	logger::log("GETALBUMCOVER", "Checking Temp File ".$tmpname);
+	logger::debug("GETALBUMCOVER", "Checking Temp File ".$tmpname);
 	if (move_uploaded_file($tmpname, $download_file)) {
-		logger::log("GETALBUMCOVER", "    File ".$src." is valid, and was successfully uploaded.");
+		logger::log("GETALBUMCOVER", "File ".$src." is valid, and was successfully uploaded.");
 	} else {
-		logger::warn("GETALBUMCOVER", "    Possible file upload attack!");
+		logger::warn("GETALBUMCOVER", "Possible file upload attack!");
 		header('HTTP/1.0 403 Forbidden');
 		ob_flush();
 		exit(0);
@@ -619,10 +619,10 @@ function getRemoteFilesize($url, $default) {
 	}
 	stream_context_set_default($def_options);
 	if ($cstring !== 0) {
-		logger::log("REMOTEFILESIZE", "  Read file size remotely as ".$cstring);
+		logger::log("REMOTEFILESIZE", "Read file size remotely as ".$cstring);
 		return $cstring;
 	} else {
-		logger::log("FUNCTIONS", "  Couldn't read filesize remotely. Using default value of ".$default);
+		logger::log("FUNCTIONS", "Couldn't read filesize remotely. Using default value of ".$default);
 		return $default;
 	}
 }
@@ -762,7 +762,7 @@ function get_encoded_image($image) {
 	}
 	$newparts['url'] = $url;
 	$newurl = 'getRemoteImage.php?'.http_build_query($newparts);
-	logger::log('SQL', '    New Image',$newurl);
+	logger::log('SQL', 'New Image',$newurl);
 	return $newurl;
 }
 
@@ -843,9 +843,9 @@ function calculate_best_update_time($podcast) {
 
 	// DateTime::format crashes into hyperspace on macOS for reasons unknown
     if (strpos($os, 'Darwin') === false)
-		logger::debug("PODCASTS", "  Last Pub Date is ".$podcast['LastPubDate'].' ('.$dt->format('c').')');
+		logger::trace("PODCASTS", "Last Pub Date is ".$podcast['LastPubDate'].' ('.$dt->format('c').')');
 
-	logger::debug("PODCASTS", "  Podcast Refresh interval is ".$podcast['RefreshOption']);
+	logger::trace("PODCASTS", "Podcast Refresh interval is ".$podcast['RefreshOption']);
 	while ($dt->getTimestamp() < time()) {
 		switch ($podcast['RefreshOption']) {
 
@@ -874,7 +874,7 @@ function calculate_best_update_time($podcast) {
 	}
 
     if (strpos($os, 'Darwin') === false)
-		logger::trace("PODCASTS", "  Worked out update time based on pubDate and RefreshOption: ".$dt->format('r').' ('.$dt->getTImestamp().')');
+		logger::log("PODCASTS", "Worked out update time based on pubDate and RefreshOption: ".$dt->format('r').' ('.$dt->getTImestamp().')');
 
 	return $dt->getTimestamp();
 
@@ -910,13 +910,13 @@ function printPlaylistItem($displayname, $fullpath) {
 
 function print_performance_measurements() {
 	global $performance;
-	logger::mark('TIMINGS','-------------------------------------------------------------------------');
+	logger::info('TIMINGS','-------------------------------------------------------------------------');
 	$tot = $performance['total'];
 	foreach ($performance as $k => $v) {
 		$pc = ($v/$tot)*100;
-		logger::mark('TIMINGS', ucfirst($k),':',$v,'seconds, or',$pc.'%');
+		logger::info('TIMINGS', ucfirst($k),':',$v,'seconds, or',$pc.'%');
 	}
-	logger::mark('TIMINGS','-------------------------------------------------------------------------');
+	logger::info('TIMINGS','-------------------------------------------------------------------------');
 }
 
 function type_to_extension($mime) {
@@ -943,11 +943,11 @@ function close_browser_connection() {
 	$sapi_type = php_sapi_name();
 	logger::log('COLLECTION','SAPI Name is',$sapi_type);
 	if (preg_match('/fpm/', $sapi_type) || preg_match('/fcgi/', $sapi_type)) {
-		logger::mark('COLLECTION', 'Closing Request The FastCGI Way');
+		logger::info('COLLECTION', 'Closing Request The FastCGI Way');
 		print('<html></html>');
 		fastcgi_finish_request();
 	} else {
-		logger::mark('COLLECTION', 'Closing Request The Apache Way');
+		logger::info('COLLECTION', 'Closing Request The Apache Way');
 		ob_end_clean();
 		ignore_user_abort(true); // just to be safe
 		ob_start();
@@ -970,22 +970,25 @@ function close_browser_connection() {
 
 }
 
+// Check that the backend daemon is running and start it if it isn't
+// or if it's an older version, restart it.
 function check_backend_daemon() {
 	global $version_string;
+	logger::mark('INIT', 'Checking backend daemon');
 	$pwd = getcwd();
 	$b = $pwd.'/rompr_backend.php';
 	logger::log('INIT', 'Checking for',$b);
 	if (get_pid($b) === false) {
-		logger::mark('INIT', 'Backend Daemon is not running. Trying to start it');
+		logger::info('INIT', 'Backend Daemon is not running. Trying to start it');
 		start_process($b);
 	    sleep(1);
 		if (get_pid($b) === false) {
 			backend_init_fail();
 		}
 	} else {
-		logger::mark('INIT', 'Backend Daemon is running.');
+		logger::info('INIT', 'Backend Daemon is already running.');
 		if (prefs::get_pref('backend_version') != $version_string || array_key_exists('force_restart', $_REQUEST)) {
-			logger::mark('INIT', 'Backend Daemon',prefs::get_pref('backend_version'),'is different from',$version_string,'. Restarting it');
+			logger::info('INIT', 'Backend Daemon',prefs::get_pref('backend_version'),'is different from',$version_string,'. Restarting it');
 			kill_process(get_pid($b));
 			while (($pid = get_pid('romonitor.php')) !== false) {
 				logger::log('INIT', 'Killing romonitor process', $pid);
@@ -1008,15 +1011,17 @@ function check_backend_daemon() {
 	}
 }
 
+// Start a process that is detached and will keep running when we exit
+// and also detahced from the php-fpm process so it frees that up too.
 function start_process($cmd, $exe='php') {
-    logger::trace('DAEMON', 'Starting Process', $cmd);
+    logger::log('DAEMON', 'Starting Process', $cmd);
     $os = php_uname();
     if (strpos($os, 'Darwin') === false) {
     	// On Linux
     	exec('nohup '.$exe.' '.$cmd.' > /dev/null & > /dev/null');
    	} else {
    		// On macOS
-   		logger::log('PROCESS', 'Using macOS form of start command');
+   		logger::debug('PROCESS', 'Using macOS form of start command');
     	exec($exe.' '.$cmd.' < /dev/null > /dev/null 2>&1 &');
     }
     return get_pid($cmd);
@@ -1040,15 +1045,15 @@ function get_pid($cmd) {
 }
 
 function create_body_tag($base_class) {
-	require_once('includes/Mobile_Detect.php');
+	require_once('includes/MobileDetect.php');
 	print '<body class="'.$base_class;
-	$md = new Mobile_Detect;
+	$md = new Detection\MobileDetect;
 	if ($md->isMobile() || $md->isTablet() || $md->isiOS()) {
 		logger::log('INIT', 'Mobile_Detect detected Mobile Browser');
-		print ' touchclick';
+		print ' mobilebrowser';
 	} else {
 		logger::log('INIT', 'Mobile_Detect detected Desktop Browser');
-		print ' mouseclick';
+		print ' desktopbrowser';
 	}
 	print '">'."\n";
 }
@@ -1109,7 +1114,7 @@ function metaphone_compare($search_term, $found_term, $match_distance = null) {
 		$match_distance = max(1, (strlen($new_search) * 0.10));
 
 	if ($dist <= $match_distance) {
-		logger::trace('METAPHONE', $found_term,'matches',$search_term);
+		logger::core('METAPHONE', $found_term,'matches',$search_term);
 		return true;
 	} else {
 		logger::core('METAPHONE', $new_found,'does not match',$new_search);

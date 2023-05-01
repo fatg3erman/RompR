@@ -3,19 +3,21 @@
 class sortby_tag extends sortby_base {
 
 	public function root_sort_query() {
-		$sflag = $this->filter_root_on_why();
-		$qstring =
-		"SELECT DISTINCT Name, Tagindex
-			FROM Tagtable
-			JOIN TagListtable USING (Tagindex)
-			JOIN Tracktable USING (TTindex)
-		WHERE
-			Uri IS NOT NULL
-			AND Hidden = 0
-			".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
-			".$sflag."
-		ORDER BY Name ASC";
-		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
+		$db = &prefs::$database;
+		$result = prefs::$database->generic_sql_query(
+			"SELECT DISTINCT Name, Tagindex
+				FROM Tagtable
+				JOIN TagListtable USING (Tagindex)
+				JOIN Tracktable USING (TTindex)
+			WHERE
+				Uri IS NOT NULL
+				AND Hidden = 0
+				{$db->track_date_check(prefs::get_pref('collectionrange'), $this->why)}
+				{$this->filter_root_on_why()}
+			ORDER BY Name ASC",
+			false, PDO::FETCH_ASSOC
+		);
+
 		foreach ($result as $tag) {
 			yield $tag;
 		}
@@ -88,7 +90,7 @@ class sortby_tag extends sortby_base {
 			$count++;
 		}
 		if ($count == 0 && $this->why != 'a') {
-			uibits::noAlbumsHaeder();
+			uibits::noAlbumsHeader();
 		}
 		return $count;
 	}
@@ -195,13 +197,15 @@ class sortby_tag extends sortby_base {
 	}
 
 	private function album_tag_trackcount($albumindex, $tagindex) {
-		$qstring =
-		"SELECT COUNT(TTindex) AS num
-		FROM Tracktable JOIN TagListtable USING (TTindex)
-		WHERE Albumindex = ".$albumindex." AND Tagindex = ".$tagindex.
-		" AND Hidden = 0 AND Uri IS NOT NULL ".
-		$this->filter_track_on_why();
-		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->sql_prepare_query(false, null, 'num', 0,
+			"SELECT COUNT(TTindex) AS num
+			FROM Tracktable JOIN TagListtable USING (TTindex)
+			WHERE Albumindex = ? AND Tagindex = ?
+			AND Hidden = 0 AND Uri IS NOT NULL
+			{$this->filter_track_on_why()}",
+			$albumindex,
+			$tagindex
+		);
 	}
 
 	public function initial_album_insert() {

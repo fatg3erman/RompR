@@ -24,14 +24,18 @@ function get_bio_link($url) {
 	));
 	if ($d->get_data_to_file()) {
 		$DOM = new DOMDocument;
-		@$DOM->loadHTML($d->get_data());
+		try {
+			@$DOM->loadHTML($d->get_data());
+		} catch (ValueError $e) {
+			return false;
+		}
 		$els = getElementsByClass($DOM, 'div', 'artist-contain');
 		if (count($els) > 0) {
 			$e = $els[0];
 			$links = $e->GetElementsByTagName('img');
 			for ($i = 0; $i < $links->length; $i++) {
 				$link = $links->item($i)->getAttribute('src');
-				logger::log("AMIMAGE", "Found Image",$link);
+				logger::debug("AMIMAGE", "Found Image",$link);
 			}
 			return $link;
 		} else {

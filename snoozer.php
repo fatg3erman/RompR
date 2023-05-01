@@ -15,7 +15,7 @@ prefs::$database = null;
 logger::mark("SNOOZE", "Player is",$alarm['Player']);
 prefs::set_pref(['currenthost' => $alarm['Player']]);
 
-logger::log('SNOOZE', 'Sleeping For',prefs::get_pref('alarm_snoozetime'),'minutes');
+logger::info('SNOOZE', 'Sleeping For',prefs::get_pref('alarm_snoozetime'),'minutes');
 
 $sleeptime = (int) prefs::get_pref('alarm_snoozetime') * 60;
 sleep($sleeptime);

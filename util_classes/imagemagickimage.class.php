@@ -54,7 +54,7 @@ class imageMagickImage {
 
 	public function save($filename, $compression) {
 		if ($this->image_type == 'image/svg+xml') {
-			logger::log("IMAGEMAGICK", "  Copying SVG file instead of converting");
+			logger::debug("IMAGEMAGICK", "  Copying SVG file instead of converting");
 			$this->justCopy($filename);
 		} else if ($this->convert_path === false) {
 			logger::warn("IMAGEMAGICK", "WARNING! ImageMagick not installed");
@@ -109,7 +109,7 @@ class imageMagickImage {
 				$outputfile = 'JPEG:-';
 				break;
 		}
-		logger::log('IMAGEMAGICK', 'Outputting',$this->filename,'as',$content_type,'size',$size);
+		logger::debug('IMAGEMAGICK', 'Outputting',$this->filename,'as',$content_type,'size',$size);
 		header('Content-type: '.$content_type);
 		switch ($size) {
 			case 'small':
@@ -155,7 +155,7 @@ class imageMagickImage {
 				$height = $matches[2];
 			}
 		}
-		logger::trace('IMAGEMAGICK', 'Dimensions are',$width,'x',$height);
+		logger::debug('IMAGEMAGICK', 'Dimensions are',$width,'x',$height);
 		return array('width' => $width, 'height' => $height);
 	}
 

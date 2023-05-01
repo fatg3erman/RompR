@@ -5,9 +5,9 @@ require_once ("includes/functions.php");
 $p = json_decode(file_get_contents('php://input'), true);
 $returninfo = false;
 prefs::$database = new metaquery();
-logger::log("METADATA", "  Doing action",strtoupper($p['action']));
+logger::info("METADATA", "  Doing action",$p['action']);
 foreach ($p as $i => $v) {
-	logger::trace("Parameter", "    ",$i,':',$v);
+	logger::trace("Parameter", $i,'=',$v);
 }
 
 switch ($p['action']) {

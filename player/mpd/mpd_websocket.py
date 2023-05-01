@@ -19,7 +19,7 @@ args = None
 # To use a UNIX socket, do not pass mpdhost or mpdport, for the same reason
 # If you're not usng a UNIX socket, do not pass the parameter
 # mpdpassword should only be passed if you need a password and have
-# configured it in RompR's player definition
+# configured it in RompR's player definition, and it must be the same password
 
 def parse_commandline_arguments():
 	parser = argparse.ArgumentParser()
@@ -38,7 +38,7 @@ def wait_for_mpd_message():
 	connect_to_mpd()
 	output = None
 	try:
-		MPD.send('idle player playlist mixer'.encode('ascii') + b"\n")
+		MPD.send('idle player playlist mixer options'.encode('ascii') + b"\n")
 		message = wait_for_mpd_response()
 		print(message)
 		lines = message.split("\n")

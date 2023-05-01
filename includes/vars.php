@@ -77,7 +77,7 @@ if (!defined('IS_ROMONITOR') && !array_key_exists('setupversion', $_REQUEST)) {
 	if (!array_key_exists(prefs::currenthost(), prefs::get_pref('multihosts'))) {
 		logger::warn("INIT", prefs::currenthost(),"is not defined in the hosts defs");
 		foreach (prefs::get_pref('multihosts') as $key => $obj) {
-			logger::log("INIT", "  Using host ".$key);
+			logger::log("INIT", "..so using host ".$key);
 			prefs::set_pref(['currenthost' => $key]);
 			break;
 		}
@@ -96,14 +96,14 @@ if (!defined('IS_ROMONITOR') && !array_key_exists('setupversion', $_REQUEST)) {
 if (defined('IS_ROMONITOR')) {
 	prefs::set_pref(['skin' => 'desktop']);
 } else if(array_key_exists('skin', $_REQUEST)) {
-	logger::log("INIT", "Request asked for skin: ".$_REQUEST['skin']);
+	logger::mark("INIT", "Request asked for skin: ".$_REQUEST['skin']);
 	prefs::set_pref(['skin' => trim($_REQUEST['skin'])]);
 } else if (prefs::skin() === null) {
 	// This will be run the first time you open RompR. After that, skin will
 	// be set as a Cookie, so also set the clickmode here.
 	logger::mark("INIT", "Detecting browser...");
-	require_once('includes/Mobile_Detect.php');
-	$md = new Mobile_Detect;
+	require_once('includes/MobileDetect.php');
+	$md = new Detection\MobileDetect;
 	if ($md->isMobile() || $md->isTablet() || $md->isiOS()) {
 		logger::info('INIT', 'Browser is a Mobile browser');
 		// Ignore user_defaults in this case, otherwise we end up with desktop on a phone and that ain't good

@@ -29,13 +29,14 @@ switch (true) {
 		break;
 
 	case array_key_exists('mpdsearch', $_REQUEST):
+		logger::debug('COLLECTION', print_r($_REQUEST['mpdsearch'], true));
 		// Handle an mpd-style search request
 		logit('mpdsearch');
 		list($cmd, $dbterms) = check_dbterms($_REQUEST['command']);
 		if ($_REQUEST['resultstype'] == "tree") {
 			mpd_file_search($cmd, checkDomains($_REQUEST), $dbterms);
 		} else {
-			mpd_search($cmd, checkDomains($_REQUEST), $dbterms);
+			mpd_search($cmd, checkDomains($_REQUEST), $dbterms, $_REQUEST['mpdsearch']);
 		}
 		break;
 
@@ -73,9 +74,10 @@ function logit($key) {
 
 function checkDomains($d) {
 	if (array_key_exists('domains', $d)) {
+		logger::trace('COLLECTION', 'Search domains are', print_r($d['domains'], true));
 		return $d['domains'];
 	}
-	logger::log("SEARCH", "No search domains in use");
+	logger::debug("SEARCH", "No search domains in use");
 	return false;
 }
 
@@ -106,7 +108,7 @@ function mpd_file_search($cmd, $domains, $dbterms) {
 	$player->doFileSearch($cmd, $domains);
 }
 
-function mpd_search($cmd, $domains, $dbterms) {
+function mpd_search($cmd, $domains, $dbterms, $mpdsearch) {
 	// If we're searching for tags or ratings it would seem sensible to only search the database
 	// HOWEVER - we could be searching for genre or performer or composer - which will not match in the database
 	// For those cases ONLY, controller.js will call into this instead of database_search, and we set $dbterms
@@ -118,11 +120,16 @@ function mpd_search($cmd, $domains, $dbterms) {
 	if (count($dbterms) > 0) {
 		$options['dbterms'] = $dbterms;
 	}
+	global $performance;
+	$timer = microtime(true);
 	prefs::$database = new musicCollection($options);
 	prefs::$database->cleanSearchTables();
-	prefs::$database->do_update_with_command($cmd, array(), $domains);
+	prefs::$database->do_update_with_command($cmd, array(), $domains, [], $mpdsearch);
 	prefs::$database->dumpAlbums($_REQUEST['dump']);
 	prefs::$database->dumpArtistSearchResults($_REQUEST['dump']);
+    $performance['total'] = microtime(true) - $timer;
+	print_performance_measurements();
+
 }
 
 function database_search() {
@@ -153,8 +160,9 @@ function update_collection() {
 	// Send some dummy data back to the browser, then close the connection
 	// so that the browser doesn't time out and retry
 
-    logger::log('COLLECTION', 'Checking Nothing Else Is Running...');
+    logger::debug('COLLECTION', 'Checking Nothing Else Is Running...');
 	if (prefs::$database->collectionUpdateRunning(true)) {
+	    logger::warn('COLLECTION', "Something else is running, can't update Collection now");
 		header('HTTP/1.1 500 Internal Server Error');
 		print language::gettext('error_nocol');
 		exit(0);
@@ -171,7 +179,7 @@ function update_collection() {
 	prefs::$database->drop_triggers();
 
 	// Browser is now happy. Now we can do our work in peace.
-    logger::log('COLLECTION', 'Now were on our own');
+    logger::info('COLLECTION', 'Process is now detached from browser');
 	$t = microtime(true);
     prefs::$database->cleanSearchTables();
     $performance['cleansearch'] = microtime(true) - $t;

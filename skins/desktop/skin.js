@@ -67,13 +67,12 @@ var layoutProcessor = function() {
 		$("#playlistcontrols").animatePanel(widths);
 	}
 
-	var my_scrollers = [ "#sources", "#infopane", "#pscroller", ".top_drop_menu:not(.noscroll)", ".drop-box" ];
-
 	return {
 
 		sortFaveRadios: true,
 		openOnImage: false,
 		playlist_scroll_parent: '#pscroller',
+		my_scrollers: [ "#sources", "#infopane", "#pscroller", ".top_drop_menu:not(.noscroll)", ".drop-box" ],
 
 		setPanelCss: function(widths) {
 			if (widths.sources) {
@@ -109,7 +108,7 @@ var layoutProcessor = function() {
 			if (!$("#playlistbuttons").is(':visible')) {
 				togglePlaylistButtons()
 			}
-			$("#"+button).trigger('click');
+			$("#"+button).trigger(prefs.click_event);
 		},
 
 		hidePanel: function(panel, is_hidden, new_state) {
@@ -219,36 +218,12 @@ var layoutProcessor = function() {
 				layoutProcessor.toggleAudioOutpts();
 			}
 			$("#sortable").disableSelection();
-			if (uiHelper.is_touch_ui) {
-
+			if (prefs.use_touch_interface) {
 				$(document).touchStretch({
 					is_double_panel_skin: true
 				});
-
-			} else {
-	            $("#sortable").acceptDroppedTracks({
-	                scroll: true,
-	                scrollparent: '#pscroller'
-	            });
-	            $("#sortable").sortableTrackList({
-	                items: '.sortable',
-	                outsidedrop: playlist.dragstopped,
-	                insidedrop: playlist.dragstopped,
-	                allowdragout: true,
-	                scroll: true,
-	                scrollparent: '#pscroller',
-	                scrollspeed: 80,
-	                scrollzone: 120
-	            });
-	            $("#pscroller").acceptDroppedTracks({
-	                ondrop: playlist.draggedToEmpty,
-	                coveredby: '#sortable'
-	            });
-	        }
+			}
 			animatePanels();
-			for (let value of my_scrollers) {
-				$(value).addCustomScrollBar();
-			};
 			$(".top_drop_menu").floatingMenu({
 				handleClass: 'dragmenu',
 				addClassTo: 'configtitle',
@@ -266,7 +241,13 @@ var layoutProcessor = function() {
 				handleClass: 'configtitle',
 				handleshow: false
 			});
-			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
+			$('#volume').volumeControl({
+				orientation: 'vertical',
+				command: player.controller.volume
+			});
+		},
+
+		postInit: function() {
 			$("#sources").find('.mCSB_draggerRail').resizeHandle({
 				side: 'left',
 				donefunc: setBottomPanelWidths
@@ -274,10 +255,6 @@ var layoutProcessor = function() {
 			$("#infopane").find('.mCSB_draggerRail').resizeHandle({
 				side: 'right',
 				donefunc: setBottomPanelWidths
-			});
-			$('#volume').volumeControl({
-				orientation: 'vertical',
-				command: player.controller.volume
 			});
 		},
 

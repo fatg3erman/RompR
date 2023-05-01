@@ -213,12 +213,12 @@ jQuery.fn.scootTheAlbums = function() {
 
 function setPlayClickHandlers() {
 
-	$(document).off('click', '.playable').off('dblclick', '.playable');
+	$(document).off(prefs.click_event, '.playable').off('dblclick', '.playable');
 	if (prefs.clickmode == 'double') {
-		$(document).on('click', '.playable', selectPlayable);
+		$(document).on(prefs.click_event, '.playable', selectPlayable);
 		$(document).on('dblclick', '.playable', playPlayable);
 	} else {
-		$(document).on('click', '.playable', playPlayable);
+		$(document).on(prefs.click_event, '.playable', playPlayable);
 	}
 	// Slightly misleading function name in this case - we're just using it
 	// to bind the click handlers to the Update Collection Now buttons
@@ -277,9 +277,9 @@ function bindClickHandlers() {
 
 	// Set up all our click event listeners
 
-	$('.infotext').on('click', '.infoclick',  onBrowserClicked);
-	$(document).on('click', '.openmenu', clickRegistry.doMenu);
-	$(document).on('click', '.clickable', clickRegistry.farmClick);
+	$('.infotext').on(prefs.click_event, '.infoclick',  onBrowserClicked);
+	$(document).on(prefs.click_event, '.openmenu', clickRegistry.doMenu);
+	$(document).on(prefs.click_event, '.clickable', clickRegistry.farmClick);
 
 	$(document).on('dblclick', '.open_magic_div', function() {
 		$('.magic_div').fadeIn('fast');
@@ -287,7 +287,6 @@ function bindClickHandlers() {
 
 	clickRegistry.addClickHandlers('clickalbummenu', makeAlbumMenu);
 	clickRegistry.addClickHandlers('clicktrackmenu', makeTrackMenu);
-	// clickRegistry.addClickHandlers('clickremovebookmark', removeBookmark);
 	clickRegistry.addClickHandlers('addtollviabrowse', browseAndAddToListenLater);
 	clickRegistry.addClickHandlers('removefromll', removeFromListenLater);
 	clickRegistry.addClickHandlers('addtocollectionviabrowse', browseAndAddToCollection);
@@ -304,7 +303,6 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('clickremdb', metaHandlers.fromUiElement.removeTrackFromDb);
 	clickRegistry.addClickHandlers('clickpltrack', metaHandlers.fromUiElement.tracksToPlaylist);
 	clickRegistry.addClickHandlers('removealbum', metaHandlers.fromUiElement.removeAlbumFromDb);
-	// clickRegistry.addClickHandlers('resetresume', metaHandlers.fromUiElement.resetResumePosition);
 	clickRegistry.addClickHandlers('youtubedl', metaHandlers.fromUiElement.downloadYoutubeTrack);
 	clickRegistry.addClickHandlers('youtubedl_all', metaHandlers.fromUiElement.downloadAllYoutubeTracks);
 	clickRegistry.addClickHandlers('clickdeleteplaylisttrack', playlistManager.deletePlaylistTrack);
@@ -319,46 +317,45 @@ function bindClickHandlers() {
 	clickRegistry.addMenuHandlers('userplaylist', playlistManager.browseUserPlaylist);
 	clickRegistry.addMenuHandlers('directory', getDirectoryUrl);
 
-	$('.open_albumart').on('click', openAlbumArtManager);
-	$("#ratingimage").on('click', nowplaying.setRating);
-	$('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodinput', $('.icon-rss.npicon'))});
-	$('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
-	$('#expandright').on('click', function(){layoutProcessor.expandInfo('right')});
-	$("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
-	// Checkbox and Radio buttons sadly can't be handled by delegated events
-	// because a lot of them are in floatingMenus, which are handled by jQueryUI
-	// which stops the events from propagating;
-	$('.toggle').on('click', prefs.togglePref);
-	$('.savulon').on('click', prefs.toggleRadio);
-	$('#ptagadd').on('click', tagAdder.show);
-	$('.close-tagadder').on('click', tagAdder.close);
-	$('#addtoplaylist').on('click', addToPlaylist.show);
-	$('.close-pladd').on('click', addToPlaylist.close);
-	$('#bookmark').on('click', bookmarkAdder.show);
-	$('#ban').on('click', nowplaying.ban);
-	$('.close-bookmark').on('click', bookmarkAdder.close);
-	$(document).on('click', ".clickaddtoplaylist", addToPlaylist.close);
+	$('.open_albumart').on(prefs.click_event, openAlbumArtManager);
+	$("#ratingimage").on(prefs.click_event, nowplaying.setRating);
+	$('.icon-rss.npicon').on(prefs.click_event, function(){podcasts.doPodcast('nppodinput', $('.icon-rss.npicon'))});
+	$('#expandleft').on(prefs.click_event, function(){layoutProcessor.expandInfo('left')});
+	$('#expandright').on(prefs.click_event, function(){layoutProcessor.expandInfo('right')});
+	$("#playlistname").parent().next('button').on(prefs.click_event, player.controller.savePlaylist);
+
+	$('#ptagadd').on(prefs.click_event, tagAdder.show);
+	$('.close-tagadder').on(prefs.click_event, tagAdder.close);
+	$('#addtoplaylist').on(prefs.click_event, addToPlaylist.show);
+	$('.close-pladd').on(prefs.click_event, addToPlaylist.close);
+	$('#bookmark').on(prefs.click_event, bookmarkAdder.show);
+	$('.close-bookmark').on(prefs.click_event, bookmarkAdder.close);
+	$('#ban').on(prefs.click_event, nowplaying.ban);
+	$('.clickreplaygain').on(prefs.click_event, player.controller.replayGain);
+
+	$(document).on(prefs.click_event, '.toggle', prefs.togglePref);
+	$(document).on(prefs.click_event, '.savulon', prefs.toggleRadio);
+	$(document).on(prefs.click_event, '.choosepanel', uiHelper.changePanel);
+
+	$(document).on(prefs.click_event, ".clickaddtoplaylist", addToPlaylist.close);
 	$(document).on('change', ".saveotron", prefs.saveTextBoxes);
 	$(document).on('keyup', ".saveotron", prefs.saveTextBoxes);
 	$(document).on('change', ".saveomatic", prefs.saveSelectBoxes);
-	$('.clickreplaygain').on('click', player.controller.replayGain);
-	$(document).on('click', '.clearbox.enter', makeClearWork);
+	$(document).on(prefs.click_event, '.clearbox.enter', makeClearWork);
 	$(document).on('keydown', 'input[name="lfmuser"]', checkLfmUser);
 	$(document).on('keyup', '.enter', onKeyUp);
 	$(document).on('change', '.inputfile', inputFIleChanged);
 	$(document).on('keyup', 'input.notspecial', filterSpecialChars);
 	$(document).on('mouseenter', "#dbtags>.tag", showTagRemover);
 	$(document).on('mouseleave', "#dbtags>.tag", hideTagRemover);
-	$(document).on('click', 'body', closeMenus);
-	$(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
-    if (uiHelper.is_touch_ui) {
-    	$(document).on('touchstart', '.choosepanel', uiHelper.changePanel);
-    	$(document).on('touchend', '.choosepanel', uiHelper.absorbTouch);
-	} else {
-	    $(document).on('click', '.choosepanel', uiHelper.changePanel);
-	}
-	$(document).on('click', '.clickaddtoplaylist', infobar.addToPlaylist);
-	$(document).on('click', '.search-category', searchManager.save_categories);
+	$(document).on(prefs.click_event, 'body', closeMenus);
+	$(document).on(prefs.click_event, '.tagremover:not(.plugclickable)', nowplaying.removeTag);
+	$(document).on(prefs.click_event, '.clickaddtoplaylist', infobar.addToPlaylist);
+	$(document).on(prefs.click_event, '.search-category', searchManager.save_categories);
+
+	// Using pointer events works for touch and mouse
+	$('.skip-button').on('pointerdown', infobar.startSkip);
+	$('.skip-button').on('pointerup', infobar.stopSkip);
 }
 
  function checkLfmUser() {
@@ -370,30 +367,30 @@ function bindClickHandlers() {
 }
 
 function bindPlaylistClicks() {
-	$("#sortable").off('click');
-	$("#sortable").on('click', '.clickplaylist', playlist.handleClick);
+	$("#sortable").off(prefs.click_event);
+	$("#sortable").on(prefs.click_event, '.clickplaylist', playlist.handleClick);
 }
 
 function unbindPlaylistClicks() {
-	$("#sortable").off('click');
+	$("#sortable").off(prefs.click_event);
 }
 
 function setControlClicks() {
-	$('i.prev-button').on('click', playlist.previous);
-	$('i.next-button').on('click', playlist.next);
+	$('i.prev-button').on(prefs.click_event, playlist.previous);
+	$('i.next-button').on(prefs.click_event, playlist.next);
 	setPlayClicks();
 }
 
 function setPlayClicks() {
-	$('i.play-button').on('click', infobar.playbutton.clicked);
-	$('i.stop-button').on('click', player.controller.stop);
-	$('i.stopafter-button').on('click', playlist.stopafter);
+	$('i.play-button').on(prefs.click_event, infobar.playbutton.clicked);
+	$('i.stop-button').on(prefs.click_event, player.controller.stop);
+	$('i.stopafter-button').on(prefs.click_event, playlist.stopafter);
 }
 
 function offPlayClicks() {
-	$('i.play-button').off('click', infobar.playbutton.clicked);
-	$('i.stop-button').off('click', player.controller.stop);
-	$('i.stopafter-button').off('click', playlist.stopafter);
+	$('i.play-button').off(prefs.click_event, infobar.playbutton.clicked);
+	$('i.stop-button').off(prefs.click_event, player.controller.stop);
+	$('i.stopafter-button').off(prefs.click_event, playlist.stopafter);
 }
 
 function onBrowserClicked(event) {
@@ -592,7 +589,7 @@ var playlistManager = function() {
 }();
 
 function setDraggable(selector) {
-	if (!uiHelper.is_touch_ui) {
+	if (prefs.use_mouse_interface) {
 		$(selector).trackdragger();
 	}
 }
@@ -608,15 +605,15 @@ function onKeyUp(e) {
 
 function fakeClickOnInput(jq) {
 	if (jq.next("button").length > 0) {
-		jq.next("button").trigger('click');
+		jq.next("button").trigger(prefs.click_event);
 	} else if (jq.parent().siblings("button").length > 0) {
-		jq.parent().siblings("button").trigger('click');
+		jq.parent().siblings("button").trigger(prefs.click_event);
 	} else if (jq.hasClass('cleargroup')) {
 		var p = jq.parent();
 		while (!p.hasClass('cleargroupparent')) {
 			p = p.parent();
 		}
-		p.find('button.cleargroup').trigger('click');
+		p.find('button.cleargroup').trigger(prefs.click_event);
 	}
 }
 
@@ -808,7 +805,11 @@ function popupMenu(event, element) {
 		closePopupMenu();
 		$(button).addClass('menu_opened');
 		justclosed = false;
-		maindiv = $('<div>', {id: 'popupmenu', class:'top_drop_menu dropshadow normalmenu albumbitsmenu', style: 'opacity:0;display:block'}).appendTo($('body'));
+		maindiv = $('<div>', {
+			id: 'popupmenu',
+			class:'top_drop_menu dropshadow normalmenu albumbitsmenu',
+			style: 'opacity:0 !important; display:block;'}
+		).appendTo($('body'));
 		holderdiv = $('<div>', {class: 'fullwidth'}).appendTo(maindiv);
 		// Copy the attributes from the button to a holder div so that .parent() still works
 		// and we don't have faffing with do we/don't we have custom scrollbars
@@ -838,10 +839,10 @@ function popupMenu(event, element) {
 		maindiv.css({
 			left: left,
 			top: mouseY+'px',
-			opacity: 1,
 			'max-height': max_size.y
 		});
 		setTop();
+		maindiv.css({opacity: 1});
 	}
 
 	this.openSubMenu = function(e, element) {
@@ -917,7 +918,7 @@ function popupMenu(event, element) {
 
 }
 
-function makeTrackMenu(e, element) {
+async function makeTrackMenu(e, element) {
 	if (prefs.clickmode == 'single') {
 		if ($(element).parent().hasClass('selected')) {
 			$(element).parent().removeFromSelection();
@@ -988,11 +989,15 @@ function makeTrackMenu(e, element) {
 	}).html(language.gettext("button_addtoplaylist")).appendTo(d);
 	var plssub = $('<div>', {class:'submenu invisible submenuspacer'}).appendTo(d);
 
-	$.get('player/utils/loadplaylists.php?addtoplaylistmenu', function(data) {
-		data.forEach(function(p) {
-			var h = $('<div>', {class: "backhi clickable menuitem clickpltrack closepopup", name: p.name }).html(p.html).appendTo(plssub);
-		});
-	});
+	// Do this out of band because it can be slow with some backends
+	$.ajax({
+		url: 'player/utils/loadplaylists.php?addtoplaylistmenu=1',
+		type: 'GET',
+		cache: false
+	})
+	.done(function(data) {
+		finishPlaylistMenu(data, plssub);
+	})
 
 	var banana = $(element).parent().next();
 	while (banana.hasClass('podcastresume')) {
@@ -1011,6 +1016,12 @@ function makeTrackMenu(e, element) {
 	menu.addAction('resetresume', metaHandlers.fromUiElement.resetResumePosition);
 
 	menu.open();
+}
+
+function finishPlaylistMenu(data, menu) {
+	data.forEach(function(p) {
+		var h = $('<div>', {class: "backhi clickable menuitem clickpltrack closepopup", name: p.name }).html(p.html).appendTo(menu);
+	});
 }
 
 function makeAlbumMenu(e, element) {
@@ -1160,10 +1171,7 @@ function amendAlbumDetails(e, element) {
 	$(element).parent().remove();
 	var albumindex = $(element).attr('name');
 	var fnarkle = new popup({
-		css: {
-			width: 400,
-			height: 300
-		},
+		width: 400,
 		title: language.gettext("label_amendalbum"),
 		atmousepos: true,
 		mousevent: e,

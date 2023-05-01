@@ -14,13 +14,48 @@ You can add new players from the configuration menu. This opens a dialog box.
 
 ![](images/playerdefs.png)
 
-Click the + icon to add a new player.
+Click the ADD to add a new player.
 
-The Name can be anything that is meaningful to you.
+You can edit the player name, the name can be anything that is meaningful to you.
 
 Remember that 'localhost' in a player definition means 'the computer running the web server'.
 
 If you're using players that are on different computers from the web server you should also read [this guide](/RompR/Troubleshooting).
+
+### Webscokets
+
+Websockets are an *additional* interface to the Player that RompR can use.
+
+#### With Mopidy
+
+With Mopidy, this is what is referred to as the HTTP Frontend.
+RompR can use [Mopidy's HTTP frontend](/RompR/Rompr-And-Mopidy#Using-the-HTTP-Frontend-for-Improved-Responsiveness) to make the UI
+more responsve, to query Mopidy for Album Art, and for doing searches (this is more efficient than using the MPD frontend). You just need
+to make sure you have the HTTP frontend enabled in Mopidy and set the port number correctly in RompR.
+
+#### With MPD
+
+MPD does not have an HTTP Frontend, but RompR can [fake one](/RompR/Rompr-And-MPD) using the Websocket port number you supply here.
+**If you are using multiple MPD Players, the websocket port for each one MUST be different.**
+When you refresh the browser RompR will start its websocket server for the Player you are connecting to.
+
+#### Verifying the Websocket Connection
+
+You will see a connection notification that has two port numbers in it, for example 'Connected to MPD at localhost:6600/8001'.
+(If you're using a UNIX socket for MPD you will see 'Connected to MPD at ip.address.of.mpd/8001')
+
+![](/images/mpd_on_ws.png)
+
+If you don't get the port number after the / then the websocket server failed to start. If you're using a UNIX socket to connect
+to your player you will see only one port number and that will be the Websocket port. If you don't see the websocket port the
+websocket is not working.
+
+If you get a permanent message saying 'Player has stopped responding' this means the backend (web server) is able to connect to the MPD interface
+but your browser is not able to connect to the Websocket. If you get problems, try not using 'localhost' in your player definition and refresh
+the browser.
+
+If Websockets are not working for you, you can disable them by leaving the Websocket value blank.
+
 
 ## Selecting Players
 

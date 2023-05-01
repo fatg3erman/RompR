@@ -14,24 +14,27 @@ class prefs {
 		'mopidy_remote' => false,
 		'do_consume' => false,
 		'websocket' => false,
+		'websocket_port' => '6680',
 		'radioparams' => [
 			"radiomode" => "",
 			"radioparam" => "",
 			"radioconsume" => [],
 			"radiodomains" => ['local', 'spotify', 'youtube', 'ytmusic'],
 			"toptracks_current" => 1,
-			"toptracks_total" => 1
+			"toptracks_total" => 1,
+			"stationname" => ''
 		]
 	];
 
 	// These are the keys from the above array that we check
 	// to see if a player definition has changed
 	const PLAYER_CONNECTION_PARAMS = [
-		'HOST' => 'host',
-		'PORT' => 'port',
-		'PASSWORD' => 'password',
-		'SOCKET' => 'socket',
-		'REMOTE' => 'mopidy_remote'
+		'Host' => 'host',
+		'Port' => 'port',
+		'Password' => 'password',
+		'Socket' => 'socket',
+		'Websocket' => 'websocket_port',
+		'Remote' => 'mopidy_remote',
 	];
 
 	private static $prefs = [];
@@ -51,13 +54,14 @@ class prefs {
 		"composergenre" => false,
 		"composergenrename" => array("Classical"),
 		"preferlocalfiles" => false,
-		"mopidy_collection_folders" => array("Spotify Playlists","Local media","SoundCloud/Liked"),
-		"lastfm_country_code" => "GB",
+		"mopidy_collection_folders" => array("Local media"),
+		"lastfm_country_code" => "",
 		"country_userset" => false,
 		"debug_enabled" => 0,
 		"custom_logfile" => "",
 		"cleanalbumimages" => true,
 		"do_not_show_prefs" => false,
+		"clear_update_lock" => false,
 		// This option for plugin debugging ONLY
 		"load_plugins_at_loadtime" => false,
 		"beets_server_location" => "",
@@ -74,8 +78,8 @@ class prefs {
 		"snapcast_server" => '',
 		"snapcast_port" => '1705',
 		"snapcast_http" => '1780',
+		// We don't need this any more except to update the player defs to schema 97
 		"http_port_for_mopidy" => "6680",
-		"mpd_websocket_port" => "",
 		"multihosts" => [
 			'Default' => self::DEFAULT_PLAYER
 		],
@@ -86,6 +90,7 @@ class prefs {
 		// Need these next two so the player defs can be updated
 		"consume_workaround" => false,
 		"we_do_consume" => false,
+		"smartradio_clearfirst" => true,
 
 		'interface_language' => null,
 		'collection_type' => null,
@@ -99,6 +104,8 @@ class prefs {
 		"sync_lastfm_playcounts" => false,
 		"sync_lastfm_at_start" => false,
 		"next_lastfm_synctime" => 0,
+		// Although we can't init this to a value, it must be defined here or we can never save it
+		"last_lastfm_synctime" => 0,
 		"lastfm_sync_frequency" => 86400,
 		"lfm_importer_start_offset" => 0,
 		"lfm_importer_last_import" => 0,
@@ -129,7 +136,7 @@ class prefs {
 		"autotagname" => "",
 		"lastfm_logged_in" => false,
 		"lastfm_scrobbling" => false,
-		"scrobblepercent" => 50,
+		"use_mopidy_search" => true
 	];
 
 	public const BROWSER_PREFS = [
@@ -188,8 +195,8 @@ class prefs {
 		'advsearchoptions_isopen' => false,
 		'podcastbuttons_isopen' => false,
 		"somafm_quality" => 'highest_available_quality',
-		"stupid_rounded_corner_buffer_size" => 0
-
+		"stupid_rounded_corner_buffer_size" => 0,
+		"skip_amount" => 10
 	];
 
 	// Prefs that should not be exposed to the browser for security reasons
@@ -245,6 +252,8 @@ class prefs {
 	public static function load() {
 
 		// Can't set a value in a constant using a function, so it has to be done here.
+		// Note that this key must still exist in BACKEND_PREFS otherwise we can't save it.
+		// This value will be overridden by the value from $sp if it exists
 		$cannot_init = ["last_lastfm_synctime" => time()];
 		$sp = self::load_prefs_file('prefs/prefs.var');
 		// Old prefs files might have values we've removed. This removes those values
@@ -265,7 +274,7 @@ class prefs {
 					// The frontend sesms to be able to set cookies to '' but not expire them
 					setcookie($cookie, '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
 					$cp[$cookie] = $default;
-					logger::core('COOKIEPREFS',"Pref",$cookie,"is expired and set to default of",$default);
+					logger::trace('COOKIEPREFS',"Pref",$cookie,"is expired and set to default of",$default);
 				} else {
 					if ($cookie_val === 'false') { $cookie_val = false; }
 					if ($cookie_val === 'true') { $cookie_val = true; }
@@ -456,7 +465,7 @@ class prefs {
 	}
 
 	public static function set_music_directory($dir) {
-		logger::mark("SAVEPREFS", "Creating Album Art SymLink to ".$dir);
+		logger::info("SAVEPREFS", "Creating Album Art SymLink to ".$dir);
 		if (is_link("prefs/MusicFolders")) {
 			system ("unlink prefs/MusicFolders");
 		}
@@ -514,6 +523,11 @@ class prefs {
 	}
 
 	public static function upgrade_host_defs($ver) {
+		$websocket = prefs::get_pref('http_port_for_mopidy');
+		if (!is_numeric($websocket)) {
+			$websocket = 6680;
+		}
+
 		foreach (self::$prefs['multihosts'] as $key => $value) {
 			switch ($ver) {
 				case 45:
@@ -569,16 +583,20 @@ class prefs {
 				case 95:
 					if (!array_key_exists('radiodomains', self::$prefs['multihosts'][$key]['radioparams']))
 						self::$prefs['multihosts'][$key]['radioparams']['radiodomains'] = ['local', 'spotify', 'youtube', 'ytmusic'];
-						break;
+					break;
 
-				case 96:
-					if (!array_key_exists('radio_process', self::$prefs['multihosts'][$key]['radioparams']))
-						self::$prefs['multihosts'][$key]['radioparams']['radio_process'] = [
-							"mode" => '',
-							"param" => '',
-							"pid" => ''
-						];
-						break;
+				case 98:
+					if (!array_key_exists('websocket_port', self::$prefs['multihosts'][$key]))
+						self::$prefs['multihosts'][$key]['websocket_port'] = ''.$websocket;
+
+					$websocket += 2;
+					break;
+
+				case 101:
+					if (!array_key_exists('stationname', self::$prefs['multihosts'][$key]['radioparams']))
+						self::$prefs['multihosts'][$key]['radioparams']['stationname'] = '';
+					break;
+
 			}
 		}
 		self::save();
@@ -596,7 +614,7 @@ class prefs {
 				'pirate' => 'pirate'
 			];
 			self::$prefs['interface_language'] = $newlangs[self::$prefs['language']];
-			logger::mark('INIT', 'Upgrading interface language from',self::$prefs['language'],'to',self::$prefs['interface_language']);
+			logger::info('INIT', 'Upgrading interface language from',self::$prefs['language'],'to',self::$prefs['interface_language']);
 			unset(self::$prefs['language']);
 		}
 		// Change old object prefs into new associative arrays prefs
@@ -628,7 +646,7 @@ class prefs {
 		//
 
 		if (array_key_exists('currenthost', $_POST)) {
-			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable') as $p) {
+			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan', 'spotify_mark_unplayable', 'use_mopidy_search', 'clear_update_lock') as $p) {
 				if (array_key_exists($p, $_POST)) {
 					$_POST[$p] = true;
 				} else {
@@ -636,7 +654,7 @@ class prefs {
 				}
 			}
 			foreach ($_POST as $i => $value) {
-				logger::mark("INIT", "Setting Pref ".$i." to ".$value);
+				logger::info("INIT", "Setting Pref ".$i." to ".$value);
 				self::set_pref([$i => $value]);
 			}
 
@@ -648,7 +666,8 @@ class prefs {
 				'host' => self::$prefs['mpd_host'],
 				'port' => self::$prefs['mpd_port'],
 				'password' => self::$prefs['mpd_password'],
-				'socket' => self::$prefs['unix_socket']
+				'socket' => self::$prefs['unix_socket'],
+				'websocket_port' => self::$prefs['websocket_port']
 			];
 			$current_player = self::get_player_def();
 

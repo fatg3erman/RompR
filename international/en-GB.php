@@ -61,7 +61,6 @@ language::add_translations([
 	"config_lastfmusername" =>				"Last.FM Username",
 	"config_loginbutton" =>					"Login",
 	"config_scrobbling" =>					"Scrobble tracks to Last.FM",
-	"config_scrobblepercent" =>				"Percentage of track to play before scrobbling",
 	"config_autocorrect" =>					"Use Last.FM to auto-correct artist names etc",
 	"config_tagloved" =>					"Tag Loved Tracks With:",
 	"config_fontsize" =>					"FONT SIZE",
@@ -115,7 +114,7 @@ language::add_translations([
 	"label_wikipedia" =>					"Wikipedia",
 	"label_general_error" =>				"There was an error. Please refresh the page and try again",
 	"label_days" =>							"days",
-	"label_noalbums" =>						"No Individual Albums Returned By Search",
+	"label_noalbums" =>						"No Albums Found",
 	"label_duration" =>						"Duration",
 	"label_playererror" =>					"Player Error",
 	"button_playradio" =>					"Play",
@@ -213,12 +212,13 @@ language::add_translations([
 	"setup_advanced" =>						"Advanced options",
 	"setup_password" =>						"Password",
 	"setup_unixsocket" =>					"UNIX-domain socket",
+	"setup_websocket_port" =>				"Websocket Port",
 
 	// Intro Window
 
 	// Last.FM
 	"lastfm_loginwindow" =>					"Log In to Last.FM",
-	"lastfm_login1" =>						"Please click the button below to open the Last.FM website in a new tab. Enter your Last.FM login details if required then give RompЯ permission to access your account",
+	"lastfm_login1" =>						"Please click the link below to open the Last.FM website in a new tab. Enter your Last.FM login details if required then give RompЯ permission to access your account",
 	"lastfm_login2" =>						"You can close the new tab when you have finished but do not close this dialog!",
 	"lastfm_loginbutton" =>					"Click Here To Log In",
 	"lastfm_login3" =>						"Once you have logged in to Last.FM, click the OK button below to complete the process",
@@ -630,7 +630,7 @@ language::add_translations([
 	"label_dailymixdesc" =>					"A playlist just for you, a mix of tracks you know and new music you might love. Powered by Last.FM %s",
 	"label_luckydipdesc" =>					"A radio station just for you, playing a wider range of music by artists you know and artists you don't yet love. Powered by Last.FM %s",
 	"label_goonlogin" =>					"Log in to Last.FM and start scrobbling. RompЯ can then delight you with new music you're going to love!",
-	"label_nospotify" =>					"Use Mopidy with a Youtube Music subscription and start scrobbbling to Last.FM so RompЯ can delight you with new music you're going to love!",
+	"label_nospotify" =>					"Use Mopidy with a Spotify or Youtube Music subscription and start scrobbbling to Last.FM so RompЯ can delight you with new music you're going to love!",
 	"label_spotimixdesc" =>					"A radio station of suggestions based on your recent listening. Powered by RompЯ and Spotify",
 	"label_spotiswimdesc" =>				"Scanning the vastness of Spotify. Powered by RompЯ and Spotify",
 	"label_opmlexp" =>						"OPML Export",
@@ -708,8 +708,6 @@ language::add_translations([
 	"label_youtubedl" =>					"Download Audio",
 	"label_youtubedl_all" =>				"Download All Youtube Tracks",
 	"error_playergone" =>					"Player '%s' has stopped resonding!",
-	"label_mopidy_http" =>					"Mopidy HTTP Interface Port",
-	"info_mopidy_http" =>					"Optional, provides extra functionality with Mopidy",
 	"label_collinfo" =>						"Collection Information",
 	"label_incoll" =>						"This track is in the Music Collection",
 	"label_notincoll" =>					"This track is not in the Music Collection. Click to add it",
@@ -745,13 +743,12 @@ language::add_translations([
 	"label_name" =>							'Name',
 	"play_even_if_playing" =>				'Even If Already Playing',
 	"setup_mpd_special"	=>					'MPD Special Options',
-	"info_mpd_websocket" =>					"Optional, provides extra functionality with MPD",
-	"label_mpd_websocket" =>				'Port for MPD Websocket Server',
 	"label_ui_defaults" =>					'Defaults',
 	"button_save_defaults" =>				'Save As Default For All Browsers',
 	"label_recommenddesc" =>				'A Radio Station of recommendations based on your listening',
 	"label_rmixdesc" =>						'A Radio Station of music by artists you love and artists like them',
-	"config_stupid_round_corners" =>		'Padding at bottom of screen (to help on phones with round corners or controls that get in the way)'
+	"config_stupid_round_corners" =>		'Padding at bottom of screen (to help on phones with round corners or controls that get in the way)',
+	"config_clearfirst" =>					'Empty Play Queue before starting'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

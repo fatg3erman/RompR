@@ -84,7 +84,6 @@ class metaquery extends collection_base {
 		if (count($ids) > 0) {
 			logger::log('RELINKING', 'Got chunk of',count($ids),'spotify tracks to check');
 			$this->open_transaction();
-			$retval = true;
 			$trackinfo = spotify::track_checklinking(['id' => $ids, 'cache' => false], false);
 			$spoti_data = json_decode($trackinfo, true);
 			foreach ($tracks as $i => $my_track) {
@@ -93,40 +92,40 @@ class metaquery extends collection_base {
 				$spoti_track = $spoti_data['tracks'][$i];
 				if ($spoti_track) {
 					if ($spoti_track['is_playable']) {
-						logger::log('RELINKING', 'Track',$spoti_track['name'],'is playable');
+						logger::debug('RELINKING', 'Track',$spoti_track['name'],'is playable');
+						// If it's relinked I don't know if I'm supposed to use $spoti_track['uri']
+						// or $spoti_track['linked_from']['uri']. The latter is the same as the one
+						// we initially supplied, whereas the former is different BUT the docs say
+						// not to use the former.???
 						if (array_key_exists('linked_from', $spoti_track)) {
-							logger::log('RELINKING', '  Track',$spoti_track['name'],'is relinked',$uri, $spoti_track['linked_from']['uri']);
-							$uri = $spoti_track['linked_from']['uri'];
-						} else {
-							$uri = $spoti_track['uri'];
+							logger::log('RELINKING', 'Track',$spoti_track['name'],'is relinked from',$uri, 'to', $spoti_track['uri']);
+							logger::log('RELINKING', 'What does this even mean?');
 						}
+
+						$uri = $spoti_track['uri'];
 						$status = 2;
 					} else {
 						logger::log('RELINKING', 'Track',$spoti_track['name'],'is not playable');
 						if ($spoti_track['restrictions']) {
-							logger::log('RELINKING','  Restrictions',$spoti_track['restrictions']['reason']);
+							logger::debug('RELINKING','  Restrictions',$spoti_track['restrictions']['reason']);
 						}
 					}
 				} else {
-					logger::log('RELINKING', 'No data from spotify for TTindex',$my_track['TTindex']);
+					logger::debug('RELINKING', 'No data from spotify for TTindex',$my_track['TTindex']);
 				}
 				$this->updateCheckedLink($my_track['TTindex'], $uri, $status);
 			}
 			$this->close_transaction();
 		} else {
-			prefs::set_pref(['link_checker_is_running' => false]);
-			prefs::save();
+			logger::log('RELINKING', 'Got no more spotify tracks to check');
+			$retval = true;
 		}
 		return $retval;
 	}
 
 	public function resetlinkcheck() {
-		if (!prefs::get_pref('link_checker_is_running')) {
-			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2 OR LinkChecked = 4");
-			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3");
-			prefs::set_pref(['link_checker_is_running' => true]);
-			prefs::save();
-		}
+		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2 OR LinkChecked = 4", true);
+		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3", true);
 	}
 
 	public function getcharts($data) {
@@ -135,44 +134,6 @@ class metaquery extends collection_base {
 			'Albums' => $this->get_album_charts(),
 			'Tracks' => $this->get_track_charts()
 		];
-	}
-
-	public function get_recommendation_seeds($days, $limit, $top) {
-
-		// 1. Get a list of tracks played in the last $days days, sorted by their OVERALL popularity
-		$resultset = $this->generic_sql_query(
-			"SELECT SUM(Playcount) AS playtotal, Artistname, Title, Uri
-			FROM Playcounttable JOIN Tracktable USING (TTindex)
-			JOIN Artisttable USING (Artistindex)
-			WHERE ".$this->sql_two_weeks_include($days).
-			" AND Uri IS NOT NULL AND Uri NOT LIKE 'http%' AND isAudiobook = 0
-			GROUP BY Artistname, Title ORDER BY playtotal DESC LIMIT ".$limit);
-
-		// 2. Get a list of recently played tracks, ignoring popularity
-		// $result = generic_sql_query(
-		// 	"SELECT 0 AS playtotal, Artistname, Title, Uri
-		// 	FROM Playcounttable JOIN Tracktable USING (TTindex)
-		// 	JOIN Artisttable USING (Artistindex)
-		// 	WHERE ".sql_two_weeks_include(intval($days/2)).
-		// 	" AND Uri IS NOT NULL GROUP BY Artistindex ORDER BY ".database::SQL_RANDOM_SORT." LIMIT ".intval($limit/2));
-		// $resultset = array_merge($resultset, $result);
-
-		// 3. Get the top tracks overall
-		$tracks = $this->get_track_charts(intval($top), CHARTS_MUSIC_ONLY);
-		foreach ($tracks as $track) {
-			if ($track->Uri) {
-				$resultset[] = [
-					'playtotal' => $track->soundcloud_plays,
-					'Artistname' => $track->label_artist,
-					'Title' => $track->label_track,
-					'Uri' => $track->Uri
-				];
-			}
-		}
-
-		// 4. Randomise that list and return the first $top.
-		shuffle($resultset);
-		return array_slice($resultset,0,$top);
 	}
 
 	public function addToListenLater($album) {
@@ -191,11 +152,11 @@ class metaquery extends collection_base {
 	}
 
 	public function removeListenLater($id) {
-		$this->generic_sql_query("DELETE FROM AlbumsToListenTotable WHERE Listenindex = ".$id, true);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM AlbumsToListenTotable WHERE Listenindex = ?", $id);
 	}
 
 	public function updateCheckedLink($ttindex, $uri, $status) {
-		logger::trace("METADATA", "Updating Link Check For TTindex",$ttindex,$uri);
+		logger::debug("METADATA", "Updating Link Check For TTindex",$ttindex,$uri);
 		$this->sql_prepare_query(true, null, null, null,
 			"UPDATE Tracktable SET LinkChecked = ?, Uri = ? WHERE TTindex = ?", $status, $uri, $ttindex);
 	}
@@ -206,28 +167,6 @@ class metaquery extends collection_base {
 		} else {
 			return $album['id'];
 		}
-	}
-
-	private function get_track_charts($limit = 40, $include = null) {
-		// MIN(Uri) is simply because I needed an aggregate function and SQLite doesn't support ANY_VALUE.
-		// Use MAX(Playcount) because we can have multiple copies of the same track -
-		// they *should* all have the same Playcount but we can't be certain because of
-		// the vaguaries of track numbers with Youtube
-		$query = "SELECT
-			Artistname AS label_artist,
-			Albumname AS label_album,
-			Title AS label_track,
-			MAX(Playcount) AS soundcloud_plays,
-			MIN(Uri) AS Uri
-			FROM
-			Tracktable
-			JOIN Playcounttable USING (TTIndex)
-			JOIN Albumtable USING (Albumindex)
-			JOIN Artisttable USING (Artistindex)
-			".$this->charts_include_option($include)."
-			GROUP BY label_artist, label_album, label_track
-			ORDER BY soundcloud_plays DESC LIMIT ".$limit;
-		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
 	}
 
 	private function get_artist_charts() {
@@ -242,7 +181,7 @@ class metaquery extends collection_base {
 				JOIN Playcounttable USING (TTindex)
 				JOIN Albumtable USING (albumindex)
 				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-				".$this->charts_include_option()."
+				{$this->charts_include_option()}
 				GROUP BY Artistname, Albumname, Title
 			) AS nodupes
 			GROUP BY label_artist
@@ -264,34 +203,12 @@ class metaquery extends collection_base {
 				JOIN Playcounttable USING (TTindex)
 				JOIN Albumtable USING (albumindex)
 				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-				".$this->charts_include_option()."
+				{$this->charts_include_option()}
 				GROUP BY Artistname, Albumname, Title
 			) AS nodupes
 			GROUP BY label_artist, label_album
 			ORDER BY soundcloud_plays DESC LIMIT 40";
 		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
-	}
-
-	private function charts_include_option($include = null) {
-		if ($include == null)
-			$include = prefs::get_pref('chartoption');
-		switch ($include) {
-			case CHARTS_INCLUDE_ALL:
-				return '';
-				break;
-
-			case CHARTS_MUSIC_ONLY:
-				return ' WHERE isAudiobook = 0 AND Hidden = 0 ';
-				break;
-
-			case CHARTS_AUDIOBOOKS_ONLY:
-				return ' WHERE isAudiobook > 0 AND Hidden = 0 ';
-				break;
-
-			case CHARTS_INTERNET_ONLY:
-				return ' WHERE Hidden = 1 ';
-				break;
-		}
 	}
 
 }

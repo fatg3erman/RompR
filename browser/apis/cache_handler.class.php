@@ -40,7 +40,7 @@ class cache_handler extends url_downloader {
 			} else {
 				$header = '500 '.http_status_code_string(500);
 			}
-			logger::warn("CACHE HANDLER", "  ",$header);
+			logger::warn("CACHE HANDLER",$header);
 			// Sometimes we do get data returned by APIs even if there was an error
 			// If that data exists, return it else return our standard array('error' => value)
 			if ($this->get_data() != '') {

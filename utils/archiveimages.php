@@ -33,10 +33,12 @@ foreach ($r as $obj) {
 				$out = $albumpath.'/'.basename($obj->Image);
 				print "Archiving Image ".$img.' to '.$out."\n";
 				$filename = pathinfo($img, PATHINFO_FILENAME);
-				$current = glob($albumpath.'/'.$filename.'.*');
+				$current = glob($albumpath.'/*.jpg');
 				foreach ($current as $f) {
-					print '  Removing '.$f."\n";
-					unlink($f);
+					if (strlen(basename($f)) == 36) {
+						print '  Removing '.$f."\n";
+						unlink($f);
+					}
 				}
 				copy($img, $out);
 			}

@@ -312,6 +312,17 @@ function get_file_extension(filename) {
 	return poop2;
 }
 
+function uiLoginBind() {
+	if (!prefs.lastfm_logged_in) {
+		$('.lastfmlogin-required').removeClass('notenabled').addClass('notenabled');
+		$('input[name="lfmuser"]').val('');
+		$('#lastfmloginbutton').off(prefs.click_event).on(prefs.click_event, lastfm.startlogin).html(language.gettext('config_loginbutton')).removeClass('notenabled').addClass('notenabled');
+	} else {
+		$('.lastfmlogin-required').removeClass('notenabled');
+		$('#lastfmloginbutton').off(prefs.click_event).on(prefs.click_event, lastfm.logout).html(language.gettext('button_logout')).removeClass('notenabled');
+	}
+}
+
 function get_css_variable(name) {
 	return getComputedStyle(document.documentElement).getPropertyValue(name);
 }
@@ -322,6 +333,10 @@ function set_css_variable(name, value) {
 
 function unset_css_variable(name) {
 	document.documentElement.style.removeProperty(name);
+}
+
+function data_from_source(script_name) {
+    return JSON.parse($('script[name="'+script_name+'"]').text());
 }
 
 // Warn if overriding existing method

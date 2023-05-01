@@ -49,7 +49,7 @@ var alarmclock = function() {
 			if (notifier == null) {
 				notifier = infobar.permnotify(message, 'icon-alarm-on');
 				$('.notify-icon-'+notifier).attr('name', alarms[alarm_running].Alarmindex).addClass('clickicon');
-				$('.notify-icon-'+notifier).on('click', function(event) {
+				$('.notify-icon-'+notifier).on(prefs.click_event, function(event) {
 					event.stopPropagation();
 					var element = $(event.target);
 					alarmclock.enableAlarm(event, element);
@@ -57,7 +57,7 @@ var alarmclock = function() {
 			}
 		} else {
 			if (notifier !== null) {
-				$('.notify-icon-'+notifier).off('click');
+				$('.notify-icon-'+notifier).off(prefs.click_event);
 				infobar.removenotify(notifier);
 				notifier = null;
 			}
@@ -254,12 +254,8 @@ var alarmclock = function() {
 				alarm_editor.close(null);
 
 			alarm_editor = new popup({
-				css: {
-					width: 500,
-				},
+				width: 500,
 				title: 'Alarm For Player '+prefs.currenthost,
-				fitheight: true,
-				hasscrollbar: true,
 				atmousepos: true,
 				mousevent: event
 			});
@@ -317,7 +313,7 @@ var alarmclock = function() {
 			var alarmdropper = $('<div>', {id: 'alarmdropper', rompr_index: ourindex, class: 'alarmdropempty canbefaded'}).appendTo(ropebox);
 
 			if (alarm.ItemToPlay == '') {
-				let text_key = (uiHelper.is_touch_ui) ? 'label_alarm_to_play_click' : 'label_alarm_to_play';
+				let text_key = (prefs.use_mouse_interface) ? 'label_alarm_to_play' : 'label_alarm_to_play_click';
 				alarmdropper.html('<div class="containerbox menuitem fullwidth" style="height:100%"><div class="expand textcentre">'+language.gettext(text_key)+'</div></div>');
 			} else {
 				putAlarmDropPlayItem(alarm.ItemToPlay, alarmdropper);
@@ -334,7 +330,7 @@ var alarmclock = function() {
 			editor_popup.append($('<input>', {type: 'hidden', class: 'alarmvalue', name: 'ItemToPlay', value: alarm.ItemToPlay}));
 			editor_popup.append($('<input>', {type: 'hidden', class: 'alarmvalue', name: 'PlayCommands', value: alarm.PlayCommands}));
 
-			editor_popup.on('click', 'label', alarmclock.labelclick);
+			editor_popup.on(prefs.click_event, 'label', alarmclock.labelclick);
 
 			alarm_editor.addCloseButton('Save', alarmclock.close_editor);
 			if (alarm.Alarmindex != 'NEW')
@@ -425,7 +421,7 @@ var alarmclock = function() {
 			$('#alarm_ramptime').html(prefs.alarm_ramptime);
 			$('#alarm_snoozetime').html(prefs.alarm_snoozetime);
 
-			$('#alarmpanel').on('click', function(event) {
+			$('#alarmpanel').on(prefs.click_event, function(event) {
 				// We need to use a single click event handler for the whole panel:
 				// We must prevent propagation of clicks anywhere on the panel, otherwise it will close
 				event.stopPropagation();

@@ -150,7 +150,7 @@ class ui_elements {
 		// Menu Button
 		if ($data['ttid']) {
 			$button_class = "icon-menu inline-icon fixed clickable clickicon invisibleicon clicktrackmenu spinable";
-			if ($data['lm'] === null) {
+			if ($data['lm'] === null && $data['isSearchResult'] < 2) {
 				$button_class .= ' clickremovedb';
 			}
 			// foreach ($bookmarks as $book) {
@@ -179,10 +179,9 @@ class ui_elements {
 		return self::artistHeader($id, $name);
 	}
 
-	// public static function noAlbumsHeader() {
-	// 	print '<div class="playlistrow2" style="padding-left:64px">'.
-	// 		language::gettext("label_noalbums").'</div>';
-	// }
+	public static function noAlbumsHeader() {
+		print '<div class="playlistrow2" style="padding-left:64px">'.language::gettext("label_noalbums").'</div>';
+	}
 
 	//
 	// $why is collection key - eg 'a', 'b' etc
@@ -207,7 +206,7 @@ class ui_elements {
 		}
 		$html = '';
 		if ($det['buttons']) {
-			$html .= '<div class="containerbox wrap album-play-controls">';
+			$html .= '<div class="containerbox wrap album-play-controls vertical-centre">';
 			if ($det['AlbumUri']) {
 				$albumuri = rawurlencode($det['AlbumUri']);
 				if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
@@ -603,9 +602,12 @@ class ui_elements {
 	public static function pluginplaylists_base($opts) {
 		$opts = array_merge(self::DEFAULT_PLUGINPLAYLISTS, $opts);
 		print self::ui_config_header([
+			'lefticon' => 'icon-menu clickicon fixed openmenu',
+			'lefticon_name' => 'smartradiobuttons',
 			'label' => 'label_pluginplaylists',
 			'icon_size' => 'smallicon'
 		]);
+		uibits::smartradio_options_box();
 		if (prefs::get_pref('player_backend') == "mopidy") {
 			print self::ui_config_header([
 				'label' => 'label_mfyc'
@@ -630,9 +632,6 @@ class ui_elements {
 		}
 		/* Music From Everywhere */
 		print '<div class="'.$opts['class'].'" id="pluginplaylists_everywhere"></div>';
-		/* Slidery stuff (to be moved) */
-		print '<div class="clearfix containerbox vertical" id="pluginplaylists_crazy"></div>';
-
 	}
 
 	public static function main_play_buttons() {
@@ -665,6 +664,12 @@ class ui_elements {
 		self::ui_checkbox(['id' => 'notvabydate', 'label' => 'config_notvabydate']);
 		self::ui_config_button(['label' => 'config_updatenow', 'name' => 'donkeykong']);
 
+		print'</div>';
+	}
+
+	public static function smartradio_options_box() {
+		print '<div id="smartradiobuttons" class="invisible toggledown is-coverable">';
+		self::ui_checkbox(['id' => 'smartradio_clearfirst', 'label' => 'config_clearfirst']);
 		print'</div>';
 	}
 

@@ -1,7 +1,7 @@
 <?php
 $currenthost = prefs::currenthost();
 $pdef = prefs::get_player_def();
-logger::log('SETUP', 'Initial currenthost is', $currenthost);
+logger::mark('SETUP', 'Initial currenthost is', $currenthost);
 // Calling set_pref(['currenthost' => null]) sets currenthost back to the Default value
 // of Default. This means that when we load and do check_setup_values() it doesn't
 // get changed to what we set it to here. We need to actually clear the cookie completely
@@ -9,7 +9,7 @@ logger::log('SETUP', 'Initial currenthost is', $currenthost);
 setcookie('currenthost', '', ['expires' => 1, 'path' => '/', 'SameSite' => 'Lax']);
 prefs::set_pref(['player_backend' => null]);
 prefs::set_pref(['skin' => 'desktop']);
-logger::log("SETUP", "Displaying Setup Screen");
+logger::info("SETUP", "Displaying Setup Screen");
 print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -28,9 +28,11 @@ print '<link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png
 <link rel="shortcut icon" sizes="48x48" href="newimages/favicon-48.png" />
 <link rel="shortcut icon" sizes="32x32" href="newimages/favicon-32.png" />
 <link rel="shortcut icon" sizes="16x16" href="newimages/favicon-16.png" />
-<script type="text/javascript" src="jquery/jquery-3.6.0.min.js"></script>
-<script type="text/javascript" src="jquery/jquery-migrate-3.3.2.min.js"></script>
-<script type="text/javascript" src="ui/setupbits.js"></script>
+<script type="text/javascript" src="jquery/jquery-3.6.4.min.js"></script>'."\n";
+
+// print '<script type="text/javascript" src="jquery/jquery-migrate-3.3.2.min.js"></script>'."\n";
+
+print '<script type="text/javascript" src="ui/setupbits.js?setupversion='.time().'"></script>
 <style>
 input[type=text] { width: 50% }
 input[type=submit] { width: 40% }
@@ -73,13 +75,11 @@ print '<p>'.language::gettext("setup_password").'<br>';
 print '<input type="text" name="mpd_password" value="'.$pdef['password'].'" /></p>';
 print '<p>'.language::gettext("setup_unixsocket").'<br>';
 print '<input type="text" name="unix_socket" value="'.$pdef['socket'].'" /></p>';
+print '<p>'.language::gettext("setup_websocket_port").'<br>';
+print '<input type="text" name="websocket_port" value="'.$pdef['websocket_port'].'" /></p>';
 
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("setup_mopidy_scan_title").'</h3>';
-
-print '<p>'.language::gettext("label_mopidy_http").'</p>';
-print '<p class="tiny">'.language::gettext("info_mopidy_http").'</p>';
-print '<input type="text" name="http_port_for_mopidy" value="'.prefs::get_pref('http_port_for_mopidy').'" /></p>';
 
 print '<div class="styledinputs"><input id="mopscan" type="checkbox" name="use_mopidy_scan" ';
 if (prefs::get_pref('use_mopidy_scan')) {
@@ -91,18 +91,15 @@ print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy#scanning-
 print '<div class="styledinputs"><input id="spotifyunplayable" type="checkbox" name="spotify_mark_unplayable" ';
 print '><label for="spotifyunplayable">Mark All Spotify Tracks as Unplayable and add them to Your Wishlist</label></div>';
 
-
-print '<hr class="setup_screen_options" />';
-print '<h3>'.language::gettext("setup_mpd_special").'</h3>';
-
-print '<p>'.language::gettext("label_mpd_websocket").'</p>';
-print '<p class="tiny">'.language::gettext("info_mpd_websocket").'</p>';
-print '<input type="text" name="mpd_websocket_port" value="'.prefs::get_pref('mpd_websocket_port').'" /></p>';
-print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-MPD" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
-
+print '<div class="styledinputs"><input id="mopidysearch" type="checkbox" name="use_mopidy_search" ';
+if (prefs::get_pref('use_mopidy_search')) {
+	print " checked";
+}
+print '><label for="mopidysearch">Use Mopidy HTTP interface for search</label></div>';
 
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("label_generalsettings").'</h3>';
+
 print '<div class="styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
 if (prefs::get_pref('cleanalbumimages')) {
 	print " checked";
@@ -117,6 +114,10 @@ if (prefs::get_pref('do_not_show_prefs')) {
 print '><label for="dsp">Do not show preferences panel on the interface</label></div>';
 print '<p class="tiny">This will stop people messing with your configuration, but also with theirs</p>';
 
+print '<div class="styledinputs"><input id="cul" type="checkbox" name="clear_update_lock" />';
+print '<label for="cul">Clear Update Lock</label></div>';
+print '<p class="tiny">If your Collection Update keeps saying Already Updating Collection, enable this, once</p>';
+
 print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext('config_google_credentials').'</h3>';
 print '<p class="tiny">To use Bing Image Search you need to create an API key</p>';
@@ -130,13 +131,14 @@ print '<div class="styledinputs"><input id="dblite" type="radio" name="collectio
 if (prefs::get_pref('collection_type') == "sqlite") {
 	print " checked";
 }
-print '><label for="dblite">Lite Database Collection</label></div>';
+print '><label for="dblite">SQLite Database Collection</label></div>';
 print '<div class="styledinputs"><input id="dbsql" type="radio" name="collection_type" value="mysql"';
 if (prefs::get_pref('collection_type') == "mysql") {
 	print " checked";
 }
-print '><label for="dbsql">Full Database Collection</input></label>';
-print '<p class="tiny">Requires MySQL Server:</p>';
+print '><label for="dbsql">MySQL Database Collection</input></label>';
+print '<p class="tiny">You almost certainly do not need this, SQLite is almost always faster</p>';
+print '<p>MySQL Server Connection Info</p>';
 print '<p>Server<br><input type="text" name="mysql_host" value="'.
 	prefs::get_pref('mysql_host').'" /></p>'."\n";
 print '<p>Port or UNIX Socket<br><input type="text" name="mysql_port" value="'.

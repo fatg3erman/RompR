@@ -3,7 +3,7 @@
 class collection_radio extends musicCollection {
 
 	public function preparePlaylist() {
-		$this->generic_sql_query('UPDATE Tracktable SET usedInPlaylist = 0 WHERE usedInPlaylist = 1');
+		$this->generic_sql_query('UPDATE Tracktable SET usedInPlaylist = 0 WHERE usedInPlaylist = 1', true);
 		$this->init_random_albums();
 	}
 
@@ -164,7 +164,7 @@ class collection_radio extends musicCollection {
 			$values = explode(',', $rule['value']);
 			$sqlstring .= '(';
 			foreach ($values as $j => $value) {
-				logger::log('CUSTOMRADIO',$rule['db_key'],$value);
+				logger::trace('CUSTOMRADIO',$rule['db_key'],$value);
 				if ($j > 0) {
 					switch ($rule['option']) {
 						case RADIO_RULE_OPTIONS_STRING_IS:
@@ -256,10 +256,10 @@ class collection_radio extends musicCollection {
 		$tries = 0;
 		$rndstr = $random ? " ORDER BY ".self::SQL_RANDOM_SORT : " ORDER BY randomSort, Albumindex, Disc, TrackNo";
 		$sqlstring .= ' '.$rndstr.' LIMIT '.$limit;
-		logger::log('GET TRACKS', $sqlstring);
+		logger::debug('GET TRACKS', $sqlstring);
 		if ($tags) {
 			foreach ($tags as $t) {
-				logger::log('GETALLURILS', '  Param :',$t);
+				logger::debug('GETALLURILS', '  Param :',$t);
 			}
 		}
 		do {

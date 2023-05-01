@@ -177,10 +177,15 @@ var info_wikipedia = function() {
 				return {
 
 					populate: async function() {
-						if (typeof artistmeta.wikipedia.layout == 'undefined')
-							artistmeta.wikipedia.layout = new info_html_layout({title: artistmeta.name, type: 'artist', source: me});
+						if (typeof artistmeta.wikipedia.layout == 'undefined') {
+							if (artistmeta.name == '') {
+								artistmeta.wikipedia.layout = new info_layout_empty();
+							} else {
+								artistmeta.wikipedia.layout = new info_html_layout({title: artistmeta.name, type: 'artist', source: me});
+							}
+						}
 
-						if (artistmeta.wikipedia.link == '')
+						if (artistmeta.wikipedia.link == '' || artistmeta.name == '')
 							return;
 
 						if (artistmeta.wikipedia.link === null) {
@@ -289,10 +294,15 @@ var info_wikipedia = function() {
 				return {
 
 					populate: async function() {
-						if (typeof trackmeta.wikipedia.layout == 'undefined')
-							trackmeta.wikipedia.layout = new info_html_layout({title: trackmeta.name, type: 'track', source: me});
+						if (typeof trackmeta.wikipedia.layout == 'undefined') {
+							if (trackmeta.name == '') {
+								trackmeta.wikipedia.layout = new info_layout_empty();
+							} else {
+								trackmeta.wikipedia.layout = new info_html_layout({title: trackmeta.name, type: 'track', source: me});
+							}
+						}
 
-						if (trackmeta.wikipedia.link == '')
+						if (trackmeta.wikipedia.link == '' || trackmeta.name == '')
 							return;
 
 						if (trackmeta.wikipedia.link === null) {

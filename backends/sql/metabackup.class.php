@@ -40,7 +40,7 @@ class metabackup extends metaDatabase {
 		$dirname = $this->check_backup_dir();
 
 		foreach (self::BACKUP_MAP as $title => $file) {
-			logger::log("BACKEND", "Backing up",$title);
+			logger::mark("BACKEND", "Backing up",$title);
 			$fn = 'get_'.str_replace(' ', '', $title);
 			$stats[$title] = $this->$fn($dirname.$file);
 		}
@@ -100,6 +100,7 @@ class metabackup extends metaDatabase {
 				$this->$fn($filename, $monitor, $translate);
 			}
 		}
+		$this->close_transaction();
 
 		fwrite($monitor, "\n<b>Cleaning Up...</b>\n");
 		// Now... we may have restored data on tracks that were previously local and now aren't there any more.
@@ -110,12 +111,10 @@ class metabackup extends metaDatabase {
 			$this->generic_sql_query("DELETE FROM Tracktable WHERE Uri LIKE 'local:%' AND LastModified IS NULL AND Hidden = 0", true);
 		}
 
-		$this->generic_sql_query("UPDATE Albumtable SET domain = 'spotify' WHERE AlbumUri LIKE 'spotify:%'");
-		$this->check_transaction();
+		$this->generic_sql_query("UPDATE Albumtable SET domain = 'spotify' WHERE AlbumUri LIKE 'spotify:%'", true);
 		$this->resetallsyncdata();
 		$this->remove_cruft();
 		$this->update_track_stats();
-		$this->close_transaction();
 		fwrite($monitor, "\n \n");
 		fclose($monitor);
 	}
@@ -235,7 +234,7 @@ class metabackup extends metaDatabase {
 
 		$tracks = $this->generic_sql_query(
 			"SELECT
-				".database::SQL_TAG_CONCAT."AS tag,
+				{$this->get_constant('self::SQL_TAG_CONCAT')} AS tag,
 				tr.Title AS Title,
 				tr.TrackNo AS Track,
 				tr.Duration AS Time,
@@ -256,7 +255,8 @@ class metabackup extends metaDatabase {
 				JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
 				JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex
 			WHERE tr.Hidden = 0 AND tr.isSearchResult < 2
-			GROUP BY tr.TTindex");
+			GROUP BY tr.TTindex"
+		);
 
 		file_put_contents($file, json_encode($tracks));
 
@@ -495,7 +495,7 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_Bookmarks($file, &$monitor, $translate) {
-		$this->generic_sql_query('DELETE FROM Bookmarktable WHERE Bookmark >= 0');
+		$this->generic_sql_query('DELETE FROM Bookmarktable WHERE Bookmark >= 0', true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			if ($translate)
@@ -510,8 +510,8 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_Podcasts($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM PodcastTracktable WHERE PODTrackindex IS NOT NULL");
-		$this->generic_sql_query("DELETE FROM Podcasttable WHERE PODindex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM PodcastTracktable WHERE PODTrackindex IS NOT NULL", true);
+		$this->generic_sql_query("DELETE FROM Podcasttable WHERE PODindex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			if (array_key_exists('LastUpdate', $trackdata))
@@ -525,7 +525,7 @@ class metabackup extends metaDatabase {
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			if ($trackdata['Downloaded'] == 1 && !file_exists('.'.$trackdata['Localfilename'])) {
-				logger::log('BACKUPS', 'Podcast track',$trackdata['Title'],'has been removed');
+				logger::trace('BACKUPS', 'Podcast track',$trackdata['Title'],'has been removed');
 				$trackdata['Downloaded'] = 0;
 				$trackdata['Localfilename'] = null;
 			}
@@ -553,8 +553,8 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_Radio($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM RadioStationtable WHERE Stationindex IS NOT NULL");
-		$this->generic_sql_query("DELETE FROM RadioTracktable WHERE Trackindex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM RadioStationtable WHERE Stationindex IS NOT NULL", true);
+		$this->generic_sql_query("DELETE FROM RadioTracktable WHERE Trackindex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			$this->generic_restore($trackdata, 'RadioStationtable');
@@ -572,13 +572,13 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_Images($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM BackgroundImageTable WHERE BgImageIndex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM BackgroundImageTable WHERE BgImageIndex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			if (file_exists($trackdata['Filename'])) {
 				$this->generic_restore($trackdata, 'BackgroundImageTable');
 			} else {
-				logger::log('BACKUPS', 'Background Image',$trackdata['Filename'],'has been removed');
+				logger::trace('BACKUPS', 'Background Image',$trackdata['Filename'],'has been removed');
 			}
 			$progress = round(($i/count($tracks))*100);
 			fwrite($monitor, "\n<b>Restoring Background Images : </b>".$progress."%\n");
@@ -586,7 +586,7 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_WishlistSources($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			$this->generic_restore($trackdata, 'WishlistSourcetable');
@@ -596,7 +596,7 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_AlbumsToListenTo($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM AlbumsToListenTotable WHERE Listenindex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM AlbumsToListenTotable WHERE Listenindex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			$this->generic_restore($trackdata, 'AlbumsToListenTotable');
@@ -606,7 +606,7 @@ class metabackup extends metaDatabase {
 	}
 
 	private function restore_Alarms($file, &$monitor, $translate) {
-		$this->generic_sql_query("DELETE FROM Alarms WHERE Alarmindex IS NOT NULL");
+		$this->generic_sql_query("DELETE FROM Alarms WHERE Alarmindex IS NOT NULL", true);
 		$tracks = json_decode(file_get_contents($file), true);
 		foreach ($tracks as $i => $trackdata) {
 			$this->generic_restore($trackdata, 'Alarms');

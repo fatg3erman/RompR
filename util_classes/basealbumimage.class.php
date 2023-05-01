@@ -13,6 +13,19 @@ class baseAlbumImage {
 
 	// Remember to keep albumart_translator in uifunctions.js in step with this
 
+	// We can no longer use dynamicm properties so we have to declare all these here.
+	public $artist;
+	public $album;
+	public $key;
+	public $source;
+	public $file;
+	public $base64data;
+	public $mbid;
+	public $albumpath;
+	public $albumuri;
+	public $trackuri;
+	public $dbimage;
+
 	public function __construct($params) {
 		foreach (array('artist', 'album', 'key', 'source', 'file', 'base64data', 'mbid', 'albumpath', 'albumuri', 'trackuri', 'dbimage') as $param) {
 			if (array_key_exists($param, $params) && $params[$param] != ''  && $params[$param] !== null) {
@@ -46,7 +59,7 @@ class baseAlbumImage {
 			if ($this->key === null)
 				$this->key = $this->make_image_key();
 		} else if ($this->key !== null) {
-			logger::log('ALBUMIMAGE', 'Image Info From Database');
+			logger::debug('ALBUMIMAGE', 'Image Info From Database');
 			$this->image_info_from_database();
 		} else {
 			$this->images = $this->image_info_from_album_info();
@@ -59,7 +72,8 @@ class baseAlbumImage {
 
 	private function image_exists($image) {
 		logger::core("ALBUMIMAGE", "Checking for existence of file ".$image);
-		return file_exists($image);
+		// is_file() is way quicker than file_exists()
+		return is_file($image);
 	}
 
 	public function get_image_if_exists($size = 'small') {
@@ -252,7 +266,7 @@ class baseAlbumImage {
 		if (substr($this->images['small'], 0, 4) == 'http' || substr($this->images['small'], 0, 14) == 'getRemoteImage')
 			return false;
 
-		if (!file_exists($this->images['small']))
+		if (!is_file($this->images['small']))
 			return true;
 
 		return false;

@@ -6,7 +6,7 @@ include ("getid3/getid3.php");
 
 $image = '';
 $retval = ['ImgKey' => false];
-logger::log('PLONKINGTON', 'Checking file',$_REQUEST['file']);
+logger::mark('PLONKINGTON', 'Checking file',$_REQUEST['file']);
 
 if ($_REQUEST['type'] == 'podcast') {
 	prefs::$database = new poDatabase();

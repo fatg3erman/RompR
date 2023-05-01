@@ -26,13 +26,13 @@ check_php_installation();
 //
 
 if (array_key_exists('setup', $_REQUEST)) {
-	logger::log('INIT', 'User asked for Setup Screen');
+	logger::mark('INIT', 'User asked for Setup Screen');
 	$title = language::gettext("setup_request");
 	include("setupscreen.php");
 	exit(0);
 }
 
-logger::log('INIT', 'Got Past Setup Bit');
+logger::debug('INIT', 'Got Past Setup Bit');
 
 //
 // Check to see if a specific player has been requested in the URL
@@ -57,17 +57,26 @@ upgrade_old_collections();
 // See if we can use the SQL backend
 //
 
-logger::log('INIT', 'Checking Database Connection');
+logger::mark('INIT', 'Checking Database Connection');
 
 if (prefs::get_pref('collection_type') === null) {
-	$success = data_base::probe_database();
+	list($success, $error_message) = data_base::probe_database();
 	if ($success) {
 		set_include_path('backends/sql/'.prefs::get_pref('collection_type').PATH_SEPARATOR.get_include_path());
 	} else {
-		sql_init_fail("No Database Connection Was Possible");
+		sql_init_fail($error_message);
 	}
 }
 prefs::$database = new init_database();
+
+// if (prefs::$database->test_error_handling() === false) {
+// 	logger::info('INIT', 'Got database error');
+// 	exit(0);
+// } else {
+// 	logger::info('INIT', 'Did NOT Got database error');
+// 	exit(0);
+// }
+
 list($result, $message) = prefs::$database->check_sql_tables();
 if ($result == false) {
 	sql_init_fail($message);
@@ -81,17 +90,29 @@ if (array_key_exists('cacheclean', $_REQUEST)) {
 	exit(0);
 }
 
-
+//
+// Do some initialisation of the backend directories. Must do this now,
+// since we almost immediately start calling spotify:: methods which require
+// cache_handler, so these directories need to exist
+//
+include ("includes/firstrun.php");
 
 //
 // Set the country code from the browser (though this may not be accurate)
-// - unless the user has already set it. Note, this is the lastfm country
+// - unless the user has already set it. Note, this is the Spotify 'market'
 // code, not the interface language.
-// Later on we set it using geoip.
 //
 
 if (!prefs::get_pref('country_userset')) {
-	prefs::set_pref(['lastfm_country_code' => language::get_browser_country()]);
+	logger::info('INIT', 'Country Code not sent by user');
+	$browser_country = language::get_browser_country();
+	$markets = spotify::get_markets();
+	if (in_array($browser_country, $markets)) {
+		logger::info('INIT', 'Browser gave us',$browser_country,'which is valid for Spotify');
+		prefs::set_pref(['lastfm_country_code' => $browser_country]);
+	} else {
+		logger::info('INIT', 'Browser gave us',$browser_country,'which is NOT valid for Spotify');
+	}
 }
 
 logger::debug("INIT", $_SERVER['SCRIPT_FILENAME']);
@@ -103,9 +124,9 @@ logger::debug("INIT", $_SERVER['PHP_SELF']);
 
 logger::mark('INIT','Attempting to connect to player',prefs::currenthost());
 if (array_key_exists('player_backend', $_COOKIE) && $_COOKIE['player_backend'] != '') {
-	logger::mark('INIT','Player backend cookie is',$_COOKIE['player_backend']);
+	logger::info('INIT','Player backend cookie is',$_COOKIE['player_backend']);
 } else {
-	logger::mark('INIT','Player backend cookie is not set');
+	logger::info('INIT','Player backend cookie is not set');
 }
 $player = new base_mpd_player();
 if ($player->is_connected()) {
@@ -138,6 +159,10 @@ $player = new player();
 // and it might have changed since last time we opened the page
 $player->probe_websocket();
 
+// This table has to exist because it's used in get_album_uri() but we
+// can't create it until we know which player we're connected to.
+prefs::$database->create_radio_uri_table(false);
+
 //
 // Check that the Backend Daemon is running and (re)start if it necessary.
 // Add ?force_restart=1 to the URL to force the Daemon to Restart
@@ -148,11 +173,6 @@ check_backend_daemon();
 prefs::save();
 
 prefs::refresh_cookies();
-
-//
-// Do some initialisation of the backend directories
-//
-include ("includes/firstrun.php");
 
 logger::log("INIT", "Initialisation done. Let's Boogie!");
 logger::mark("CREATING PAGE", "******++++++======------******------======++++++******");
@@ -179,6 +199,8 @@ print '<script type="application/json" name="cover_sizes">'."\n".json_encode(COV
 print '<script type="application/json" name="default_player">'."\n".json_encode(prefs::DEFAULT_PLAYER)."\n</script>\n";
 print '<script type="application/json" name="player_connection_params">'."\n".json_encode(prefs::PLAYER_CONNECTION_PARAMS)."\n</script>\n";
 print '<script type="application/json" name="browser_prefs">'."\n".json_encode(array_keys(prefs::BROWSER_PREFS))."\n</script>\n";
+print '<script type="application/json" name="mopidy_collection_folders">'."\n".json_encode(MOPIDY_COLLECTION_FOLDERS)."\n</script>\n";
+print '<script type="application/json" name="player_uri_schemes">'."\n".json_encode($player->get_uri_handlers())."\n</script>\n";
 print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string."&skin=".prefs::skin().'" />'."\n";
 print '<link rel="stylesheet" type="text/css" href="css/scrollbars/jquery.mCustomScrollbar.css?version='.$version_string.'" />'."\n";
 
@@ -187,9 +209,8 @@ print '<link rel="stylesheet" type="text/css" href="css/scrollbars/jquery.mCusto
 <?php
 logger::mark("INIT", "Reconfiguring the Forward Deflector Array");
 $scripts = array(
-	"jquery/jquery-3.6.0.min.js",
-	// "jquery/jquery-migrate-3.3.2.js",
-	"jquery/jquery-migrate-3.3.2.min.js",
+	"jquery/jquery-3.6.4.min.js",
+	// "jquery/jquery-migrate-3.3.2.min.js",
 	"ui/functions.js",
 	"ui/prefs.js",
 	"ui/language.php",
@@ -266,7 +287,7 @@ foreach($inc as $i) {
 if (prefs::get_pref('load_plugins_at_loadtime')) {
 	$inc = glob("plugins/code/*.js");
 	foreach($inc as $i) {
-		logger::log("INIT", "DEVELOPMENT MODE : Including Plugin ".$i);
+		logger::info("INIT", "DEVELOPMENT MODE : Including Plugin ".$i);
 		print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 	}
 }

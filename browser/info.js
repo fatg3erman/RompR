@@ -60,7 +60,7 @@ var browser = function() {
 				displaypointer--;
 		}
 
-		var hpanel = $('#historypanel').empty().off('click');
+		var hpanel = $('#historypanel').empty().off(prefs.click_event);
 		var t = $('<table>', {class: 'histable', width: '100%'}).appendTo('#historypanel');
 		history.forEach(function(h, i) {
 			var r = $('<tr>', {class: 'top clickable clickicon', name: i}).appendTo(t);
@@ -75,7 +75,7 @@ var browser = function() {
 		});
 		browser.update_forward_back_buttons();
 
-		hpanel.on('click', historyClicked);
+		hpanel.on(prefs.click_event, historyClicked);
 
 	}
 
@@ -186,15 +186,15 @@ var browser = function() {
 
 		update_forward_back_buttons: function() {
 			if (displaypointer <= 0) {
-				$("#backbutton").off('click').addClass('button-disabled');
+				$("#backbutton").off(prefs.click_event).addClass('button-disabled');
 			} else if ($("#backbutton").hasClass('button-disabled')) {
-				$("#backbutton").on('click', browser.back).removeClass('button-disabled');
+				$("#backbutton").on(prefs.click_event, browser.back).removeClass('button-disabled');
 			}
 
 			if (history.length == 0 || displaypointer == history.length - 1) {
-				$("#forwardbutton").off('click').addClass('button-disabled');
+				$("#forwardbutton").off(prefs.click_event).addClass('button-disabled');
 			} else if ($("#forwardbutton").hasClass('button-disabled')) {
-				$("#forwardbutton").on('click', browser.forward).removeClass('button-disabled');
+				$("#forwardbutton").on(prefs.click_event, browser.forward).removeClass('button-disabled');
 			}
 
 			$('#historypanel').find('tr.current').removeClass('current');
@@ -261,9 +261,9 @@ var browser = function() {
 			displayer.html(browser.info_banner(opts, false, true));
 			displayer.append($('<div>', {id: id+'foldup', class: 'extraplugin-foldup'}));
 			panelclosed[id] = false;
-			displayer.off('click');
+			displayer.off(prefs.click_event);
 			extraPlugins[id] = { div: displayer, parent: parent };
-			displayer.on('click', '.infoclick', onBrowserClicked);
+			displayer.on(prefs.click_event, '.infoclick', onBrowserClicked);
 			return displayer;
 		},
 
@@ -330,6 +330,35 @@ var browser = function() {
 				params.gutter = masonry_gutter;
 				panel.masonry(params);
 				panel.addClass('masonry-initialised');
+			}
+		},
+
+		setup_radio_nondisplay_panel: function(collection, artistmeta, albummeta, trackmeta, me, playlistinfo) {
+			if (typeof artistmeta[me].layout == 'undefined') {
+				artistmeta[me].layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
+				if (artistmeta.name == '' && trackmeta.name == '') {
+					artistmeta[me].populated = true;
+					collection.artist.doBrowserUpdate({error: 'There is no Artist to display information for'});
+					artistmeta[me].layout.finish(null, 'No Artist');
+				}
+			}
+
+			if (typeof albummeta[me].layout == 'undefined') {
+				if (playlistinfo.type == 'stream') {
+					albummeta[me].layout = new info_layout_empty();
+					albummeta[me].populated = true;
+				} else {
+					albummeta[me].layout = new info_sidebar_layout({title: albummeta.name, type: 'album', source: me});
+				}
+			}
+
+			if (typeof trackmeta[me].layout == 'undefined') {
+				if (trackmeta.name == '') {
+					trackmeta[me].populated = true;
+					trackmeta[me].layout = new info_layout_empty();
+				} else {
+					trackmeta[me].layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
+				}
 			}
 		}
 	}

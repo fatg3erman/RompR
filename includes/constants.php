@@ -3,8 +3,9 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 250);
 define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 96);
-define('ROMPR_VERSION', '2.00');
+define('ROMPR_SCHEMA_VERSION', 104);
+define('ROMPR_MIN_SCHEMA_VERSION', 63);
+define('ROMPR_VERSION', '2.06');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -353,6 +354,72 @@ const EXECUTABLES_PATHS = [
 	'/usr/bin/',
 	'./',
 	''
+];
+
+// The pref for these stores the dir, for backards compatability reasons
+const MOPIDY_COLLECTION_FOLDERS = [
+	'local' =>  [
+		[
+			'dir' => "Local media",
+			'label' => "Local Media"
+		]
+	],
+	'beetslocal' => [
+		[
+			'dir' => "Local (beets)",
+			'label' => "Local (beets)"
+		]
+	],
+	'beets' => [
+		[
+			'dir' => "Beets library/Albums by Artist",
+			'label' => "Beets Library"
+		]
+	],
+	'spotify' => [
+		[
+			'dir' => "Spotify/Your music/Your tracks",
+			'label' => "Spotify 'Your Tracks'"
+		],
+		[
+			'dir' => "Spotify/Your music/Your albums",
+			'label' => "Spotify 'Your Albums'"
+		]
+	],
+	'soundcloud' => [
+		[
+			'dir' => "SoundCloud/Liked",
+			'label' => "SoundCloud Liked"
+		],
+		[
+			'dir' => "SoundCloud/Sets",
+			'label' => "SoundCloud Sets"
+		],
+		[
+			'dir' => "SoundCloud/Stream",
+			'label' => "SoundCloud Stream"
+		]
+	],
+	'vkontakte' => [
+		[
+			'dir' => "VKontakte",
+			'label' => "VKontakte"
+		]
+	],
+	'ytmusic' => [
+		[
+			'dir' => "YouTube Music/Liked Songs",
+			'label' => "YouTube Music Liked Songs"
+		],
+		[
+			'dir' => "YouTube Music/Albums",
+			'label' => "YouTube Music Albums"
+		],
+		[
+			'dir' => "YouTube Music/Subscriptions",
+			'label' => "YouTube Music Subscriptions"
+		]
+	]
 ];
 
 ?>

@@ -26,7 +26,7 @@ You must create the RompЯ database before you start. You will need your mysql r
 
 *If you are using MySQL version lower than version 8*
 
-    mysql -uroot -p
+    mysql -u root -p
     CREATE DATABASE romprdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
     USE romprdb;
     GRANT ALL ON romprdb.* TO rompr@localhost IDENTIFIED BY 'romprdbpass';
@@ -35,7 +35,7 @@ You must create the RompЯ database before you start. You will need your mysql r
 
 *If you are using MYSQL version 8 or later*
 
-    mysql -uroot -p
+    sudo mysql -u root -p
     CREATE DATABASE romprdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
     USE romprdb;
     CREATE USER 'rompr' IDENTIFIED WITH mysql_native_password BY 'romprdbpass';
@@ -45,7 +45,7 @@ You must create the RompЯ database before you start. You will need your mysql r
 
 *And if you're using mariadb version 10 you might need to do*
 
-    sudo mysql -uroot -p
+    sudo mysql -u root -p
     CREATE DATABASE romprdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
     CREATE USER 'rompr' IDENTIFIED BY 'romprdbpass';
     USE romprdb;

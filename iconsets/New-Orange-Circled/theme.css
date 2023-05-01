@@ -121,4 +121,6 @@
     --icon-padlock:  url('iconsets/New-Orange_Circled/padlock.svg');
     --icon-padlock-open: url('iconsets/New-Orange-Circled/padlock_open.svg');
     --icon-instagram: url('iconsets/New-Orange-Circled/instagram.svg');
+    --icon-rewind: url('iconsets/New-Orange-Circled/rewind.svg');
+    --icon-ffwd: url('iconsets/New-Orange-Circled/ffwd.svg');
 }

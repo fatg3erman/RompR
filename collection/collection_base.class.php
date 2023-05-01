@@ -50,54 +50,59 @@ class collection_base extends database {
 		// and that can make eg spotify search results be put under local albums
 		// We could also just not return the album index, but doing it this way speeds it up
 		// and I don't *think* it'll cause a problem.
-		$data = array();;
-		$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-			'SELECT
-				Uri,
-				TTindex,
-				isSearchResult,
-				Disc,
-				Artistname AS AlbumArtist,
-				Albumtable.Image AS "X-AlbumImage",
-				mbid AS MUSICBRAINZ_ALBUMID,
-				Searched,
-				IFNULL(Playcount, 0) AS Playcount,
-				isAudiobook,
-				Albumindex AS album_index,
-				AlbumArtistindex AS albumartist_index,
-				useTrackIms AS usetrackimages,
-				Tracktable.Artistindex AS trackartist_index
-			FROM
-				Tracktable
-				JOIN Albumtable USING (Albumindex)
-				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
-				LEFT JOIN Playcounttable USING (TTindex)
-			WHERE
-			Hidden = 0
-			AND Title = ?
-			AND TrackNo = ?
-			AND Albumname = ?
-			AND Domain = ?
-			ORDER BY isSearchResult ASC',
-			$filedata['Title'], $filedata['Track'], $filedata['Album'], $filedata['domain']
-		);
+		$data = array();
+		// Have seen Mopidy get confused and we get here with $filedata == null;
+		if (!is_array($filedata))
+			return $data;
 
-		foreach ($result as $tinfo) {
-			if ($tinfo['Uri'] == $filedata['file']) {
-				if ($tinfo['isAudiobook'] > 0) {
-					$tinfo['type'] = 'audiobook';
-				}
-				$tinfo['isAudiobook'] = null;
-				$data = array_filter($tinfo, function($v) {
-					if ($v === null || $v == '') {
-						return false;
+		if ($filedata['Album']) {
+			$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
+				'SELECT
+					Uri,
+					TTindex,
+					isSearchResult,
+					Disc,
+					Artistname AS AlbumArtist,
+					Albumtable.Image AS "X-AlbumImage",
+					mbid AS MUSICBRAINZ_ALBUMID,
+					Searched,
+					IFNULL(Playcount, 0) AS Playcount,
+					isAudiobook,
+					Albumindex AS album_index,
+					AlbumArtistindex AS albumartist_index,
+					useTrackIms AS usetrackimages,
+					Tracktable.Artistindex AS trackartist_index
+				FROM
+					Tracktable
+					JOIN Albumtable USING (Albumindex)
+					JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+					LEFT JOIN Playcounttable USING (TTindex)
+				WHERE
+				Hidden = 0
+				AND Title = ?
+				AND TrackNo = ?
+				AND Albumname = ?
+				AND Domain = ?
+				ORDER BY isSearchResult ASC',
+				$filedata['Title'], $filedata['Track'], $filedata['Album'], $filedata['domain']
+			);
+
+			foreach ($result as $tinfo) {
+				if ($tinfo['Uri'] == $filedata['file']) {
+					if ($tinfo['isAudiobook'] > 0) {
+						$tinfo['type'] = 'audiobook';
 					}
-					return true;
-				});
-				break;
+					$tinfo['isAudiobook'] = null;
+					$data = array_filter($tinfo, function($v) {
+						if ($v === null || $v == '') {
+							return false;
+						}
+						return true;
+					});
+					break;
+				}
 			}
 		}
-
 		// This is a fallback and I don't like having to do this, but YTMusic and Youtube sometimes don't
 		// return the same data they did last time.
 		// CASE WHEN because the track might already be in the database with a TrackNo of 0
@@ -145,7 +150,7 @@ class collection_base extends database {
 			}
 		}
 
-		if (count($data) == 0) {
+		if (count($data) == 0 && $filedata['Album']) {
 			$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 				'SELECT
 					Albumtable.Image AS "X-AlbumImage",
@@ -277,6 +282,11 @@ class collection_base extends database {
 				AND AlbumArtistindex = ?"
 		);
 
+		if ($this->find_album === false || $this->find_album2 === false) {
+			logger::error('SQL', 'Could not prepare find_album statement');
+			exit(1);
+		}
+
 	}
 
 	public function check_album(&$data) {
@@ -305,11 +315,10 @@ class collection_base extends database {
 			$result = $this->find_album2->fetchAll(PDO::FETCH_OBJ);
 			$obj = array_shift($result);
 			if ($obj) {
-				logger::mark('BACKEND', "Album ".$data['Album']." was found on domain ".$obj->Domain.". Changing to local");
+				logger::info('BACKEND', "Album ".$data['Album']." was found on domain ".$obj->Domain.". Changing to local");
 				$index = $obj->Albumindex;
 				if ($this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET AlbumUri = NULL, Domain = ?, justUpdated = ? WHERE Albumindex = ?", 'local', 1, $index)) {
 					$obj->AlbumUri = null;
-					logger::debug('BACKEND', "   ...Success");
 				} else {
 					logger::warn('BACKEND', "   Album ".$data['Album']." update FAILED");
 					return false;
@@ -344,7 +353,6 @@ class collection_base extends database {
 					WHERE
 						Albumindex = ?",
 					$year, $img, $uri, $mbid, $index)) {
-					logger::debug('BACKEND', "   ...Success");
 				} else {
 					logger::warn('BACKEND', "   Album ".$data['album']." update FAILED");
 					return false;
@@ -362,7 +370,7 @@ class collection_base extends database {
 		//		Creates an album
 		//		Returns: Albumindex
 
-		logger::trace('COLLECTION', 'Creating Album',$data['Album'],'with year',$data['year']);
+		logger::info('COLLECTION', 'Creating Album',$data['Album'],'with year',$data['year']);
 
 		$retval = null;
 		if ($this->sql_prepare_query(true, null, null, null,
@@ -417,22 +425,18 @@ class collection_base extends database {
 	}
 
 	protected function update_track_stats() {
-		logger::mark('BACKEND', "Updating Track Stats");
+		logger::log('BACKEND', "Updating Track Stats");
 		$t = microtime(true);
-		$this->update_stat('ArtistCount',$this->get_artist_count(ADDED_ALL_TIME, 0));
-		$this->update_stat('AlbumCount',$this->get_album_count(ADDED_ALL_TIME, 0));
-		$this->update_stat('TrackCount',$this->get_track_count(ADDED_ALL_TIME, 0));
-		$this->update_stat('TotalTime',$this->get_duration_count(ADDED_ALL_TIME, 0));
-		$this->update_stat('BookArtists',$this->get_artist_count(ADDED_ALL_TIME, 1));
-		$this->update_stat('BookAlbums',$this->get_album_count(ADDED_ALL_TIME, 1));
-		$this->update_stat('BookTracks',$this->get_track_count(ADDED_ALL_TIME, 1));
-		$this->update_stat('BookTime',$this->get_duration_count(ADDED_ALL_TIME, 1));
+		$this->set_admin_value('ArtistCount',$this->get_artist_count(ADDED_ALL_TIME, 0));
+		$this->set_admin_value('AlbumCount',$this->get_album_count(ADDED_ALL_TIME, 0));
+		$this->set_admin_value('TrackCount',$this->get_track_count(ADDED_ALL_TIME, 0));
+		$this->set_admin_value('TotalTime',$this->get_duration_count(ADDED_ALL_TIME, 0));
+		$this->set_admin_value('BookArtists',$this->get_artist_count(ADDED_ALL_TIME, 1));
+		$this->set_admin_value('BookAlbums',$this->get_album_count(ADDED_ALL_TIME, 1));
+		$this->set_admin_value('BookTracks',$this->get_track_count(ADDED_ALL_TIME, 1));
+		$this->set_admin_value('BookTime',$this->get_duration_count(ADDED_ALL_TIME, 1));
 		$at = microtime(true) - $t;
 		logger::info('BACKEND', "Updating Track Stats took ".$at." seconds");
-	}
-
-	protected function update_stat($item, $value) {
-		$this->generic_sql_query("UPDATE Statstable SET Value='".$value."' WHERE Item='".$item."'", true);
 	}
 
 	protected function get_artist_count($range, $iab) {
@@ -475,7 +479,7 @@ class collection_base extends database {
 	}
 
 	protected function get_stat($item) {
-		return $this->simple_query('Value', 'Statstable', 'Item', $item, 0);
+		return $this->get_admin_value($item, 0);
 	}
 
 	public function collectionStats() {
@@ -663,7 +667,7 @@ class collection_base extends database {
 
 	public function update_radio_station_name($info) {
 		if ($info['streamid']) {
-			logger::mark('BACKEND', "Updating Stationindex",$info['streamid'],"with new name",$info['name']);
+			logger::info('BACKEND', "Updating Stationindex",$info['streamid'],"with new name",$info['name']);
 			$this->sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ? WHERE Stationindex = ?",$info['name'],$info['streamid']);
 		} else {
 			$stationid = $this->check_radio_station($info['uri'], $info['name'], '');
@@ -675,7 +679,7 @@ class collection_base extends database {
 		$index = null;
 		$index = $this->sql_prepare_query(false, null, 'Stationindex', false, "SELECT Stationindex FROM RadioStationtable WHERE PlaylistUrl = ?", $playlisturl);
 		if ($index === false) {
-			logger::mark('BACKEND', "Adding New Radio Station");
+			logger::info('BACKEND', "Adding New Radio Station");
 			logger::log('BACKEND', "  Name  :",$stationname);
 			logger::log('BACKEND', "  Image :",$image);
 			logger::log('BACKEND', "  URL   :",$playlisturl);
@@ -687,13 +691,13 @@ class collection_base extends database {
 		} else {
 			$this->sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ?, Image = ? WHERE Stationindex = ?",
 				trim($stationname), trim($image), $index);
-			logger::mark('BACKEND', "Found radio station",$stationname,"with index",$index);
+			logger::info('BACKEND', "Found radio station",$stationname,"with index",$index);
 		}
 		return $index;
 	}
 
 	public function check_radio_tracks($stationid, $tracks) {
-		$this->generic_sql_query("DELETE FROM RadioTracktable WHERE Stationindex = ".$stationid, true);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM RadioTracktable WHERE Stationindex = ?", $stationid);
 		foreach ($tracks as $track) {
 			$index = $this->sql_prepare_query(false, null, 'Stationindex', false, "SELECT Stationindex FROM RadioTracktable WHERE TrackUri = ?", trim($track['TrackUri']));
 			if ($index !== false) {
@@ -713,20 +717,20 @@ class collection_base extends database {
 	}
 
 	public function remove_user_radio_stream($x) {
-		$this->generic_sql_query("UPDATE RadioStationtable SET IsFave = 0, Number = 65535 WHERE Stationindex = ".$x, true);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET IsFave = 0, Number = 65535 WHERE Stationindex = ?", $x);
 	}
 
 	public function save_radio_order($order) {
 		foreach ($order as $i => $o) {
 			logger::trace('RADIO ORDER', 'Station',$o,'index',$i);
-			$this->generic_sql_query("UPDATE RadioStationtable SET Number = ".$i." WHERE Stationindex = ".$o, true);
+			$this->sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Number = ? WHERE Stationindex = ?", $i, $o);
 		}
 	}
 
 	public function add_fave_station($info) {
 		if (array_key_exists('streamid', $info) && $info['streamid']) {
-			logger::mark('BACKEND', "Updating StationIndex",$info['streamid'],"to be fave");
-			$this->generic_sql_query("UPDATE RadioStationtable SET IsFave = 1 WHERE Stationindex = ".$info['streamid'], true);
+			logger::info('BACKEND', "Updating StationIndex",$info['streamid'],"to be fave");
+			$this->sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET IsFave = 1 WHERE Stationindex = ?", $info['streamid']);
 			return true;
 		}
 		$stationindex = $this->check_radio_station($info['location'],$info['album'],$info['image']);
@@ -738,7 +742,10 @@ class collection_base extends database {
 		// Returns the number of tracks this album contains that were added by a collection update
 		// (i.e. not added manually). We do this because editing year or album artist for those albums
 		// won't hold across a collection update, so we just forbid it.
-		return $this->generic_sql_query("SELECT COUNT(TTindex) AS cnt FROM Tracktable WHERE Albumindex = ".$albumindex." AND LastModified IS NOT NULL AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2", false, null, 'cnt', 0);
+		return $this->sql_prepare_query(false, null, 'cnt', 0,
+			"SELECT COUNT(TTindex) AS cnt FROM Tracktable WHERE Albumindex = ? AND LastModified IS NOT NULL AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2",
+			$albumindex
+		);
 
 	}
 
@@ -755,7 +762,10 @@ class collection_base extends database {
 
 	public function album_is_audiobook($albumindex) {
 		// Returns the maxiumum value of isAudiobook for a given album
-		return $this->generic_sql_query("SELECT MAX(isAudiobook) AS cnt FROM Tracktable WHERE Albumindex = ".$albumindex." AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2", false, null, 'cnt', 0);
+		return $this->sql_prepare_query(false, null, 'cnt', 0,
+			"SELECT MAX(isAudiobook) AS cnt FROM Tracktable WHERE Albumindex = ? AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2",
+			$albumindex
+		);
 	}
 
 	public function get_imagesearch_info($key) {
@@ -822,7 +832,7 @@ class collection_base extends database {
 				if ($retval['dbimage'] == null) {
 					$retval['dbimage'] = $obj->Image;
 				}
-				logger::log('BACKEND', "Found album",$retval['album'],"in database");
+				logger::debug('BACKEND', "Found album",$retval['album'],"in database");
 			}
 		}
 		return $retval;
@@ -832,16 +842,13 @@ class collection_base extends database {
 		$retval = null;
 		// Get album directory by using the Uri of one of its tracks, making sure we choose only local tracks
 		if (getDomain($uri) == 'local') {
-			$result = $this->generic_sql_query("SELECT Uri FROM Tracktable WHERE Albumindex = ".$albumindex);
-			while (count($result) > 0 && $retval === null) {
-				$obj2 = array_shift($result);
-				if ($obj2['Uri']) {
-					$retval = dirname($obj2['Uri']);
-					$retval = preg_replace('#^local:track:#', '', $retval);
-					$retval = preg_replace('#^file://#', '', $retval);
-					$retval = preg_replace('#^beetslocal:\d+:'.prefs::get_pref('music_directory_albumart').'/#', '', $retval);
-					logger::log('BACKEND', "Got album directory using track Uri :",$retval);
-				}
+			$result = $this->sql_prepare_query(false, null, 'Uri', null, "SELECT Uri FROM Tracktable WHERE Albumindex = ? AND Uri IS NOT NULL", $albumindex);
+			if ($result !== null) {
+				$retval = dirname($result);
+				$retval = preg_replace('#^local:track:#', '', $retval);
+				$retval = preg_replace('#^file://#', '', $retval);
+				$retval = preg_replace('#^beetslocal:\d+:'.prefs::get_pref('music_directory_albumart').'/#', '', $retval);
+				logger::debug('BACKEND', "Got album directory using track Uri :",$retval);
 			}
 		}
 		return $retval;
@@ -850,9 +857,9 @@ class collection_base extends database {
 	public function update_image_db($key, $found, $imagefile) {
 		$val = ($found) ? $imagefile : null;
 		if ($this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Image = ?, Searched = 1 WHERE ImgKey = ?", $val, $key)) {
-			logger::log('BACKEND', "    Database Image URL Updated");
+			logger::debug('BACKEND', "Database Image URL Updated");
 		} else {
-			logger::warn('BACKEND', "    Failed To Update Database Image URL",$val,$key);
+			logger::warn('BACKEND', "Failed To Update Database Image URL",$val,$key);
 		}
 	}
 
@@ -900,7 +907,7 @@ class collection_base extends database {
 	public function pull_wishlist($sortby) {
 		$qstring = "SELECT
 			IFNULL(r.Rating, 0) AS rating,
-			".database::SQL_TAG_CONCAT." AS tags,
+			{$this->get_constant('self::SQL_TAG_CONCAT')} AS tags,
 			tr.TTindex AS ttid,
 			tr.Title AS title,
 			tr.Duration AS time,
@@ -974,11 +981,18 @@ class collection_base extends database {
 		foreach ($rawterms as $key => $term) {
 			$command .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
 		}
-		logger::trace("RAW SEARCH", "Search command : ".$command);
 		$player = new player();
 		$dirs = array();
-		foreach ($player->parse_list_output($command, $dirs, $domains) as $filedata) {
-			$this->newTrack($filedata);
+		if ($player->has_specific_search_function($rawterms, $domains)) {
+			logger::info('RAW SEARCH', 'Using Mopidy Search');
+			foreach ($player->search_function($rawterms, $domains) as $filedata) {
+				$this->newTrack($filedata);
+			}
+		} else {
+			logger::info("RAW SEARCH", "MPD Search command : ".$command);
+			foreach ($player->parse_list_output($command, $dirs, $domains) as $filedata) {
+				$this->newTrack($filedata);
+			}
 		}
 	}
 
@@ -996,7 +1010,7 @@ class collection_base extends database {
 		$this->options['doing_search'] = true;
 		$this->options['trackbytrack'] = false;
 
-		logger::trace('FAVEFINDER', 'Search Terms', $this->options['searchterms']);
+		logger::debug('FAVEFINDER', 'Search Terms', print_r($this->options['searchterms'], true));
 		$found = false;
 		if ($checkdb){
 			logger::log('FAVEFINDER', 'Checking database first');
@@ -1019,13 +1033,6 @@ class collection_base extends database {
 		$worst_matches = [];
 		$player = new player();
 		foreach ($this->albums as $album) {
-			// If it's a ytmusic track we really really want to get the track number, which we don't get
-			// without doing a lookup. It's quick enough if we do it now. The other mechanism we have, in do-command_list
-			// doesn't work because the album isn't in the database
-			$uri = $album->check_ytmusic_lookup();
-			if ($uri)
-				$player->do_command_list(['find file "'.$uri.'"']);
-
 			$album->sortTracks();
 			foreach($album->tracks as $trackobj) {
 				if ($rawterms['Album'] && !$rawterms['Title']) {
@@ -1100,5 +1107,125 @@ class collection_base extends database {
 		}
 		return false;
 	}
+
+	public function get_recommendation_seeds($days, $limit, $top) {
+
+		logger::log('RECSEEDS', 'Looking for', $top, 'seed tracks over', $days, 'days');
+		$resultset = [];
+		// 1. Get the top tracks overall
+		$tracks = $this->get_track_charts(20, CHARTS_MUSIC_ONLY);
+		foreach ($tracks as $track) {
+			if ($track->Uri) {
+				$resultset[] = [
+					'Artistname' => $track->label_artist,
+					'Title' => $track->label_track,
+					'Uri' => $track->Uri
+				];
+			}
+		}
+		logger::log('RECSEEDS', 'Charts resultset has',(count($resultset)),'members');
+
+		// 2. Get a list of tracks played in the last $days days, sorted by their OVERALL popularity
+		$popular = $this->generic_sql_query(
+			"SELECT
+				 Artistname,
+				 Title,
+				 Uri
+			FROM
+				Playcounttable
+				JOIN Tracktable USING (TTindex)
+				JOIN Artisttable USING (Artistindex)
+			WHERE
+				{$this->sql_two_weeks_include($days)}
+				AND Uri IS NOT NULL
+				AND Uri NOT LIKE 'http%'
+				AND isAudiobook = 0
+			ORDER BY Playcount DESC LIMIT $limit");
+
+		logger::log('RECSEEDS', 'Popular resultset has',(count($popular)),'members');
+
+		// 3. Combine the two, filtering out duplicates
+		foreach ($popular as $track) {
+			if (!in_array($track, $resultset)) {
+				$resultset[] = $track;
+			}
+		}
+
+		logger::log('RECSEEDS', 'Final resultset has',(count($resultset)),'members');
+
+		// 4. Randomise that list and return the first $top.
+		shuffle($resultset);
+		logger::log('RECSEEDS', 'Returning', (min($top, count($resultset))), 'entries');
+
+		return array_slice($resultset,0,$top);
+	}
+
+	public function get_most_recently_played_music($limit, $min_plays) {
+		// Get a list of the $limit most recently played music tracks, regardless
+		// of how recently "recent" actually is
+		$resultset = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
+			"SELECT
+				 Artistname,
+				 Title,
+				 Uri
+			FROM
+				Playcounttable
+				JOIN Tracktable USING (TTindex)
+				JOIN Artisttable USING (Artistindex)
+			WHERE
+				Uri IS NOT NULL
+				AND Uri NOT LIKE 'http%'
+				AND isAudiobook = 0
+				AND Playcount > ?
+			ORDER BY LastPlayed DESC LIMIT $limit",
+			$min_plays
+		);
+		return $resultset;
+	}
+
+	protected function charts_include_option($include = null) {
+		if ($include == null)
+			$include = prefs::get_pref('chartoption');
+		switch ($include) {
+			case CHARTS_INCLUDE_ALL:
+				return '';
+				break;
+
+			case CHARTS_MUSIC_ONLY:
+				return ' WHERE isAudiobook = 0 AND Hidden = 0 ';
+				break;
+
+			case CHARTS_AUDIOBOOKS_ONLY:
+				return ' WHERE isAudiobook > 0 AND Hidden = 0 ';
+				break;
+
+			case CHARTS_INTERNET_ONLY:
+				return ' WHERE Hidden = 1 ';
+				break;
+		}
+	}
+
+	protected function get_track_charts($limit = 40, $include = null) {
+		// MIN(Uri) is simply because I needed an aggregate function and SQLite doesn't support ANY_VALUE.
+		// Use MAX(Playcount) because we can have multiple copies of the same track -
+		// they *should* all have the same Playcount but we can't be certain because of
+		// the vaguaries of track numbers with Youtube
+		$query = "SELECT
+			Artistname AS label_artist,
+			Albumname AS label_album,
+			Title AS label_track,
+			MAX(Playcount) AS soundcloud_plays,
+			MIN(Uri) AS Uri
+			FROM
+			Tracktable
+			JOIN Playcounttable USING (TTIndex)
+			JOIN Albumtable USING (Albumindex)
+			JOIN Artisttable USING (Artistindex)
+			{$this->charts_include_option($include)}
+			GROUP BY label_artist, label_album, label_track
+			ORDER BY soundcloud_plays DESC LIMIT ".$limit;
+		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
+	}
+
 }
 ?>

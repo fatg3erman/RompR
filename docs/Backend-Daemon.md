@@ -5,7 +5,7 @@
 The RompЯ Backend Daemon is a small program that needs to be running on the same computer as your webserver. It takes care of some operations
 that can't be done if the browser is closed while music is playing, or if you are running RompЯ on a Phone or Tablet and the device goes to sleep.
 
-## Important Note If Uphgrading From Version 1.61 or earlier
+## Important Note If Upgrading From Version 1.61 or earlier
 
 If you are upgrading from an earlier version of RompЯ and you were running the program called romonitor, this Daemon replaces it.
 Before doing the following you MUST do
@@ -109,5 +109,5 @@ Systemd should restart it after 5 seconds and then you'll be able to load RompR*
 If it's not working, first enable [debug logging](/RompR/Troubleshooting) to level 7 then restart rombackend.
 You'll see some output from it in the web server's error log (and your custom logifle if you're using one).
 
-You can also try to run it from the command-line with php /PATH/TO/ROMPR/rompr_backend.php, but if you do this it will need write access to your webserver's error log.
+You can also try to run it from the command-line with php /PATH/TO/ROMPR/rompr_backend.php, but if you do this it will need write access to your webserver's error log and everything in your rompr/prefs directory.
 This might, however, be useful if it's crashing out really early.

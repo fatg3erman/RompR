@@ -120,7 +120,9 @@
     --icon-bookmark: url('iconsets/Slush/bookmark.svg');
     --icon-padlock:  url('iconsets/Slush/padlock.svg');
     --icon-padlock-open: url('iconsets/Slush/padlock_open.svg');
-    --icon-padlock:  url('iconsets/Slush-Purple/padlock.svg');
-    --icon-padlock-open: url('iconsets/Slush-Purple/padlock_open.svg');
-    --icon-instagram: url('iconsets/Slush-Purple/instagram.svg');
+    --icon-padlock:  url('iconsets/Slush/padlock.svg');
+    --icon-padlock-open: url('iconsets/Slush/padlock_open.svg');
+    --icon-instagram: url('iconsets/Slush/instagram.svg');
+    --icon-rewind: url('iconsets/Slush/rewind.svg');
+    --icon-ffwd: url('iconsets/Slush/ffwd.svg');
 }

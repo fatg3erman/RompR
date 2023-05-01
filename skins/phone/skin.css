@@ -184,6 +184,22 @@ button.spinable.icon-spin6 {
 	height: 14px;
 }
 
+.skip-button {
+	height:14px;
+	width:14px;
+	border:4px solid transparent;
+}
+
+.skip-backwards {
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+}
+
+.skip-forwards {
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+}
+
 @media screen and (max-height: 450px) {
 
 	#playbackTime {
@@ -196,7 +212,7 @@ button.spinable.icon-spin6 {
 	#progress {
 		margin-top: 4px;
 		margin-bottom: 4px;
-		height: 8px;
+/*		height: 8px;*/
 	}
 
 }
@@ -227,7 +243,7 @@ button.spinable.icon-spin6 {
 	margin-left: auto;
 }
 
-#lastfm, #addtoplaylist, #ptagadd, #bookmark {
+#lastfm, #addtoplaylist, #ptagadd, #bookmark, #ban {
 	float:right;
 	margin-left:6px;
 	margin-right:6px;
@@ -305,11 +321,6 @@ button.spinable.icon-spin6 {
 =====================================================================
 */
 
-#scrobwrangler {
-	font-size:8pt;
-	width:90%;
-}
-
 #notifications {
 	position:absolute;
 	width:100%;
@@ -319,7 +330,6 @@ button.spinable.icon-spin6 {
 	display:none;
 	font-size:8pt;
 	font-weight:bold;
-	z-index:10010;
 }
 
 #chooserbuttons
@@ -514,6 +524,10 @@ div.albumbitsmenu {
 	overflow-y: scroll;
 	z-index: 10000;
 	padding-bottom:0px;
+}
+
+body.customscroll .dropmenu {
+	overflow-y: hidden;
 }
 
 .popupcontents {
@@ -896,7 +910,7 @@ span.timer-time {
 		border-image-slice: 0 0 1 0;
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
+	#lastfm, #addtoplaylist, #ptagadd, #bookmark, #ban {
 		/*margin-bottom: 4px;*/
 		float: right;
 		display: inline-block;
@@ -1003,9 +1017,9 @@ span.timer-time {
 	}
 
 	#progress {
-		height: 8px;
-		margin-top: 2px;
-		margin-bottom: 2px;
+/*		height: 8px;*/
+		margin-top: 4px;
+		margin-bottom: 4px;
 	}
 
 	#playbackTime {
@@ -1048,7 +1062,7 @@ span.timer-time {
         padding: 0px;
     }
 
-	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
+	#lastfm, #addtoplaylist, #ptagadd, #bookmark, #ban {
 		height: 20px;
 		line-height: 20px;
 		margin-left: 0px;
@@ -1171,7 +1185,7 @@ span.timer-time {
 		object-fit: scale-down;
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
+	#lastfm, #addtoplaylist, #ptagadd, #bookmark, #ban {
 		height: 20px;
 		line-height: 20px;
 		float: left;
@@ -1213,9 +1227,9 @@ span.timer-time {
 	}
 
 	#progress {
-		height: 10px;
+/*		height: 10px;*/
 		margin-top: 4px;
-		margin-bottom: 2px;
+		margin-bottom: 4px;
 	}
 
 	#playbackTime {
@@ -1264,7 +1278,7 @@ span.timer-time {
 		object-fit: scale-down;
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #stars, #bookmark {
+	#lastfm, #addtoplaylist, #ptagadd, #stars, #bookmark, #ban {
 		/*margin-bottom: 8px;*/
 	}
 
@@ -1347,10 +1361,11 @@ span.timer-time {
 	}
 
 	#progress {
-		margin-top: 8px;
+		margin-top: 6px;
+		margin-bottom: 6px;
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
+	#lastfm, #addtoplaylist, #ptagadd, #bookmark, #ban {
 		/*margin-bottom: 4px;*/
 		float: right;
 		display: inline-block;
@@ -1447,7 +1462,7 @@ span.timer-time {
 		padding-bottom: 4px;
 	}
 
-	#lastfm, #addtoplaylist, #ptagadd, #bookmark {
+	#lastfm, #addtoplaylist, #ptagadd, #bookmark, #ban {
 		/*margin-bottom: 4px;*/
 		float: none;
 		display: inline-block;
@@ -1481,7 +1496,6 @@ span.timer-time {
 	.mainpane {
 		width: 44%;
 	}
-
 }
 
 #infopane:visible ~ div {
@@ -1500,3 +1514,18 @@ span.timer-time {
 	display:none;
 }
 
+ul.info-links-column>li:not(.info-list-title) {
+	margin-top: 2px;
+	/*position:  relative;*/
+}
+
+ul.info-links-column>li:not(.info-list-title)>i {
+	position: absolute;
+}
+
+ul.info-links-column>li:not(.info-list-title)>a {
+	position: relative;
+	left: calc(var(--small-icon-size) + 8px);
+	top: 2px;
+	margin-right: 8px;
+}

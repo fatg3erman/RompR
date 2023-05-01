@@ -24,9 +24,9 @@ switch (ROMPR_IMAGE_VERSION) {
 				$ih->resizeToWidth(100);
 				$ih->save("albumart/small/".$k.".jpg", 75);
 				$ih->destroy();
-				prefs::$database->generic_sql_query("UPDATE Albumtable SET ImgVersion = ".ROMPR_IMAGE_VERSION." WHERE ImgKey = '".$k."'");
+				prefs::$database->generic_sql_query("UPDATE Albumtable SET ImgVersion = ".ROMPR_IMAGE_VERSION." WHERE ImgKey = '".$k."'", true);
 			} else {
-				prefs::$database->generic_sql_query("UPDATE Albumtable SET Image = '' WHERE ImgKey = '".$k."'");
+				prefs::$database->generic_sql_query("UPDATE Albumtable SET Image = '' WHERE ImgKey = '".$k."'", true);
 			}
 		}
 

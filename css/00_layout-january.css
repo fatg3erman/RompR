@@ -21,7 +21,7 @@
 	--track-control-icon-size: var(--inline-clickable-icon-size);
 }
 
-body.mouseclick {
+body.desktopbrowser {
 	--inline-track-icon-size: 16px;
 	--inline-clickable-icon-size: 16px;
 	--inline-clickable-icon-border-width: none;
@@ -32,9 +32,9 @@ body.mouseclick {
 	--playlist-track-min-height: unset;
 }
 
-/* use body.phone here as well as touchclick, in case Mobile_Detect thinks
-it's a desktop browser. */
-body.touchclick, body.phone {
+/* use body.phone here as well as mobilebrowser in case Mobile_Detect thinks
+it's a desktop browser. This ensure the phone skin always gets these settings */
+body.mobilebrowser, body.phone {
 	--inline-track-icon-size: 20px;
 	--inline-clickable-icon-size: 28px;
 	--inline-clickable-icon-border-width: 6px;
@@ -63,6 +63,7 @@ body.desktop #headerbar
 {
     background-color: var(--top_drop_menu-bg-colour);
     background-image: var(--top_drop_menu-bg-image);
+    z-index: 50000;
 }
 
 div.notification {
@@ -115,6 +116,10 @@ table#debuginfotable tr td:nth-child(2) {
 	width:300px;
 	z-index: 20200;
 	padding: 4px;
+}
+
+.innerdragger {
+	z-index: 60200;
 }
 
 /* Used for styling all progress bars, volume controls, etc */
@@ -960,6 +965,17 @@ div.podtitle>div.fixed {
 {
 	margin-top: 0.5em;
 	margin-bottom: 0.75em;
+}
+
+.podcast-download-bar {
+	width: 100%;
+}
+
+div.podcast-item-image-holder {
+	float: left;
+	margin-top: 4px;
+	margin-right: 0.5em;
+	display: flex;
 }
 
 .resumebar
@@ -1992,11 +2008,6 @@ div.lyrics p {
 =====================================================================
 */
 
-#scrobwrangler
-{
-	font-size:6pt;
-}
-
 .pref
 {
 	/*margin-left:8px;*/
@@ -2021,7 +2032,9 @@ div.selectholder.snapcast_select
 	margin-right: 1em;
 }
 
-.snapcastgroup input[type="text"].expand {
+.snapcastgroup input[type="text"].expand,
+.player-def input[type="text"].expand
+ {
 	font-size: 120%;
 	font-weight: bold;
 	background-color: transparent !important;
@@ -2349,19 +2362,21 @@ div.plugin_backi_drop-images {
     border-top: var(--bordered-top);
 }
 
-.popupcontentcontainer {
-	height: 100%;
-}
-
 .popupcontentholder {
 	overflow-y: auto;
 	overflow-x: auto;
 }
 
 .popupcontents {
-	padding-left: 2px;
-	padding-right: 2px;
-	padding-top: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	padding-top: 4px;
+	padding-bottom: 8px;
+}
+
+.popupbuttons {
+	padding-top: 8px;
+	border-top: 1px solid var(--border-colour);
 }
 
 /*
@@ -2430,8 +2445,29 @@ div.top_drop_menu div:not(.canbefaded) {
 	opacity: 1 !important;
 }
 
-div.top_drop_menu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols i.notenabled, div.top_drop_menu button.notenabled {
+div.top_drop_menu div.notenabled,
+div.togglecontainer.notenabled,
+div#flowcontrols i.notenabled,
+div.top_drop_menu button.notenabled,
+.lastfmlogin-required.notenabled
+{
 	opacity: 0.2 !important;
+	cursor: not-allowed !important;
+}
+
+.notenabled input,
+.notenabled label,
+.notenabled select,
+.notenabled input:hover
+.notenabled label:hover
+.notenabled select:hover
+{
+	cursor: not-allowed !important;
+	pointer-events: none !important;
+}
+
+div.smartradio.lastfmlogin-required.notenabled {
+	display: none;
 }
 
 .top_drop_menu .top_drop_menu {
@@ -2493,33 +2529,6 @@ div.top_drop_menu div.notenabled, div.togglecontainer.notenabled, div#flowcontro
 	display:none;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.single-player .divlabel {
+	width: 30%;
+}

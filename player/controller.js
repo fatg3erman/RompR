@@ -70,20 +70,13 @@ function playerController() {
 
 	this.initialise = async function() {
 		debug.mark('PLAYER', 'Initialising');
+		let urischemes = data_from_source('player_uri_schemes');
+		for (var i in urischemes) {
+			var h = urischemes[i].replace(/\:\/\/$/,'');
+			debug.log("PLAYER","URI Handler : ",h);
+			player.urischemes[h] = true;
+		}
 		try {
-			var urischemes = await $.ajax({
-				type: 'GET',
-				url: 'player/utils/geturlhandlers.php',
-				dataType: 'json'
-			});
-			for (var i in urischemes) {
-				var h = urischemes[i].replace(/\:\/\/$/,'');
-				debug.log("PLAYER","URI Handler : ",h);
-				player.urischemes[h] = true;
-			}
-			if (!player.canPlay('spotify')) {
-				$('div.textcentre.textunderline:contains("Music From Spotify")').remove();
-			}
 			// checkSearchDomains();
 			doMopidyCollectionOptions();
 			playlist.radioManager.init();
@@ -97,7 +90,7 @@ function playerController() {
 			checkProgress();
 			searchManager.add_search_plugin('playersearch', player.controller.search, player.get_search_uri_schemes());
 		} catch(err) {
-			debug.error("MPD","Failed to get URL Handlers",err);
+			debug.error("MPD","Failed to connect to player",err);
 			infobar.permerror(language.gettext('error_noplayer'));
 		}
 	}
@@ -117,7 +110,7 @@ function playerController() {
 				timeout: 30000
 			});
 			// Clone the object so this thread can exit
-			debug.debug('PLAYER', 'Got response for',list,s);
+			debug.core('PLAYER', 'Got response for',list,s);
 			let last_state = player.status.state;
 			player.status = cloneObject(s);
 			$('#radiodomains').makeDomainChooser("setSelection", player.status.smartradio.radiodomains);
@@ -142,7 +135,6 @@ function playerController() {
 			} else if (player.status.db_updated != 'no') {
 				podcasts.loadPodcast(player.status.db_updated);
 			}
-
 		} catch (err) {
 			playlist.validate();
 			debug.error('CONTROLLER', 'Command List Failed', err);
@@ -186,7 +178,11 @@ function playerController() {
 				$('i.menu.openmenu.playlist.icon-toggle-closed[name="'+openplaylists[i]+'"]').click();
 			}
 
-			data = await $.get('player/utils/loadplaylists.php?addtoplaylistmenu');
+			var data = await $.ajax({
+				url: 'player/utils/loadplaylists.php?addtoplaylistmenu=1',
+				type: 'GET',
+				cache: false
+			});
 			$('#addtoplaylistmenu').empty();
 			data.forEach(function(p) {
 				var h = $('<div>', {class: "containerbox backhi clickicon menuitem clickaddtoplaylist", name: p.name }).appendTo($('#addtoplaylistmenu'));
@@ -249,10 +245,7 @@ function playerController() {
 		oldplname = decodeURIComponent(name);
 		debug.log("MPD","Renaming Playlist",name,e);
 		var fnarkle = new popup({
-			css: {
-				width: 400,
-				height: 300
-			},
+			width: 400,
 			title: language.gettext("label_renameplaylist"),
 			atmousepos: true,
 			mousevent: e
@@ -332,6 +325,29 @@ function playerController() {
 	this.pause = function() {
 		alarmclock.pre_pause_actions();
 		self.do_command_list([['pause']]);
+	}
+
+	// play button calls this because our current state could be
+	// out of sync if we're a mobile device and we've just woken up.
+	// We don't call do_command_list because that initiates a bunch
+	// of async stuff that'll be triggered again as soon as this command
+	// executes.
+	this.toggle_playback_state = async function() {
+		var s = await $.ajax({
+			type: 'POST',
+			url: 'api/player/',
+			data: JSON.stringify([]),
+			contentType: false,
+			dataType: 'json',
+			timeout: 30000
+		});
+		debug.log('PLAYER', 'Toggling Playback State From',s.state);
+		player.status.state = s.state;
+		if (s.state == 'play') {
+			self.pause();
+		} else {
+			self.play();
+		}
 	}
 
 	this.stop = function() {

@@ -111,7 +111,9 @@ create_body_tag('desktop');
 
 	<div id="theotherthing" class="fixed infobarnoheight containerbox vertical-centre">
 			<div id="playposss" class="fixed timebox tboxl"></div>
+			<i class="icon-rewind skip-button skip-backwards fixed"></i>
 			<div class="expand"><div id="progress"></div></div>
+			<i class="icon-ffwd skip-button skip-forwards fixed"></i>
 			<div id="tracktimess" class="fixed timebox tboxr clickicon"></div>
 	</div>
 </div>

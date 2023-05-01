@@ -96,7 +96,7 @@ var metaBackup = function() {
 				progressDiv = $('<div>', {class: 'textcentre'}).appendTo('#mbbfoldup');
 
 				$("#mbbfoldup").append('<div class="noselection fullwidth" id="mbbmunger"></div>');
-				$('#createbackup').on('click', metaBackup.create);
+				$('#createbackup').on(prefs.click_event, metaBackup.create);
 				getBackupData();
 			} else {
 				browser.goToPlugin("mbb");
@@ -134,7 +134,7 @@ var metaBackup = function() {
 		},
 
 		create: function() {
-			$('#createbackup').off('click').hide();
+			$('#createbackup').off(prefs.click_event).hide();
 			$('#backupspinner').css('display', 'inline-block').makeSpinner();
 			do_request(
 				{action: 'metabackup'},
@@ -142,11 +142,11 @@ var metaBackup = function() {
 					infobar.notify(language.gettext('label_backupcreated'));
 					getBackupData();
 					$('#backupspinner').stopSpinner().hide();
-					$('#createbackup').show().on('click', metaBackup.create);
+					$('#createbackup').show().on(prefs.click_event, metaBackup.create);
 				},
 				function() {
 					$('#backupspinner').stopSpinner().css('display', 'none');
-					$('#createbackup').show().on('click', metaBackup.create);
+					$('#createbackup').show().on(prefs.click_event, metaBackup.create);
 					infobar.error(language.gettext('label_general_error'));
 					mbb.slideToggle('fast');
 				}

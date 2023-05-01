@@ -58,7 +58,6 @@ language::add_translations([
 	"config_lastfmusername" =>				"Nome utente Last.FM",
 	"config_loginbutton" =>					"Accedi",
 	"config_scrobbling" =>					"Abilita lo Scrobbling di Last.FM",
-	"config_scrobblepercent" =>				"Percentuale di brano riprodotto prima di effettuare lo scrobbling",
 	"config_autocorrect" =>					"Abilita autocorrezione di Last.FM",
 	"config_tagloved" =>					"Tagga il Brano come Preferito con:",
 	"config_fontsize" =>					"DIMENSIONE CARATTERI",

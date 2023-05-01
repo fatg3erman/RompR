@@ -17,9 +17,9 @@ $params = json_decode(file_get_contents('php://input'), true);
 
 foreach($params as $p) {
 
-	logger::log("METADATA", "Doing action",strtoupper($p['action']));
+	logger::info("METADATA", "Doing action", $p['action']);
 	foreach ($p as $i => $v) {
-		logger::trace("Parameter", "  ",$i,':',$v);
+		logger::trace("Parameter", $i,'=',$v);
 	}
 
 	prefs::$database->sanitise_data($p);

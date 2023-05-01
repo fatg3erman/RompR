@@ -37,7 +37,7 @@ class imageHandler {
 	}
 
 	public function resizeToWidth($width) {
-		logger::trace('IMAGEHANDLER', 'Resizing to width', $width);
+		logger::debug('IMAGEHANDLER', 'Resizing to width', $width);
 		$this->image->resizeToWidth($width);
 	}
 
@@ -58,7 +58,7 @@ class imageHandler {
 			'.'.$size.'.'.pathinfo($this->filename, PATHINFO_EXTENSION);
 
 		if (!file_exists($thumbfile)) {
-			logger::log('IMAGEHANDLER', 'Creating Thumbnail',$thumbfile);
+			logger::debug('IMAGEHANDLER', 'Creating Thumbnail',$thumbfile);
 			$this->image->outputResizedFile($size, $thumbfile);
 		}
 

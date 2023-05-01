@@ -56,7 +56,6 @@ language::add_translations([
 	"config_lastfmusername" =>				"Me name in t' red ball club",
 	"config_loginbutton" =>					"Arrrrrr",
 	"config_scrobbling" =>					"Avast! Scrobbling is witchcraft",
-	"config_scrobblepercent" =>				"Afore ye scrobble, pipe this much shanty",
 	"config_autocorrect" =>					"Ye red ball corrects ye",
 	"config_tagloved" =>					"Ye beautys be marked wi'",
 	"config_country" =>						"YER LUBBER (for t' green ball)",

@@ -14,7 +14,7 @@ if (
 ) {
 	$module = $params['module'];
 	$method = $params['method'];
-
+	logger::debug('APIHANDLER', print_r($params, true));
 	$module::$method($params['params'], true);
 
 } else {

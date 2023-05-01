@@ -27,7 +27,7 @@ var playlist = function() {
 	var timeleft = 0;
 	var remainingtime = null;
 	var totaltime = 0;
-
+	var smart_notify = null;
 	var add_proxy_command = null;
 
 	// Minimal set of information - just what infobar requires to make sure
@@ -83,7 +83,6 @@ var playlist = function() {
 		}
 
 		return {
-
 			register: function(name, fn, script) {
 				debug.log("RADIO MANAGER","Registering Plugin",name);
 				radios[name] = {func: fn, script: script, loaded: false};
@@ -109,7 +108,7 @@ var playlist = function() {
 							}
 					});
 					$("#radiodomains").find('input.topcheck').each(function() {
-						$(this).on('click', function() {
+						$(this).on(prefs.click_event, function() {
 							prefs.save({radiodomains: $("#radiodomains").makeDomainChooser("getSelection")});
 						});
 					});
@@ -135,19 +134,22 @@ var playlist = function() {
 						} catch (err) {
 							debug.error("RADIO MANAGER","Failed to Load Script",err);
 							infobar.error(language.gettext('label_general_error'));
+							return;
 						}
 					}
 					radios[radiomode].func.initialise(radiomode, radioparam);
 					if (!from_remote) {
 						// This is us, starting it off
-						infobar.smartradio(language.gettext('label_preparing'));
+						smart_notify = infobar.smartradio(language.gettext('label_preparing'));
 						if (await radios[radiomode].func.getURIs()) {
 							setHeader();
 						} else {
-							debug.error("RADIO MANAGER","Failed to Initialise Script");
+							infobar.error(language.gettext('label_gotnotracks'));
+							debug.error("RADIO MANAGER","Got no tracks");
 							playlist.radioManager.stop();
-							infobar.error(language.gettext('label_general_error'));
-
+							infobar.removenotify(smart_notify);
+							smart_notify = null;
+							$('#waiter').empty();
 						}
 					}
 				}
@@ -156,7 +158,7 @@ var playlist = function() {
 			checkStatus: async function() {
 				// clearTimeout(status_check_timer);
 				// status_check_timer = setTimeout(playlist.radioManager.checkRemoteChanges, 1000);
-				debug.log('RADIOMANAGER', 'Status Check',player.status.smartradio.radiomode, this_radio, player.status.smartradio.radioparam, this_param);
+				debug.debug('RADIOMANAGER', 'Status Check',player.status.smartradio.radiomode, this_radio, player.status.smartradio.radioparam, this_param);
 				if (player.status.smartradio.radiomode != this_radio || player.status.smartradio.radioparam != this_param) {
 					await playlist.radioManager.load(player.status.smartradio.radiomode, player.status.smartradio.radioparam, true);
 					setHeader();
@@ -164,15 +166,6 @@ var playlist = function() {
 						playlist.radioManager.was_stopped();
 				}
 			},
-
-			// checkRemoteChanges: function() {
-			// 	if (player.status.smartradio.radiomode != this_radio || player.status.smartradio.radioparam != this_param) {
-			// 		playlist.radioManager.load(player.status.smartradio.radiomode, player.status.smartradio.radioparam, true);
-			// 		setHeader();
-			// 		if (this_radio == '')
-			// 			playlist.radiomanager.was_stopped();
-			// 	}
-			// },
 
 			// This is a user request to stop the smart radio and return to manual
 			stop: async function() {
@@ -202,9 +195,14 @@ var playlist = function() {
 				playlist.radioManager.load(params[0], params[1] ? params[1] : null);
 			},
 
-			standardBox: function(station, param, icon, label) {
+			standardBox: function(station, param, icon, label, cls) {
+				if (cls) {
+					cls = ' '+cls;
+				} else {
+					cls = '';
+				}
 				var container = $('<div>', {
-					class: 'menuitem containerbox playable smartradio collectionitem',
+					class: 'menuitem containerbox playable smartradio collectionitem'+cls,
 					name: station + (param ? '+'+param : '')
 				});
 				container.append('<div class="svg-square fixed '+icon+'"></div>');
@@ -280,7 +278,7 @@ var playlist = function() {
 
 			debug.log('PLAYLIST', 'Starting update request',my_queue_id);
 			coverscraper.clearCallbacks();
-			$('.clear_playlist').off('click').makeSpinner();
+			$('.clear_playlist').off(prefs.click_event).makeSpinner();
 			try {
 				var list = await $.ajax({
 					type: "GET",
@@ -389,9 +387,16 @@ var playlist = function() {
 			playlist.doUpcomingCrap();
 			player.controller.postLoadActions();
 			uiHelper.postPlaylistLoad();
-			$('.clear_playlist').on('click', playlist.clear).stopSpinner();
+			$('.clear_playlist').on(prefs.click_event, playlist.clear).stopSpinner();
 			playlist.radioManager.checkStatus();
 			current_queue_request++;
+			if (playlist.radioManager.is_running() && finaltrack < (prefs.smartradio_chunksize-1)) {
+				playlist.waiting();
+			}
+			if (smart_notify !== null && finaltrack > -1) {
+				infobar.removenotify(smart_notify);
+				smart_notify = null;
+			}
 		},
 
 		is_valid: async function() {
@@ -455,7 +460,12 @@ var playlist = function() {
 		},
 
 		clear: function() {
-			playlist.radioManager.stop().then(player.controller.clearPlaylist);
+			if (playlist.radioManager.is_running()) {
+				// If we do this when it's not running it might change the Consume mode
+				playlist.radioManager.stop().then(player.controller.clearPlaylist);
+			} else {
+				player.controller.clearPlaylist();
+			}
 		},
 
 		handleClick: function(event) {
@@ -554,8 +564,8 @@ var playlist = function() {
 			var tracks = new Array();
 			$.each(elements, function (index, element) {
 				var uri = $(element).attr("name");
-				debug.log("PLAYLIST","Adding",uri);
-				if (uri) {
+				if (uri && !$(element).hasClass('notenabled')) {
+					debug.log("PLAYLIST","Adding",uri);
 					if ($(element).hasClass('searchdir')) {
 						var s = addSearchDir($(element));
 						tracks = tracks.concat(s);
@@ -731,15 +741,15 @@ var playlist = function() {
 
 		preventControlClicks: function(t) {
 			if (t) {
-				$('#random').on('click', player.controller.toggleRandom).removeClass('notenabled');
-				$('#repeat').on('click', player.controller.toggleRepeat).removeClass('notenabled');
-				$('#consume').on('click', player.controller.toggleConsume).removeClass('notenabled');
+				$('#random').off(prefs.click_event).on(prefs.click_event, player.controller.toggleRandom).removeClass('notenabled');
+				$('#repeat').off(prefs.click_event).on(prefs.click_event, player.controller.toggleRepeat).removeClass('notenabled');
+				$('#consume').off(prefs.click_event).on(prefs.click_event, player.controller.toggleConsume).removeClass('notenabled');
 			} else {
-				$('#random').off('click').addClass('notenabled');
-				$('#repeat').off('click').addClass('notenabled');
-				$('#consume').off('click').addClass('notenabled');
+				$('#random').off(prefs.click_event).addClass('notenabled');
+				$('#repeat').off(prefs.click_event).addClass('notenabled');
+				$('#consume').off(prefs.click_event).addClass('notenabled');
 			}
-			$('#crossfade').off('click').on('click', player.controller.toggleCrossfade);
+			$('#crossfade').off(prefs.click_event).on(prefs.click_event, player.controller.toggleCrossfade);
 		},
 
 		delete: function(id) {
@@ -892,9 +902,17 @@ var playlist = function() {
 			return currentalbum;
 		},
 
+		getDomain: function(u) {
+			var s = u.split(':');
+			if (s.length > 0) {
+				return s.shift();
+			} else {
+				return 'local';
+			}
+		},
+
 		getDomainIcon: function(track, def) {
-			var s = track.file.split(':');
-			var d = s.shift();
+			var d = playlist.getDomain(track.file);
 			switch (d) {
 				case "spotify":
 				case "ytmusic":
@@ -1054,7 +1072,8 @@ function Album(artist, album, index, rolledup) {
 		controls.append('<i class="icon-cancel-circled inline-icon tooltip expand clickplaylist clickicon clickremovealbum" title="'+language.gettext('label_removefromplaylist')+'" name="'+self.index+'"></i>');
 
 		if (tracks[0]['X-AlbumUri'] && ['youtube', 'ytmusic', 'spotify'].indexOf(tracks[0]['domain']) >= 0) {
-			controls.append('<i class="expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse" uri="'+tracks[0]['X-AlbumUri']+'"></i>');
+			let menu = $('<i>', {class: "expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse", uri: tracks[0]['X-AlbumUri']}).appendTo(controls);
+			// controls.append('<i class="expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse" uri="'+tracks[0]['X-AlbumUri']+'"></i>');
 		}
 
 		var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');

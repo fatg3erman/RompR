@@ -19,8 +19,8 @@ In mopidy.conf, your mpd section needs to contain
 ### Using the HTTP Frontend for Improved Responsiveness
 
 If your Mopidy has its HTTP frontend enabled, RompR can use that *in addition to* the MPD interface. This is optional, it makes RompR a little more
-responsive when things change within Mopidy. RompR can also use this connection to query Mopidy for album art, which is very handy if the Mopidy backend supports
-it. Currently, local, spotify, and youtube definitely do.
+responsive when things change within Mopidy. RompR can also use this connection to query Mopidy for album art - which is very handy if the Mopidy backend supports
+it - and when searching for tracks, which is more efficient than using the MPD interface.
 
 You will, however, have to configure a couple of things.
 
@@ -39,12 +39,6 @@ or
 
 If RompR is able to connect to Mopidy in this way, you will see a connection message that displays two port numbers when you first open RompR.
 
-If you get a permanent message saying 'Player has stopped responding' this means the backend (web server) is able to connect to the MPD interface  but your browser is not able to connect to the HTTP interface.
-Try not using 'localhost' in your player definition. If that doesn't work then Mopidy is blocking the connection from the browser and you need to check
-the settings above. If you're having problems and you just can't get rid of that message then either disable Mopidy's HTTP frontend, or change the port from the setup page
-in RompR so that RompR is using the 'wrong' port.
-
-![](images/httport.png)
 
 ### Fixing Mopidy's Consume Bug
 
@@ -75,6 +69,9 @@ You will only see options for backends that are enabled in Mopidy. The complete 
 * **SoundCloud 'Liked'** ('soundcloud' backend must be enabled)
 * **SoundCloud 'Sets'** ('soundcloud' backend must be enabled)
 * **VKontakte** ('vkontakte' backend must be enabled)
+* **Youtube Music Liked Songs** ('ytmusic' backend must be enabled)
+* **YouTube Music Albums** ('ytmusic' backend must be enabled)
+* **YouTube Music Subscription** ('ytmusic' backend must be enabled)
 
 
 If you don't want to build a collection this way, tracks from anywhere can be added to the collection by tagging or rating them at any time.
@@ -95,6 +92,15 @@ You need to make sure that your browser can access your Beets server for this to
       host: IP.address.of.beets.server
 
 Otherwise beets will not allow RompЯ to talk to it. Your configuration for beets in mopidy must also contain this IP address as Beets will only communicate via the supplied IP address.
+
+
+## Search
+
+If Mopidy's HTTP interface is available and you do a search in RompR and limit the search to specific backends the search will be performed
+using Mopidy's HTTP interface instead of the MPD interface. This can provide significantly improved search performance and better
+quality information and really helps when running 'Music From Anywhere' personalised radio, but it can use a lot of RAM and in certain setups
+it might be a lot slower. You can disable this behaviour by unchecking 'Use Mopidy HTTP interface for Search' on the rompr/?setup screen.
+
 
 ## Scanning Local Files
 
@@ -135,21 +141,17 @@ Note that only Mopidy-Local seems to return Genres, so Genre-based Collection fu
 
 ## Note on Mopidy-YTMusic and Mopidy-Youtube
 
-Mopidy-YTMusic cannot accept a URI it has not seen before. This gives RompR problems if you add YTMusic tracks to your collection and then restart
-Mopidy, because all the tracks in your collection will no longer work. I have suggested a fix for this that works for RompR but as yet there has
-been no movement on it. https://github.com/OzymandiasTheGreat/mopidy-ytmusic/pull/69. If you run that version then you can add tracks to your collection
-safely.
+To work properly with RompR you need Mopidy-YTMusic 0.3.8 or later. This is the preferable solution as Mopidy-YTMusic supports
+artists and albums in a way that is the same as all the other Mopidy backends, whereas Mopidy-Youtube does not. You can use
+Mopidy-Youtube in parralel with Mopidy-YTMusic, to give you access to Youtube Videos and Youtube Music.
+RompR's Mopidy-Youtube support is based on using it for standard YouTube, not Youtube Music. You should use Mopidy-YTMusic
+for Youtube Music support.
 
-Mopidy-Youtube also supports the Youtube Music API. I've worked with the developer to bring the functionality more in line with what
-Spotify used to provide and in general it works well. At the time of writing (October 2022) the development version contains
-all the functionality RompR requires.
-
-I've put a lot of effort into these backends to replace a lot of what RompR used to rely on Mopidy-Spotify for but bear in mind
+I've put a lot of effort into using these backends to replace a lot of what RompR used to rely on Mopidy-Spotify for but bear in mind
 Youtbe Music does not have a proper API and there is some information - like track numbers - that is extremely unreliable.
 RompR likes track numbers because they make Playcounts more accurate, and RompR will try very hard indeed to get
-Youtube to give it a track number when it needs one. Mopidy-Youtube is better than Mopidy-YTMusic in this respect.
-Mopidy-YTMusic often doesn't even return an Album name, which messes up Playcounts and Ratings and a lot of stuff. If that's important
-to you then you shouldn't use Mopidy-YTMusic.
+Youtube to give it a track number when it needs one.
+
 
 
 ## Downloading Youtube Tracks
@@ -168,7 +170,7 @@ The binaries must be installed so that they can be executed by your webserver. R
 If you're trying to use this feature and you keep getting an error, enable debug logging and look at the output.
 If all the binaries are installed then the debug log will tell you the command line it is using, you should try that from a console to look for error messages.
 
-Assuming it works, the YoutTube video will be downloaded and the audio will be extracted to a FLAC file which will be streamed from your webserver
+Assuming it works, the YouTube video will be downloaded and the audio will be extracted to a FLAC file which will be streamed from your webserver
 using Mopidy's Stream backend the next time you add the track to the play queue.
 
 The file will be downloaded to a subdirectory under rompr/prefs/youtubedl/. Assuming the download actually started there will be a log file
@@ -192,4 +194,4 @@ you symlink to MUST be called youtubedl or everything in it will get deleted.**
 Youtube Music Premium subscribers have the ability to stream audio at a higher quality. To ensure your downloads use the highest quality streams
 you need to install yt-dlp and edit your /etc/yt-dlp.conf and set the --cookies option so it points to your cookie file.
 The cookie file must also be writeable by your webserver.
-This is the same cookie file you reference in the musicapi_cookiefile option for moidy-youtube. See Mopidy-Youtube's documentation for more info.
+This is the same cookie file you reference in the musicapi_cookiefile option for mopidy-youtube. See Mopidy-Youtube's documentation for more info.

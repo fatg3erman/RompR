@@ -8,7 +8,7 @@ var genreRadio = function() {
 			//
 			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
 				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-music', language.gettext('label_genre'), 'genre_radio'));
-				$('button[name="genre_radio"]').on('click', function() {
+				$('button[name="genre_radio"]').on(prefs.click_event, function() {
 					var v = $('#genre_radio').val();
 					if (v != '') {
 						playlist.radioManager.load('genreRadio', v);
@@ -47,7 +47,7 @@ var singleArtistRadio = function() {
 			//
 			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
 				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-artist', language.gettext('label_singleartistradio'), 'singart_radio'));
-				$('button[name="singart_radio"]').on('click', function() {
+				$('button[name="singart_radio"]').on(prefs.click_event, function() {
 					var v = $('#singart_radio').val();
 					if (v != '') {
 						playlist.radioManager.load('faveArtistRadio', v);
@@ -68,7 +68,7 @@ var lastFMTrackRadio = function() {
 				//
 				var holder = $("#pluginplaylists_everywhere");
 				['7day', '1month', '12month', 'overall'].forEach(function(l) {
-					holder.append(playlist.radioManager.standardBox('lastFMTrackRadio', l, 'icon-lastfm-1', language.gettext('label_lastfm_mix_'+l)));
+					holder.append(playlist.radioManager.standardBox('lastFMTrackRadio', l, 'icon-lastfm-1', language.gettext('label_lastfm_mix_'+l), 'lastfmlogin-required notenabled'));
 				});
 			}
 		}
@@ -86,7 +86,7 @@ var lastFMArtistRadio = function() {
 				//
 				var holder = $("#pluginplaylists_everywhere");
 				['7day', '1month', '12month', 'overall'].forEach(function(l) {
-					holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', l, 'icon-lastfm-1', language.gettext('label_lastfm_dip_'+l)));
+					holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', l, 'icon-lastfm-1', language.gettext('label_lastfm_dip_'+l), 'lastfmlogin-required notenabled'));
 				});
 			}
 		}
@@ -124,6 +124,7 @@ var recommendationsRadio = function() {
 		}
 	}
 }();
+
 
 playlist.radioManager.register("recommendationsRadio", recommendationsRadio, 'radios/code/recommendationsradio.js');
 playlist.radioManager.register("faveArtistRadio", faveArtistRadio, 'radios/code/faveartistradio.js');

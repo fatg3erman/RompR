@@ -60,10 +60,24 @@ input[type=text],input[type="number"] {
 	width: 100%;
 }
 
+.skip-button {
+	height: 12px;
+	width: 14px;
+	cursor: pointer;
+}
+
+.skip-backwards {
+	margin-right: 4px;
+}
+
+.skip-forwards {
+	margin-left: 4px;
+}
+
 #playbackTime {
-	font-size:11px;
-	height:15px;
-	line-height:15px;
+	font-size:12px;
+	height:16px;
+	line-height:16px;
 }
 
 #albumcover {
@@ -160,6 +174,10 @@ input[type=text],input[type="number"] {
 	height: 32px;
 }
 
+#headerbar>#sourcescontrols>i.topimg:first-child {
+	margin-top: 0px;
+}
+
 #headerbar i.invisible {
 	display: none;
 }
@@ -191,7 +209,6 @@ input[type=text],input[type="number"] {
 	padding:8px;
 	top:0px;
 	display:none;
-	z-index:2000;
 	left: 0;
 	right: 0;
 	margin: 0 auto;
@@ -288,7 +305,6 @@ button.spinable.icon-spin6 {
 	padding-bottom:2px;
 	padding-left:0px;
 	padding-right:0px;
-	height:90px;
 }
 
 .infobarnoheight {
@@ -457,17 +473,17 @@ button.spinable.icon-spin6 {
 	margin-top:2px;
 }
 
-body.touchclick .outhack {
+body.mobilebrowser .outhack {
 	width:18px;
 	height:18px;
 	margin-top:2px;
 }
 
-body.touchclick #volumecontrol {
+body.mobilebrowser #volumecontrol {
 	width: 18px;
 }
 
-body.touchclick .progressbar_v {
+body.mobilebrowser .progressbar_v {
 	width: 16px;
 }
 
@@ -476,11 +492,11 @@ body.touchclick .progressbar_v {
 	margin-right: 0px;
 }
 
-body.touchclick .snap_vert_holder {
+body.mobilebrowser .snap_vert_holder {
 	margin-right: 4px;
 }
 
-body.touchclick .snap_vert_holder:last-child {
+body.mobilebrowser .snap_vert_holder:last-child {
 	margin-right: 0px;
 }
 
@@ -605,6 +621,10 @@ div.rightmenu
 	margin-left: 0px;
 }
 
+.title-menu.containerbox.vertical-centre>i.svg-square {
+	margin-right:4px;
+}
+
 .minwidthed2.expand>.tagh.albumthing {
 	padding: 0px;
 }
@@ -623,43 +643,6 @@ div.rightmenu
 
 @media screen and (max-height: 1099px) {
 	.infobarlayout {
-		height:140px;
-	}
-	#albumcover {
-		height: 162px;
-	}
-	#albumpicture {
-		height: 158px;
-		padding: 2px;
-	}
-	#nowplaying {
-		height: 110px;
-	}
-
-	.controlbutton-small
-	{
-		width:24px !important;
-		height:24px !important;
-		margin-top:6px !important;
-		margin-left:4px !important;
-	}
-
-	.controlbutton
-	{
-		width:32px !important;
-		height:32px !important;
-		margin-top:6px !important;
-	}
-
-	.smallpluginicon
-	{
-		height: 20px !important;
-		width: 18px !important;
-	}
-}
-
-@media screen and (min-height: 1100px) {
-	.infobarlayout {
 		height:160px;
 	}
 	#albumcover {
@@ -672,10 +655,11 @@ div.rightmenu
 	#nowplaying {
 		height: 130px;
 	}
+
 	.controlbutton-small
 	{
-		width:28px !important;
-		height:28px !important;
+		width:26px !important;
+		height:26px !important;
 		margin-top:6px !important;
 		margin-left:4px !important;
 	}
@@ -684,6 +668,42 @@ div.rightmenu
 	{
 		width:36px !important;
 		height:36px !important;
+		margin-top:6px !important;
+	}
+
+	.smallpluginicon
+	{
+		height: 20px !important;
+		width: 18px !important;
+	}
+}
+
+@media screen and (min-height: 1100px) {
+	.infobarlayout {
+		height:180px;
+	}
+	#albumcover {
+		height: 202px;
+	}
+	#albumpicture {
+		height: 198px;
+		padding: 2px;
+	}
+	#nowplaying {
+		height: 150px;
+	}
+	.controlbutton-small
+	{
+		width:30px !important;
+		height:30px !important;
+		margin-top:6px !important;
+		margin-left:4px !important;
+	}
+
+	.controlbutton
+	{
+		width:38px !important;
+		height:38px !important;
 		margin-top:6px !important;
 	}
 
@@ -858,3 +878,19 @@ div.helpfulalbum>div.tagh.albumthing {
 	display:none;
 }
 
+ul.info-links-column>li:not(.info-list-title) {
+	margin-top: 2px;
+	/*position:  relative;*/
+}
+
+ul.info-links-column>li:not(.info-list-title)>i {
+	position: absolute;
+	left: -2px;
+}
+
+ul.info-links-column>li:not(.info-list-title)>a {
+	position: relative;
+	left: calc(var(--small-icon-size) + 2px);
+	top: 2px;
+	margin-right: 8px;
+}

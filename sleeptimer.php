@@ -6,7 +6,7 @@ $opts = getopt('', ['currenthost:', 'sleeptime:']);
 prefs::set_pref($opts);
 
 logger::mark("SLEEPTIMER", "Using Player",prefs::currenthost());
-logger::log('SLEEPTIMER', 'Sleeping for',format_time(prefs::get_pref('sleeptime')));
+logger::info('SLEEPTIMER', 'Sleeping for',format_time(prefs::get_pref('sleeptime')));
 
 sleep((int) prefs::get_pref('sleeptime'));
 

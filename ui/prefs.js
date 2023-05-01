@@ -132,9 +132,7 @@ var prefs = function() {
 	var deferredPrefs = null;
 	var uichangetimer = null;
 
-    jsonNode = document.querySelector("script[name='browser_prefs']");
-    jsonText = jsonNode.textContent;
-    const prefsInLocalStorage = JSON.parse(jsonText);
+    const prefsInLocalStorage = data_from_source('browser_prefs');
 
 	const menus_to_save_state_for = [
 		'podcastbuttons',
@@ -153,13 +151,9 @@ var prefs = function() {
 
 	function offerToTransferPlaylist() {
 		var fnarkle = new popup({
-			css: {
-				width: 360,
-				height: 800
-			},
+			width: 360,
 			title: language.gettext('label_transferplaylist'),
 			hasclosebutton: false,
-			fitheight: true,
 			button_min_width: '4em',
 			modal: true
 		});
@@ -171,7 +165,6 @@ var prefs = function() {
 		fnarkle.useAsCloseButton(yes, transferPlaylist);
 		fnarkle.useAsCloseButton(no, dontTransferPlaylist);
 		fnarkle.open();
-		fnarkle.setWindowToContentsSize();
 	}
 
 	function dontTransferPlaylist() {
@@ -259,10 +252,6 @@ var prefs = function() {
 		prefs.save(felakuti, callback);
 	}
 
-	function setscrob(e) {
-		prefs.save({scrobblepercent: e.max});
-	}
-
 	function loadBackgroundImages() {
 		clearTimeout(backgroundTimer);
 		if (typeof(prefs.bgimgparms[prefs.theme]) == 'undefined') {
@@ -348,10 +337,10 @@ var prefs = function() {
 
 		var ran = $('#cus_bg_random');
 		ran.prop('checked', prefs.bgimgparms[prefs.theme].random);
-		ran.off('click').on('click', changeRandomMode);
+		ran.off(prefs.click_event).on(prefs.click_event, changeRandomMode);
 
 		$('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
-		$('input[name="backgroundposition"]').off('click').on('click', changeBackgroundPosition);
+		$('input[name="backgroundposition"]').off(prefs.click_event).on(prefs.click_event, changeBackgroundPosition);
 	}
 
 	function doNothing() {
@@ -435,9 +424,7 @@ var prefs = function() {
 		try {
 			var test = prefs.fontsize.match(/\d\d-(.+)\.css/);
 			if (test !== null) {
-				var jsonNode = document.querySelector("script[name='font_sizes']");
-	    		var jsonText = jsonNode.textContent;
-	    		var font_sizes = JSON.parse(jsonText);
+	    		var font_sizes = data_from_source('font_sizes');
 	    		if (font_sizes.hasOwnProperty(test[1])) {
 		    		debug.log('PREFS', 'Updating old font size from',prefs.fontsize,'to',font_sizes[test[1]]);
 	    			prefs.fontsize = font_sizes[test[1]];
@@ -454,9 +441,7 @@ var prefs = function() {
 		try {
 			var test = prefs.coversize.match(/\d\d-(.+)\.css/);
 			if (test !== null) {
-				var jsonNode = document.querySelector("script[name='cover_sizes']");
-	    		var jsonText = jsonNode.textContent;
-	    		var cover_sizes = JSON.parse(jsonText);
+	    		var cover_sizes = data_from_source('cover_sizes');
 	    		if (cover_sizes.hasOwnProperty(test[1])) {
 		    		debug.log('PREFS', 'Updating old cover size from',prefs.coversize,'to',cover_sizes[test[1]]);
 	    			prefs.coversize = cover_sizes[test[1]];
@@ -497,6 +482,11 @@ var prefs = function() {
 	}
 
 	return {
+
+		click_event: 'click',
+		use_mouse_interface: true,
+		use_touch_interface: false,
+		has_custom_scrollbars: true,
 
 		quickhack: function() {
 			updateCustomBackground();
@@ -578,7 +568,7 @@ var prefs = function() {
 			for (var i in options) {
 				prefs[i] = options[i];
 				if (prefsInLocalStorage.indexOf(i) > -1) {
-					debug.trace("PREFS", "Setting",i,"to",options[i],"in local storage");
+					debug.debug("PREFS", "Setting",i,"to",options[i],"in local storage");
 					localStorage.setItem("prefs."+i, JSON.stringify(options[i]));
 				} else {
 					debug.debug("PREFS", "Setting",i,"to",options[i],"on backend");
@@ -586,7 +576,7 @@ var prefs = function() {
 				}
 			}
 			if (Object.keys(prefsToSave).length > 0) {
-				debug.trace("PREFS",'Saving to backend', JSON.stringify(prefsToSave));
+				debug.debug("PREFS",'Saving to backend', JSON.stringify(prefsToSave));
 				await $.post('api/saveprefs/', {prefs: JSON.stringify(prefsToSave)});
 			}
 			if (callback) callback();
@@ -613,8 +603,10 @@ var prefs = function() {
 			var prefobj = new Object;
 			var prefname = $(this).attr("id");
 			if (event === null) {
+				debug.warn('PREFS', 'Event is NULL');
 				// Event will be null if we've called into this through
 				// $.proxy - like we have to in a floatingMenu.
+				// UPDATE - actually not sure if this is true any more
 				prefobj[prefname] = !$(this).is(":checked");
 			} else {
 				prefobj[prefname] = $(this).is(":checked");
@@ -724,14 +716,6 @@ var prefs = function() {
 		},
 
 		setPrefs: async function() {
-
-			$("#scrobwrangler").rangechooser({
-				range: 100,
-				ends: ['max'],
-				allowed_min: 0.5,
-				onstop: setscrob,
-				startmax: prefs.scrobblepercent/100
-			});
 
 			$.each($('.autoset'), function() {
 				debug.debug('SETPREFS','Checkbox',$(this).attr("id"), prefs[$(this).attr("id")]);
@@ -951,7 +935,7 @@ var prefs = function() {
 		},
 
 		clickBindType: function() {
-			return prefs.clickmode == 'double' ? 'dblclick' : 'click';
+			return prefs.clickmode == 'double' ? 'dblclick' : prefs.click_event;
 		},
 
 		save_prefs_for_open_menus: function(menu) {

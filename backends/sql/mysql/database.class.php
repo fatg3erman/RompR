@@ -2,10 +2,13 @@
 
 class database extends data_base {
 
-	const SQL_RANDOM_SORT = 'RAND()';
-	const SQL_TAG_CONCAT = "GROUP_CONCAT(t.Name SEPARATOR ', ') ";
-	const SQL_URI_CONCAT = "GROUP_CONCAT(Uri SEPARATOR ',') ";
-	const STUPID_CONCAT_THING = "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR ? LIKE CONCAT('%', Localfilename)";
+	public const SQL_RANDOM_SORT = 'RAND()';
+	public const SQL_TAG_CONCAT = "GROUP_CONCAT(t.Name SEPARATOR ', ') ";
+	public const STUPID_CONCAT_THING = "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR ? LIKE CONCAT('%', Localfilename)";
+
+	public function get_constant($c) {
+		return constant($c);
+	}
 
 	public function __construct() {
 		try {
@@ -18,9 +21,12 @@ class database extends data_base {
 			}
 			$this->mysqlc = new PDO($dsn, prefs::get_pref('mysql_user'), prefs::get_pref('mysql_password'));
 			logger::core("MYSQL", "Connected to MySQL");
+			$this->mysqlc->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->generic_sql_query('SET SESSION sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"', true);
-		} catch (Exception $e) {
-			logger::warn("MYSQL", "Database connect failure - ".$e);
+		} catch (PDOException $e) {
+			logger::warn("MYSQL", "Database connect failure");
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			sql_init_fail($e->getMessage());
 		}
 	}
@@ -59,10 +65,29 @@ class database extends data_base {
 	}
 
 	public function get_album_uri($trackuri) {
-		return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
-			"SELECT AlbumUri FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Uri = ?",
+		$nipples = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
+			"SELECT
+				AlbumUri
+			FROM
+				Albumtable
+			JOIN Tracktable USING (Albumindex)
+			WHERE Uri = ?",
 			$trackuri
 		);
+		// Too much load for Mopidy, this is when we're doing smart radio and it
+		// just locks up and we start getting rubbish back from the MPD interface.
+		// if ($nipples == null) {
+		// 	$table = everywhere_radio::get_uri_table_name();
+		// 	$nipples = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'AlbumUri', null,
+		// 		"SELECT
+		// 			AlbumUri
+		// 		FROM
+		// 			".$table."
+		// 		WHERE Uri = ?",
+		// 		$trackuri
+		// 	);
+		// }
+		return $nipples;
 	}
 
 	protected function init_random_albums() {
@@ -155,9 +180,9 @@ class database extends data_base {
 	public function delete_orphaned_artists() {
 		// MariaDB doesn't like using a UNION in the select when we create the table. MySQL is fine with it but we have to
 		// cope with the retarded backwards fork.
-		$this->generic_sql_query("CREATE TEMPORARY TABLE Cruft(Artistindex INT UNSIGNED) ENGINE=MEMORY AS (SELECT DISTINCT Artistindex FROM Tracktable)");
-		$this->generic_sql_query('INSERT INTO Cruft (SELECT DISTINCT AlbumArtistindex AS Artistindex FROM Albumtable)');
-		$this->generic_sql_query("DELETE FROM Artisttable WHERE Artistindex NOT IN (SELECT Artistindex FROM Cruft)");
+		$this->generic_sql_query("CREATE TEMPORARY TABLE Cruft(Artistindex INT UNSIGNED) ENGINE=MEMORY AS (SELECT DISTINCT Artistindex FROM Tracktable)", true);
+		$this->generic_sql_query('INSERT INTO Cruft (SELECT DISTINCT AlbumArtistindex AS Artistindex FROM Albumtable)', true);
+		$this->generic_sql_query("DELETE FROM Artisttable WHERE Artistindex NOT IN (SELECT Artistindex FROM Cruft)", true);
 		$this->generic_sql_query("DROP TABLE Cruft");
 	}
 
@@ -170,47 +195,53 @@ class database extends data_base {
 	}
 
 	private function prepare_update_findtrack_old() {
-		if ($this->find_track = $this->sql_prepare_query_later(
-			"INSERT INTO Tracktable
-				(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isAudiobook, Genreindex, TYear)
-			VALUES
-				(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-			ON DUPLICATE KEY UPDATE
-				Duration = VALUES(Duration),
-				Uri = VALUES(Uri),
-				LastModified = VALUES(LastModified),
-				Hidden = 0,
-				justAdded = 1,
-				isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE VALUES(isAudiobook) END,
-				Genreindex = VALUES(Genreindex),
-				TYear = VALUES(TYear)"
-		)) {
+		try {
+			$this->find_track = $this->mysqlc->prepare(
+				"INSERT INTO Tracktable
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isAudiobook, Genreindex, TYear)
+				VALUES
+					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				ON DUPLICATE KEY UPDATE
+					Duration = VALUES(Duration),
+					Uri = VALUES(Uri),
+					LastModified = VALUES(LastModified),
+					Hidden = 0,
+					justAdded = 1,
+					isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE VALUES(isAudiobook) END,
+					Genreindex = VALUES(Genreindex),
+					TYear = VALUES(TYear)"
+			);
 			logger::log('MYSQL', 'Prepared old-style update query successfully');
-		} else {
-			$this->show_sql_error();
+		} catch (PDOException $e) {
+			logger::error('SQL', 'Failed to prepare old style find_track statement');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			exit(1);
 		}
 	}
 
 	private function prepare_update_findtrack_new() {
-		if ($this->find_track = $this->sql_prepare_query_later(
-			"INSERT INTO Tracktable
-				(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isAudiobook, Genreindex, TYear)
-			VALUES
-				(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS new
-			ON DUPLICATE KEY UPDATE
-				Duration = new.Duration,
-				Uri = new.Uri,
-				LastModified = new.LastModified,
-				Hidden = 0,
-				justAdded = 1,
-				isAudiobook = CASE WHEN Tracktable.isAudiobook = 2 THEN 2 ELSE new.isAudiobook END,
-				Genreindex = new.Genreindex,
-				TYear = new.TYear"
-		)) {
+		try {
+			$this->find_track = $this->mysqlc->prepare(
+				"INSERT INTO Tracktable
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isAudiobook, Genreindex, TYear)
+				VALUES
+					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS new
+				ON DUPLICATE KEY UPDATE
+					Duration = new.Duration,
+					Uri = new.Uri,
+					LastModified = new.LastModified,
+					Hidden = 0,
+					justAdded = 1,
+					isAudiobook = CASE WHEN Tracktable.isAudiobook = 2 THEN 2 ELSE new.isAudiobook END,
+					Genreindex = new.Genreindex,
+					TYear = new.TYear"
+			);
 			logger::log('MYSQL', 'Prepared new-style update query successfully');
-		} else {
-			$this->show_sql_error();
+		} catch (PDOException $e) {
+			logger::error('SQL', 'Failed to prepare new style find_track statement');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			exit(1);
 		}
 	}
@@ -231,47 +262,53 @@ class database extends data_base {
 	//
 
 	private function prepare_search_findtrack_old() {
-		if ($this->find_track = $this->sql_prepare_query_later(
-			"INSERT INTO Tracktable
-				(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
-			VALUES
-				(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?)
-			ON DUPLICATE KEY UPDATE
-				Duration = VALUES(Duration),
-				Uri = VALUES(Uri),
-				isSearchResult = CASE WHEN isSearchResult > 0 THEN isSearchResult ELSE CASE WHEN Hidden = 0 THEN 1 ELSE 3 END END,
-				Hidden = 0,
-				justAdded = 1,
-				isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE VALUES(isAudiobook) END,
-				Genreindex = VALUES(Genreindex),
-				TYear = VALUES(TYear)"
-		)) {
+		try {
+			$this->find_track = $this->mysqlc->prepare(
+				"INSERT INTO Tracktable
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
+				VALUES
+					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?)
+				ON DUPLICATE KEY UPDATE
+					Duration = VALUES(Duration),
+					Uri = VALUES(Uri),
+					isSearchResult = CASE WHEN isSearchResult > 0 THEN isSearchResult ELSE CASE WHEN Hidden = 0 THEN 1 ELSE 3 END END,
+					Hidden = 0,
+					justAdded = 1,
+					isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE VALUES(isAudiobook) END,
+					Genreindex = VALUES(Genreindex),
+					TYear = VALUES(TYear)"
+			);
 			logger::log('MYSQL', 'Prepared old-style update query successfully');
-		} else {
-			$this->show_sql_error();
+		} catch (PDOException $e) {
+			logger::error('SQL', 'Failed to prepare old style find_track statement');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			exit(1);
 		}
 	}
 
 	private function prepare_search_findtrack_new() {
-		if ($this->find_track = $this->sql_prepare_query_later(
-			"INSERT INTO Tracktable
-				(Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
-			VALUES
-				(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?) AS new
-			ON DUPLICATE KEY UPDATE
-				Duration = new.Duration,
-				Uri = new.Uri,
-				isSearchResult = CASE WHEN Tracktable.isSearchResult > 0 THEN Tracktable.isSearchResult ELSE CASE WHEN Tracktable.Hidden = 0 THEN 1 ELSE 3 END END,
-				Hidden = 0,
-				justAdded = 1,
-				isAudiobook = CASE WHEN Tracktable.isAudiobook = 2 THEN 2 ELSE new.isAudiobook END,
-				Genreindex = new.Genreindex,
-				TYear = new.TYear"
-		)) {
-			logger::log('MYSQL', 'Prepared old-style update query successfully');
-		} else {
-			$this->show_sql_error();
+		try {
+			$this->find_track = $this->mysqlc->prepare(
+				"INSERT INTO Tracktable
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
+				VALUES
+					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?) AS new
+				ON DUPLICATE KEY UPDATE
+					Duration = new.Duration,
+					Uri = new.Uri,
+					isSearchResult = CASE WHEN Tracktable.isSearchResult > 0 THEN Tracktable.isSearchResult ELSE CASE WHEN Tracktable.Hidden = 0 THEN 1 ELSE 3 END END,
+					Hidden = 0,
+					justAdded = 1,
+					isAudiobook = CASE WHEN Tracktable.isAudiobook = 2 THEN 2 ELSE new.isAudiobook END,
+					Genreindex = new.Genreindex,
+					TYear = new.TYear"
+			);
+			logger::log('MYSQL', 'Prepared new-style update query successfully');
+		} catch (PDOException $e) {
+			logger::error('SQL', 'Failed to prepare new style find_track statement');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			exit(1);
 		}
 	}
@@ -300,19 +337,32 @@ class database extends data_base {
 
 	protected function check_youtube_uri_exists($uri) {
 		logger::trace('CLEANER', 'Checking for', $uri);
+		// If we've put it in the database as an http: Uri, it won't be URL-encoded
 		$bacon = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
 			"SELECT TTindex FROM Tracktable WHERE Uri LIKE CONCAT('%', ?) AND Hidden = ?",
 			$uri,
 			0
 		);
-		return count($bacon);
+		if (count($bacon) > 0)
+			return true;
+
+		// If we've put it in the music directory and scanned it to Mopidy's database
+		// the Uri will have been url-encoded, except for /
+		$uri = implode("/", array_map("rawurlencode", explode("/", $uri)));
+		logger::trace('CLEANER', 'Checking for', $uri);
+		$bacon = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			"SELECT TTindex FROM Tracktable WHERE Uri LIKE CONCAT('%', ?) AND Hidden = ?",
+			$uri,
+			0
+		);
+		return (count($bacon) > 0);
 	}
 
 	public function drop_triggers() {
 		$triggers = $this->generic_sql_query('SHOW TRIGGERS');
 		foreach ($triggers as $trigger) {
 			logger::debug('MYSQL', 'Dropping Trigger', $trigger['Trigger']);
-			$this->generic_sql_query('DROP TRIGGER '.$trigger['Trigger']);
+			$this->generic_sql_query('DROP TRIGGER '.$trigger['Trigger'], true);
 		}
 	}
 
@@ -329,14 +379,17 @@ class database extends data_base {
 
 	protected function create_conditional_triggers() {
 		if ($this->trigger_not_exists('Tracktable', 'track_insert_trigger')) {
-			$this->generic_sql_query("CREATE TRIGGER track_insert_trigger AFTER INSERT ON Tracktable
+			if (!$this->generic_sql_query("CREATE TRIGGER track_insert_trigger AFTER INSERT ON Tracktable
 								FOR EACH ROW
 								BEGIN
 									IF (NEW.Hidden=0)
 									THEN
 									  UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = NEW.Albumindex;
 									END IF;
-								END;", true);
+								END;", true)
+			) {
+				return false;
+			}
 		}
 
 		if ($this->trigger_not_exists('Tracktable', 'track_update_trigger')) {
@@ -356,47 +409,57 @@ class database extends data_base {
 
 	protected function create_update_triggers() {
 		if ($this->trigger_not_exists('Ratingtable', 'rating_update_trigger')) {
-			$this->generic_sql_query("CREATE TRIGGER rating_update_trigger AFTER UPDATE ON Ratingtable
+			if (!$this->generic_sql_query("CREATE TRIGGER rating_update_trigger AFTER UPDATE ON Ratingtable
 								FOR EACH ROW
 								BEGIN
 								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
 								UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
 								UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
-								END;", true);
+								END;", true)) {
+				return false;
+			}
 		}
 
 		if ($this->trigger_not_exists('Ratingtable', 'rating_insert_trigger')) {
-			$this->generic_sql_query("CREATE TRIGGER rating_insert_trigger AFTER INSERT ON Ratingtable
+			if (!$this->generic_sql_query("CREATE TRIGGER rating_insert_trigger AFTER INSERT ON Ratingtable
 								FOR EACH ROW
 								BEGIN
 								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
 								UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
 								UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
-								END;", true);
+								END;", true)) {
+				return false;
+			}
 		}
 
 		if ($this->trigger_not_exists('Tagtable', 'tag_delete_trigger')) {
-			$this->generic_sql_query("CREATE TRIGGER tag_delete_trigger AFTER DELETE ON Tagtable
+			if (!$this->generic_sql_query("CREATE TRIGGER tag_delete_trigger AFTER DELETE ON Tagtable
 								FOR EACH ROW
 								BEGIN
 								DELETE FROM TagListtable WHERE Tagindex = OLD.Tagindex;
-								END;", true);
+								END;", true)) {
+				return false;
+			}
 		}
 
 		if ($this->trigger_not_exists('TagListtable', 'tag_insert_trigger')) {
-			$this->generic_sql_query("CREATE TRIGGER tag_insert_trigger AFTER INSERT ON TagListtable
+			if (!$this->generic_sql_query("CREATE TRIGGER tag_insert_trigger AFTER INSERT ON TagListtable
 								FOR EACH ROW
 								BEGIN
 								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
 								UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
 								UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
-								END;", true);
+								END;", true)) {
+				return false;
+			}
 		}
 
 		if ($this->trigger_not_exists('TagListtable', 'tag_remove_trigger')) {
-			$this->generic_sql_query("CREATE TRIGGER tag_remove_trigger AFTER DELETE ON TagListtable
+			if (!$this->generic_sql_query("CREATE TRIGGER tag_remove_trigger AFTER DELETE ON TagListtable
 								FOR EACH ROW
-								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = OLD.TTindex);", true);
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = OLD.TTindex);", true)) {
+				return false;
+			}
 		}
 
 		if ($this->trigger_not_exists('Tracktable', 'track_delete_trigger')) {
@@ -409,14 +472,16 @@ class database extends data_base {
 
 	protected function create_playcount_triggers() {
 		if ($this->trigger_not_exists('Playcounttable', 'syncupdatetrigger')) {
-			$this->generic_sql_query("CREATE TRIGGER syncupdatetrigger BEFORE UPDATE ON Playcounttable
+			if (!$this->generic_sql_query("CREATE TRIGGER syncupdatetrigger BEFORE UPDATE ON Playcounttable
 								FOR EACH ROW
 								BEGIN
 									IF (NEW.Playcount > OLD.Playcount)
 									THEN
 										SET NEW.SyncCount = OLD.SyncCount + 1;
 									END IF;
-								END;", true);
+								END;", true)) {
+				return false;
+			}
 		}
 
 		if ($this->trigger_not_exists('Playcounttable', 'syncinserttrigger')) {
@@ -432,11 +497,13 @@ class database extends data_base {
 	protected function create_progress_triggers() {
 
 		if ($this->trigger_not_exists('Bookmarktable', 'bookmark_update_trigger')) {
-			$this->generic_sql_query("CREATE TRIGGER bookmark_update_trigger AFTER UPDATE ON Bookmarktable
+			if (!$this->generic_sql_query("CREATE TRIGGER bookmark_update_trigger AFTER UPDATE ON Bookmarktable
 								FOR EACH ROW
 								BEGIN
 								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
-								END;", true);
+								END;", true)) {
+				return false;
+			}
 		}
 
 		if ($this->trigger_not_exists('Bookmarktable', 'bookmark_insert_trigger')) {
@@ -482,7 +549,7 @@ class database extends data_base {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking ".$name." : ".$err);
 		}
-		$this->generic_sql_query("TRUNCATE TABLE ".$name);
+		$this->generic_sql_query("TRUNCATE TABLE ".$name, true);
 	}
 
 	public function add_toptrack($type, $artist, $title) {
@@ -495,7 +562,7 @@ class database extends data_base {
 		);
 	}
 
-	public function create_radio_uri_table() {
+	public function create_radio_uri_table($truncate = true) {
 		$name = everywhere_radio::get_uri_table_name();
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS ".$name."(".
 			"uriindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
@@ -503,6 +570,7 @@ class database extends data_base {
 			"trackartist VARCHAR(100) NOT NULL, ".
 			"Title VARCHAR(255) NOT NULL, ".
 			"Uri VARCHAR(2000), ".
+			"AlbumUri VARCHAR(2000), ".
 			"UNIQUE INDEX(trackartist, Title), ".
 			"PRIMARY KEY (uriindex)) ENGINE=InnoDB", true))
 		{
@@ -511,7 +579,8 @@ class database extends data_base {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking ".$name." : ".$err);
 		}
-		$this->generic_sql_query("TRUNCATE TABLE ".$name);
+		if ($truncate)
+			$this->generic_sql_query("TRUNCATE TABLE ".$name, true);
 	}
 
 	public function create_radio_ban_table() {
@@ -536,20 +605,21 @@ class database extends data_base {
 	// Blood, Sweat & Tears
 	// Blood, Sweat And Tears
 	// all come back in response to a search for Blood Sweat & Tears
-	public function add_smart_uri($uri, $artist, $title) {
+	public function add_smart_uri($uri, $artist, $title, $albumuri) {
 		$name = everywhere_radio::get_uri_table_name();
 		$this->sql_prepare_query(true, null, null, null,
-			"INSERT IGNORE INTO ".$name." (trackartist, Title, Uri) VALUES (?, ? ,?)",
+			"INSERT IGNORE INTO $name (trackartist, Title, Uri, AlbumUri) VALUES (?, ? ,?, ?)",
 			strip_track_name($artist),
 			strip_track_name($title),
-			$uri
+			$uri,
+			$albumuri
 		);
 	}
 
 	public function add_ban_track($artist, $title) {
 		$name = everywhere_radio::get_ban_table_name();
 		$this->sql_prepare_query(true, null, null, null,
-			"INSERT IGNORE INTO ".$name." (trackartist, Title) VALUES (?, ?)",
+			"INSERT IGNORE INTO $name (trackartist, Title) VALUES (?, ?)",
 			$artist,
 			$title
 		);

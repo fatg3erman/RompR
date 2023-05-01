@@ -202,8 +202,8 @@ var backimagemanager = function() {
 				lholder = $('<div>', {class: 'containerbox wrap'}).appendTo('#backimunger');
 
 				backimagemanager.populate();
-				$('#bgfileuploadbutton').off('click').on('click', backimagemanager.uploadImages);
-				$('#bg-removeall').off('click').on('click', backimagemanager.remove_all);
+				$('#bgfileuploadbutton').off(prefs.click_event).on(prefs.click_event, backimagemanager.uploadImages);
+				$('#bg-removeall').off(prefs.click_event).on(prefs.click_event, backimagemanager.remove_all);
 				$('#thisbrowseronly').off('change').on('change', backimagemanager.switch_browser_mode);
 				$('#bg-drop-image').on('dragenter', dragEnter);
 				$('#bg-drop-image').on('dragover', dragOver);

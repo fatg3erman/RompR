@@ -42,6 +42,7 @@ class everywhere_radio extends musicCollection {
 		$uris = [];
 		$gotseeds = false;
 		$query_params = [];
+		prefs::load();
 		$rp = prefs::get_radio_params();
 		$qstring = "SELECT * FROM ".self::get_seed_table_name()." WHERE ";
 		if ($type) {
@@ -70,18 +71,26 @@ class everywhere_radio extends musicCollection {
 	}
 
 	protected function handle_multi_tracks($uris) {
-		$bantable = self::get_ban_table_name();
 		foreach ($uris as $uri) {
-			$banned = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'banindex', null,
-				"SELECT banindex FROM ".$bantable." WHERE trackartist = ? AND Title = ?",
-				$uri['trackartist'], $uri['Title']
-			);
-			if ($banned !== null) {
-				logger::log('EVRADIO',$uri['trackartist'], $uri['Title'],'is BANNED');
-			} else {
-				logger::log('EVRADIO', 'Got Uri ',$uri['trackartist'], $uri['Title']);
-				$this->add_smart_uri($uri['file'], $uri['trackartist'], $uri['Title']);
+			if (!$this->is_banned($uri['trackartist'], $uri['Title'])) {
+				logger::log('EVRADIO', 'Got Uri',$uri['trackartist'], $uri['Title']);
+				$this->add_smart_uri($uri['file'], $uri['trackartist'], $uri['Title'], $uri['X-AlbumUri']);
 			}
+		}
+	}
+
+	protected function is_banned($artist, $title) {
+		$bantable = self::get_ban_table_name();
+		$banned = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'banindex', null,
+			"SELECT banindex FROM $bantable WHERE trackartist = ? AND Title = ?",
+			$artist,
+			$title
+		);
+		if ($banned !== null) {
+			logger::log('EVRADIO',$artist, $title,'is BANNED');
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -163,12 +172,15 @@ class everywhere_radio extends musicCollection {
 				$cmds = [join_command_string(array('add', $uri))];
 				$player->do_command_list($cmds);
 				$numtracks--;
+				// Trying this here because Mopidy on Pi4 seems to get
+				// annoyed at us at this point.
+				sleep(1);
 			}
 		}
 		return true;
 	}
 
-	protected function get_fave_artists($type) {
+	protected function get_fave_artists($type, $days = null) {
 
 		// Ignore Audiobooks and all internet tracks since those are likely podcasts
 		// We might still get some spoken word artists from Hidden tracks, but we can't
@@ -212,13 +224,33 @@ class everywhere_radio extends musicCollection {
 		logger::log('FAVEARTISTS', 'Found',count($artists),'fave artists');
 
 		foreach ($artists as $artist) {
-			logger::log('FARTIST', "Adding Fave Artist", $artist['Artistname']);
+			logger::debug('FARTIST', "Adding Fave Artist", $artist['Artistname']);
 			$this->add_toptrack(
 				$type,
 				$artist['Artistname'],
 				''
 			);
 		}
+	}
+
+	protected function get_spotify_id($artist) {
+		$params = [
+			'q' => $artist,
+			'type' => 'artist',
+			'limit' => 50,
+			'cache' => true
+		];
+		$candidates = json_decode(spotify::search($params, false), true);
+		if (array_key_exists('artists', $candidates) && array_key_exists('items', $candidates['artists'])) {
+			foreach ($candidates['artists']['items'] as $willies) {
+				if (metaphone_compare($artist, $willies['name'], 0)) {
+					logger::debug('MIXRADIO', 'Spotify Artist',$willies['id'],$willies['name'],'matches',$artist);
+					return $willies['id'];
+				}
+			}
+		}
+		logger::log('MIXRADIO', 'Could not find Spotify Id for',$artist);
+		return null;
 	}
 
 }

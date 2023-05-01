@@ -86,8 +86,3 @@ By default, 5 upcoming tracks will be displayed. You can change this number from
 
 ![](images/upcomingtracks.png)
 
-## Mobile Devices
-
-When using a mobile device to run RompЯ, you should understand that the browser must be open for new tracks to keep being added. If the device sleeps (screen turns off) then the playlist will stop updating until you wake the device.
-
-One way around this is to run [romonitor](/RompR/Rompr-And-Mobiles), which is capable of repopulating some of the Personalised Radio stations by itself.

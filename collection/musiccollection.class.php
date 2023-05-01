@@ -148,17 +148,17 @@ class musicCollection extends collection_base {
 			"SELECT * FROM Tracktable JOIN Artisttable USING (Artistindex) WHERE Albumindex = ? AND Title NOT LIKE 'Album:%'",
 			$who
 		);
-		$this->generic_sql_query("DELETE FROM Tracktable WHERE Albumindex = ".$who, true);
-		$this->generic_sql_query("DELETE FROM Albumtable WHERE Albumindex = ".$who, true);
-		$this->generic_sql_query('UPDATE Albumtable SET Albumindex = '.$who.' WHERE Albumindex = '.$new);
-		$this->generic_sql_query('UPDATE Tracktable SET Albumindex = '.$who.' WHERE Albumindex = '.$new);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM Tracktable WHERE Albumindex = ?", $who);
+		$this->sql_prepare_query(true, null, null, null, "DELETE FROM Albumtable WHERE Albumindex = ?", $who);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Albumindex = ? WHERE Albumindex = ?", $who, $new);
+		$this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET Albumindex = ? WHERE Albumindex = ?", $who, $new);
 		foreach ($tracks_now as $track) {
 			$ttids = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
 				"SELECT TTindex FROM Tracktable WHERE Albumindex = ? AND Title = ?",
 				$who,
 				$track['Title']
 			);
-			logger::log('PRAP', 'Checking',$track['Title'],$track['Artistname'],$track['TTindex']);
+			logger::log('BACKEND', 'Checking',$track['Title'],$track['Artistname'],$track['TTindex']);
 			if (count($ttids) > 1) {
 				logger::log("BACKEND", 'Ambiguous track',$track["Title"],'could not have trackartist reset');
 			} else if (count($ttids) == 0) {
@@ -217,10 +217,10 @@ class musicCollection extends collection_base {
 	}
 
 	private function browse_podcast_search_result($uri) {
-		logger::trace("COLLECTION", "Browsing For Podcast ".substr($uri, 9));
+		logger::info("COLLECTION", "Browsing For Podcast ".substr($uri, 9));
 		$podatabase = new poDatabase();
 		$podid = $podatabase->getNewPodcast(substr($uri, 8), 0, false);
-		logger::log("ALBUMS", "Ouputting Podcast ID ".$podid);
+		logger::trace("ALBUMS", "Ouputting Podcast ID ",$podid);
 		$podatabase->outputPodcast($podid, false);
 	}
 
@@ -236,9 +236,14 @@ class musicCollection extends collection_base {
 			return true;
 		}
 
-		logger::log('COLLECTION', 'Browsing for album',$uri);
+		logger::info('COLLECTION', 'Browsing for album',$uri);
 		$this->create_foundtracks();
-		$this->do_update_with_command('find file "'.$uri.'"', array(), false, ['AlbumArtist' => $album_details['Artistname']]);
+		// We want the tracks we're browsing to appear under the same album. Sometimes Mopidy-YTMusic hasn't returned an album name
+		// or some tracks have an album name and some haven't. It gets very confusing in the UI and for the backend
+		// so we force the values of AlbumArtist and Album to be the same as the one we're browsing
+		// whatever comes back from Mopidy. This isn't ideal but ytmusicapi seems very inconsistent
+		// in what information it returns so we need to tidy it up.
+		$this->do_update_with_command('find file "'.$uri.'"', array(), false, ['AlbumArtist' => $album_details['Artistname'], 'Album' => $album_details['Albumname']], []);
 		$just_added = $this->find_justadded_albums();
 		if (is_array($just_added) && count($just_added) > 0) {
 			logger::log('BROWSEALBUM', 'We got a just modded response');
@@ -251,7 +256,8 @@ class musicCollection extends collection_base {
 				// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
 				// When we browse the album the new tracks therefore get added to a new album.
 				// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
-				// (otherwise the GUI doesn't work)
+				// (otherwise the GUI doesn't work). This shouldn't now be necessary as we force it above
+				// but I eft this here just in case.
 				logger::log('BROWSEALBUM', 'New album',$modded_album,'was created. Setting it to',$index);
 				if ($album_details['Image'] != null) {
 					$this->set_image_for_album($modded_album, $album_details['Image']);
@@ -308,8 +314,8 @@ class musicCollection extends collection_base {
 		if ($uri) {
 			$this->options['doing_search'] = true;
 			$this->options['trackbytrack'] = true;
-			logger::log('COLLECTION', 'Browsing for artist',$uri);
-			$this->do_update_with_command('find file "'.$uri.'"', array(), false);
+			logger::info('COLLECTION', 'Browsing for artist',$uri);
+			$this->do_update_with_command('find file "'.$uri.'"', array(), false, [], []);
 			$this->unbrowse_artist($index);
 			return true;
 		} else {
@@ -317,8 +323,8 @@ class musicCollection extends collection_base {
 		}
 	}
 
-	public function do_update_with_command($cmd, $dirs, $domains, $force_keys = []) {
-		logger::log('COLLECTION', 'Doing update with',$cmd);
+	public function do_update_with_command($cmd, $dirs, $domains, $force_keys, $mpdsearch) {
+		logger::info('COLLECTION', 'Doing update with',$cmd);
 		// In cases where we're browsing search results from eg youtube, the initial
 		// Album Artist can sometimes be wrong, but we want it to be the same otherwise
 		// the UI doesn't work, so force it.
@@ -330,8 +336,14 @@ class musicCollection extends collection_base {
 		$this->prepareCollectionUpdate();
 		$player = new player();
 		$player->initialise_search();
-		foreach ($player->parse_list_output($cmd, $dirs, $domains) as $filedata) {
-			$this->newTrack($filedata);
+		if ($player->has_specific_search_function($mpdsearch, $domains)) {
+			foreach ($player->search_function($mpdsearch, $domains) as $filedata) {
+				$this->newTrack($filedata);
+			}
+		} else {
+			foreach ($player->parse_list_output($cmd, $dirs, $domains) as $filedata) {
+				$this->newTrack($filedata);
+			}
 		}
 		$this->tracks_to_database();
 		foreach ($player->to_browse as $artist) {
@@ -344,48 +356,79 @@ class musicCollection extends collection_base {
 		// Find tracks that have been removed
 		logger::mark('BACKEND', "Starting Cruft Removal");
 		$now = time();
-		logger::trace('BACKEND', "Checking Wishlist");
 		$wishlist = $this->pull_wishlist('date');
-		foreach ($wishlist as $wishtrack) {
-			$newtrack = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
-				"SELECT TTindex FROM Tracktable WHERE
-					Hidden = 0 AND Title = ? AND Artistindex = ? AND justAdded = 1 "
+		logger::log('BACKEND', "Checking",(count($wishlist)),"Wishlist Tracks");
+		foreach ($wishlist as $i => $wishtrack) {
+			logger::debug('BACKEND', 'Wishlist Track',$i);
+			$newtrack = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, null, 0,
+				"SELECT TTindex FROM Tracktable
+				WHERE
+					Hidden = 0
+					AND Uri IS NOT NULL
+					AND Title = ?
+					AND Artistindex = ?
+					AND justAdded = 1 "
 					.$this->track_date_check(ADDED_TODAY, false),
 				$wishtrack['title'],
 				$wishtrack['artistindex']
 			);
-			foreach ($newtrack AS $track) {
-				logger::log('COLLECTION', "We have found wishlist track",$wishtrack['Title'],'by',$wishtrack['trackartist'],'as TTindex',$newtrack['TTindex']);
-				$this->sql_prepare_query(true, null, null, null,
-					'UPDATE Ratingtable SET TTindex = ? WHERE TTindex = ?',
-					$newtrack['TTindex'],
+			foreach ($newtrack as $track) {
+				if (!$wishtrack['title'] || !$wishtrack['trackartist'] || !$wishtrack['ttid'] || !$wishtrack['artistindex'])
+					continue;
+
+				logger::trace('COLLECTION', "We have found wishlist track",$wishtrack['title'],'by',$wishtrack['trackartist'],'as TTindex',$track);
+
+				// Get the rating and tags from the wishlist track
+				$rating = $this->simple_query('Rating', 'Ratingtable', 'TTindex', $wishtrack['ttid'], null);
+				logger::log('COLLECTION', 'Track has Rating',$rating);
+				$taglist = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, null, 0,
+					"SELECT Tagindex FROM TagListtable WHERE TTindex = ?",
 					$wishtrack['ttid']
 				);
-				$this->sql_prepare_query(true, null, null, null,
-					'UPDATE TagListtable SET TTindex = ? WHERE TTindex = ?',
-					$newtrack['TTindex'],
-					$wishtrack['ttid']
-				);
+				logger::log('COLLECTION', 'Track has',(count($taglist)),'Tags');
+				// Delete the wishlist track
 				$this->sql_prepare_query(true, null, null, null,
 					'DELETE FROM Tracktable WHERE TTindex = ?',
 					$wishtrack['ttid']
 				);
+				// Put the Rating and Tags onto the new track we just found
+				if ($rating != null) {
+					$this->sql_prepare_query(true, null, null, null,
+						"REPLACE INTO Ratingtable (TTindex, Rating) VALUES (?, ?)",
+						$track,
+						$rating
+					);
+				}
+				foreach ($taglist as $tagindex) {
+					$this->sql_prepare_query(true, null, null, null,
+						"REPLACE INTO TagListtable (Tagindex, TTindex) VALUES (?, ?)",
+						$tagindex,
+						$track
+					);
+				}
 			}
 		}
 
-		logger::trace('BACKEND', "Finding tracks that have been deleted");
+		// Let's try to not lose playcounts from tracks that have been deleted, in case they
+		// ever come back or we start playing them from other sources.
+		logger::log('BACKEND', "Hiding tracks that have been deleted");
+		$this->generic_sql_query("UPDATE Tracktable SET Hidden = 1
+			WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0
+			AND TTindex IN (SELECT TTindex FROM Playcounttable)
+		", true);
+
+		logger::log('BACKEND', "Removing tracks that have been deleted");
 		$this->generic_sql_query("DELETE FROM Tracktable WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0", true);
 
-		logger::trace('BACKEND', "Making Sure Local Tracks Are Not Unplayable");
+		logger::log('BACKEND', "Making Sure Local Tracks Are Not Unplayable");
 		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked > 0 AND Uri LIKE 'local:%'", true);
 
 		$this->remove_cruft();
 		logger::log('COLLECTION', 'Updating collection version to', ROMPR_COLLECTION_VERSION);
-		$this->update_stat('ListVersion',ROMPR_COLLECTION_VERSION);
+		$this->set_admin_value('ListVersion', ROMPR_COLLECTION_VERSION);
 		$this->update_track_stats();
 		$dur = format_time(time() - $now);
-		logger::info('BACKEND', "Cruft Removal Took ".$dur);
-		logger::info('BACKEND', "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		logger::trace('BACKEND', "Cruft Removal Took ".$dur);
 	}
 
 	public function prepare_findtracks() {
@@ -476,24 +519,24 @@ class musicCollection extends collection_base {
 			$current_trackartist = null;
 		}
 
-		// logger::log('PARP','Albumindex',$trackobj->tags['album_index'],'Title',$trackobj->tags['Title']);
-
-		if ($this->find_track->execute([
-			$trackobj->tags['Title'],
-			$trackobj->tags['album_index'],
-			$trackobj->tags['Track'],
-			$trackobj->tags['Time'],
-			$trackartistindex,
-			$trackobj->tags['Disc'],
-			$trackobj->tags['file'],
-			$trackobj->tags['Last-Modified'],
-			$trackobj->tags['type'] == 'audiobook' ? 1 : 0,
-			$genreindex,
-			$trackobj->tags['year']
-		])) {
-
-		} else {
-			$this->show_sql_error('AAAGH!', $this->find_track);
+		try {
+			$this->find_track->execute([
+				$trackobj->tags['Title'],
+				$trackobj->tags['album_index'],
+				$trackobj->tags['Track'],
+				$trackartistindex,
+				$trackobj->tags['Disc'],
+				$trackobj->tags['Time'],
+				$trackobj->tags['file'],
+				$trackobj->tags['Last-Modified'],
+				$trackobj->tags['type'] == 'audiobook' ? 1 : 0,
+				$genreindex,
+				$trackobj->tags['year']
+			]);
+		} catch (PDOException $e) {
+			logger::error('SQL', 'find_track execution failed');
+			logger::error('GENERIC SQL', 'Code', $e->getCode(), $e->getMessage());
+			logger::error('GENERIC SQL', 'Stack Trace',print_r($e->getTrace(), true));
 			exit(1);
 		}
 

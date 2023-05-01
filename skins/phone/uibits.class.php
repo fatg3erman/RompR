@@ -131,7 +131,6 @@ class uibits extends ui_elements {
 	}
 
 	public static function playlistPlayHeader($name, $text) {
-		logger::log("UI", "Getting image for playlist",$name);
 		$albumimage = new albumImage(array('artist' => "PLAYLIST", 'album' => $text));
 		$image = $albumimage->get_image_if_exists();
 		if ($image) {

@@ -121,4 +121,6 @@
     --icon-padlock:  url('iconsets/Greydient/padlock.svg');
     --icon-padlock-open: url('iconsets/Greydient/padlock_open.svg');
     --icon-instagram: url('iconsets/Greydient/instagram.svg');
+    --icon-rewind: url('iconsets/Greydient/rewind.svg');
+    --icon-ffwd: url('iconsets/Greydient/ffwd.svg');
 }

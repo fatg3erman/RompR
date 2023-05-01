@@ -121,7 +121,7 @@ class sortby_albumbyartist extends sortby_base {
 		$result = prefs::$database->generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->artist_albumcount($mod['AlbumArtistindex']);
-			logger::mark("SORTBY_ALBUMBYARTIST", "  Artist",$mod['AlbumArtistindex'],"has",$atc,$this->why,"albums we need to consider");
+			logger::log("SORTBY_ALBUMBYARTIST", "Artist",$mod['AlbumArtistindex'],"has",$atc,$this->why,"albums we need to consider");
 			// Modified artists also go in as deleted - since the 'root' item in this case is an artist banner
 			// and we only do inserts after album IDs, we always remove and then re-insert the banners.
 			prefs::$database->returninfo['deletedartists'][] = $this->why.'artist'.$mod['AlbumArtistindex'];
@@ -135,7 +135,7 @@ class sortby_albumbyartist extends sortby_base {
 		$result = prefs::$database->generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->album_trackcount($mod['Albumindex']);
-			logger::mark("SORTBY_ALBUMBYARTIST", "  Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
+			logger::log("SORTBY_ALBUMBYARTIST", "Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
 			if ($atc == 0) {
 				prefs::$database->returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
 			} else {

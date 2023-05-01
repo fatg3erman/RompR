@@ -91,24 +91,29 @@ class discogs {
 
 	public static function verify_data($params, $print_data) {
 
-		logger::log('DISCOGS', 'PARAMS', print_r($params, true));
+		// logger::debug('DISCOGS', 'PARAMS', print_r($params, true));
+
+		if ($params['artist']['name'] == '' && $params['album']['artist'] == 'Radio' && $params['track']['name'] == '') {
+			print json_encode(self::$retval);
+			exit(0);
+		}
 
 		if ($params['artist']['artistlink'] == null) {
-			logger::log('DISCOGS', 'Searching for Artist');
+			logger::debug('DISCOGS', 'Searching for Artist');
 			self::$retval['artistmeta']['discogs']['possibilities'] = self::artist_search(['q' => $params['artist']['name']], false);
 			if (count(self::$retval['artistmeta']['discogs']['possibilities']) > 0) {
 				$params['artist']['artistlink'] = self::$retval['artistmeta']['discogs']['possibilities'][0]['link'];
-				logger::log('DISCOGS', 'Search found Artist Link', $params['artist']['artistlink']);
+				logger::debug('DISCOGS', 'Search found Artist Link', $params['artist']['artistlink']);
 			}
 		}
 		if ($params['artist']['artistlink']) {
 			self::$retval['artistmeta']['discogs']['artistid'] = self::find_id($params['artist']['artistlink']);
-			logger::log('DISCOGS', 'Getting Artist Data', self::$retval['artistmeta']['discogs']['artistid']);
+			logger::debug('DISCOGS', 'Getting Artist Data', self::$retval['artistmeta']['discogs']['artistid']);
 			self::$retval['metadata']['artist']['artist_'.self::$retval['artistmeta']['discogs']['artistid']] = json_decode(self::artist_getinfo(['id' => self::$retval['artistmeta']['discogs']['artistid']], false), true);
 		}
 
 		if ($params['album']['releaselink'] == null && $params['album']['masterlink'] == null && $params['album']['artist'] != 'Radio') {
-			logger::log('DISCOGS', 'Searching for Album');
+			logger::debug('DISCOGS', 'Searching for Album');
 			$links = self::album_search([
 				'artist' => $params['album']['artist'],
 				'release_title' => $params['album']['name']],
@@ -120,27 +125,27 @@ class discogs {
 
 		if ($params['album']['releaselink'] != null) {
 			self::$retval['albummeta']['discogs']['releaseid'] = self::find_id($params['album']['releaselink']);
-			logger::log('DISCOGS', 'Getting Album Release Data',self::$retval['albummeta']['discogs']['releaseid']);
+			logger::debug('DISCOGS', 'Getting Album Release Data',self::$retval['albummeta']['discogs']['releaseid']);
 			self::$retval['metadata']['album']['release'] = json_decode(self::album_getinfo(['id' => 'releases/'.self::$retval['albummeta']['discogs']['releaseid']], false), true);
-			if ($params['album']['masterlink'] == null && self::$retval['metadata']['album']['release']['master_id']) {
+			if ($params['album']['masterlink'] == null &&  array_key_exists('master_id', self::$retval['metadata']['album']['release']) && self::$retval['metadata']['album']['release']['master_id']) {
 				// If we don't have a master link we can find one from the release link.
 				// The master link is more useful to us
 				// TODO maybe if we have a master link we don't bother getting the release data
 				// because we probably don't use it (check info_discogs.js)
 				$params['album']['masterlink'] = 'masters/'.self::$retval['metadata']['album']['release']['master_id'];
-				logger::log('DISCOGS', 'Found Album Master Link from Release Info', $params['album']['masterlink']);
+				logger::debug('DISCOGS', 'Found Album Master Link from Release Info', $params['album']['masterlink']);
 			}
 		}
 
 		if ($params['album']['masterlink'] != null) {
 			self::$retval['albummeta']['discogs']['masterid'] = self::find_id($params['album']['masterlink']);
-			logger::log('DISCOGS', 'Getting Album Master Data',self::$retval['albummeta']['discogs']['masterid']);
+			logger::debug('DISCOGS', 'Getting Album Master Data',self::$retval['albummeta']['discogs']['masterid']);
 			self::$retval['metadata']['album']['master'] = json_decode(self::album_getinfo(['id' => 'masters/'.self::$retval['albummeta']['discogs']['masterid']], false), true);
 		}
 
 
 		if ($params['track']['releaselink'] == null && $params['track']['masterlink'] == null) {
-			logger::log('DISCOGS', 'Searching for Track');
+			logger::debug('DISCOGS', 'Searching for Track');
 			$links = self::track_search([
 				'artist' => $params['track']['artist'],
 				'albumartist' => $params['album']['artist'],
@@ -153,7 +158,7 @@ class discogs {
 
 		if ($params['track']['releaselink'] != null) {
 			self::$retval['trackmeta']['discogs']['releaseid'] = self::find_id($params['track']['releaselink']);
-			logger::log('DISCOGS', 'Getting Track Release Data',self::$retval['trackmeta']['discogs']['releaseid']);
+			logger::debug('DISCOGS', 'Getting Track Release Data',self::$retval['trackmeta']['discogs']['releaseid']);
 			self::$retval['metadata']['track']['release'] = json_decode(self::album_getinfo(['id' => 'releases/'.self::$retval['trackmeta']['discogs']['releaseid']], false), true);
 			if ($params['track']['masterlink'] == null && self::$retval['metadata']['track']['release']['master_id']) {
 				// If we don't have a master link we can find one from the release link.
@@ -161,13 +166,13 @@ class discogs {
 				// TODO maybe if we have a master link we don't bother getting the release data
 				// because we probably don't use it (check info_discogs.js)
 				$params['track']['masterlink'] = 'masters/'.self::$retval['metadata']['track']['release']['master_id'];
-				logger::log('DISCOGS', 'Found Track Master Link from Release Info', $params['track']['masterlink']);
+				logger::debug('DISCOGS', 'Found Track Master Link from Release Info', $params['track']['masterlink']);
 			}
 		}
 
 		if ($params['track']['masterlink'] != null) {
 			self::$retval['trackmeta']['discogs']['masterid'] = self::find_id($params['track']['masterlink']);
-			logger::log('DISCOGS', 'Getting Track Master Data',self::$retval['trackmeta']['discogs']['masterid']);
+			logger::debug('DISCOGS', 'Getting Track Master Data',self::$retval['trackmeta']['discogs']['masterid']);
 			self::$retval['metadata']['track']['master'] = json_decode(self::album_getinfo(['id' => 'masters/'.self::$retval['trackmeta']['discogs']['masterid']], false), true);
 		}
 
@@ -194,7 +199,7 @@ class discogs {
 			if ($results['results']) {
 				foreach($results['results'] as $result) {
 					if ($result['type'] == 'artist' && metaphone_compare($aname, $result['title'], 0)) {
-						logger::log('DISCOGS', 'Search found artist', $result['title']);
+						logger::debug('DISCOGS', 'Search found artist', $result['title']);
 						$possibilities[] = [
 							'name' 	=> $result['title'],
 							'link' 	=> $result['resource_url'],
@@ -253,7 +258,7 @@ class discogs {
 			];
 			$results = self::request(self::create_url('database/search', $options), false);
 			$results = json_decode($results, true);
-			// logger::log('DISCOGS', print_r($results, true));
+			// logger::debug('DISCOGS', print_r($results, true));
 			if ($results['results']) {
 				foreach($results['results'] as $result) {
 					if ($result['format'] && $result['master_url']) {
@@ -326,7 +331,7 @@ class discogs {
 
 			if ($results['results']) {
 				foreach($results['results'] as $result) {
-					// logger::log('DISCOGS', $result['title'], $aname, $options['track']);
+					// logger::debug('DISCOGS', $result['title'], $aname, $options['track']);
 					if ($result['format'] && $result['resource_url'] && metaphone_compare($aname.' - '.$options['track'], $result['title'])) {
 						if (in_array('Single', $result['format'])) {
 							$retval = self::albumlink($result);

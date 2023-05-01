@@ -43,6 +43,10 @@ class player extends base_mpd_player {
 		fclose($this->monitor);
 	}
 
+	public function has_specific_search_function($mpdsearch, $domains) {
+		return false;
+	}
+
 	protected function player_specific_fixups(&$filedata) {
 		switch($filedata['domain']) {
 			case 'local':
@@ -130,7 +134,7 @@ class player extends base_mpd_player {
 
 		$result = prefs::$database->find_podcast_track_from_url($url);
 		foreach ($result as $obj) {
-			logger::log("STREAMHANDLER", "Found PODCAST ".$obj->title);
+			logger::log("STREAMHANDLER", "Found Podcast ".$obj->title);
 			return array(
 				($obj->title == '') ? $filedata['Title'] : $obj->title,
 				$obj->duration,
@@ -163,7 +167,7 @@ class player extends base_mpd_player {
 				$album = $filedata['Title'];
 				$filedata['Title'] = null;
 			} else {
-				logger::trace("STREAMHANDLER", "  No information to set Album field");
+				logger::warn("STREAMHANDLER", "  No information to set Album field");
 				$album = ROMPR_UNKNOWN_STREAM;
 			}
 			return array (
@@ -183,10 +187,10 @@ class player extends base_mpd_player {
 			);
 		}
 
-		logger::warn("STREAMHANDLER", "Stream Track",$filedata['file'],"from",$filedata['domain'],"was not found indatabase");
+		logger::warn("STREAMHANDLER", "Stream Track",$filedata['file'],"from",$filedata['domain'],"was not found ind atabase");
 
 		if ($filedata['Name']) {
-			logger::log("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
+			logger::trace("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
 			$album = $filedata['Name'];
 			if ($filedata['Pos'] !== null) {
 				prefs::$database->update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
@@ -199,7 +203,7 @@ class player extends base_mpd_player {
 				prefs::$database->update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
 			}
 		} else {
-			logger::trace("STREAMHANDLER", "  No information to set Album field");
+			logger::warn("STREAMHANDLER", "  No information to set Album field");
 			$album = ROMPR_UNKNOWN_STREAM;
 		}
 		return array(
@@ -267,7 +271,7 @@ class player extends base_mpd_player {
 	private function websocket_command() {
 		$retval = 	'/player/mpd/mpd_websocket.py'
 					.' --currenthost='.prefs::currenthost()
-					.' --wsport='.prefs::get_pref('mpd_websocket_port');
+					.' --wsport='.$this->websocket_port;
 
 		if ($this->socket) {
 			$retval .= ' --unix='.$this->socket;
@@ -283,17 +287,18 @@ class player extends base_mpd_player {
 	}
 
 	public function probe_websocket() {
-		if (prefs::get_pref('mpd_websocket_port') !== '') {
+		if ($this->websocket_port != '') {
+			logger::info('MPDSOCKET', 'Probing HTTP API for',prefs::currenthost());
 			if (get_pid($this->websocket_command()) === false) {
 				if (($pid = get_pid('mpd_websocket.py --currenthost='.prefs::currenthost())) !== false) {
-					logger::log('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config');
+					logger::info('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config for',prefs::currenthost());
 					kill_process($pid);
 				}
-				logger::log('MPDSOCKET', 'Starting MPD Websocket Server');
+				logger::log('MPDSOCKET', 'Starting MPD Websocket Server for',prefs::currenthost());
 				$pwd = getcwd();
 				$pid = start_process($pwd.$this->websocket_command(), 'python3');
 				if (get_pid($this->websocket_command()) === false) {
-					logger::warn('MPDSOCKET', 'Failed to start MPD Websocket Server');
+					logger::warn('MPDSOCKET', 'Failed to start MPD Websocket Server for',prefs::currenthost());
 					prefs::set_player_param(['websocket' => false]);
 					return false;
 				}
@@ -301,12 +306,12 @@ class player extends base_mpd_player {
 				logger::log('MPDSOCKET', 'MPD Websocket Server already running');
 			}
 			$http_server = nice_server_address($this->ip);
-			prefs::set_player_param(['websocket' => $http_server.':'.prefs::get_pref('mpd_websocket_port').'/']);
-			logger::log('MPDSOCKET', 'Using',prefs::get_player_param('websocket'),'for MPD websocket');
+			prefs::set_player_param(['websocket' => $http_server.':'.$this->websocket_port.'/']);
+			logger::log('MPDSOCKET', 'Using',prefs::get_player_param('websocket'),'for MPD websocket on',prefs::currenthost());
 		} else {
 			logger::log('MPDSOCKET', 'MPD websocket Not Configured');
 			if (($pid = get_pid('mpd_websocket.py --currenthost='.prefs::currenthost())) !== false) {
-				logger::log('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config');
+				logger::info('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config for',prefs::currenthost());
 				kill_process($pid);
 			}
 			prefs::set_player_param(['websocket' => false]);
@@ -342,13 +347,13 @@ class player extends base_mpd_player {
 			$this->do_mpd_command('binarylimit 1048576');
 		}
 		while (($size === null || $size > 0) && $retries > 0) {
-			logger::log('MPDPLAYER', '  Reading at offset',$offset);
+			logger::debug('MPDPLAYER', '  Reading at offset',$offset);
 			$command = $embedded ? 'readpicture' : 'albumart';
 			$result = $this->do_mpd_command($command.' "'.$uri.'" '.$offset, true);
 			if (is_array($result) && array_key_exists('binary', $result)) {
 				if ($size === null) {
 					$size = $result['size'];
-					logger::log('MPDPLAYER', '    Size is',$size);
+					logger::debug('MPDPLAYER', 'Size is',$size);
 
 					$filename = 'prefs/temp/'.md5($uri);
 					$handle = fopen($filename, 'w');
@@ -357,13 +362,13 @@ class player extends base_mpd_player {
 					fwrite($handle, $result['binarydata']);
 					$size -= $result['binary'];
 					$offset += $result['binary'];
-					logger::log('MPDPLAYER', '    Remaining', $size);
+					logger::debug('MPDPLAYER', 'Remaining', $size);
 				} else {
-					logger::log('MPDPLAYER', '    Expected', $result['binary'], 'bytes but only got', strlen($result['binarydata']));
+					logger::warn('MPDPLAYER', 'Expected', $result['binary'], 'bytes but only got', strlen($result['binarydata']));
 					$retries--;
 				}
 			} else {
-				logger::log('ALBUMART', '    No binary data in response from MPD');
+				logger::warn('ALBUMART', 'No binary data in response from MPD');
 				$retries--;
 			}
 		}
