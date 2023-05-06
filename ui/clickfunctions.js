@@ -333,11 +333,11 @@ function bindClickHandlers() {
 	$('#ban').on(prefs.click_event, nowplaying.ban);
 	$('.clickreplaygain').on(prefs.click_event, player.controller.replayGain);
 
-	$(document).on(prefs.click_event, '.toggle', prefs.togglePref);
-	$(document).on(prefs.click_event, '.savulon', prefs.toggleRadio);
 	$(document).on(prefs.click_event, '.choosepanel', uiHelper.changePanel);
 
 	$(document).on(prefs.click_event, ".clickaddtoplaylist", addToPlaylist.close);
+	$(document).on('change', '.toggle', prefs.togglePref);
+	$(document).on('change', '.savulon', prefs.toggleRadio);
 	$(document).on('change', ".saveotron", prefs.saveTextBoxes);
 	$(document).on('keyup', ".saveotron", prefs.saveTextBoxes);
 	$(document).on('change', ".saveomatic", prefs.saveSelectBoxes);
