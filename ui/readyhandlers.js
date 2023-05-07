@@ -177,13 +177,13 @@ function set_mouse_touch_flags() {
 		prefs.use_touch_interface = true;
 		prefs.use_mouse_interface = true;
 		prefs.has_custom_scrollbars = true;
-		prefs.click_event = prefs.click_event;
+		prefs.click_event = 'click';
 		$('body').addClass('customscroll');
 	} else {
 		prefs.use_touch_interface = false;
 		prefs.use_mouse_interface = true;
 		prefs.has_custom_scrollbars = true;
-		prefs.click_event = prefs.click_event;
+		prefs.click_event = 'click';
 		$('body').addClass('customscroll');
 	}
 	if (prefs.use_touch_interface)
