@@ -421,14 +421,52 @@ class prefspanel extends uibits {
 				self::ui_checkbox(['id' => 'preferlocalfiles', 'label' => 'config_preferlocal']);
 			}
 
+			//
+			// Classical Music Sorting Options
+			//
+
 			if (prefs::get_pref('collection_player') == prefs::get_pref('player_backend') || prefs::get_pref('collection_player') == null) {
-				self::ui_checkbox(['id' => 'sortbycomposer', 'label' => 'config_sortbycomposer']);
-				self::ui_checkbox(['id' => 'composergenre', 'label' => 'config_composergenre', 'class' => 'indent']);
+
+				print '<div class="pref bold">'.language::gettext('label_classicalrules').'</div>';
+				self::ui_checkbox(['id' => 'useclassicalrules', 'label' => 'config_classicalrules']);
+
+				self::ui_radio([
+					[
+						'name' => 'classical_rule',
+						'value' => prefs::CLASSICAL_RULES_USE_ARTIST,
+						'id' => 'cra',
+						'label' => 'config_sortbyartist',
+						'class' => 'indent'
+					],
+					[
+						'name' => 'classical_rule',
+						'value' => prefs::CLASSICAL_RULES_USE_COMPOSER,
+						'id' => 'crc',
+						'label' => 'config_sortbycomposer',
+						'class' => 'indent'
+					]
+				]);
+
+				print '<div class="pref indent">'.language::gettext('label_classicalgenre').'</div>';
 				self::ui_textentry([
-					'id' => 'composergenrename',
+					'id' => 'classicalgenres',
 					'is_array' => true,
 					'class' => 'indent'
 				]);
+
+				print '<div class="pref indent">'.language::gettext('label_classicalfolder').'</div>';
+				self::ui_textentry([
+					'id' => 'classicalfolder',
+					'class' => 'indent'
+				]);
+
+				// self::ui_checkbox(['id' => 'sortbycomposer', 'label' => 'config_sortbycomposer']);
+				// self::ui_checkbox(['id' => 'composergenre', 'label' => 'config_composergenre', 'class' => 'indent']);
+				// self::ui_textentry([
+				// 	'id' => 'composergenrename',
+				// 	'is_array' => true,
+				// 	'class' => 'indent'
+				// ]);
 			}
 		}
 

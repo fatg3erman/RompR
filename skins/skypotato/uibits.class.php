@@ -56,6 +56,7 @@ class uibits extends ui_elements {
 	// }
 
 	public static function radioChooser($obj) {
+		$obj = array_merge(self::DEFAULT_ALBUM_PARAMS, $obj);
 		$h = '<div class="collectionitem radiosection fixed">';
 		$h .= '<div class="containerbox openmenu menuitem menu '.$obj['class'].'" name="'.$obj['id'].'">';
 		$albumimage = new baseAlbumImage(array('baseimage' => $obj['Image']));

@@ -1031,8 +1031,13 @@ function makeAlbumMenu(e, element) {
 	if (!d) {
 		return;
 	}
-
-	if ($(element).hasClass('clickalbumoptions')) {
+	if ($(element).hasClass('clickalbumuri')) {
+		var cl = 'backhi clickable menuitem fakedouble closepopup '
+		d.append($('<div>', {
+			class: cl+'clicktrack',
+			name: $(element).attr('uri')
+		}).html(language.gettext('label_play_whole_album')));
+	} else if ($(element).hasClass('clickalbumoptions')) {
 		var cl = 'backhi clickable menuitem fakedouble closepopup '
 		d.append($('<div>', {
 			class: cl+'clicktrack',

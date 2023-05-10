@@ -18,6 +18,9 @@ var collectionHelper = function() {
 		while (player.status.updating_db) {
 			debug.debug('GENERAL','Still updating collection');
 			await new Promise(t => setTimeout(t, 1000));
+			if (prefs.player_backend == 'mpd') {
+				await player.controller.do_command_list([]);
+			}
 		}
 		debug.info('GENERAL','Player rescan is complete');
 		loadFileBrowser();

@@ -36,7 +36,7 @@ class music_loader extends musicCollection {
 			}
 			$alltracks = $this->get_album_tracks_from_database($why.'album'.$album->Albumindex, 'add');
 			$count = 0;
-			while (strpos($alltracks[$count], $uri) === false) {
+			while (strpos($alltracks[$count], format_for_mpd($uri)) === false) {
 				$count++;
 			}
 			$retval = array_slice($alltracks, $count);
@@ -56,7 +56,7 @@ class music_loader extends musicCollection {
 		$result = $lister->track_sort_query();
 		$cmd = ($cmd === null) ? 'add' : $cmd;
 		foreach($result as $a) {
-			$retarr[] = $cmd.' "'.$a['uri'].'"';
+			$retarr[] = $cmd.' "'.format_for_mpd($a['uri']).'"';
 		}
 		return $retarr;
 	}

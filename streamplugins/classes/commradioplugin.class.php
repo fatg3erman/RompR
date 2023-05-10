@@ -46,7 +46,6 @@ class commradioplugin {
 	}
 
 	private function doHeader() {
-		// print '<div id="communityradioplugin">';
 		print uibits::radioChooser([
 			'playable' => false,
 			'id' => 'communityradiolist',
@@ -56,7 +55,6 @@ class commradioplugin {
 		]);
 		print '<div id="communityradiolist" class="dropmenu notfilled">';
 		print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
-		// print '</div>';
 	}
 
 	private static function map_labels($a) {

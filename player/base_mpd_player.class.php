@@ -484,7 +484,11 @@ class base_mpd_player {
 
 					default:
 						if (in_array($parts[0], MPD_ARRAY_PARAMS)) {
-							$filedata[$parts[0]] = array_unique(explode(';',$parts[1]));
+							// MPD now sends the same key multiple times instead of using a ';'
+							if (!is_array($filedata[$parts[0]]))
+								$filedata[$parts[0]] = [];
+
+							$filedata[$parts[0]] = array_merge($filedata[$parts[0]], explode(';',$parts[1]));
 						} else {
 							$filedata[$parts[0]] = explode(';',$parts[1])[0];
 						}
@@ -512,6 +516,14 @@ class base_mpd_player {
 		// 	logger::debug("COLLECTION", "Ignoring unloaded track ".$filedata['file']);
 		// 	return false;
 		// }
+
+		foreach (MPD_ARRAY_PARAMS as $p) {
+			if (is_array($filedata[$p])) {
+				$filedata[$p] = array_unique($filedata[$p]);
+			}
+		}
+
+		// logger::log('SANITIZE', print_r($filedata, true));
 
 		if (strpos($filedata['file'], ":artist:") !== false) {
 			logger::debug("COLLECTION", "Ignoring artist Uri ".$filedata['file']);
@@ -601,13 +613,16 @@ class base_mpd_player {
 		// eg local:track:some/uri/of/a/file
 		// We want the path, not the domain or type
 		// This is much faster than using a regexp
-		$cock = explode(':', $filedata['file']);
-		if (count($cock) > 1) {
-			$file = array_pop($cock);
+		if (prefs::get_pref('player_backend') == 'mpd') {
+			return $filedata['file'];
 		} else {
-			$file = $filedata['file'];
+			$cock = explode(':', $filedata['file']);
+			if (count($cock) > 1) {
+				return array_pop($cock);
+			} else {
+				return $filedata['file'];
+			}
 		}
-		return $file;
 	}
 
 	private function album_from_path($p) {

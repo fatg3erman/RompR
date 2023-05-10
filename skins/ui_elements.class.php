@@ -199,11 +199,6 @@ class ui_elements {
 
 		$db_album = ($when === null) ? $who : $who.'_'.$when;
 		$iab = -1;
-		$play_col_button = 'icon-music';
-		if ($what == 'album' && ($why == 'a' || $why == 'z')) {
-			$iab = prefs::$database->album_is_audiobook($who);
-			$play_col_button = ($iab == 0) ? 'icon-music' : 'icon-audiobook';
-		}
 		$html = '';
 		if ($det['buttons']) {
 			$html .= '<div class="containerbox wrap album-play-controls vertical-centre">';
@@ -212,11 +207,10 @@ class ui_elements {
 				if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
 					$html .= '<div class="icon-no-response-playbutton track-control-icon expand playable clickcue noselect tooltip" name="'.$albumuri.'" title="'.language::gettext('label_play_whole_album').'"></div>';
 				} else {
-					$html .= '<div class="icon-no-response-playbutton track-control-icon expand clicktrack playable noselect tooltip" name="'.$albumuri.'" title="'.language::gettext('label_play_whole_album').'"></div>';
-					$html .= '<div class="'.$play_col_button.' track-control-icon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.language::gettext('label_from_collection').'"></div>';
+					$html .= '<div class="icon-no-response-playbutton track-control-icon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.language::gettext('label_from_collection').'"></div>';
 				}
 			} else {
-				$html .= '<div class="'.$play_col_button.' track-control-icon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.language::gettext('label_from_collection').'"></div>';
+				$html .= '<div class="icon-no-response-playbutton track-control-icon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.language::gettext('label_from_collection').'"></div>';
 			}
 			$html .= '<div class="icon-single-star track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" title="'.language::gettext('label_with_ratings').'"></div>';
 			$html .= '<div class="icon-tags track-control-icon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$db_album.'" title="'.language::gettext('label_with_tags').'"></div>';
@@ -252,6 +246,9 @@ class ui_elements {
 			} else {
 				$classes[] = 'clickcolloptions';
 			}
+		} else {
+			if ($det['AlbumUri'])
+				$classes[] = 'clickalbumuri';
 		}
 
 		if ($why == 'b' && $det['AlbumUri'] &&

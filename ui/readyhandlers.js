@@ -235,11 +235,5 @@ function carry_on_starting() {
 	$(document).on('focus', 'input[type="number"]', function() {
 		$(this).attr('autocomplete', 'off');
 	});
-	//
-	// Hide the Music from Spotify Panel if player can't play spotify
-	//
-	if (!player.canPlay('spotify')) {
-		$('#pluginplaylists_spotify').prev().hide();
-	}
 	searchManager.setup_categories();
 }
