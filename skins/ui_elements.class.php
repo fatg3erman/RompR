@@ -205,17 +205,17 @@ class ui_elements {
 			if ($det['AlbumUri']) {
 				$albumuri = rawurlencode($det['AlbumUri']);
 				if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-					$html .= '<div class="icon-no-response-playbutton track-control-icon expand playable clickcue noselect tooltip" name="'.$albumuri.'" title="'.language::gettext('label_play_whole_album').'"></div>';
+					$html .= '<div class="bold textcentre track-control-icon expand playable clickcue noselect tooltip" name="'.$albumuri.'">Play This Album</div>';
 				} else {
-					$html .= '<div class="icon-no-response-playbutton track-control-icon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.language::gettext('label_from_collection').'"></div>';
+					$html .= '<div class="bold textcentre track-control-icon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'">Play This Album</div>';
 				}
 			} else {
-				$html .= '<div class="icon-no-response-playbutton track-control-icon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.language::gettext('label_from_collection').'"></div>';
+				$html .= '<div class="bold textcentre track-control-icon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'">Play This Album</div>';
 			}
-			$html .= '<div class="icon-single-star track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" title="'.language::gettext('label_with_ratings').'"></div>';
-			$html .= '<div class="icon-tags track-control-icon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$db_album.'" title="'.language::gettext('label_with_tags').'"></div>';
-			$html .= '<div class="icon-ratandtag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$db_album.'" title="'.language::gettext('label_with_tagandrat').'"></div>';
-			$html .= '<div class="icon-ratortag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$db_album.'" title="'.language::gettext('label_with_tagorrat').'"></div>';
+			// $html .= '<div class="icon-single-star track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" title="'.language::gettext('label_with_ratings').'"></div>';
+			// $html .= '<div class="icon-tags track-control-icon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$db_album.'" title="'.language::gettext('label_with_tags').'"></div>';
+			// $html .= '<div class="icon-ratandtag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$db_album.'" title="'.language::gettext('label_with_tagandrat').'"></div>';
+			// $html .= '<div class="icon-ratortag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$db_album.'" title="'.language::gettext('label_with_tagorrat').'"></div>';
 		}
 
 		$classes = array();
@@ -267,14 +267,14 @@ class ui_elements {
 			$classes[] = 'clickratedtracks';
 
 		if (count($classes) > 0) {
-			$classes[] = $det['iconclass'];
-			$html .= '<div class="icon-menu inline-icon track-control-icon clickable clickicon clickalbummenu '
-					.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']);
+			// $classes[] = $det['iconclass'];
+			// $html .= '<div class="icon-menu inline-icon track-control-icon clickable clickicon clickalbummenu '
+			// 		.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']);
 
-			if (in_array('clickalbumoptions', $classes) || in_array('clickaddtocollectionviabrowse', $classes) || in_array('clickaddtollviabrowse', $classes))
-				$html .= '" uri="'.rawurlencode($det['AlbumUri']);
+			// if (in_array('clickalbumoptions', $classes) || in_array('clickaddtocollectionviabrowse', $classes) || in_array('clickaddtollviabrowse', $classes))
+			// 	$html .= '" uri="'.rawurlencode($det['AlbumUri']);
 
-			$html .= '"></div>';
+			// $html .= '"></div>';
 		}
 
 		if ($det['buttons'])
