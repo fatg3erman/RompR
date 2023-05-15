@@ -79,9 +79,9 @@ You will only see options for backends that are enabled in Mopidy. The complete 
 
 ### On-The-Fly Collection Building
 
-Mopidy users also have the option to add tracks to the collection as they play. If you're playing a track from, say, Spotify and you like it, just give it a tag or a rating and it will be automatically added to your Collection. Tracks added this way can be removed using the hamburger icon menu. Spotify albums from the [Play Queue](/RompR/The-Playlist), the [Spotify Info Panel](/RompR/The-Info-Panel), and [Music Discovery Sources](/RompR/Music-Discovery) can also be added directly into the Music Collection.
+Mopidy users also have the option to add tracks to the collection as they play. If you're playing a track from, say, Spotify and you like it, just give it a tag or a rating and it will be automatically added to your Collection. Tracks added this way can be removed using the hamburger icon menu. Spotify/YoutTube Music albums from the [Play Queue](/RompR/The-Playlist), the [Spotify Info Panel](/RompR/The-Info-Panel), and [Music Discovery Sources](/RompR/Music-Discovery) can also be added directly into the Music Collection.
 
-If you're listening to an internet radio station and you hear a track you like, tagging or rating that will make RompЯ search for it on Spotify and add it to the collection if it finds it, or to your [Wishlist](/RompR/The-Wishlist) if it doesn't.
+If you're listening to an internet radio station and you hear a track you like, tagging or rating that will make RompЯ search for it on Spotify/Youtube Music and add it to the collection if it finds it, or to your [Wishlist](/RompR/The-Wishlist) if it doesn't.
 
 ### Preferring Local Music
 
@@ -89,9 +89,26 @@ This option is best explained by an example. Suppose you have added some tracks 
 
 Note that if the album exists in your Spotify Playlists or 'Your Music' and you are building your Collection from those sources, it will remain in your Collection. The replacement option only applies to files that have been added on the fly.
 
+## Classical
 
-## Composers
-
-Classical music lovers (or lovers of other genres) also have the option to sort by Composer for specific Genres. Note that this relies on tracks being tagged with Composer information, which is not always the case with some backends in Mopidy. For local files you will need to tag them yourself for this to work.
+By default RompR will use the 'Album Artist' tags in local files to sort music by Artist. But with Classical Music this is very rarely useful if you want music sorted by composer. Versions prior to 2.01 had an option to use the Composer tag if the files had a Genre of Classical. However it turns out this doesn't work very well because if you've tagged your files using Musicbrainz tags many Classical albums don't have either a Composer tag or a Genre tag, so something better was needed.
 
 ![](images/composersort.png)
+
+If you were previously using 'Use Composer as Sort Artist' the new options will be set so the behaviour doesn't change, but there is a new and better way.
+
+Firstly you'll need to enable the 'Use Different Rules for Sorting Classical Music' Option. Then you can select either 'Use Composer' or 'Use Track Artist'. 'Use Track Artist' generally works much better than 'Use Composer', especially if you've used Musicbrainz tags in your files.
+
+To get RompR to recognise Classical music you can:
+
+Enter a comma-separated list of Genre tags into the apporpriate box.
+
+AND/OR
+
+Enter a directory name into the Folder Path box. Any music stored under this directory in your local music will be regarded as Classical. So if your local music as defined in your Mopidy or MPD config file is '/home/you/Music' then you can make a directory '/home/you/Music/Classical', enter 'Classical' in the Folder Path box, then Update your Music Collection. Leave this box blank if you do not want to use a Folder Path to recognise Classical Music.
+
+To make RompR not use Genres, leave the Genres box empty. To make it not use a Folder Path, leave that box empty.
+
+Note that these options have no effect with most of Mopidy's online backends since they don't use Folder Paths and none of the ones I've tried return Genres, even Spotify.
+
+If you want to have the full Composer / Perfomer information from your tagged files displayed in the Now Playing section of the UI there is an option for that in the preferences but note that this only really works properly with MPD because Mopidy-Local does not support multiple values for the same tag.
