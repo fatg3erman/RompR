@@ -475,16 +475,6 @@ function artistNameHtml($obj) {
 	return $h;
 }
 
-function checkComposerGenre($genre, $pref) {
-	$gl = strtolower($genre);
-	foreach ($pref as $g) {
-		if ($gl == strtolower($g)) {
-			return true;
-		}
-	}
-	return false;
-}
-
 function get_player_ip() {
 	// SERVER_ADDR reflects the address typed into the browser
 	logger::log("INIT", "Server Address is ".$_SERVER['SERVER_ADDR']);
@@ -724,22 +714,6 @@ function format_artist($artist, $empty = null) {
 	} else {
 		return $empty;
 	}
-}
-
-function format_sortartist($tags) {
-	$sortartist = null;
-	if (prefs::get_pref('sortbycomposer') && $tags['Composer'] !== null) {
-		if (prefs::get_pref('composergenre') && $tags['Genre'] &&
-				checkComposerGenre($tags['Genre'], prefs::get_pref('composergenrename'))) {
-			$sortartist = $tags['Composer'];
-		} else if (!prefs::get_pref('composergenre')) {
-			$sortartist = $tags['Composer'];
-		}
-	}
-	if ($sortartist === null)
-		$sortartist = $tags['AlbumArtist'];
-
-	return concatenate_artist_names($sortartist);
 }
 
 function get_encoded_image($image) {

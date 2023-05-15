@@ -62,7 +62,8 @@ class collection_base extends database {
 					TTindex,
 					isSearchResult,
 					Disc,
-					Artistname AS AlbumArtist,
+					aa.Artistname AS AlbumArtist,
+					ta.Artistname AS Artist,
 					Albumtable.Image AS "X-AlbumImage",
 					mbid AS MUSICBRAINZ_ALBUMID,
 					Searched,
@@ -75,7 +76,8 @@ class collection_base extends database {
 				FROM
 					Tracktable
 					JOIN Albumtable USING (Albumindex)
-					JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+					JOIN Artisttable AS aa ON Albumtable.AlbumArtistindex = aa.Artistindex
+					JOIN Artisttable AS ta ON Tracktable.Artistindex = ta.Artistindex
 					LEFT JOIN Playcounttable USING (TTindex)
 				WHERE
 				Hidden = 0

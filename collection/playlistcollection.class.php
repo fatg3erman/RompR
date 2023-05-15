@@ -8,12 +8,17 @@ class playlistCollection extends musicCollection {
 		if (!is_array($filedata))
 			return array_replace(MPD_FILE_MODEL, ROMPR_FILE_MODEL);
 
+		// logger::log('PLAYLIST1', print_r($filedata, true));
+
 		// Translate from MPD_FILE_MODEL to ROMPR_FILE_MODEL
-		$filedata = array_replace(MPD_FILE_MODEL, ROMPR_FILE_MODEL, $filedata, $this->get_extra_track_info($filedata));
+		$filedata = array_replace(MPD_FILE_MODEL, ROMPR_FILE_MODEL, $filedata, ['is_tracklist' => true], $this->get_extra_track_info($filedata));
 
 		$track = new track($filedata);
-		if ($track->tags['albumartist'] === null)
+		if ($track->tags['albumartist'] === null) {
 			$track->tags['albumartist'] = $track->get_sort_artist();
+		}
+
+		// logger::log('PLAYLIST', print_r($track->tags, true));
 
 		$track->tags['Id'] = (int) $track->tags['Id'];
 
@@ -64,26 +69,12 @@ class playlistCollection extends musicCollection {
 
 		if (prefs::get_pref('displaycomposer')) {
 			// The user has chosen to display Composer/Perfomer information
-			// Here check:
-			// a) There is composer/performer information AND
-			// bi) Specific Genre Selected, Track Has Genre, Genre Matches Specific Genre OR
-			// bii) No Specific Genre Selected, Track Has Genre
-			if (($track->tags['Composer'] !== null || $track->tags['Performer'] !== null) &&
-				((prefs::get_pref('composergenre') && $track->tags['Genre'] &&
-					checkComposerGenre($track->tags['Genre'], prefs::get_pref('composergenrename'))) ||
-				(!prefs::get_pref('composergenre') && $track->tags['Genre'])))
-			{
-				// Track Genre matches selected 'Sort By Composer' Genre
-				// Display Compoer - Performer - AlbumArtist
-				$this->do_composers($track->tags);
-				$this->do_performers($track->tags);
-				// The album artist probably won't be required in this case, but use it just in case
+			if ($track->tags['is_classical']) {
 				$this->do_albumartist($track->tags);
-				// Don't do track artist as with things tagged like this this is usually rubbish
+				$this->do_track_artists($track->tags);
+				$this->do_performers($track->tags);
+				$this->do_composers($track->tags);
 			} else {
-				// Track Genre Does Not Match Selected 'Sort By Composer' Genre
-				// Or there is no composer/performer info
-				// Do Track Artist - Album Artist - Composer - Performer
 				$this->do_track_artists($track->tags);
 				$this->do_albumartist($track->tags);
 				$this->do_performers($track->tags);
@@ -113,6 +104,7 @@ class playlistCollection extends musicCollection {
 			return;
 		}
 		foreach ($info['Composer'] as $comp) {
+			// $comp = preg_replace('/ \(.+?\)/', '', $comp);
 			if ($this->artist_not_found_yet($comp)) {
 				array_push($info['metadata']['artists'], array( "name" => trim($comp), "musicbrainz_id" => "", "type" => "composer", "ignore" => "false", 'backendid' => $info['Id']));
 			}
@@ -124,6 +116,7 @@ class playlistCollection extends musicCollection {
 			return;
 		}
 		foreach ($info['Performer'] as $comp) {
+			// $comp = preg_replace('/ \(.+?\)/', '', $comp);
 			$toremove = null;
 			foreach($info['metadata']['artists'] as $i => $artist) {
 				if ($artist['type'] == "albumartist" || $artist['type'] == "artist") {
@@ -196,10 +189,16 @@ class playlistCollection extends musicCollection {
 		$s = strtolower($a);
 		if (in_array($s, $this->foundartists)) {
 			return false;
-		} else {
-			$this->foundartists[] = $s;
-			return true;
+		// } else {
+		// 	foreach ($this->foundartists as $fa) {
+		// 		if (strpos($fa, $s.',') !== false) {
+		// 			return false;
+		// 		}
+		// 	}
 		}
+		// logger::log('PL', 'Adding', $s);
+		$this->foundartists[] = $s;
+		return true;
 	}
 }
 

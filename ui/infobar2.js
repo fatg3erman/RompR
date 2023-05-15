@@ -93,7 +93,7 @@ var infobar = function() {
 						joinstring = " : ";
 					}
 					if (i == info.metadata.artists.length - 1) {
-						joinstring = (info.metadata.artists.length == 2 && prevtype == "artist" && info.metadata.artists[i].type == "albumartist") ? " / " : " & ";
+						joinstring = ((info.metadata.artists.length == 2 && prevtype == "artist" && info.metadata.artists[i].type == "albumartist" ) || info.is_classical) ? " / " : " & ";
 					}
 					if (info.metadata.artists[i].type == "composer") {
 						if (!info.metadata.artists[i].name.match(/composer/i)) {

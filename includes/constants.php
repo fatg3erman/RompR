@@ -131,7 +131,9 @@ define('MPD_FILE_MODEL', array(
 		'album_index' => null,
 		'hidden' => 0,
 		"year" => null,
-		'isaudiobook' => 0
+		'isaudiobook' => 0,
+		'is_classical' => false,
+		"is_tracklist" => false
 	)
 );
 

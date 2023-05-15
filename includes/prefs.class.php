@@ -26,6 +26,10 @@ class prefs {
 		]
 	];
 
+	// Don't use 0 in these options as that doesn't make a radio button work
+	const CLASSICAL_RULES_USE_COMPOSER = 1;
+	const CLASSICAL_RULES_USE_ARTIST = 2;
+
 	// These are the keys from the above array that we check
 	// to see if a player definition has changed
 	const PLAYER_CONNECTION_PARAMS = [
@@ -50,9 +54,16 @@ class prefs {
 		"proxy_host" => "",
 		"proxy_user" => "",
 		"proxy_password" => "",
+
+		// We need to leave these in so they can be updated
 		"sortbycomposer" => false,
-		"composergenre" => false,
 		"composergenrename" => array("Classical"),
+
+		"useclassicalrules" => false,
+		"classical_rule" => self::CLASSICAL_RULES_USE_COMPOSER,
+		"classicalgenres" => array('Classical'),
+		"classicalfolder" => 'Classical',
+
 		"preferlocalfiles" => false,
 		"mopidy_collection_folders" => array("Local media"),
 		"lastfm_country_code" => "",
@@ -634,6 +645,14 @@ class prefs {
 
 		if (self::$prefs['linkchecker_nextrun'] > 999999999999) {
 			self::$prefs['linkchecker_nextrun'] = round(self::$prefs['linkchecker_nextrun'] / 1000);
+		}
+
+		if (self::$prefs['sortbycomposer']) {
+			// Swap from old sortbycomposer to new Classical rules
+			self::$prefs['useclassicalrules'] = true;
+			self::$prefs['classical_rule'] = self::CLASSICAL_RULES_USE_COMPOSER;
+			self::$prefs['classicalgenres'] = self::$prefs['composergenrename'];
+			self::$prefs['sortbycomposer'] = false;
 		}
 
 		self::save();

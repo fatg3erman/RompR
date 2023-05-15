@@ -11,7 +11,6 @@ class tuneinplugin {
 	}
 
 	public function doHeader() {
-		// print '<div id="tuneinradio">';
 		print uibits::radioChooser([
 			'playable' => false,
 			'id' => 'tuneinlist',

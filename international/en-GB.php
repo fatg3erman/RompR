@@ -422,7 +422,6 @@ language::add_translations([
 	"settings_interface" =>					"Interface",
 	"label_charts" =>						"Top 40",
 	"button_subscribe" =>					"Subscribe",
-	"config_sortbycomposer" =>				"Use Composer as Sort Artist",
 	"config_composergenre" =>				" .. only if Genre is:",
 	"config_displaycomposer" =>				"Display Composer/Performer in Now Playing",
 	"label_radio_mix" =>					"Favourite Artists and Related Artists",
@@ -515,7 +514,7 @@ language::add_translations([
 	"config_players" =>						"Players",
 	"button_edit_players" =>				"Edit Players",
 
-	"label_play_all" =>						"Play All",
+	"label_play_all" =>						"Play All by this Artist",
 	"label_last_played" =>					"Last Played:",
 	"label_station_website" =>				"Station Website",
 
@@ -748,7 +747,14 @@ language::add_translations([
 	"label_recommenddesc" =>				'A Radio Station of recommendations based on your listening',
 	"label_rmixdesc" =>						'A Radio Station of music by artists you love and artists like them',
 	"config_stupid_round_corners" =>		'Padding at bottom of screen (to help on phones with round corners or controls that get in the way)',
-	"config_clearfirst" =>					'Empty Play Queue before starting'
+	"config_clearfirst" =>					'Empty Play Queue before starting',
+	"label_classicalrules" =>				'Classical Music Sorting Rules',
+	"config_classicalrules" =>				'Use Different Rules for Sorting Classical Music',
+	"config_sortbyartist" =>				"Use Track Artist as Sort Artist",
+	"config_sortbycomposer" =>				"Use Composer as Sort Artist",
+	"label_classicalgenre" =>				"Detect Classical Music Using Genre(s)",
+	"label_classicalfolder" =>				"Detect Classical Music by Folder Path"
+
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------
