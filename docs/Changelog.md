@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 2.01
+## Version 2.06
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
 
@@ -12,80 +12,46 @@
 * Mopidy-Spotify is well on the way to working again thanks to the efforts of its maintainers, so some of the functionality I pulled out of version 2.00 is back. This includes being able to play tracks directly from the Spotify Info panel and the Discoverator as well as the Spotify Personalised Radio stations, which have had a revamp and work better than they used to.
 * All skins should now display and work correctly on touch devices and devices with mice, though drag-and-drop is only supported if you are using a mouse. Laptops with touchscreens should repond to touch events on all elements, but whether drag-and-drop works on a laptop touchscreen will depend on your OS and browser. I don't have one to test it out on, if anybody does plese tell me how well it works.
 * On devices with only touchscreens all clickable elements now respond when you remove your finger from the screen instead of the old behaviour which was to use a browser's emulated mouse-click - this required you to 'jab' at the icons which many people found difficult.
-* Better Music Collection handling of Classical Music. See [The Docs](https://github.com/fatg3erman/RompR/Music-Collection#Classical)
+* Better Music Collection handling of Classical Music. See [The Docs](/RompR/Music-Collection#Classical)
 
 
 ## Version 2.00
 
 ### Big Changes In This Version. Please Read The Following Before Updating
 
-* This bump in version number reflects a big change in how RompR works internally. This has allowed me to improve
-a lot of the functionality, but I cannot possibly test it on every system.
+* This bump in version number reflects a big change in how RompR works internally. This has allowed me to improve a lot of the functionality, but I cannot possibly test it on every system.
 * **You must be running RompR version 1.40 or newer to upgrade to this version**
-* **It is strongly reccommended that you [back up your entire database](/RompR/Backing-Up-Your-Metadata#Backing-Up-Your-Entire_database)
-before updating to this version, as if it does not work for you then rolling back will be impossible without a database backup.**
-* **In order to upgrade to this version from an earlier version you must delete everything from your installation except your prefs and albumart directories,
-then copy the new version in.**
-* If you do have problems after upgrading, please [raise a bug on the issue tracker](https://github.com/fatg3erman/RompR/issues)
-and I will attempt to fix it or assist you.
-* This version introduces the [RompR Backend Daemon](/RompR/Backend-Daemon) which replaces romonitor and is now a requirement.
-The Daemon performs some tasks that are very difficult to do in the browser but very easy to do if you have a process running permanently on the server.
-It requires a POSIX operating system and therefore RompR is no longer supported on Windows. RompR will, on most systems, start this daemon itself so you
+* **It is strongly reccommended that you [back up your entire database](/RompR/Backing-Up-Your-Metadata#Backing-Up-Your-Entire_database) before updating to this version, as if it does not work for you then rolling back will be impossible without a database backup.**
+* **In order to upgrade to this version from an earlier version you must delete everything from your installation except your prefs and albumart directories, then copy the new version in.**
+* If you do have problems after upgrading, please [raise a bug on the issue tracker](https://github.com/fatg3erman/RompR/issues) and I will attempt to fix it or assist you.
+* This version introduces the [RompR Backend Daemon](/RompR/Backend-Daemon) which replaces romonitor and is now a requirement. The Daemon performs some tasks that are very difficult to do in the browser but very easy to do if you have a process running permanently on the server. It requires a POSIX operating system and therefore RompR is no longer supported on Windows. RompR will, on most systems, start this daemon itself so you
 shouldn't need to do anything *except* if you were previously running romonitor, in which case you **must** read the link above.
-* Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin.
-As a result of this change though, you will need to recreate any Alarms you had previously configured.
-* There is now a [Websocket Server](/RompR/Rompr-And-MPD) that makes the UI more responsive when you're using MPD - essentially it
-mimics the part of Mopidy's HTTP interface that RompR uses. It's not required but it is recommended. There are some pre-requisistes you
-need for this to work, please read the link.
-* The websocket port to use for Mopidy is now configurable for each player, to help those who use multiple players running on the
-same machine. Crazy people :) As a result of this though if you do have multiepl players you might find that the websocket port
-number is wrong after upgrading. It's easily fixed from the config panel.
-* Unified Search - everything you can search for in RompR is now available through the main Search Panel instead of being
-spread out in different places throughout the interface.
+* Alarms and the Sleep Timer no longer require a browser to be open, and are therefore now supported in the Phone skin. As a result of this change though, you will need to recreate any Alarms you had previously configured.
+* There is now a [Websocket Server](/RompR/Rompr-And-MPD) that makes the UI more responsive when you're using MPD - essentially it mimics the part of Mopidy's HTTP interface that RompR uses. It's not required but it is recommended. There are some pre-requisistes you need for this to work, please read the link.
+* The websocket port to use for Mopidy is now configurable for each player, to help those who use multiple players running on the same machine. Crazy people :) As a result of this though if you do have multiple players you might find that the websocket port number is wrong after upgrading. It's easily fixed from the config panel.
+* Unified Search - everything you can search for in RompR is now available through the main Search Panel instead of being spread out in different places throughout the interface.
 * IceCast radio support has been removed, because the "API" really sucks and the station IDs keep changing.
 * Fix bug where album art might be partially downloaded when using MPD (Fix contributed by corubba)
 * New option to not clear the Play Queue before starting personalised radio.
-* Try to make RompR properly timezone aware, so the alarm clock works when Daylight Saving Time is enabled, for example.
-RompR will try to work out your timezone, but if you notice the alarm clock isn't going off at the right time you
-should set date.timezone in your php.ini.
+* Try to make RompR properly timezone aware, so the alarm clock works when Daylight Saving Time is enabled, for example. RompR will try to work out your timezone, but if you notice the alarm clock isn't going off at the right time you should set date.timezone in your php.ini.
 * Done some work to make the Desktop and Skypotato skins work better on touch-enabled devices like tablets:
 	* It should auto-detect a touch interface and enable swiping and long press on the Play Queue.
-	* On a touch device, you can pinch to shrink or enlarge the left-hand list (ie the list of artists) in both skins, and also the Play Queue
-	in the desktop skin.
+	* On a touch device, you can pinch to shrink or enlarge the left-hand list (ie the list of artists) in both skins, and also the Play Queue in the desktop skin.
 	* On a touch device it should now use the device's native scrolling instead of RompR's custom scrollbars.
-* A new button in the preferences panel allows you to save the current settings as defaults for all browsers. This will assist
-people who prefer to run in private sessions - your UI settings will be saved to the backend when you push this button.
-This includes the skin and single/double click mode but some prefs that are stored as Cookies are not saved - this includes the
-current Player as well some of the collection sort options.
-* People who use phones with silly rounded corners can now specify a padding to be applied to the bottom of the Phone skin so that
-the rounded corners or other bits that Apple decide to put in our way don't obscure my UI.
-* Clients in a Snapcast Group can now have their volumes locked together, so that adjusting one adjusts them all. So you can now set the
-relative volumes as you want them, then make the whole lot louder if you need to.
-* Make the SQLite collection case-insensitive, which makes it work the same way as MySQL and means I can remove a lot of
-case checking statements, which speeds things up.
+* A new button in the preferences panel allows you to save the current settings as defaults for all browsers. This will assist people who prefer to run in private sessions - your UI settings will be saved to the backend when you push this button. This includes the skin and single/double click mode but some prefs that are stored as Cookies are not saved - this includes the current Player as well some of the collection sort options.
+* People who use phones with silly rounded corners can now specify a padding to be applied to the bottom of the Phone skin so that the rounded corners or other bits that Apple decide to put in our way don't obscure my UI.
+* Clients in a Snapcast Group can now have their volumes locked together, so that adjusting one adjusts them all. So you can now set the relative volumes as you want them, then make the whole lot louder if you need to.
+* Make the SQLite collection case-insensitive, which makes it work the same way as MySQL and means I can remove a lot of case checking statements, which speeds things up.
 * All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.
 * All Personal Radio stations are now populated by the Backend Daemon, so there is no longer any need to keep a browser open.
-* If Mopidy's HTTP interface is available and you do a search in RompR and limit the search to specific backends the search can be performed
-using Mopidy's HTTP interface instead of the MPD interface. This can provide significantly improved search performance and better
-quality information but it can use a lot of RAM and in certain setups it might be a lot slower. You can disable this behaviour
-by unchcking 'Use Mopidy HTTP interface for Search' on the rompr/?setup screen.
+* If Mopidy's HTTP interface is available and you do a search in RompR and limit the search to specific backends the search can be performed using Mopidy's HTTP interface instead of the MPD interface. This can provide significantly improved search performance and better quality information but it can use a lot of RAM and in certain setups it might be a lot slower. You can disable this behaviour by unchcking 'Use Mopidy HTTP interface for Search' on the rompr/?setup screen.
 * The usual collection of undocumented bugfixes.
 * **Youtube Music as a Spotify Replacement**
-* Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix,
-the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection and will be
-added to Your Wishlist. Note that selecting this option will force a rescan of your Music Collection.
- The Wishlist Viewer will give you an easy way to browse them and decide which ones you want to buy digital or physical copies of.
- I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify.
- If you have enabled Youtube Music support in Mopidy the Wishlist Viewer will permit you to search for tracks on Youtube Music
- and import them into your Collection in place of your Spotify tracks, preserving the tags, ratings, and playcounts.
-* For YouTube Music support in RompR you can use Mopidy-Youtube with musicapi_enabled set to true, or Mopidy-YTMusic 0.3.8 or later.
-Mopidy-YTMusic is preferred for Youtube Music support because it handles artists, albums, and tracks whereas Mopidy-Youtube regards
-everything as either a playlist or a video. Using both backends together gives you access to all of Youtube and Youtube Music.
+* Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix, the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection and will be added to Your Wishlist. Note that selecting this option will force a rescan of your Music Collection. The Wishlist Viewer will give you an easy way to browse them and decide which ones you want to buy digital or physical copies of. I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify. If you have enabled Youtube Music support in Mopidy the Wishlist Viewer will permit you to search for tracks on Youtube Music and import them into your Collection in place of your Spotify tracks, preserving the tags, ratings, and playcounts.
+* For YouTube Music support in RompR you can use Mopidy-Youtube with musicapi_enabled set to true, or Mopidy-YTMusic 0.3.8 or later. Mopidy-YTMusic is preferred for Youtube Music support because it handles artists, albums, and tracks whereas Mopidy-Youtube regards everything as either a playlist or a video. Using both backends together gives you access to all of Youtube and Youtube Music.
 * For Mopidy users, all Personalised Radio stations that relied on Spotify support have been removed and are not coming back.
 * The other Mopidy-specific Personal radio stations have been adjusted so that they work with Mopidy-Youtube and Mopidy-YTMusic.
-* Where the Info Panel used to show lists of Spotify albums and allow you to play them it will still do this but now if you try
-to play tracks from them it will search for them using all your online sources and play whatever it can find. You can still add
-these albums to Albums To Listen To as well. You can also now add albums from Youtube that come up in search results to Albums To Listen To.
+* Where the Info Panel used to show lists of Spotify albums and allow you to play them it will still do this but now if you try to play tracks from them it will search for them using all your online sources and play whatever it can find. You can still add these albums to Albums To Listen To as well. You can also now add albums from Youtube that come up in search results to Albums To Listen To.
 
 
 ## Version 1.61
