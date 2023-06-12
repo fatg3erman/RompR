@@ -17,48 +17,48 @@ class prefspanel extends uibits {
 		// Players
 		//
 		// =======================================================
-		// print self::ui_config_header([
-		// 	'label' => 'config_players'
-		// ]);
-		// print '<div class="fullwidth">';
-		// print '<div class="clearfix">';
-		// print '<div class="pref styledinputs tleft" name="playerdefs">';
-		// print '</div>';
-		// print '<div class="pref tright"><button onclick="player.defs.edit()">'.language::gettext('button_edit_players').'</button></div>';
-		// print '</div>';
+		print self::ui_config_header([
+			'label' => 'config_players'
+		]);
+		print '<div class="fullwidth">';
+		print '<div class="clearfix">';
+		print '<div class="pref styledinputs tleft" name="playerdefs">';
+		print '</div>';
+		print '<div class="pref tright"><button onclick="player.defs.edit()">'.language::gettext('button_edit_players').'</button></div>';
+		print '</div>';
 
-		// self::ui_checkbox(['id' => 'player_in_titlebar', 'label' => 'config_playerintitlebar']);
-		// // self::ui_checkbox(['id' => 'consume_workaround', 'label' => 'config_consumeworkaround']);
-		// if (prefs::get_pref('player_backend') == "mpd") {
-		// 	self::ui_textentry([
-		// 		'label' => 'config_crossfade',
-		// 		'size' => 3,
-		// 		'id' => 'crossfade_duration',
-		// 		'type' => 'number'
-		// 	]);
-		// }
-		// print '</div>';
+		self::ui_checkbox(['id' => 'player_in_titlebar', 'label' => 'config_playerintitlebar']);
+		// self::ui_checkbox(['id' => 'consume_workaround', 'label' => 'config_consumeworkaround']);
+		if (prefs::get_pref('player_backend') == "mpd") {
+			self::ui_textentry([
+				'label' => 'config_crossfade',
+				'size' => 3,
+				'id' => 'crossfade_duration',
+				'type' => 'number'
+			]);
+		}
+		print '</div>';
 
 		// =======================================================
-		//
+
 		// Snapcast
-		//
-		// =======================================================
-		// print self::ui_config_header([
-		// 	'main_icon' => 'icon-snapcast'
-		// ]);
-		// print '<div class="fullwidth">';
-		// if (!self::SNAPCAST_IN_VOLUME) {
-		// 	print '<div class="pref" id="snapcastgroups">';
-		// 	print '</div>';
-		// }
-		// self::ui_checkbox(['id' => 'hide_master_volume', 'label' => 'config_hidemastervolume']);
 
-		// print '<div class="pref styledinputs containerbox vertical-centre">';
-		// print '<input class="saveotron expand" id="snapcast_server" type="text" placeholder="'.language::gettext('config_snapcast_server').'" />';
-		// print '<input class="saveotron fixed" id="snapcast_http" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.language::gettext('config_snapcast_http').'" />';
-		// print '</div>';
-		// print '</div>';
+		// =======================================================
+		print self::ui_config_header([
+			'main_icon' => 'icon-snapcast'
+		]);
+		print '<div class="fullwidth">';
+		if (!self::SNAPCAST_IN_VOLUME) {
+			print '<div class="pref" id="snapcastgroups">';
+			print '</div>';
+		}
+		self::ui_checkbox(['id' => 'hide_master_volume', 'label' => 'config_hidemastervolume']);
+
+		print '<div class="pref styledinputs containerbox vertical-centre">';
+		print '<input class="saveotron expand" id="snapcast_server" type="text" placeholder="'.language::gettext('config_snapcast_server').'" />';
+		print '<input class="saveotron fixed" id="snapcast_http" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.language::gettext('config_snapcast_http').'" />';
+		print '</div>';
+		print '</div>';
 
 		// =======================================================
 		//
