@@ -17,6 +17,11 @@ var starRadios = function() {
 			$('#pluginplaylists').append(playlist.radioManager.standardBox('starRadios', 'allrandom', 'icon-allrandom', language.gettext('label_allrandom')));
 
 			//
+			// All Albums at random
+			//
+			$('#pluginplaylists').append(playlist.radioManager.standardBox('starRadios', 'randomalbums', 'icon-allrandom', language.gettext('label_randomalbums')));
+
+			//
 			// Never Played Tracks
 			//
 			$('#pluginplaylists').append(playlist.radioManager.standardBox('starRadios', 'neverplayed', 'icon-neverplayed', language.gettext('label_neverplayed')));
