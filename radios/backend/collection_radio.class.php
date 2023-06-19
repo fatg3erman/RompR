@@ -35,6 +35,11 @@ class collection_radio extends musicCollection {
 				$sqlstring = $this->sql_recent_tracks();
 				break;
 
+			case "randomalbums":
+				$random = false;
+				$sqlstring = "SELECT Uri FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE Uri IS NOT NULL";
+				break;
+
 			case "favealbums":
 				$avgplays = $this->getAveragePlays();
 				$sqlstring = "SELECT Uri FROM Tracktable JOIN Albumtable USING (Albumindex)

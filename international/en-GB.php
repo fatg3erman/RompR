@@ -464,6 +464,7 @@ language::add_translations([
 	"config_collectionfolders" =>			"Build Collection From:",
 	"button_videos" =>						"Related Videos",
 	"label_allrandom" =>					"All Tracks At Random",
+	"label_randomalbums" =>					"All Albums At Random",
 	"config_background" =>					"Background Image",
 	"lastfm_error" =>						"Could not find information on Last.FM",
 	"config_skin" =>						"SKIN",
