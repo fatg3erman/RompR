@@ -596,7 +596,7 @@ class poDatabase extends database {
 				if ($podetails->KeepDownloaded == 1)
 					$qstring .= " AND Downloaded = 0";
 
-				$this->sql_prepare_query(true, null, null, null, $qstring, $podid);
+				$num = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0, $qstring, $podid);
 				$getrid = $num - $podetails->NumToKeep;
 				logger::trace("PODCASTS", "  Num To Keep is ".$podetails->NumToKeep." and there are ".$num." episodes that can be pruned. Removing ".$getrid);
 				if ($getrid > 0) {
