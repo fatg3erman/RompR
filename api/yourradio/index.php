@@ -48,7 +48,7 @@ function do_radio_list() {
 			'streamname' => $playlist['StationName'],
 			'streamimg' => $playlist['Image'],
 			'class' => 'faveradio'
-			// 'podcounts' => '<i class="clickable clickradioremove clickicon yourradio icon-cancel-circled fixed inline-icon" name="'.$playlist['Stationindex'].'"></i>'
+			'podcounts' => '<i class="clickable clickradioremove clickicon yourradio icon-cancel-circled fixed inline-icon" name="'.$playlist['Stationindex'].'"></i>'
 		));
 
 	}
