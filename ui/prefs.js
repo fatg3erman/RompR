@@ -598,6 +598,10 @@ var prefs = function() {
 			$.post('api/power/?off=true');
 		},
 
+		power_restart: async function() {
+			$.post('api/power/?restart=true');
+		},
+
 		togglePref: function(event) {
 			debug.debug("PREFS","Toggling",event);
 			var prefobj = new Object;

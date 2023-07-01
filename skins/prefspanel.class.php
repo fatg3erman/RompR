@@ -629,6 +629,11 @@ class prefspanel extends uibits {
 			'onclick' => 'prefs.power_off()'
 		]]);
 
+		self::ui_config_button([[
+			'label' => 'button_restart',
+			'name' => 'power-restart',
+			'onclick' => 'prefs.power_restart()'
+		]]);
 
 	}
 
