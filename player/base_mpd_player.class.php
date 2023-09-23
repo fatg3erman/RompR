@@ -860,7 +860,14 @@ class base_mpd_player {
 	}
 
 	private function mpd_to_mopidy($file) {
-		if (substr($file, 0, 5) != 'http:' && substr($file, 0, 6) != 'https:') {
+		// Don't for this for streams, and also don't do it for anything containing :track:
+		// bevause that'll be coming from Mopidy's file browser if we're using a Mopidy player
+		// on an MPD collection
+		if (
+			substr($file, 0, 5) != 'http:'
+			&& substr($file, 0, 6) != 'https:'
+			&& !preg_match('#:track:#', $file)
+		) {
 			return 'local:track:'.implode("/", array_map("rawurlencode", explode("/", $file)));
 		} else {
 			return $file;
