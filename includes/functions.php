@@ -304,6 +304,10 @@ function audioClass($filetype, $domain = '') {
 			return "icon-doc-text";
 			break;
 
+		case 'unknown':
+			return "icon-blank";
+			break;
+
 		case "?":
 		case 'text/html':
 		case '':

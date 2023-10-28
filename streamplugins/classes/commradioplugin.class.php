@@ -294,11 +294,17 @@ class commradioplugin {
 			$buttons .= '</div>';
 		}
 
+		logger::log("COMMRADIO", $station['name'], $station['codec'], $station['bitrate']);
+
+		$albumname = htmlspecialchars($station['name']).' '.'<i class="'.audioClass($station['codec']).' inline-icon fixed"></i>';
+		if (is_numeric($station['bitrate']))
+			$albumname .= ' ('.$station['bitrate'].' kbps)';
+
 		print uibits::albumHeader(array(
 			'openable' => false,
 			'Image' => $this->comm_radio_get_image($station),
 			'Artistname' => htmlspecialchars($station['state'].$station['country']),
-			'Albumname' => htmlspecialchars($station['name']).' '.'<i class="'.audioClass($station['codec']).' inline-icon fixed"></i>',
+			'Albumname' =>$albumname,
 			'streamuri' => $station['playurl'],
 			'streamname' => $station['name'],
 			'streamimg' => $this->comm_radio_get_stream_image($station),
