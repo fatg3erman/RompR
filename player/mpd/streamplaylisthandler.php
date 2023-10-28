@@ -184,6 +184,9 @@ class xspfFile {
 // #EXTM3U
 // #EXTINF:duration,Artist - Album
 
+// This is copied from Mopidy's streamhandler. MPD seems to support these now
+// and the new BBC streams don't work with my unwrapper because they provide an infinite
+// number of track URLs for some bizarre reason
 class m3uFile {
 
 	public function __construct($data, $url, $station, $image) {
@@ -192,61 +195,34 @@ class m3uFile {
 		$this->station = $station;
 		$this->image = $image;
 		$this->tracks = array();
-		$prettystream = '';
+		$this->prettystream = '';
 		$this->url_to_add = $url;
-		$this->secondary = null;
 
 		$parts = explode(PHP_EOL, $data);
 		foreach ($parts as $line) {
 			if (preg_match('/#EXTINF:(.*?),(.*?)$/', $line, $matches)) {
-				$prettystream = $matches[2];
+				$this->prettystream = $matches[2];
 			} else if (preg_match('/^\#/', $line) || preg_match('/^\s*$/', $line)) {
 
 			} else {
-				$this->tracks[] = array('TrackUri' => trim($line), 'PrettyStream' => $prettystream);
+				$this->tracks[] = array('TrackUri' => trim($line), 'PrettyStream' => $this->prettystream);
 			}
 		}
-
-		if (preg_match('/opml\.radiotime\.com/', $url)) {
-			logger::log("RADIO PLAYLIST", "This is a radiotime tune api, Checking returned playlist");
-			$this->url_to_add = $this->get_first_track();
-			$this->secondary = internetPlaylist::download_remote_playlist($this->url_to_add, null, null);
-			$this->tracks = $this->secondary->tracks;
-		}
-
 	}
 
 	public function updateDatabase() {
 		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			prefs::$database->check_radio_tracks($stationid, $this->tracks);
+			prefs::$database->check_radio_tracks($stationid, array(array('TrackUri' => $this->url_to_add, 'PrettyStream' => $this->prettystream)));
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
-			header('HTTP/1.1 417 Expectation Failed');
-			exit(0);
 		}
 	}
 
 	public function getTracksToAdd() {
-		if ($this->secondary !== null) {
-			return $this->secondary->getTracksToAdd();
-		} else {
-			return array('load "'.format_for_mpd(htmlspecialchars_decode($this->url_to_add)).'"');
-		}
+		return array('add "'.format_for_mpd(htmlspecialchars_decode($this->url_to_add)).'"');
 	}
 
-	public function get_first_track() {
-		$return = $this->tracks[0]['TrackUri'];
-		foreach ($this->tracks as $track) {
-			$ext = pathinfo($track['TrackUri'], PATHINFO_EXTENSION);
-			if ($ext == 'pls' || $ext == 'm3u' || $ext == 'xspf' || $ext == 'asx') {
-				$return = $track['TrackUri'];
-				break;
-			}
-		}
-		logger::trace("RADIO_PLAYLIST", "  First Track Is ".$return);
-		return $return;
-	}
 }
 
 // [Reference]
