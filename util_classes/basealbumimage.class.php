@@ -25,6 +25,11 @@ class baseAlbumImage {
 	public $albumuri;
 	public $trackuri;
 	public $dbimage;
+	public $baseimage;
+	public $image_downloaded;
+	public $basepath;
+	public $albumImage;
+	public $images;
 
 	public function __construct($params) {
 		foreach (array('artist', 'album', 'key', 'source', 'file', 'base64data', 'mbid', 'albumpath', 'albumuri', 'trackuri', 'dbimage') as $param) {

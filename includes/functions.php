@@ -863,10 +863,24 @@ function printFileSearch(&$tree) {
 }
 
 function printFileItem($displayname, $fullpath, $time) {
+	global $prefs;
 	$ext = strtolower(pathinfo($fullpath, PATHINFO_EXTENSION));
 	print '<div class="clickable clicktrack playable ninesix draggable indent containerbox line" name="'.
 		rawurlencode($fullpath).'">';
+
+	if (prefs::get_pref('music_directory_albumart') != '' &&
+		 (prefs::get_pref('player_backend') == 'mpd' || strpos($fullpath, 'local:track:') === 0)) {
+		$dlp = str_replace('local:track:', '', $fullpath);
+		print '<a href="'.dirname(dirname(get_base_url())).'/prefs/MusicFolders/'.$dlp.'" download="'.rawurldecode(basename($dlp)).'">';
+	}
+
 	print '<i class="'.audioClass($ext, getDomain($fullpath)).' fixed inline-icon"></i>';
+
+	if (prefs::get_pref('music_directory_albumart') != '' &&
+		 (prefs::get_pref('player_backend') == 'mpd' || strpos($fullpath, 'local:track:') === 0)) {
+		print '</a>';
+	}
+
 	print '<div class="expand">'.$displayname.'</div>';
 	if ($time > 0) {
 		print '<div class="fixed playlistrow2 tracktime">'.format_time($time).'</div>';
