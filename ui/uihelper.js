@@ -728,7 +728,7 @@ var uiHelper = function() {
 			bindClickHandlers();
 			setPlayClickHandlers();
 			bindPlaylistClicks();
-			showUpdateWindow();
+			// showUpdateWindow();
 			uiHelper.set_rounded_corner_buffer_size();
 		},
 
