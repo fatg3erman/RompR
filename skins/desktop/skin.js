@@ -1,13 +1,13 @@
 
 jQuery.fn.animatePanel = function(options) {
 	var settings = $.extend({},options);
-	var panel = this.attr("id");
+	var panel = $(this).prop("id");
 	var opanel = panel;
 	panel = panel.replace(/controls/,'');
 	// MUST use hide() and show() because I think mCustomScrollbar is adding a display: none
 	// when width is 0%. Something is, anyway. And it's adding it to the OTHER panel
-	if (settings[panel] > 0 && !this.is(':visible')) {
-		this.show();
+	if (settings[panel] > 0 && !$(this).is(':visible')) {
+		$(this).show();
 	}
 	this.animate({width: settings[panel]+"%"},
 		{

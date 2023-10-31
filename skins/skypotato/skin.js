@@ -210,9 +210,9 @@ jQuery.fn.isClosed = function() {
 
 jQuery.fn.animatePanel = function(options) {
 	var settings = $.extend({},options);
-	var panel = this.attr("id");
-	debug.log('UI', 'Animating Panel',panel,settings);
-	this.css('width', settings[panel]+'%');
+	var panel = $(this).prop("id");
+	// debug.log('UI', 'Animating Panel',panel,settings);
+	$(this).css('width', settings[panel]+'%');
 	browser.rePoint();
 }
 
