@@ -551,7 +551,7 @@ div.normalmenu {
 }
 
 div.rightmenu {
-	bottom:38px;
+	bottom:calc(38px + var(--stupid-rounded-corner-buffer-size));
 	right:0px;
 }
 
