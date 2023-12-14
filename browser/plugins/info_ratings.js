@@ -80,7 +80,7 @@ var info_ratings = function() {
 					collectionHelper.updateCollectionDisplay(rdata);
 				}
 			}
-
+s
 			function findSuccess(rdata) {
 				debug.debug("RATING PLUGIN","Success", rdata);
 				if (rdata) {
