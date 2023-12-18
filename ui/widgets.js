@@ -1767,10 +1767,20 @@ $.widget('rompr.volumeControl', {
 
 	options: {
 		orientation: 'vertical',
-		command: null
+		command: null,
+		downCommand: null,
+		upCommand: null
 	},
 
 	_create: function() {
+		if (this.options.downCommand !== null) {
+			var db = $('<i>', {class: 'icon-rewind vol-button vol-down'}).insertBefore(this.element);
+			db.on(prefs.click_event, this.options.downCommand);
+		}
+		if (this.options.upCommand !== null) {
+			var ub = $('<i>', {class: 'icon-ffwd vol-button vol-up'}).insertAfter(this.element);
+			ub.on(prefs.click_event, this.options.upCommand);
+		}
 		this.element.rangechooser({
 			range: 100,
 			ends: ['max'],

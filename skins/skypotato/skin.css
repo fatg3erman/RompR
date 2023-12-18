@@ -60,10 +60,14 @@ input[type=text],input[type="number"] {
 	width: 100%;
 }
 
-.skip-button {
+.skip-button, .vol-button {
 	height: 12px;
 	width: 14px;
 	cursor: pointer;
+}
+
+.vol-button {
+	margin-right: 1em;
 }
 
 .skip-backwards {
