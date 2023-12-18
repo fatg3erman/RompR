@@ -595,8 +595,7 @@ function snapcastClient() {
 		volume.volumeControl({
 			orientation: 'horizontal',
 			command: self.setVolume,
-			downCommand: function() { self.updateVolume(-1) },
-			upCommand: function() { self.updateVolume(1) }
+			withbuttons: true
 		});
 
 		groupmenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
@@ -719,10 +718,6 @@ function snapcastClient() {
 
 		if (callback)
 			callback();
-	}
-
-	this.updateVolume = function(i) {
-		this.setVolume(volumepc+i, null);
 	}
 
 	this.check_volume_increment = function(increment) {

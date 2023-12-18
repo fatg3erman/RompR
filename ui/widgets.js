@@ -1764,22 +1764,23 @@ $.widget('rompr.volumeControl', {
 
 	vtimer: null,
 	sliderclamps: 0,
+	volinc: 0,
+	button_timer: null,
 
 	options: {
 		orientation: 'vertical',
 		command: null,
-		downCommand: null,
-		upCommand: null
+		withbuttons: false
 	},
 
 	_create: function() {
-		if (this.options.downCommand !== null) {
+		if (this.options.withbuttons && this.options.orientation == 'horizontal') {
 			var db = $('<i>', {class: 'icon-rewind vol-button vol-down'}).insertBefore(this.element);
-			db.on(prefs.click_event, this.options.downCommand);
-		}
-		if (this.options.upCommand !== null) {
+			db.on('pointerdown', $.proxy(this.startdown, this));
+			db.on('pointerup', $.proxy(this.stopdownup, this));
 			var ub = $('<i>', {class: 'icon-ffwd vol-button vol-up'}).insertAfter(this.element);
-			ub.on(prefs.click_event, this.options.upCommand);
+			ub.on('pointerdown', $.proxy(this.startup, this));
+			ub.on('pointerup', $.proxy(this.stopdownup, this));
 		}
 		this.element.rangechooser({
 			range: 100,
@@ -1811,12 +1812,38 @@ $.widget('rompr.volumeControl', {
 			debug.trace("VOLUMECONTROL2","Setting volume",v.max);
 			this.options.command(v.max, $.proxy(this.releaseTheClamps, this));
 			clearTimeout(this.vtimer);
-			this.vtimer = setTimeout($.proxy(this.releaseTheClamps, this), 500);
+			this.vtimer = setTimeout($.proxy(this.releaseTheClamps, this), 400);
 		}
 	},
 
 	displayVolume: function(v) {
 		this.element.rangechooser("setRange", {min: 0, max: v});
+	},
+
+	startdown: function() {
+		this.volinc = -1;
+		this.sliderclamps = 0;
+		this.dobuttoncontrol();
+	},
+
+	startup: function() {
+		this.volinc = 1;
+		this.sliderclamps = 0;
+		this.dobuttoncontrol();
+	},
+
+	stopdownup: function() {
+		clearTimeout(this.button_timer);
+		this.onstop(this.element.rangechooser('getRange'));
+	},
+
+	dobuttoncontrol: function() {
+		clearTimeout(this.button_timer);
+		var cr = this.element.rangechooser('getRange');
+		let curvol = cr.max + this.volinc;
+		var cr = this.element.rangechooser('setRange', {min: 0, max: curvol});
+		this.whiledragging({max: curvol});
+		this.button_timer = setTimeout($.proxy(this.dobuttoncontrol, this), 200);
 	}
 
 });
