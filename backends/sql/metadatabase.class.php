@@ -1240,6 +1240,16 @@ class metaDatabase extends playlistCollection {
 		$this->sql_prepare_query(true, null, null, null, "DELETE FROM Bookmarktable WHERE TTindex = ?", $ttid);
 	}
 
+	public function dummy_returninfo($albumids) {
+		foreach ($albumids as $album) {
+			logger::trace('RETURNINFO', 'Marking Album', $album, 'as modified');
+			$this->sql_prepare_query(true, null, null, null,
+				"UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = ?",
+				$album
+			);
+		}
+	}
+
 	public function prepare_returninfo() {
 		logger::info("USERRATINGS", "Preparing Return Info");
 		$t = microtime(true);

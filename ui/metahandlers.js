@@ -115,6 +115,31 @@ var metaHandlers = function() {
 				}
 			},
 
+			uiWakeup: function() {
+				var albumids = new Array();
+				$('[id^="aalbum"]').each(function() {
+					albumids.push($(this).prop('id'));
+				});
+				$('[id^="balbum"]').each(function() {
+					albumids.push($(this).prop('id'));
+				});
+				$('[id^="zalbum"]').each(function() {
+					albumids.push($(this).prop('id'));
+				});
+				if (albumids.length > 0) {
+					debug.log('WAKEUP', 'UI refreshing open albums', albumids);
+					dbQueue.request(
+						[{action: 'ui_wakeup_refresh', albums: albumids}],
+						function(rdata) {
+							collectionHelper.updateCollectionDisplay(rdata);
+						},
+						function(data) {
+							debug.warn("WAKEUP","Failed to refresh albumids",albumids);
+						}
+					);
+				}
+			},
+
 			rateTrack: function(element, callback) {
 				var value;
 				switch (true) {

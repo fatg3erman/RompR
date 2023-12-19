@@ -730,6 +730,7 @@ var uiHelper = function() {
 			bindPlaylistClicks();
 			// showUpdateWindow();
 			uiHelper.set_rounded_corner_buffer_size();
+			sleepHelper.addWakeHelper(metaHandlers.fromUiElement.uiWakeup);
 		},
 
 		changePanel: function(event) {
@@ -752,6 +753,7 @@ var uiHelper = function() {
 				if (
 					element.hasClass('directory') ||
 					element.hasClass('playlist') ||
+					element.hasClass('album') ||
 					element.hasClass('userplaylist')
 				) {
 					c += ' removeable';

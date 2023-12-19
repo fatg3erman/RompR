@@ -48,6 +48,20 @@ foreach($params as $p) {
 			prefs::$database->prepare_returninfo();
 			break;
 
+		case 'ui_wakeup_refresh':
+			$albums = [];
+			foreach ($p['albums'] as $album) {
+				if (preg_match('/[abz]album(\d+)/', $album, $matches)) {
+					$albums[] = $matches[1];
+				} else {
+					logger::error('UIWAKEUP', "Couldn't match album", $album);
+				}
+			}
+			prefs::$database->create_foundtracks();
+			prefs::$database->dummy_returninfo($albums);
+			prefs::$database->prepare_returninfo();
+			break;
+
 		case 'getreturninfo':
 			prefs::$database->prepare_returninfo();
 			break;

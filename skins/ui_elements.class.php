@@ -153,12 +153,6 @@ class ui_elements {
 			if ($data['lm'] === null && $data['isSearchResult'] < 2) {
 				$button_class .= ' clickremovedb';
 			}
-			// foreach ($bookmarks as $book) {
-			// 	if ($book['Name'] == 'Resume') {
-			// 		$button_class .= ' clickresetresume';
-			// 		break;
-			// 	}
-			// }
 			if ($d == 'youtube' || $d == 'yt') {
 				$button_class .= ' clickyoutubedl';
 			}

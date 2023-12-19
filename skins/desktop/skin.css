@@ -47,10 +47,14 @@ input[type=text],input[type="number"] {
 	height: 10px;
 }
 
-.skip-button {
+.skip-button, .vol-button {
 	height: 14px;
 	width: 14px;
 	cursor: pointer;
+}
+
+.vol-button {
+	margin-right: 1em;
 }
 
 .skip-backwards {

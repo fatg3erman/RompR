@@ -912,6 +912,11 @@ class init_database extends init_generic {
 					$this->set_admin_value('SchemaVer', 104);
 					break;
 
+				case 104:
+					logger::log("SQL", "Updating FROM Schema version 104 TO Schema version 105");
+					$this->set_admin_value('SchemaVer', 105);
+					break;
+
 			}
 			$sv++;
 		}
@@ -1004,6 +1009,11 @@ class init_database extends init_generic {
 		if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS album_idx ON Tracktable (Albumindex)", true)) {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error Creating Tracktable Albumindex Index : ".$err);
+		}
+
+		if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS genre_idx ON Tracktable (Genreindex)", true)) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error Creating Tracktable Genreindex Index : ".$err);
 		}
 
 		return array(true, '');

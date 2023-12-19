@@ -594,7 +594,8 @@ function snapcastClient() {
 		var m = $('<i>', {class: "inline-icon fixed clickicon", name :"clientmuted"}).appendTo(vc).on(prefs.click_event, self.setMute);
 		volume.volumeControl({
 			orientation: 'horizontal',
-			command: self.setVolume
+			command: self.setVolume,
+			withbuttons: true
 		});
 
 		groupmenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);

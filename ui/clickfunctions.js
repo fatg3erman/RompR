@@ -936,11 +936,11 @@ async function makeTrackMenu(e, element) {
 		return;
 	}
 
-	if (prefs.cdplayermode) {
-		d.append($('<div>', {
-			class: 'backhi clickable menuitem clickqueuetracks closepopup',
-		}).html(language.gettext('label_addtoqueue')));
-	} else if ($('.selected').length == 1) {
+	d.append($('<div>', {
+		class: 'backhi clickable menuitem clickqueuetracks closepopup',
+	}).html(language.gettext('label_addtoqueue')));
+
+	if ($('.selected').length == 1) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem clickplayfromhere closepopup',
 		}).html(language.gettext('label_playfromhere')));

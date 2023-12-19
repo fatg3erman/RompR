@@ -13,6 +13,28 @@ require_once ("includes/functions.php");
 // Do some important pre-load checks
 //
 
+if (!is_dir('prefs')) {
+	big_bad_fail('The prefs directory does not exist. Please check the installation instructions');
+}
+
+if (!is_dir('albumart')) {
+	big_bad_fail('The albumart directory does not exist. Please check the installation instructions');
+}
+
+if (($f = @fopen('prefs/test.tmp', 'w')) == false) {
+	big_bad_fail('The web server does not have write access to the prefs directory. Please check the installation instructions');
+} else {
+	fclose($f);
+	unlink('prefs/test.tmp');
+}
+
+if (($f = @fopen('albumart/test.tmp', 'w')) == false) {
+	big_bad_fail('The web server does not have write access to the albumart directory. Please check the installation instructions');
+} else {
+	fclose($f);
+	unlink('albumart/test.tmp');
+}
+
 if (file_exists('collection/collection.php') || is_dir('themes/fruit') || file_exists('radios/musicfromspotify.js')) {
 	big_bad_fail('Remains of an earlier installation still exist. To install this version of RompЯ you must
 		delete <b>everything except your albumart and prefs directories</b> and then copy the new version
