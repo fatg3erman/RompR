@@ -13,7 +13,7 @@ jQuery.fn.menuReveal = async function() {
 	var holder = $('.openmenu[name="'+id+'"]');
 	var parent = holder.parent();
 	var adjustboxes = true;
-	var scrollto = true;
+	var scrollto = false;
 
 	switch (true) {
 		case holder.hasClass('album'):
