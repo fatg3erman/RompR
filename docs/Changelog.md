@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 2.07
+## Version 2.08
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
 
