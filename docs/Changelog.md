@@ -4,6 +4,13 @@
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
 
+* Basic support for Mopidy-Qobuz, provided you use the mopidy-qobuz-hires backend in Mopidy
+
+
+## Version 2.07
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
 * Album art bugfix for people running PHP 8, contributed by svalo.
 * Files can now be downloaded through the browser from the File Browser by clicking on the 'mp3' (or whatever) icon next to the file name. This works with anything in mpd and for local files in Mopidy. It requires the path to your localmusic to be configured in the preferences.
 
