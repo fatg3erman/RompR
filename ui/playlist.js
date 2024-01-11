@@ -922,6 +922,7 @@ var playlist = function() {
 				case "podcast":
 				case "dirble":
 				case "bandcamp":
+				case "qobuz":
 					return '<i class="icon-'+d+'-circled inline-icon fixed"></i>';
 					break;
 

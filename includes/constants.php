@@ -421,6 +421,12 @@ const MOPIDY_COLLECTION_FOLDERS = [
 			'dir' => "YouTube Music/Subscriptions",
 			'label' => "YouTube Music Subscriptions"
 		]
+	],
+	'qobuz' => [
+		[
+			'dir' => "Qobuz/Favorites/Albums",
+			'label' => 'Qobuz Favourite Albums'
+		]
 	]
 ];
 

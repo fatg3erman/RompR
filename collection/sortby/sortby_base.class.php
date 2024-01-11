@@ -277,7 +277,8 @@ class sortby_base {
 		logger::log('SORTBY', 'Doing Track List For Album',$this->who);
 		$trackarr = $this->track_sort_query();
 		if (($this->why == 'b' && !method_exists(prefs::$database, 'sanitise_data'))) {
-			if (substr($trackarr[0]['title'],0,6) == "Album:") {
+			if (substr($trackarr[0]['title'],0,6) == "Album:"
+				&& strpos($trackarr[0]['AlbumUri'], 'qobuz:album:') === false) {
 				logger::log('SORTER', 'Album has one track which is an album Uri');
 				$this->who = prefs::$database->check_album_browse($this->who, $trackarr[0]['uri']);
 				if ($this->who === true) {
@@ -286,14 +287,14 @@ class sortby_base {
 				$trackarr = $this->track_sort_query();
 			} else if (
 				strpos($trackarr[0]['AlbumUri'], 'yt:playlist:') !== false
-				|| strpos($trackarr[0]['AlbumUri'], 'youtube:playlist:') !== false ||
-				strpos($trackarr[0]['AlbumUri'], 'ytmusic:album:') !== false
+				|| strpos($trackarr[0]['AlbumUri'], 'youtube:playlist:') !== false
+				|| strpos($trackarr[0]['AlbumUri'], 'ytmusic:album:') !== false
 			) {
 				// Basically we ALWAYS want to browse youtube music albums because
 				// they're often incomplete and never have Track Numbers
 				// and search results don't alwyas give us an Album: result
 				// for every album
-				logger::log('SORTER', 'Forcing browse of Youtube Album');
+				logger::log('SORTER', 'Forcing browse of Youtube or Qobuz Album');
 				$this->who = prefs::$database->check_album_browse($this->who, $trackarr[0]['AlbumUri']);
 				if ($this->who === true) {
 					return;

@@ -337,6 +337,7 @@ function domainCheck($default, $domain) {
 		case 'dirble':
 		case 'youtube':
 		case 'bandcamp':
+		case 'qobuz':
 			return 'icon-'.$domain.'-circled';
 			break;
 
@@ -431,6 +432,7 @@ function domainIcon($d, $c) {
 		case "dirble":
 		case "tunein":
 		case "bandcamp":
+		case 'qobuz':
 			$h = '<i class="'.domainCheck('icon-music', $d).' '.$c.' fixed"></i>';
 			break;
 
