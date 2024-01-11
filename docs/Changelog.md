@@ -1,13 +1,13 @@
 # Changelog
 
-## Version 2.08
+## Version 2.09
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
 
 * Basic support for Mopidy-Qobuz, provided you use the mopidy-qobuz-hires backend in Mopidy
 
 
-## Version 2.07
+## Version 2.08
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
 
