@@ -54,6 +54,7 @@ class metaDatabase extends playlistCollection {
 		}
 
 		if (($data['Track'] == 0 || $data['Track'] == '') &&
+			$data['X-AlbumUri'] &&
 			(strpos($data['X-AlbumUri'], 'yt:playlist:') !== false
 			|| strpos($data['X-AlbumUri'], 'youtube:playlist:') !== false
 			|| strpos($data['X-AlbumUri'], 'ytmusic:album:') !== false)

@@ -28,7 +28,7 @@ listening ot (if it's a Spotify track) or sometimes on the Artists Genres - but 
 
 ![](images/musicfromeverywhere.png)
 
-This panel allows you to make use of all your Mopidy sources - Soundcloud, Youtube, Youtube Music, etc to create playlists.
+This panel allows you to make use of all your Mopidy sources - Soundcloud, Youtube, Youtube Music, Qobuz, etc to create playlists.
 
 Recommendations For You uses your Favourite Artists as determined by your RompR playcounts and then uses Spotify's API to get recommended tracks based on
 those artists. This does not require Mopidy-Spotify to be enabled.
@@ -71,5 +71,5 @@ Mopidy-Spotify users can get more suggestions about new music related to the cur
 
 The Discoverator (available as a plug-in on the Info Panel) uses your favourite music to generate suggestions of albums
 you might like. Note that, like the Spotify stations mentioned above, this will send information about music you have
-listened to to Spotify's API.
+listened to to Spotify's API. If you have online music backends enabled you can play the tracks or albums that are suggested.
 

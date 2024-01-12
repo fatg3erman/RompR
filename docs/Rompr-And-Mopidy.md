@@ -52,6 +52,7 @@ It's best if you also have the HTTP interface enabled as above, so that the trac
 Note that RompR will continue to do the consuming even if you use another client to control Mopidy, but that client will display and control
 Mopidy's internal consume setting, which could have unwanted consequences.
 
+
 ## Building Your Music Collection
 
 The configuration panel will allow you to choose various sources from which to build your [Music Collection](/RompR/Music-Collection).
@@ -60,24 +61,25 @@ The configuration panel will allow you to choose various sources from which to b
 
 You will only see options for backends that are enabled in Mopidy. The complete list of supported backends is:
 
-* **Local Music** [('local' backend must be enabled)](/RompR/Rompr-And-Mopidy)
-* **Beets** [('beets' backend must be enabled)](/RompR/Rompr-And-Mopidy)
+* **Local Music** ('local' backend must be enabled)
+* **Beets** ('beets' backend must be enabled)
 * **Beets Local** ('beetslocal' backend must be enabled)
 * **Spotify Playlists** ('spotify' backend must be enabled) *This will add all tracks from your Spotify Playlists into your collection. Your playlists will still be available as Playlists even if you don't select this option*
-* **Spotify 'Your Music'** ('spotify-web' backend must be enabled)
-* **Spotify 'Your Artists'** ('spotify-web' backend must be enabled)
+* **Spotify 'Your Tracks'** ('spotify' backend must be enabled)
+* **Spotify 'Your Albums'** ('spotify' backend must be enabled)
 * **SoundCloud 'Liked'** ('soundcloud' backend must be enabled)
 * **SoundCloud 'Sets'** ('soundcloud' backend must be enabled)
 * **VKontakte** ('vkontakte' backend must be enabled)
 * **Youtube Music Liked Songs** ('ytmusic' backend must be enabled)
 * **YouTube Music Albums** ('ytmusic' backend must be enabled)
 * **YouTube Music Subscription** ('ytmusic' backend must be enabled)
+* **Qobuz Favourite Albums** ('qobuz' backend must be enabled)
 
 
 If you don't want to build a collection this way, tracks from anywhere can be added to the collection by tagging or rating them at any time.
 
 
-Tagging or rating a track that is playing on a radio station will make RompЯ search for it on Spotify (if you have Spotify) and add it to your collection if it can find it, or to your [wishlist](/RompR/The-Wishlist) if it can't.
+Tagging or rating a track that is playing on a radio station will make RompЯ search for it using all available online backends and add it to your collection if it can find it, or to your [wishlist](/RompR/The-Wishlist) if it can't.
 
 
 ## If you use Mopidy-Beets
@@ -92,6 +94,28 @@ You need to make sure that your browser can access your Beets server for this to
       host: IP.address.of.beets.server
 
 Otherwise beets will not allow RompЯ to talk to it. Your configuration for beets in mopidy must also contain this IP address as Beets will only communicate via the supplied IP address.
+
+
+## Qobuz Support woth Mopidy
+
+The [Mopidy-Qobuz-Hires](https://github.com/vitiko98/mopidy-qobuz) backend works reasonably well provided you set the search_album_count and search_track_count
+values to something rather bigger than the default. The main limitation with this backend is that it doesn't support album browsing, so sometimes with search
+results you will only see one track off an alum, or just 'Album:Album name'. To fix this the backend will need updating to support browsing
+of qobuz:album URIs, but it appears to be unmaintained at the time of writing.
+
+
+## Mopidy-YTMusic and Mopidy-Youtube
+
+To work properly with RompR you need Mopidy-YTMusic 0.3.8 or later. This is the preferable solution as Mopidy-YTMusic supports
+artists and albums in a way that is the same as all the other Mopidy backends, whereas Mopidy-Youtube does not. You can use
+Mopidy-Youtube in parralel with Mopidy-YTMusic, to give you access to Youtube Videos and Youtube Music.
+RompR's Mopidy-Youtube support is based on using it for standard YouTube, not Youtube Music. You should use Mopidy-YTMusic
+for Youtube Music support.
+
+I've put a lot of effort into using these backends to replace a lot of what RompR used to rely on Mopidy-Spotify for but bear in mind
+Youtube Music does not have a proper API and there is some information - like track numbers - that is extremely unreliable.
+RompR likes track numbers because they make Playcounts more accurate, and RompR will try very hard indeed to get
+Youtube to give it a track number when it needs one.
 
 
 ## Search
@@ -137,21 +161,6 @@ If you haven't done this right, then your music collection update will just hang
 ## Genres
 
 Note that only Mopidy-Local seems to return Genres, so Genre-based Collection functions will not work as your might expect if you use Spotify, Soundcloud, etc.
-
-
-## Note on Mopidy-YTMusic and Mopidy-Youtube
-
-To work properly with RompR you need Mopidy-YTMusic 0.3.8 or later. This is the preferable solution as Mopidy-YTMusic supports
-artists and albums in a way that is the same as all the other Mopidy backends, whereas Mopidy-Youtube does not. You can use
-Mopidy-Youtube in parralel with Mopidy-YTMusic, to give you access to Youtube Videos and Youtube Music.
-RompR's Mopidy-Youtube support is based on using it for standard YouTube, not Youtube Music. You should use Mopidy-YTMusic
-for Youtube Music support.
-
-I've put a lot of effort into using these backends to replace a lot of what RompR used to rely on Mopidy-Spotify for but bear in mind
-Youtbe Music does not have a proper API and there is some information - like track numbers - that is extremely unreliable.
-RompR likes track numbers because they make Playcounts more accurate, and RompR will try very hard indeed to get
-Youtube to give it a track number when it needs one.
-
 
 
 ## Downloading Youtube Tracks
