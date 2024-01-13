@@ -61,6 +61,7 @@ var searchManager = function() {
 		search: function() {
 			$('.search_result_box').clearOut().empty();
 			$('.search-section').remove();
+			uiHelper.prepareSearch();
 			plugins.forEach(function(plugin) {
 				plugin.terms = {};
 				$("#collectionsearcher").find('.searchterm.'+plugin.class).each( function() {

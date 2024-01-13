@@ -249,8 +249,7 @@ class ui_elements {
 			(
 				strpos($det['AlbumUri'], 'ytmusic:album:') !== false ||
 				strpos($det['AlbumUri'], 'spotify:album:') !== false ||
-				// TODO Needs my PR to be merged and a new release made
-				// strpos($det['AlbumUri'], 'qobuz:album:') !== false ||
+				strpos($det['AlbumUri'], 'qobuz:album:') !== false ||
 				strpos($det['AlbumUri'], 'youtube:playlist:') !== false ||
 				strpos($det['AlbumUri'], 'yt:playlist:') !== false
 			)

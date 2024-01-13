@@ -855,6 +855,10 @@ var layoutProcessor = function() {
 			$('#searchresultholder').empty();
 		},
 
+		prepareSearch: function() {
+			$('.collectionpanel.searcher').remove();
+		},
+
 		createPluginHolder: function(icon, title, id, panel) {
 			var d = $('<div>', {class: 'expand topdrop'}).prependTo('#gronky');
 			var i = $('<i>', {class: 'tooltip', title: title, id: id}).appendTo(d);
