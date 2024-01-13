@@ -278,6 +278,8 @@ class sortby_base {
 		$trackarr = $this->track_sort_query();
 		if (($this->why == 'b' && !method_exists(prefs::$database, 'sanitise_data'))) {
 			if (substr($trackarr[0]['title'],0,6) == "Album:"
+				// TODO when qobuz merge my PR this needs moving so we always browse qobuz albums like we do for ytmusic below
+				// - atm find file on a qobuz Uri returns junk so we can't possiby do it
 				&& strpos($trackarr[0]['AlbumUri'], 'qobuz:album:') === false) {
 				logger::log('SORTER', 'Album has one track which is an album Uri');
 				$this->who = prefs::$database->check_album_browse($this->who, $trackarr[0]['uri']);

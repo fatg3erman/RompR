@@ -98,7 +98,7 @@ var helpfulThings = function() {
 				let rradio_bends = ['RompR'].concat(bends);
 				let lfmradio_bends = ['Last.FM', 'RompR'].concat(bends);
 
-				if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube') || player.canPlay('qobuz')) {
+				if (player.hasOnlineSources()) {
 					var html = '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="recommendationsRadio">';
 					html += '<img class="smallcover fixed" src="newimages/favicon-128.png" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_radio_recommended")+'</b><br/>';
@@ -152,7 +152,7 @@ var helpfulThings = function() {
 
 				$('#helpful_radio').append(html);
 
-				if (player.canPlay('spotify') || player.canPlay('youtube') || player.canPlay('ytmusic') || player.canPlay('qobuz')) {
+				if (player.hasOnlineSources()) {
 					$('#hplfoldup').append('<div id="helpful_spinner"><i class="svg-square icon-spin6 spinner"></i></div>');
 					getRecommendationSeeds();
 				}

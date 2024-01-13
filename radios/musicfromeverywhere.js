@@ -6,7 +6,7 @@ var genreRadio = function() {
 			//
 			// Genre (Music from Everywhere)
 			//
-			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
+			if (player.hasOnlineSources()) {
 				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-music', language.gettext('label_genre'), 'genre_radio'));
 				$('button[name="genre_radio"]').on(prefs.click_event, function() {
 					var v = $('#genre_radio').val();
@@ -27,7 +27,7 @@ var faveArtistRadio = function() {
 			//
 			// Favourite Artists (Music from Everywhere)
 			//
-			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
+			if (player.hasOnlineSources()) {
 				$('#pluginplaylists_everywhere').append(playlist.radioManager.standardBox('faveArtistRadio', null, 'icon-artist', language.gettext('label_radio_fartist')));
 			}
 		}
@@ -45,7 +45,7 @@ var singleArtistRadio = function() {
 			//
 			// Tracks By Artist (Music from Everywhere)
 			//
-			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
+			if (player.hasOnlineSources()) {
 				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-artist', language.gettext('label_singleartistradio'), 'singart_radio'));
 				$('button[name="singart_radio"]').on(prefs.click_event, function() {
 					var v = $('#singart_radio').val();
@@ -62,7 +62,7 @@ var lastFMTrackRadio = function() {
 
 	return {
 		setup: function() {
-			if (lastfm.isLoggedIn && (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube'))) {
+			if (lastfm.isLoggedIn && player.hasOnlineSources()) {
 				//
 				// Last.FM Mix Radio (Music from Everywhere). Uses favourite tracks to get recommendations
 				//
@@ -80,7 +80,7 @@ var lastFMArtistRadio = function() {
 	return {
 
 		setup: function() {
-			if (lastfm.isLoggedIn && (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube'))) {
+			if (lastfm.isLoggedIn && player.hasOnlineSources()) {
 				//
 				// Last.FM Lucky Dip (Music from Everywhere). Uses favourite artists to get recommendations
 				//
@@ -99,7 +99,7 @@ var mixRadio = function() {
 
 		setup: function() {
 
-			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
+			if (player.hasOnlineSources()) {
 				//
 				// Favourite Artists and Related Artists (using Spotify API)
 				//
@@ -115,7 +115,7 @@ var recommendationsRadio = function() {
 
 		setup: function() {
 
-			if (player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) {
+			if (player.hasOnlineSources()) {
 				//
 				// Recommendations For You
 				//
