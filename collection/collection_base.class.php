@@ -429,46 +429,52 @@ class collection_base extends database {
 	protected function update_track_stats() {
 		logger::log('BACKEND', "Updating Track Stats");
 		$t = microtime(true);
-		$this->set_admin_value('ArtistCount',$this->get_artist_count(ADDED_ALL_TIME, 0));
-		$this->set_admin_value('AlbumCount',$this->get_album_count(ADDED_ALL_TIME, 0));
-		$this->set_admin_value('TrackCount',$this->get_track_count(ADDED_ALL_TIME, 0));
-		$this->set_admin_value('TotalTime',$this->get_duration_count(ADDED_ALL_TIME, 0));
-		$this->set_admin_value('BookArtists',$this->get_artist_count(ADDED_ALL_TIME, 1));
-		$this->set_admin_value('BookAlbums',$this->get_album_count(ADDED_ALL_TIME, 1));
-		$this->set_admin_value('BookTracks',$this->get_track_count(ADDED_ALL_TIME, 1));
-		$this->set_admin_value('BookTime',$this->get_duration_count(ADDED_ALL_TIME, 1));
+		$this->set_admin_value('ArtistCount',$this->get_artist_count(ADDED_ALL_TIME, 0, 'All'));
+		$this->set_admin_value('AlbumCount',$this->get_album_count(ADDED_ALL_TIME, 0, 'All'));
+		$this->set_admin_value('TrackCount',$this->get_track_count(ADDED_ALL_TIME, 0, 'All'));
+		$this->set_admin_value('TotalTime',$this->get_duration_count(ADDED_ALL_TIME, 0, 'All'));
+		$this->set_admin_value('BookArtists',$this->get_artist_count(ADDED_ALL_TIME, 1, 'All'));
+		$this->set_admin_value('BookAlbums',$this->get_album_count(ADDED_ALL_TIME, 1, 'All'));
+		$this->set_admin_value('BookTracks',$this->get_track_count(ADDED_ALL_TIME, 1, 'All'));
+		$this->set_admin_value('BookTime',$this->get_duration_count(ADDED_ALL_TIME, 1, 'All'));
 		$at = microtime(true) - $t;
 		logger::info('BACKEND', "Updating Track Stats took ".$at." seconds");
 	}
 
-	protected function get_artist_count($range, $iab) {
+	protected function get_artist_count($range, $iab, $dm) {
 		$qstring = "SELECT COUNT(*) AS NumArtists FROM (SELECT AlbumArtistindex FROM Albumtable
 			INNER JOIN Tracktable USING (Albumindex) WHERE Uri IS NOT NULL
 			AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook";
 		$qstring .= ($iab == 0) ? ' = ' : ' > ';
-		$qstring .= '0 '.$this->track_date_check($range, 'a')." GROUP BY AlbumArtistindex) AS t";
+		$qstring .= '0 '.$this->track_date_check($range, 'a');
+		$qstring .= $this->track_domain_check($dm, 'a');
+		$qstring .= " GROUP BY AlbumArtistindex) AS t";
 		return $this->generic_sql_query($qstring, false, null, 'NumArtists', 0);
 	}
 
-	protected function get_album_count($range, $iab) {
+	protected function get_album_count($range, $iab, $dm) {
 		$qstring = "SELECT COUNT(*) AS NumAlbums FROM (SELECT Albumindex FROM Tracktable WHERE Uri IS NOT NULL
 			AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook";
 		$qstring .= ($iab == 0) ? ' = ' : ' > ';
-		$qstring .= '0 '.$this->track_date_check($range, 'a')." GROUP BY Albumindex) AS t";
+		$qstring .= '0 '.$this->track_date_check($range, 'a');
+		$qstring .= $this->track_domain_check($dm, 'a');
+		$qstring .= " GROUP BY Albumindex) AS t";
 		return $this->generic_sql_query($qstring, false, null, 'NumAlbums', 0);
 	}
 
-	protected function get_track_count($range, $iab) {
+	protected function get_track_count($range, $iab, $dm) {
 		$qstring = "SELECT COUNT(*) AS NumTracks FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isAudiobook";
 		$qstring .= ($iab == 0) ? ' = ' : ' > ';
 		$qstring .= '0 '.$this->track_date_check($range, 'a')." AND isSearchResult < 2";
+		$qstring .= $this->track_domain_check($dm, 'a');
 		return $this->generic_sql_query($qstring, false, null, 'NumTracks', 0);
 	}
 
-	protected function get_duration_count($range, $iab) {
+	protected function get_duration_count($range, $iab, $dm) {
 		$qstring = "SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isAudiobook";
 		$qstring .= ($iab == 0) ? ' = ' : ' > ';
 		$qstring .= '0 '.$this->track_date_check($range, 'a')." AND isSearchResult < 2";
+		$qstring .= $this->track_domain_check($dm, 'a');
 		$ac = $this->generic_sql_query($qstring, false, null, 'TotalTime', 0);
 		if ($ac == '') {
 			$ac = 0;
@@ -486,7 +492,7 @@ class collection_base extends database {
 
 	public function collectionStats() {
 		$html = '<div id="fothergill" class="fullwidth">';
-		if (prefs::get_pref('collectionrange') == ADDED_ALL_TIME) {
+		if (prefs::get_pref('collectionrange') == ADDED_ALL_TIME && prefs::get_pref('collectiondomains') == 'All') {
 			$html .= $this->alistheader(
 				$this->get_stat('ArtistCount'),
 				$this->get_stat('AlbumCount'),
@@ -495,10 +501,10 @@ class collection_base extends database {
 			);
 		} else {
 			$html .= $this->alistheader(
-				$this->get_artist_count(prefs::get_pref('collectionrange'), 0),
-				$this->get_album_count(prefs::get_pref('collectionrange'), 0),
-				$this->get_track_count(prefs::get_pref('collectionrange'), 0),
-				format_time($this->get_duration_count(prefs::get_pref('collectionrange'), 0))
+				$this->get_artist_count(prefs::get_pref('collectionrange'), 0, prefs::get_pref('collectiondomains')),
+				$this->get_album_count(prefs::get_pref('collectionrange'), 0, prefs::get_pref('collectiondomains')),
+				$this->get_track_count(prefs::get_pref('collectionrange'), 0, prefs::get_pref('collectiondomains')),
+				format_time($this->get_duration_count(prefs::get_pref('collectionrange'), 0, prefs::get_pref('collectiondomains')))
 			);
 		}
 		$html .= '</div>';
@@ -508,7 +514,7 @@ class collection_base extends database {
 	public function audiobookStats() {
 		$html = '<div id="mingus" class="fullwidth">';
 
-		if (prefs::get_pref('collectionrange') == ADDED_ALL_TIME) {
+		if (prefs::get_pref('collectionrange') == ADDED_ALL_TIME && prefs::get_pref('collectiondomains') == 'All') {
 			$html .= $this->alistheader(
 				$this->get_stat('BookArtists'),
 					$this->get_stat('BookAlbums'),
@@ -517,10 +523,10 @@ class collection_base extends database {
 				);
 		} else {
 			$html .= $this->alistheader(
-				$this->get_artist_count(prefs::get_pref('collectionrange'), 1),
-				$this->get_album_count(prefs::get_pref('collectionrange'), 1),
-				$this->get_track_count(prefs::get_pref('collectionrange'), 1),
-				format_time($this->get_duration_count(prefs::get_pref('collectionrange'), 1))
+				$this->get_artist_count(prefs::get_pref('collectionrange'), 1, prefs::get_pref('collectiondomains')),
+				$this->get_album_count(prefs::get_pref('collectionrange'), 1, prefs::get_pref('collectiondomains')),
+				$this->get_track_count(prefs::get_pref('collectionrange'), 1, prefs::get_pref('collectiondomains')),
+				format_time($this->get_duration_count(prefs::get_pref('collectionrange'), 1, prefs::get_pref('collectiondomains')))
 			);
 		}
 		$html .= "</div>";

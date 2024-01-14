@@ -252,6 +252,7 @@ class sortby_base {
 					tr.Albumindex = ?
 					AND uri IS NOT NULL
 					AND tr.Hidden = 0
+					{$db->track_domain_check(prefs::get_pref('collectiondomains'), $this->why)}
 					{$db->track_date_check(prefs::get_pref('collectionrange'), $this->why)}
 					{$this->filter_track_on_why()}
 					AND tr.Artistindex = ta.Artistindex

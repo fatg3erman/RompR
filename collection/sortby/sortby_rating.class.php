@@ -12,6 +12,7 @@ class sortby_rating extends sortby_base {
 				Uri IS NOT NULL
 				AND Hidden = 0
 				AND Rating > 0
+				{$db->track_domain_check(prefs::get_pref('collectiondomains'), $this->why)}
 				{$db->track_date_check(prefs::get_pref('collectionrange'), $this->why)}
 				{$this->filter_root_on_why()}
 			ORDER BY Rating ASC",
@@ -32,6 +33,7 @@ class sortby_rating extends sortby_base {
 				Tracktable JOIN Ratingtable USING (TTindex)
 				WHERE Rating = ".$this->who." AND ";
 		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
+		prefs::$database->track_domain_check(prefs::get_pref('collectiondomains'), $this->why)." ".
 		prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";

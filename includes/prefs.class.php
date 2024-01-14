@@ -236,6 +236,7 @@ class prefs {
 		"sortbydate" => false,
 		"notvabydate" => false,
 		"collectionrange" => ADDED_ALL_TIME,
+		'collectiondomains' => 'All',
 		"sortcollectionby" => 'artist',
 		"sortresultsby" => 'sameas',
 		"actuallysortresultsby" => 'artist',

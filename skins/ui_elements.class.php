@@ -658,6 +658,17 @@ class ui_elements {
 			'options' => array_map('language::gettext', COLLECTION_RANGE_OPTIONS)
 		]);
 
+		$doms = prefs::$database->get_collection_domains();
+		if (count($doms) > 1) {
+			$doms = array_merge(['All'], $doms);
+			self::ui_select_box([
+				'id' => 'collectiondomains',
+				'options' => array_combine($doms, $doms)
+			]);
+		} else {
+			prefs::set_pref(['collectiondomains' => '']);
+		}
+
 		self::ui_checkbox(['id' => 'sortbydate', 'label' => 'config_sortbydate']);
 		self::ui_checkbox(['id' => 'notvabydate', 'label' => 'config_notvabydate']);
 		self::ui_config_button(['label' => 'config_updatenow', 'name' => 'donkeykong']);
