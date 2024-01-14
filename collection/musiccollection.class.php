@@ -92,6 +92,7 @@ class musicCollection extends collection_base {
 	}
 
 	private function sort_badly_tagged_albums() {
+		logger::log("COLLECTION", "Sorting badly tagged albums");
 		foreach ($this->albums as &$album) {
 			$album->sortTracks();
 			$album->check_database();
