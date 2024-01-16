@@ -361,7 +361,8 @@ class init_database extends init_generic {
 			Pid INT UNSIGNED DEFAULT NULL,
 			Player VARCHAR(50) NOT NULL,
 			TimeSet INT UNSIGNED NOT NULL,
-			SleepTime INT UNSIGNED NOT NULL) ENGINE=InnoDB", true))
+			SleepTime INT UNSIGNED NOT NULL,
+			FadeTime INT UNSIGNED NOT NULL) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  Sleeptimers OK");
 		} else {
@@ -853,6 +854,11 @@ class init_database extends init_generic {
 					$this->set_admin_value('SchemaVer', 105);
 					break;
 
+				case 104:
+					logger::log("SQL", "Updating FROM Schema version 104 TO Schema version 105");
+					$this->generic_sql_query("ALTER TABLE Sleeptimers ADD COLUMN FadeTime INT UNSIGNED NOT NULL", true);
+					$this->set_admin_value('SchemaVer', 105);
+					break;
 
 			}
 			$sv++;

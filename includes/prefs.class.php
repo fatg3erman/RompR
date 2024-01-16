@@ -207,7 +207,8 @@ class prefs {
 		'podcastbuttons_isopen' => false,
 		"somafm_quality" => 'highest_available_quality',
 		"stupid_rounded_corner_buffer_size" => 0,
-		"skip_amount" => 10
+		"skip_amount" => 10,
+		"fadetime" => 60
 	];
 
 	// Prefs that should not be exposed to the browser for security reasons
@@ -247,6 +248,7 @@ class prefs {
 		// so long as IS_ROMINTOR is defined.
 		'alarmindex' => null,
 		'sleeptime' => null,
+		'fadetime' => null,
 		'snooze' => null
 	];
 

@@ -372,7 +372,8 @@ class init_database extends init_generic {
 			Pid INTEGER DEFAULT NULL,
 			Player VARCHAR(50) NOT NULL,
 			TimeSet INTEGER NOT NULL,
-			SleepTime INTEGER NOT NULL)", true))
+			SleepTime INTEGER NOT NULL,
+			FadeTime INTEGER NOT NULL)", true))
 		{
 			logger::log("SQLITE", "  Sleeptimers OK");
 		} else {
@@ -914,6 +915,7 @@ class init_database extends init_generic {
 
 				case 104:
 					logger::log("SQL", "Updating FROM Schema version 104 TO Schema version 105");
+					$this->generic_sql_query("ALTER TABLE Sleeptimers ADD FadeTime INTEGER NOT NULL", true);
 					$this->set_admin_value('SchemaVer', 105);
 					break;
 

@@ -81,7 +81,10 @@ Set the number of minutes, and click the icon to the left to start the timer. A 
 
 ![](images/sleeptimer2.png)
 
-You can adjust the countdown while it is running.
+You can adjust the countdown while it is running. You can cancel the countdown by clicking the icon again.
 
-After the countdown has finished the sleep timer will slowly fade the music out before pausing playback. You can cancel the countdown by clicking the icon again.
+After the countdown has finished the sleep timer will slowly fade the music out before pausing playback. You can set the duration of the fade in seconds
+by adjusting the Fade value before you start the sleep timer.
+Once the Fade has started you cannot adjust the duration, but cancelling the sleep timer will reset the volume to
+its start value.
 

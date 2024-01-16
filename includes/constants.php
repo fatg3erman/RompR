@@ -3,9 +3,9 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 250);
 define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 104);
+define('ROMPR_SCHEMA_VERSION', 105);
 define('ROMPR_MIN_SCHEMA_VERSION', 63);
-define('ROMPR_VERSION', '2.11');
+define('ROMPR_VERSION', '2.12');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");

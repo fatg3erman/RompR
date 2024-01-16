@@ -14,11 +14,11 @@ class timers extends database {
 		parent::__construct();
 	}
 
-	public function set_sleep_timer($enable, $sleeptime) {
+	public function set_sleep_timer($enable, $sleeptime, $fadetime) {
 		if ($enable == 0) {
 			$this->kill_sleep_timer();
 		} else {
-			$this->start_sleep_timer($sleeptime);
+			$this->start_sleep_timer($sleeptime, $fadetime);
 		}
 	}
 
@@ -30,7 +30,7 @@ class timers extends database {
 	}
 
 	public function get_sleep_timer() {
-		$default = [['Pid' => null, 'TimeSet' => 0, 'SleepTime' => 0]];
+		$default = [['Pid' => null, 'TimeSet' => 0, 'SleepTime' => 0, 'FadeTime' => 0]];
 		$t = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, $default,
 			"SELECT * FROM Sleeptimers WHERE Player = ?",
 			$this->player
@@ -40,6 +40,7 @@ class timers extends database {
 
 		return [
 			'sleeptime' => $t[0]['SleepTime'],
+			'fadetime' => $t[0]['FadeTime'],
 			'timeset' => $t[0]['TimeSet'],
 			'state' => ($t[0]['Pid'] === null) ? 0 : 1
 		];
@@ -54,7 +55,7 @@ class timers extends database {
 		$this->sleep_timer_finished();
 	}
 
-	private function start_sleep_timer($sleeptime) {
+	private function start_sleep_timer($sleeptime, $fadetime) {
 		$t = $this->get_sleep_timer();
 		if ($t['state'] === 1) {
 			logger::log($this->player, 'Timeout was adjusted while sleep timer was running',$t['timeset'], ($sleeptime * 60), time());
@@ -66,10 +67,10 @@ class timers extends database {
 			$timeset = time();
 		}
 
-		$pid = start_process($this->get_sleep_command($timeout));
+		$pid = start_process($this->get_sleep_command($timeout, $fadetime));
 		$this->sql_prepare_query(true, null, null, null,
-			'INSERT INTO Sleeptimers (Pid, Player, TimeSet, SleepTime) VALUES (?, ?, ?, ?)',
-			$pid, $this->player, $timeset, $sleeptime
+			'INSERT INTO Sleeptimers (Pid, Player, TimeSet, SleepTime, FadeTime) VALUES (?, ?, ?, ?, ?)',
+			$pid, $this->player, $timeset, $sleeptime, $fadetime
 		);
 	}
 
@@ -301,9 +302,9 @@ class timers extends database {
 
 	}
 
-	private function get_sleep_command($timeout) {
+	private function get_sleep_command($timeout, $fadetime) {
 		$pwd = getcwd();
-		return $pwd.'/sleeptimer.php --currenthost '.$this->player.' --sleeptime '.$timeout;
+		return $pwd.'/sleeptimer.php --currenthost '.$this->player.' --sleeptime '.$timeout.' --fadetime '.$fadetime;
 	}
 
 	private function get_alarm_command($alarmindex) {
