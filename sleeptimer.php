@@ -18,7 +18,8 @@ logger::info('SLEEPTIMER', 'Sleeping for',format_time(prefs::get_pref('sleeptime
 
 sleep((int) prefs::get_pref('sleeptime'));
 
-logger::mark(prefs::currenthost(), 'Starting Sleep Timer Volume Ramp over', prefs::get_pref('fadetime'), 'seconds');
+$fadetime = prefs::get_pref('fadetime') * 60;
+logger::mark(prefs::currenthost(), 'Starting Sleep Timer Volume Ramp over', $fadetime, 'seconds');
 
 $player = new base_mpd_player();
 $mpd_status = $player->do_command_list(['status']);
@@ -27,7 +28,7 @@ $volume = $mpd_status['volume'];
 prefs::$database = new timers();
 if ($mpd_status['state'] == 'play') {
 	$ramping = true;
-	$player->ramp_volume($volume, 0, prefs::get_pref('fadetime'));
+	$player->ramp_volume($volume, 0, $fadetime);
 	// Mark the timer as finished. The UI will react to the state change
 	// callback when we pause it, which will mark the timer as not running.
 	prefs::$database->sleep_timer_finished();

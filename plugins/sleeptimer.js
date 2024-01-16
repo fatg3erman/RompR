@@ -24,7 +24,7 @@ var sleepTimer = function() {
 
 		runIncrement: function() {
 			clearTimeout(inctimer);
-			prefs.sleeptime = Math.max(prefs.sleeptime+incamount, 0);
+			prefs.sleeptime = Math.max(prefs.sleeptime+incamount, 1);
 			sleepTimer.setBoxes();
 			inctimer = setTimeout(sleepTimer.runIncrement, inctime);
 			inctime = Math.max(50, inctime-50);
@@ -44,7 +44,7 @@ var sleepTimer = function() {
 
 		runFIncrement: function() {
 			clearTimeout(inctimer);
-			prefs.fadetime = Math.max(prefs.fadetime+incamount, 10);
+			prefs.fadetime = Math.max(prefs.fadetime+incamount, 1);
 			sleepTimer.setBoxes();
 			inctimer = setTimeout(sleepTimer.runFIncrement, inctime);
 			inctime = Math.max(50, inctime-50);
@@ -202,7 +202,7 @@ var sleepTimer = function() {
 				'<table width="90%" align="center">'+
 				'<tr>'+
 				'<td align="left" rowspan="2"><i id="sleepon" class="medicon icon-sleep clickicon"></i></td>'+
-				'<td align="right">Time (m)</td>'+
+				'<td align="right">Time</td>'+
 				'<td align="center"><i id="sleepinc" class="icon-increase smallicon clickicon"></i></td>'+
 				'<td align="center" class="alarmnumbers" id="sleepminutes">12</td>'+
 				'<td align="center"><i id="sleepdec" class="icon-decrease smallicon clickicon"></i></td>'+
@@ -210,9 +210,9 @@ var sleepTimer = function() {
 				'</tr>'+
 
 				'<tr>'+
-				'<td align="right">Fade (s)</td>'+
+				'<td align="right">Fade</td>'+
 				'<td align="center"><i id="fadeinc" class="icon-increase smallicon clickicon"></i></td>'+
-				'<td align="center" id="fadeseconds">60</td>'+
+				'<td align="center" id="fadeseconds">1</td>'+
 				'<td align="center"><i id="fadedec" class="icon-decrease smallicon clickicon"></i></td>'+
 				'</tr>'+
 
