@@ -189,7 +189,7 @@ var sleepTimer = function() {
 			if (d === false) {
 				return false;
 			}
-			var holder = uiHelper.makeDropHolder('sleeppanel', d, false, false, false);
+			var holder = uiHelper.makeDropHolder('sleeppanel', d, false, false, true);
 			if ($('body').hasClass('phone')) {
 				// Give it a close button so it can be closed on small screens when
 				// the opener icon is in the onlyverysmall menu
