@@ -616,7 +616,8 @@ class ui_elements {
 
 		if (prefs::get_pref('player_backend') == "mopidy") {
 			print uibits::ui_config_header([
-				'label' => 'label_mfsp'
+				'label' => 'label_mfsp',
+				'id' => 'spotiplay_title'
 			]);
 		}
 		/* Music From Spotify */
