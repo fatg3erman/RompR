@@ -48,6 +48,11 @@ foreach($params as $p) {
 			prefs::$database->prepare_returninfo();
 			break;
 
+		case 'browsesearchresult':
+			prefs::$database->check_album_browse($p['albumindex']);
+			prefs::$database->prepare_returninfo();
+			break;
+
 		case 'ui_wakeup_refresh':
 			$albums = [];
 			foreach ($p['albums'] as $album) {

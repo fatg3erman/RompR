@@ -54,7 +54,8 @@ class uibits extends ui_elements {
 					$what,
 					$who,
 					$when,
-					array_merge($obj, ['buttons' => false, 'iconclass' => 'fixed'])
+					array_merge($obj, ['buttons' => false, 'iconclass' => 'fixed']),
+					false
 				);
 			}
 		}

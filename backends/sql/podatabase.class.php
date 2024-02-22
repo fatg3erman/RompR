@@ -643,7 +643,7 @@ class poDatabase extends database {
 			$aa = $aa . ' - ';
 		}
 		$pm = $y->PODindex;
-		uibits::trackControlHeader('','','podcast_'. $pm, null, ['Image' => $y->Image, 'Albumname' => $y->Title]);
+		uibits::trackControlHeader('','','podcast_'. $pm, null, ['Image' => $y->Image, 'Albumname' => $y->Title], false);
 		print '<div class="whatdoicallthis">'.format_podcast_text($y->Description).'</div>';
 		if ($y->Subscribed == 1) {
 			print '<div class="containerbox bumpad">';

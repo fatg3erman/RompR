@@ -347,9 +347,10 @@ var layoutProcessor = function() {
 		},
 
 		displayCollectionInsert: function(details) {
-			infobar.notify(
-				(details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw')
-			);
+			// Bum. This will fire when we broswe an album
+			// infobar.notify(
+			// 	(details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw')
+			// );
 		},
 
 		setRadioModeHeader: function(html) {

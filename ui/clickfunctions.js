@@ -290,6 +290,7 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('addtollviabrowse', browseAndAddToListenLater);
 	clickRegistry.addClickHandlers('removefromll', removeFromListenLater);
 	clickRegistry.addClickHandlers('addtocollectionviabrowse', browseAndAddToCollection);
+	clickRegistry.addClickHandlers('clickalbumbrowse', browseSearchResults);
 	clickRegistry.addClickHandlers('amendalbum', amendAlbumDetails);
 	clickRegistry.addClickHandlers('setasaudiobook', setAsAudioBook);
 	clickRegistry.addClickHandlers('setasmusiccollection', setAsAudioBook);
@@ -1264,6 +1265,12 @@ function browseAndAddToListenLater(event, clickedElement) {
 			false
 		);
 	}
+}
+
+function browseSearchResults(event, clickedElement) {
+	var albumindex = clickedElement.attr('name');
+	debug.log('BROF', 'Browsing Album Index', albumindex);
+	metaHandlers.browseSearchResult(albumindex);
 }
 
 function removeFromListenLater(event, clickedElement) {

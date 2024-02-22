@@ -754,7 +754,8 @@ language::add_translations([
 	"config_sortbyartist" =>				"Use Track Artist as Sort Artist",
 	"config_sortbycomposer" =>				"Use Composer as Sort Artist",
 	"label_classicalgenre" =>				"Detect Classical Music Using Genre(s)",
-	"label_classicalfolder" =>				"Detect Classical Music by Folder Path"
+	"label_classicalfolder" =>				"Detect Classical Music by Folder Path",
+	"label_showallresults" =>				"Show All Tracks"
 
 	// ----------------------------------------------------
 	// Proobaly Unused

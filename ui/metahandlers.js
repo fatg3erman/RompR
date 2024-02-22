@@ -440,6 +440,20 @@ var metaHandlers = function() {
 			);
 		},
 
+		browseSearchResult(albumindex) {
+			metaHandlers.genericAction(
+				[{
+					action: 'browsesearchresult',
+					albumindex: albumindex
+				}],
+				collectionHelper.updateCollectionDisplay,
+				function(rdata) {
+					debug.warn("BUMFINGER","Failure to do bumfinger", rdata);
+					infobar.error('Failed to browse album')
+				}
+			);
+		},
+
 		// data should be either {action :'addtolistenlater', json: {spotify album.getInfo}}
 		// OR
 		// {action: 'browsetoll', uri: an album uri that Mpodiy can find file}
