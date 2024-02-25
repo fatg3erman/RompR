@@ -131,6 +131,7 @@ var metaHandlers = function() {
 					dbQueue.request(
 						[{action: 'ui_wakeup_refresh', albums: albumids}],
 						function(rdata) {
+							debug.log("UIWRF", rdata);
 							collectionHelper.updateCollectionDisplay(rdata);
 						},
 						function(data) {
