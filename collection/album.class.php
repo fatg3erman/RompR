@@ -48,7 +48,7 @@ class album {
 			'name' => $this->tracks[0]->tags['Album'],
 			'artists' => [['name' => $this->tracks[0]->tags['albumartist']]],
 			'uri' => $this->tracks[0]->tags['X-AlbumUri'],
-			'id' => md5($this->tracks[0]->tags['X-AlbumUri']),
+			'id' => md5($this->tracks[0]->tags['albumartist'].$this->tracks[0]->tags['Album']),
 			'images' => [[
 				'url' => $image,
 				'width' => 0

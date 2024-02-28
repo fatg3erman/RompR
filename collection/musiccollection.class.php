@@ -100,22 +100,6 @@ class musicCollection extends collection_base {
 		$this->albums = array();
 	}
 
-	public function tracks_as_array() {
-		$c = true;
-		$player = new player();
-		print '[';
-		foreach($this->albums as $album) {
-			if ($c) {
-				$c = false;
-			} else {
-				print ', ';
-			}
-			$album->sortTracks();
-			print $album->dump_json($player);
-		}
-		print ']';
-	}
-
 	public function prepareCollectionUpdate() {
 		$this->create_foundtracks();
 		$this->prepare_findtracks();
@@ -473,6 +457,22 @@ class musicCollection extends collection_base {
 		} else {
 			$albumobj->newTrack($trackobject);
 		}
+	}
+
+	public function tracks_as_array() {
+		$c = true;
+		$player = new player();
+		print '[';
+		foreach($this->albums as $album) {
+			if ($c) {
+				$c = false;
+			} else {
+				print ', ';
+			}
+			$album->sortTracks();
+			print $album->dump_json($player);
+		}
+		print ']';
 	}
 
 	public function check_and_update_track(&$trackobj) {

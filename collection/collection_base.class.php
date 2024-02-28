@@ -1096,6 +1096,10 @@ class collection_base extends database {
 		$filedata = $track->tags;
 		$lookingfor = $this->options['searchterms'];
 
+		// For DB search with no trackartist
+		if (!array_key_exists('trackartist', $lookingfor) || !array_key_exists('Title', $lookingfor))
+			return true;
+
 		if ($filedata['Title'] == null && $filedata['trackartist'] == null)
 			return false;
 

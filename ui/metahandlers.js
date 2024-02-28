@@ -405,6 +405,23 @@ var metaHandlers = function() {
 			);
 		},
 
+		get_artist_albums_as_spoti: async function(artist) {
+			debug.log("JOHN", "Getting albums info for artist", artist);
+			try {
+				var data = await $.ajax({
+					url: "api/metadata/query/",
+					type: "POST",
+					contentType: false,
+					data: JSON.stringify({action: 'getalbumsasspoti', artist: artist}),
+					dataType: 'json'
+				});
+				debug.log("JOHN", 'Got', data);
+				return data;
+			} catch (err) {
+				return null;
+			}
+		},
+
 		genericQuery: async function(action, success, fail) {
 			if (typeof action == "object") {
 				var request = action;

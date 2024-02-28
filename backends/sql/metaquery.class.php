@@ -1,6 +1,6 @@
 <?php
 
-class metaquery extends collection_base {
+class metaquery extends musiccollection {
 
 	public function gettags() {
 
@@ -159,6 +159,24 @@ class metaquery extends collection_base {
 		logger::debug("METADATA", "Updating Link Check For TTindex",$ttindex,$uri);
 		$this->sql_prepare_query(true, null, null, null,
 			"UPDATE Tracktable SET LinkChecked = ?, Uri = ? WHERE TTindex = ?", $status, $uri, $ttindex);
+	}
+
+	public function getalbumsasspoti($p) {
+		$artist = concatenate_artist_names($p['artist']);
+		logger::log("JOHN", "Getting albums info for $artist");
+		$rawterms = [
+			'artist' => $artist
+		];
+		$this->options['searchterms'] = $rawterms;
+		$this->options['doing_search'] = true;
+		$this->options['trackbytrack'] = false;
+
+		$collection = new db_collection();
+		$t = $collection->doDbCollection($rawterms, [], true);
+		foreach ($t as $filedata) {
+			$this->newTrack($filedata);
+		}
+		$this->tracks_as_array();
 	}
 
 	private function spotifyAlbumId($album) {

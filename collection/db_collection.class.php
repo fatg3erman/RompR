@@ -159,6 +159,8 @@ class db_collection extends collection_base {
 			$parameters[] = '% '.trim($term). '%';
 			$a[] = "".$s." LIKE ?";
 			$parameters[] = '%'.trim($term). ' %';
+			$a[] = "".$s." = ?";
+			$parameters[] = trim($term);
 		}
 		$ret = implode(' OR ',$a);
 		return $ret;
