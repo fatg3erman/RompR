@@ -301,7 +301,9 @@ var info_file = function() {
 			}
 
 			this.getAlbumsInfo = async function() {
-				trackmeta.fileinfo.albums_spoti = await metaHandlers.get_artist_albums_as_spoti(parent.playlistinfo.Artist);
+				var artist = (parent.playlistinfo.Artist == null) ? parent.playlistinfo.trackartist : parent.playlistinfo.Artist;
+				if (artist)
+					trackmeta.fileinfo.albums_spoti = await metaHandlers.get_artist_albums_as_spoti(artist);
 				self.doBrowserUpdate();
 			}
 
