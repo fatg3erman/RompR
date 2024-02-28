@@ -147,6 +147,8 @@ class prefs {
 		"autotagname" => "",
 		"lastfm_logged_in" => false,
 		"lastfm_scrobbling" => false,
+		"noscrobble_audiobook" => false,
+		"noscrobble_podcast" => false,
 		"use_mopidy_search" => true
 	];
 

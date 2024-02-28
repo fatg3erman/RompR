@@ -27,7 +27,7 @@ var info_file = function() {
 
 		try {
 			if (typeof(fileinfo.albums_spoti) == 'object' && fileinfo.albums_spoti.length > 0) {
-				layout.add_non_flow_box_header({title: 'Albums From Your Collection'});
+				layout.add_non_flow_box_header({title: language.gettext('label_bythisartist')});
 				fileinfo.albums_spoti_widget = layout.add_non_flow_box();
 				fileinfo.albums_spoti_widget.addClass('fullwidth medium_masonry_holder');
 				fileinfo.albums_spoti_widget.removeClass('masonry-initialised');

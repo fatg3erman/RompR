@@ -40,9 +40,15 @@ If you want to keep your Last.FM tagging in sync with your RompЯ Collection, th
 
 You can also use the option 'Last.FM Love Means' to automatically add a rating to tracks in the collection when you click the 'Love' button in RompЯ, and to automatically Love the track on Last.FM if you give it that Rating in RompЯ.
 
-## File Information
+## Collection Information
 
-This panel displays information about the file being played. The information includes format information from the player, and information from the Music Collection.
+This panel displays information about the file being played. The information includes format information from the player,
+and information from the Music Collection.
+
+You can add tags and ratings to tracks from here, or add the track to the collection if it is from an online source.
+
+This panel will also display every album from your Collection that contains a track by the current Artist, you can add tracks directly
+to the play queue from here.
 
 ![](images/trackinfo.png)
 
@@ -66,7 +72,7 @@ The buttons above the info panel are (left to right)
 * History
 * Back
 * Forward
-* File Information
+* Collection Information
 * Last.FM
 * Wikipedia
 * Musicbrainz

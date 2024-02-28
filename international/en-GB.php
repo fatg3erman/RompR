@@ -61,6 +61,8 @@ language::add_translations([
 	"config_lastfmusername" =>				"Last.FM Username",
 	"config_loginbutton" =>					"Login",
 	"config_scrobbling" =>					"Scrobble tracks to Last.FM",
+	"config_noscrobble_audiobook" =>		"Do not scrobble Spoken Word tracks",
+	"config_noscrobble_podcast" =>			"Do not scrobble Podcast tracks",
 	"config_autocorrect" =>					"Use Last.FM to auto-correct artist names etc",
 	"config_tagloved" =>					"Tag Loved Tracks With:",
 	"config_fontsize" =>					"FONT SIZE",
@@ -234,7 +236,7 @@ language::add_translations([
 	"info_newtab" =>						"View In New Tab",
 
 	// File Info panel
-	"button_fileinfo" =>					"Info Panel (File Information)",
+	"button_fileinfo" =>					"Info Panel (Collection Information)",
 	"info_file" =>							"File:",
 	"info_from_beets" =>					"(from beets server)",
 	"info_format" =>						"Format:",
@@ -755,7 +757,8 @@ language::add_translations([
 	"config_sortbycomposer" =>				"Use Composer as Sort Artist",
 	"label_classicalgenre" =>				"Detect Classical Music Using Genre(s)",
 	"label_classicalfolder" =>				"Detect Classical Music by Folder Path",
-	"label_showallresults" =>				"Show All Tracks"
+	"label_showallresults" =>				"Show All Tracks",
+	"label_bythisartist" =>					"By This Artist from Your Collection"
 
 	// ----------------------------------------------------
 	// Proobaly Unused

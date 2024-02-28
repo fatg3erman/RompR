@@ -1504,7 +1504,14 @@ class base_mpd_player {
 
 	private function scrobble_to_lastfm() {
 		if (prefs::get_pref('lastfm_scrobbling') && prefs::get_pref('lastfm_session_key') != '') {
-			logger::info(prefs::currenthost(), 'Scrobbling');
+
+			if ($this->current_song['type'] == 'audiobook' && prefs::get_pref('noscrobble_audiobook'))
+				return;
+
+			if ($this->current_song['type'] == 'podcast' && prefs::get_pref('noscrobble_podcast'))
+				return;
+
+			logger::info(prefs::currenthost(), 'Scrobbling', $this->current_song['type']);
 			$options = array(
 				'timestamp' => time() - $this->current_song['Time'],
 				'track' => $this->current_song['Title'],
