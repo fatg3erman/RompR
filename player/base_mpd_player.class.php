@@ -1492,6 +1492,13 @@ class base_mpd_player {
 	private function lastfm_update_nowplaying() {
 		prefs::load();
 		if (prefs::get_pref('lastfm_scrobbling') && prefs::get_pref('lastfm_session_key') != '') {
+
+			if ($this->current_song['type'] == 'audiobook' && prefs::get_pref('noscrobble_audiobook'))
+				return;
+
+			if ($this->current_song['type'] == 'podcast' && prefs::get_pref('noscrobble_podcast'))
+				return;
+
 			logger::info(prefs::currenthost(), 'Updating Last.FM Nowplaying');
 			$options = array(
 				'track' => $this->current_song['Title'],
