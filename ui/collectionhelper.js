@@ -184,11 +184,15 @@ var collectionHelper = function() {
 			if (rdata && rdata.hasOwnProperty('modifiedartists')) {
 				$('#emptycollection').remove();
 				$.each(rdata.modifiedartists, function(i,v) {
-					// The only thing to do with artists is to add them in if they don't exist
-					// NOTE. Do this AFTER inserting new albums, because if we're doing albumbyartist with banners showing
-					// then the insertAfter logic will be wrong if we've already inserted the artist banner.
-					if ($('.openmenu[name="'+v.id+'"]').length == 0 && $('#'+v.id).length == 0) {
-						uiHelper.insertArtist(v);
+					try {
+						// The only thing to do with artists is to add them in if they don't exist
+						// NOTE. Do this AFTER inserting new albums, because if we're doing albumbyartist with banners showing
+						// then the insertAfter logic will be wrong if we've already inserted the artist banner.
+						if ($('.openmenu[name="'+v.id+'"]').length == 0 && $('#'+v.id).length == 0) {
+							uiHelper.insertArtist(v);
+						}
+					} catch (err) {
+
 					}
 				});
 			}
