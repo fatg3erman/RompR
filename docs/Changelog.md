@@ -6,6 +6,7 @@
 
 * Sleep Timer fadeout time is now configurable.
 * Further support for Qobuz using the [mopidy-qobuz-hires backend](https://github.com/vitiko98/mopidy-qobuz)
+* A few minor bugfixes
 
 NOTE. Due to a limtation in mopidy-qobuz-hires version 0.1.0, to use that backend with RompR 2.14 or later you will
 need to install or upgrade it by doing
