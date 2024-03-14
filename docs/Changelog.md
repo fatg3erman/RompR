@@ -6,6 +6,10 @@
 
 * Sleep Timer fadeout time is now configurable.
 * Further support for Qobuz using the [mopidy-qobuz-hires backend](https://github.com/vitiko98/mopidy-qobuz)
+* New options to not scrobble Podcasts and/or Spoken Word tracks to Last.FM
+* MPD outputs with hyperlnks in the name will now cause a link to be displayed in the UI (contributed by ron-from-nl)
+* All Mopidy-linked functionality that depends on online music sources (eg 'Music From Everywhere') should now recognise all the main ones that work well (Spotify, YTMusic, YouTube, Qobuz)
+* You can now limit your Collection view to only show tracks from a specific Mopidy backend (eg only loca, only spotify, etc..)
 * A few minor bugfixes
 
 NOTE. Due to a limtation in mopidy-qobuz-hires version 0.1.0, to use that backend with RompR 2.14 or later you will
@@ -28,7 +32,7 @@ until an official updated version is released. Trying to use the official releas
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
 
 * Album art bugfix for people running PHP 8, contributed by svalo.
-* Files can now be downloaded through the browser from the File Browser by clicking on the 'mp3' (or whatever) icon next to the file name. This works with anything in mpd and for local files in Mopidy. It requires the path to your localmusic to be configured in the preferences.
+* Files can now be downloaded through the browser from the File Browser by clicking on the 'mp3' (or whatever) icon next to the file name. This works with anything in mpd and for local files in Mopidy. It requires the path to your local music to be configured in the preferences.
 
 
 ## Version 2.06
@@ -76,7 +80,7 @@ until an official updated version is released. Trying to use the official releas
 * Make the SQLite collection case-insensitive, which makes it work the same way as MySQL and means I can remove a lot of case checking statements, which speeds things up.
 * All tracks and podcast episodes can now have an arbitrary number of named bookmarks associated with them.
 * All Personal Radio stations are now populated by the Backend Daemon, so there is no longer any need to keep a browser open.
-* If Mopidy's HTTP interface is available and you do a search in RompR and limit the search to specific backends the search can be performed using Mopidy's HTTP interface instead of the MPD interface. This can provide significantly improved search performance and better quality information but it can use a lot of RAM and in certain setups it might be a lot slower. You can disable this behaviour by unchcking 'Use Mopidy HTTP interface for Search' on the rompr/?setup screen.
+* If Mopidy's HTTP interface is available and you do a search in RompR and limit the search to specific backends the search can be performed using Mopidy's HTTP interface instead of the MPD interface. This can provide significantly improved search performance and better quality information but it can use a lot of RAM and in certain setups it might be a lot slower. You can disable this behaviour by unchecking 'Use Mopidy HTTP interface for Search' on the rompr/?setup screen.
 * The usual collection of undocumented bugfixes.
 * **Youtube Music as a Spotify Replacement**
 * Now that Mopidy-Spotify is no longer working, and we don't know how long it will take (or if ever) to get a fix, the rompr/?setup screen has an option to mark all your Spotify tracks as unplayable. They will no longer appear in your collection and will be added to Your Wishlist. Note that selecting this option will force a rescan of your Music Collection. The Wishlist Viewer will give you an easy way to browse them and decide which ones you want to buy digital or physical copies of. I recommend Bandcamp, where the artist gets a fair share of the money, unlike from Spotify. If you have enabled Youtube Music support in Mopidy the Wishlist Viewer will permit you to search for tracks on Youtube Music and import them into your Collection in place of your Spotify tracks, preserving the tags, ratings, and playcounts.

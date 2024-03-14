@@ -106,7 +106,7 @@ At the time of writing, version 0.1.0 of mopidy-qobuz-hires does not support alb
 you might find the search results get corrupted and end up plyaing different tracks.
 I have raised this as a Pull Request with the maintainer but until that gets merged you should install mopidy-qobuz-hires using the command
 
-	pip3 install git+https://github.com/fatg3erman/mopidy-qobuz@dev
+	pip3 install git+https://github.com/vitiko98/mopidy-qobuz@dev
 
 
 ## Mopidy-YTMusic and Mopidy-Youtube
@@ -165,7 +165,7 @@ If you haven't done this right, then your music collection update will just hang
 
 ## Genres
 
-Note that only Mopidy-Local seems to return Genres, so Genre-based Collection functions will not work as your might expect if you use Spotify, Soundcloud, etc.
+Note that only Mopidy-Local seems to return Genres, so Genre-based Collection functions will not work as you might expect if you use Spotify, Soundcloud, etc.
 
 
 ## Downloading Youtube Tracks
