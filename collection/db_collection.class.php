@@ -108,6 +108,8 @@ class db_collection extends collection_base {
 			$qstring .= ")";
 		}
 
+		$qstring .= " ORDER BY Albumname ASC, Disc ASC, TrackNo ASC";
+
 		logger::debug("DB SEARCH", "String", $qstring);
 		logger::debug("DB SEARCH", "Parameters", $parameters);
 
@@ -159,6 +161,8 @@ class db_collection extends collection_base {
 			$parameters[] = '% '.trim($term). '%';
 			$a[] = "".$s." LIKE ?";
 			$parameters[] = '%'.trim($term). ' %';
+			$a[] = "".$s." = ?";
+			$parameters[] = trim($term);
 		}
 		$ret = implode(' OR ',$a);
 		return $ret;

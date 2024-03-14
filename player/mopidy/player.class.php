@@ -36,11 +36,15 @@ class player extends base_mpd_player {
 		$this->monitor = fopen('prefs/monitor','w');
 		$dirs = prefs::get_pref('mopidy_collection_folders');
 		logger::log('MOPIDY', 'Collection Folders Are', print_r($dirs, true));
+		foreach ($dirs as &$dir) {
+			$dir = $this->local_media_check($dir);
+		}
+		logger::log('MOPIDY', 'Collection Folders Are Now', print_r($dirs, true));
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
 			logger::log('MOPIDY', 'Scanning', $dir);
 			fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs)))."\n");
-			foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($this->local_media_check($dir)).'"', $dirs, false) as $filedata) {
+			foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($dir).'"', $dirs, false) as $filedata) {
 				yield $filedata;
 			}
 		}

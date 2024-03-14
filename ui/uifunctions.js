@@ -838,7 +838,7 @@ function spotifyTrackListing(data, show_add_button) {
 		var domain = playlist.getDomain(data.tracks.items[i].uri);
 		if (player.canPlay(domain)) {
 			h += '<div class="playable draggable clickable clicktrack fullwidth" name="'+rawurlencode(data.tracks.items[i].uri)+'">';
-		} else if (player.canPlay('youtube') || player.canPlay('ytmusic') || player.canPlay('spotify')) {
+		} else if (player.hasOnlineSources()) {
 			h += '<div class="fullwidth playable clicktracksearch">';
 			h += '<input type="hidden" class="search_param" name="trackartist" value="'+escapeHtml(combine_spotify_artists(data.artists))+'" />';
 			if (data.name)

@@ -29,7 +29,7 @@ In the centre is the Info Panel. The icons across the top are (left to right)
 * History
 * Back (Info Panel)
 * Forward (Info Panel)
-* File Information
+* Collection Information
 * Last.FM Info
 * Wikipedia
 * Musicbrainz

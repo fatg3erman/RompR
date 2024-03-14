@@ -211,7 +211,7 @@ language::add_translations([
 	"info_clicktohide" =>					"BURY",
 
 	// File Info panel
-	"button_fileinfo" =>					"Info Panel (File Information)",
+	"button_fileinfo" =>					"Info Panel (Collection Information)",
 	"info_file" =>							"File:",
 	"info_from_beets" =>					"(from beets server)",
 	"info_format" =>						"Format:",

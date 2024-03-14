@@ -27,8 +27,12 @@ function printOutputCheckboxes() {
 		if ($outputdata[$i]['outputenabled'] == 1) {
 			print ' checked';
 		}
-		print '><label for="outputbutton_'.$i.'" onclick="player.controller.doOutput('.$i.')">'.
-			$outputdata[$i]['outputname'].'</label>';
+		print ' /><label for="outputbutton_'.$i.'" onclick="player.controller.doOutput('.$i.')">';
+		if (!preg_match('/^http[s]*:\/\/.+$/', $outputdata[$i]['outputname'], $matches)) {
+			print $outputdata[$i]['outputname'].'</label>';
+		} else {
+			print $outputdata[$i]['outputname'].'</label>	<a href="'.$outputdata[$i]['outputname'] . '" target="_blank"> &#128279;</a>';
+		}
 		print '</div>';
 	}
 }

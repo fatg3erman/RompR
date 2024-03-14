@@ -1,6 +1,7 @@
 var info_file = function() {
 
 	var me = "file";
+	var maxwidth = 300;
 
 	function format_date(date) {
 		var t = parseInt(date) * 1000;
@@ -22,6 +23,27 @@ var info_file = function() {
 		if (parent.playlistinfo.type == 'podcast' && parent.playlistinfo.Comment) {
 			layout.add_flow_box_header({title: language.gettext("info_comment").replace(':','')});
 			layout.add_flow_box(parent.playlistinfo.Comment);
+		}
+
+		try {
+			if (typeof(fileinfo.albums_spoti) == 'object' && fileinfo.albums_spoti.length > 0) {
+				layout.add_non_flow_box_header({title: language.gettext('label_bythisartist')});
+				fileinfo.albums_spoti_widget = layout.add_non_flow_box();
+				fileinfo.albums_spoti_widget.addClass('fullwidth medium_masonry_holder');
+				fileinfo.albums_spoti_widget.removeClass('masonry-initialised');
+				fileinfo.albums_spoti_widget.spotifyAlbumThing({
+					classes: 'nobwobbler nobalbum spotify_album_masonry selecotron',
+					itemselector: 'nobwobbler',
+					sub: null,
+					showbiogs: false,
+					maxwidth: maxwidth,
+					is_plugin: false,
+					imageclass: 'spotify_album_image',
+					data: fileinfo.albums_spoti
+				});
+			}
+		} catch (err) {
+
 		}
 
 		layout.finish(null, name);
@@ -220,6 +242,7 @@ var info_file = function() {
 							player.controller.do_command_list([]).then(self.updateFileInformation);
 						}, 500);
 					}
+
 				}
 			}
 
@@ -232,6 +255,8 @@ var info_file = function() {
 					nowplaying.removeTag(event, parent.nowplayingindex);
 				} else if (element.hasClass("clickaddtags")) {
 					tagAdder.show(event, parent.nowplayingindex);
+				} else if (element.hasClass('clickspotifywidget')) {
+					trackmeta.fileinfo.albums_spoti_widget.spotifyAlbumThing('handleClick', element);
 				}
 			}
 
@@ -251,7 +276,7 @@ var info_file = function() {
 					trackmeta
 				);
 				trackmeta.lyrics.lyrics = null;
-				self.doBrowserUpdate();
+				self.getAlbumsInfo();
 			}
 
 			this.updateBeetsInformation = function(thing) {
@@ -267,7 +292,7 @@ var info_file = function() {
 						},
 						trackmeta
 					);
-					self.doBrowserUpdate();
+					self.getAlbumsInfo();
 				})
 				.fail( function() {
 					debug.error("FILE PLUGIN", "Error getting info from beets server");
@@ -275,7 +300,14 @@ var info_file = function() {
 				});
 			}
 
-			this.doBrowserUpdate = function() {
+			this.getAlbumsInfo = async function() {
+				var artist = (parent.playlistinfo.Artist == null) ? parent.playlistinfo.trackartist : parent.playlistinfo.Artist;
+				if (artist)
+					trackmeta.fileinfo.albums_spoti = await metaHandlers.get_artist_albums_as_spoti(artist);
+				self.doBrowserUpdate();
+			}
+
+			this.doBrowserUpdate = async function() {
 				trackmeta.file.layout.clear_out();
 				make_file_information(trackmeta.file.layout, trackmeta.fileinfo, parent, trackmeta.usermeta, trackmeta.name);
 			}

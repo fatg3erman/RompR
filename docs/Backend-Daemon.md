@@ -104,10 +104,47 @@ And start it with
 As this will fail (or why are you running it as a service?) you will see the error that it is not running again.
 Systemd should restart it after 5 seconds and then you'll be able to load RompR**
 
+### On Systems without systemd (eg FreeBSD)
+
+If you run a system that doesn't have systemd, one user has reported that the following works on FreeBSD
+
+Create the file /usr/local/etc/rc.d/romprbackend
+
+    # PROVIDE: romprbackend
+    # REQUIRE: LOGIN cleanvar sshd apache24
+    # KEYWORD: shutdown
+
+    . /etc/rc.subr
+
+    name="romprbackend"
+    rcvar="romprbackend_enable"
+
+    romprbackend_chdir="/PATH_TO_ROMPR/"
+
+    command="/usr/sbin/daemon"
+    command_args="-r -f -u www /usr/local/bin/php /PATH_TO_ROMPR/rompr_backend.php"
+
+    load_rc_config $name
+    : ${romprbackend_enable:=no}
+    : ${romprbackend_msg="Nothing started."}
+
+    run_rc_command "$1"
+
+Where /PATH_TO_ROMPR/ is the RompR installation directory, as above. This requires first running.
+
+    sysrc romprbackend_enable="YES"
+
+More info might be available by following [This Thread](https://github.com/fatg3erman/RompR/issues/140)
+
 ## Troubleshooting
 
 If it's not working, first enable [debug logging](/RompR/Troubleshooting) to level 7 then restart rombackend.
 You'll see some output from it in the web server's error log (and your custom logifle if you're using one).
 
-You can also try to run it from the command-line with php /PATH/TO/ROMPR/rompr_backend.php, but if you do this it will need write access to your webserver's error log and everything in your rompr/prefs directory.
+You can also try to run it from the command-line with
+
+	cd /PATH_TO_ROMPR
+	php /PATH_TO_ROMPR/rompr_backend.php
+
+but if you do this it will need write access to your webserver's error log and everything in your rompr/prefs directory.
 This might, however, be useful if it's crashing out really early.

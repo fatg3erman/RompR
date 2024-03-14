@@ -92,27 +92,12 @@ class musicCollection extends collection_base {
 	}
 
 	private function sort_badly_tagged_albums() {
+		logger::log("COLLECTION", "Sorting badly tagged albums");
 		foreach ($this->albums as &$album) {
 			$album->sortTracks();
 			$album->check_database();
 		}
 		$this->albums = array();
-	}
-
-	public function tracks_as_array() {
-		$c = true;
-		$player = new player();
-		print '[';
-		foreach($this->albums as $album) {
-			if ($c) {
-				$c = false;
-			} else {
-				print ', ';
-			}
-			$album->sortTracks();
-			print $album->dump_json($player);
-		}
-		print ']';
 	}
 
 	public function prepareCollectionUpdate() {
@@ -472,6 +457,22 @@ class musicCollection extends collection_base {
 		} else {
 			$albumobj->newTrack($trackobject);
 		}
+	}
+
+	public function tracks_as_array() {
+		$c = true;
+		$player = new player();
+		print '[';
+		foreach($this->albums as $album) {
+			if ($c) {
+				$c = false;
+			} else {
+				print ', ';
+			}
+			$album->sortTracks();
+			print $album->dump_json($player);
+		}
+		print ']';
 	}
 
 	public function check_and_update_track(&$trackobj) {

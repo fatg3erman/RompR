@@ -69,6 +69,13 @@ var helpfulThings = function() {
 		return false;
 	}
 
+	function get_backend_info(bends) {
+		let poop = cloneObject(bends);
+		var lastb = poop.pop();
+		var f = poop.join(', ');
+		return [f + ' and ' + lastb];
+	}
+
 	return {
 
 		open: function() {
@@ -78,60 +85,64 @@ var helpfulThings = function() {
 
 				$('#hplfoldup').append('<div id="helpful_radio" class="containerbox wrap mixcontainer"></div>');
 
-				var powers;
-				if (player.canPlay('spotify') && (player.canPlay('ytmusic') || player.canPlay('youtube'))) {
-					powers = [', Spotify, and Youtube'];
-				} else if (player.canPlay('ytmusic') || player.canPlay('youtube')) {
-					powers = [' and Youtube'];
-				} else {
-					powers = [' and Spotify'];
-				}
+				var bends = [];
+				if (player.canPlay('spotify'))
+					bends.push('Spotify');
 
-				if ((player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube'))) {
+				if (player.canPlay('youtube') || player.canPlay('ytmusic'))
+					bends.push('YouTube');
+
+				if (player.canPlay('qobuz'))
+					bends.push('Qobuz');
+
+				let rradio_bends = ['RompR'].concat(bends);
+				let lfmradio_bends = ['Last.FM', 'RompR'].concat(bends);
+
+				if (player.hasOnlineSources()) {
 					var html = '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="recommendationsRadio">';
 					html += '<img class="smallcover fixed" src="newimages/favicon-128.png" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_radio_recommended")+'</b><br/>';
-					html += language.gettext('label_recommenddesc', cloneObject(powers));
+					html += language.gettext('label_recommenddesc', get_backend_info(rradio_bends));
 					html += '</div></div>';
 
 					html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="mixRadio">';
 					html += '<img class="smallcover fixed" src="newimages/vinyl_record.svg" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_radio_mix")+'</b><br/>';
-					html += language.gettext('label_rmixdesc', powers);
+					html += language.gettext('label_rmixdesc', get_backend_info(rradio_bends));
 					html += '</div></div>';
 				 	if (lastfm.isLoggedIn()) {
 						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="lastFMTrackRadio+1month">';
 						html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_dailymix")+'</b><br/>';
-						html += language.gettext('label_dailymixdesc', cloneObject(powers));
+						html += language.gettext('label_dailymixdesc', get_backend_info(lfmradio_bends));
 						html += '</div></div>';
 
 						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="lastFMArtistRadio+6month">';
 						html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_luckydip")+'</b><br/>';
-						html += language.gettext('label_luckydipdesc', powers);
+						html += language.gettext('label_luckydipdesc', get_backend_info(lfmradio_bends));
 						html += '</div></div>';
+					} else {
+						html += '<div class="fixed containerbox plugin_hpl_radio">';
+						html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
+						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_startshere")+'</b><br/>';
+						html += language.gettext('label_goonlogin')+"</div>";
+						html += '</div>';
 					}
 				 	if (player.canPlay('spotify')) {
 						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="spotiRecRadio+mix">';
 						html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_spotify_mix")+'</b><br/>';
-						html += language.gettext('label_spotimixdesc', cloneObject(powers));
+						html += language.gettext('label_spotimixdesc');
 						html += '</div></div>';
 
 						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="spotiRecRadio+surprise">';
 						html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_spottery_lottery")+'</b><br/>';
-						html += language.gettext('label_spotiswimdesc', powers);
+						html += language.gettext('label_spotiswimdesc');
 						html += '</div></div>';
 					}
-				} else if ((player.canPlay('spotify') || player.canPlay('ytmusic') || player.canPlay('youtube')) && !lastfm.isLoggedIn()) {
-					var html = '<div class="fixed containerbox plugin_hpl_radio">';
-					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_startshere")+'</b><br/>';
-					html += language.gettext('label_goonlogin')+"</div>";
-					html += '</div>';
-				} else if (!player.canPlay('spotify') && !player.canPlay('ytmusic') || !player.canPlay('youtube')) {
+				} else {
 					var html = '<div class="fixed containerbox plugin_hpl_radio">';
 					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_getspotify")+'</b><br/>';
@@ -141,7 +152,7 @@ var helpfulThings = function() {
 
 				$('#helpful_radio').append(html);
 
-				if (player.canPlay('spotify') || player.canPlay('youtube') || player.canPlay('ytmusic')) {
+				if (player.hasOnlineSources()) {
 					$('#hplfoldup').append('<div id="helpful_spinner"><i class="svg-square icon-spin6 spinner"></i></div>');
 					getRecommendationSeeds();
 				}

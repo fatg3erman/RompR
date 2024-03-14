@@ -374,6 +374,21 @@ class data_base {
 		);
 	}
 
+	public function get_collection_domains() {
+		return $this->sql_get_column(
+			"SELECT DISTINCT domain FROM Albumtable JOIN Tracktable USING (Albumindex)
+			WHERE Hidden = 0 AND isSearchResult < 2",
+			0
+		);
+	}
+
+	public function track_domain_check($dm, $why) {
+		if ($why == 'b' || $dm == 'All')
+			return '';
+
+		return " AND Uri LIKE '$dm:%'";
+	}
+
 }
 
 ?>

@@ -249,6 +249,7 @@ class ui_elements {
 			(
 				strpos($det['AlbumUri'], 'ytmusic:album:') !== false ||
 				strpos($det['AlbumUri'], 'spotify:album:') !== false ||
+				strpos($det['AlbumUri'], 'qobuz:album:') !== false ||
 				strpos($det['AlbumUri'], 'youtube:playlist:') !== false ||
 				strpos($det['AlbumUri'], 'yt:playlist:') !== false
 			)
@@ -265,8 +266,14 @@ class ui_elements {
 			// $html .= '<div class="icon-menu inline-icon track-control-icon clickable clickicon clickalbummenu '
 			// 		.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']);
 
-			// if (in_array('clickalbumoptions', $classes) || in_array('clickaddtocollectionviabrowse', $classes) || in_array('clickaddtollviabrowse', $classes))
+			// if (
+			// 	in_array('clickalbumuri', $classes)
+			// 	|| in_array('clickalbumoptions', $classes)
+			// 	|| in_array('clickaddtocollectionviabrowse', $classes)
+			// 	|| in_array('clickaddtollviabrowse', $classes)
+			// ) {
 			// 	$html .= '" uri="'.rawurlencode($det['AlbumUri']);
+			// }
 
 			// $html .= '"></div>';
 		}
@@ -609,7 +616,8 @@ class ui_elements {
 
 		if (prefs::get_pref('player_backend') == "mopidy") {
 			print uibits::ui_config_header([
-				'label' => 'label_mfsp'
+				'label' => 'label_mfsp',
+				'id' => 'spotiplay_title'
 			]);
 		}
 		/* Music From Spotify */
@@ -650,6 +658,17 @@ class ui_elements {
 			'id' => 'collectionrange',
 			'options' => array_map('language::gettext', COLLECTION_RANGE_OPTIONS)
 		]);
+
+		$doms = prefs::$database->get_collection_domains();
+		if (count($doms) > 1) {
+			$doms = array_merge(['All'], $doms);
+			self::ui_select_box([
+				'id' => 'collectiondomains',
+				'options' => array_combine($doms, $doms)
+			]);
+		} else {
+			prefs::set_pref(['collectiondomains' => '']);
+		}
 
 		self::ui_checkbox(['id' => 'sortbydate', 'label' => 'config_sortbydate']);
 		self::ui_checkbox(['id' => 'notvabydate', 'label' => 'config_notvabydate']);

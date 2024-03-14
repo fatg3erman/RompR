@@ -590,6 +590,19 @@ img.notexist,img.notfound {
 	transition: opacity 0.2s ease;
 }
 
+.clickalbumbrowse {
+	font-style: italic;
+	font-size: 80%;
+	color: var(--link-colour);
+	margin-left: 1.5em;
+	margin-bottom: 0.5em;
+}
+
+.clickalbumbrowse:hover {
+	font-weight: bold;
+	cursor: pointer;
+}
+
 .tracknumber
 {
 	/*height:1.3em;*/

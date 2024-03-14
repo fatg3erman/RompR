@@ -421,6 +421,14 @@ var uiHelper = function() {
 			}
 		},
 
+		prepareSearch: function() {
+			try {
+				layoutProcessor.prepareSearch();
+			} catch (err) {
+
+			}
+		},
+
 		setProgressTime: function(stats) {
 			try {
 				layoutProcessor.setProgressTime(stats);

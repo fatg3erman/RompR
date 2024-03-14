@@ -202,6 +202,14 @@ var player = function() {
 		'podcast+gpodder': 1
 	}
 
+	// Sources we use for online stuff like radios
+	var online_sources = [
+		'spotify',
+		'youtube',
+		'ytmusic',
+		'qobuz'
+	];
+
 	return {
 
 		// These are all the mpd status fields the program currently cares about.
@@ -237,6 +245,15 @@ var player = function() {
 
 		canPlay: function(urischeme) {
 			return this.urischemes.hasOwnProperty(urischeme);
+		},
+
+		hasOnlineSources: function() {
+			for (let b of online_sources) {
+				if (this.urischemes.hasOwnProperty(b)) {
+					return true;
+				}
+			}
+			return false;
 		},
 
 		skip: function(sec) {

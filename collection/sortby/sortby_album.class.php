@@ -23,6 +23,7 @@ class sortby_album extends sortby_base {
 				// For browse album 'All Artists Featuring'
 				$qstring .= "AND Albumtable.AlbumArtistindex = ".$this->who;
 			}
+			$qstring .= prefs::$database->track_domain_check(prefs::get_pref('collectiondomains'), $this->why);
 			$qstring .= " ".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
 			".$sflag.")
 		ORDER BY ";

@@ -39,6 +39,11 @@ switch ($p['action']) {
 		prefs::$database->removeListenLater($p['index']);
 		break;
 
+	case 'getalbumsasspoti':
+		prefs::$database->getalbumsasspoti($p);
+		exit(0);
+		break;
+
 	default:
 		logger::warn("USERRATINGS", "Unknown Request",$p['action']);
 		header('HTTP/1.1 400 Bad Request');

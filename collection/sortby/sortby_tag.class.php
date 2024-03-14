@@ -12,6 +12,7 @@ class sortby_tag extends sortby_base {
 			WHERE
 				Uri IS NOT NULL
 				AND Hidden = 0
+				{$db->track_domain_check(prefs::get_pref('collectiondomains'), $this->why)}
 				{$db->track_date_check(prefs::get_pref('collectionrange'), $this->why)}
 				{$this->filter_root_on_why()}
 			ORDER BY Name ASC",
@@ -34,6 +35,7 @@ class sortby_tag extends sortby_base {
 				Tracktable JOIN TagListtable USING (TTindex)
 				WHERE Tagindex = ".$this->who." AND ";
 		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
+		prefs::$database->track_domain_check(prefs::get_pref('collectiondomains'), $this->why)." ".
 		prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";

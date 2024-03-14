@@ -817,6 +817,7 @@ var prefs = function() {
 					break;
 
 				case 'collectionrange':
+				case 'collectiondomains':
 					callback = layoutProcessor.changeCollectionSortMode;
 					break;
 

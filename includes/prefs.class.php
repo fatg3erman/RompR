@@ -19,7 +19,7 @@ class prefs {
 			"radiomode" => "",
 			"radioparam" => "",
 			"radioconsume" => [],
-			"radiodomains" => ['local', 'spotify', 'youtube', 'ytmusic'],
+			"radiodomains" => ['local', 'spotify', 'youtube', 'ytmusic', 'qobuz'],
 			"toptracks_current" => 1,
 			"toptracks_total" => 1,
 			"stationname" => ''
@@ -147,6 +147,8 @@ class prefs {
 		"autotagname" => "",
 		"lastfm_logged_in" => false,
 		"lastfm_scrobbling" => false,
+		"noscrobble_audiobook" => false,
+		"noscrobble_podcast" => false,
 		"use_mopidy_search" => true
 	];
 
@@ -207,7 +209,8 @@ class prefs {
 		'podcastbuttons_isopen' => false,
 		"somafm_quality" => 'highest_available_quality',
 		"stupid_rounded_corner_buffer_size" => 0,
-		"skip_amount" => 10
+		"skip_amount" => 10,
+		"fadetime" => 1
 	];
 
 	// Prefs that should not be exposed to the browser for security reasons
@@ -236,6 +239,7 @@ class prefs {
 		"sortbydate" => false,
 		"notvabydate" => false,
 		"collectionrange" => ADDED_ALL_TIME,
+		'collectiondomains' => 'All',
 		"sortcollectionby" => 'artist',
 		"sortresultsby" => 'sameas',
 		"actuallysortresultsby" => 'artist',
@@ -246,6 +250,7 @@ class prefs {
 		// so long as IS_ROMINTOR is defined.
 		'alarmindex' => null,
 		'sleeptime' => null,
+		'fadetime' => null,
 		'snooze' => null
 	];
 

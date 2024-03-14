@@ -13,13 +13,21 @@ jQuery.fn.menuReveal = async function() {
 	var holder = $('.openmenu[name="'+id+'"]');
 	var parent = holder.parent();
 	var adjustboxes = true;
-	var scrollto = true;
+	var scrollto = false;
 
 	switch (true) {
 		case holder.hasClass('album'):
 		case holder.hasClass('playlist'):
 		case holder.hasClass('userplaylist'):
 			// Albums and Playlists
+			// Need to check for a lazy-load image in case this is in response to a re-load
+			// of the album (eg after browser wake) and the image has scrolled off the top. If we
+			// don't force the image to reload it breaks the formatting and looks shit.
+			parent.find('img.lazy').each(function() {
+				var self = $(this);
+				self.attr('src', self.attr('data-src')).removeAttr('data-src').removeClass('lazy');
+			});
+
 			parent.addClass('masonry_opened dropshadow').insertDummySpacers();
 
 			self.wrap('<div class="expand"></div>');
@@ -853,6 +861,10 @@ var layoutProcessor = function() {
 			$('.collectionpanel.albumlist').remove();
 			$('.collectionpanel.audiobooklist').remove();
 			$('#searchresultholder').empty();
+		},
+
+		prepareSearch: function() {
+			$('.collectionpanel.searcher').remove();
 		},
 
 		createPluginHolder: function(icon, title, id, panel) {

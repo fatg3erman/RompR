@@ -48,7 +48,7 @@ class album {
 			'name' => $this->tracks[0]->tags['Album'],
 			'artists' => [['name' => $this->tracks[0]->tags['albumartist']]],
 			'uri' => $this->tracks[0]->tags['X-AlbumUri'],
-			'id' => md5($this->tracks[0]->tags['X-AlbumUri']),
+			'id' => md5($this->tracks[0]->tags['albumartist'].$this->tracks[0]->tags['Album']),
 			'images' => [[
 				'url' => $image,
 				'width' => 0
@@ -133,8 +133,10 @@ class album {
 		// user, or to the AlbumArtist setting, which will be null if no AlbumArtist tag is present -
 		// as is the case with many mopidy backends
 
+		logger::log("COLLECTION", "Sorting Albums", $this->get_album_name());
+
 		if ($this->tracks[0]->tags['albumartist'] === null) {
-			logger::mark("COLLECTION", "Finding AlbumArtist for album ".$this->tracks[0]->tags['Album']);
+			logger::log("COLLECTION", "Finding AlbumArtist for album ".$this->tracks[0]->tags['Album']);
 			if (count($this->tracks) < ROMPR_MIN_TRACKS_TO_DETERMINE_COMPILATION) {
 				logger::log("COLLECTION", "  Album ".$this->tracks[0]->tags['Album']." has too few tracks to determine album artist");
 				$this->decideOnArtist($this->tracks[0]->get_sort_artist());

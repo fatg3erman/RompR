@@ -27,6 +27,7 @@ class sortby_artist extends sortby_base {
 			JOIN Tracktable USING (Albumindex)
 			WHERE Uri IS NOT NULL
 			AND Hidden = 0
+			".prefs::$database->track_domain_check(prefs::get_pref('collectiondomains'), $this->why)."
 			".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
 			".$sflag."
 			GROUP BY AlbumArtistindex) ";
@@ -66,6 +67,7 @@ class sortby_artist extends sortby_base {
 		$qstring .= "Albumindex IN (SELECT Albumindex FROM Tracktable WHERE
 				Tracktable.Albumindex = Albumtable.Albumindex AND ";
 		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
+		prefs::$database->track_domain_check(prefs::get_pref('collectiondomains'), $this->why)." ".
 		prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";

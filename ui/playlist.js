@@ -97,15 +97,7 @@ var playlist = function() {
 					// Don't set any default domains. player.controller will set them as soon as it knows what they are
 					// But this UI element HAS to exist before we try to do that
 					$("#radiodomains").addClass('tiny').makeDomainChooser({
-						default_domains: [],
-						sources_not_to_choose: {
-									bassdrive: 1,
-									dirble: 1,
-									tunein: 1,
-									audioaddict: 1,
-									oe1: 1,
-									podcast: 1,
-							}
+						default_domains: []
 					});
 					$("#radiodomains").find('input.topcheck').each(function() {
 						$(this).on(prefs.click_event, function() {
@@ -922,6 +914,7 @@ var playlist = function() {
 				case "podcast":
 				case "dirble":
 				case "bandcamp":
+				case "qobuz":
 					return '<i class="icon-'+d+'-circled inline-icon fixed"></i>';
 					break;
 

@@ -15,6 +15,8 @@ var spotiRecRadio = function() {
 				// Spotify Surprise
 				//
 				$('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('spotiRecRadio', 'surprise', 'icon-spotify-circled', language.gettext('label_spottery_lottery')));
+			} else {
+				$('#spotiplay_title').remove();
 			}
 		}
 	}

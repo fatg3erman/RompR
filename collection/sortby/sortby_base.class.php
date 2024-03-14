@@ -252,6 +252,7 @@ class sortby_base {
 					tr.Albumindex = ?
 					AND uri IS NOT NULL
 					AND tr.Hidden = 0
+					{$db->track_domain_check(prefs::get_pref('collectiondomains'), $this->why)}
 					{$db->track_date_check(prefs::get_pref('collectionrange'), $this->why)}
 					{$this->filter_track_on_why()}
 					AND tr.Artistindex = ta.Artistindex
@@ -276,29 +277,33 @@ class sortby_base {
 	public function output_track_list($fragment = false) {
 		logger::log('SORTBY', 'Doing Track List For Album',$this->who);
 		$trackarr = $this->track_sort_query();
+		$can_browse = false;
 		if (($this->why == 'b' && !method_exists(prefs::$database, 'sanitise_data'))) {
 			if (substr($trackarr[0]['title'],0,6) == "Album:") {
 				logger::log('SORTER', 'Album has one track which is an album Uri');
-				$this->who = prefs::$database->check_album_browse($this->who, $trackarr[0]['uri']);
+				$this->who = prefs::$database->check_album_browse($this->who);
 				if ($this->who === true) {
 					return;
 				}
 				$trackarr = $this->track_sort_query();
 			} else if (
-				strpos($trackarr[0]['AlbumUri'], 'yt:playlist:') !== false
-				|| strpos($trackarr[0]['AlbumUri'], 'youtube:playlist:') !== false ||
-				strpos($trackarr[0]['AlbumUri'], 'ytmusic:album:') !== false
+				   strpos($trackarr[0]['AlbumUri'], 'yt:playlist:') !== false
+				|| strpos($trackarr[0]['AlbumUri'], 'youtube:playlist:') !== false
+				|| strpos($trackarr[0]['AlbumUri'], 'ytmusic:album:') !== false
+				// || strpos($trackarr[0]['AlbumUri'], 'qobuz:album:') !== false
 			) {
 				// Basically we ALWAYS want to browse youtube music albums because
 				// they're often incomplete and never have Track Numbers
 				// and search results don't alwyas give us an Album: result
 				// for every album
 				logger::log('SORTER', 'Forcing browse of Youtube Album');
-				$this->who = prefs::$database->check_album_browse($this->who, $trackarr[0]['AlbumUri']);
+				$this->who = prefs::$database->check_album_browse($this->who);
 				if ($this->who === true) {
 					return;
 				}
 				$trackarr = $this->track_sort_query();
+			} else {
+				$can_browse = true;
 			}
 		}
 
@@ -350,6 +355,9 @@ class sortby_base {
 			}
 			$tracktype = uibits::albumTrack($arr, prefs::$database->get_track_bookmarks($arr['ttid']));
 
+		}
+		if ($can_browse) {
+			print '<div class="clickable clickalbumbrowse" name="'.$this->who.'">'.language::gettext('label_showallresults').'</div>';
 		}
 		if ($total_time > 0) {
 			print '<input type="hidden" class="albumtime" value="'.format_time($total_time).'" />';
