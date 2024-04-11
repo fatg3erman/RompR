@@ -404,7 +404,7 @@ language::add_translations([
 
 	// New in 0.60
 	"spotify_error" =>						"Spotify没有响应",
-	"spotify_noinfo" =>						"C无法从Spotify获取到信息",
+	"spotify_noinfo" =>						"无法从 Spotify 获取到信息",
 	"button_infospotify" =>					"信息面板（Spotify）",
 	"config_icontheme" =>					"图标",
 	"label_radio" =>						"电台",
@@ -428,7 +428,7 @@ language::add_translations([
 	"config_displaycomposer" =>				"在正在播放中显示作曲者/演唱者",
 	"label_radio_mix" =>					"收藏的歌手和关联歌手",
 	"label_gotnotracks" =>					"未找到任何曲目",
-	"config_artistfirst" =>					"Artists At Top Of Collection",
+	"config_artistfirst" =>					"集合前列的歌手",
 	"config_nosortprefixes" =>				"排序歌手的时候忽略这些前缀",
 	"button_skipforward" =>					"快进",
 	"button_skipbackward" =>				"快退",
@@ -476,7 +476,7 @@ language::add_translations([
 	"config_wheelspeed" =>					"鼠标滚轮滚动速率",
 
 	"label_radio_recommend" =>				"推荐基于此 %s",
-	"label_amendalbum" =>					"Amend Album Details",
+	"label_amendalbum" =>					"修订专辑细节",
 	"label_radio_recommended" =>			"为你推荐",
 
 	//CHANGED in 0.60
@@ -565,10 +565,10 @@ language::add_translations([
 	"label_closepanel" =>					"关闭这个面板",
 	"label_hidepanel" =>					"隐藏这个面板",
 	"label_removefromplaylist" =>			"从播放列表移除",
-	"label_addtolistenlater" =>				"Add To Albums To Listen To",
-	"label_removefromlistenlater" =>		"Remove From Albums To Listen To",
+	"label_addtolistenlater" =>				"添加专辑到稍后收听",
+	"label_removefromlistenlater" =>		"从稍后收听中移除专辑",
 	"label_addtocollection" =>				"添加专辑到音乐集",
-	"label_addtoradio" =>					"Add To Your Radio Stations",
+	"label_addtoradio" =>					"添加到你的电台",
 	"button_logout" =>						"登出",
 	"label_transferplaylist" =>				"转移播放队列到新的播放器？",
 	"label_yes" =>							"是",
@@ -717,7 +717,7 @@ language::add_translations([
 	"config_hidemastervolume" =>			'使用Snapcast音量作为主音量控制',
 	"setup_mopidy_scan" =>					'当创建音乐集时允许RompR运行mopidy本地扫描',
 	"setup_mopidy_scan_title" =>			'Mopidy特定选项',
-	"label_upnext" =>						'Up Next',
+	"label_upnext" =>						'向上一个',
 	// "config_consumeworkaround" =>			'Work Around Mopidy Consume Bug (Read the Docs First)',
 	// "warn_consumearound" =>					'Please DISABLE consume before enabling this option',
 	// "msg_consumearound" =>					'Read the Docs about this option. You must be running romonitor for it to work',
@@ -749,7 +749,7 @@ language::add_translations([
 	"button_save_defaults" =>				'保存为所有浏览器的缺省设置',
 	"label_recommenddesc" =>				'根据你最近的收听情况推荐的一个电台。由 %s 驱动',
 	"label_rmixdesc" =>						'根据你喜欢的歌手和相似的歌手推荐的一个电台。由 %s 驱动',
-	"config_stupid_round_corners" =>		'Padding at bottom of screen (to help on phones with round corners or controls that get in the way)',
+	"config_stupid_round_corners" =>		'屏幕底部填充（有助于有圆角或操控受阻的手机）',
 	"config_clearfirst" =>					'开始前清空播放队列',
 	"label_classicalrules" =>				'古典音乐排序规则',
 	"config_classicalrules" =>				'使用不同的规则来排序古典音乐',
