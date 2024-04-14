@@ -34,10 +34,14 @@ class player extends base_mpd_player {
 			logger::mark('MOPIDY', 'Mopidy local scan finished');
 		}
 		$this->monitor = fopen('prefs/monitor','w');
-		$dirs = prefs::get_pref('mopidy_collection_folders');
-		logger::log('MOPIDY', 'Collection Folders Are', print_r($dirs, true));
-		foreach ($dirs as &$dir) {
-			$dir = $this->local_media_check($dir);
+		$dirs_temp = prefs::get_pref('mopidy_collection_folders');
+		$dirs = [];
+		logger::log('MOPIDY', 'Collection Folders Are', print_r($dirs_temp, true));
+		foreach ($dirs_temp as $dir) {
+			if ($dir == 'Local media') {
+				$dir = 'Local media/Albums';
+			}
+			$dirs[] = $dir;
 		}
 		logger::log('MOPIDY', 'Collection Folders Are Now', print_r($dirs, true));
 		while (count($dirs) > 0) {
@@ -55,23 +59,6 @@ class player extends base_mpd_player {
 		saveCollectionPlayer('mopidy');
 		fwrite($this->monitor, "\nRompR Is Done\n");
 		fclose($this->monitor);
-	}
-
-	private function local_media_check($dir) {
-		if ($dir == "Local media") {
-			// Mopidy-Local-SQlite contains a virtual tree sorting things by various keys
-			// If we scan the whole thing we scan every file about 8 times. This is stoopid.
-			// Check to see if 'Local media/Albums' is browseable and use that instead if it is.
-			// Using Local media/Folders causes every file to be re-scanned every time we update
-			// the collection, which takes ages and also includes m3u and pls stuff that we don't want
-			$r = $this->do_mpd_command('lsinfo "'.$dir.'/Albums"', false, false);
-			if ($r === false) {
-				return $dir;
-			} else {
-				return $dir.'/Albums';
-			}
-		}
-		return $dir;
 	}
 
 	public function has_specific_search_function($mpdsearch, $domains) {
@@ -385,6 +372,10 @@ class player extends base_mpd_player {
 				$this->preprocess_local($filedata);
 				break;
 
+			case 'subidy':
+				$this->preprocess_subsonic($filedata);
+				break;
+
 			case "soundcloud":
 				$this->preprocess_soundcloud($filedata);
 				break;
@@ -452,6 +443,11 @@ class player extends base_mpd_player {
 				$filedata['type'] = 'audiobook';
 			}
 		}
+	}
+
+	private function preprocess_subsonic(&$filedata) {
+		$this->check_undefined_tags($filedata);
+		$filedata['folder'] = $filedata['X-AlbumUri'];
 	}
 
 	private function preprocess_internetarchive(&$filedata) {

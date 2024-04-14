@@ -74,6 +74,7 @@ You will only see options for backends that are enabled in Mopidy. The complete 
 * **YouTube Music Albums** ('ytmusic' backend must be enabled)
 * **YouTube Music Subscription** ('ytmusic' backend must be enabled)
 * **Qobuz Favourite Albums** ('qobuz' backend must be enabled)
+* **Subsonic** ('subidy' backend must be enabled) *Note - this is very slow since Mopidy has to query subsonic for every album. Also Subsonic does not seem to return Album Artists, which might cause album sorting issues*
 
 
 If you don't want to build a collection this way, tracks from anywhere can be added to the collection by tagging or rating them at any time.

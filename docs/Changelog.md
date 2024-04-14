@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 2.15
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* Support for Mopidy-Subidy to build your collection from a Subsonic server. Note that this will be slow due to Subidy having to qury your subsonic server for every single album. Also Subsonic does not seem to return Album Artists, this might cause sorting issues in your Collection.
+* Simplified Chinese translation provided by Roll8ack
+
+
 ## Version 2.14
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
