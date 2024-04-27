@@ -6,7 +6,7 @@ All the players can be used simultaneously, but they will not play in sync. The 
 
 ## Multiroom Audio
 
-If you want to have multiroom audio with all rooms playing the same music, in sync, then RompЯ has full support for controlling [Snapcast](/RompR/Snapcast)
+If you want to have multiroom audio with all rooms playing the same music, in sync, then RompЯ has full support for controlling [Snapcast](/RompR/snapcast)
 
 ## Defining Players
 

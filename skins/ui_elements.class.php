@@ -108,6 +108,18 @@ class ui_elements {
 			print '<div class="playable '.$class.' ninesix draggable indent containerbox vertical-centre" name="'.rawurlencode($data['uri']).'">';
 		}
 
+		if ($data['lm'] != null && $data['lastplayed'] == 0) {
+			// Add a "new" icon if Last-Modified is less than a month ago and it hasn't been played
+			if (is_numeric($data['lm'])) {
+				$age = time() - $data['lm'];
+			} else {
+				$age = time() - strtotime($data['lm']);
+			}
+			if ($age < 2592000) {
+				print '<i class="inline-icon fixed icon-sun"></i>';
+			}
+		}
+
 		print domainIcon($d, 'inline-icon');
 
 		print '<div class="tracknumber fixed '.$data['trackno_width'].'">';
