@@ -11,6 +11,7 @@ var infobar = function() {
 	var biggerizing = false;
 	var current_progress = 0;
 	var current_duration = 0;
+	var notifying_addtracks = false;
 
 	var skip_inc_timer;
 	var skip_amount;
@@ -584,6 +585,22 @@ var infobar = function() {
 			if (player.controller.volume(volume)) {
 				$("#volume").volumeControl("displayVolume", volume);
 				prefs.save({volume: parseInt(volume.toString())});
+			}
+		},
+
+		notifyaddtracks: function() {
+			if (!notifying_addtracks) {
+				notifying_addtracks = true;
+				var div = doNotification(language.gettext('label_addingtracks'), 'icon-info-circled');
+				setTimeout($.proxy(
+					function(c) {
+						infobar.removenotify(c);
+						notifying_addtracks = false;
+					},
+					div,
+					notifycounter
+					),
+				5000);
 			}
 		},
 

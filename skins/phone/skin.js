@@ -277,7 +277,7 @@ var layoutProcessor = function() {
 		notifyAddTracks: function() {
 			var display_mode = get_css_variable('--display-mode');
 			if (display_mode != 2)
-				infobar.notify(language.gettext("label_addingtracks"));
+				infobar.notifyaddtracks();
 		},
 
 		hidePanel: function(panel, is_hidden, new_state) { },
