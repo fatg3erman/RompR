@@ -539,6 +539,9 @@ function get_user_file($src, $fname, $tmpname) {
 	logger::info("GETALBUMCOVER", " Uploading ".$src." ".$fname." ".$tmpname);
 	$download_file = "prefs/temp/".$fname;
 	logger::debug("GETALBUMCOVER", "Checking Temp File ".$tmpname);
+	if (!is_file($tmpname)) {
+		logger::warn('GETALBUMCOVER', $tmpname, 'does not exist');
+	}
 	if (move_uploaded_file($tmpname, $download_file)) {
 		logger::log("GETALBUMCOVER", "File ".$src." is valid, and was successfully uploaded.");
 	} else {
