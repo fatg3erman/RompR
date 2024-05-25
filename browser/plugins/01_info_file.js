@@ -20,7 +20,7 @@ var info_file = function() {
 		if (fileinfo.beets)
 			make_beets_info(layout, fileinfo.beets);
 
-		if (parent.playlistinfo.type == 'podcast' && parent.playlistinfo.Comment) {
+		if (parent.playlistinfo.Comment) {
 			layout.add_flow_box_header({title: language.gettext("info_comment").replace(':','')});
 			layout.add_flow_box(parent.playlistinfo.Comment);
 		}

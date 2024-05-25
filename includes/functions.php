@@ -46,6 +46,95 @@ function format_podcast_text($d) {
 	return $d;
 }
 
+function update_audio_tags($download_file, $tags, $track_image_file) {
+	if (pathinfo($download_file, PATHINFO_EXTENSION) == 'm4a') {
+		return update_m4a_tags($download_file, $tags, $track_image_file);
+	} else {
+		return update_id3_tags($download_file, $tags, $track_image_file);
+	}
+}
+
+function update_id3_tags($download_file, $tags, $track_image_file) {
+	logger::log('TAGGER', 'Writing ID3 tags to',$download_file);
+	getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
+	$tagwriter = new getid3_writetags();
+
+	// If we have an image, whether track image or podcast image, add that to the tags now
+	if ($track_image_file) {
+		if ($fd = @fopen($track_image_file, 'rb')) {
+				$APICdata = fread($fd, filesize($track_image_file));
+				fclose ($fd);
+			$tags['attached_picture'][0]['data']            = $APICdata;
+			$tags['attached_picture'][0]['picturetypeid']   = 0x03;                 // 'Cover (front)'
+			$tags['attached_picture'][0]['description']     = 'Cover Image';
+			$tags['attached_picture'][0]['mime']            = mime_content_type($track_image_file);
+		} else {
+			logger::warn('TAGGER', 'Could not open image file',$track_image_file,'to embed into audio');
+			@unlink($track_image_file);
+			$track_image_file = null;
+		}
+	}
+
+	$tagwriter->filename       = $download_file;
+	$tagwriter->tagformats = array('id3v2.3');
+	$tagwriter->overwrite_tags = true;
+	$tagwriter->tag_encoding   = 'UTF-8';
+	$tagwriter->remove_other_tags = true;
+	$tagwriter->tag_data = $tags;
+	if ($tagwriter->WriteTags()) {
+		logger::trace('TAGGER', 'Successfully wrote tags');
+		if (!empty($tagwriter->warnings)) {
+			logger::warn('TAGGER', 'There were some warnings'.implode(' ', $tagwriter->warnings));
+		}
+	} else {
+		logger::error('TAGGER', 'Failed to write tags!', implode(' ', $tagwriter->errors));
+	}
+
+	return $track_image_file;
+}
+
+function update_m4a_tags($download_file, $tags, $track_image_file) {
+	$ap = find_executable('AtomicParsley');
+	if ($ap !== false) {
+		logger::log('TAGGER', "Wrting Tags using AtomicParsley");
+		foreach ($tags as &$tag) {
+			$tag[0] = str_replace('"', '\"', $tag[0]);
+		}
+		$cmdline = $ap.'AtomicParsley "'.$download_file
+			.'" --artist "'.$tags['artist'][0]
+			.'" --title "'.$tags['title'][0]
+			.'" --album "'.$tags['album'][0]
+			.'" --albumArtist "'.$tags['albumartist'][0]
+			.'" --comment "'.$tags['comment'][0].'"';
+		if (array_key_exists('track_number', $tags)) {
+			$cmdline .= ' --tracknum '.$tags['track_number'][0];
+		}
+		if ($track_image_file && is_file($track_image_file)) {
+			$cmdline .= ' --artwork "'.$track_image_file.'"';
+		}
+		logger::trace('TAGGER', "cmdline is", $cmdline);
+		$o = [];
+		exec($cmdline, $o);
+		foreach ($o as $l) {
+			logger::trace('TAGGER', $o);
+		}
+		$fname = pathinfo($download_file, PATHINFO_FILENAME);
+		$tlf = dirname($download_file).'/'.$fname.'-temp*.m4a';
+		logger::trace("TAGGER", "Checking for", $tlf);
+		$tmp = glob($tlf);
+		foreach ($tmp as $t) {
+			logger::log("TAGGER", "AtomicParsley left temp file behind", $t);
+			unlink($download_file);
+			rename($t, $download_file);
+			break;
+		}
+	} else {
+		logger::warn("TAGGER", "File is m4a, please install AtomicParsley to write tags");
+	}
+
+	return $track_image_file;
+}
+
 // This is for converting a time parameter in seconds into something like 2 Days 12:34:15
 // Pass it a value in seconds. It does not use date functions since they're timezone aware
 // and will add one to the hours value during BST.

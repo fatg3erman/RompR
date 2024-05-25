@@ -1140,6 +1140,12 @@ class poDatabase extends database {
 			$d = new url_downloader(array('url' => $url));
 			$download_file = 'prefs/podcasts/'.$channel.'/'.$key.'/'.$filename;
 			if ($d->get_data_to_file($download_file, true)) {
+
+				// Tags
+				// We want to update important tags if the user has specified that option
+				// We want to embed a trackimage if there is one, whether the user has asked us to or not
+				//
+
 				$getID3 = new getID3;
 				$getID3->setOption(array('encoding'=>'UTF-8'));
 				$getID3->analyze($download_file);
@@ -1150,6 +1156,7 @@ class poDatabase extends database {
 					logger::log('PODCASTS', 'Updating database duration field to',$p,'seconds');
 				}
 
+				// Get current tags
 				// Note - we need to merge our info with the current tags, getID3 will not
 				// merge them for us as aparently that's very hard. I synmpathise.
 				$tags = [];
@@ -1164,6 +1171,7 @@ class poDatabase extends database {
 					}
 				}
 
+				// Work out what the track number is
 				$track_number = 0;
 				if (array_key_exists('track_number', $tags) && is_array($tags['track_number'])) {
 					$track_number = $tags['track_number'][0];
@@ -1183,6 +1191,8 @@ class poDatabase extends database {
 				if (is_numeric($track_number) && $track_number > 0) {
 					$tags['track_number'] = [$track_number];
 				}
+
+				// Track image file
 				$track_image_file = null;
 				$has_trackimage = false;
 				if ($obj->image) {
@@ -1197,11 +1207,13 @@ class poDatabase extends database {
 						logger::warn('PODCASTS', 'Failed to download track image');
 						$track_image_file = null;
 					}
-				} else if (file_exists($obj->podimage)) {
+				}
+				if ($track_image_file === null && file_exists($obj->podimage)) {
 					logger::trace('PODCASTS', 'Embedding Podcast image', $obj->podimage);
 					$track_image_file = $obj->podimage;
 				}
 
+				// If asked to update track tags, do that now
 				if ($obj->WriteTags != 0) {
 					logger::log('PODCASTS', 'Updating ID3 tags as requested by preference');
 					$tags['artist'] = array($obj->artist);
@@ -1211,85 +1223,17 @@ class poDatabase extends database {
 					$tags['comment'] = array($obj->comment);
 				}
 
-				if ($track_image_file) {
-					if ($fd = @fopen($track_image_file, 'rb')) {
-  						$APICdata = fread($fd, filesize($track_image_file));
-  						fclose ($fd);
-						$tags['attached_picture'][0]['data']            = $APICdata;
-						$tags['attached_picture'][0]['picturetypeid']   = 0x03;                 // 'Cover (front)'
-						$tags['attached_picture'][0]['description']     = 'Cover Image';
-						$tags['attached_picture'][0]['mime']            = mime_content_type($track_image_file);
-					} else {
-						logger::warn('PODCASTS', 'Could not open file',$track_image_file,'to embed into audio');
-						@unlink($track_image_file);
-						$track_image_file = null;
-					}
-				}
-
+				// If we've been asked to update tags, or if we have a track image, update them
 				if ($obj->WriteTags != 0 || $has_trackimage) {
-					if (pathinfo($download_file, PATHINFO_EXTENSION) == 'm4a') {
-						$ap = find_executable('AtomicParsley');
-						if ($ap !== false) {
-							logger::log('PODCASTS', "Wrting Tags using AtomicParsley");
-							foreach ($tags as &$tag) {
-								$tag[0] = str_replace('"', '\"', $tag[0]);
-							}
-							$cmdline = $ap.'AtomicParsley "'.$download_file
-								.'" --artist "'.$tags['artist'][0]
-								.'" --title "'.$tags['title'][0]
-								.'" --album "'.$tags['album'][0]
-								.'" --albumArtist "'.$tags['albumartist'][0]
-								.'" --comment "'.$tags['comment'][0].'"';
-							if (array_key_exists('track_number', $tags)) {
-								$cmdline .= ' --tracknum '.$tags['track_number'][0];
-							}
-							if ($track_image_file) {
-								$cmdline .= ' --artwork "'.$track_image_file.'"';
-							}
-							logger::trace('PODCASTS', "cmdline is", $cmdline);
-							$o = [];
-							exec($cmdline, $o);
-							foreach ($o as $l) {
-								logger::trace('PODCASTS', $o);
-							}
-							$fname = pathinfo($download_file, PATHINFO_FILENAME);
-							$tlf = dirname($download_file).'/'.$fname.'-temp*.m4a';
-							logger::trace("PODCASTS", "Checking for", $tlf);
-							$tmp = glob($tlf);
-							foreach ($tmp as $t) {
-								logger::log("PODCASTS", "AtomicParsley left temp file behind", $t);
-								unlink($download_file);
-								rename($t, $download_file);
-							}
-						} else {
-							logger::warn("PODCASTS", "File is m4a, please install AtomicParsley to write tags");
-						}
-					} else {
-						logger::log('PODCASTS', 'Writing ID3 tags to',$download_file);
-						getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
-
-						$tagwriter = new getid3_writetags();
-						$tagwriter->filename       = $download_file;
-						$tagwriter->tagformats = array('id3v2.3');
-						$tagwriter->overwrite_tags = true;
-						$tagwriter->tag_encoding   = 'UTF-8';
-						$tagwriter->remove_other_tags = true;
-						$tagwriter->tag_data = $tags;
-						if ($tagwriter->WriteTags()) {
-							logger::trace('PODCASTS', 'Successfully wrote tags');
-							if (!empty($tagwriter->warnings)) {
-								logger::warn('PODCASTS', 'There were some warnings'.implode(' ', $tagwriter->warnings));
-							}
-						} else {
-							logger::error('PODCASTS', 'Failed to write tags!', implode(' ', $tagwriter->errors));
-						}
-					}
+					$track_image_file = update_audio_tags($download_file, $tags, $track_image_file);
 				} else {
 					logger::log('PODCASTS', 'No Tags to Write');
 				}
+
 				if ($track_image_file && $has_trackimage)
 					unlink($track_image_file);
 
+				// Prefix the file with the track number
 				if ($track_number > 0 && is_numeric($track_number)) {
 					$tn = str_pad((string) $track_number, 3, '0', STR_PAD_LEFT);
 					$newfile = dirname($download_file).'/'.$tn.' - '.basename($download_file);
@@ -1298,6 +1242,7 @@ class poDatabase extends database {
 				} else {
 					$newfile = $download_file;
 				}
+
 				$this->sql_prepare_query(true, null, null, null,
 					"UPDATE PodcastTracktable SET Duration = ?, Downloaded = ?, Localfilename = ?
 					WHERE PODTrackindex = ?",
