@@ -1227,23 +1227,62 @@ class poDatabase extends database {
 				}
 
 				if ($obj->WriteTags != 0 || $has_trackimage) {
-					logger::log('PODCASTS', 'Writing ID3 tags to',$download_file);
-					getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
-
-					$tagwriter = new getid3_writetags();
-					$tagwriter->filename       = $download_file;
-					$tagwriter->tagformats = array('id3v2.3');
-					$tagwriter->overwrite_tags = true;
-					$tagwriter->tag_encoding   = 'UTF-8';
-					$tagwriter->remove_other_tags = true;
-					$tagwriter->tag_data = $tags;
-					if ($tagwriter->WriteTags()) {
-						logger::trace('PODCASTS', 'Successfully wrote tags');
-						if (!empty($tagwriter->warnings)) {
-							logger::warn('PODCASTS', 'There were some warnings'.implode(' ', $tagwriter->warnings));
+					if (pathinfo($download_file, PATHINFO_EXTENSION) == 'm4a') {
+						$ap = find_executable('AtomicParsley');
+						if ($ap !== false) {
+							logger::log('PODCASTS', "Wrting Tags using AtomicParsley");
+							foreach ($tags as &$tag) {
+								$tag[0] = str_replace('"', '\"', $tag[0]);
+							}
+							$cmdline = $ap.'AtomicParsley "'.$download_file
+								.'" --artist "'.$tags['artist'][0]
+								.'" --title "'.$tags['title'][0]
+								.'" --album "'.$tags['album'][0]
+								.'" --albumArtist "'.$tags['albumartist'][0]
+								.'" --comment "'.$tags['comment'][0].'"';
+							if (array_key_exists('track_number', $tags)) {
+								$cmdline .= ' --tracknum '.$tags['track_number'][0];
+							}
+							if ($track_image_file) {
+								$cmdline .= ' --artwork "'.$track_image_file.'"';
+							}
+							logger::trace('PODCASTS', "cmdline is", $cmdline);
+							$o = [];
+							exec($cmdline, $o);
+							foreach ($o as $l) {
+								logger::trace('PODCASTS', $o);
+							}
+							$fname = pathinfo($download_file, PATHINFO_FILENAME);
+							$tlf = dirname($download_file).'/'.$fname.'-temp*.m4a';
+							logger::trace("PODCASTS", "Checking for", $tlf);
+							$tmp = glob($tlf);
+							foreach ($tmp as $t) {
+								logger::log("PODCASTS", "AtomicParsley left temp file behind", $t);
+								unlink($download_file);
+								rename($t, $download_file);
+							}
+						} else {
+							logger::warn("PODCASTS", "File is m4a, please install AtomicParsley to write tags");
 						}
 					} else {
-						logger::error('PODCASTS', 'Failed to write tags!', implode(' ', $tagwriter->errors));
+						logger::log('PODCASTS', 'Writing ID3 tags to',$download_file);
+						getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
+
+						$tagwriter = new getid3_writetags();
+						$tagwriter->filename       = $download_file;
+						$tagwriter->tagformats = array('id3v2.3');
+						$tagwriter->overwrite_tags = true;
+						$tagwriter->tag_encoding   = 'UTF-8';
+						$tagwriter->remove_other_tags = true;
+						$tagwriter->tag_data = $tags;
+						if ($tagwriter->WriteTags()) {
+							logger::trace('PODCASTS', 'Successfully wrote tags');
+							if (!empty($tagwriter->warnings)) {
+								logger::warn('PODCASTS', 'There were some warnings'.implode(' ', $tagwriter->warnings));
+							}
+						} else {
+							logger::error('PODCASTS', 'Failed to write tags!', implode(' ', $tagwriter->errors));
+						}
 					}
 				} else {
 					logger::log('PODCASTS', 'No Tags to Write');
