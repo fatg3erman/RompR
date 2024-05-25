@@ -9,7 +9,7 @@ var info_file = function() {
 		return d.toLocaleDateString(getLocale(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 	}
 
-	function make_file_information(layout, fileinfo, parent, usermeta, name) {
+	async function make_file_information(layout, fileinfo, parent, usermeta, name) {
 
 		if (usermeta)
 			make_usermeta_info(layout, usermeta, parent);
@@ -21,10 +21,20 @@ var info_file = function() {
 			make_beets_info(layout, fileinfo.beets);
 
 		if (parent.playlistinfo.Comment) {
-			layout.add_flow_box_header({title: language.gettext("info_comment").replace(':','')});
-			layout.add_flow_box(parent.playlistinfo.Comment);
-		}
+			add_comment(layout, parent.playlistinfo.Comment);
+		} else if (prefs.music_directory_albumart != '') {
+			try {
+				data = await $.ajax({
+					type: 'POST',
+					url: "browser/backends/getComment.php",
+					data: {file: player.status.file}
+				});
+				parent.playlistinfo.Comment = data;
+				add_comment(layout, data);
+			} catch (err) {
 
+			}
+		}
 		try {
 			if (typeof(fileinfo.albums_spoti) == 'object' && fileinfo.albums_spoti.length > 0) {
 				layout.add_non_flow_box_header({title: language.gettext('label_bythisartist')});
@@ -50,7 +60,13 @@ var info_file = function() {
 
 	}
 
+	function add_comment(layout, poo) {
+		layout.add_flow_box_header({title: language.gettext("info_comment").replace(':','')});
+		layout.add_flow_box(poo);
+	}
+
 	function make_player_info(layout, info, parent) {
+
 		var file = decodeURI(info.file);
 		file = file.replace(/^file:\/\//, '');
 
@@ -79,8 +95,7 @@ var info_file = function() {
 			if (parent.playlistinfo.type == 'stream' && parent.playlistinfo.stream) {
 				poo += '<br />'+parent.playlistinfo.stream;
 			}
-			layout.add_flow_box_header({title: language.gettext("info_comment")});
-			layout.add_flow_box(poo);
+			add_comment(layout, poo);
 		}
 
 		var filetype = get_file_extension(file).toLowerCase();
