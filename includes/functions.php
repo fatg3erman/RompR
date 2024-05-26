@@ -1085,7 +1085,7 @@ function check_backend_daemon() {
 				kill_process($pid);
 			}
 			start_process($b);
-		    sleep(5);
+		    sleep(3);
 			if (get_pid($b) === false) {
 				logger::info('INIT', 'Backend failed to start');
 				backend_init_fail();
