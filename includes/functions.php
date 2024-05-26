@@ -1060,7 +1060,7 @@ function close_browser_connection() {
 // or if it's an older version, restart it.
 function check_backend_daemon() {
 	global $version_string;
-	logger::mark('INIT', 'Checking backend daemon');
+	logger::mark('INIT', 'Checking backend daemon', $version_string);
 	$pwd = getcwd();
 	$b = $pwd.'/rompr_backend.php';
 	logger::log('INIT', 'Checking for',$b);
@@ -1087,10 +1087,12 @@ function check_backend_daemon() {
 			start_process($b);
 		    sleep(3);
 			if (get_pid($b) === false) {
+				logger::info('INIT', 'Backend failed to start');
 				backend_init_fail();
 			}
 			prefs::load();
 			if (prefs::get_pref('backend_version') != $version_string) {
+				logger::info('INIT', 'Backend version mismatch after restart');
 				backend_version_fail();
 			}
 		}
