@@ -87,15 +87,15 @@ var info_file = function() {
 			layout.add_flow_box_header({title: language.gettext("info_composers")});
 			layout.add_flow_box(concatenate_artist_names(info.Composer.split(';')));
 		}
-		if (info.Comment) {
+		if (info.Comment && parent.playlistinfo.Comment == '') {
 			if (typeof info.Comment == "object") {
-				info.Comment = info.Comment.join('<br>');
+				info.Comment = info.Comment.join('<br />');
 			}
 			var poo = info.Comment;
 			if (parent.playlistinfo.type == 'stream' && parent.playlistinfo.stream) {
 				poo += '<br />'+parent.playlistinfo.stream;
 			}
-			add_comment(layout, poo);
+			parent.playlistinfo.Comment = poo;
 		}
 
 		var filetype = get_file_extension(file).toLowerCase();
