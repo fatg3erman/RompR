@@ -642,8 +642,7 @@ function get_user_file($src, $fname, $tmpname) {
 	return $download_file;
 }
 
-function format_bytes($size, $precision = 1)
-{
+function format_bytes($size, $precision = 1) {
 	$base = log($size, 1024);
 	$suffixes = array('', 'K', 'M', 'G', 'T');
 	return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
@@ -655,20 +654,27 @@ function set_version_string() {
 		// This adds an extra parameter to the version number - the short
 		// hash of the most recent git commit, or a timestamp. It's for use in testing,
 		// to make sure the browser pulls in the latest version of all the files.
+		// Note we use time() / 10 otherwise the version check for the backend can fail
+		// if we don't start it on the same second as we load the page.
+		// Even with this it can fail from time to time.
 		if (prefs::get_pref('live_mode')) {
 			logger::log('INIT', 'Using Live Mode for Version String');
-			$version_string = ROMPR_VERSION.".".time();
+			$version_string = ROMPR_VERSION.".".floor(time() / 10);
 		} else {
-			logger::debug('INIT', 'Dev Mode starting in',getcwd());
+			logger::log('INIT', 'Dev Mode starting in',getcwd());
 			$gitpath = find_executable('git');
 			// DO NOT USE OUTSIDE A git REPO!
+			// Make sure that ownership of the repo doesn't fuck up git
+			// So you'll probably have to make /var/www/.gitconfig which contains
+			// [safe]
+        	// 		directory = /PATH/TO/ROMPR
 			$git_ver = exec($gitpath."/git log --pretty=format:'%h' -n 1 2>&1", $output);
-			logger::core('INIT', print_r($output, true));
 			if (count($output) == 1) {
 				$version_string = ROMPR_VERSION.".".$output[0];
 			} else {
 				logger::warn('INIT', 'Could not work out git thing for dev mode!');
-				$version_string = ROMPR_VERSION.".".time();
+				logger::trace('INIT', print_r($output, true));
+				$version_string = ROMPR_VERSION.".".floor(time() / 100);
 			}
 		}
 		logger::log('INIT', 'Dev mode - version string is '.$version_string);
