@@ -1085,14 +1085,14 @@ function check_backend_daemon() {
 				kill_process($pid);
 			}
 			start_process($b);
-		    sleep(3);
+		    sleep(5);
 			if (get_pid($b) === false) {
 				logger::info('INIT', 'Backend failed to start');
 				backend_init_fail();
 			}
 			prefs::load();
 			if (prefs::get_pref('backend_version') != $version_string) {
-				logger::info('INIT', 'Backend version mismatch after restart');
+				logger::info('INIT', 'Backend version mismatch after restart', prefs::get_pref('backend_version'), $version_string);
 				backend_version_fail();
 			}
 		}
