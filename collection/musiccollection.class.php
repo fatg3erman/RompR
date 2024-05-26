@@ -459,7 +459,7 @@ class musicCollection extends collection_base {
 		}
 	}
 
-	public function tracks_as_array() {
+	public function tracks_as_array($fix_albumuri = false) {
 		$c = true;
 		$player = new player();
 		print '[';
@@ -469,7 +469,7 @@ class musicCollection extends collection_base {
 			} else {
 				print ', ';
 			}
-			$album->sortTracks();
+			$album->sortTracks($fix_albumuri);
 			print $album->dump_json($player);
 		}
 		print ']';

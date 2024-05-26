@@ -41,8 +41,17 @@ class album {
 		// Is this too hacky? It is if we start returning LOTS of matches, it's going to
 		// take a very long time. But otherwise we don't get any image at all for anything
 		// that isn't from search results
-		if ($player && !$image && prefs::get_pref('player_backend') == 'mopidy')
-			$image = $player->find_album_image($this->tracks[0]->tags['X-AlbumUri']);
+		if (!$image) {
+			if ($player &&
+				prefs::get_pref('player_backend') == 'mopidy' &&
+				$this->tracks[0]->tags['X-AlbumUri'] &&
+				!preg_match('/album\d+$/', $this->tracks[0]->tags['X-AlbumUri'])
+			) {
+				$image = $player->find_album_image($this->tracks[0]->tags['X-AlbumUri']);
+			} else {
+				$image = 'newimages/vinyl_record.svg';
+			}
+		}
 
 		$data = [
 			'name' => $this->tracks[0]->tags['Album'],
@@ -119,7 +128,7 @@ class album {
 		return $this->tracks[0]->tags['Album'];
 	}
 
-	public function sortTracks() {
+	public function sortTracks($fix_albumuri = false) {
 
 		// Some Mopidy backends don't send disc numbers.When there are no disc numbers
 		// multi-disc albums don't sort properly.
@@ -132,6 +141,18 @@ class album {
 		// to something sensible. So far it has been set to Composer tags if required by the
 		// user, or to the AlbumArtist setting, which will be null if no AlbumArtist tag is present -
 		// as is the case with many mopidy backends
+
+		// The other thing we do here is fix the album URI in the case where it's not set
+		// we can set it to our own format of aalbum1234. This is used ONLY when doing
+		// dumpalbumsasspoti. It's just convenient to do it here.
+
+		$albumuri = null;
+		if ($fix_albumuri) {
+			if (!$this->tracks[0]->tags['X-AlbumUri'] && array_key_exists('isaudiobook', $this->tracks[0]->tags)) {
+				$iab = $this->tracks[0]->tags['isaudiobook'] ? 'z' : 'a';
+				$albumuri = $iab.'album'.$this->tracks[0]->tags['album_index'];
+			}
+		}
 
 		logger::log("COLLECTION", "Sorting Albums", $this->get_album_name());
 
@@ -190,6 +211,10 @@ class album {
 				$tracks[$track->tags['Track']]++;
 			} else {
 				$tracks[$track->tags['Track']] = 1;
+			}
+
+			if ($albumuri !== null) {
+				$track->tags['X-AlbumUri'] = $albumuri;
 			}
 		}
 		// Assign disc numbers in reverse order so that tracks that are later in the list

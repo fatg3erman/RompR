@@ -176,7 +176,7 @@ class metaquery extends musiccollection {
 		foreach ($t as $filedata) {
 			$this->newTrack($filedata);
 		}
-		$this->tracks_as_array();
+		$this->tracks_as_array(true);
 	}
 
 	private function spotifyAlbumId($album) {

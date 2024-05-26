@@ -1147,7 +1147,11 @@ $.widget('rompr.spotifyAlbumThing', {
 			text_span.prepend('<span class="artistnamething">'+artistname+'</span><br />');
 
 		if (player.canPlay(album.domain)) {
-			text_span.addClass('playable draggable clickable clicktrack').attr('name', rawurlencode(album.uri));
+			if (album.uri.search(/[az]album\d+/) !== -1) {
+				text_span.addClass('playable draggable clickable clickalbum').attr('name', album.uri);
+			} else {
+				text_span.addClass('playable draggable clickable clicktrack').attr('name', rawurlencode(album.uri));
+			}
 		} else {
 			text_span.addClass('playable clicktracksearch clicktrack');
 			text_span.prepend($('<input>', {type: 'hidden', name: 'trackartist', class: 'search_param', value: escapeHtml(artistname)}));

@@ -131,7 +131,9 @@ class db_collection extends collection_base {
 				'year' => $obj->Year,
 				'Last-Modified' => $obj->LastModified,
 				'Genre' => $obj->Genre,
-				'trackartist' => $obj->Artistname
+				'trackartist' => $obj->Artistname,
+				'album_index' => $obj->Albumindex,
+				'isaudiobook' => $obj->isAudiobook
 			);
 			$filedata = array_replace(MPD_FILE_MODEL, $filedata);
 			logger::trace("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
