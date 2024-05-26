@@ -32,7 +32,7 @@ var info_file = function() {
 				parent.playlistinfo.Comment = data;
 				add_comment(layout, data);
 			} catch (err) {
-
+				parent.playlistinfo.Comment = "NOCOMMENT";
 			}
 		}
 		try {
@@ -61,6 +61,11 @@ var info_file = function() {
 	}
 
 	function add_comment(layout, poo) {
+		// The value NOCOMMENT prevents us from repeatedly querying the backend
+		// for a comment in the event that there isn't one.
+		if (poo == "NOCOMMENT")
+			return;
+
 		layout.add_flow_box_header({title: language.gettext("info_comment").replace(':','')});
 		layout.add_flow_box(poo);
 	}
@@ -71,7 +76,8 @@ var info_file = function() {
 		file = file.replace(/^file:\/\//, '');
 
 		layout.add_flow_box_header({title: language.gettext("info_file")});
-		layout.add_flow_box_wrap_all(file);
+		fl = layout.add_flow_box_wrap_all(file);
+		fl.addClass('monospace');
 
 		if (info.Performer) {
 			if (typeof info.Performer == "object") {
@@ -154,8 +160,9 @@ var info_file = function() {
 			}
 
 			if (data.comments) {
-				layout.add_flow_box_header({title: language.gettext("info_comment")});
-				layout.add_flow_box(data.comments);
+				parent.playlistinfo.Comment = data.comments;
+			} else {
+				parent.playlistinfo.Comment = "NOCOMMENT";
 			}
 
 		} catch (err) {

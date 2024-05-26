@@ -19,13 +19,16 @@ if (file_exists($fname)) {
 	getid3_lib::CopyTagsToComments($tags);
 
 	if (array_key_exists('comments', $tags) &&
-		array_key_exists('comment', $tags['comments'])) {
+		array_key_exists('comment', $tags['comments']) &&
+		is_array($tags['comments']['comment']) &&
+		array_key_exists(0, $tags['comments']['comment'])
+	) {
 		$output = $tags['comments']['comment'][0];
 	}
 }
 
 if ($output == null) {
-	header('HTTP/1.1 404 Not Found');
+	$output = "NOCOMMENT";
 }
 
 print $output;
