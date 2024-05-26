@@ -1080,7 +1080,11 @@ function check_backend_daemon() {
 	} else {
 		logger::info('INIT', 'Backend Daemon is already running.');
 		if (prefs::get_pref('backend_version') != $version_string || array_key_exists('force_restart', $_REQUEST)) {
-			logger::info('INIT', 'Backend Daemon',prefs::get_pref('backend_version'),'is different from',$version_string,'. Restarting it');
+			if (prefs::get_pref('backend_version') != $version_string) {
+				logger::info('INIT', 'Backend Daemon',prefs::get_pref('backend_version'),'is different from',$version_string,'. Restarting it');
+			} else {
+				logger::info('INIT', 'Force Restart of Backend Daemon was requested');
+			}
 			kill_process(get_pid($b));
 			while (($pid = get_pid('romonitor.php')) !== false) {
 				logger::log('INIT', 'Killing romonitor process', $pid);
