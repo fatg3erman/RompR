@@ -95,21 +95,33 @@ function playerController() {
 		}
 	}
 
+	this.get_command_response = async function(list) {
+		var response = await fetch(
+			'api/player/',
+			{
+				signal: AbortSignal.timeout(30000),
+				body: JSON.stringify(list),
+				cache: 'no-store',
+				method: 'POST',
+				priority: 'high',
+
+			}
+		);
+		if (!response.ok) {
+			debug.error('CONTROLLER', 'Status was not OK', response);
+			throw new Error('Command List Failed');
+		}
+		var s = await response.json();
+		return s;
+	}
+
 	this.do_command_list = async function(list) {
 		debug.debug('PLAYER', 'Command List',list);
 		// Prevent checkProgress and radioManager from doing anything while we're doing things
 		playlist.invalidate();
 		try {
-			// Use temp variable in case it errors
-			var s = await $.ajax({
-				type: 'POST',
-				url: 'api/player/',
-				data: JSON.stringify(list),
-				contentType: false,
-				dataType: 'json',
-				timeout: 30000
-			});
-			// Clone the object so this thread can exit
+			var s = await self.get_command_response(list);
+			// Clone the object or we get left with dangling references
 			debug.core('PLAYER', 'Got response for',list,s);
 			let last_state = player.status.state;
 			player.status = cloneObject(s);
@@ -333,14 +345,7 @@ function playerController() {
 	// of async stuff that'll be triggered again as soon as this command
 	// executes.
 	this.toggle_playback_state = async function() {
-		var s = await $.ajax({
-			type: 'POST',
-			url: 'api/player/',
-			data: JSON.stringify([]),
-			contentType: false,
-			dataType: 'json',
-			timeout: 30000
-		});
+		var s = await self.get_command_response([]);
 		debug.log('PLAYER', 'Toggling Playback State From',s.state);
 		player.status.state = s.state;
 		if (s.state == 'play') {
