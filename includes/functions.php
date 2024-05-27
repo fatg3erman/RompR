@@ -294,11 +294,12 @@ function backend_init_fail() {
 }
 
 function backend_version_fail() {
-	global $title, $setup_error;
+	global $title, $setup_error, $version_string;
 	logger::warn('INIT', 'Backend Daemon Version Failure');
 	$title = 'RompЯ Backend Daemon Is Out Of Date';
 	$setup_error = '<h3 align="center">The RompЯ Backend Daemon needs to be restarted before you can access RompЯ. RompR has tried to restart it but it did not work.</h3>'.
-	'<h3 align="center">Please <a href="https://fatg3erman.github.io/RompR/Backend-Dameon" target="_blank">Read The Docs</a></h3>';
+	'<h3 align="center">Please <a href="https://fatg3erman.github.io/RompR/Backend-Dameon" target="_blank">Read The Docs</a></h3>'.
+	'<p>The daemon version currently running is '.prefs::get_pref('backend_version').' and this version of RompЯ is '.$version_string.'</p>';
 	include("setupscreen.php");
 	exit();
 }
@@ -1095,7 +1096,7 @@ function check_backend_daemon() {
 				kill_process($pid);
 			}
 			start_process($b);
-		    sleep(3);
+		    sleep(2);
 			if (get_pid($b) === false) {
 				logger::info('INIT', 'Backend failed to start');
 				backend_init_fail();
