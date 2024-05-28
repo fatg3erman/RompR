@@ -133,26 +133,41 @@ var alarmclock = function() {
 	return {
 
 		populate_alarms: async function() {
-			newalarms = await $.ajax({
-				type: 'GET',
-				url: 'api/alarmclock/?populate=1'
-			});
-			newalarms.push({
-				'Alarmindex': 'NEW',
-				'Time': '00:00',
-				'Days': '',
-				'ItemToPlay': '',
-				'PlayCommands': '',
-				'StopMins': 60,
-				'Running': 0
-			});
-			if (newalarms.equals(alarms)) {
-				debug.debug('ALARMS', 'Alarm state has not changed');
-			} else {
-				alarms = newalarms;
-				debug.debug('ALARMS', alarms);
-				holder.empty();
-				fillWindow();
+			try {
+				var response = await fetch(
+					'api/alarmclock/?populate=1',
+					{
+						signal: AbortSignal.timeout(10000),
+						cache: 'no-store',
+						method: 'GET',
+						priority: 'low',
+					}
+				);
+				if (!response.ok) {
+					debug.error('ALARMS', 'Status was not OK', response);
+					throw new Error('Failed to get alarms');
+				}
+				newalarms = await response.json();
+
+				newalarms.push({
+					'Alarmindex': 'NEW',
+					'Time': '00:00',
+					'Days': '',
+					'ItemToPlay': '',
+					'PlayCommands': '',
+					'StopMins': 60,
+					'Running': 0
+				});
+				if (newalarms.equals(alarms)) {
+					debug.debug('ALARMS', 'Alarm state has not changed');
+				} else {
+					alarms = newalarms;
+					debug.debug('ALARMS', alarms);
+					holder.empty();
+					fillWindow();
+				}
+			} catch (err) {
+
 			}
 		},
 
@@ -340,16 +355,31 @@ var alarmclock = function() {
 
 		},
 
+		post_request: async function(data) {
+			var response = await fetch(
+				'api/alarmclock/',
+				{
+					signal: AbortSignal.timeout(5000),
+					body: JSON.stringify(data),
+					method: 'POST',
+					priority: 'low',
+				}
+			);
+			if (!response.ok) {
+				debug.error('ALARMEDIT', 'Status was not OK', response);
+				throw new Error('Balls');
+			}
+		},
+
 		edit_alarm_time: async function(event) {
 			let index = parseInt($(this).attr('rompr_index'));
 			debug.log('ALARMS', 'Edit alarm time', index);
 			alarms[index].Time = $(this).val();
-			await $.ajax({
-				type: 'POST',
-				url: 'api/alarmclock/',
-				data: JSON.stringify(alarms[index]),
-				contentType: false
-			});
+			try {
+				await alarmclock.post_request(alarms[index]);
+			} catch (err) {
+
+			}
 			alarmclock.populate_alarms();
 		},
 
@@ -374,12 +404,11 @@ var alarmclock = function() {
 				}
 			});
 			options.Days = days.join(',');
-			await $.ajax({
-				type: 'POST',
-				url: 'api/alarmclock/',
-				data: JSON.stringify(options),
-				contentType: false
-			});
+			try {
+				await alarmclock.post_request(options);
+			} catch (err) {
+
+			}
 			alarmclock.populate_alarms();
 		},
 

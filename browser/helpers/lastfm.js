@@ -7,6 +7,7 @@ function LastFM() {
 	var backofftimer;
 	var username;
 	var token = "";
+	var reqid_counter = 100000;
 
 	// --------------------------------------------------------------------------------------------------
 	//
@@ -124,12 +125,12 @@ function LastFM() {
 		}
 	}
 
-	this.flushReqids = function() {
-		for (var i = queue.length-1; i >= 0; i--) {
-			if (queue[i].reqid)
-				queue.splice(i, 1);
-		}
-	}
+	// this.flushReqids = function() {
+	// 	for (var i = queue.length-1; i >= 0; i--) {
+	// 		if (queue[i].reqid)
+	// 			queue.splice(i, 1);
+	// 	}
+	// }
 
 	this.formatBio = function(bio, link) {
 		debug.debug("LASTFM","    Formatting Bio");
@@ -153,28 +154,41 @@ function LastFM() {
 
 	function api_request(options, success, fail, reqid) {
 		options.module = 'lastfm';
+		if (!reqid && reqid !== 0) {
+			reqid = reqid_counter;
+			reqid_counter++;
+		}
 		queue.push({data: options, success: success, fail: fail, reqid: reqid, retries: 0});
 		if (typeof current_req == 'undefined')
 			do_Request();
 	}
 
 	async function do_Request() {
-		var data, jqxhr, throttle;
+		var data, throttle, response;
 		while (current_req = queue.shift()) {
-			debug.debug('LASTFM', 'Handling request', current_req);
+			debug.debug('LASTFM', 'Handling request '+current_req.reqid, current_req);
 			try {
-				data = await (jqxhr = $.ajax({
-					method: 'POST',
-					url: 'browser/backends/api_handler.php',
-					data: JSON.stringify(current_req.data),
-					dataType: 'json'
-				}));
-				var c = jqxhr.getResponseHeader('Pragma');
-				debug.debug("LASTFM","Request success",c, data, jqxhr);
+				response = await fetch(
+					'browser/backends/api_handler.php',
+					{
+						signal: AbortSignal.timeout(30000),
+						body: JSON.stringify(current_req.data),
+						cache: 'no-store',
+						method: 'POST',
+						priority: 'low',
+					}
+				);
+				if (!response.ok) {
+					// debug.error("LASTFM", 'Request failed '+current_req.reqid, response);
+					throw new Error(response.status+' '+response.statusText);
+				}
+				var c = response.headers.get('Pragma');
+				data = await response.json();
+				debug.debug("LASTFM","Request success "+current_req.reqid, c, data);
 				throttle = (c == "From Cache") ? 50 : throttleTime;
 				if (data.error) {
-					if (handle_error(current_req, jqxhr)) {
-						current_req.fail({error: data.error, message: format_remote_api_error('lastfm_error', jqxhr)}, current_req.reqid);
+					if (handle_error(current_req, data)) {
+						current_req.fail({error: data.error, message: format_remote_api_error('lastfm_error', data)}, current_req.reqid);
 					} else {
 						throttle = throttleTime;
 					}
@@ -182,9 +196,10 @@ function LastFM() {
 					current_req.success(data, current_req.reqid);
 				}
 			} catch (err) {
-				debug.warn("LASTFM", "Get Request Failed",err);
-				if (handle_error(current_req, err))
+				if (handle_error(current_req, err)) {
+					debug.log("LASTFM", "Calling req.fail in response to", err);
 					current_req.fail({error: 1, message: format_remote_api_error('lastfm_error', err)}, current_req.reqid);
+				}
 
 				throttle = throttleTime;
 			}
@@ -192,13 +207,11 @@ function LastFM() {
 		}
 	}
 
-	function handle_error(req, xhr) {
-		debug.error("LASTFM",req,"request error",xhr);
-		if (xhr.responseJSON) {
-			var errorcode = xhr.responseJSON.error;
-			var errortext = xhr.responseJSON.message;
-			debug.error("LASTFM", 'Error Code',errorcode,"Message",errortext);
-			switch (errorcode) {
+	function handle_error(req, data) {
+		debug.warn("LASTFM","Request error "+req.reqid, data, typeof(data));
+		if (data.error) {
+			debug.error("LASTFM", 'Error Code',data.error,"Message",data.message);
+			switch (data.error) {
 				case 4:
 				case 9:
 				case 10:
@@ -211,7 +224,6 @@ function LastFM() {
 
 				case 6:
 					// Track not found
-					debug.warn('LASTFM', errortext);
 					return true;
 					break;
 

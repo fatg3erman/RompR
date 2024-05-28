@@ -35,12 +35,30 @@ var info_lyrics = function() {
 					trackmeta.lyrics.lyrics = '<h3 align=center>'+language.gettext("lyrics_nonefound")+'</h3><p>'+language.gettext("lyrics_nopath")+'</p>';
 					self.doBrowserUpdate();
 				} else {
-					$.post("browser/backends/getLyrics.php", {file: player.status.file, artist: getSearchArtist(), song: trackmeta.name})
-						.done(function(data) {
-							debug.debug("LYRICS",data);
-							trackmeta.lyrics.lyrics = data;
-							self.doBrowserUpdate();
-						});
+					try {
+						fetch(
+							"browser/backends/getLyrics.php",
+							{
+								signal: AbortSignal.timeout(60000),
+								cache: 'no-store',
+								method: 'POST',
+								priority: 'low',
+								body: JSON.stringify({file: player.status.file, artist: getSearchArtist(), song: trackmeta.name})
+							}
+						).then(async response => {
+							if (response.ok) {
+								var data = await response.text();
+								debug.debug("LYRICS",data);
+								trackmeta.lyrics.lyrics = data;
+								self.doBrowserUpdate();
+							} else {
+								debug.trace(medebug, 'Unable to find ALyrics', response);
+							}
+
+						})
+					} catch (err) {
+						debug.trace("LYRICS", "Error trying to find lyrics");
+					}
 				}
 			}
 

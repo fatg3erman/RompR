@@ -494,12 +494,17 @@ var prefs = function() {
 
 		loadPrefs: async function(callback) {
 
-			var tags = await $.ajax({
-				method: 'GET',
-				url: 'includes/loadprefs.php',
-				dataType: 'json',
-				cache: false
-			});
+			var response = await fetch(
+				'includes/loadprefs.php',
+				{
+					signal: AbortSignal.timeout(5000),
+					cache: 'no-store',
+					method: 'GET',
+					priority: 'high',
+				}
+			);
+
+			var tags = await response.json();
 
 			for (var p in tags) {
 				if (prefsInLocalStorage.indexOf(p) > -1) {
@@ -577,7 +582,21 @@ var prefs = function() {
 			}
 			if (Object.keys(prefsToSave).length > 0) {
 				debug.debug("PREFS",'Saving to backend', JSON.stringify(prefsToSave));
-				await $.post('api/saveprefs/', {prefs: JSON.stringify(prefsToSave)});
+				try {
+					await fetch(
+						'api/saveprefs/',
+						{
+							signal: AbortSignal.timeout(5000),
+							body: JSON.stringify(prefsToSave),
+							cache: 'no-store',
+							method: 'POST',
+							priority: 'high',
+						}
+					);
+				} catch (err) {
+					debug.error("PREFS", 'Failed to save prefs!', err);
+					infobar.error('Failed to save preferences to backend');
+				}
 			}
 			if (callback) callback();
 		},
@@ -589,9 +608,23 @@ var prefs = function() {
 				if (typeof(prefs[i]) != 'function') {
 					to_send[i] = v;
 				}
-			})
-			await $.post('api/saveprefs/ui_defaults.php', {prefs: JSON.stringify(to_send)});
-			infobar.notify('Defaults Have Been Saved');
+			});
+			try {
+				await fetch(
+					'api/saveprefs/ui_defaults.php',
+					{
+						signal: AbortSignal.timeout(5000),
+						body: JSON.stringify(to_send),
+						cache: 'no-store',
+						method: 'POST',
+						priority: 'low',
+					}
+				);
+				infobar.notify('Defaults Have Been Saved');
+			} catch (err) {
+				debug.error("PREFS", "Failed to save defaults", err);
+				infobar.error('Failed to save defaults');
+			}
 		},
 
 		togglePref: function(event) {

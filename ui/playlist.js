@@ -256,6 +256,7 @@ var playlist = function() {
 
 			update_queue++;
 			var my_queue_id = update_queue;
+			var list;
 
 			while (my_queue_id > current_queue_request) {
 				debug.trace('PLAYLIST', 'Waiting for outstanding requests to finish');
@@ -272,15 +273,23 @@ var playlist = function() {
 			coverscraper.clearCallbacks();
 			$('.clear_playlist').off(prefs.click_event).makeSpinner();
 			try {
-				var list = await $.ajax({
-					type: "GET",
-					url: "api/tracklist/",
-					cache: false,
-					dataType: "json"
-				});
+				var response = await fetch(
+					'api/tracklist/',
+					{
+						signal: AbortSignal.timeout(60000),
+						cache: 'no-store',
+						method: 'GET',
+						priority: 'high',
+					}
+				);
+				if (response.ok) {
+					list = await response.json();
+				} else {
+					throw new Error(response.status+' '+response.statusText);
+				}
 			} catch (err) {
 				current_queue_request++;
-				debug.error("PLAYLIST","Got notified that an update FAILED");
+				debug.error("PLAYLIST","Got notified that an update FAILED", err);
 				if (update_error === false) {
 					update_error = infobar.permerror(language.gettext("label_playlisterror"));
 				}

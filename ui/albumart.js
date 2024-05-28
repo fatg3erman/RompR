@@ -475,6 +475,7 @@ var imageEditor = function() {
 		},
 
 		search: function() {
+			debug.log("BING", "Searching with offset", offset);
 			bing.image.search(
 				$("#searchphrase").val(),
 				offset,
@@ -499,7 +500,7 @@ var imageEditor = function() {
 						}
 					));
 				});
-				if (data.nextOffset) {
+				if (data.nextOffset && data.nextOffset > offset) {
 					offset = data.nextOffset;
 					$("#searchresultsholder").append('<div id="morebutton" class="fullwidth"><button onclick="imageEditor.search()">'+language.gettext("albumart_showmore")+'</button></div>');
 				}

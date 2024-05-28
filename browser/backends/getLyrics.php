@@ -4,12 +4,14 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 include ("getid3/getid3.php");
 
-$fname = rawurldecode($_POST['file']);
+$r = json_decode(file_get_contents('php://input'), true);
+
+$fname = rawurldecode($r['file']);
 $fname = preg_replace('/local:track:/','',$fname);
 $fname = preg_replace('#file://#','',$fname);
 $fname = 'prefs/MusicFolders/'.$fname;
-$artist = $_POST['artist'];
-$song = $_POST['song'];
+$artist = $r['artist'];
+$song = $r['song'];
 
 $getID3 = new getID3;
 $output = null;

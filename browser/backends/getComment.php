@@ -3,8 +3,8 @@ chdir('../..');
 include ("includes/vars.php");
 include ("includes/functions.php");
 include ("getid3/getid3.php");
-
-$fname = rawurldecode($_POST['file']);
+$s = json_decode(file_get_contents('php://input'), true);
+$fname = rawurldecode($s['file']);
 $fname = preg_replace('/local:track:/','',$fname);
 $fname = preg_replace('#file://#','',$fname);
 $fname = 'prefs/MusicFolders/'.$fname;

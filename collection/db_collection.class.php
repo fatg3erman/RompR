@@ -136,7 +136,7 @@ class db_collection extends collection_base {
 				'isaudiobook' => $obj->isAudiobook
 			);
 			$filedata = array_replace(MPD_FILE_MODEL, $filedata);
-			logger::trace("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
+			logger::debug("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
 			if ($tree === false) {
 				$this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET isSearchResult = 1 WHERE TTindex = ?", $obj->TTindex);
 				$this->check_transaction();

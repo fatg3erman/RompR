@@ -896,6 +896,12 @@ function format_remote_api_error(msg, err) {
 		errormessage += ' ('+err.responseJSON.error.message+')';
 	} else if (err.responseJSON && err.responseJSON.message) {
 		errormessage += ' ('+err.responseJSON.message+')';
+	} else if (err.message) {
+		// For user-created Error objects and conveniently for Last.FM API errors
+		errormessage += ' ('+err.message+')';
+	} else if (err.error) {
+		// This needs to come after message, as Last.FM errors contain error as an error code
+		errormessage += ' ('+err.error+')';
 	}
 	return errormessage;
 }

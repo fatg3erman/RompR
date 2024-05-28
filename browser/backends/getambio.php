@@ -3,52 +3,18 @@ chdir('../..');
 ob_start();
 include ("includes/vars.php");
 include ("includes/functions.php");
+$r = json_decode(file_get_contents('php://input'), true);
 
-if (array_key_exists("url", $_REQUEST)) {
-	$link = get_bio_link($_REQUEST['url']);
-	if ($link !== false) {
-		get_allmusic_page($link);
-	} else {
-		print '<p></p>';
-	}
+
+if (array_key_exists("url", $r)) {
+	get_allmusic_page($r['url']);
 } else {
 	header('HTTP/1.1 400 Bad Request');
 }
 ob_flush();
 
-function get_bio_link($url) {
-	$html = '';
-	$d = new url_downloader(array(
-		'url' => $url,
-		'cache' => 'allmusic'
-	));
-	logger::debug('AMBIO', 'Looking for bio link from', $url);
-	if ($d->get_data_to_file()) {
-		$DOM = new DOMDocument;
-		try {
-			@$DOM->loadHTML($d->get_data());
-		} catch (ValueError $e) {
-			return false;
-		}
-		$els = getElementsByClass($DOM, 'li', 'biography');
-		if (count($els) > 0) {
-			$e = $els[0];
-			$links = $e->GetElementsByTagName('a');
-			for ($i = 0; $i < $links->length; $i++) {
-				$link = $links->item($i)->getAttribute('href');
-				logger::debug("AMBIO", "Found Bio Link",$link);
-			}
-			return 'http://www.allmusic.com'.$link;
-		} else {
-			return false;
-		}
-	} else {
-		return false;
-	}
-}
-
 function get_allmusic_page($url) {
-	logger::debug("AMBIO", "Getting allmusic Page",$url);
+	logger::log("AMBIO", "Getting allmusic Page",$url);
 	$r = '<p></p>';
 	$d = new url_downloader(array(
 		'url' => $url,
@@ -57,9 +23,9 @@ function get_allmusic_page($url) {
 	if ($d->get_data_to_file()) {
 		$DOM = new DOMDocument;
 		@$DOM->loadHTML($d->get_data());
-		$els = getElementsByClass($DOM, 'section', 'biography');
-		foreach ($els as $el) {
-			logger::core("AMBIO", "Found Review Body");
+		$el = $DOM->getElementById('bioHeadline');
+		if ($el !== null) {
+			logger::log("AMBIO", "Found Review Body");
 			if (mb_check_encoding($el->nodeValue, 'UTF-8')) {
 				logger::core('AMBIO', 'String seems to be valid UTF-8');
 				$r = $el->nodeValue;
@@ -67,8 +33,8 @@ function get_allmusic_page($url) {
 				logger::core('AMBIO', 'String IS NOT valid UTF-8');
 				$r = mb_convert_encoding($el->nodeValue, 'UTF-8', mb_detect_encoding($el->nodeValue));
 			}
+			// $r = '<p>'.$r.'</p><p>Biography courtesy of AllMusic</p>';
 		}
-		$r = '<p>'.$r.'</p><p>Biography courtesy of AllMusic</p>';
 	}
 	print preg_replace('/\n/', '</p><p>',$r);
 }

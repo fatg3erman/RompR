@@ -2,7 +2,7 @@
 chdir('../..');
 include ("includes/vars.php");
 logger::mark("SAVEPREFS", "Saving prefs");
-$p = json_decode($_POST['prefs'], true);
+$p = json_decode(file_get_contents('php://input'), true);
 foreach($p as $key => $value) {
 	logger::trace("SAVEPREFS", $key,"=",$value);
 	switch ($key) {

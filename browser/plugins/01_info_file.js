@@ -24,17 +24,31 @@ var info_file = function() {
 			add_comment(layout, parent.playlistinfo.Comment);
 		} else if (prefs.music_directory_albumart != '') {
 			try {
-				data = await $.ajax({
-					type: 'POST',
-					url: "browser/backends/getComment.php",
-					data: {file: player.status.file}
-				});
-				parent.playlistinfo.Comment = data;
-				add_comment(layout, data);
+				debug.debug("COMMENT", "Getting comment for", player.status.file);
+				var response = await fetch(
+					'browser/backends/getComment.php',
+					{
+						signal: AbortSignal.timeout(10000),
+						body: JSON.stringify({file: player.status.file}),
+						cache: 'no-store',
+						method: 'POST',
+						priority: 'low',
+					}
+				);
+				debug.debug("COMMENT", response);
+				if (response.ok) {
+					parent.playlistinfo.Comment = await response.text();
+					debug.log("COMMENT", parent.playlistinfo.Comment);
+					add_comment(layout, parent.playlistinfo.Comment);
+				} else {
+					throw new Error('Balls');
+				}
 			} catch (err) {
+				debug.error("COMMENT", err);
 				parent.playlistinfo.Comment = "NOCOMMENT";
 			}
 		}
+
 		try {
 			if (typeof(fileinfo.albums_spoti) == 'object' && fileinfo.albums_spoti.length > 0) {
 				layout.add_non_flow_box_header({title: language.gettext('label_bythisartist')});
