@@ -69,6 +69,10 @@ var spotify = function() {
 		throttle = (c == "From Cache") ? 50 : rate;
 		debug.debug("SPOTIFY","Request success",c);
 		debug.debug('SPOTIFY', data);
+		if (data.length == 0) {
+			req.fail({error: format_remote_api_error("spotify_error", 'No Data')});
+			return throttle;
+		}
 		try {
 			var root = objFirst(data);
 			if (data[root].next) {

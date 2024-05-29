@@ -11,13 +11,21 @@ var singleArtistRadio = function() {
 
 		getURIs: async function() {
 			try {
-				var t = await $.ajax({
-					url: "radios/api/starRadios.php",
-					type: "POST",
-					contentType: false,
-					data: JSON.stringify({radiomode: mode, radioparam: param}),
-					dataType: 'json'
-				});
+				var response = await fetch(
+					"radios/api/starRadios.php",
+					{
+						signal: AbortSignal.timeout(60000),
+						body: JSON.stringify({radiomode: mode, radioparam: param}),
+						cache: 'no-store',
+						method: 'POST',
+						priority: 'high',
+					}
+				);
+				if (!response.ok) {
+					var t = await response.text();
+					var msg = t ? t : response.status+' '+response.statusText;
+					throw new Error(msg)
+				}
 			} catch (err) {
 				debug.error('STARRADIOS', 'Error getting tracks', err);
 				return false;

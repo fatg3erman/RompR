@@ -28,7 +28,7 @@ class cache_handler extends url_downloader {
 
 	public function get_cache_data() {
 		$retval = '';
-		$header = '';
+		$status = null;
 		if ($this->get_data_to_file()) {
 			// If the download was successful, return the data that was downloaded
 			$retval = $this->get_data();
@@ -36,18 +36,18 @@ class cache_handler extends url_downloader {
 			logger::warn("CACHE HANDLER", "There was an HTTP error");
 			// Else set the HTTP header to the status code returned, or to 500 if none
 			if ($this->get_status() > 0) {
-				$header = $this->get_status().' '.http_status_code_string($this->get_status());
+				$status = $this->get_status();
 			} else {
-				$header = '500 '.http_status_code_string(500);
+				$status = 500;
 			}
-			logger::warn("CACHE HANDLER",$header);
+			logger::warn("CACHE HANDLER", "Status is $status");
 			// Sometimes we do get data returned by APIs even if there was an error
 			// If that data exists, return it else return our standard array('error' => value)
 			if ($this->get_data() != '') {
 				$retval = $this->get_data();
 				logger::core('CACHE HANDLER', $retval);
 			} else {
-				$retval =  json_encode(array('error' => $header));
+				$retval =  json_encode(array('error' => $status." ".http_status_code_string($status)));
 			}
 		}
 		if ($this->options['return_value']) {
@@ -55,8 +55,8 @@ class cache_handler extends url_downloader {
 			return $retval;
 		} else {
 			// ...otherwise we just print it to stdout after first sending the headers
-			if ($header != '') {
-				header('HTTP/1.1 '.$header);
+			if ($status) {
+				http_response_code($status);
 			} else if ($this->from_cache) {
 				header("Pragma: From Cache");
 			} else {

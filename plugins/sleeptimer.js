@@ -122,8 +122,7 @@ var sleepTimer = function() {
 		pollState: async function() {
 			clearTimeout(polltimer);
 			debug.debug('SLEEPTIMER', 'Polling');
-			await sleep_timer_command('api/sleeptimer/?poll=1');
-			sleepTimer.set_poll_timer();
+			sleep_timer_command('api/sleeptimer/?poll=1').then(sleepTimer.set_poll_timer);
 		},
 
 		set_poll_timer: function() {

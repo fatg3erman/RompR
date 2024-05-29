@@ -3,23 +3,26 @@
 chdir ('../..');
 include ("includes/vars.php");
 include ("includes/functions.php");
+$params = json_decode(file_get_contents("php://input"), true);
 prefs::$database = new collection_base();
+// if ($params === null)
+// 	$params = [];
 
-logger::mark("USERSTREAMS", "Doing User Radio Stuff");
+logger::mark("USERSTREAMS", "Doing User Radio Stuff", print_r($params, true));
 if (array_key_exists('populate', $_REQUEST)) {
 	do_radio_header();
-} else if (array_key_exists('remove', $_REQUEST)) {
-	prefs::$database->remove_user_radio_stream($_REQUEST['remove']);
-	header('HTTP/1.1 204 No Content');
-} else if (array_key_exists('order', $_REQUEST)) {
-	prefs::$database->save_radio_order($_REQUEST['order']);
-	header('HTTP/1.1 204 No Content');
-} else if (array_key_exists('addfave', $_REQUEST)) {
-	prefs::$database->add_fave_station($_REQUEST);
-	header('HTTP/1.1 204 No Content');
-} else if (array_key_exists('updatename', $_REQUEST)) {
-	prefs::$database->update_radio_station_name($_REQUEST);
-	header('HTTP/1.1 204 No Content');
+} else if (array_key_exists('remove', $params)) {
+	prefs::$database->remove_user_radio_stream($params['remove']);
+	http_response_code(204);
+} else if (array_key_exists('order', $params)) {
+	prefs::$database->save_radio_order($params['order']);
+	http_response_code(204);
+} else if (array_key_exists('addfave', $params)) {
+	prefs::$database->add_fave_station($params);
+	http_response_code(204);
+} else if (array_key_exists('updatename', $params)) {
+	prefs::$database->update_radio_station_name($params);
+	http_response_code(204);
 }
 
 function do_radio_header() {

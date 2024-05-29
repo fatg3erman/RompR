@@ -252,7 +252,7 @@ function find_executable($prog) {
 
 function sql_init_fail($message) {
 	global $title, $setup_error;
-	header("HTTP/1.1 500 Internal Server Error");
+	http_response_code(500);
 	$setup_error = error_message($message);
 	$title = 'RompЯ encountered an error while checking your '.ucfirst(prefs::get_pref('collection_type')).' database';
 	include('setupscreen.php');
@@ -261,7 +261,7 @@ function sql_init_fail($message) {
 
 function big_bad_fail($message) {
 	global $title, $setup_error;
-	header("HTTP/1.1 500 Internal Server Error");
+	http_response_code(500);
 	$setup_error = error_message($message);
 	$title = 'RompЯ encountered an error while checking your installation';
 	include('setupscreen.php');

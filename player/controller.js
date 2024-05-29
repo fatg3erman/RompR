@@ -119,31 +119,33 @@ function playerController() {
 		}
 	}
 
-	this.get_command_response = async function(list) {
-		var response = await fetch(
-			'api/player/',
-			{
-				signal: AbortSignal.timeout(30000),
-				body: JSON.stringify(list),
-				cache: 'no-store',
-				method: 'POST',
-				priority: 'high',
-			}
-		);
-		if (!response.ok) {
-			debug.error('CONTROLLER', 'Status was not OK', response);
-			throw new Error('Command List Failed');
-		}
-		var s = await response.json();
-		return s;
-	}
-
 	this.do_command_list = async function(list) {
+		var s;
 		debug.debug('PLAYER', 'Command List',list);
 		// Prevent checkProgress and radioManager from doing anything while we're doing things
 		playlist.invalidate();
 		try {
-			var s = await self.get_command_response(list);
+			var response = await fetch(
+				'api/player/',
+				{
+					signal: AbortSignal.timeout(30000),
+					body: JSON.stringify(list),
+					cache: 'no-store',
+					method: 'POST',
+					priority: 'high',
+				}
+			);
+			if (response.ok) {
+				s = await response.json();
+			} else {
+				debug.error('CONTROLLER', 'Status was not OK', response);
+				var t = await response.text();
+				var msg = t ? t : response.status+' '+response.statusText;
+				throw new Error(
+					language.gettext('error_sendingcommands', [prefs.player_backend])+'<br />'+
+					msg
+				);
+			}
 			// Clone the object or we get left with dangling references
 			debug.core('PLAYER', 'Got response for',list,s);
 			let last_state = player.status.state;
@@ -174,7 +176,7 @@ function playerController() {
 			playlist.validate();
 			debug.error('CONTROLLER', 'Command List Failed', err);
 			if (list.length > 0) {
-				infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
+				infobar.error(err);
 			}
 		}
 	}
@@ -366,7 +368,21 @@ function playerController() {
 	// executes.
 	this.toggle_playback_state = async function() {
 		try {
-			var s = await self.get_command_response([]);
+			var response = await fetch(
+				'api/player/',
+				{
+					signal: AbortSignal.timeout(30000),
+					body: JSON.stringify([]),
+					cache: 'no-store',
+					method: 'POST',
+					priority: 'high',
+				}
+			);
+			if (response.ok) {
+				s = await response.json();
+			} else {
+				throw new Error('Failed to read playback state : '+response.status+' '+response.statusText);
+			}
 			debug.trace('CONTROLLER', 'Toggling Playback State From',s.state);
 			player.status.state = s.state;
 			if (s.state == 'play') {
@@ -375,7 +391,8 @@ function playerController() {
 				self.play();
 			}
 		} catch (err) {
-			debug.error('CONTROLLER', 'Failed to read playback state', err);
+			debug.error('CONTROLLER', 'Error toggling playback', err);
+			infobar.error(err);
 		}
 	}
 

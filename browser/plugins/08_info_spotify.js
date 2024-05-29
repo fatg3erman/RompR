@@ -356,8 +356,6 @@ var info_spotify = function() {
 					layout.add_main_image(data.images[0].url);
 				}
 
-				artistobj.tryForAllMusicBio();
-
 				artistmeta.spotify.spotichooser = layout.add_non_flow_box();
 				let holderbox = $('<div>', {class: 'containerbox textunderline'}).appendTo(artistmeta.spotify.spotichooser);
 				holderbox.append($('<div>', {class: 'fixed infoclick clickshowalbums bleft'}).html(language.gettext('label_albumsby')));
@@ -366,6 +364,8 @@ var info_spotify = function() {
 
 				artistmeta.spotify.spotiwidget = layout.add_non_flow_box();
 				artistmeta.spotify.spotiwidget.addClass('fullwidth medium_masonry_holder');
+
+				artistobj.tryForAllMusicBio();
 
 				layout.finish(data.external_urls.spotify, data.name);
 
@@ -566,7 +566,6 @@ var info_spotify = function() {
 						artistmeta.spotify.done_bio = true;
 						debug.debug(medebug,"Getting allmusic bio from",artistmeta.allmusic.link);
 						try {
-
 							fetch(
 								'browser/backends/getambio.php',
 								{
@@ -578,11 +577,12 @@ var info_spotify = function() {
 								}
 							).then(async function(response) {
 								if (response.ok) {
-									debug.log(medebug,"Got Allmusic Bio", response);
+									debug.debug(medebug,"Got Allmusic Bio", response);
 									var data = await response.text();
-									artistmeta.spotify.layout.add_profile(data);
+									// artistmeta.spotify.layout.add_profile(data);
+									artistmeta.spotify.layout.add_non_flow_box(data, artistmeta.spotify.spotichooser);
 								} else {
-									debug.log(medebug, 'Unable to find AllMusic bio', response);
+									debug.trace(medebug, 'Unable to find AllMusic bio', response);
 								}
 							});
 						} catch (err) {

@@ -7,5 +7,5 @@ if (preg_match('/^(\d+\.\d+)/', ROMPR_VERSION, $matches)) {
 		exit(0);
 	}
 }
-header('HTTP/1.1 204 No Content');
+http_response_code(204);
 ?>

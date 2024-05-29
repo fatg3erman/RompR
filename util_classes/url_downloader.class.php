@@ -37,6 +37,7 @@ class url_downloader {
 	private $file;
 	public $from_cache = false;
 	protected $options;
+	private $cookies = [];
 
 	public function __construct($options) {
 		$this->options = array_merge($this->default_options, $options);
@@ -87,6 +88,10 @@ class url_downloader {
 
 			$name = ($header[0]);
 			$this->headerarray[$name] = trim($header[1]);
+			if (preg_match('/^Set-Cookie:\s*([^;]*)/mi', $name, $cookie) == 1) {
+				logger::log('URL_DOWNLOADER', 'Found Cookie', $cookie);
+        		$this->cookies[] = $cookie;
+			}
 			return $len;
 		});
 		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
@@ -174,6 +179,10 @@ class url_downloader {
 
 	public function get_headers() {
 		return $this->headerarray;
+	}
+
+	public function get_cookies() {
+		return $this->cookies;
 	}
 
 	public function get_header($h) {

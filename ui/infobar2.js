@@ -535,28 +535,29 @@ var infobar = function() {
 			// uiHelper.adjustLayout();
 		},
 
-		checkForTrackSpecificImage: async function(info) {
+		checkForTrackSpecificImage: function(info) {
 			// if (info.domain == 'local' && prefs.music_directory_albumart != '') {
 			if (info.ImgKey && (info.usetrackimages == 1 || info.type == 'podcast')) {
-				try {
-					data = await (jqxhr = $.ajax({
+				var data = {
+					file: info.file,
+					unmopfile: info.unmopfile,
+					ImgKey: info.ImgKey,
+					type: info.type
+				};
+				fetch(
+					'utils/checklocalcover.php',
+					{
+						signal: AbortSignal.timeout(60000),
+						body: JSON.stringify(data),
+						cache: 'no-store',
 						method: 'POST',
-						url: 'utils/checklocalcover.php',
-						data: {
-							file: info.file,
-							unmopfile: info.unmopfile,
-							ImgKey: info.ImgKey,
-							type: info.type
-						},
-						dataType: 'json'
-					}));
-					if (data.ImgKey) {
-						debug.log('INFOBAR', 'Setting image to track-specific image returned by plonkington boofar');
-						infobar.albumImage.setSource(data);
+						priority: 'high',
+
 					}
-				} catch (err) {
-					debug.warn('FETTLE', 'Fettling failed', err);
-				}
+				)
+				.then((response) => response.json())
+				.then(data => { if (data.ImgKey) infobar.albumImage.setSource(data) })
+				.catch()
 			}
 		},
 

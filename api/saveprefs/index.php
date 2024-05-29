@@ -23,5 +23,5 @@ foreach($p as $key => $value) {
 }
 prefs::set_pref($p);
 prefs::save();
-header('HTTP/1.1 204 No Content');
+http_response_code(204);
 ?>

@@ -170,8 +170,12 @@ function info_sidebar_layout(options) {
 		return mbbox;
 	}
 
-	this.add_non_flow_box = function(content) {
-		return $('<div>', {class: 'mbbox'}).html(content).appendTo(self.html);
+	this.add_non_flow_box = function(content, before) {
+		if (before) {
+			return $('<div>', {class: 'mbbox'}).html(content).insertBefore(before);
+		} else {
+			return $('<div>', {class: 'mbbox'}).html(content).appendTo(self.html);
+		}
 	}
 
 	this.add_dropdown_box = function(target, cls, name, dropname, title) {

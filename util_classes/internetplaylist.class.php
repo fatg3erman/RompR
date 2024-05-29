@@ -83,7 +83,7 @@ class internetPlaylist {
 
 				case "text/html":
 					logger::debug("RADIO_PLAYLIST", "HTML page returned!");
-					header('HTTP/1.1 404 Not Found');
+					http_response_code(404);
 					exit(0);
 			}
 			logger::trace("RADIO_PLAYLIST", "Playlist Type From Content Type is ".$type);
@@ -162,7 +162,7 @@ class internetPlaylist {
 				return $playlist;
 			} else {
 				logger::warn("RADIO_PLAYLIST", "Could not determine playlist type");
-				header("HTTP/1.1 404 Not Found");
+				http_response_code(404);
 				return false;
 			}
 		}

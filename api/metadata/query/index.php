@@ -46,13 +46,13 @@ switch ($p['action']) {
 
 	default:
 		logger::warn("USERRATINGS", "Unknown Request",$p['action']);
-		header('HTTP/1.1 400 Bad Request');
+		http_response_code(400);
 		break;
 
 }
 if ($returninfo) {
 	print json_encode($returninfo);
 } else {
-	header('HTTP/1.1 204 No Content');
+	http_response_code(204);
 }
 ?>

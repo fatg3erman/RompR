@@ -25,13 +25,13 @@ if (array_key_exists('get_all_backgrounds', $_REQUEST)) {
 		if (isset($_SERVER["CONTENT_LENGTH"])) {
 			if ($_SERVER["CONTENT_LENGTH"] > ((int) ini_get('post_max_size')*1024*1024)) {
 				logger::warn("BACKIMAGE", "Content Length Error");
-				header("HTTP/1.1 400 Bad Request", 'BACKIMAGE');
+				http_response_code(400);
 				ob_flush();
 				exit(0);
 			}
 		}
 		logger::warn("BACKIMAGE", "Some kind of upload error");
-		header("HTTP/1.1 500 Internal Server Error");
+		http_response_code(500);
 		ob_flush();
 		exit(0);
 	}

@@ -528,12 +528,15 @@ function showUpdateWindow() {
 		});
 	} else if (prefs.lastversionchecktime < Date.now() - 604800000) {
 		debug.mark('INIT', 'Doing Upgrade Check');
-		$.ajax({
-			method: 'GET',
-			dataType: 'json',
-			url: 'https://api.github.com/repos/fatg3erman/RompR/releases'
+		fetch('https://api.github.com/repos/fatg3erman/RompR/releases')
+		.then(response => {
+			if (response.ok) {
+				return response.json()
+			} else {
+				throw new Error('Upgrade check failed '+response.status+' '+response.statusText);
+			}
 		})
-		.done(function(data) {
+		.then(data => {
 			debug.debug('INIT', 'Got release data',data);
 			var newest = '1.00';
 			data.forEach(function(v) {
@@ -550,8 +553,9 @@ function showUpdateWindow() {
 				updateRemindLater();
 			}
 		})
-		.fail(function(xhr,status,err) {
-			debug.warn('INIT','Upgrade Check Failed',xhr,status,err);
+		.catch(err => {
+			debug.warn('INIT', err);
+			updateRemindLater();
 		});
 	}
 

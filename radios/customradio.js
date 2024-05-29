@@ -263,16 +263,26 @@ var customRadioManager = function() {
 			}
 			debug.log('CUSTOMRADIO','Saving Station',save_params);
 			try {
-				var s = await $.ajax({
-					type: 'POST',
-					url: 'radios/api/savecustom.php',
-					data: JSON.stringify(save_params),
-					contentType: false
-				});
-				callback.call();
+				var response = await fetch(
+					'radios/api/savecustom.php',
+					{
+						signal: AbortSignal.timeout(5000),
+						cache: 'no-store',
+						method: 'POST',
+						priority: 'high',
+						body: JSON.stringify(save_params)
+					}
+				)
+				if (response.ok) {
+					callback.call();
+				} else {
+					var t = await response.text();
+					msg = t ? t : response.statusText;
+					throw new Error(msg);
+				}
 			} catch (err) {
 				debug.error('CUSTOMRADIO', 'Failed to save station',err);
-				infobar.error(language.gettext('label_general_error'));
+				infobar.error(language.gettext('label_general_error')+'<br>'+err);
 			}
 		}
 
@@ -309,12 +319,16 @@ var customRadioManager = function() {
 
 		this.delete = function() {
 			params.delete = 1;
- 			$.ajax({
-				type: 'POST',
-				url: 'radios/api/savecustom.php',
-				data: JSON.stringify(params),
-				contentType: false
-			});
+			fetch(
+				'radios/api/savecustom.php',
+				{
+					signal: AbortSignal.timeout(5000),
+					cache: 'no-store',
+					method: 'POST',
+					priority: 'high',
+					body: JSON.stringify(params)
+				}
+			);
 			self.remove();
 		}
 
@@ -342,11 +356,22 @@ var customRadioManager = function() {
 		setup: async function() {
 			var sd = new Array();
 			try {
-				sd = await $.ajax({
-					type: 'GET',
-					url: 'radios/api/loadcustom.php',
-					dataType: 'json'
-				});
+				var response = await fetch(
+					'radios/api/loadcustom.php',
+					{
+						signal: AbortSignal.timeout(5000),
+						cache: 'no-store',
+						method: 'GET',
+						priority: 'low'
+					}
+				)
+				if (response.ok) {
+					sd = await response.json();
+				} else {
+					var t = await response.text();
+					msg = t ? t : response.statusText;
+					throw new Error(msg);
+				}
 			} catch (err) {
 				debug.error('CUSTOMRADIO', 'Error loading stations', err);
 			}

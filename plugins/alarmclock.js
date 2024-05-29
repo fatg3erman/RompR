@@ -130,6 +130,25 @@ var alarmclock = function() {
 		dropper.empty().removeClass('alarmdropempty').html(stuff.replace(/\\"/g, '"'));
 	}
 
+	async function post_request(data) {
+		try {
+			var response = await fetch(
+				'api/alarmclock/',
+				{
+					signal: AbortSignal.timeout(5000),
+					body: JSON.stringify(data),
+					method: 'POST',
+					priority: 'low',
+				}
+			);
+			if (!response.ok) {
+				throw new Error(response.status+' '+response.statusText);
+			}
+		} catch (err) {
+			debug.error("ALARMCLOCK", err);
+		}
+	}
+
 	return {
 
 		populate_alarms: async function() {
@@ -355,35 +374,14 @@ var alarmclock = function() {
 
 		},
 
-		post_request: async function(data) {
-			var response = await fetch(
-				'api/alarmclock/',
-				{
-					signal: AbortSignal.timeout(5000),
-					body: JSON.stringify(data),
-					method: 'POST',
-					priority: 'low',
-				}
-			);
-			if (!response.ok) {
-				debug.error('ALARMEDIT', 'Status was not OK', response);
-				throw new Error('Balls');
-			}
-		},
-
-		edit_alarm_time: async function(event) {
+		edit_alarm_time: function(event) {
 			let index = parseInt($(this).attr('rompr_index'));
 			debug.log('ALARMS', 'Edit alarm time', index);
 			alarms[index].Time = $(this).val();
-			try {
-				await alarmclock.post_request(alarms[index]);
-			} catch (err) {
-
-			}
-			alarmclock.populate_alarms();
+			post_request(alarms[index]).then(alarmclock.populate_alarms);
 		},
 
-		close_editor: async function() {
+		close_editor: function() {
 			debug.log('ALARMS', 'Editor Closed');
 			var options = {};
 			editor_popup.find('input.alarmvalue').each(function() {
@@ -404,12 +402,7 @@ var alarmclock = function() {
 				}
 			});
 			options.Days = days.join(',');
-			try {
-				await alarmclock.post_request(options);
-			} catch (err) {
-
-			}
-			alarmclock.populate_alarms();
+			post_request(options).then(alarmclock.populate_alarms);
 		},
 
 		labelclick: function(event) {

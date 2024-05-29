@@ -23,7 +23,7 @@ if (array_key_exists('url', $r)) {
 	rename('prefs/userplaylists/'.$old_name, 'prefs/userplaylists/'.$new_name);
 }
 
-header('HTTP/1.1 204 No Content');
+http_response_code(204);
 
 ?>
 

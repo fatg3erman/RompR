@@ -443,7 +443,6 @@ class poDatabase extends database {
 	}
 
 	public function refreshPodcast($podid) {
-		$this->check_refresh_pid();
 		logger::mark("PODCASTS", "---------------------------------------------------");
 		logger::mark("PODCASTS", "Refreshing podcast",$podid);
 		$result = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, [], "SELECT * FROM Podcasttable WHERE PODindex = ?", $podid);
@@ -525,7 +524,6 @@ class poDatabase extends database {
 		}
 		$this->check_tokeep($podetails, $podid);
 		$this->close_transaction();
-		$this->clear_refresh_pid();
 		return $podid;
 	}
 
@@ -1287,7 +1285,6 @@ class poDatabase extends database {
 	}
 
 	public function check_podcast_refresh() {
-		$this->check_refresh_pid();
 		// Give it 59 seconds backwards grace, as the backend daemon seems to check them a minute late
 		$result = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, array(),
 			"SELECT PODindex FROM Podcasttable WHERE RefreshOption > 0 AND Subscribed = 1 AND NextUpdate <= ?",
@@ -1300,7 +1297,6 @@ class poDatabase extends database {
 				$updated['updated'][] = $retval;
 
 		}
-		$this->clear_refresh_pid();
 		return $updated;
 	}
 
@@ -1390,34 +1386,12 @@ class poDatabase extends database {
 	}
 
 	public function refresh_all_podcasts() {
-		$this->check_refresh_pid();
 		$result = $this->generic_sql_query("SELECT PODindex FROM Podcasttable WHERE Subscribed = 1", false, PDO::FETCH_OBJ);
 		foreach ($result as $obj) {
 			$this->refreshPodcast($obj->PODindex);
 		}
-		$this->clear_refresh_pid();
 		return false;
 	}
-
-	// public function checkListened($title, $album, $artist) {
-	// 	logger::mark("PODCASTS", "Checking Podcast",$album,"for track",$title);
-	// 	$podid = false;
-	// 	$pods = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
-	// 		"SELECT PODindex, PODTrackindex FROM Podcasttable JOIN PodcastTracktable USING (PODindex)
-	// 		WHERE
-	// 		Podcasttable.Title = ? AND
-	// 		PodcastTracktable.Title = ?",
-	// 		$album,
-	// 		$title);
-	// 	foreach ($pods as $pod) {
-	// 		$podid = $pod->PODindex;
-	// 		logger::log("PODCASTS", "Marking",$pod->PODTrackindex,"from",$podid,"as listened");
-	// 		$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex = ?",$pod->PODTrackindex);
-	// 		$this->sql_prepare_query(true, null, null, null, "UPDATE PodBookmarktable SET Bookmark = 0 WHERE PODTrackindex = ? AND Name = ?",$pod->PODTrackindex, 'Resume');
-	// 	}
-	// 	return $podid;
-
-	// }
 
 	public function doPodcastList($subscribed) {
 		$qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM Podcasttable WHERE Subscribed = ".$subscribed." ORDER BY";
@@ -1450,21 +1424,5 @@ class poDatabase extends database {
 
 	}
 
-	private function check_refresh_pid() {
-		// $pid = getmypid();
-		// $rpid = $this->simple_query('Value', 'Statstable', 'Item', 'PodUpPid', null);
-		// if ($rpid === null) {
-		//     header('HTTP/1.1 500 Internal Server Error');
-		//     exit(0);
-		// } else if ($rpid != 0) {
-		//     header('HTTP/1.1 412 Precondition Failed');
-		//     exit(0);
-		// }
-		// $this->set_admin_value('PodUpPid', '.$pid.');
-	}
-
-	private function clear_refresh_pid() {
-		// $this->set_admin_value('PodUpPid', 0);
-	}
 }
 ?>

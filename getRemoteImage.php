@@ -6,7 +6,7 @@ $url = rawurldecode($_REQUEST['url']);
 
 if (!$url) {
 	logger::error("GETREMOTEIMAGE", "Asked to download image but no URL given!");
-	header("HTTP/1.1 404 Not Found");
+	http_response_code(404);
 } else {
 	$outfile = 'prefs/imagecache/'.md5($url);
 	if (!is_file($outfile)) {
@@ -65,7 +65,7 @@ function send_backup_image() {
 				break;
 		}
 	} else {
-		header("HTTP/1.1 404 Not Found");
+		http_response_code(404);
 	}
 }
 

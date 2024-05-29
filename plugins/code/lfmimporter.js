@@ -13,16 +13,25 @@ var lfmImporter = function() {
 	var running = false;
 
 	function getNextChunk() {
-		$.ajax({
-			url: 'plugins/code/lfmimporter.php',
-			type: "POST",
-			data: {action: 'getchunk', offset: offset, limit: limit},
-			dataType: 'json'
+		fetch(
+			'plugins/code/lfmimporter.php',
+			{
+				signal: AbortSignal.timeout(60000),
+				body: JSON.stringify({action: 'getchunk', offset: offset, limit: limit}),
+				cache: 'no-store',
+				method: 'POST',
+				priority: 'low'
+			}
+		)
+		.then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error('Get Chunk Failed '+response.status+' '+response.statusText);
+			}
 		})
-		.done(putTracks)
-		.fail(function() {
-			infobar.error(language.gettext('label_general_error'));
-		});
+		.then(data => { putTracks(data) })
+		.catch(err => { infobar.error(language.gettext('label_general_error'+'<br />'+err)) });
 	}
 
 	function putTracks(data) {
@@ -62,6 +71,10 @@ var lfmImporter = function() {
 	}
 
 	function lfmResponseHandler(data, reqid) {
+		if (alldata.length == 0) {
+			// We got a callback after we were closed. Just ignore it.
+			return;
+		}
 		row = $('#lfmitable').children('tr[name="'+alldata[reqid].TTindex+'"]');
 		if (data && !data.error) {
 			var de = new lfmDataExtractor(data.track);
@@ -121,13 +134,25 @@ var lfmImporter = function() {
 	}
 
 	function getTotalTracks() {
-		$.ajax({
-			url: 'plugins/code/lfmimporter.php',
-			type: "POST",
-			data: {action: 'gettotal'},
-			dataType: 'json'
+
+		fetch(
+			'plugins/code/lfmimporter.php',
+			{
+				signal: AbortSignal.timeout(60000),
+				body: JSON.stringify({action: 'gettotal'}),
+				cache: 'no-store',
+				method: 'POST',
+				priority: 'low'
+			}
+		)
+		.then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error('Get Total Failed '+response.status+' '+response.statusText);
+			}
 		})
-		.done(function(data) {
+		.then(data => {
 			totaltracks = data.total;
 			if (totaltracks > 0) {
 				$("#lfmiprogress").rangechooser({
@@ -142,9 +167,7 @@ var lfmImporter = function() {
 				$('#lfmimunger').append('<div class="textcentre fullwidth"><h3>'+language.gettext('label_lfm_nonew', [new Date(prefs.lfm_importer_last_import * 1000).toLocaleString()])+'</h3></div>');
 			}
 		})
-		.fail(function() {
-			infobar.error(language.gettext('label_general_error'));
-		});
+		.catch(err => { infobar.error(language.gettext('label_general_error'+'<br />'+err)) });
 	}
 
 	return {

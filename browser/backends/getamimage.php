@@ -10,10 +10,10 @@ if (array_key_exists("url", $r)) {
 	if ($link !== false) {
 		print $link;
 	} else {
-		header('HTTP/1.1 400 Bad Request');
+		http_response_code(400);
 	}
 } else {
-	header('HTTP/1.1 500 Internal Server Error');
+	http_response_code(500);
 }
 ob_flush();
 

@@ -415,7 +415,6 @@ var metaHandlers = function() {
 					data: JSON.stringify({action: 'getalbumsasspoti', artist: artist}),
 					dataType: 'json'
 				});
-				debug.log("JOHN", 'Got', data);
 				return data;
 			} catch (err) {
 				return null;

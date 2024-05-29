@@ -2,12 +2,14 @@
 chdir('../..');
 include ("includes/vars.php");
 include ("includes/functions.php");
+$r = json_decode(file_get_contents('php://input'), true);
+
 prefs::$database = new lfm_importer();
 
-switch ($_REQUEST['action']) {
+switch ($r['action']) {
 
 	case "getchunk":
-		$arse = prefs::$database->get_chunk_of_data($_REQUEST['offset'], $_REQUEST['limit']);
+		$arse = prefs::$database->get_chunk_of_data($r['offset'], $r['limit']);
 		logger::trace("LFMIMPORTER", "Got ".count($arse)." rows");
 		if (count($arse) == 0) {
 			logger::log("LFMIMPORTER", "Updating LastFM Import time");

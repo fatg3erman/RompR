@@ -171,21 +171,31 @@ var prefs = function() {
 		prefs.save(deferredPrefs).then(reloadWindow);
 	}
 
-	function transferPlaylist() {
+	async function transferPlaylist() {
 		debug.mark("PREFS","Transferring Playlist from",prefs.currenthost,"to",deferredPrefs.currenthost);
-		$.ajax({
-			type: 'POST',
-			url: 'player/transferplaylist.php',
-			data: JSON.stringify(deferredPrefs)
-		})
-		.done(function() {
-			prefs.save(deferredPrefs).then(reloadWindow);
-		})
-		.fail(function(data) {
-			debug.error("PREFS","Playlist transfer failed",data);
-			infobar.error(language.gettext('error_trfailed')+'<br>'+data.responseText);
+		try {
+			var response = await fetch(
+				'player/transferplaylist.php',
+				{
+					signal: AbortSignal.timeout(120000),
+					cache: 'no-store',
+					method: 'POST',
+					priority: 'high',
+					body: JSON.stringify(deferredPrefs)
+				}
+			)
+			if (response.ok) {
+				prefs.save(deferredPrefs).then(reloadWindow);
+			} else {
+				var t = await response.text();
+				msg = t ? t : response.statusText;
+				throw new Error(msg);
+			}
+		} catch (err) {
+			debug.error("PREFS","Playlist transfer failed",err);
+			infobar.error(language.gettext('error_trfailed')+'<br>'+err);
 			prefs.setPrefs();
-		});
+		}
 	}
 
 	function doTheSave() {
@@ -372,18 +382,16 @@ var prefs = function() {
 		setBackgroundTimer();
 	}
 
-	async function updateCustomBackground() {
+	function updateCustomBackground() {
 		debug.info('PREFS', 'Updating custom background');
 		clearTimeout(backgroundTimer);
-
-		var images = await $.ajax({
-			method: 'GET',
-			url: 'api/userbackgrounds/?get_next_background='+prefs.theme+'&random='+prefs.bgimgparms[prefs.theme].random,
-			dataType: 'json',
-			cache: false
-		});
-
-		set_backimage_urls(images);
+		fetch(
+			'api/userbackgrounds/?get_next_background='+prefs.theme+'&random='+prefs.bgimgparms[prefs.theme].random,
+			{cache: 'no-store', priority: 'low'}
+		)
+		.then((response) => response.json())
+		.then(data => { set_backimage_urls(data) })
+		.catch()
 	}
 
 	function setBackgroundTimer() {
@@ -493,18 +501,27 @@ var prefs = function() {
 		},
 
 		loadPrefs: async function(callback) {
-
-			var response = await fetch(
-				'includes/loadprefs.php',
-				{
-					signal: AbortSignal.timeout(5000),
-					cache: 'no-store',
-					method: 'GET',
-					priority: 'high',
+			var tags = {};
+			try {
+				var response = await fetch(
+					'includes/loadprefs.php',
+					{
+						signal: AbortSignal.timeout(10000),
+						cache: 'no-store',
+						method: 'GET',
+						priority: 'high',
+					}
+				);
+				if (!response.ok) {
+					var t = await response.text();
+					var msg = t ? t : response.status+' '+response.statusText;
+					throw new Error(msg)
 				}
-			);
-
-			var tags = await response.json();
+				tags = await response.json();
+			} catch (err) {
+				debug.error("PREFS", 'Failed to load prefs!', err);
+				infobar.permerror('Failed to load preferences from backend<br />'+err);
+			}
 
 			for (var p in tags) {
 				if (prefsInLocalStorage.indexOf(p) > -1) {
@@ -583,19 +600,24 @@ var prefs = function() {
 			if (Object.keys(prefsToSave).length > 0) {
 				debug.debug("PREFS",'Saving to backend', JSON.stringify(prefsToSave));
 				try {
-					await fetch(
+					var response = await fetch(
 						'api/saveprefs/',
 						{
-							signal: AbortSignal.timeout(5000),
+							signal: AbortSignal.timeout(10000),
 							body: JSON.stringify(prefsToSave),
 							cache: 'no-store',
 							method: 'POST',
 							priority: 'high',
 						}
 					);
+					if (!response.ok) {
+						var t = await response.text();
+						var msg = t ? t : response.status+' '+response.statusText;
+						throw new Error(msg)
+					}
 				} catch (err) {
 					debug.error("PREFS", 'Failed to save prefs!', err);
-					infobar.error('Failed to save preferences to backend');
+					infobar.permerror('Failed to save preferences to backend<br />'+err);
 				}
 			}
 			if (callback) callback();
@@ -943,7 +965,7 @@ var prefs = function() {
 			}
 		},
 
-		removeCurrentBackground: async function() {
+		removeCurrentBackground: function() {
 			var ws = getWindowSize();
 			var to_remove;
 			if (ws.x > ws.y) {
@@ -953,15 +975,7 @@ var prefs = function() {
 				debug.log('PREFS', 'Deleting Portrait Background Image', portraitImage.src);
 				to_remove = portraitImage.src;
 			}
-
-			await $.ajax({
-				method: 'GET',
-				url: 'api/userbackgrounds/?deleteimage='+to_remove.substr(to_remove.indexOf('prefs/')),
-				dataType: 'json',
-				cache: false
-			});
-
-			updateCustomBackground();
+			fetch('api/userbackgrounds/?deleteimage='+to_remove.substr(to_remove.indexOf('prefs/'))).then(updateCustomBackground)
 		},
 
 		clickBindType: function() {
