@@ -70,7 +70,7 @@ function getsmall() {
 		{
 			priority: 'low',
 			cache: 'no-store',
-			signal: AbortSignal.timeout(300000)
+			signal: AbortSignal.timeout(1800000)
 		}
 	)
 	.then(response => {
