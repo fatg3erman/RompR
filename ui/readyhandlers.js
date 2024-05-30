@@ -193,6 +193,18 @@ function set_mouse_touch_flags() {
 		debug.mark('MOUSE', 'Mouse interface is enabled');
 }
 
+function check_version_refresh() {
+	fetch('utils/check_version.php')
+	.then(response => response.text())
+	.then(v => {
+		debug.trace('INIT', 'Backend version is',v,'we are',prefs.backend_version);
+		if (v != prefs.backend_version) {
+			debug.mark('INIT', 'Backend version has changed. Reloading window');
+			window.location.reload();
+		}
+	});
+}
+
 function carry_on_starting() {
 	debug.mark("INIT","Prefs Have Been Loaded");
 	if (typeof(IntersectionObserver) == 'function') {
@@ -236,4 +248,5 @@ function carry_on_starting() {
 		$(this).attr('autocomplete', 'off');
 	});
 	searchManager.setup_categories();
+	sleepHelper.addWakeHelper(check_version_refresh);
 }

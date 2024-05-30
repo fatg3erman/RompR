@@ -96,18 +96,22 @@ var backimagemanager = function() {
 		if ($('#thisbrowseronly').val() == 1) {
 			formData.append('thisbrowseronly', 'on');
 		}
-		var xhr = new XMLHttpRequest();
-		xhr.open("POST", "api/userbackgrounds/");
-		xhr.responseType = "json";
-		xhr.onload = function () {
-			switch (xhr.status) {
+		fetch(
+			"api/userbackgrounds/",
+			{
+				signal: AbortSignal.timeout(1800000),
+				body: formData,
+				cache: 'no-store',
+				method: 'POST',
+				priority: 'low'
+			}
+		)
+		.then(response => {
+			switch (response.status) {
 				case 200:
-					debug.debug("BIMAGE", xhr.response);
-					$('#bguploadspinner').removeClass('spinner').parent().fadeOut('fast');
-					$('#wanglerbumface').html(language.gettext('label_choosefiles'));
+					debug.debug("BGIMAGE", response);
 					if (portCount == 0 && landCount == 0) {
-						// If there wre previously no images we need to call setTheme to prefs starts
-						// showing the new ones. That will call populate;
+						// If there were previously no images we need to call setTheme again
 						prefs.setTheme();
 					} else {
 						// Otherwise just repopuluate, which is smoother for the user.
@@ -116,18 +120,22 @@ var backimagemanager = function() {
 					break;
 
 				case 400:
-					debug.warn("BIMAGE", "FAILED");
-					infobar.error(language.gettext('error_toomanyimages'));
-					// Fall Through
+					throw new Error(language.gettext('error_toomanyimages'));
+					break;
 
 				default:
-					debug.warn("BIMAGE", "FAILED");
-					infobar.error(language.gettext('error_imageupload'));
-					$('#bguploadspinner').removeClass('spinner').parent().fadeOut('fast');
-
+					throw new Error(language.gettext('error_imageupload')+'<br />'+response.statusText);
+					break;
 			}
-		};
-		xhr.send(formData);
+		})
+		.catch(err => {
+			debug.error('BGIMAGE', err);
+			infobar.error(err);
+		})
+		.finally(function() {
+			$('#bguploadspinner').removeClass('spinner').parent().fadeOut('fast');
+			$('#wanglerbumface').html(language.gettext('label_choosefiles'));
+		});
 	}
 
 	function set_thisbrowseronly(t) {

@@ -35,6 +35,7 @@ if (array_key_exists('get_all_backgrounds', $_REQUEST)) {
 		ob_flush();
 		exit(0);
 	}
+	set_time_limit(1800);
 	prefs::$database->upload_backgrounds($_REQUEST['currbackground']);
 }
 
