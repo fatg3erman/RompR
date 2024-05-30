@@ -1,5 +1,5 @@
 <?php
-set_time_limt(1800);
+set_time_limit(1800);
 chdir('..');
 include ("includes/vars.php");
 include ("includes/functions.php");
