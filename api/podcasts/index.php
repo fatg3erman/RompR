@@ -63,11 +63,11 @@ if (array_key_exists('url', $_REQUEST)) {
 
 if ($podid === false) {
 	logger::log('PODCASTS', 'Returning No Content');
-	header('HTTP/1.1 204 No Content');
+	http_response_code(204);
 } else if (is_array($podid)) {
 	if (array_key_exists(0, $podid) && $podid[0] === false) {
 		logger::log('PODCASTS', 'Returning No Content for array return');
-		header('HTTP/1.1 204 No Content');
+		http_response_code(204);
 	} else {
 		logger::debug('PODCASTS', 'Returning podid');
 		header('Content-Type: application/json');
@@ -85,7 +85,7 @@ if ($podid === false) {
 
 
 function handle_error($errno, $errstr, $errfile, $errline) {
-	header('HTTP/1.1 400 Bad Request');
+	http_response_code(400);
 	logger::error("PODCASTS", "Error",$errno,$errstr,"in",$errfile,"at line",$errline);
 	print "Error ".$errstr." in ".$errfile." at line ".$errline;
 	exit(0);

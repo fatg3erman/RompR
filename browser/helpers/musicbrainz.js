@@ -4,32 +4,14 @@ var musicbrainz = function() {
 	var current_req;
 	const THROTTLE_TIME = 1500;
 
-	async function do_Request() {
-		var data, jqxhr, throttle;
-		while (current_req = queue.shift()) {
-			debug.debug("MUSICBRAINZ","New request",current_req);
-			try {
-				data = await (jqxhr = $.ajax({
-					method: 'POST',
-					url: "browser/backends/api_handler.php",
-					data: JSON.stringify(current_req.data),
-					dataType: "json",
-				}));
-				throttle = handle_response(current_req, data, jqxhr);
-			} catch (err) {
-				throttle = handle_error(current_req, err);
-			}
-			await new Promise(t => setTimeout(t, throttle));
-		}
-	}
-
-	function handle_response(req, data, jqxhr) {
-		var c = jqxhr.getResponseHeader('Pragma');
-		debug.debug("MUSICBRAINZ","Request success",c, data, jqxhr);
+	async function handle_response(req, response) {
+		var c = response.headers.get('Pragma');
+		var data = await response.json();
+		debug.debug("MUSICBRAINZ","Request success",c, data);
 		var throttle = (c == "From Cache") ? 50 : THROTTLE_TIME;
-		if (data === null)
-			data = {error: format_remote_api_error('musicbrainz_error', jqxhr)};
-
+		if (data === null) {
+			data = {error: format_remote_api_error('musicbrainz_error', 'No Data')};
+		}
 		if (req.reqid != '')
 			data.id = req.reqid;
 
@@ -43,12 +25,38 @@ var musicbrainz = function() {
 
 	function handle_error(req, err) {
 		debug.warn("MUSICBRAINZ","Request failed",err);
-		data = {error: format_remote_api_error('musicbrainz_noinfo', err)};
+		data = {error: format_remote_api_error('musicbrainz_error', err)};
 		if (req.reqid != '')
 			data.id = req.reqid;
 
 		req.fail(data);
 		return THROTTLE_TIME;
+	}
+
+	async function do_Request() {
+		var data, throttle, response;
+		while (current_req = queue.shift()) {
+			debug.debug("MUSICBRAINZ","New request",current_req);
+			try {
+				response = await fetch(
+					'browser/backends/api_handler.php',
+					{
+						signal: AbortSignal.timeout(30000),
+						body: JSON.stringify(current_req.data),
+						cache: 'no-store',
+						method: 'POST',
+						priority: 'low',
+					}
+				);
+				if (!response.ok) {
+					throw new Error(response.status+' '+response.statusText);
+				}
+				throttle = handle_response(current_req, response);
+			} catch (err) {
+				throttle = handle_error(current_req, err);
+			}
+			await new Promise(t => setTimeout(t, throttle));
+		}
 	}
 
 	return {

@@ -105,7 +105,7 @@ foreach($params as $p) {
 
 		default:
 			logger::warn("USERRATINGS", "Unknown Request",$p['action']);
-			header('HTTP/1.1 400 Bad Request');
+			http_response_code(400);
 			break;
 	}
 	prefs::$database->check_transaction();

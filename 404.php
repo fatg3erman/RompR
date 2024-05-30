@@ -4,24 +4,26 @@ include("includes/functions.php");
 $base_url = get_base_url();
 $request = $_SERVER['REQUEST_URI'];
 logger::info('REDIRECT','Uri is',$_SERVER['REQUEST_URI']);
+// Send temporary redirects for missing images
 if (preg_match('#prefs/userstreams/.*\.jpg#', $request) || preg_match('#prefs/userstreams/.*\.png#', $request)) {
 	$redirect = $base_url.'/newimages/broadcast.svg';
 	logger::log("404", "Request for missing userstream image. Redirecting to ".$redirect);
-	header("HTTP/1.1 307 Temporary Redirect");
+	http_response_code(307);
 	header("Location: ".$redirect);
 } else if (preg_match('#prefs/podcasts/.*\.jpg#', $request) || preg_match('#prefs/podcasts/.*\.png#', $request)) {
 	$redirect = $base_url.'/newimages/podcast-logo.svg';
 	logger::log("404", "Request for missing podcast image. Redirecting to ".$redirect);
-	header("HTTP/1.1 307 Temporary Redirect");
+	http_response_code(307);
 	header("Location: ".$redirect);
 } else if (preg_match('#themes/.*\.js#', $request)) {
 	logger::trace('404', 'Request for nonexistent theme manager script. This is normal');
+	http_response_code(204);
 } else if (preg_match('#albumart/.*?\.[jpg|png|svg|gif|webp]#', $request)) {
 	$redirect = $base_url.'/newimages/vinyl_record.svg';
-	header("HTTP/1.1 307 Temporary Redirect");
+	http_response_code(307);
 	header("Location: ".$redirect);
 } else {
-	header("HTTP/1.1 404 Not Found");
+	http_response_code(404);
 	?>
 	<html>
 	<head>

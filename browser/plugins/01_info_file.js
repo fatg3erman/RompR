@@ -9,7 +9,7 @@ var info_file = function() {
 		return d.toLocaleDateString(getLocale(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 	}
 
-	function make_file_information(layout, fileinfo, parent, usermeta, name) {
+	async function make_file_information(layout, fileinfo, parent, usermeta, name) {
 
 		if (usermeta)
 			make_usermeta_info(layout, usermeta, parent);
@@ -20,9 +20,33 @@ var info_file = function() {
 		if (fileinfo.beets)
 			make_beets_info(layout, fileinfo.beets);
 
-		if (parent.playlistinfo.type == 'podcast' && parent.playlistinfo.Comment) {
-			layout.add_flow_box_header({title: language.gettext("info_comment").replace(':','')});
-			layout.add_flow_box(parent.playlistinfo.Comment);
+		if (parent.playlistinfo.Comment) {
+			add_comment(layout, parent.playlistinfo.Comment);
+		} else if (prefs.music_directory_albumart != '') {
+			try {
+				debug.debug("COMMENT", "Getting comment for", player.status.file);
+				var response = await fetch(
+					'browser/backends/getComment.php',
+					{
+						signal: AbortSignal.timeout(10000),
+						body: JSON.stringify({file: player.status.file}),
+						cache: 'no-store',
+						method: 'POST',
+						priority: 'low',
+					}
+				);
+				debug.debug("COMMENT", response);
+				if (response.ok) {
+					parent.playlistinfo.Comment = await response.text();
+					debug.log("COMMENT", parent.playlistinfo.Comment);
+					add_comment(layout, parent.playlistinfo.Comment);
+				} else {
+					throw new Error('Balls');
+				}
+			} catch (err) {
+				debug.error("COMMENT", err);
+				parent.playlistinfo.Comment = "NOCOMMENT";
+			}
 		}
 
 		try {
@@ -50,12 +74,24 @@ var info_file = function() {
 
 	}
 
+	function add_comment(layout, poo) {
+		// The value NOCOMMENT prevents us from repeatedly querying the backend
+		// for a comment in the event that there isn't one.
+		if (poo == "NOCOMMENT")
+			return;
+
+		layout.add_flow_box_header({title: language.gettext("info_comment").replace(':','')});
+		layout.add_flow_box(poo);
+	}
+
 	function make_player_info(layout, info, parent) {
+
 		var file = decodeURI(info.file);
 		file = file.replace(/^file:\/\//, '');
 
 		layout.add_flow_box_header({title: language.gettext("info_file")});
-		layout.add_flow_box_wrap_all(file);
+		fl = layout.add_flow_box_wrap_all(file);
+		fl.addClass('monospace');
 
 		if (info.Performer) {
 			if (typeof info.Performer == "object") {
@@ -71,16 +107,15 @@ var info_file = function() {
 			layout.add_flow_box_header({title: language.gettext("info_composers")});
 			layout.add_flow_box(concatenate_artist_names(info.Composer.split(';')));
 		}
-		if (info.Comment) {
+		if (info.Comment && parent.playlistinfo.Comment == '') {
 			if (typeof info.Comment == "object") {
-				info.Comment = info.Comment.join('<br>');
+				info.Comment = info.Comment.join('<br />');
 			}
 			var poo = info.Comment;
 			if (parent.playlistinfo.type == 'stream' && parent.playlistinfo.stream) {
 				poo += '<br />'+parent.playlistinfo.stream;
 			}
-			layout.add_flow_box_header({title: language.gettext("info_comment")});
-			layout.add_flow_box(poo);
+			parent.playlistinfo.Comment = poo;
 		}
 
 		var filetype = get_file_extension(file).toLowerCase();
@@ -139,8 +174,9 @@ var info_file = function() {
 			}
 
 			if (data.comments) {
-				layout.add_flow_box_header({title: language.gettext("info_comment")});
-				layout.add_flow_box(data.comments);
+				parent.playlistinfo.Comment = data.comments;
+			} else {
+				parent.playlistinfo.Comment = "NOCOMMENT";
 			}
 
 		} catch (err) {

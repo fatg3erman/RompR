@@ -1594,6 +1594,11 @@ div.info-box-expand .underline:nth-child(1) {
 	word-break: break-all;
 }
 
+.monospace {
+	font-family: monospace;
+	font-size: 90%;
+}
+
 /*
 =====================================================================
 =

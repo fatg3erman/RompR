@@ -12,16 +12,16 @@ logger::debug("ALARMS", "Using Player ".prefs::currenthost());
 
 if (array_key_exists('enable', $_REQUEST)) {
 	prefs::$database->toggle_alarm($_REQUEST['index'], $_REQUEST['enable']);
-	header('HTTP/1.1 204 No Content');
+	http_response_code(204);
 } else if (array_key_exists('remove', $_REQUEST)) {
 	prefs::$database->remove_alarm($_REQUEST['index']);
-	header('HTTP/1.1 204 No Content');
+	http_response_code(204);
 } else if (array_key_exists('stop', $_REQUEST)) {
 	prefs::$database->stop_alarms_for_player();
-	header('HTTP/1.1 204 No Content');
+	http_response_code(204);
 } else if (array_key_exists('snooze', $_REQUEST)) {
 	prefs::$database->snooze_alarms_for_player($_REQUEST['snooze']);
-	header('HTTP/1.1 204 No Content');
+	http_response_code(204);
 } else if (array_key_exists('populate', $_REQUEST)) {
 	$state = prefs::$database->get_all_alarms();
 	header('Content-Type: application/json');

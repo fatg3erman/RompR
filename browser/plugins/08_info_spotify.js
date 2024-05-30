@@ -267,6 +267,7 @@ var info_spotify = function() {
 				artistmeta.spotify.spotichooser.find('.clickshowalbums').addClass("bsel");
 				artistmeta.spotify.spinnerthing.fadeIn(100).addClass('wafflebanger-moving');
 				if (!artistmeta.spotify.albums) {
+					debug.mark("SPOTIFY PLUGIN", "Getting albums for Artist");
 					spotify.artist.getAlbums(artistmeta.spotify.id, 'album,single', storeAlbums, self.artist.spotifyError, true)
 				} else {
 					doAlbums(artistmeta.spotify.albums);
@@ -285,6 +286,7 @@ var info_spotify = function() {
 			}
 
 			function storeAlbums(data) {
+				debug.mark("SPOTIFY PLUGIN", "Got albums for artist");
 				artistmeta.spotify.albums = data;
 				doAlbums(data);
 			}
@@ -296,7 +298,7 @@ var info_spotify = function() {
 
 			function doAlbums(data) {
 				if (artistmeta.spotify.showing == "albums" && data) {
-					debug.debug(medebug,"Doing Albums For Artist",data);
+					debug.mark(medebug,"Doing Albums For Artist",data);
 					artistmeta.spotify.spotiwidget.removeClass('masonry-initialised');
 					artistmeta.spotify.spotiwidget.spotifyAlbumThing({
 						classes: 'nobwobbler nobalbum spotify_album_masonry selecotron',
@@ -354,8 +356,6 @@ var info_spotify = function() {
 					layout.add_main_image(data.images[0].url);
 				}
 
-				artistobj.tryForAllMusicBio();
-
 				artistmeta.spotify.spotichooser = layout.add_non_flow_box();
 				let holderbox = $('<div>', {class: 'containerbox textunderline'}).appendTo(artistmeta.spotify.spotichooser);
 				holderbox.append($('<div>', {class: 'fixed infoclick clickshowalbums bleft'}).html(language.gettext('label_albumsby')));
@@ -364,6 +364,8 @@ var info_spotify = function() {
 
 				artistmeta.spotify.spotiwidget = layout.add_non_flow_box();
 				artistmeta.spotify.spotiwidget.addClass('fullwidth medium_masonry_holder');
+
+				artistobj.tryForAllMusicBio();
 
 				layout.finish(data.external_urls.spotify, data.name);
 
@@ -564,10 +566,27 @@ var info_spotify = function() {
 						artistmeta.spotify.done_bio = true;
 						debug.debug(medebug,"Getting allmusic bio from",artistmeta.allmusic.link);
 						try {
-							var data = await $.post('browser/backends/getambio.php', {url: artistmeta.allmusic.link});
-							artistmeta.spotify.layout.add_profile(data);
+							fetch(
+								'browser/backends/getambio.php',
+								{
+									signal: AbortSignal.timeout(60000),
+									cache: 'no-store',
+									method: 'POST',
+									priority: 'low',
+									body: JSON.stringify({url: artistmeta.allmusic.link})
+								}
+							).then(async function(response) {
+								if (response.ok) {
+									debug.debug(medebug,"Got Allmusic Bio", response);
+									var data = await response.text();
+									// artistmeta.spotify.layout.add_profile(data);
+									artistmeta.spotify.layout.add_non_flow_box(data, artistmeta.spotify.spotichooser);
+								} else {
+									debug.trace(medebug, 'Unable to find AllMusic bio', response);
+								}
+							});
 						} catch (err) {
-							debug.warn(medebug,"Didn't Get Allmusic Bio",data);
+							debug.log(medebug,"Didn't Get Allmusic Bio",data);
 						}
 					},
 

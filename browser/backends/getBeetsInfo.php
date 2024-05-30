@@ -9,6 +9,6 @@ $d = new url_downloader(array('url' => $uri));
 if ($d->get_data_to_string()) {
 	print $d->get_data();
 } else {
-	header("HTTP/1.1 404 Not Found");
+	http_response_code(404);
 }
 ?>

@@ -7,7 +7,7 @@ class db_collection extends collection_base {
 		parent::__construct();
 	}
 
-	public function doDbCollection($terms, $domains, $tree) {
+	public function doDbCollection($terms, $domains, $tree, $exact = false) {
 
 		// This can actually be used to search the database for title, album, artist, anything, rating, and tag
 		// But it isn't because we let Mopidy/MPD search for anything they support because otherwise we
@@ -69,7 +69,7 @@ class db_collection extends collection_base {
 		foreach ($searchmap as $t => $d) {
 			if (array_key_exists($t, $terms) && $terms[$t]) {
 				$qstring .= 'AND (';
-				$qstring .= $this->format_for_search($terms[$t],$d, $parameters);
+				$qstring .= $this->format_for_search($terms[$t],$d, $parameters, $exact);
 				// $qstring .= ' OR '.$this->format_for_search2($terms[$t],$d, $parameters);
 				$qstring .= ') ';
 			}
@@ -82,7 +82,7 @@ class db_collection extends collection_base {
 				$t = explode(' ',$tim);
 				foreach ($t as $tom) {
 					foreach ($searchmap as $d) {
-						$bunga[] = $this->format_for_search(array($tom), $d, $parameters);
+						$bunga[] = $this->format_for_search(array($tom), $d, $parameters, $exact);
 						// $bunga[] = $this->format_for_search2(array($tom), $d, $parameters);
 					}
 				}
@@ -131,15 +131,18 @@ class db_collection extends collection_base {
 				'year' => $obj->Year,
 				'Last-Modified' => $obj->LastModified,
 				'Genre' => $obj->Genre,
-				'trackartist' => $obj->Artistname
+				'trackartist' => $obj->Artistname,
+				'album_index' => $obj->Albumindex,
+				'isaudiobook' => $obj->isAudiobook
 			);
 			$filedata = array_replace(MPD_FILE_MODEL, $filedata);
-			logger::trace("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
+			logger::debug("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
 			if ($tree === false) {
 				$this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET isSearchResult = 1 WHERE TTindex = ?", $obj->TTindex);
 				$this->check_transaction();
 			} else if ($tree === true) {
-				// Slightly hacky, tree == true means "don't do a tree but also don't use the database"
+				// Dirty hacky, tree === true means don't do a tree but also don't use the database
+				// and just return an array of filedata arrays
 				$retval[] = $filedata;
 			} else {
 				$tree->newItem($filedata);
@@ -153,27 +156,18 @@ class db_collection extends collection_base {
 
 	}
 
-	private function format_for_search($terms, $s, &$parameters) {
+	private function format_for_search($terms, $s, &$parameters, $exact) {
 		$a = array();
 		$terms = getArray($terms);
 		foreach ($terms as $i => $term) {
-			$a[] = "".$s." LIKE ?";
-			$parameters[] = '% '.trim($term). '%';
-			$a[] = "".$s." LIKE ?";
-			$parameters[] = '%'.trim($term). ' %';
+			if (!$exact) {
+				$a[] = "".$s." LIKE ?";
+				$parameters[] = '% '.trim($term). '%';
+				$a[] = "".$s." LIKE ?";
+				$parameters[] = '%'.trim($term). ' %';
+			}
 			$a[] = "".$s." = ?";
 			$parameters[] = trim($term);
-		}
-		$ret = implode(' OR ',$a);
-		return $ret;
-	}
-
-	private function format_for_search2($terms, $s, &$parameters) {
-		$a = array();
-		$terms = getArray($terms);
-		foreach ($terms as $i => $term) {
-			$a[] = "LOWER(".$s.') = ?';
-			$parameters[] = strtolower(trim($term));
 		}
 		$ret = implode(' OR ',$a);
 		return $ret;

@@ -2,7 +2,7 @@
 chdir('../..');
 include ("includes/vars.php");
 logger::mark("SAVEPREFS", "Saving prefs");
-$p = json_decode($_POST['prefs'], true);
+$p = json_decode(file_get_contents('php://input'), true);
 foreach($p as $key => $value) {
 	logger::trace("SAVEPREFS", $key,"=",$value);
 	switch ($key) {
@@ -23,5 +23,5 @@ foreach($p as $key => $value) {
 }
 prefs::set_pref($p);
 prefs::save();
-header('HTTP/1.1 204 No Content');
+http_response_code(204);
 ?>

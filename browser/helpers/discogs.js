@@ -5,12 +5,13 @@ var discogs = function() {
 	var current_req;
 	const THROTTLE_TIME = 1500;
 
-	function handle_response(req, data, jqxhr) {
-		var c = jqxhr.getResponseHeader('Pragma');
-		debug.debug("DISCOGS","Request success",c, data, jqxhr);
+	async function handle_response(req, response) {
+		var c = response.headers.get('Pragma');
+		var data = await response.json();
+		debug.debug("DISCOGS","Request success",c, data);
 		var throttle = (c == "From Cache") ? 50 : THROTTLE_TIME;
 		if (data === null) {
-			data = {error: format_remote_api_error('discogs_error', jqxhr)};
+			data = {error: format_remote_api_error('discogs_error', 'No Data')};
 		} else if (!data.error) {
 			// info_discogs.js was written to accept jsonp data passed back from $.jsonp
 			// However as Discogs now seem to be refusing to respond to those requests
@@ -41,17 +42,24 @@ var discogs = function() {
 	}
 
 	async function do_Request() {
-		var data, jqxhr, throttle;
+		var data, throttle, response;
 		while (current_req = queue.shift()) {
 			debug.debug("DISCOGS","New request",current_req);
 			try {
-				data = await (jqxhr = $.ajax({
-					method: 'POST',
-					url: "browser/backends/api_handler.php",
-					data: JSON.stringify(current_req.data),
-					dataType: "json",
-				}));
-				throttle = handle_response(current_req, data, jqxhr);
+				response = await fetch(
+					'browser/backends/api_handler.php',
+					{
+						signal: AbortSignal.timeout(30000),
+						body: JSON.stringify(current_req.data),
+						cache: 'no-store',
+						method: 'POST',
+						priority: 'low',
+					}
+				);
+				if (!response.ok) {
+					throw new Error(response.status+' '+response.statusText);
+				}
+				throttle = handle_response(current_req, response);
 			} catch (err) {
 				throttle = handle_error(current_req, err);
 			}

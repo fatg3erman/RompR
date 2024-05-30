@@ -5,7 +5,7 @@ var yourRadioPlugin = {
 			clickRegistry.loadContentIntoTarget({
 				target: $('#yourradiolist'),
 				clickedElement: $('i[name="yourradiolist"]'),
-				uri: 'api/yourradio/?populate'
+				uri: 'api/yourradio//?populate'
 			});
 		}
 	},
@@ -22,36 +22,58 @@ var yourRadioPlugin = {
 				allowdragout: true
 			});
 		}
-		return 'api/yourradio/?populate';
+		return 'api/yourradio//?populate';
 	},
 
-	updateStreamName: async function(streamid, name, uri) {
-		await $.ajax({
-			type: 'POST',
-			data: { updatename: 1, streamid: streamid, name: name, uri: uri },
-			url: "api/yourradio"
-		});
-		yourRadioPlugin.reloadStations();
+	updateStreamName: function(streamid, name, uri) {
+		var data = { updatename: 1, streamid: streamid, name: name, uri: uri };
+		fetch(
+			"api/yourradio/",
+			{
+				signal: AbortSignal.timeout(5000),
+				body: JSON.stringify(data),
+				cache: 'no-store',
+				method: 'POST',
+				priority: 'low'
+			}
+		)
+		.then(yourRadioPlugin.reloadStations)
+		.catch(function(err) { debug.warn('YOURRADIO', 'Failed to update stream name', err) });
 	},
 
-	addFave: async function(data) {
+	addFave: function(data) {
 		data.addfave = 1;
-		await $.ajax({
-			type: 'POST',
-			data: data,
-			url: "api/yourradio/"
-		});
-		yourRadioPlugin.reloadStations();
-		infobar.notify(language.gettext('label_addedradio'));
+		fetch(
+			"api/yourradio/",
+			{
+				signal: AbortSignal.timeout(5000),
+				body: JSON.stringify(data),
+				cache: 'no-store',
+				method: 'POST',
+				priority: 'low'
+			}
+		)
+		.then(function() {
+			yourRadioPlugin.reloadStations();
+			infobar.notify(language.gettext('label_addedradio'));
+		})
+		.catch(function(err) { debug.warn('YOURRADIO', 'Failed to add fave', err) });
 	},
 
-	removeUserStream: async function(name) {
-		await $.ajax({
-			type: 'POST',
-			data: {remove: name},
-			url: "api/yourradio/"
-		});
-		yourRadioPlugin.reloadStations();
+	removeUserStream: function(name) {
+		var data = {remove: name};
+		fetch(
+			"api/yourradio/",
+			{
+				signal: AbortSignal.timeout(5000),
+				body: JSON.stringify(data),
+				cache: 'no-store',
+				method: 'POST',
+				priority: 'low'
+			}
+		)
+		.then(yourRadioPlugin.reloadStations)
+		.catch(function(err) { debug.warn('YOURRADIO', 'Failed to remove stream ', err) });
 	},
 
 	saveRadioOrder: function() {
@@ -60,11 +82,19 @@ var yourRadioPlugin = {
 			radioOrder.push($(this).attr('name'));
 		});
 		debug.log('YOURRADIO', 'Saving radio order',radioOrder);
-		$.ajax({
-				type: 'POST',
-				url: 'api/yourradio/',
-				data: {'order[]': radioOrder}
-		});
+		data = {order: radioOrder};
+		fetch(
+			"api/yourradio/",
+			{
+				signal: AbortSignal.timeout(5000),
+				body: JSON.stringify(data),
+				cache: 'no-store',
+				method: 'POST',
+				priority: 'low'
+			}
+		)
+		.then(yourRadioPlugin.reloadStations)
+		.catch(function(err) { debug.warn('YOURRADIO', 'Failed to save order ', err) });
 	},
 
 	handleDropRadio: function() {

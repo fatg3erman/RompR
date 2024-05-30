@@ -23,8 +23,20 @@ window.debug = (function() {
 		5: 'log',
 		6: 'log',
 		7: 'log',
-		8: 'log',
+		8: 'log'
 	}
+
+	var log_levels = [
+		'off',
+		'error',
+		'warn',
+		'mark',
+		'info',
+		'log',
+		'trace',
+		'debug',
+		'core'
+	];
 
 	function doTheLogging(loglevel, args) {
 		if (!prefs.debug_enabled || loglevel > prefs.debug_enabled) return;
@@ -145,12 +157,19 @@ window.debug = (function() {
 		},
 
 		setLevel: function(l) {
+			var t;
+			if (typeof(l) == 'string') {
+				t = l;
+				l = log_levels.indexOf(t);
+			} else {
+				t = log_levels[l];
+			}
 			if (l == prefs.debug_enabled) {
-				console.log("%cDebugging is already set to Level "+l+". Duh.", 'font-weight:bold;font-size:300%');
+				console.log("%cDebugging is already set to "+t+". Duh.", 'font-weight:bold;font-size:300%');
 				return false;
 			}
 			prefs.save({debug_enabled: l});
-			console.log("%cDebugging set to level "+l+". Aren't you clever?", 'font-weight:bold;font-size:200%');
+			console.log("%cDebugging set to "+t+". Aren't you clever?", 'font-weight:bold;font-size:200%');
 			return true;
 		},
 

@@ -45,7 +45,7 @@ class plsFile {
 			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
-			header('HTTP/1.1 417 Expectation Failed');
+			http_response_code(417);
 			exit(0);
 		}
 	}
@@ -85,7 +85,7 @@ class asxFile {
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if ($xml === false) {
 			logger::warn("RADIO_PLAYLIST", "ERROR could not parse XML from",$url);
-			header('HTTP/1.1 417 Expectation Failed');
+			http_response_code(417);
 			exit(0);
 		}
 		$this->station = ($xml->TITLE != null && $xml->TITLE != '') ? $xml->TITLE : $station;
@@ -103,7 +103,7 @@ class asxFile {
 			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
-			header('HTTP/1.1 417 Expectation Failed');
+			http_response_code(417);
 			exit(0);
 		}
 	}
@@ -143,7 +143,7 @@ class xspfFile {
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if ($xml === false) {
 			logger::warn("RADIO_PLAYLIST", "ERROR could not parse XML from",$url);
-			header('HTTP/1.1 417 Expectation Failed');
+			http_response_code(417);
 			exit(0);
 		}
 		$this->station = $xml->title != null ? $xml->title : $station;
@@ -161,7 +161,7 @@ class xspfFile {
 			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
-			header('HTTP/1.1 417 Expectation Failed');
+			http_response_code(417);
 			exit(0);
 		}
 	}
@@ -253,7 +253,7 @@ class asfFile {
 			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
-			header('HTTP/1.1 417 Expectation Failed');
+			http_response_code(417);
 			exit(0);
 		}
 	}
@@ -281,7 +281,7 @@ class possibleStreamUrl {
 			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
-			header('HTTP/1.1 417 Expectation Failed');
+			http_response_code(417);
 			exit(0);
 		}
 	}

@@ -207,10 +207,12 @@ var info_discogs = function() {
 
 		for (var i in order) {
 			try {
-				let u = layout.add_sidebar_list(language.gettext("discogs_styles"));
-				data[order[i]].data.styles.forEach(function(style) {
-					u.append($('<li>').html(style));
-				});
+				if (data[order[i]].data.styles) {
+					let u = layout.add_sidebar_list(language.gettext("discogs_styles"));
+					data[order[i]].data.styles.forEach(function(style) {
+						u.append($('<li>').html(style));
+					});
+				}
 				break;
 			} catch (err) {
 				debug.trace('DISCOGS', 'No album data for', order[i]);
@@ -230,10 +232,12 @@ var info_discogs = function() {
 		}
 
 		try {
-			let u = layout.add_sidebar_list(language.gettext("discogs_companies"));
-			data.release.data.companies.forEach(function(company) {
-				u.append($('<li>').html(company.entity_type_name+' '+company.name));
-			});
+			if (data.release.data.companies) {
+				let u = layout.add_sidebar_list(language.gettext("discogs_companies"));
+				data.release.data.companies.forEach(function(company) {
+					u.append($('<li>').html(company.entity_type_name+' '+company.name));
+				});
+			}
 		} catch (err) {
 			debug.trace('DISCOGS', 'No album data for release');
 		}

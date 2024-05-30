@@ -8,18 +8,46 @@ var spotify = function() {
 	var collectedobj = null;
 	var pages = 0;
 
+
 	async function do_Request() {
-		var data, jqxhr, throttle;
+		var throttle, response;
 		while (current_req = queue.shift()) {
-			debug.debug("SPOTIFY","Taking next request from queue",current_req);
+			debug.debug("SPOTIFY","New request",current_req);
 			try {
-				data = await (jqxhr = $.ajax({
-					method: 'POST',
-					url: "browser/backends/api_handler.php",
-					data: JSON.stringify(current_req.data),
-					dataType: "json",
-				}));
-				throttle = handle_response(current_req, data, jqxhr);
+				response = await fetch(
+					'browser/backends/api_handler.php',
+					{
+						signal: AbortSignal.timeout(30000),
+						body: JSON.stringify(current_req.data),
+						cache: 'no-store',
+						method: 'POST',
+						priority: 'low',
+					}
+				);
+				if (response.ok) {
+					var data = await response.json();
+					throttle = handle_response(current_req, data, response);
+				} else {
+					switch (response.status) {
+
+						case 401:
+							debug.error("SPOTIFY", "Bad Token", response);
+							break;
+
+						case 403:
+							debug.error('SPOTIFY', "Bad OAuth Request", response);
+							break;
+
+						case 429:
+							debug.info("SPOTIFY","Too Many Requests. Slowing Request Rate", response);
+							rate += 1000;
+							clearTimeout(backofftimer);
+							backofftimer = setTimeout(speedBackUp, 90000);
+							break;
+
+					}
+					throw new Error(response.status+' '+response.statusText);
+				}
 			} catch (err) {
 				throttle = handle_error(current_req, err);
 			}
@@ -33,12 +61,18 @@ var spotify = function() {
 		}
 	}
 
-	function handle_response(req, data, jqxhr) {
-		var c = jqxhr.getResponseHeader('Pragma');
+	// Don't make this async or mess with how it mixes req and current_req
+	// I don't know why but it makes it sometimes not work when there are multi-page results
+	function handle_response(req, data, response) {
 		var d;
+		var c = response.headers.get('Pragma');
 		throttle = (c == "From Cache") ? 50 : rate;
-		debug.debug("SPOTIFY","Request success",c,req,data,jqxhr);
-		debug.log('SPOTIFY', data);
+		debug.debug("SPOTIFY","Request success",c);
+		debug.debug('SPOTIFY', data);
+		if (data.length == 0) {
+			req.fail({error: format_remote_api_error("spotify_error", 'No Data')});
+			return throttle;
+		}
 		try {
 			var root = objFirst(data);
 			if (data[root].next) {
@@ -108,21 +142,13 @@ var spotify = function() {
 			}
 		} catch(err) {
 			debug.warn('SPOTIFY', 'Summit went wrong', err);
-			req.fail({error: language.gettext("spotify_error")});
+			req.fail({error: format_remote_api_error("spotify_error", err)});
 		}
 		return throttle;
 	}
 
 	function handle_error(req, err) {
 		debug.warn("SPOTIFY","Request failed",req,err);
-		if (err.responseJSON) {
-			if (err.responseJSON.error && err.responseJSON.error.status == 429) {
-				debug.info("SPOTIFY","Too Many Requests. Slowing Request Rate");
-				rate += 1000;
-				clearTimeout(backofftimer);
-				backofftimer = setTimeout(speedBackUp, 90000);
-			}
-		}
 		data = {error: format_remote_api_error('spotify_noinfo', err)}
 		if (req.reqid != '') {
 			data.reqid = req.reqid;

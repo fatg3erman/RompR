@@ -27,7 +27,7 @@ var podcasts = function() {
 			doDummyProgressBars();
 			$('[name="podgroupload_'+newTrack.channel+'"]').stopFlasher().removeClass('podgroupload').addClass('podgroupload');
 			if (!success) {
-				downloadQueue.unshift(newTrack);
+				podcasts.loadPodcast(channel);
 			}
 		}
 		downloadRunning = false;

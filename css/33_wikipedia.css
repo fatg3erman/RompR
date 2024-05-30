@@ -295,3 +295,13 @@ table.ambox {
     margin: 1em 10%;
 }
 
+/* This is for AllMusic Biographies */
+span.inlineImage.odd {
+    float: left;
+    margin: 10px 20px 0 0;
+}
+
+span.inlineImage.even {
+    float: right;
+    margin: 10px 0 0 20px;
+}

@@ -33,7 +33,7 @@ $searchfunctions = array(
 	'tryPlayer',
 	'trySoundcloud',
 	'tryLastFMForMBID',
-	// 'trySpotify',
+	'trySpotify',
 	'tryMusicBrainz',
 	'tryLastFM',
 	'tryBing'

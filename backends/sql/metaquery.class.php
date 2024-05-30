@@ -172,11 +172,11 @@ class metaquery extends musiccollection {
 		$this->options['trackbytrack'] = false;
 
 		$collection = new db_collection();
-		$t = $collection->doDbCollection($rawterms, [], true);
+		$t = $collection->doDbCollection($rawterms, [], true, true);
 		foreach ($t as $filedata) {
 			$this->newTrack($filedata);
 		}
-		$this->tracks_as_array();
+		$this->tracks_as_array(true);
 	}
 
 	private function spotifyAlbumId($album) {

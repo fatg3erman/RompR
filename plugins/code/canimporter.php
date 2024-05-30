@@ -16,7 +16,7 @@ if (!in_array('sticker', $commands['command'])) {
 	logger::log('CANIMPORTER', 'Player does not support Sticker Command');
 	$output = array('done' => 1, 'total' => 1, 'message' => 'Stickers not supported by your player');
 	file_put_contents('prefs/canmonitor', json_encode($output));
-	header('HTTP/1.1 204 No Content');
+	http_response_code(204);
 	exit(0);
 }
 
@@ -33,7 +33,7 @@ logger::log('CANIMPORTER', 'There are',$total,'rated tracks');
 if ($total == 0) {
 	$output = array('done' => 1, 'total' => 1, 'message' => 'No Rated Tracks Found');
 	file_put_contents('prefs/canmonitor', json_encode($output));
-	header('HTTP/1.1 204 No Content');
+	http_response_code(204);
 	exit(0);
 }
 

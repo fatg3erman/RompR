@@ -8,7 +8,7 @@ switch ($p['action']) {
 
 	case 'metabackup':
 		prefs::$database->backup_unrecoverable_data();
-		header('HTTP/1.1 204 No Content');
+		print '[]';
 		break;
 
 	case 'getbackupdata':
@@ -17,17 +17,17 @@ switch ($p['action']) {
 
 	case 'backupremove':
 		prefs::$database->removeBackup($p['which']);
-		header('HTTP/1.1 204 No Content');
+		print '[]';
 		break;
 
 	case 'backuprestore':
 		prefs::$database->restoreBackup($p['which']);
-		header('HTTP/1.1 204 No Content');
+		print '[]';
 		break;
 
 	default:
 		logger::warn("USERRATINGS", "Unknown Request",$p['action']);
-		header('HTTP/1.1 400 Bad Request');
+		http_response_code(400);
 		break;
 
 }

@@ -21,9 +21,9 @@ $result = $player->do_smartradio(1);
 
 if ($result) {
 	$player->do_command_list(['play']);
-	header('HTTP/1.1 204 No Content');
+	http_response_code(204);
 } else {
-	header('HTTP/1.1 500 Internal Server Error');
+	http_response_code(500);
 }
 $player->close_mpd_connection();
 

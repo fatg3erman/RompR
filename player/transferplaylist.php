@@ -72,11 +72,11 @@ if ($target_player->is_connected()) {
 	$target_player->close_mpd_connection();
 } else {
 	logger::warn('TRANSFER', 'Could not connect to new player',$json['currenthost']);
-	header('HTTP/1.1 500 Internal Server Error');
+	http_response_code(500);
 	print 'Could not connect to Player '.$json['currenthost'];
 	exit(0);
 }
 
-header('HTTP/1.1 204 No Content');
+http_response_code(204);
 
 ?>

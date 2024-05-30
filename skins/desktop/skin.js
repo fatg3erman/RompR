@@ -106,7 +106,7 @@ var layoutProcessor = function() {
 
 		playlistControlHotKey: function(button) {
 			if (!$("#playlistbuttons").is(':visible')) {
-				togglePlaylistButtons()
+				$('i[name="playlistbuttons]').click();
 			}
 			$("#"+button).trigger(prefs.click_event);
 		},

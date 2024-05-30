@@ -3,53 +3,59 @@ chdir('../..');
 ob_start();
 include ("includes/vars.php");
 include ("includes/functions.php");
+$r = json_decode(file_get_contents('php://input'), true);
 
-if (array_key_exists("url", $_REQUEST)) {
-	$link = get_bio_link($_REQUEST['url']);
-	if ($link !== false) {
-		get_allmusic_page($link);
+if (is_array($r) && array_key_exists("url", $r)) {
+	$retval = scrape_allmusic($r['url']);
+	// get_allmusic_page($r['url']);
+	if ($retval === null) {
+		http_response_code(404);
 	} else {
-		print '<p></p>';
+		print $retval;
+		print '<p>Biography courtesy of AllMusic</p>';
 	}
 } else {
-	header('HTTP/1.1 400 Bad Request');
+	http_response_code(400);
 }
 ob_flush();
 
-function get_bio_link($url) {
-	$html = '';
+function scrape_allmusic($url) {
+	// Pull the initial page then use the referer and cookies from that
+	// response to pull the full bio via a mocked-up ajax request
+	logger::log("AMBIO", "Getting allmusic Page",$url);
+	$r = null;
 	$d = new url_downloader(array(
 		'url' => $url,
-		'cache' => 'allmusic'
+		'cache' => false
 	));
-	logger::debug('AMBIO', 'Looking for bio link from', $url);
-	if ($d->get_data_to_file()) {
-		$DOM = new DOMDocument;
-		try {
-			@$DOM->loadHTML($d->get_data());
-		} catch (ValueError $e) {
-			return false;
+	if ($d->get_data_to_string()) {
+		$new_url = $url.'/biographyAjax';
+		$headers = ['Referer: '.$url];
+		foreach ($d->get_cookies() as $c) {
+			$headers[] = 'Cookie: '.$c;
 		}
-		$els = getElementsByClass($DOM, 'li', 'biography');
-		if (count($els) > 0) {
-			$e = $els[0];
-			$links = $e->GetElementsByTagName('a');
-			for ($i = 0; $i < $links->length; $i++) {
-				$link = $links->item($i)->getAttribute('href');
-				logger::debug("AMBIO", "Found Bio Link",$link);
-			}
-			return 'http://www.allmusic.com'.$link;
+		$nd = new url_downloader(array(
+			'url' => $new_url,
+			'header' => $headers
+		));
+		if ($nd->get_data_to_string()) {
+			$r = $nd->get_data();
+			$r = preg_replace('/data-src/', 'src', $r);
+			$r = preg_replace('/<a href.+?>(.+?)<\/a>/s', '$1', $r);
 		} else {
-			return false;
+			logger::log('AMBIO', 'biographyAjax failed', $nd->get_status());
 		}
 	} else {
-		return false;
+		logger::log('AMBIO', 'Initial download failed');
 	}
+	return $r;
 }
 
+// This is the old one, that permits us to cache the responses but only
+// gives us a one-liner.
 function get_allmusic_page($url) {
-	logger::debug("AMBIO", "Getting allmusic Page",$url);
-	$r = '<p></p>';
+	logger::log("AMBIO", "Getting allmusic Page",$url);
+	$r = null;
 	$d = new url_downloader(array(
 		'url' => $url,
 		'cache' => 'allmusic'
@@ -57,20 +63,20 @@ function get_allmusic_page($url) {
 	if ($d->get_data_to_file()) {
 		$DOM = new DOMDocument;
 		@$DOM->loadHTML($d->get_data());
-		$els = getElementsByClass($DOM, 'section', 'biography');
-		foreach ($els as $el) {
-			logger::core("AMBIO", "Found Review Body");
+		$el = $DOM->getElementById('bioHeadline');
+		if ($el !== null) {
+			logger::log("AMBIO", "Found Review Body");
 			if (mb_check_encoding($el->nodeValue, 'UTF-8')) {
 				logger::core('AMBIO', 'String seems to be valid UTF-8');
 				$r = $el->nodeValue;
 			} else {
 				logger::core('AMBIO', 'String IS NOT valid UTF-8');
 				$r = mb_convert_encoding($el->nodeValue, 'UTF-8', mb_detect_encoding($el->nodeValue));
+				$r = preg_replace('/\n/', '</p><p>',$r);
 			}
 		}
-		$r = '<p>'.$r.'</p><p>Biography courtesy of AllMusic</p>';
 	}
-	print preg_replace('/\n/', '</p><p>',$r);
+	return '<p>'.$r.'</p>';
 }
 
 function getElementsByClass(&$parentNode, $tagName, $className) {

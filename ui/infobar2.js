@@ -11,6 +11,7 @@ var infobar = function() {
 	var biggerizing = false;
 	var current_progress = 0;
 	var current_duration = 0;
+	var notifying_addtracks = false;
 
 	var skip_inc_timer;
 	var skip_amount;
@@ -534,28 +535,29 @@ var infobar = function() {
 			// uiHelper.adjustLayout();
 		},
 
-		checkForTrackSpecificImage: async function(info) {
+		checkForTrackSpecificImage: function(info) {
 			// if (info.domain == 'local' && prefs.music_directory_albumart != '') {
 			if (info.ImgKey && (info.usetrackimages == 1 || info.type == 'podcast')) {
-				try {
-					data = await (jqxhr = $.ajax({
+				var data = {
+					file: info.file,
+					unmopfile: info.unmopfile,
+					ImgKey: info.ImgKey,
+					type: info.type
+				};
+				fetch(
+					'utils/checklocalcover.php',
+					{
+						signal: AbortSignal.timeout(60000),
+						body: JSON.stringify(data),
+						cache: 'no-store',
 						method: 'POST',
-						url: 'utils/checklocalcover.php',
-						data: {
-							file: info.file,
-							unmopfile: info.unmopfile,
-							ImgKey: info.ImgKey,
-							type: info.type
-						},
-						dataType: 'json'
-					}));
-					if (data.ImgKey) {
-						debug.log('INFOBAR', 'Setting image to track-specific image returned by plonkington boofar');
-						infobar.albumImage.setSource(data);
+						priority: 'high',
+
 					}
-				} catch (err) {
-					debug.warn('FETTLE', 'Fettling failed', err);
-				}
+				)
+				.then((response) => response.json())
+				.then(data => { if (data.ImgKey) infobar.albumImage.setSource(data) })
+				.catch()
 			}
 		},
 
@@ -584,6 +586,22 @@ var infobar = function() {
 			if (player.controller.volume(volume)) {
 				$("#volume").volumeControl("displayVolume", volume);
 				prefs.save({volume: parseInt(volume.toString())});
+			}
+		},
+
+		notifyaddtracks: function() {
+			if (!notifying_addtracks) {
+				notifying_addtracks = true;
+				var div = doNotification(language.gettext('label_addingtracks'), 'icon-info-circled');
+				setTimeout($.proxy(
+					function(c) {
+						infobar.removenotify(c);
+						notifying_addtracks = false;
+					},
+					div,
+					notifycounter
+					),
+				5000);
 			}
 		},
 

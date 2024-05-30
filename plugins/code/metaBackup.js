@@ -7,16 +7,24 @@ var metaBackup = function() {
 
 	async function do_request(req, success, fail) {
 		try {
-			var data = await $.ajax({
-				url: "api/metadata/backup/",
-				type: "POST",
-				contentType: false,
-				data: JSON.stringify(req),
-				dataType: 'json'
-			});
+			var response = await fetch(
+				"api/metadata/backup/",
+				{
+					signal: AbortSignal.timeout(120000),
+					body: JSON.stringify(req),
+					cache: 'no-store',
+					method: 'POST',
+					priority: 'low',
+				}
+			);
+			if (!response.ok) {
+				throw new Error(response.status+' '+response.statusText);
+			}
+			var data = await response.json();
 			success(data);
 		} catch (err) {
-			fail(data);
+			debug.error('METABACKUP', 'Request Failed', err);
+			fail();
 		}
 	}
 
@@ -67,20 +75,16 @@ var metaBackup = function() {
 
 	function monitorRestore() {
 		clearTimeout(monitortimer);
-		$.ajax({
-			type: "GET",
-			url: 'utils/checkrestoreprogress.php',
-			dataType: 'json'
-		})
-		.done(function(data) {
-			debug.debug("MINITORRESTORE",data);
-			progressDiv.html(data.current);
-			monitortimer = setTimeout(monitorRestore, 500);
-		})
-		.fail(function(data) {
-			debug.warn("MONITORRESTORE","ERROR",data);
-			monitortimer = setTimeout(monitorRestore, 500);
-		});
+		fetch('utils/checkrestoreprogress.php')
+			.then((response) => response.json())
+			.then(data => {
+				progressDiv.html(data.current);
+				monitortimer = setTimeout(monitorRestore, 500);
+			})
+			.catch(err => {
+				debug.warn("MONITORRESTORE","ERROR",err)
+				monitortimer = setTimeout(monitorRestore, 500);
+			});
 	}
 
 	return {

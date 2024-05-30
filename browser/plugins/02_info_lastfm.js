@@ -4,11 +4,11 @@ var info_lastfm = function() {
 	var medebug = "LASTFM PLUGIN";
 
 	function format_lastfm_error(lfmdata, type) {
-		if (lfmdata.errorcode() == 6) {
-			return language.gettext('label_no'+type+'info');
-		} else {
+		// if (lfmdata.errorcode() == 6) {
+		// 	return language.gettext('label_no'+type+'info');
+		// } else {
 			return lfmdata.error();
-		}
+		// }
 	}
 
 	function do_section_header(layout, data) {
@@ -368,19 +368,27 @@ var info_lastfm = function() {
 								},
 								artistmeta
 							);
-							debug.log(medebug,"Getting allmusic bio from",artistmeta.allmusic.link);
-							$.post('browser/backends/getamimage.php', {url: artistmeta.allmusic.link})
-							 .done( function(data) {
-								debug.debug(medebug,"Got Allmusic Image", data);
-								artistmeta.lastfm.layout.add_main_image(data);
-							 })
-							 .fail( function() {
-								debug.log(medebug,"Didn't Get Allmusic Image");
-								// Causes too much discogs traffic
-								// parent.get_random_discogs_artist_image(artistmeta.lastfm.layout);
-							 });
+							debug.log(medebug,"Getting allmusic image from",artistmeta.allmusic.link);
+							fetch(
+								'browser/backends/getamimage.php',
+								{
+									signal: AbortSignal.timeout(60000),
+									cache: 'no-store',
+									method: 'POST',
+									priority: 'low',
+									body: JSON.stringify({url: artistmeta.allmusic.link})
+								}
+							).then(async function(response) {
+								if (response.ok) {
+									debug.log(medebug,"Got Allmusic Image", response);
+									var data = await response.text();
+									artistmeta.lastfm.layout.add_main_image(data);
+								} else {
+									debug.log(medebug, 'Unable to find AllMusic image link', response);
+								}
+							});
 						} catch (err) {
-							debug.log(medebug, 'Unable to find AllMusic image link');
+							debug.log(medebug, 'Unable to find AllMusic image link', err);
 							// Causes too much discogs traffic
 							// parent.get_random_discogs_artist_image(artistmeta.lastfm.layout);
 						}
@@ -532,9 +540,9 @@ var info_lastfm = function() {
 							formatUserTagData(albummeta);
 						} else {
 							var options = { artist: getSearchArtist(), album: self.album.name() };
-							if (albummeta.musicbrainz_id != "" && albummeta.musicbrainz_id != null) {
-								options.mbid = albummeta.musicbrainz_id;
-							}
+							// if (albummeta.musicbrainz_id != "" && albummeta.musicbrainz_id != null) {
+							// 	options.mbid = albummeta.musicbrainz_id;
+							// }
 							lastfm.album.getTags(
 								options,
 								self.album.gotUserTags,
@@ -631,9 +639,10 @@ var info_lastfm = function() {
 							formatUserTagData(trackmeta);
 						} else {
 							var options = { artist: self.artist.name(), track: self.track.name() };
-							if (trackmeta.musicbrainz_id != "" && trackmeta.musicbrainz_id != null) {
-								options.mbid = trackmeta.musicbrainz_id;
-							}
+							// Yeah don't do this it causes Track Not Found errors
+							// if (trackmeta.musicbrainz_id != "" && trackmeta.musicbrainz_id != null) {
+							// 	options.mbid = trackmeta.musicbrainz_id;
+							// }
 							lastfm.track.getTags(
 								options,
 								self.track.gotUserTags,

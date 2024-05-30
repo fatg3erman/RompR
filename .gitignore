@@ -14,3 +14,5 @@ player/mpd/telnet.py
 player/mpd/websocket.py
 iconfactory
 decode.txt
+test.js
+test_A.html

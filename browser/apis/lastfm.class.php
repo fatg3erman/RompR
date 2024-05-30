@@ -209,7 +209,7 @@ class lastfm {
 				'token' => $d['token']
 			));
 		} else {
-			header('HTTP/1.1 500 Internal Server Error');
+			http_response_code(500);
 		}
 	}
 

@@ -312,15 +312,16 @@ class prefs {
 		self::wait_for_unlock();
 
 		if (file_exists($filename)) {
-			$fp = fopen($filename, 'r');
+			$fp = @fopen($filename, 'r');
 			if($fp) {
 				if (flock($fp, LOCK_EX)) {
 					$file = fread($fp, 32768);
 					if ($file === false) {
 						fclose($fp);
-						print '<h1>Fatal Error - Could not read the preferences file</h1>';
-						error_log("ERROR!              : COULD NOT LOAD PREFS");
-						exit(1);
+						print "<h3>Fatal Error - Could not read from the preferences file $filename</h3>";
+						error_log("ERROR! : COULD NOT LOAD PREFS FROM ".$filename);
+						http_response_code(500);
+						exit(0);
 					}
 					flock($fp, LOCK_UN);
 					fclose($fp);
@@ -329,14 +330,16 @@ class prefs {
 
 				} else {
 					fclose($fp);
-					print '<h1>Fatal Error - Could not open the preferences file</h1>';
-					error_log("ERROR!              : COULD NOT GET READ LOCK ON PREFS FILE");
-					exit(1);
+					print "<h3>Fatal Error - Could not open the preferences file $filename</h3>";
+					error_log("ERROR! : COULD NOT GET READ LOCK ON PREFS FILE ".$filename);
+					http_response_code(500);
+					exit(0);
 				}
 			} else {
-				print '<h1>Fatal Error - Could not open the preferences file</h1>';
-				error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
-				exit(1);
+				print "<h3>Fatal Error - Could not open the preferences file $filename</h3>";
+				error_log("ERROR! : COULD NOT GET HANDLE FOR PREFS FILE $filename");
+				http_response_code(500);
+				exit(0);
 			}
 		}
 		return $sp;
@@ -347,8 +350,15 @@ class prefs {
 	// exclusive across different processes.
 	// So we create an additional lock file and we don't read or write to prefs while it exists.
 	private static function wait_for_unlock() {
-		while (file_exists(self::LOCKFILE)) {
+		$t = time();
+		while (file_exists(self::LOCKFILE) && (time() - $t) < 5) {
 			usleep(200000);
+		}
+		if (file_exists(self::LOCKFILE)) {
+			print '<h3>Fatal Error - Timed out waiting for access to prefs</h3>';
+			error_log("ERROR! : PREFS LOCK TIMEOUT");
+			http_response_code(500);
+			exit(0);
 		}
 	}
 
@@ -413,7 +423,7 @@ class prefs {
 
 		self::lock_prefs();
 
-		$fp = fopen($file, 'w');
+		$fp = @fopen($file, 'w');
 		if($fp) {
 			if (flock($fp, LOCK_EX)) {
 				ftruncate($fp, 0);
@@ -421,22 +431,27 @@ class prefs {
 				fflush($fp);
 				fclose($fp);
 				self::unlock();
+				chmod($file, 0600);
 				if ($success === false) {
-					error_log("ERROR!              : COULD NOT SAVE PREFS TO",$file);
-					exit(1);
+					print "<h3>Fatal Error - Could not write to the preferences file $file</h3>";
+					error_log("ERROR! : COULD NOT SAVE PREFS TO ".$file);
+					http_response_code(500);
+					exit(0);
 				}
 			} else {
 				fclose($fp);
-				print '<h1>Fatal Error - Could not write to the preferences file</h1>';
-				error_log("ERROR!              : COULD NOT GET WRITE LOCK ON PREFS FILE",$file);
+				print "<h3>Fatal Error - Could not lock the preferences file $file</h3>";
+				error_log("ERROR! : COULD NOT GET WRITE LOCK ON PREFS FILE ".$file);
 				self::unlock();
-				exit(1);
+				http_response_code(500);
+				exit(0);
 			}
 		} else {
-			print '<h1>Fatal Error - Could not open the preferences file</h1>';
-			error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE",$file);
+			print "<h3>Fatal Error - Could not open the preferences file $file</h3>";
+			error_log("ERROR! : COULD NOT GET HANDLE FOR PREFS FILE ".$file);
 			self::unlock();
-			exit(1);
+			http_response_code(500);
+			exit(0);
 		}
 	}
 

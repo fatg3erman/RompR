@@ -237,7 +237,7 @@ language::add_translations([
 
 	// File Info panel
 	"button_fileinfo" =>					"Info Panel (Collection Information)",
-	"info_file" =>							"File:",
+	"info_file" =>							"File",
 	"info_from_beets" =>					"(from beets server)",
 	"info_format" =>						"Format:",
 	"info_bitrate" =>						"Bitrate:",

@@ -19,7 +19,7 @@ if (
 
 } else {
 	logger::warn('APIHANDLER', 'Bad Request', print_r($params, true));
-	header('HTTP/1.1 400 Bad Request');
+	http_response_code(400);
 }
 
 

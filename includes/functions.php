@@ -46,6 +46,95 @@ function format_podcast_text($d) {
 	return $d;
 }
 
+function update_audio_tags($download_file, $tags, $track_image_file) {
+	if (pathinfo($download_file, PATHINFO_EXTENSION) == 'm4a') {
+		return update_m4a_tags($download_file, $tags, $track_image_file);
+	} else {
+		return update_id3_tags($download_file, $tags, $track_image_file);
+	}
+}
+
+function update_id3_tags($download_file, $tags, $track_image_file) {
+	logger::log('TAGGER', 'Writing ID3 tags to',$download_file);
+	getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
+	$tagwriter = new getid3_writetags();
+
+	// If we have an image, whether track image or podcast image, add that to the tags now
+	if ($track_image_file) {
+		if ($fd = @fopen($track_image_file, 'rb')) {
+				$APICdata = fread($fd, filesize($track_image_file));
+				fclose ($fd);
+			$tags['attached_picture'][0]['data']            = $APICdata;
+			$tags['attached_picture'][0]['picturetypeid']   = 0x03;                 // 'Cover (front)'
+			$tags['attached_picture'][0]['description']     = 'Cover Image';
+			$tags['attached_picture'][0]['mime']            = mime_content_type($track_image_file);
+		} else {
+			logger::warn('TAGGER', 'Could not open image file',$track_image_file,'to embed into audio');
+			@unlink($track_image_file);
+			$track_image_file = null;
+		}
+	}
+
+	$tagwriter->filename       = $download_file;
+	$tagwriter->tagformats = array('id3v2.3');
+	$tagwriter->overwrite_tags = true;
+	$tagwriter->tag_encoding   = 'UTF-8';
+	$tagwriter->remove_other_tags = true;
+	$tagwriter->tag_data = $tags;
+	if ($tagwriter->WriteTags()) {
+		logger::trace('TAGGER', 'Successfully wrote tags');
+		if (!empty($tagwriter->warnings)) {
+			logger::warn('TAGGER', 'There were some warnings'.implode(' ', $tagwriter->warnings));
+		}
+	} else {
+		logger::error('TAGGER', 'Failed to write tags!', implode(' ', $tagwriter->errors));
+	}
+
+	return $track_image_file;
+}
+
+function update_m4a_tags($download_file, $tags, $track_image_file) {
+	$ap = find_executable('AtomicParsley');
+	if ($ap !== false) {
+		logger::log('TAGGER', "Wrting Tags using AtomicParsley");
+		foreach ($tags as &$tag) {
+			$tag[0] = str_replace('"', '\"', $tag[0]);
+		}
+		$cmdline = $ap.'AtomicParsley "'.$download_file
+			.'" --artist "'.$tags['artist'][0]
+			.'" --title "'.$tags['title'][0]
+			.'" --album "'.$tags['album'][0]
+			.'" --albumArtist "'.$tags['albumartist'][0]
+			.'" --comment "'.$tags['comment'][0].'"';
+		if (array_key_exists('track_number', $tags)) {
+			$cmdline .= ' --tracknum '.$tags['track_number'][0];
+		}
+		if ($track_image_file && is_file($track_image_file)) {
+			$cmdline .= ' --artwork "'.$track_image_file.'"';
+		}
+		logger::trace('TAGGER', "cmdline is", $cmdline);
+		$o = [];
+		exec($cmdline, $o);
+		foreach ($o as $l) {
+			logger::trace('TAGGER', $o);
+		}
+		$fname = pathinfo($download_file, PATHINFO_FILENAME);
+		$tlf = dirname($download_file).'/'.$fname.'-temp*.m4a';
+		logger::trace("TAGGER", "Checking for", $tlf);
+		$tmp = glob($tlf);
+		foreach ($tmp as $t) {
+			logger::log("TAGGER", "AtomicParsley left temp file behind", $t);
+			unlink($download_file);
+			rename($t, $download_file);
+			break;
+		}
+	} else {
+		logger::warn("TAGGER", "File is m4a, please install AtomicParsley to write tags");
+	}
+
+	return $track_image_file;
+}
+
 // This is for converting a time parameter in seconds into something like 2 Days 12:34:15
 // Pass it a value in seconds. It does not use date functions since they're timezone aware
 // and will add one to the hours value during BST.
@@ -163,7 +252,7 @@ function find_executable($prog) {
 
 function sql_init_fail($message) {
 	global $title, $setup_error;
-	header("HTTP/1.1 500 Internal Server Error");
+	http_response_code(500);
 	$setup_error = error_message($message);
 	$title = 'RompЯ encountered an error while checking your '.ucfirst(prefs::get_pref('collection_type')).' database';
 	include('setupscreen.php');
@@ -172,7 +261,7 @@ function sql_init_fail($message) {
 
 function big_bad_fail($message) {
 	global $title, $setup_error;
-	header("HTTP/1.1 500 Internal Server Error");
+	http_response_code(500);
 	$setup_error = error_message($message);
 	$title = 'RompЯ encountered an error while checking your installation';
 	include('setupscreen.php');
@@ -205,11 +294,12 @@ function backend_init_fail() {
 }
 
 function backend_version_fail() {
-	global $title, $setup_error;
+	global $title, $setup_error, $version_string;
 	logger::warn('INIT', 'Backend Daemon Version Failure');
 	$title = 'RompЯ Backend Daemon Is Out Of Date';
 	$setup_error = '<h3 align="center">The RompЯ Backend Daemon needs to be restarted before you can access RompЯ. RompR has tried to restart it but it did not work.</h3>'.
-	'<h3 align="center">Please <a href="https://fatg3erman.github.io/RompR/Backend-Dameon" target="_blank">Read The Docs</a></h3>';
+	'<h3 align="center">Please <a href="https://fatg3erman.github.io/RompR/Backend-Dameon" target="_blank">Read The Docs</a></h3>'.
+	'<p>The daemon version currently running is '.prefs::get_pref('backend_version').' and this version of RompЯ is '.$version_string.'</p>';
 	include("setupscreen.php");
 	exit();
 }
@@ -539,6 +629,9 @@ function get_user_file($src, $fname, $tmpname) {
 	logger::info("GETALBUMCOVER", " Uploading ".$src." ".$fname." ".$tmpname);
 	$download_file = "prefs/temp/".$fname;
 	logger::debug("GETALBUMCOVER", "Checking Temp File ".$tmpname);
+	if (!is_file($tmpname)) {
+		logger::warn('GETALBUMCOVER', $tmpname, 'does not exist');
+	}
 	if (move_uploaded_file($tmpname, $download_file)) {
 		logger::log("GETALBUMCOVER", "File ".$src." is valid, and was successfully uploaded.");
 	} else {
@@ -550,8 +643,7 @@ function get_user_file($src, $fname, $tmpname) {
 	return $download_file;
 }
 
-function format_bytes($size, $precision = 1)
-{
+function format_bytes($size, $precision = 1) {
 	$base = log($size, 1024);
 	$suffixes = array('', 'K', 'M', 'G', 'T');
 	return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
@@ -563,20 +655,27 @@ function set_version_string() {
 		// This adds an extra parameter to the version number - the short
 		// hash of the most recent git commit, or a timestamp. It's for use in testing,
 		// to make sure the browser pulls in the latest version of all the files.
+		// Note we use time() / 10 otherwise the version check for the backend can fail
+		// if we don't start it on the same second as we load the page.
+		// Even with this it can fail from time to time.
 		if (prefs::get_pref('live_mode')) {
 			logger::log('INIT', 'Using Live Mode for Version String');
-			$version_string = ROMPR_VERSION.".".time();
+			$version_string = ROMPR_VERSION.".".floor(time() / 10);
 		} else {
-			logger::debug('INIT', 'Dev Mode starting in',getcwd());
+			logger::log('INIT', 'Dev Mode starting in',getcwd());
 			$gitpath = find_executable('git');
 			// DO NOT USE OUTSIDE A git REPO!
+			// Make sure that ownership of the repo doesn't fuck up git
+			// So you'll probably have to make /var/www/.gitconfig which contains
+			// [safe]
+        	// 		directory = /PATH/TO/ROMPR
 			$git_ver = exec($gitpath."/git log --pretty=format:'%h' -n 1 2>&1", $output);
-			logger::core('INIT', print_r($output, true));
 			if (count($output) == 1) {
 				$version_string = ROMPR_VERSION.".".$output[0];
 			} else {
 				logger::warn('INIT', 'Could not work out git thing for dev mode!');
-				$version_string = ROMPR_VERSION.".".time();
+				logger::trace('INIT', print_r($output, true));
+				$version_string = ROMPR_VERSION.".".floor(time() / 100);
 			}
 		}
 		logger::log('INIT', 'Dev mode - version string is '.$version_string);
@@ -968,7 +1067,7 @@ function close_browser_connection() {
 // or if it's an older version, restart it.
 function check_backend_daemon() {
 	global $version_string;
-	logger::mark('INIT', 'Checking backend daemon');
+	logger::mark('INIT', 'Checking backend daemon', $version_string);
 	$pwd = getcwd();
 	$b = $pwd.'/rompr_backend.php';
 	logger::log('INIT', 'Checking for',$b);
@@ -982,7 +1081,11 @@ function check_backend_daemon() {
 	} else {
 		logger::info('INIT', 'Backend Daemon is already running.');
 		if (prefs::get_pref('backend_version') != $version_string || array_key_exists('force_restart', $_REQUEST)) {
-			logger::info('INIT', 'Backend Daemon',prefs::get_pref('backend_version'),'is different from',$version_string,'. Restarting it');
+			if (prefs::get_pref('backend_version') != $version_string) {
+				logger::info('INIT', 'Backend Daemon',prefs::get_pref('backend_version'),'is different from',$version_string,'. Restarting it');
+			} else {
+				logger::info('INIT', 'Force Restart of Backend Daemon was requested');
+			}
 			kill_process(get_pid($b));
 			while (($pid = get_pid('romonitor.php')) !== false) {
 				logger::log('INIT', 'Killing romonitor process', $pid);
@@ -993,12 +1096,14 @@ function check_backend_daemon() {
 				kill_process($pid);
 			}
 			start_process($b);
-		    sleep(3);
+		    sleep(2);
 			if (get_pid($b) === false) {
+				logger::info('INIT', 'Backend failed to start');
 				backend_init_fail();
 			}
 			prefs::load();
 			if (prefs::get_pref('backend_version') != $version_string) {
+				logger::info('INIT', 'Backend version mismatch after restart', prefs::get_pref('backend_version'), $version_string);
 				backend_version_fail();
 			}
 		}

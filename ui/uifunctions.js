@@ -528,12 +528,15 @@ function showUpdateWindow() {
 		});
 	} else if (prefs.lastversionchecktime < Date.now() - 604800000) {
 		debug.mark('INIT', 'Doing Upgrade Check');
-		$.ajax({
-			method: 'GET',
-			dataType: 'json',
-			url: 'https://api.github.com/repos/fatg3erman/RompR/releases'
+		fetch('https://api.github.com/repos/fatg3erman/RompR/releases')
+		.then(response => {
+			if (response.ok) {
+				return response.json()
+			} else {
+				throw new Error('Upgrade check failed '+response.status+' '+response.statusText);
+			}
 		})
-		.done(function(data) {
+		.then(data => {
 			debug.debug('INIT', 'Got release data',data);
 			var newest = '1.00';
 			data.forEach(function(v) {
@@ -550,8 +553,9 @@ function showUpdateWindow() {
 				updateRemindLater();
 			}
 		})
-		.fail(function(xhr,status,err) {
-			debug.warn('INIT','Upgrade Check Failed',xhr,status,err);
+		.catch(err => {
+			debug.warn('INIT', err);
+			updateRemindLater();
 		});
 	}
 
@@ -731,40 +735,34 @@ function doMopidyCollectionOptions() {
 	}
 }
 
-function fileUploadThing(formData, options, success, fail) {
-	if (formData === null) {
-		$.ajax({
-			url: "utils/getalbumcover.php",
-			type: "POST",
-			data: options,
-			cache:false
-		})
-		.done(success)
-		.fail(fail);
-	} else {
-		$.each(options, function(i, v) {
-			formData.append(i, v);
-		})
-		var xhr = new XMLHttpRequest();
-		xhr.open('POST', 'utils/getalbumcover.php');
-		xhr.responseType = "json";
-		xhr.onload = function () {
-			if (xhr.status === 200) {
-				success(xhr.response);
-			} else {
-				fail();
-			}
-		};
-		xhr.send(formData);
-	}
+function fileUploadThing(formData, success, fail) {
+	fetch(
+		"utils/getalbumcover.php",
+		{
+			body: formData,
+			method: 'POST',
+			priority: 'low',
+		}
+	)
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Image upload failed '+response.status+' '+response.statusText);
+		} else {
+			return response.json();
+		}
+	})
+	.then(data => { success(data) })
+	.catch(err => {
+		debug.error ('UPLOAD', err);
+		fail();
+	});
 }
 
 function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 
 	evt.stopPropagation();
 	evt.preventDefault();
-	var options = coverscraper.getImageSearchParams(imgobj);
-	var formData = new FormData();
+	var formData = coverscraper.getImageFormParams(imgobj);
 	if (evt.dataTransfer.types) {
 		for (var i in evt.dataTransfer.types) {
 			type = evt.dataTransfer.types[i];
@@ -781,10 +779,10 @@ function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 						if (src.match(/image\/.*;base64/)) {
 							debug.log("ALBUMART","Looks like Base64");
 							formData.append('base64data', src);
-							fileUploadThing(formData, options, success, fail);
+							fileUploadThing(formData, success, fail);
 						} else {
-							options.source = src;
-							fileUploadThing(null, options, success, fail);
+							formData.append('source', src);
+							fileUploadThing(formData, success, fail);
 						}
 						return false;
 					}
@@ -796,7 +794,7 @@ function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 					if (files[0]) {
 						imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').removeAttr('src');
 						formData.append('ufile', files[0]);
-						fileUploadThing(formData, options, success, fail);
+						fileUploadThing(formData, success, fail);
 						return false;
 					}
 					break;
@@ -817,8 +815,8 @@ function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 			src = u[1];
 			debug.log("ALBUMART","Found possible Google Image Result",src);
 		}
-		options.source = src;
-		fileUploadThing(null, options, success, fail);
+		formData.append('source', src);
+		fileUploadThing(formData, success, fail);
 	}
 	return false;
 }
@@ -896,6 +894,12 @@ function format_remote_api_error(msg, err) {
 		errormessage += ' ('+err.responseJSON.error.message+')';
 	} else if (err.responseJSON && err.responseJSON.message) {
 		errormessage += ' ('+err.responseJSON.message+')';
+	} else if (err.message) {
+		// For user-created Error objects and conveniently for Last.FM API errors
+		errormessage += ' ('+err.message+')';
+	} else if (err.error) {
+		// This needs to come after message, as Last.FM errors contain error as an error code
+		errormessage += ' ('+err.error+')';
 	}
 	return errormessage;
 }

@@ -163,7 +163,7 @@ function update_collection() {
     logger::debug('COLLECTION', 'Checking Nothing Else Is Running...');
 	if (prefs::$database->collectionUpdateRunning(true)) {
 	    logger::warn('COLLECTION', "Something else is running, can't update Collection now");
-		header('HTTP/1.1 500 Internal Server Error');
+		http_response_code(500);
 		print language::gettext('error_nocol');
 		exit(0);
 	}

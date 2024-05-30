@@ -153,8 +153,9 @@ var info_wikipedia = function() {
 					wikipedia.wikiMediaPopup(element, event);
 				} else if (element.hasClass('clickwikilink')) {
 					var link = decodeURIComponent(element.attr('name'));
+					var title = decodeURIComponent(element.attr('title'));
 					debug.debug("WIKI PLUGIN",parent.nowplayingindex,source,"clicked a wiki link",link);
-					self[source].followLink(link);
+					self[source].followLink(link, title);
 				} else if (element.hasClass('clickwikicontents')) {
 					var section = element.attr('name');
 					debug.debug("WIKI PLUGIN",parent.nowplayingindex,source,"clicked a contents link",section);
@@ -214,8 +215,8 @@ var info_wikipedia = function() {
 						}
 					},
 
-					followLink: function(link) {
-						following_layout = new info_html_layout({title: 'Wikipedia...', type: 'artist', source: me});
+					followLink: function(link, title) {
+						following_layout = new info_html_layout({title: title, type: 'artist', source: me});
 						nowplaying.special_update(me, 'artist', following_layout);
 						wikipedia.getWiki(link, self.artist.gotWikiLink, self.wikiGotFailed);
 					},
@@ -270,8 +271,8 @@ var info_wikipedia = function() {
 						}
 					},
 
-					followLink: function(link) {
-						following_layout = new info_html_layout({title: 'Wikipedia...', type: 'album', source: me});
+					followLink: function(link, title) {
+						following_layout = new info_html_layout({title: title, type: 'album', source: me});
 						nowplaying.special_update(me, 'album', following_layout);
 						wikipedia.getWiki(link, self.album.gotWikiLink, self.wikiGotFailed);
 					},
@@ -328,8 +329,8 @@ var info_wikipedia = function() {
 						}
 					},
 
-					followLink: function(link) {
-						following_layout = new info_html_layout({title: 'Wikipedia...', type: 'track', source: me});
+					followLink: function(link, title) {
+						following_layout = new info_html_layout({title: title, type: 'track', source: me});
 						nowplaying.special_update(me, 'track', following_layout);
 						wikipedia.getWiki(link, self.track.gotWikiLink, self.wikiGotFailed);
 					},

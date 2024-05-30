@@ -65,7 +65,7 @@ if (isset($_GET['currenthost'])) {
 		'currenthost' => $_GET['currenthost'],
 		'player_backend' => null
 	]);
-	header("HTTP/1.1 307 Temporary Redirect");
+	http_response_code(307);
    	header("Location: ".get_base_url());
     exit;
 }

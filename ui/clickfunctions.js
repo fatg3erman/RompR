@@ -991,14 +991,11 @@ async function makeTrackMenu(e, element) {
 	var plssub = $('<div>', {class:'submenu invisible submenuspacer'}).appendTo(d);
 
 	// Do this out of band because it can be slow with some backends
-	$.ajax({
-		url: 'player/utils/loadplaylists.php?addtoplaylistmenu=1',
-		type: 'GET',
-		cache: false
-	})
-	.done(function(data) {
+	fetch('player/utils/loadplaylists.php?addtoplaylistmenu=1', {cache: 'no-store', priority: 'high'})
+	.then((response) => response.json())
+	.then(data => {
 		finishPlaylistMenu(data, plssub);
-	})
+	});
 
 	var banana = $(element).parent().next();
 	while (banana.hasClass('podcastresume')) {

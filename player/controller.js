@@ -57,6 +57,30 @@ function checkForUpdateToUnknownStream(streamid, name) {
 	}
 }
 
+function user_playlist_request(data) {
+	try {
+		fetch(
+			'utils/getUserPlaylist.php',
+			{
+				signal: AbortSignal.timeout(5000),
+				cache: 'no-store',
+				method: 'POST',
+				priority: 'high',
+				body: JSON.stringify(data)
+			}
+		)
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(response.status+' '+response.statusText);
+			}
+			self.reloadPlaylists();
+		});
+	} catch (err) {
+		debug.error("CONTROLLER","User playlist request failed", data, err);
+	}
+
+}
+
 function playerController() {
 
 	var self = this;
@@ -96,20 +120,33 @@ function playerController() {
 	}
 
 	this.do_command_list = async function(list) {
+		var s;
 		debug.debug('PLAYER', 'Command List',list);
 		// Prevent checkProgress and radioManager from doing anything while we're doing things
 		playlist.invalidate();
 		try {
-			// Use temp variable in case it errors
-			var s = await $.ajax({
-				type: 'POST',
-				url: 'api/player/',
-				data: JSON.stringify(list),
-				contentType: false,
-				dataType: 'json',
-				timeout: 30000
-			});
-			// Clone the object so this thread can exit
+			var response = await fetch(
+				'api/player/',
+				{
+					signal: AbortSignal.timeout(30000),
+					body: JSON.stringify(list),
+					cache: 'no-store',
+					method: 'POST',
+					priority: 'high',
+				}
+			);
+			if (response.ok) {
+				s = await response.json();
+			} else {
+				debug.error('CONTROLLER', 'Status was not OK', response);
+				var t = await response.text();
+				var msg = t ? t : response.status+' '+response.statusText;
+				throw new Error(
+					language.gettext('error_sendingcommands', [prefs.player_backend])+'<br />'+
+					msg
+				);
+			}
+			// Clone the object or we get left with dangling references
 			debug.core('PLAYER', 'Got response for',list,s);
 			let last_state = player.status.state;
 			player.status = cloneObject(s);
@@ -139,7 +176,7 @@ function playerController() {
 			playlist.validate();
 			debug.error('CONTROLLER', 'Command List Failed', err);
 			if (list.length > 0) {
-				infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
+				infobar.error(err);
 			}
 		}
 	}
@@ -178,11 +215,19 @@ function playerController() {
 				$('i.menu.openmenu.playlist.icon-toggle-closed[name="'+openplaylists[i]+'"]').click();
 			}
 
-			var data = await $.ajax({
-				url: 'player/utils/loadplaylists.php?addtoplaylistmenu=1',
-				type: 'GET',
-				cache: false
-			});
+			var response = await fetch(
+				'player/utils/loadplaylists.php?addtoplaylistmenu=1',
+				{
+					signal: AbortSignal.timeout(5000),
+					cache: 'no-store',
+					method: 'GET',
+					priority: 'low',
+				}
+			);
+			if (!response.ok) {
+				throw new Error(response.status+' '+response.statusText);
+			}
+			var data = await response.json();
 			$('#addtoplaylistmenu').empty();
 			data.forEach(function(p) {
 				var h = $('<div>', {class: "containerbox backhi clickicon menuitem clickaddtoplaylist", name: p.name }).appendTo($('#addtoplaylistmenu'));
@@ -199,26 +244,32 @@ function playerController() {
 		return false;
 	}
 
-	this.loadPlaylistURL = function(name) {
+	this.loadPlaylistURL = async function(name) {
 		if (name == '') {
 			return false;
 		}
-		var data = {url: encodeURIComponent(name)};
-		$.ajax({
-			type: "GET",
-			url: "utils/getUserPlaylist.php",
-			cache: false,
-			data: data,
-			dataType: "xml"
-		})
-		.done(function() {
-			self.reloadPlaylists();
-			self.addTracks([{type: 'remoteplaylist', name: name}], null, null);
-		})
-		.fail(function(data, status) {
+		var data = {url: name};
+		try {
+			var response = await fetch(
+				'utils/getUserPlaylist.php',
+				{
+					signal: AbortSignal.timeout(60000),
+					cache: 'no-store',
+					method: 'POST',
+					priority: 'high',
+					body: JSON.stringify(data)
+				}
+			);
+			if (response.ok) {
+				self.reloadPlaylists();
+				self.addTracks([{type: 'remoteplaylist', name: name}], null, null);
+			} else {
+				throw new Error(response.status+' '+response.statusText);
+			}
+		} catch (err) {
+			debug.error("CONTROLLER","User playlist request failed", data, err);
 			playlist.repopulate();
-			debug.error("MPD","Failed to save user playlist URL");
-		});
+		}
 		return false;
 	}
 
@@ -227,18 +278,11 @@ function playerController() {
 	}
 
 	this.deleteUserPlaylist = function(name) {
-		var data = {del: name};
-		$.ajax({
-			type: "GET",
-			url: "utils/getUserPlaylist.php",
-			cache: false,
-			data: data,
-			dataType: "xml"
-		})
-		.done(self.reloadPlaylists)
-		.fail(function(data, status) {
-			debug.error("MPD","Failed to delete user playlist",name);
-		});
+		user_playlist_request(
+			{
+				del: name,
+			}
+		);
 	}
 
 	this.renamePlaylist = function(name, e, callback) {
@@ -266,22 +310,12 @@ function playerController() {
 	}
 
 	this.doRenameUserPlaylist = function() {
-		var data = {rename: encodeURIComponent(oldplname),
-					newname: encodeURIComponent($("#newplname").val())
-		};
-		$.ajax({
-			type: "GET",
-			url: "utils/getUserPlaylist.php",
-			cache: false,
-			data: data,
-			dataType: "xml"
-		})
-		.done(function(data) {
-			self.reloadPlaylists();
-		})
-		.fail(function(data, status) {
-			debug.error("MPD","Failed to rename user playlist",name);
-		});
+		user_playlist_request(
+			{
+				rename: oldplname,
+				newname: $("#newplname").val()
+			}
+		);
 		return true;
 	}
 
@@ -333,20 +367,32 @@ function playerController() {
 	// of async stuff that'll be triggered again as soon as this command
 	// executes.
 	this.toggle_playback_state = async function() {
-		var s = await $.ajax({
-			type: 'POST',
-			url: 'api/player/',
-			data: JSON.stringify([]),
-			contentType: false,
-			dataType: 'json',
-			timeout: 30000
-		});
-		debug.log('PLAYER', 'Toggling Playback State From',s.state);
-		player.status.state = s.state;
-		if (s.state == 'play') {
-			self.pause();
-		} else {
-			self.play();
+		try {
+			var response = await fetch(
+				'api/player/',
+				{
+					signal: AbortSignal.timeout(30000),
+					body: JSON.stringify([]),
+					cache: 'no-store',
+					method: 'POST',
+					priority: 'high',
+				}
+			);
+			if (response.ok) {
+				s = await response.json();
+			} else {
+				throw new Error('Failed to read playback state : '+response.status+' '+response.statusText);
+			}
+			debug.trace('CONTROLLER', 'Toggling Playback State From',s.state);
+			player.status.state = s.state;
+			if (s.state == 'play') {
+				self.pause();
+			} else {
+				self.play();
+			}
+		} catch (err) {
+			debug.error('CONTROLLER', 'Error toggling playback', err);
+			infobar.error(err);
 		}
 	}
 

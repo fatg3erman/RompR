@@ -11,18 +11,16 @@ var recentlyPlayed = function() {
 				rpl = browser.registerExtraPlugin("rpl", language.gettext("label_recentlyplayed"), recentlyPlayed);
 
 				$("#rplfoldup").append('<div class="noselection fullwidth masonry_general" id="rplmunger"></div>');
-				$.ajax({
-					url: 'plugins/code/recentlyplayed.php',
-					type: "POST"
-				})
-				.done(function(data) {
-					setDraggable('#rplfoldup');
-					recentlyPlayed.doMainLayout(data);
-				})
-				.fail(function() {
-					infobar.error(language.gettext('label_general_error'));
-					rpl.slideToggle('fast');
-				});
+				fetch('plugins/code/recentlyplayed.php')
+					.then((response) => response.text())
+					.then(data => {
+						setDraggable('#rplfoldup');
+						recentlyPlayed.doMainLayout(data);
+					})
+					.catch(err => {
+						infobar.error(language.gettext('label_general_error'));
+						rpl.slideToggle('fast');
+					});
 			} else {
 				browser.goToPlugin("rpl");
 			}
@@ -38,16 +36,14 @@ var recentlyPlayed = function() {
 		},
 
 		reloadAll: function() {
-			$.ajax({
-				url: 'plugins/code/recentlyplayed.php',
-				type: "POST"
-			})
-			.done(function(data) {
-				$('#rplmunger').html(data);
-			})
-			.fail(function(data) {
-				debug.error("RECENTLY PLAYED","Error reloading list",data);
-			});
+			fetch('plugins/code/recentlyplayed.php')
+				.then((response) => response.text())
+				.then(data => {
+					$('#rplmunger').html(data);
+				})
+				.catch(err => {
+					debug.error("RECENTLY PLAYED","Error reloading list",data);
+				});
 		},
 
 		handleClick: function(element, event) {

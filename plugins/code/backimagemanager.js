@@ -226,12 +226,7 @@ var backimagemanager = function() {
 			} else if (element.hasClass('back-image-delete')) {
 				var url = element.parent().parent().children('input.back-filename').first().val();
 				var ori = element.parent().parent().children('input.back-orientation').first().val();
-				$.ajax({
-					method: 'GET',
-					url: 'api/userbackgrounds/?deleteimage='+url,
-					dataType: 'json',
-					cache: false
-				});
+				fetch('api/userbackgrounds/?deleteimage='+url);
 				element.parent().parent().parent().fadeOut('fast');
 				if (ori == 'portrait')
 					portCount--;
@@ -272,12 +267,8 @@ var backimagemanager = function() {
 			} else {
 				$('#bgnotsupported').hide();
 				$('#bguploader').show();
-				var images = await $.ajax({
-					method: 'GET',
-					url: 'api/userbackgrounds/?get_all_backgrounds='+prefs.theme,
-					dataType: 'json',
-					cache: false
-				});
+				var response = await fetch('api/userbackgrounds/?get_all_backgrounds='+prefs.theme);
+				var images = await response.json();
 				set_thisbrowseronly(images.thisbrowseronly);
 				debug.log('BACKIMAGE', images);
 				if (images.images) {

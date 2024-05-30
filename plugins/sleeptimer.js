@@ -8,6 +8,19 @@ var sleepTimer = function() {
 	var boxtimer;
 	var fading = false;
 
+	async function sleep_timer_command(cmd) {
+		let response = await fetch(cmd,
+			{
+				signal: AbortSignal.timeout(5000),
+				cache: 'no-store',
+				method: 'GET',
+				priority: 'low',
+			}
+		);
+		let state = await response.json();
+		sleepTimer.process_state(state);
+	}
+
 	return {
 
 		startInc: function(amount) {
@@ -99,11 +112,9 @@ var sleepTimer = function() {
 			clearTimeout(polltimer);
 			let enable = (prefs.sleepon) ? '1' : '0';
 			if (toggled || prefs.sleepon) {
-				let state = await $.ajax({
-					type: 'GET',
-					url: 'api/sleeptimer/?enable='+enable+'&sleeptime='+prefs.sleeptime.toString()+'&fadetime='+prefs.fadetime.toString()
-				});
-				sleepTimer.process_state(state);
+				await sleep_timer_command(
+					'api/sleeptimer/?enable='+enable+'&sleeptime='+prefs.sleeptime.toString()+'&fadetime='+prefs.fadetime.toString()
+				);
 			}
 			sleepTimer.set_poll_timer();
 		},
@@ -111,12 +122,7 @@ var sleepTimer = function() {
 		pollState: async function() {
 			clearTimeout(polltimer);
 			debug.debug('SLEEPTIMER', 'Polling');
-			let state = await $.ajax({
-				type: 'GET',
-				url: 'api/sleeptimer/?poll=1'
-			});
-			sleepTimer.process_state(state);
-			sleepTimer.set_poll_timer();
+			sleep_timer_command('api/sleeptimer/?poll=1').then(sleepTimer.set_poll_timer);
 		},
 
 		set_poll_timer: function() {

@@ -4,7 +4,7 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 $domain = "en";
 $userdomain = false;
-// $mobile = (array_key_exists('layout', $_POST) && ($_POST['layout'] == 'phone' || $_POST['layout'] == 'tablet')) ? true : false;
+// $mobile = (array_key_exists('layout', $req) && ($req['layout'] == 'phone' || $req['layout'] == 'tablet')) ? true : false;
 
 $mobile = false;
 
@@ -14,27 +14,29 @@ $mobile = false;
 // Remember to switch this off if debugging this script.
 error_reporting(0);
 
-if (array_key_exists("lang", $_POST)) {
-	$domain = $_POST["lang"];
+$req = json_decode(file_get_contents('php://input'), true);
+
+if (array_key_exists("lang", $req)) {
+	$domain = $req["lang"];
 }
 logger::debug("WIKIPEDIA", "Using Language",$domain);
 
-if (array_key_exists("wiki", $_POST)) {
+if (array_key_exists("wiki", $req)) {
 	// An intra-wiki link from a page we're displaying
-	$a = preg_match('#(.*?)/(.*)#', $_POST['wiki'], $matches);
+	$a = preg_match('#(.*?)/(.*)#', $req['wiki'], $matches);
 	send_result(get_wikipedia_page( $matches[2], $matches[1].".wikipedia.org", false ));
 
-} else if (array_key_exists("uri", $_POST)) {
+} else if (array_key_exists("uri", $req)) {
 	// Full URI to get - eg this will be a link found from musicbrainz
-	$uri = $_POST['uri'];
+	$uri = $req['uri'];
 	logger::debug("WIKIPEDIA", "URI request ".$uri);
 	$a = preg_match('#https*://(.*?)/#', $uri, $matches);
 	$xml_response = get_wikipedia_page(basename($uri), $matches[1], true);
 	if ($userdomain == false) {
 		// Found a page, but not in the user's chosen domain
-		if (array_key_exists('term', $_POST)) {
+		if (array_key_exists('term', $req)) {
 			logger::trace("WIKIPEDIA", "Page was retreieved but not in user's chosen language. Checking via a search");
-			$upage = wikipedia_find_exact($_POST['term'], $domain);
+			$upage = wikipedia_find_exact($req['term'], $domain);
 			if ($upage != '') {
 				$xml_response = $upage;
 			}
@@ -42,31 +44,31 @@ if (array_key_exists("wiki", $_POST)) {
 	}
 	send_result($xml_response);
 
-} else if (array_key_exists("artist", $_POST)) {
+} else if (array_key_exists("artist", $req)) {
 	// Search for an artist
-	$xml_response = getArtistWiki($_POST['artist'], $_POST['disambiguation']);
+	$xml_response = getArtistWiki($req['artist'], $req['disambiguation']);
 	if ($xml_response == null) {
-		send_failure($_POST['artist']);
+		send_failure($req['artist']);
 	} else {
 		send_result($xml_response);
 	}
 
-} else if (array_key_exists("album", $_POST)) {
+} else if (array_key_exists("album", $req)) {
 	// Search for an album
-	logger::debug("WIKIPEDIA", "Doing album ".$_POST['album']);
-	$xml_response = getAlbumWiki($_POST['album'], $_POST['albumartist']);
+	logger::debug("WIKIPEDIA", "Doing album ".$req['album']);
+	$xml_response = getAlbumWiki($req['album'], $req['albumartist']);
 	if ($xml_response == null) {
-		send_failure($_POST['album']);
+		send_failure($req['album']);
 	} else {
 		send_result($xml_response);
 	}
 
-} else if (array_key_exists("track", $_POST)) {
+} else if (array_key_exists("track", $req)) {
 	// Search for a track
-	logger::debug("WIKIPEDIA", "Doing track ".$_POST['track']);
-	$xml_response = getTrackWiki($_POST['track'], $_POST['trackartist']);
+	logger::debug("WIKIPEDIA", "Doing track ".$req['track']);
+	$xml_response = getTrackWiki($req['track'], $req['trackartist']);
 	if ($xml_response == null) {
-		send_failure($_POST['track']);
+		send_failure($req['track']);
 	} else {
 		send_result($xml_response);
 	}
@@ -221,6 +223,7 @@ function send_result($xml) {
 }
 
 function send_failure($term) {
+	header('Content-Type: text/xml');
 	$xml = '<?xml version="1.0" encoding="UTF-8"?><api><parse><text xml:space="preserve">';
 	$xml .= htmlspecialchars('<h3 align="center">', ENT_QUOTES).language::gettext("wiki_fail", array($term)).htmlspecialchars('</h3>', ENT_QUOTES);
 	$xml .= '</text></parse>';

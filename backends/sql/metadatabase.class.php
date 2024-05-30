@@ -205,7 +205,7 @@ class metaDatabase extends playlistCollection {
 
 		if ($data['trackartist'] === null || $data['Title'] === null ) {
 			logger::error("SET", "Something is not set");
-			header('HTTP/1.1 400 Bad Request');
+			http_response_code(400);
 			print json_encode(['error' => 'Artist or Title not set']);
 			exit(0);
 		}
@@ -301,7 +301,7 @@ class metaDatabase extends playlistCollection {
 			logger::warn("SET", "Set Command failed");
 			$this->returninfo['error'] = 'TTindex not found';
 			logger::log('SET', $this->returninfo['error']);
-			header('HTTP/1.1 417 Expectation Failed');
+			http_response_code(417);
 		}
 	}
 
@@ -337,7 +337,7 @@ class metaDatabase extends playlistCollection {
 
 		if ($data['trackartist'] === null || $data['Title'] === null ||	$data['attributes'] == null) {
 			logger::error("INC", "Something is not set",$data);
-			header('HTTP/1.1 400 Bad Request');
+			http_response_code(400);
 			print json_encode(array('error' => 'Artist or Title or Attributes not set'));
 			exit(0);
 		}
@@ -483,7 +483,7 @@ class metaDatabase extends playlistCollection {
 		//
 
 		if ($data['trackartist'] === null || $data['Title'] === null) {
-			header('HTTP/1.1 400 Bad Request');
+			http_response_code(400);
 			print json_encode(array('error' => 'Artist or Title not set'));
 			exit(0);
 		}
@@ -502,13 +502,13 @@ class metaDatabase extends playlistCollection {
 				if ($result) {
 					$this->returninfo['metadata'] = $this->get_all_data($ttid);
 				} else {
-					header('HTTP/1.1 417 Expectation Failed');
+					http_response_code(417);
 					$this->returninfo['error'] = 'Removing attributes failed';
 				}
 			}
 		} else {
 			logger::warn("USERRATING", "TTID Not Found");
-			header('HTTP/1.1 417 Expectation Failed');
+			http_response_code(417);
 			$this->returninfo['error'] = 'TTindex not found';
 		}
 	}
@@ -520,7 +520,7 @@ class metaDatabase extends playlistCollection {
 		//
 
 		if ($data['trackartist'] === null || $data['Title'] === null) {
-			header('HTTP/1.1 400 Bad Request');
+			http_response_code(400);
 			print json_encode(array('error' => 'Artist or Title not set'));
 			exit(0);
 		}
@@ -575,7 +575,7 @@ class metaDatabase extends playlistCollection {
 	public function amendalbum($data) {
 		if ($data['album_index'] !== null && $this->amend_album($data['album_index'], $data['albumartist'], $data['year'])) {
 		} else {
-			header('HTTP/1.1 400 Bad Request');
+			http_response_code(400);
 			$this->returninfo['error'] = 'That just did not work';
 		}
 	}
@@ -583,7 +583,7 @@ class metaDatabase extends playlistCollection {
 	public function deletealbum($data) {
 		if ($data['album_index'] !== null && $this->delete_album($data['album_index'])) {
 		} else {
-			header('HTTP/1.1 400 Bad Request');
+			http_response_code(400);
 			$this->returninfo['error'] = 'That just did not work';
 		}
 	}
@@ -591,7 +591,7 @@ class metaDatabase extends playlistCollection {
 	public function setasaudiobook($data) {
 		if ($data['album_index'] !== null && $this->set_as_audiobook($data['album_index'], $data['value'])) {
 		} else {
-			header('HTTP/1.1 400 Bad Request');
+			http_response_code(400);
 			$this->returninfo['error'] = 'That just did not work';
 		}
 	}
@@ -599,7 +599,7 @@ class metaDatabase extends playlistCollection {
 	public function usetrackimages($data) {
 		if ($data['album_index'] !== null && $this->use_trackimages($data['album_index'], $data['value'])) {
 		} else {
-			header('HTTP/1.1 400 Bad Request');
+			http_response_code(400);
 			$this->returninfo['error'] = 'That just did not work';
 		}
 	}
@@ -607,7 +607,7 @@ class metaDatabase extends playlistCollection {
 	public function delete($data) {
 		$ttids = $this->find_item($data, true);
 		if (count($ttids) == 0) {
-			header('HTTP/1.1 400 Bad Request');
+			http_response_code(400);
 			$this->returninfo['error'] = 'TTindex not found';
 		} else {
 			$this->delete_track(array_shift($ttids));
@@ -983,7 +983,7 @@ class metaDatabase extends playlistCollection {
 	private function delete_track($ttid) {
 		if ($this->remove_ttid($ttid)) {
 		} else {
-			header('HTTP/1.1 400 Bad Request');
+			http_response_code(400);
 		}
 	}
 
@@ -1409,7 +1409,7 @@ class metaDatabase extends playlistCollection {
 
 	private function youtubedl_error($message, $progress_file) {
 		logger::error('YOUTUBEDL', $message);
-		header("HTTP/1.1 404 Not Found");
+		http_response_code(404);
 		file_put_contents($progress_file.'_error', $message);
 		print $message;
 
