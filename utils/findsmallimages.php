@@ -7,7 +7,7 @@ prefs::$database = new collection_base();
 $results = array();
 $r = prefs::$database->get_all_images();
 foreach ($r as $obj) {
-	if ($obj->Image) {
+	if ($obj->Image && is_file($obj->Image)) {
 		$image = new baseAlbumImage(array('baseimage' => $obj->Image));
 		if ($image->is_collection_image()) {
 			$images = $image->get_images();
