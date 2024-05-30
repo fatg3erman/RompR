@@ -735,40 +735,34 @@ function doMopidyCollectionOptions() {
 	}
 }
 
-function fileUploadThing(formData, options, success, fail) {
-	if (formData === null) {
-		$.ajax({
-			url: "utils/getalbumcover.php",
-			type: "POST",
-			data: options,
-			cache:false
-		})
-		.done(success)
-		.fail(fail);
-	} else {
-		$.each(options, function(i, v) {
-			formData.append(i, v);
-		})
-		var xhr = new XMLHttpRequest();
-		xhr.open('POST', 'utils/getalbumcover.php');
-		xhr.responseType = "json";
-		xhr.onload = function () {
-			if (xhr.status === 200) {
-				success(xhr.response);
-			} else {
-				fail();
-			}
-		};
-		xhr.send(formData);
-	}
+function fileUploadThing(formData, success, fail) {
+	fetch(
+		"utils/getalbumcover.php",
+		{
+			body: formData,
+			method: 'POST',
+			priority: 'low',
+		}
+	)
+	.then(response => {
+		if (!response.ok) {
+			throw new Error('Image upload failed '+response.status+' '+response.statusText);
+		} else {
+			return response.json();
+		}
+	})
+	.then(data => { success(data) })
+	.catch(err => {
+		debug.error ('UPLOAD', err);
+		fail();
+	});
 }
 
 function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 
 	evt.stopPropagation();
 	evt.preventDefault();
-	var options = coverscraper.getImageSearchParams(imgobj);
-	var formData = new FormData();
+	var formData = coverscraper.getImageFormParams(imgobj);
 	if (evt.dataTransfer.types) {
 		for (var i in evt.dataTransfer.types) {
 			type = evt.dataTransfer.types[i];
@@ -785,10 +779,10 @@ function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 						if (src.match(/image\/.*;base64/)) {
 							debug.log("ALBUMART","Looks like Base64");
 							formData.append('base64data', src);
-							fileUploadThing(formData, options, success, fail);
+							fileUploadThing(formData, success, fail);
 						} else {
-							options.source = src;
-							fileUploadThing(null, options, success, fail);
+							formData.append('source', src);
+							fileUploadThing(formData, success, fail);
 						}
 						return false;
 					}
@@ -800,7 +794,7 @@ function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 					if (files[0]) {
 						imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').removeAttr('src');
 						formData.append('ufile', files[0]);
-						fileUploadThing(formData, options, success, fail);
+						fileUploadThing(formData, success, fail);
 						return false;
 					}
 					break;
@@ -821,8 +815,8 @@ function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 			src = u[1];
 			debug.log("ALBUMART","Found possible Google Image Result",src);
 		}
-		options.source = src;
-		fileUploadThing(null, options, success, fail);
+		formData.append('source', src);
+		fileUploadThing(formData, success, fail);
 	}
 	return false;
 }

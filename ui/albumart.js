@@ -65,23 +65,33 @@ function start() {
 function getsmall() {
 	$('#doobag').html(language.gettext('label_searching')).makeFlasher();
 	$("#doobag").off(prefs.click_event);
-	$.ajax({
-		type: 'GET',
-		url: 'utils/findsmallimages.php',
-		dataType: 'json',
-		timeout: 300000
+	fetch(
+		'utils/findsmallimages.php',
+		{
+			priority: 'low',
+			cache: 'no-store',
+			signal: AbortSignal.timeout(300000)
+		}
+	)
+	.then(response => {
+		if (response.ok) {
+			return response.json();
+		} else {
+			throw new Error('FindSmallImages : '+response.status+' '+response.statusText);
+		}
 	})
-	.done(function(data) {
+	.then(data => {
 		$('#doobag').stopFlasher().remove();
 		debug.debug("SMALL IMAGES","Got List!",data);
 		for (var i in data) {
-			$('img[name="'+data[i]+'"]').attr('src', 'newimages/transparent.png').addClass('notexist');
+			$('img[name="'+data[i]+'"]').attr('src', 'newimages/transparent.png')
+				.addClass('notexist').removeAttr('data-src').removeClass('lazy');
 		}
 		coverscraper.reset($('.notexist:not(.notfound)').length + $('.notfound:not(.notexist)').length);
 	})
-	.fail(function() {
+	.catch(err => {
+		debug.error('ALBUMART', err);
 		$('#doobag').html("FAILED!").stopFlasher();
-		debug.error("SMALL IMAGES","Big Wet Balls");
 	});
 }
 
@@ -581,19 +591,29 @@ var imageEditor = function() {
 			imageEditor.updateBigImg(true);
 			startAnimation();
 			var formElement = document.getElementById("uform");
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "utils/getalbumcover.php");
-			xhr.responseType = "json";
-			xhr.onload = function () {
-				if (xhr.status === 200) {
-					uploadComplete(xhr.response);
-				} else {
-					searchFail();
+			var formData = new FormData(formElement);
+			fetch(
+				"utils/getalbumcover.php",
+				{
+					method: 'POST',
+					signal: AbortSignal.timeout(20000),
+					priority: 'low',
+					body: formData
 				}
-			};
-			xhr.send(new FormData(formElement));
+			)
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error('Balls '+response.status+' '+response.statusText);
+				}
+			})
+			.then(data => { uploadComplete(data) })
+			.catch(err => {
+				debug.error('ALBUMART', 'Upload Failed '+err);
+				searchFail();
+			});
 		}
-
 	}
 
 }();
@@ -612,16 +632,26 @@ function updateImage(url, index) {
 	imgobj.removeClass('notfound notexist').addClass('notfound');
 	imageEditor.updateBigImg(true);
 	startAnimation();
-	var options = coverscraper.getImageSearchParams(imgobj);
-	options.source = url;
-	$.ajax({
-		url: "utils/getalbumcover.php",
-		type: "POST",
-		data: options,
-		cache:false
+	var formData = coverscraper.getImageFormParams(imgobj);
+	formData.append('source', url);
+	fetch(
+		"utils/getalbumcover.php",
+		{
+			method: 'POST',
+			body: formData,
+			signal: AbortSignal.timeout(30000),
+			priority: 'low'
+		}
+	)
+	.then(response => {
+		if (response.ok) {
+			return response.json();
+		} else {
+			throw new Error('Ah balls');
+		}
 	})
-	.done(uploadComplete)
-	.fail(searchFail);
+	.then(data => { uploadComplete(data) })
+	.catch(searchFail);
 }
 
 function startAnimation() {

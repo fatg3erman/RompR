@@ -74,6 +74,15 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 		}
 	}
 
+	this.getImageFormParams = function(imgobj) {
+		var p = self.getImageSearchParams(imgobj);
+		var formData = new FormData();
+		$.each(p, function(i, v) {
+			formData.append(i, v);
+		});
+		return formData;
+	}
+
 	// Is there something else I could be doing?
 
 	function doNextImage(time) {

@@ -408,14 +408,20 @@ var metaHandlers = function() {
 		get_artist_albums_as_spoti: async function(artist) {
 			debug.log("JOHN", "Getting albums info for artist", artist);
 			try {
-				var data = await $.ajax({
-					url: "api/metadata/query/",
-					type: "POST",
-					contentType: false,
-					data: JSON.stringify({action: 'getalbumsasspoti', artist: artist}),
-					dataType: 'json'
-				});
-				return data;
+				var response = await fetch(
+					"api/metadata/query/",
+					{
+						method: 'POST',
+						body: JSON.stringify({action: 'getalbumsasspoti', artist: artist}),
+						priority: 'low'
+					}
+				);
+				if (response.ok) {
+					var data = await response.json();
+					return data;
+				} else {
+					return null;
+				}
 			} catch (err) {
 				return null;
 			}
