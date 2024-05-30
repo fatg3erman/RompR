@@ -200,7 +200,7 @@ function check_version_refresh() {
 		debug.trace('INIT', 'Backend version is',v,'we are',prefs.backend_version);
 		if (v != prefs.backend_version) {
 			debug.mark('INIT', 'Backend version has changed. Reloading window');
-			window.location.reload();
+			reloadWindow();
 		}
 	});
 }
