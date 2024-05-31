@@ -114,9 +114,7 @@ var starHelpers = function() {
 			metaHandlers.genericQuery(
 				'getgenres',
 				callback,
-				function() {
-					debug.error("DB TRACKS", "Failed to get genres");
-				}
+				metaHandlers.genericFail
 			);
 		},
 
@@ -124,9 +122,7 @@ var starHelpers = function() {
 			metaHandlers.genericQuery(
 				'getartists',
 				callback,
-				function() {
-					debug.error("DB TRACKS", "Failed to get artists");
-				}
+				metaHandlers.genericFail
 			);
 		},
 
@@ -134,9 +130,7 @@ var starHelpers = function() {
 			metaHandlers.genericQuery(
 				'getalbumartists',
 				callback,
-				function() {
-					debug.error("DB TRACKS", "Failed to get artists");
-				}
+				metaHandlers.genericFail
 			);
 		}
 

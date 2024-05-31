@@ -6,11 +6,7 @@ var albumstolistento = function() {
 	var spinner;
 
 	function getListenLater() {
-		metaHandlers.genericQuery('getlistenlater', gotListenLater, notGotListenLater);
-	}
-
-	function notGotListenLater(data) {
-		debug.error("LISTENLATER","Failed to get list",data);
+		metaHandlers.genericQuery('getlistenlater', gotListenLater, metaHandlers.genericFail);
 	}
 
 	function gotListenLater(data) {
@@ -77,8 +73,8 @@ var albumstolistento = function() {
 			holder.find('div.albumwidget[rompr_index="'+id+'"]').fadeOut('fast', browser.rePoint);
 			metaHandlers.genericQuery({action: 'removelistenlater', index: id}, function() {
 				debug.log("LISTENLATER", "Listen Later ID",id,"removed");
-			}, function() {
-				debug.error("LISTENLATER", "Failed To Remove ID",id);
+			}, function(err) {
+				debug.error("LISTENLATER", "Failed To Remove ID",id, err);
 			});
 		}
 

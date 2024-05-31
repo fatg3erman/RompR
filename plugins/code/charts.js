@@ -115,7 +115,7 @@ var charts = function() {
 			clearTimeout(refreshtimer);
 			if (cha) {
 				refreshtimer = setTimeout(function() {
-					getCharts(charts.backgroundUpdate,null)
+					getCharts(charts.backgroundUpdate, metaHandlers.genericFail)
 				},
 				1000);
 			}

@@ -982,7 +982,7 @@ async function makeTrackMenu(e, element) {
 			});
 			menu.markTrackTags();
 		},
-		function() { debug.error('SUBMENU', 'Failed to populate tag menu') }
+		metaHandlers.genericFail
 	);
 
 	var pls = $('<div>', {

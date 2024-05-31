@@ -78,7 +78,11 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 		var p = self.getImageSearchParams(imgobj);
 		var formData = new FormData();
 		$.each(p, function(i, v) {
-			formData.append(i, v);
+			if (i != 'cb') {
+				// 'cb' parameter is sent by the play queue, it's a callback
+				// function so we don't want to use it in our formdata
+				formData.append(i, v);
+			}
 		});
 		return formData;
 	}
@@ -131,13 +135,28 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 
 		animateWaiting();
 
-		// Munge params here as we can't pass the 'callback' (cb) parameter to $.post
-		var postparams = cloneObject(imgparams);
-		delete postparams.cb;
-		$.post("utils/getalbumcover.php", postparams)
-		.done( gotImage )
-		.fail( revertCover );
-
+		var formData = self.getImageFormParams(image);
+		fetch(
+			"utils/getalbumcover.php",
+			{
+				method: 'POST',
+				signal: AbortSignal.timeout(60000),
+				priority: 'low',
+				body: formData
+			}
+		)
+		.then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error(' GetAlbumCover failed<br />'+response.statusText);
+			}
+		})
+		.then(data => { gotImage(data) })
+		.catch(err => {
+			debug.error('COVERSCARPER', err);
+			revertCover();
+		});
 	}
 
 	function animateWaiting() {

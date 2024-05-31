@@ -39,9 +39,7 @@ var tagAdder = function() {
 			metaHandlers.genericQuery(
 				'gettags',
 				callback,
-				function() {
-					debug.error("DB TRACKS", "Failed to get tags");
-				}
+				metaHandlers.genericFail
 			);
 		}
 	}

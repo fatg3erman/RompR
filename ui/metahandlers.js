@@ -399,9 +399,7 @@ var metaHandlers = function() {
 			dbQueue.request(
 				[{action: 'getreturninfo'}],
 				collectionHelper.updateCollectionDisplay,
-				function(data) {
-					debug.warn("Failed to get return info");
-				}
+				metaHandlers.genericFail
 			);
 		},
 
@@ -427,24 +425,30 @@ var metaHandlers = function() {
 			}
 		},
 
-		genericQuery: async function(action, success, fail) {
+		genericQuery: function(action, success, fail) {
 			if (typeof action == "object") {
 				var request = action;
 			} else {
 				var request = {action: action};
 			}
-			try {
-				var data = await $.ajax({
-					url: "api/metadata/query/",
-					type: "POST",
-					contentType: false,
-					data: JSON.stringify(request),
-					dataType: 'json'
-				});
-				success(data);
-			} catch (err) {
-				fail(data);
-			}
+			fetch(
+				"api/metadata/query/",
+				{
+					method: 'POST',
+					body: JSON.stringify(request),
+					cache: 'no-store',
+					priority: 'low'
+				}
+			)
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error(response.status+' '+response.statusText);
+				}
+			})
+			.then(data => { success(data) })
+			.catch(err => { fail(err) });
 		},
 
 		addAlbumUriToCollection(albumuri) {
@@ -489,9 +493,7 @@ var metaHandlers = function() {
 						albumstolistento.update();
 					}
 				},
-				function() {
-					debug.error("METAHANDLERS","Tailed To Add Album To Listen Later");
-				}
+				metaHandlers.genericFail
 			)
 		},
 
@@ -503,8 +505,8 @@ var metaHandlers = function() {
 
 		},
 
-		genericFail: function() {
-
+		genericFail: function(err) {
+			debug.error('METAHANDLERS', err);
 		}
 
 	}
