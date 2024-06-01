@@ -298,16 +298,12 @@ var backimagemanager = function() {
 		},
 
 		remove_all: function() {
-			$.getJSON('api/userbackgrounds/?clearallbackgrounds='+prefs.theme+'&browser_id=', function(data) {
-				prefs.setTheme();
-			});
+			fetch('api/userbackgrounds/?clearallbackgrounds='+prefs.theme+'&browser_id=').finally(prefs.setTheme);
 		},
 
 		switch_browser_mode: function() {
 			if (portCount > 0 || landCount > 0) {
-				$.getJSON('api/userbackgrounds/?switchbrowseronly='+prefs.theme+'&thisbrowseronly='+$('#thisbrowseronly').val(), function(data) {
-					prefs.setTheme();
-				});
+				fetch('api/userbackgrounds/?switchbrowseronly='+prefs.theme+'&thisbrowseronly='+$('#thisbrowseronly').val()).finally(prefs.setTheme);
 			}
 		}
 

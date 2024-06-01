@@ -5,6 +5,7 @@ var podcasts = function() {
 	var newcounts = {};
 	var scrobblesToCheck = [];
 	var refreshtimer;
+	var checktimer;
 
 	async function downloadTrack(track, channel) {
 		downloadQueue.push({track: track, channel: channel});
@@ -42,29 +43,29 @@ var podcasts = function() {
 		var running = true;
 
 		this.checkProgress = function() {
-			$.ajax( {
-				type: "GET",
-				url: "utils/checkpodcastdownload.php",
-				cache: false,
-				dataType: "json"
+			fetch(
+				"utils/checkpodcastdownload.php",
+				{
+					cache: 'no-store',
+					priority: 'low'
+				}
+			)
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error(language.gettext('error_dlpfail')+' : '+response.statusText);
+				}
 			})
-			.done(function(data) {
-				// Sometimes we refesh just before this fires, and the content has been
-				// reloaded, which makes this throw an error
-				debug.debug("PODCAST DOWNLOAD","Download status is",data);
-				try {
-					if (progressdiv.hasClass('rangechooser')) {
+			.then(data => {
+				if (progressdiv && progressdiv.hasClass('rangechooser'))
 						progressdiv.rangechooser('setProgress', data.percent);
-					}
-				} catch (err) {
 
-				}
-				if (running) {
+				if (running)
 					timer = setTimeout(self.checkProgress, 500);
-				}
 			})
-			.fail(function() {
-				debug.warn(language.gettext('error_dlpfail'));
+			.catch(err => {
+				debug.warn(err.message);
 				if (running) {
 					timer = setTimeout(self.checkProgress, 1000);
 				}
@@ -134,24 +135,29 @@ var podcasts = function() {
 			}
 		}
 		debug.trace("PODCASTS","Sending request",options);
+		var params = new URLSearchParams(options);
 		try {
-			var data = await $.ajax({
-				type: "GET",
-				url: "api/podcasts/",
-				cache: false,
-				data: options,
-				contentType: 'application/json'
-			});
-			checkForUpdatedPodcasts(data);
-			podcasts.doNewCount();
-		} catch (err) {
-			debug.error("PODCASTS", "Podcast Request Failed:",data,options);
-			if (data.status == 412) {
-				infobar.error(language.gettext('label_refreshinprogress'));
+			var response = await fetch(
+				"api/podcasts/?"+params.toString(),
+				{
+					priority: 'low',
+					cache: 'no-store'
+				}
+			);
+			if (response.ok) {
+				var data = await response.json();
+				checkForUpdatedPodcasts(data);
+				podcasts.doNewCount();
 			} else {
-				infobar.error(language.gettext("label_general_error"));
+				if (response.status == 412) {
+					infobar.error(language.gettext('label_refreshinprogress'));
+				} else {
+					throw new Error(language.gettext("label_general_error")+'<br />'+response.statusText);
+				}
 			}
-		};
+		} catch(err) {
+			infobar.error(err.message);
+		}
 		if (clickedElement)	clickedElement.stopSpinner();
 	}
 
@@ -283,12 +289,29 @@ var podcasts = function() {
 		},
 
 		doNewCount: function() {
-			$.getJSON("api/podcasts/?populate=1&getcounts=1", function(data) {
+			fetch(
+				"api/podcasts/?populate=1&getcounts=1",
+				{
+					cache: 'no-store',
+					priority: 'low'
+				}
+			)
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error(response.statusText);
+				}
+			})
+			.then(data => {
 				debug.core('PODCASTS','Got New Counts',data);
 				$.each(data, function(index, value) {
 					putPodCount('#podnumber_'+index, value.new, value.unlistened);
 				});
 				newcounts = data;
+			})
+			.catch(err => {
+				debug.warn('PODCASTS', 'doNewCount Failed', err);
 			});
 		},
 
@@ -298,24 +321,31 @@ var podcasts = function() {
 			var isnewpodcast = false;
 			var to_reload = new Array();
 			try {
-				var data = await $.ajax({
-					type: 'GET',
-					url: "api/podcasts/?populate=1&getcounts=1",
-					dataType: 'json'
-				});
-				$.each(data, function(index, value) {
-					if (!newcounts.hasOwnProperty(index)) {
-						debug.info('PODCASTS', 'A new podcast has been subscribed to by somebody else');
-						isnewpodcast = true;
-					}  else if (newcounts[index].new != value.new || newcounts[index].unlistened != value.unlistened) {
-						if (index != 'totals') {
-							debug.info('PODCASTS', 'Podcast',index,'was updated by someobody else');
-							to_reload.push(index);
-						}
+				var response = await fetch(
+					"api/podcasts/?populate=1&getcounts=1",
+					{
+						cache: 'no-store',
+						priority: 'low'
 					}
-				});
+				);
+				if (response.ok) {
+					var data = await response.json();
+					$.each(data, function(index, value) {
+						if (!newcounts.hasOwnProperty(index)) {
+							debug.info('PODCASTS', 'A new podcast has been subscribed to by somebody else');
+							isnewpodcast = true;
+						}  else if (newcounts[index].new != value.new || newcounts[index].unlistened != value.unlistened) {
+							if (index != 'totals') {
+								debug.info('PODCASTS', 'Podcast',index,'was updated by someobody else');
+								to_reload.push(index);
+							}
+						}
+					});
+				} else {
+					throw new Error(response.statusText);
+				}
 			} catch(err) {
-				debug.warn('PODCASTS', 'Failed when doing post-wake actions');
+				debug.warn('PODCASTS', 'Failed when doing post-wake actions', err.message);
 			}
 			if (isnewpodcast) {
 				await podcasts.reloadList();
@@ -357,36 +387,47 @@ var podcasts = function() {
 			if (callback) callback();
 		},
 
-		checkRefresh: async function() {
+		checkRefresh: function() {
+			clearTimeout(checktimer);
 			debug.info('PODCASTS', 'Starting Refresh');
-			try {
-				var data = await $.ajax({
-					type: 'GET',
-					url: "api/podcasts/?populate=1&checkrefresh=1",
-					timeout: prefs.collection_load_timeout,
-					dataType: 'JSON'
-				});
+			fetch(
+				"api/podcasts/?populate=1&checkrefresh=1",
+				{
+					signal: AbortSignal.timeout(prefs.collection_load_timeout),
+					cache: 'no-store',
+					priority: 'low'
+				}
+			)
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					if (response.status == 412) {
+						debug.trace("PODCASTS", 'Refresh is in progress, checking again in 10 seconds');
+						checktimer = setTimeout(podcasts.checkRefresh, 10000);
+					} else {
+						throw new Error(language.gettext('error_refreshfail')+'<br />'+response.statusText);
+					}
+				}
+			})
+			.then(data => {
 				debug.log('PODCASTS', 'Refresh complete');
 				checkForUpdatedPodcasts(data.updated);
 				podcasts.doNewCount();
-			} catch (err)  {
-				debug.error("PODCASTS","Refresh Failed with status",err.status);
-				if (err.status == 412) {
-					setTimeout(podcasts.checkRefresh, 10000);
-				} else {
-					infobar.error(language.gettext('error_refreshfail'));
-				}
-			}
+			})
+			.catch(err => {
+				debug.error("PODCASTS","Refresh Failed", err);
+				infobar.error(err.message);
+			});
 		},
 
-		removePodcast: async function(event, clickedElement) {
+		removePodcast: function(event, clickedElement) {
 			var index = clickedElement.attr('name').replace(/podremove_/, '');
 			debug.log("PODCAST","Removing podcast",index);
 			// Remove it right away for responsiveness
 			$('.openmenu[name="podcast_'+index+'"]').removeCollectionItem();
 			$('#podcast_'+index).removeCollectionDropdown();
-			await $.get('api/podcasts/?remove='+index+'&populate=1').promise();
-			podcasts.reloadList();
+			fetch('api/podcasts/?remove='+index+'&populate=1').finally(podcasts.reloadList);
 		},
 
 		search: async function(terms, domains) {

@@ -353,7 +353,7 @@ class sortby_base {
 			} else {
 				$arr['discclass'] = '';
 			}
-			$tracktype = uibits::albumTrack($arr, prefs::$database->get_track_bookmarks($arr['ttid']));
+			$tracktype = uibits::albumTrack($this->why, $arr, prefs::$database->get_track_bookmarks($arr['ttid']));
 
 		}
 		if ($can_browse) {

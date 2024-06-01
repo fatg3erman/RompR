@@ -35,7 +35,8 @@ var collectionHelper = function() {
 				'api/collection/?rebuild=yes',
 				{
 					signal: AbortSignal.timeout(prefs.collection_load_timeout),
-					cache: 'no-store'
+					cache: 'no-store',
+					priority: 'low'
 				}
 			);
 			if (response.ok) {
@@ -83,43 +84,43 @@ var collectionHelper = function() {
 		player.updatingcollection = false;
 	}
 
-	function loadCollection() {
+	async function loadCollection() {
 		if (!prefs.hide_albumlist) {
 			var albums = 'api/collection/?item='+collectionHelper.collectionKey('a');
 			debug.info("GENERAL","Loading Collection from URL",albums);
-			$.ajax({
-				type: "GET",
-				url: albums,
-				timeout: prefs.collection_load_timeout,
-				dataType: "html",
-				cache: false
-			})
-			.done(function(data) {
-				debug.log('GENERAL','Collection Loaded');
-				$("#collection").html(data);
-				if ($('#emptycollection').length > 0) {
-					$('#collectionbuttons').show();
-					prefs.save({ collectionconbuttons_isopen: true });
-					$('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
+			try {
+				var response = await fetch(
+					albums,
+					{
+						signal: AbortSignal.timeout(prefs.collection_load_timeout),
+						cache: 'no-store',
+						priority: 'high'
+					}
+				);
+				var data = await response.text();
+				if (response.ok) {
+					debug.log('GENERAL','Collection Loaded');
+					$("#collection").html(data);
+					if ($('#emptycollection').length > 0) {
+						$('#collectionbuttons').show();
+						prefs.save({ collectionconbuttons_isopen: true });
+						$('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
+					}
+					data = null;
+					$("#collection").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
+					loadAudiobooks();
+				} else {
+					var msg = data ? data : response.statusText;
+					throw new Error(msg);
 				}
-				data = null;
-				$("#collection").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
-				loadAudiobooks();
-			})
-			.fail(function(data) {
+			} catch (err) {
 				collectionHelper.disableCollectionUpdates();
 				var html = '<p align="center"><b><font color="red">'+language.gettext('label_update_error')+'</font></b></p>';
-				if (data.responseText) {
-					html += '<p align="center">'+data.responseText+'</p>';
-				}
-				if (data.statusText) {
-					html += '<p align="center">'+data.statusText+'</p>';
-				}
+				html += '<p align="center">'+err.message+'</p>';
 				html += '<p align="center"><a href="https://fatg3erman.github.io/RompR/Troubleshooting#very-large-collections" target="_blank">Read The Troubleshooting Docs</a></p>';
 				$("#collection").html(html);
-				debug.error("PLAYER","Failed to generate collection",data);
-				infobar.error(language.gettext('error_collectionupdate'));
-			});
+				debug.error("PLAYER","Failed to generate collection",err);
+			}
 		} else {
 			loadAudiobooks();
 		}
@@ -134,14 +135,22 @@ var collectionHelper = function() {
 
 	function loadAudiobooks() {
 		if (!prefs.hide_audiobooklist) {
-			$('#audiobooks').load(
+			fetch(
 				'api/collection/?item='+collectionHelper.collectionKey('z'),
-				function() {
-					$("#audiobooks").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
-					uiHelper.doCollectionStripyStuff();
-					check_init_tasks();
+				{
+					signal: AbortSignal.timeout(prefs.collection_load_timeout),
+					cache: 'no-store',
+					priority: 'high'
 				}
-			);
+			)
+			.then(response => response.text())
+			.then(data => {
+				$("#audiobooks").html(data)
+				$("#audiobooks").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
+				uiHelper.doCollectionStripyStuff();
+				check_init_tasks();
+			})
+			.catch(err => { debug.warn('INIT', 'Could not load audiobooks', err) });
 		} else {
 			check_init_tasks();
 		}

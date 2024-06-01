@@ -62,19 +62,41 @@ var wikipedia = function() {
 
 		wikiMediaPopup: function(element, event) {
 			var thing = element.attr("name");
-			debug.trace("WIKIPEDIA","Clicked element has name",thing);
+			debug.trace("WIKIMEDIAPOPUP","Clicked element has name",thing);
 			var a = thing.match(/(.*?)\/(.*)/);
 			if (a && a[1] && a[2]) {
 				var fname = a[2];
 				if (fname.match(/jpg$/i) || fname.match(/gif$/i) || fname.match(/png$/i) || fname.match(/jpeg$/i) || fname.match(/svg$/i) || fname.match(/bmp$/i)) {
+					debug.trace("WIKIMEDIAPOPUP","Clicked element has name",thing);
 					imagePopup.create(element, event);
 					var url = "http://"+a[1]+"/w/api.php?action=query&iiprop=url|size&prop=imageinfo&titles=" + a[2] + "&format=json&callback=?";
-					$.getJSON(url, function(data) {
+					debug.trace("WIKIMEDIAPOPUP","Getting", url);
+					fetch(
+						'browser/backends/info_wikipedia.php',
+						{
+							priority: 'low',
+							cache: 'no-store',
+							method: 'POST',
+							body: JSON.stringify({json: url})
+						}
+					)
+					.then(response => {
+						if (response.ok) {
+							return response.json();
+						} else {
+							throw new Error(response.statusText);
+						}
+					})
+					.then(data => {
 						$.each(data.query.pages, function(index, value) {
 							imagePopup.create(element, event, 'getRemoteImage.php?url='+rawurlencode(value.imageinfo[0].url));
 							return false;
 						});
-					}).fail( function() { imagePopup.close() });
+					})
+					.catch(err => {
+						debug.error('WIKIPEDIA', 'wikimedia fetch failed', err);
+						imagePopup.close();
+					})
 				}
 			}
 			return false;

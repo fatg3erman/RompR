@@ -39,13 +39,21 @@ var metaHandlers = function() {
 		var key = hex_md5(uri);
 
 		this.checkProgress = function() {
-			$.ajax( {
-				type: "GET",
-				url: "utils/checkyoutubedownload.php?key="+key,
-				cache: false,
-				dataType: "json"
+			fetch(
+				"utils/checkyoutubedownload.php?key="+key,
+				{
+					cache: 'no-store',
+					priority: 'low'
+				}
+			)
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error(response.statusText)
+				}
 			})
-			.done(function(data) {
+			.then(data => {
 				if (data.info) {
 					infobar.updatenotify(notify, 'Youtube Download : '+track_name+'<br />'+data.info);
 				} else if (data.result) {
@@ -62,8 +70,9 @@ var metaHandlers = function() {
 					timer = setTimeout(self.checkProgress, 1000);
 				}
 			})
-			.fail(function() {
-				debug.warn('YOUTUBEDL', language.gettext('error_dlpfail'));
+			.catch(err => {
+				debug.warn('YOUTUBEDL', err);
+				infobar.error(language.gettext('error_dlpfail')+'<br />'+err.message);
 				self.stop();
 			});
 		}
@@ -211,26 +220,24 @@ var metaHandlers = function() {
 					debug.log('YOUTUBEDL', uri, name);
 					var monitor = new youtubeDownloadMonitor(uri, track_name, $(this));
 					try {
-						var data = await $.ajax({
-							url: "api/metadata/",
-							type: "POST",
-							contentType: false,
-							data: JSON.stringify([{action: 'youtubedl', urilist: [uri] }]),
-							dataType: "html",
-							cache: false
-						});
-					} catch (err) {
-						if (err.status == 200) {
-							debug.log('YOUTUBEDL', 'Error handler caught success code! WTF?');
-						} else {
-							debug.warn("FUCK!", 'Why did that not work?');
-							debug.log('BUMBLETREE', err);
-							if (err.responseText) {
-								debug.error('YOUTUBEDL', err.responseText);
-								infobar.error('Failed to download YouTube track - '+err.responseText);
+						var response = await fetch(
+							"api/metadata/",
+							{
+								method: 'POST',
+								cache: 'no-store',
+								priority: 'low',
+								body: JSON.stringify([{action: 'youtubedl', urilist: [uri] }])
 							}
-							monitor.stop();
+						);
+						if (!response.ok) {
+							var t = await response.text();
+							var msg = t ? t : response.statusText;
+							throw new Error(msg);
 						}
+					} catch (err) {
+						debug.error('BUMBLETREE', err);
+						infobar.error('Failed to download YouTube track - '+err.message);
+						monitor.stop();
 					}
 				});
 			},
@@ -241,26 +248,24 @@ var metaHandlers = function() {
 				debug.log('YTDLALL', 'Downloading album', albumname);
 				var monitor = new youtubeDownloadMonitor(element.attr('who'), albumname, $(this));
 				try {
-					var data = await $.ajax({
-						url: "api/metadata/",
-						type: "POST",
-						contentType: false,
-						data: JSON.stringify([{action: 'youtubedl_album', why: element.attr('why'), who: element.attr('who') }]),
-						dataType: "html",
-						cache: false
-					});
-				} catch (err) {
-					if (err.status == 200) {
-						debug.log('YOUTUBEDL', 'Error handler caught success code! WTF?');
-					} else {
-						debug.warn("FUCK!", 'Why did that not work?');
-						debug.log('BUMBLETREE', err);
-						if (err.responseText) {
-							debug.error('YOUTUBEDL', err.responseText);
-							infobar.error('Failed to download YouTube Album - '+err.responseText);
+					var response = await fetch(
+						"api/metadata/",
+						{
+							method: 'POST',
+							cache: 'no-store',
+							priority: 'low',
+							body: JSON.stringify([{action: 'youtubedl_album', why: element.attr('why'), who: element.attr('who') }])
 						}
-						monitor.stop();
+					);
+					if (!response.ok) {
+						var t = await response.text();
+						var msg = t ? t : response.statusText;
+						throw new Error(msg);
 					}
+				} catch (err) {
+					debug.error('BUMBLETREE', err);
+					infobar.error('Failed to download YouTube album - '+err.message);
+					monitor.stop();
 				}
 			},
 

@@ -77,7 +77,7 @@ class ui_elements {
 		'year_always' => false
 	];
 
-	public static function albumTrack($data, $bookmarks) {
+	public static function albumTrack($why, $data, $bookmarks) {
 
 		$data = array_merge(self::DEFAULT_TRACK_PARAMS, $data);
 
@@ -165,7 +165,7 @@ class ui_elements {
 			if ($data['lm'] === null && $data['isSearchResult'] < 2) {
 				$button_class .= ' clickremovedb';
 			}
-			if ($d == 'youtube' || $d == 'yt') {
+			if ($why != 'b' && ($d == 'youtube' || $d == 'yt')) {
 				$button_class .= ' clickyoutubedl';
 			}
 			$enc_tags = ($data['tags']) ? rawurlencode($data['tags']) : '';
