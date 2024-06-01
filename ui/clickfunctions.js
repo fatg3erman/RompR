@@ -1144,10 +1144,7 @@ function useTrackImages(e, element) {
 	metaHandlers.genericAction(
 		[data],
 		collectionHelper.updateCollectionDisplay,
-		function(rdata) {
-			debug.warn("RATING PLUGIN","Failure to do bumfinger", rdata);
-			infobar.error(language.gettext('label_general_error'));
-		}
+		metaHandlers.genericFailPopup
 	);
 	return true;
 }
@@ -1162,10 +1159,7 @@ function setAsAudioBook(e, element) {
 	metaHandlers.genericAction(
 		[data],
 		collectionHelper.updateCollectionDisplay,
-		function(rdata) {
-			debug.warn("RATING PLUGIN","Failure to set as audiobook", rdata);
-			infobar.error(language.gettext('label_general_error'));
-		}
+		metaHandlers.genericFailPopup
 	);
 	return true;
 }
@@ -1225,10 +1219,7 @@ function actuallyAmendAlbumDetails(albumindex) {
 			collectionHelper.updateCollectionDisplay(rdata);
 			playlist.repopulate();
 		},
-		function(rdata) {
-			debug.warn("RATING PLUGIN","Failure amending album details", rdata);
-			infobar.error(language.gettext('label_general_error'));
-		}
+		metaHandlers.genericFailPopup
 	);
 	return true;
 }
@@ -1266,6 +1257,7 @@ function browseAndAddToListenLater(event, clickedElement) {
 
 function browseSearchResults(event, clickedElement) {
 	var albumindex = clickedElement.attr('name');
+	clickedElement.html(language.gettext('label_searching')).removeClass('clickable');
 	debug.log('BROF', 'Browsing Album Index', albumindex);
 	metaHandlers.browseSearchResult(albumindex);
 }

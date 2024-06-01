@@ -107,10 +107,7 @@ var metaHandlers = function() {
 								if (fn) fn(name);
 							});
 						},
-						function(data) {
-							debug.warn("DROPPLUGIN","Failed to set attributes for",data);
-							infobar.error(language.gettext('label_general_error'));
-						}
+						metaHandlers.genericFailPopup
 					);
 				}
 			},
@@ -133,9 +130,7 @@ var metaHandlers = function() {
 						function(rdata) {
 							collectionHelper.updateCollectionDisplay(rdata);
 						},
-						function(data) {
-							debug.warn("WAKEUP","Failed to refresh albumids",albumids);
-						}
+						metaHandlers.genericFail
 					);
 				}
 			},
@@ -195,9 +190,7 @@ var metaHandlers = function() {
 				dbQueue.request(
 					trackstogo,
 					collectionHelper.updateCollectionDisplay,
-					function(data) {
-						debug.warn("Failed to remove track! Possibly duplicate request?");
-					}
+					metaHandlers.genericFailPopup
 				);
 			},
 
@@ -276,9 +269,7 @@ var metaHandlers = function() {
 				dbQueue.request(
 					[{action: 'deletealbum', album_index: albumToGo}],
 					collectionHelper.updateCollectionDisplay,
-					function(data) {
-						debug.warn("Failed to remove album! Possibly duplicate request?");
-					}
+					metaHandlers.genericFailPopup
 				);
 			}
 		},
@@ -337,9 +328,7 @@ var metaHandlers = function() {
 					Track: albumdata.tracks.items[track_index].track_number,
 					trackartist: combine_spotify_artists(albumdata.tracks.items[track_index].artists)
 				};
-				dbQueue.request([data], success, function() {
-					infobar.error('Import Failed because reasons');
-				});
+				dbQueue.request([data], success, metaHandlers.genericFail);
 			}
 		},
 
@@ -442,9 +431,13 @@ var metaHandlers = function() {
 			)
 			.then(response => {
 				if (response.ok) {
-					return response.json();
+					if (response.status == 200) {
+						return response.json();
+					} else {
+						return true;
+					}
 				} else {
-					throw new Error(response.status+' '+response.statusText);
+					throw new Error(response.statusText);
 				}
 			})
 			.then(data => { success(data) })
@@ -459,10 +452,7 @@ var metaHandlers = function() {
 					albumuri: albumuri
 				}],
 				collectionHelper.updateCollectionDisplay,
-				function(rdata) {
-					debug.warn("BUMFINGER","Failure to do bumfinger", rdata);
-					infobar.error('Failed to add album to collection')
-				}
+				metaHandlers.genericFailPopup
 			);
 		},
 
@@ -473,10 +463,7 @@ var metaHandlers = function() {
 					albumindex: albumindex
 				}],
 				collectionHelper.updateCollectionDisplay,
-				function(rdata) {
-					debug.warn("BUMFINGER","Failure to do bumfinger", rdata);
-					infobar.error('Failed to browse album')
-				}
+				metaHandlers.genericFailPopup
 			);
 		},
 
@@ -507,6 +494,11 @@ var metaHandlers = function() {
 
 		genericFail: function(err) {
 			debug.error('METAHANDLERS', err);
+		},
+
+		genericFailPopup: function(err) {
+			debug.error('METAHANDLERS', err);
+			infobar.error(language.gettext('label_generic_error')+'<br />'+err);
 		}
 
 	}
@@ -528,28 +520,50 @@ var dbQueue = function() {
 	];
 
 	async function process_request(req) {
+		var err, request, data;
 		try {
-			var data = await $.ajax({
-				url: "api/metadata/",
-				type: "POST",
-				contentType: false,
-				data: JSON.stringify(req.data),
-				dataType: 'json'
-			});
-			debug.debug('DB QUEUE', 'Request Success', req, data);
-			for (var i in req.data) {
-				if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
-					debug.debug("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
-					cleanuprequired = true;
+			response = await fetch(
+				'api/metadata/',
+				{
+					signal: AbortSignal.timeout(60000),
+					body: JSON.stringify(req.data),
+					cache: 'no-store',
+					method: 'POST',
+					priority: 'low'
 				}
-			}
-			if (req.success) {
-				req.success(data);
+			);
+			if (response.ok) {
+				if (response.status == 200) {
+					data = await response.json();
+				} else {
+					data = true;
+				}
+				debug.debug('DB QUEUE', 'Request Success', req, data);
+				for (var i in req.data) {
+					if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
+						debug.debug("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
+						cleanuprequired = true;
+					}
+				}
+				if (req.success) {
+					req.success(data);
+				}
+			} else {
+				// response.json() doesn't work when there's an error response
+				var t = await response.text();
+				var msg = t ? t : response.statusText;
+				if (msg.match(/\{.+\}/)) {
+					var j = JSON.parse(msg);
+					if (j.error) {
+						msg = j.error;
+					}
+				}
+				throw new Error(msg);
 			}
 		} catch (err) {
 			debug.warn("DB QUEUE","Request Failed",err);
 			if (req.fail) {
-				req.fail(data, err);
+				req.fail(err.message);
 			}
 		}
 	}

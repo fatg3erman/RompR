@@ -71,11 +71,13 @@ var albumstolistento = function() {
 
 		removeId: function(id) {
 			holder.find('div.albumwidget[rompr_index="'+id+'"]').fadeOut('fast', browser.rePoint);
-			metaHandlers.genericQuery({action: 'removelistenlater', index: id}, function() {
-				debug.log("LISTENLATER", "Listen Later ID",id,"removed");
-			}, function(err) {
-				debug.error("LISTENLATER", "Failed To Remove ID",id, err);
-			});
+			metaHandlers.genericQuery(
+				{action: 'removelistenlater', index: id},
+				function() {
+					debug.log("LISTENLATER", "Listen Later ID",id,"removed");
+				},
+				metaHandlers.genericFail
+			);
 		}
 
 	}

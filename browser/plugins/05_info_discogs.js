@@ -533,7 +533,7 @@ var info_discogs = function() {
 					}
 				},
 				function(data) {
-					infobar.error(language.gettext('label_general_error'));
+					debug.error('DISCOGS', data);
 				}
 			);
 		}

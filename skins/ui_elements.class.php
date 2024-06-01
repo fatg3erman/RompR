@@ -204,7 +204,7 @@ class ui_elements {
 		$det = array_merge(['buttons' => true, 'iconclass' => 'expand noselect'], $det);
 
 		$db_album = ($when === null) ? $who : $who.'_'.$when;
-		$iab = -1;
+		$iab = prefs::$database->album_is_audiobook($who);
 		$html = '';
 		if ($det['buttons']) {
 			$html .= '<div class="containerbox wrap album-play-controls vertical-centre">';

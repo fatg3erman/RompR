@@ -10,10 +10,7 @@ var wishlistViewer = function() {
 		metaHandlers.genericAction(
 			[{action: command, wltrack: element.next().val()}],
 			collectionHelper.updateCollectionDisplay,
-			function(data) {
-				debug.error("DB TRACKS", "Failed to remove track",data);
-				infobar.error(language.gettext('label_general_error'));
-			}
+			metaHandlers.genericFailPopup
 		);
 		trackDiv.fadeOut('fast');
 	}
@@ -25,10 +22,7 @@ var wishlistViewer = function() {
 				debug.mark("DB TRACKS","Wishlist Cleared");
 				loadWishlist(false);
 			},
-			function(data) {
-				debug.error("DB TRACKS","Failed to clear wishlist for some reason",data);
-				infobar.error(language.gettext('label_general_error'));
-			}
+			metaHandlers.genericFailPopup
 		);
 	}
 
@@ -64,6 +58,7 @@ var wishlistViewer = function() {
 				}
 			},
 			function() {
+				debug.warn('WLVIEWER', 'Did not find track');
 				$('.wlsch_'+reqid).stopSpinner();
 				$('#wlresults_'+reqid).html('<h3>No Tracks Found</h3>');
 			}
