@@ -90,6 +90,9 @@ function tryLocal($albumimage) {
 	logger::debug("GETALBUMCOVER", "  Checking for local images");
 	$covernames = array("folder", "cover", "albumart", "thumb", "albumartsmall", "front");
 	$files = imageFunctions::scan_for_local_images($albumimage->albumpath);
+	if (array_key_exists('error', $files)) {
+		return "";
+	}
 	foreach ($files as $i => $file) {
 		$info = pathinfo($file);
 		if (array_key_exists('extension', $info)) {
