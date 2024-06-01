@@ -149,7 +149,7 @@ function playerController() {
 			// Clone the object or we get left with dangling references
 			debug.core('PLAYER', 'Got response for',list,s);
 			let last_state = player.status.state;
-			player.status = cloneObject(s);
+			player.status = structuredClone(s);
 			$('#radiodomains').makeDomainChooser("setSelection", player.status.smartradio.radiodomains);
 			if (player.status.songid != self.previoussongid) {
 				if (playlist.trackHasChanged(player.status.songid)) {

@@ -344,7 +344,7 @@ var metaHandlers = function() {
 					tracks.push(metaHandlers.fromLastFMData.mapData(track, action, attributes));
 				});
 				dbQueue.request(tracks, success, fail);
-				return cloneObject(tracks);
+				return structuredClone(tracks);
 			},
 
 			mapData: function(data, action, attributes) {

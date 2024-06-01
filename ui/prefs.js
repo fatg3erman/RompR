@@ -760,7 +760,7 @@ var prefs = function() {
 
 			}
 			if (defer) {
-				deferredPrefs = cloneObject(prefobj);
+				deferredPrefs = structuredClone(prefobj);
 			} else {
 				prefs.save(prefobj, callback);
 			}

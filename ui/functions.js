@@ -34,10 +34,9 @@ function zeroPad(num, count) {
 	return numZeropad;
 }
 
-function cloneObject(obj) {
-	return JSON.parse(JSON.stringify(obj));
-	// return $.extend(true, { }, obj);
-}
+// function cloneObject(obj) {
+// 	return JSON.parse(JSON.stringify(obj));
+// }
 
 function rawurlencode (str) {
 	str = (str+'').toString();
@@ -276,7 +275,7 @@ function joinartists(ob) {
 }
 
 function concatenate_artist_names(t) {
-	var shitte = cloneObject(t);
+	var shitte = structuredClone(t);
 	var f = shitte.pop();
 	if (shitte.length == 0) {
 		return f;

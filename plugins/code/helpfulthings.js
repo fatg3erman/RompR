@@ -68,7 +68,7 @@ var helpfulThings = function() {
 	}
 
 	function get_backend_info(bends) {
-		let poop = cloneObject(bends);
+		let poop = structuredClone(bends);
 		var lastb = poop.pop();
 		var f = poop.join(', ');
 		return [f + ' and ' + lastb];

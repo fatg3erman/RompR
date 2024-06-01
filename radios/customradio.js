@@ -13,7 +13,7 @@ var customRadioManager = function() {
 		name: language.gettext('label_createcustom'),
 		combine_option: ' AND ',
 		rules: [
-			cloneObject(default_rule)
+			structuredClone(default_rule)
 		]
 	}
 
@@ -241,7 +241,7 @@ var customRadioManager = function() {
 		}
 
 		this.addRule = function() {
-			var rule = cloneObject(default_rule);
+			var rule = structuredClone(default_rule);
 			var r = new custom_radio_rule(table, rule);
 			r.initialise();
 			rules.push(r);
@@ -393,7 +393,7 @@ var customRadioManager = function() {
 				stations.push(s);
 			}
 			if (!found_default) {
-				var params = cloneObject(default_station);
+				var params = structuredClone(default_station);
 				var s = new custom_radio_station(params);
 				s.initialise();
 				stations.push(s);
