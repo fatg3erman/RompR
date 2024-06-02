@@ -221,6 +221,19 @@ class sortby_base {
 		}
 	}
 
+	protected function year_sort($albumonly = false) {
+		$qstring = '';
+		$sortbydate = ($this->why == 'z') ? prefs::get_pref('sort_ab_bydate') : prefs::get_pref('sortbydate');
+		if ($sortbydate) {
+			if (!$albumonly && prefs::get_pref('notvabydate')) {
+				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
+			} else {
+				$qstring .= ' Year,';
+			}
+		}
+		return $qstring;
+	}
+
 	public function track_sort_query() {
 		// This is the generic query for sortby_artist, sortby_album, and sortby_albumbyartist
 		$db = &prefs::$database;

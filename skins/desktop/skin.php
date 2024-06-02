@@ -257,9 +257,12 @@ print '<button class="fixed iconbutton savebutton"></button></div>';
 	<div id="audiobooklist" class="invisible noborder">
 		<?php
 		print uibits::ui_config_header([
+			'lefticon' => 'icon-menu clickicon fixed openmenu',
+			'lefticon_name' => 'abcollectionbuttons',
 			'label' => 'label_audiobooks',
 			'icon_size' => 'smallicon'
 		]);
+		uibits::ab_collection_options_box();
 		?>
 		<div id="audiobooks" class="noborder selecotron"></div>
 	</div>

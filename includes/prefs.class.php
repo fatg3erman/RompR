@@ -149,7 +149,8 @@ class prefs {
 		"lastfm_scrobbling" => false,
 		"noscrobble_audiobook" => false,
 		"noscrobble_podcast" => false,
-		"use_mopidy_search" => true
+		"use_mopidy_search" => true,
+		"sortby_upgraded" => false
 	];
 
 	public const BROWSER_PREFS = [
@@ -205,6 +206,7 @@ class prefs {
 		"bgimgparms" => ['dummy' => 'baby'],
 		'playlistbuttons_isopen' => false,
 		'collectionbuttons_isopen' => false,
+		'abcollectionbuttons_isopen' => false,
 		'advsearchoptions_isopen' => false,
 		'podcastbuttons_isopen' => false,
 		"somafm_quality" => 'highest_available_quality',
@@ -237,6 +239,7 @@ class prefs {
 		'clickmode' => 'double',
 		'skin' => null,
 		"sortbydate" => false,
+		"sort_ab_bydate" => false,
 		"notvabydate" => false,
 		"collectionrange" => ADDED_ALL_TIME,
 		'collectiondomains' => 'All',
@@ -673,6 +676,12 @@ class prefs {
 			self::$prefs['classical_rule'] = self::CLASSICAL_RULES_USE_COMPOSER;
 			self::$prefs['classicalgenres'] = self::$prefs['composergenrename'];
 			self::$prefs['sortbycomposer'] = false;
+		}
+
+		if (self::$prefs['sortby_upgraded'] === false) {
+			self::set_cookie_pref('sort_ab_bydate', self::$prefs['sortbydate']);
+			self::$prefs['sort_ab_bydate'] = self::$prefs['sortbydate'];
+			self::$prefs['sortby_upgraded'] = true;
 		}
 
 		self::save();

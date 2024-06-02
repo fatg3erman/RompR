@@ -138,6 +138,7 @@ var prefs = function() {
 		'podcastbuttons',
 		'advsearchoptions',
 		'collectionbuttons',
+		'abcollectionbuttons',
 		'playlistbuttons'
 	];
 
@@ -731,6 +732,7 @@ var prefs = function() {
 					break
 
 				case "sortbydate":
+				case "sort_ab_bydate":
 				case "notvabydate":
 					callback = layoutProcessor.changeCollectionSortMode;
 					break;
