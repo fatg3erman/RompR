@@ -145,9 +145,11 @@ var podcasts = function() {
 				}
 			);
 			if (response.ok) {
-				var data = await response.json();
-				checkForUpdatedPodcasts(data);
-				podcasts.doNewCount();
+				if (response.status == 200) {
+					var data = await response.json();
+					checkForUpdatedPodcasts(data);
+					podcasts.doNewCount();
+				}
 			} else {
 				if (response.status == 412) {
 					infobar.error(language.gettext('label_refreshinprogress'));
