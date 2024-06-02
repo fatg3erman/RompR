@@ -315,7 +315,7 @@ class sortby_base {
 					return;
 				}
 				$trackarr = $this->track_sort_query();
-			} else {
+			} else if (prefs::get_pref('player_backend') == 'mopidy' && getDomain($trackarr[0]['uri']) != 'local') {
 				$can_browse = true;
 			}
 		}

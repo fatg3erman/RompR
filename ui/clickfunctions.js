@@ -104,26 +104,69 @@ var clickRegistry = function() {
 				opts.uri = findMenuLoader(opts.clickedElement, menutoopen);
 			}
 			if (opts.uri) {
+				params = object_to_postdata(opts.data);
+				switch (opts.type) {
+					case 'GET':
+						if (Object.keys(opts.data).length > 0)
+							opts.uri += '?'+params.toString();
+
+						var request = new Request(opts.uri, {
+							cache: 'no-store',
+							priority: 'high',
+							method: opts.type
+						});
+						break;
+
+					case 'POST':
+						var request = new Request(opts.uri, {
+							headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'},
+							method: opts.type,
+							cache: 'no-store',
+							priority: 'high',
+							body: params.toString()
+						})
+						break;
+
+					default:
+						debug.error('LOADCONTENT', 'Unsupported method', opts.type);
+						return false;
+				}
+
 				debug.trace('DOMENU', 'Loading from', opts.uri);
 				try {
-					var html = await $.ajax({
-						type: opts.type,
-						url: opts.uri,
-						cache: false,
-						dataType: 'html',
-						data: opts.data
-					});
-					opts.target.html(html);
-					data = null;
-					opts.target.removeClass('notfilled');
-				} catch(err) {
-					let msg = language.gettext('label_general_error');
-					if (err.responseText) {
-						msg += ' '+err.responseText;
+					var response = await fetch(request);
+					if (response.ok) {
+						var html = await response.text();
+						opts.target.html(html);
+						html = null;
+						opts.target.removeClass('notfilled');
+					} else {
+						throw new Error(response.statusText);
 					}
-					infobar.error(msg);
+				} catch (err) {
+					infobar.error(language.gettext('label_general_error')+'<br />'+err.message);
 					success = false;
 				}
+
+				// try {
+				// 	var html = await $.ajax({
+				// 		type: opts.type,
+				// 		url: opts.uri,
+				// 		cache: false,
+				// 		dataType: 'html',
+				// 		data: opts.data
+				// 	});
+				// 	opts.target.html(html);
+				// 	html = null;
+				// 	opts.target.removeClass('notfilled');
+				// } catch(err) {
+				// 	let msg = language.gettext('label_general_error');
+				// 	if (err.responseText) {
+				// 		msg += ' '+err.responseText;
+				// 	}
+				// 	infobar.error(msg);
+				// 	success = false;
+				// }
 			} else {
 				debug.error('DOMENU', 'Unfilled menu element with no loader',opts.clickedElement);
 			}

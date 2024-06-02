@@ -174,7 +174,8 @@ var podcasts = function() {
 				target: $('#fruitbat'),
 				clickedElement: element,
 				uri: 'api/podcasts/',
-				data: {url: encodeURIComponent(url), populate: 1}
+				data: {url: url, populate: 1},
+				type: 'POST'
 			});
 			podcasts.doNewCount();
 		},
