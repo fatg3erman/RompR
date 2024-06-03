@@ -444,11 +444,6 @@ var podcasts = function() {
 			searchManager.make_search_title('podcast_search', 'Podcast Search Results for &quot;'+terms.any+'&quot;');
 		},
 
-		// clearsearch: function() {
-		// 	$('#podcast_search').clearOut().empty();
-		// 	$('#podsclear').hide();
-		// },
-
 		subscribe: async function(event, clickedElement) {
 			var index = clickedElement.next().val();
 			await clickRegistry.loadContentIntoTarget({
@@ -460,10 +455,6 @@ var podcasts = function() {
 			$('#podcast_search').find('#podcast_'+index).removeCollectionDropdown();
 			podcasts.doNewCount();
 		},
-
-		// removeSearch: function(event, clickedElement) {
-		// 	$('#podcast_search').clearOut().empty();
-		// },
 
 		storePlaybackProgress: function(track) {
 			podcastRequest({setprogress: Math.round(track.progress), track: encodeURIComponent(track.uri), name: track.name}, null);

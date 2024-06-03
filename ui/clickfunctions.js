@@ -85,6 +85,9 @@ var clickRegistry = function() {
 			return false;
 		},
 
+		// For GET requests the data part will be appended to the URI as a query string. Do not pass a data parameter and a
+		// URI with a query string for a GET request. For a POST request the data part will be the request body.
+		// POST requests will be sent as application/x-www-form-urlencoded, ie NOT JSON.
 		loadContentIntoTarget: async function(params) {
 			var opts = {
 				type: 'GET',
@@ -290,7 +293,7 @@ function setPlayClickHandlers() {
 			type: 'GET' or 'POST', default GET
 			scoot: bool default true
 			uri: uri (optional)
-			data: data
+			data: {}
 		})
 			scoot will alnost always be true in this case, and setting it to true won't hurt
 			If the uri parameter is used clickedElement is ignored except for making it a spinner while the loading occurs.
