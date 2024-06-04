@@ -233,7 +233,7 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 					// but we only allow those to go false => true otherwise initialising new collection unsets flags
 					// in the data that we don't want to unset
 					start[i] = data[i];
-					debug.core('UPDATEDATA', 'Setting',i,'to',data[i]);
+					debug.debug('UPDATEDATA', 'Setting',i,'to',data[i]);
 					if (trigger && typeof(trigger[i]) == 'object') {
 						debug.log('NOWPLAYING', 'Calling triggers for',i);
 						for (var fn of trigger[i]) {

@@ -17,7 +17,7 @@ var wikipedia = function() {
 				var response = await fetch(
 					'browser/backends/info_wikipedia.php',
 					{
-						signal: AbortSignal.timeout(30000),
+						signal: AbortSignal.timeout(90000),
 						body: JSON.stringify(terms),
 						cache: 'no-store',
 						method: 'POST',
