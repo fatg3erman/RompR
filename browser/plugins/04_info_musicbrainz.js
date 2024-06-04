@@ -703,7 +703,8 @@ var info_musicbrainz = function() {
 					musicbrainz: {musicbrainz_id: null},
 					discogs: {artistlink: null, releaselink: null, releaseid: null},
 					wikipedia: {link: null},
-					spotify: {id: null}
+					spotify: {id: null},
+					allmusic: {link: null}
 				}
 
 				parent.updateData(mb_failure_data, artistmeta);
