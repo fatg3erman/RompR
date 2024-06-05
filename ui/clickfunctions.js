@@ -110,9 +110,10 @@ var clickRegistry = function() {
 				params = object_to_postdata(opts.data);
 				switch (opts.type) {
 					case 'GET':
-						if (Object.keys(opts.data).length > 0)
-							opts.uri += '?'+params.toString();
-
+						if (Object.keys(opts.data).length > 0) {
+							let joiner = (opts.uri.indexOf('?') > -1) ? '&' : '?';
+							opts.uri += joiner+params.toString();
+						}
 						var request = new Request(opts.uri, {
 							cache: 'no-store',
 							priority: 'high',
