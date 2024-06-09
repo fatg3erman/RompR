@@ -247,6 +247,39 @@ class sortby_base {
 		return $qstring;
 	}
 
+	protected function album_sort() {
+		if (count(prefs::get_pref('nosortprefixes')) > 0) {
+			$qstring = " (CASE ";
+			foreach(prefs::get_pref('nosortprefixes') AS $p) {
+				$phpisshitsometimes = strlen($p)+2;
+				$qstring .= "WHEN Albumname LIKE '".$p.
+					" %' THEN SUBSTR(Albumname,".$phpisshitsometimes.") ";
+			}
+			$qstring .= "ELSE Albumname END)";
+		} else {
+			$qstring = " Albumname";
+		}
+		return $qstring;
+	}
+
+	protected function album_artist_sort($doit) {
+		$qstring = '';
+		if ($doit) {
+			if (count(prefs::get_pref('nosortprefixes')) > 0) {
+				$qstring .= "(CASE ";
+				foreach(prefs::get_pref('nosortprefixes') AS $p) {
+					$phpisshitsometimes = strlen($p)+2;
+					$qstring .= "WHEN Artistname LIKE '".$p.
+						" %' THEN SUBSTR(Artistname,".$phpisshitsometimes.") ";
+				}
+				$qstring .= "ELSE Artistname END), ";
+			} else {
+				$qstring .= "Artistname, ";
+			}
+		}
+		return $qstring;
+	}
+
 	public function track_sort_query() {
 		// This is the generic query for sortby_artist, sortby_album, and sortby_albumbyartist
 		$db = &prefs::$database;
@@ -409,6 +442,14 @@ class sortby_base {
 			$artistindex
 		);
 	}
+
+	protected function artistBanner($a, $i) {
+		$html = uibits::ui_config_header([
+			'label_text' => $a,
+			'id' => $this->why.'artist'.$i
+		]);
+		return $html;
+ 	}
 
 	public function album_trackcount($albumindex) {
 		return prefs::$database->sql_prepare_query(false, null, 'num', 0,

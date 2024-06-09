@@ -37,24 +37,14 @@ class sortby_albumbyartist extends sortby_base {
 			foreach(prefs::get_pref('nosortprefixes') AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
 				$qstring .= "WHEN Artistname LIKE '".$p.
-					" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
+					" %' THEN SUBSTR(Artistname,".$phpisshitsometimes.") ";
 			}
-			$qstring .= "ELSE LOWER(Artistname) END), ";
+			$qstring .= "ELSE Artistname END), ";
 		} else {
-			$qstring .= ", LOWER(Artistname), ";
+			$qstring .= ", Artistname, ";
 		}
 		$qstring .= $this->year_sort();
-		if (count(prefs::get_pref('nosortprefixes')) > 0) {
-			$qstring .= " (CASE ";
-			foreach(prefs::get_pref('nosortprefixes') AS $p) {
-				$phpisshitsometimes = strlen($p)+2;
-				$qstring .= "WHEN Albumname LIKE '".$p.
-					" %' THEN SUBSTR(Albumname,".$phpisshitsometimes.") ";
-			}
-			$qstring .= "ELSE Albumname END)";
-		} else {
-			$qstring .= " Albumname";
-		}
+		$qstring .= $this->album_sort(true);
 		$result = prefs::$database->generic_sql_query($qstring);
 		foreach ($result as $album) {
 			$album['why'] = $this->why;
@@ -151,13 +141,6 @@ class sortby_albumbyartist extends sortby_base {
 		}
 	}
 
-	private function artistBanner($a, $i) {
-		$html = uibits::ui_config_header([
-			'label_text' => $a,
-			'id' => $this->why.'artist'.$i
-		]);
-		return $html;
- 	}
 }
 
 ?>

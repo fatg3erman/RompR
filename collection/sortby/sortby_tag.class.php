@@ -2,6 +2,8 @@
 
 class sortby_tag extends sortby_base {
 
+	const SORT_BY_ARTIST = false;
+
 	public function root_sort_query() {
 		$db = &prefs::$database;
 		$result = prefs::$database->generic_sql_query(
@@ -39,18 +41,9 @@ class sortby_tag extends sortby_base {
 		prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";
+		$qstring .= $this->album_artist_sort(static::SORT_BY_ARTIST);
 		$qstring .= $this->year_sort();
-		if (count(prefs::get_pref('nosortprefixes')) > 0) {
-			$qstring .= " (CASE ";
-			foreach(prefs::get_pref('nosortprefixes') AS $p) {
-				$phpisshitsometimes = strlen($p)+2;
-				$qstring .= "WHEN Albumname LIKE '".$p.
-					" %' THEN SUBSTR(Albumname,".$phpisshitsometimes.") ";
-			}
-			$qstring .= "ELSE Albumname END)";
-		} else {
-			$qstring .= " Albumname";
-		}
+		$qstring .= $this->album_sort(true);
 		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $album) {
 			$album['why'] = $this->why;
@@ -91,7 +84,12 @@ class sortby_tag extends sortby_base {
 		if ($do_controlheader) {
 			print uibits::albumControlHeader(false, $this->why, 'tag', $this->who, $this->getTagName());
 		}
+		$current_artist = null;
 		foreach ($this->album_sort_query($unused) as $album) {
+			if (static::SORT_BY_ARTIST && $album['Artistname'] != $current_artist) {
+				$current_artist = $album['Artistname'];
+				print $this->artistBanner($current_artist, $album['AlbumArtistindex']);
+			}
 			print uibits::albumHeader($album);
 			$count++;
 		}

@@ -759,7 +759,10 @@ language::add_translations([
 	"label_classicalfolder" =>				"Detect Classical Music by Folder Path",
 	"label_showallresults" =>				"Show All Tracks",
 	"label_bythisartist" =>					"By This Artist from Your Collection",
-	"label_generic_error" =>				"Something has gone wrong"
+	"label_generic_error" =>				"Something has gone wrong",
+	"label_genrebyartist" =>				"Genre (by Artist)",
+	"label_ratingbyartist" =>				"Rating (by Artist)",
+	"label_tagbyartist" =>					"Tag (by Artist)"
 
 	// ----------------------------------------------------
 	// Proobaly Unused

@@ -184,12 +184,15 @@ define('ROMPR_FILE_MODEL', array(
 //
 
 const COLLECTION_SORT_MODES = array(
-	'artist' 		=> 'label_artists',
-	'album' 		=> 'label_albums',
-	'albumbyartist' => 'label_albumsbyartist',
-	'genre' 		=> 'label_genre',
-	'rating' 		=> 'label_rating',
-	'tag' 			=> 'label_tag'
+	'artist' 		 => 'label_artists',
+	'album' 		 => 'label_albums',
+	'albumbyartist'  => 'label_albumsbyartist',
+	'genre' 		 => 'label_genre',
+	'genrebyartist'  => 'label_genrebyartist',
+	'rating' 		 => 'label_rating',
+	'ratingbyartist' => 'label_ratingbyartist',
+	'tag' 			 => 'label_tag',
+	'tagbyartist'	 => 'label_tagbyartist'
 );
 
 const BG_IMAGE_TIMEOUTS = [
