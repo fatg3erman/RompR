@@ -44,7 +44,17 @@ class sortby_genre extends sortby_base {
 			prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)." ".
 			$sflag.") ORDER BY";
 		$qstring .= $this->year_sort(true);
-		$qstring .= ' LOWER(Albumname)';
+		if (count(prefs::get_pref('nosortprefixes')) > 0) {
+			$qstring .= " (CASE ";
+			foreach(prefs::get_pref('nosortprefixes') AS $p) {
+				$phpisshitsometimes = strlen($p)+2;
+				$qstring .= "WHEN Albumname LIKE '".$p.
+					" %' THEN SUBSTR(Albumname,".$phpisshitsometimes.") ";
+			}
+			$qstring .= "ELSE Albumname END)";
+		} else {
+			$qstring .= " Albumname";
+		}
 		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $album) {
 			$album['why'] = $this->why;

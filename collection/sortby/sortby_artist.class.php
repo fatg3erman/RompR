@@ -44,11 +44,11 @@ class sortby_artist extends sortby_base {
 			foreach(prefs::get_pref('nosortprefixes') AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
 				$qstring .= "WHEN a.Artistname LIKE '".$p.
-					" %' THEN LOWer(SUBSTR(a.Artistname,".$phpisshitsometimes.")) ";
+					" %' THEN SUBSTR(a.Artistname,".$phpisshitsometimes.") ";
 			}
-			$qstring .= "ELSE LOWER(a.Artistname) END)";
+			$qstring .= "ELSE a.Artistname END)";
 		} else {
-			$qstring .= "LOWER(a.Artistname)";
+			$qstring .= "a.Artistname";
 		}
 		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $artist) {
@@ -72,7 +72,17 @@ class sortby_artist extends sortby_base {
 		$sflag.")";
 		$qstring .= " ORDER BY ";
 		$qstring .= $this->year_sort();
-		$qstring .= ' LOWER(Albumname)';
+		if (count(prefs::get_pref('nosortprefixes')) > 0) {
+			$qstring .= " (CASE ";
+			foreach(prefs::get_pref('nosortprefixes') AS $p) {
+				$phpisshitsometimes = strlen($p)+2;
+				$qstring .= "WHEN Albumname LIKE '".$p.
+					" %' THEN SUBSTR(Albumname,".$phpisshitsometimes.") ";
+			}
+			$qstring .= "ELSE Albumname END)";
+		} else {
+			$qstring .= " Albumname";
+		}
 		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $album) {
 			if (!$force_artistname) {

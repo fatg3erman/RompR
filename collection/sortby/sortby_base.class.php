@@ -226,7 +226,20 @@ class sortby_base {
 		$sortbydate = ($this->why == 'z') ? prefs::get_pref('sort_ab_bydate') : prefs::get_pref('sortbydate');
 		if ($sortbydate) {
 			if (!$albumonly && prefs::get_pref('notvabydate')) {
-				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
+				$qstring .= " CASE WHEN Artisttable.Artistname IN ('".
+					implode("', '", prefs::get_pref('artistsatstart'))."') THEN ";
+						if (count(prefs::get_pref('nosortprefixes')) > 0) {
+							$qstring .= "(CASE ";
+							foreach(prefs::get_pref('nosortprefixes') AS $p) {
+								$phpisshitsometimes = strlen($p)+2;
+								$qstring .= "WHEN Albumname LIKE '".$p.
+									" %' THEN SUBSTR(Albumname,".$phpisshitsometimes.") ";
+							}
+							$qstring .= "ELSE Albumname END)";
+						} else {
+							$qstring .= "Albumname";
+						}
+					$qstring .= " ELSE Year END,";
 			} else {
 				$qstring .= ' Year,';
 			}

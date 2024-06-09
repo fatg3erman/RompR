@@ -429,7 +429,7 @@ language::add_translations([
 	"label_radio_mix" =>					"Favourite Artists and Related Artists",
 	"label_gotnotracks" =>					"Didn't find any tracks",
 	"config_artistfirst" =>					"Artists At Top Of Collection",
-	"config_nosortprefixes" =>				"Ignore These Prefixes When Sorting Artists",
+	"config_nosortprefixes" =>				"Ignore These Prefixes When Sorting",
 	"button_skipforward" =>					"Skip Forwards",
 	"button_skipbackward" =>				"Skip Backwards",
 	"config_snoozetime" =>					"Snooze Time (Mins)",
