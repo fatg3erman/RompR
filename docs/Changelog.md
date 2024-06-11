@@ -1,5 +1,19 @@
 # Changelog
 
+## Version 2.16
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* New sort modes for Genre, Tag, and Rating allowing a sub-sort by Artist.
+* Permit 'Sort Albums by Date' to be applied indpendantly to the Collection and Spoken Word
+* When 'Sort Albums by Date' is disabled, obey the same "ignore prefixes" rules as for Artist names
+* Mostly switch from using JQuery ajax to the fetch API, which permits better error handling, and
+requests to be prioritised and so makes the UI slightly more responsive, except in Firefox where priorities are not supported.
+* Fix bug where the Info Panel would mostly fail to update if Musicbrainz didn't respond.
+* Podcast downloads could not write ID3 tags to m4a files due to getid3 not supporting it. Added support for
+writing these tags usong AtomicParsley. You should install the AtomicParsley package to take advantage of this.
+
+
 ## Version 2.15
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.

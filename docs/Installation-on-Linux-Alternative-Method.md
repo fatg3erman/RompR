@@ -19,7 +19,7 @@ We need to make sure Apache can find RompЯ. To do this we create a soft link fr
 
 ### Install some packages
 
-    sudo apt-get install apache2 php-curl php-sqlite3 php-gd php-json php-xml php-mbstring php-intl imagemagick
+    sudo apt-get install apache2 php-curl php-sqlite3 php-gd php-json php-xml php-mbstring php-intl imagemagick atomicparsley
 
 
 ### Enable some Apache modules

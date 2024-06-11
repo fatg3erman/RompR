@@ -1,6 +1,10 @@
 # Installing on macOS with nginx webserver
 
-This is an alternative method to install RompЯ on macOS which uses the nginx webserver instead of the built in Apache server. This method installs everything from Homebrew, which should future-proof it better against Apple removing stuff from macOS in the future. This guide assumed you've already installed a player and copied the RompЯ files to /Users/YOU/Sites/rompr
+This is an alternative method to install RompЯ on macOS which uses the nginx webserver instead of the built in Apache server.
+
+This method installs everything from Homebrew, which should future-proof it better against Apple removing stuff from macOS in the future.
+
+This guide assumed you've already installed a player and copied the RompЯ files to /Users/YOU/Sites/rompr
 
 ## Install Homebrew
 
