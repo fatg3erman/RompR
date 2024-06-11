@@ -150,7 +150,7 @@ class metaDatabase extends playlistCollection {
 			$data,
 			false
 		);
-		$this->tracks_as_array();
+		$this->tracks_as_array(true);
 	}
 
 	public function browsetoll($uri) {

@@ -26,17 +26,49 @@ function getWindowSize() {
 
 }
 
+// Turn an object into something that can be sent as POST data using fetch().
+// Returns URLSearchParams()
+// var opts = {
+// 	command: 'search',
+// 	resultstype: 'collection',
+// 	domains: ['spotify', 'youtube'],
+// 	dump: 'bartistroot',
+// 	mpdsearch: {any: ['boobs']}
+// }
+// var formdata = object_to_postdata(opts);
+// then use formdata.toString() as the body of the POST request
+// command=search&resultstype=collection&domains%5B%5D=spotify&domains%5B%5D=youtube&dump=bartistroot&mpdsearch%5Bany%5D%5B%5D=boobs
+
+// WON'T work if an array value contains an object value
+// eg ['arse', 'cheese', {boobs: 'fruit'}]
+// but I can't think of any time where that would ever crop up
+
+function object_to_postdata(object, formdata, prevtag) {
+	if (!formdata)
+		formdata = new URLSearchParams();
+
+	if (typeof object != 'object') {
+		formdata.append(prevtag, object);
+	} else if (Array.isArray(object)) {
+		var key = prevtag + '[]';
+		object.forEach(val => {
+			formdata.append(key, val)
+		});
+	} else {
+		$.each(object, (key, value) => {
+			var newkey = (prevtag) ? prevtag+'['+key+']' : key;
+			formdata = object_to_postdata(value, formdata, newkey)
+		});
+	}
+	return formdata;
+}
+
 function zeroPad(num, count) {
 	var numZeropad = num + '';
 	while(numZeropad.length < count) {
 		numZeropad = "0" + numZeropad;
 	}
 	return numZeropad;
-}
-
-function cloneObject(obj) {
-	return JSON.parse(JSON.stringify(obj));
-	// return $.extend(true, { }, obj);
 }
 
 function rawurlencode (str) {
@@ -276,7 +308,7 @@ function joinartists(ob) {
 }
 
 function concatenate_artist_names(t) {
-	var shitte = cloneObject(t);
+	var shitte = structuredClone(t);
 	var f = shitte.pop();
 	if (shitte.length == 0) {
 		return f;

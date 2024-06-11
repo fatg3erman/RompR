@@ -164,3 +164,7 @@ img#browns {
 #morebutton {
 	text-align:center;
 }
+
+.breakall {
+	word-break: break-all;
+}

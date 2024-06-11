@@ -70,7 +70,12 @@ var alarmclock = function() {
 		var row1 = $('<tr>').appendTo(lego);
 		var froggy = $('<td rowspan="2">').appendTo(row1);
 		// Note rompr_index - this is OUR array index, whereas Alarmindex is the database table AUTO_INCREMENT index.
-		$('<input>', {type: "time", style: 'width:5em', class: "fixed snapclientname alarmtimeedit alarmnumbers", rompr_index: ourindex, name: "Time"}).val(alarm.Time).appendTo(froggy);
+		var toady = $('<input>', {type: "time", style: 'width:5em', class: "fixed snapclientname alarmtimeedit alarmnumbers", rompr_index: ourindex, name: "Time"}).val(alarm.Time).appendTo(froggy);
+		if (alarm.Alarmindex == 'NEW') {
+			// Make clicking on the time editor for the NEW row open the alarm editor instead
+			// - the backend won't cope with simply editing the time for an alarm that doesn't exist.
+			toady.addClass('editalarm').attr('name', alarm.Alarmindex);
+		}
 
 		var namebit = $('<td width="99%">').html(alarm.Name).appendTo(row1);
 
@@ -186,7 +191,7 @@ var alarmclock = function() {
 					fillWindow();
 				}
 			} catch (err) {
-
+				debug.error('ALARMS', err.message);
 			}
 		},
 
@@ -197,10 +202,7 @@ var alarmclock = function() {
 		// pause sends a command to cancel or sleep
 		pre_stop_actions: function() {
 			if (alarm_running !== false) {
-				$.get({
-					type: 'GET',
-					url: 'api/alarmclock/?stop=1'
-				});
+				fetch('api/alarmclock/?stop=1');
 				if (playlist.radioManager.is_running())
 					playlist.radioManager.stop();
 			}
@@ -208,20 +210,14 @@ var alarmclock = function() {
 
 		pre_pause_actions: function() {
 			if (alarm_running !== false) {
-				$.get({
-					type: 'GET',
-					url: 'api/alarmclock/?snooze=1'
-				});
+				fetch('api/alarmclock/?snooze=1');
 			}
 		},
 
 
 		pre_play_actions: function() {
 			if (alarm_running !== false) {
-				$.get({
-					type: 'GET',
-					url: 'api/alarmclock/?snooze=0'
-				});
+				fetch('api/alarmclock/?snooze=0');
 			}
 		},
 
@@ -255,24 +251,17 @@ var alarmclock = function() {
 			putAlarmDropPlayItem(elements.html(), element);
 		},
 
-		deleteAlarm: async function(event, button) {
+		deleteAlarm: function(event, button) {
 			var index = editor_popup.find('input.alarmvalue[name="Alarmindex"]').val();
 			debug.log('ALARMS', 'Deleting Alarm', index);
-			await $.get({
-				type: 'GET',
-				url: 'api/alarmclock/?index='+index+'&remove=1'
-			});
-			alarmclock.populate_alarms();
+			fetch('api/alarmclock/?index='+index+'&remove=1').finally(alarmclock.populate_alarms);
 		},
 
 		enableAlarm: async function(event, button) {
 			var index = button.attr('name');
 			debug.log('ALARMS', 'Toggling Alarm', index);
 			var enable = button.hasClass('icon-alarm-on') ? 0 : 1;
-			await $.get({
-				type: 'GET',
-				url: 'api/alarmclock/?index='+index+'&enable='+enable
-			});
+			await fetch('api/alarmclock/?index='+index+'&enable='+enable);
 			if (index === running_alarm_index && playlist.radioManager.is_running())
 				playlist.radioManager.stop();
 
@@ -283,6 +272,12 @@ var alarmclock = function() {
 			var index = button.attr('name');
 			var ourindex = button.attr('rompr_index');
 			debug.log('ALARMS', 'Editing Alarm', index, ourindex);
+
+			// Prevent us from editing the time using the main dropdown timer while
+			// the editore is open. We can't make that update the editor one so they get
+			// out of sync. We MUST populate_alarms when we close the editor to undo this.
+			$('input.alarmtimeedit[rompr_index="'+ourindex+'"]').attr('disabled', true);
+
 			var alarm = alarms[ourindex];
 			if (alarm_editor !== null)
 				alarm_editor.close(null);
@@ -291,7 +286,8 @@ var alarmclock = function() {
 				width: 500,
 				title: 'Alarm For Player '+prefs.currenthost,
 				atmousepos: true,
-				mousevent: event
+				mousevent: event,
+				hasclosebutton: false
 			});
 
 			editor_popup = alarm_editor.create();
@@ -367,6 +363,7 @@ var alarmclock = function() {
 			editor_popup.on(prefs.click_event, 'label', alarmclock.labelclick);
 
 			alarm_editor.addCloseButton('Save', alarmclock.close_editor);
+			alarm_editor.addCloseButton('Cancel', alarmclock.populate_alarms);
 			if (alarm.Alarmindex != 'NEW')
 				alarm_editor.addCloseButton('Delete', alarmclock.deleteAlarm);
 

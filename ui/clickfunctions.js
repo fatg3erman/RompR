@@ -85,6 +85,9 @@ var clickRegistry = function() {
 			return false;
 		},
 
+		// For GET requests the data part will be appended to the URI as a query string. Do not pass a data parameter and a
+		// URI with a query string for a GET request. For a POST request the data part will be the request body.
+		// POST requests will be sent as application/x-www-form-urlencoded, ie NOT JSON.
 		loadContentIntoTarget: async function(params) {
 			var opts = {
 				type: 'GET',
@@ -104,26 +107,70 @@ var clickRegistry = function() {
 				opts.uri = findMenuLoader(opts.clickedElement, menutoopen);
 			}
 			if (opts.uri) {
+				params = object_to_postdata(opts.data);
+				switch (opts.type) {
+					case 'GET':
+						if (Object.keys(opts.data).length > 0) {
+							let joiner = (opts.uri.indexOf('?') > -1) ? '&' : '?';
+							opts.uri += joiner+params.toString();
+						}
+						var request = new Request(opts.uri, {
+							cache: 'no-store',
+							priority: 'high',
+							method: opts.type
+						});
+						break;
+
+					case 'POST':
+						var request = new Request(opts.uri, {
+							headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'},
+							method: opts.type,
+							cache: 'no-store',
+							priority: 'high',
+							body: params.toString()
+						})
+						break;
+
+					default:
+						debug.error('LOADCONTENT', 'Unsupported method', opts.type);
+						return false;
+				}
+
 				debug.trace('DOMENU', 'Loading from', opts.uri);
 				try {
-					var html = await $.ajax({
-						type: opts.type,
-						url: opts.uri,
-						cache: false,
-						dataType: 'html',
-						data: opts.data
-					});
-					opts.target.html(html);
-					data = null;
-					opts.target.removeClass('notfilled');
-				} catch(err) {
-					let msg = language.gettext('label_general_error');
-					if (err.responseText) {
-						msg += ' '+err.responseText;
+					var response = await fetch(request);
+					if (response.ok) {
+						var html = await response.text();
+						opts.target.html(html);
+						html = null;
+						opts.target.removeClass('notfilled');
+					} else {
+						throw new Error(response.statusText);
 					}
-					infobar.error(msg);
+				} catch (err) {
+					infobar.error(language.gettext('label_general_error')+'<br />'+err.message);
 					success = false;
 				}
+
+				// try {
+				// 	var html = await $.ajax({
+				// 		type: opts.type,
+				// 		url: opts.uri,
+				// 		cache: false,
+				// 		dataType: 'html',
+				// 		data: opts.data
+				// 	});
+				// 	opts.target.html(html);
+				// 	html = null;
+				// 	opts.target.removeClass('notfilled');
+				// } catch(err) {
+				// 	let msg = language.gettext('label_general_error');
+				// 	if (err.responseText) {
+				// 		msg += ' '+err.responseText;
+				// 	}
+				// 	infobar.error(msg);
+				// 	success = false;
+				// }
 			} else {
 				debug.error('DOMENU', 'Unfilled menu element with no loader',opts.clickedElement);
 			}
@@ -247,7 +294,7 @@ function setPlayClickHandlers() {
 			type: 'GET' or 'POST', default GET
 			scoot: bool default true
 			uri: uri (optional)
-			data: data
+			data: {}
 		})
 			scoot will alnost always be true in this case, and setting it to true won't hurt
 			If the uri parameter is used clickedElement is ignored except for making it a spinner while the loading occurs.
@@ -982,7 +1029,7 @@ async function makeTrackMenu(e, element) {
 			});
 			menu.markTrackTags();
 		},
-		function() { debug.error('SUBMENU', 'Failed to populate tag menu') }
+		metaHandlers.genericFail
 	);
 
 	var pls = $('<div>', {
@@ -1144,10 +1191,7 @@ function useTrackImages(e, element) {
 	metaHandlers.genericAction(
 		[data],
 		collectionHelper.updateCollectionDisplay,
-		function(rdata) {
-			debug.warn("RATING PLUGIN","Failure to do bumfinger", rdata);
-			infobar.error(language.gettext('label_general_error'));
-		}
+		metaHandlers.genericFailPopup
 	);
 	return true;
 }
@@ -1162,10 +1206,7 @@ function setAsAudioBook(e, element) {
 	metaHandlers.genericAction(
 		[data],
 		collectionHelper.updateCollectionDisplay,
-		function(rdata) {
-			debug.warn("RATING PLUGIN","Failure to set as audiobook", rdata);
-			infobar.error(language.gettext('label_general_error'));
-		}
+		metaHandlers.genericFailPopup
 	);
 	return true;
 }
@@ -1225,10 +1266,7 @@ function actuallyAmendAlbumDetails(albumindex) {
 			collectionHelper.updateCollectionDisplay(rdata);
 			playlist.repopulate();
 		},
-		function(rdata) {
-			debug.warn("RATING PLUGIN","Failure amending album details", rdata);
-			infobar.error(language.gettext('label_general_error'));
-		}
+		metaHandlers.genericFailPopup
 	);
 	return true;
 }
@@ -1266,6 +1304,7 @@ function browseAndAddToListenLater(event, clickedElement) {
 
 function browseSearchResults(event, clickedElement) {
 	var albumindex = clickedElement.attr('name');
+	clickedElement.html(language.gettext('label_searching')).removeClass('clickable');
 	debug.log('BROF', 'Browsing Album Index', albumindex);
 	metaHandlers.browseSearchResult(albumindex);
 }

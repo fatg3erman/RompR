@@ -2,6 +2,8 @@
 
 class sortby_genre extends sortby_base {
 
+	const SORT_BY_ARTIST = false;
+
 	public function root_sort_query() {
 		$db = &prefs::$database;
 		// This query gives us album artists only. It also makes sure we only get artists for whom we
@@ -32,7 +34,7 @@ class sortby_genre extends sortby_base {
 		$sflag = $this->filter_album_on_why();
 
 		$qstring =
-		"SELECT Albumtable.*, Artisttable.Artistname
+		"SELECT Albumtable.*, Artisttable.Artistname, '{$this->why}' AS why
 			FROM Albumtable
 			JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
 			WHERE Albumindex IN
@@ -42,11 +44,10 @@ class sortby_genre extends sortby_base {
 			    AND Tracktable.Genreindex = ".$this->who." ".
 			prefs::$database->track_domain_check(prefs::get_pref('collectiondomains'), $this->why)." ".
 			prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)." ".
-			$sflag.") ORDER BY";
-		if (prefs::get_pref('sortbydate')) {
-			$qstring .= ' Year,';
-		}
-		$qstring .= ' LOWER(Albumname)';
+			$sflag.") ORDER BY ";
+		$qstring .= $this->album_artist_sort(static::SORT_BY_ARTIST);
+		$qstring .= $this->year_sort(true);
+		$qstring .= $this->album_sort(true);
 		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $album) {
 			$album['why'] = $this->why;
@@ -87,7 +88,12 @@ class sortby_genre extends sortby_base {
 		if ($do_controlheader) {
 			print uibits::albumControlHeader(false, $this->why, 'genre', $this->who, $this->getGenreName());
 		}
+		$current_artist = null;
 		foreach ($this->album_sort_query($force_artistname) as $album) {
+			if (static::SORT_BY_ARTIST && $album['Artistname'] != $current_artist) {
+				$current_artist = $album['Artistname'];
+				print $this->artistBanner($current_artist, $album['AlbumArtistindex']);
+			}
 			print uibits::albumHeader($album);
 			$count++;
 		}

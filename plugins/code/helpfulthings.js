@@ -15,9 +15,7 @@ var helpfulThings = function() {
 		debug.log(medebug, "Getting Seeds For Recommendations");
 		metaHandlers.genericQuery({action: 'getrecommendationseeds', days: 180, limit: 35, top: 15},
 			gotRecommendationSeeds,
-			function(data) {
-				debug.error(medebug,"Error Getting Seeds",data);
-			}
+			metaHandlers.genericFailPopup
 		);
 	}
 
@@ -70,7 +68,7 @@ var helpfulThings = function() {
 	}
 
 	function get_backend_info(bends) {
-		let poop = cloneObject(bends);
+		let poop = structuredClone(bends);
 		var lastb = poop.pop();
 		var f = poop.join(', ');
 		return [f + ' and ' + lastb];
@@ -106,7 +104,7 @@ var helpfulThings = function() {
 					html += '</div></div>';
 
 					html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="mixRadio">';
-					html += '<img class="smallcover fixed" src="newimages/vinyl_record.svg" />';
+					html += '<img class="smallcover fixed" src="newimages/artist-icon.png" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_radio_mix")+'</b><br/>';
 					html += language.gettext('label_rmixdesc', get_backend_info(rradio_bends));
 					html += '</div></div>';
@@ -117,7 +115,7 @@ var helpfulThings = function() {
 						html += language.gettext('label_dailymixdesc', get_backend_info(lfmradio_bends));
 						html += '</div></div>';
 
-						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="lastFMArtistRadio+6month">';
+						html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="lastFMArtistRadio+12month">';
 						html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 						html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_luckydip")+'</b><br/>';
 						html += language.gettext('label_luckydipdesc', get_backend_info(lfmradio_bends));

@@ -31,36 +31,44 @@ var collectionHelper = function() {
 		// at which point it will load the collection.
 		debug.mark('GENERAL', 'Initiating Collection Rebuild');
 		try {
-			await $.ajax({
-				type: "GET",
-				url: 'api/collection/?rebuild=yes',
-				timeout: prefs.collection_load_timeout,
-				dataType: "html",
-				cache: false
-			});
-			debug.info('GENERAL','Collection Rebuild has Started. Polling From Here.');
+			var response = await fetch(
+				'api/collection/?rebuild=yes',
+				{
+					signal: AbortSignal.timeout(prefs.collection_load_timeout),
+					cache: 'no-store',
+					priority: 'low'
+				}
+			);
+			if (response.ok) {
+				debug.info('GENERAL','Collection Rebuild has Started. Polling From Here.');
+			} else {
+				var t = await response.text();
+				var msg = t ? t : response.statusText;
+				throw new Error(language.gettext('error_collectionupdate')+'<br />'+msg);
+			}
 		} catch (err) {
 			debug.error('GENERAL','Collection Rebuild Did Not Work!',err);
-			var msg = language.gettext('error_collectionupdate');
-			if (err.responseText) {
-				msg += ' - '+err.responseText;
-			}
-			infobar.error(msg);
+			infobar.error(err.message);
 			doneUpdate();
 			return false;
 		}
 		var data = {current: 'Preparing'};
 		while (data.current != 'RompR Is Done') {
 			try {
-				data = await $.ajax({
-					type: "GET",
-					url: 'utils/checkupdateprogress.php',
-					dataType: 'json',
-				});
-				debug.debug("UPDATE",data);
-				$('#updatemonitor').html(data.current);
+				var response = await fetch(
+					'utils/checkupdateprogress.php',
+					{ cache: 'no-store' }
+				);
+				if (response.ok) {
+					var data = await response.json();
+					debug.debug("UPDATE",data);
+					if (data.current != 'RomoR Is Done')
+						$('#updatemonitor').html(data.current);
+				} else {
+					throw new Error(response.statusText);
+				}
 			} catch (err) {
-				debug.warn('UPDATE', 'Failed to get update stats');
+				debug.warn('UPDATE', 'Failed to get update stats', err);
 			}
 			await new Promise(t => setTimeout(t, monitorduration));
 		}
@@ -76,43 +84,43 @@ var collectionHelper = function() {
 		player.updatingcollection = false;
 	}
 
-	function loadCollection() {
+	async function loadCollection() {
 		if (!prefs.hide_albumlist) {
 			var albums = 'api/collection/?item='+collectionHelper.collectionKey('a');
 			debug.info("GENERAL","Loading Collection from URL",albums);
-			$.ajax({
-				type: "GET",
-				url: albums,
-				timeout: prefs.collection_load_timeout,
-				dataType: "html",
-				cache: false
-			})
-			.done(function(data) {
-				debug.log('GENERAL','Collection Loaded');
-				$("#collection").html(data);
-				if ($('#emptycollection').length > 0) {
-					$('#collectionbuttons').show();
-					prefs.save({ collectionconbuttons_isopen: true });
-					$('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
+			try {
+				var response = await fetch(
+					albums,
+					{
+						signal: AbortSignal.timeout(prefs.collection_load_timeout),
+						cache: 'no-store',
+						priority: 'high'
+					}
+				);
+				var data = await response.text();
+				if (response.ok) {
+					debug.log('GENERAL','Collection Loaded');
+					$("#collection").html(data);
+					if ($('#emptycollection').length > 0) {
+						$('#collectionbuttons').show();
+						prefs.save({ collectionconbuttons_isopen: true });
+						$('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
+					}
+					data = null;
+					$("#collection").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
+					loadAudiobooks();
+				} else {
+					var msg = data ? data : response.statusText;
+					throw new Error(msg);
 				}
-				data = null;
-				$("#collection").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
-				loadAudiobooks();
-			})
-			.fail(function(data) {
+			} catch (err) {
 				collectionHelper.disableCollectionUpdates();
 				var html = '<p align="center"><b><font color="red">'+language.gettext('label_update_error')+'</font></b></p>';
-				if (data.responseText) {
-					html += '<p align="center">'+data.responseText+'</p>';
-				}
-				if (data.statusText) {
-					html += '<p align="center">'+data.statusText+'</p>';
-				}
+				html += '<p align="center">'+err.message+'</p>';
 				html += '<p align="center"><a href="https://fatg3erman.github.io/RompR/Troubleshooting#very-large-collections" target="_blank">Read The Troubleshooting Docs</a></p>';
 				$("#collection").html(html);
-				debug.error("PLAYER","Failed to generate collection",data);
-				infobar.error(language.gettext('error_collectionupdate'));
-			});
+				debug.error("PLAYER","Failed to generate collection",err);
+			}
 		} else {
 			loadAudiobooks();
 		}
@@ -127,14 +135,22 @@ var collectionHelper = function() {
 
 	function loadAudiobooks() {
 		if (!prefs.hide_audiobooklist) {
-			$('#audiobooks').load(
+			fetch(
 				'api/collection/?item='+collectionHelper.collectionKey('z'),
-				function() {
-					$("#audiobooks").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
-					uiHelper.doCollectionStripyStuff();
-					check_init_tasks();
+				{
+					signal: AbortSignal.timeout(prefs.collection_load_timeout),
+					cache: 'no-store',
+					priority: 'high'
 				}
-			);
+			)
+			.then(response => response.text())
+			.then(data => {
+				$("#audiobooks").html(data)
+				$("#audiobooks").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
+				uiHelper.doCollectionStripyStuff();
+				check_init_tasks();
+			})
+			.catch(err => { debug.warn('INIT', 'Could not load audiobooks', err) });
 		} else {
 			check_init_tasks();
 		}
@@ -354,7 +370,7 @@ var collectionHelper = function() {
 			// Otherwise we would have to reload the entire collection panel every time,
 			// which would cause any opened dropdowns to be mysteriously closed,
 			// which would just look shit.
-			debug.debug("COLLECTION","Update Display",cloneObject(rdata));
+			debug.debug("COLLECTION","Update Display",structuredClone(rdata));
 			if (rdata) {
 				clearTimeout(update_timer);
 				returned_data.push(rdata);

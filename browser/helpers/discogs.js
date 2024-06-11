@@ -49,7 +49,7 @@ var discogs = function() {
 				response = await fetch(
 					'browser/backends/api_handler.php',
 					{
-						signal: AbortSignal.timeout(30000),
+						signal: AbortSignal.timeout(90000),
 						body: JSON.stringify(current_req.data),
 						cache: 'no-store',
 						method: 'POST',

@@ -24,25 +24,33 @@ class imageFunctions {
 		logger::info("LOCAL IMAGE SCAN", "Album Path Is ".$albumpath);
 		logger::log("LOCAL IMAGE SCAN", getcwd());
 		$result = array();
-		if ((is_dir("prefs/MusicFolders") || is_link('prefs/MusicFolders')) && $albumpath != ".") {
-			$albumpath = self::munge_filepath($albumpath);
-			logger::log('LOCAL IMAGE SCAN','Checking',$albumpath);
-			$result = array_merge($result, self::get_images($albumpath));
-			// Is the album dir part of a multi-disc set?
-			if (preg_match('/^CD\s*\d+$|^disc\s*\d+$/i', basename($albumpath))) {
-				$albumpath = dirname($albumpath);
-				$result = array_merge($result, self::get_images($albumpath));
-			}
-			// Are there any subdirectories?
-			$globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $albumpath);
-			$lookfor = glob($globpath."/*", GLOB_ONLYDIR);
-			foreach ($lookfor as $i => $f) {
-				if (is_dir($f)) {
-					$result = array_merge($result, self::get_images($f));
+		if (is_dir("prefs/MusicFolders") || is_link('prefs/MusicFolders')) {
+			if ($albumpath != ".") {
+				$albumpath = self::munge_filepath($albumpath);
+				if (is_readable($albumpath)) {
+					logger::log('LOCAL IMAGE SCAN','Checking',$albumpath);
+					$result = array_merge($result, self::get_images($albumpath));
+					// Is the album dir part of a multi-disc set?
+					if (preg_match('/^CD\s*\d+$|^disc\s*\d+$/i', basename($albumpath))) {
+						$albumpath = dirname($albumpath);
+						$result = array_merge($result, self::get_images($albumpath));
+					}
+					// Are there any subdirectories?
+					$globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $albumpath);
+					$lookfor = glob($globpath."/*", GLOB_ONLYDIR);
+					foreach ($lookfor as $i => $f) {
+						if (is_dir($f)) {
+							$result = array_merge($result, self::get_images($f));
+						}
+					}
+				} else {
+					return [
+						'error' => 'Directory '.preg_replace('#prefs/MusicFolders/#', '', $albumpath)." is not readable"
+					];
 				}
 			}
 		} else {
-			logger::log('LOCAL IMAGE SCAN', 'Nope');
+			return ['error' => "Local Music Directory is not set, or link does not exist"];
 		}
 		return $result;
 	}

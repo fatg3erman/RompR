@@ -6,7 +6,7 @@ This assumes you've already followed the guide to install a player and the Romp–
 
 **Debian / Ubuntu / Raspberry Pi OS / Mint etc**
 
-    sudo apt-get install nginx php-curl php-json php-xml php-mbstring php-sqlite3 php-gd php-fpm php-intl imagemagick
+    sudo apt-get install nginx php-curl php-json php-xml php-mbstring php-sqlite3 php-gd php-fpm php-intl imagemagick atomicparsley
 
 **Arch / Manjaro etc**
 

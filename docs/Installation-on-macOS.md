@@ -1,6 +1,9 @@
 # macOS (with Apache webserver)
 
-Getting this to work on macOS gets harder by the release, but it's not actually that much of a problem. This guide should work on macOS High Sierra, and uses the built-in versions of Apache and PHP that Apple supply. Apple are slowly removing all this stuff from macOS so for future-proofing I'd reccomend doing everything from Homebrew instead, as described [here](/RompR/macOS-With-Nginx)
+Getting this to work on macOS gets harder by the release, but it's not actually that much of a problem.
+
+This guide should work on macOS High Sierra, and uses the built-in versions of Apache and PHP that Apple supply.
+Apple are slowly removing all this stuff from macOS so for future-proofing I'd reccomend doing everything from Homebrew instead, as described [here](/RompR/macOS-With-Nginx)
 
 
 ## 1. Install imagemagick

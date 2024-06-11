@@ -429,7 +429,7 @@ language::add_translations([
 	"label_radio_mix" =>					"Favourite Artists and Related Artists",
 	"label_gotnotracks" =>					"Didn't find any tracks",
 	"config_artistfirst" =>					"Artists At Top Of Collection",
-	"config_nosortprefixes" =>				"Ignore These Prefixes When Sorting Artists",
+	"config_nosortprefixes" =>				"Ignore These Prefixes When Sorting",
 	"button_skipforward" =>					"Skip Forwards",
 	"button_skipbackward" =>				"Skip Backwards",
 	"config_snoozetime" =>					"Snooze Time (Mins)",
@@ -761,7 +761,11 @@ language::add_translations([
 	"button_power_off" =>					"Switch the Musicbox Off",
 	"button_restart" =>						"Restart the Musicbox",
 	"label_showallresults" =>				"Show All Tracks",
-	"label_bythisartist" =>					"By This Artist from Your Collection"
+	"label_bythisartist" =>					"By This Artist from Your Collection",
+	"label_generic_error" =>				"Something has gone wrong",
+	"label_genrebyartist" =>				"Genre (by Artist)",
+	"label_ratingbyartist" =>				"Rating (by Artist)",
+	"label_tagbyartist" =>					"Tag (by Artist)"
 
 	// ----------------------------------------------------
 	// Proobaly Unused

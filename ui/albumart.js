@@ -437,7 +437,23 @@ var imageEditor = function() {
 
 			imageEditor.search();
 			if (path && path != '.') {
-				$.getJSON("utils/findLocalImages.php?path="+encodeURIComponent(path), imageEditor.gotLocalImages)
+				fetch(
+					"utils/findLocalImages.php?path="+encodeURIComponent(path),
+					{
+						priority: 'low',
+						cache: 'no-store',
+						signal: AbortSignal.timeout(10000)
+					}
+				)
+				.then(response => {
+					if (response.ok) {
+						return response.json();
+					} else {
+						throw new Error(response.statusText);
+					}
+				})
+				.then(data => { imageEditor.gotLocalImages(data) })
+				.catch(err => { debug.error('LOCALIMAGES', err) });
 			}
 
 			var searchparams = coverscraper.getImageSearchParams(imgobj);
@@ -526,7 +542,7 @@ var imageEditor = function() {
 			container.append($('<img>', {class: 'clickable clickicon clickgimage', src: options.thumbnail, id: options.id}));
 			container.append($('<input>', {type: 'hidden', value: options.fullurl}));
 			if (options.name)
-				container.append($('<div>', {class: 'playlistrow2'}).html(options.name));
+				container.append($('<div>', {class: 'playlistrow2 breakall'}).html(options.name));
 			if (options.dimensions)
 				container.append($('<div>', {class: 'playlistitem'}).html(options.dimensions));
 			if (options.hostpage)
@@ -566,17 +582,22 @@ var imageEditor = function() {
 
 		gotLocalImages: function(data) {
 			debug.debug("ALBUMART","Retreived Local Images: ",data);
-			if (data && data.length > 0) {
-				data.forEach(function(image) {
-					$("#localresults").append(imageEditor.imageResult({
-						thumbnail: image,
-						dimensions: false,
-						hostpage: false,
-						name: false,
-						id: hex_md5(image),
-						fullurl: image
-					}));
-				});
+			if (data && data.error) {
+				$("#localresults").html('<h3>'+data.error+'</h3>');
+			} else if (data && data.length > 0) {
+				if (data.hasOwnProperty('error')) {
+				} else {
+					data.forEach(function(image) {
+						$("#localresults").append(imageEditor.imageResult({
+							thumbnail: image,
+							dimensions: false,
+							hostpage: false,
+							name: image.split(/[\\/]/).pop(),
+							id: hex_md5(image),
+							fullurl: image
+						}));
+					});
+				}
 			}
 		},
 

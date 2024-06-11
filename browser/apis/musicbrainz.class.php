@@ -444,7 +444,12 @@ class musicbrainz {
 			'offset'	=> 0
 		];
 		$searchresult = self::request(self::create_url('artist/', $query), false);
-		return json_decode($searchresult, true);
+		$r = json_decode($searchresult, true);
+		if ($r) {
+			return $r;
+		} else {
+			return [];
+		}
 	}
 
 	private static function releasegroup_search($artistid, $album) {

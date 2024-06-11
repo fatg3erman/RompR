@@ -39,13 +39,21 @@ var metaHandlers = function() {
 		var key = hex_md5(uri);
 
 		this.checkProgress = function() {
-			$.ajax( {
-				type: "GET",
-				url: "utils/checkyoutubedownload.php?key="+key,
-				cache: false,
-				dataType: "json"
+			fetch(
+				"utils/checkyoutubedownload.php?key="+key,
+				{
+					cache: 'no-store',
+					priority: 'low'
+				}
+			)
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error(response.statusText)
+				}
 			})
-			.done(function(data) {
+			.then(data => {
 				if (data.info) {
 					infobar.updatenotify(notify, 'Youtube Download : '+track_name+'<br />'+data.info);
 				} else if (data.result) {
@@ -62,8 +70,9 @@ var metaHandlers = function() {
 					timer = setTimeout(self.checkProgress, 1000);
 				}
 			})
-			.fail(function() {
-				debug.warn('YOUTUBEDL', language.gettext('error_dlpfail'));
+			.catch(err => {
+				debug.warn('YOUTUBEDL', err);
+				infobar.error(language.gettext('error_dlpfail')+'<br />'+err.message);
 				self.stop();
 			});
 		}
@@ -107,10 +116,7 @@ var metaHandlers = function() {
 								if (fn) fn(name);
 							});
 						},
-						function(data) {
-							debug.warn("DROPPLUGIN","Failed to set attributes for",data);
-							infobar.error(language.gettext('label_general_error'));
-						}
+						metaHandlers.genericFailPopup
 					);
 				}
 			},
@@ -133,9 +139,7 @@ var metaHandlers = function() {
 						function(rdata) {
 							collectionHelper.updateCollectionDisplay(rdata);
 						},
-						function(data) {
-							debug.warn("WAKEUP","Failed to refresh albumids",albumids);
-						}
+						metaHandlers.genericFail
 					);
 				}
 			},
@@ -195,9 +199,7 @@ var metaHandlers = function() {
 				dbQueue.request(
 					trackstogo,
 					collectionHelper.updateCollectionDisplay,
-					function(data) {
-						debug.warn("Failed to remove track! Possibly duplicate request?");
-					}
+					metaHandlers.genericFailPopup
 				);
 			},
 
@@ -218,26 +220,24 @@ var metaHandlers = function() {
 					debug.log('YOUTUBEDL', uri, name);
 					var monitor = new youtubeDownloadMonitor(uri, track_name, $(this));
 					try {
-						var data = await $.ajax({
-							url: "api/metadata/",
-							type: "POST",
-							contentType: false,
-							data: JSON.stringify([{action: 'youtubedl', urilist: [uri] }]),
-							dataType: "html",
-							cache: false
-						});
-					} catch (err) {
-						if (err.status == 200) {
-							debug.log('YOUTUBEDL', 'Error handler caught success code! WTF?');
-						} else {
-							debug.warn("FUCK!", 'Why did that not work?');
-							debug.log('BUMBLETREE', err);
-							if (err.responseText) {
-								debug.error('YOUTUBEDL', err.responseText);
-								infobar.error('Failed to download YouTube track - '+err.responseText);
+						var response = await fetch(
+							"api/metadata/",
+							{
+								method: 'POST',
+								cache: 'no-store',
+								priority: 'low',
+								body: JSON.stringify([{action: 'youtubedl', urilist: [uri] }])
 							}
-							monitor.stop();
+						);
+						if (!response.ok) {
+							var t = await response.text();
+							var msg = t ? t : response.statusText;
+							throw new Error(msg);
 						}
+					} catch (err) {
+						debug.error('BUMBLETREE', err);
+						infobar.error('Failed to download YouTube track - '+err.message);
+						monitor.stop();
 					}
 				});
 			},
@@ -248,26 +248,24 @@ var metaHandlers = function() {
 				debug.log('YTDLALL', 'Downloading album', albumname);
 				var monitor = new youtubeDownloadMonitor(element.attr('who'), albumname, $(this));
 				try {
-					var data = await $.ajax({
-						url: "api/metadata/",
-						type: "POST",
-						contentType: false,
-						data: JSON.stringify([{action: 'youtubedl_album', why: element.attr('why'), who: element.attr('who') }]),
-						dataType: "html",
-						cache: false
-					});
-				} catch (err) {
-					if (err.status == 200) {
-						debug.log('YOUTUBEDL', 'Error handler caught success code! WTF?');
-					} else {
-						debug.warn("FUCK!", 'Why did that not work?');
-						debug.log('BUMBLETREE', err);
-						if (err.responseText) {
-							debug.error('YOUTUBEDL', err.responseText);
-							infobar.error('Failed to download YouTube Album - '+err.responseText);
+					var response = await fetch(
+						"api/metadata/",
+						{
+							method: 'POST',
+							cache: 'no-store',
+							priority: 'low',
+							body: JSON.stringify([{action: 'youtubedl_album', why: element.attr('why'), who: element.attr('who') }])
 						}
-						monitor.stop();
+					);
+					if (!response.ok) {
+						var t = await response.text();
+						var msg = t ? t : response.statusText;
+						throw new Error(msg);
 					}
+				} catch (err) {
+					debug.error('BUMBLETREE', err);
+					infobar.error('Failed to download YouTube album - '+err.message);
+					monitor.stop();
 				}
 			},
 
@@ -276,9 +274,7 @@ var metaHandlers = function() {
 				dbQueue.request(
 					[{action: 'deletealbum', album_index: albumToGo}],
 					collectionHelper.updateCollectionDisplay,
-					function(data) {
-						debug.warn("Failed to remove album! Possibly duplicate request?");
-					}
+					metaHandlers.genericFailPopup
 				);
 			}
 		},
@@ -337,9 +333,7 @@ var metaHandlers = function() {
 					Track: albumdata.tracks.items[track_index].track_number,
 					trackartist: combine_spotify_artists(albumdata.tracks.items[track_index].artists)
 				};
-				dbQueue.request([data], success, function() {
-					infobar.error('Import Failed because reasons');
-				});
+				dbQueue.request([data], success, metaHandlers.genericFail);
 			}
 		},
 
@@ -355,7 +349,7 @@ var metaHandlers = function() {
 					tracks.push(metaHandlers.fromLastFMData.mapData(track, action, attributes));
 				});
 				dbQueue.request(tracks, success, fail);
-				return cloneObject(tracks);
+				return structuredClone(tracks);
 			},
 
 			mapData: function(data, action, attributes) {
@@ -399,9 +393,7 @@ var metaHandlers = function() {
 			dbQueue.request(
 				[{action: 'getreturninfo'}],
 				collectionHelper.updateCollectionDisplay,
-				function(data) {
-					debug.warn("Failed to get return info");
-				}
+				metaHandlers.genericFail
 			);
 		},
 
@@ -427,24 +419,34 @@ var metaHandlers = function() {
 			}
 		},
 
-		genericQuery: async function(action, success, fail) {
+		genericQuery: function(action, success, fail) {
 			if (typeof action == "object") {
 				var request = action;
 			} else {
 				var request = {action: action};
 			}
-			try {
-				var data = await $.ajax({
-					url: "api/metadata/query/",
-					type: "POST",
-					contentType: false,
-					data: JSON.stringify(request),
-					dataType: 'json'
-				});
-				success(data);
-			} catch (err) {
-				fail(data);
-			}
+			fetch(
+				"api/metadata/query/",
+				{
+					method: 'POST',
+					body: JSON.stringify(request),
+					cache: 'no-store',
+					priority: 'low'
+				}
+			)
+			.then(response => {
+				if (response.ok) {
+					if (response.status == 200) {
+						return response.json();
+					} else {
+						return true;
+					}
+				} else {
+					throw new Error(response.statusText);
+				}
+			})
+			.then(data => { success(data) })
+			.catch(err => { fail(err) });
 		},
 
 		addAlbumUriToCollection(albumuri) {
@@ -455,10 +457,7 @@ var metaHandlers = function() {
 					albumuri: albumuri
 				}],
 				collectionHelper.updateCollectionDisplay,
-				function(rdata) {
-					debug.warn("BUMFINGER","Failure to do bumfinger", rdata);
-					infobar.error('Failed to add album to collection')
-				}
+				metaHandlers.genericFailPopup
 			);
 		},
 
@@ -469,10 +468,7 @@ var metaHandlers = function() {
 					albumindex: albumindex
 				}],
 				collectionHelper.updateCollectionDisplay,
-				function(rdata) {
-					debug.warn("BUMFINGER","Failure to do bumfinger", rdata);
-					infobar.error('Failed to browse album')
-				}
+				metaHandlers.genericFailPopup
 			);
 		},
 
@@ -489,9 +485,7 @@ var metaHandlers = function() {
 						albumstolistento.update();
 					}
 				},
-				function() {
-					debug.error("METAHANDLERS","Tailed To Add Album To Listen Later");
-				}
+				metaHandlers.genericFail
 			)
 		},
 
@@ -503,8 +497,13 @@ var metaHandlers = function() {
 
 		},
 
-		genericFail: function() {
+		genericFail: function(err) {
+			debug.error('METAHANDLERS', err);
+		},
 
+		genericFailPopup: function(err) {
+			debug.error('METAHANDLERS', err);
+			infobar.error(language.gettext('label_generic_error')+'<br />'+err);
 		}
 
 	}
@@ -526,28 +525,50 @@ var dbQueue = function() {
 	];
 
 	async function process_request(req) {
+		var err, request, data;
 		try {
-			var data = await $.ajax({
-				url: "api/metadata/",
-				type: "POST",
-				contentType: false,
-				data: JSON.stringify(req.data),
-				dataType: 'json'
-			});
-			debug.debug('DB QUEUE', 'Request Success', req, data);
-			for (var i in req.data) {
-				if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
-					debug.debug("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
-					cleanuprequired = true;
+			response = await fetch(
+				'api/metadata/',
+				{
+					signal: AbortSignal.timeout(60000),
+					body: JSON.stringify(req.data),
+					cache: 'no-store',
+					method: 'POST',
+					priority: 'low'
 				}
-			}
-			if (req.success) {
-				req.success(data);
+			);
+			if (response.ok) {
+				if (response.status == 200) {
+					data = await response.json();
+				} else {
+					data = true;
+				}
+				debug.debug('DB QUEUE', 'Request Success', req, data);
+				for (var i in req.data) {
+					if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
+						debug.debug("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
+						cleanuprequired = true;
+					}
+				}
+				if (req.success) {
+					req.success(data);
+				}
+			} else {
+				// response.json() doesn't work when there's an error response
+				var t = await response.text();
+				var msg = t ? t : response.statusText;
+				if (msg.match(/\{.+\}/)) {
+					var j = JSON.parse(msg);
+					if (j.error) {
+						msg = j.error;
+					}
+				}
+				throw new Error(msg);
 			}
 		} catch (err) {
 			debug.warn("DB QUEUE","Request Failed",err);
 			if (req.fail) {
-				req.fail(data, err);
+				req.fail(err.message);
 			}
 		}
 	}

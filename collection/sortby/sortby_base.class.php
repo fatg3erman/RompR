@@ -221,6 +221,65 @@ class sortby_base {
 		}
 	}
 
+	protected function year_sort($albumonly = false) {
+		$qstring = '';
+		$sortbydate = ($this->why == 'z') ? prefs::get_pref('sort_ab_bydate') : prefs::get_pref('sortbydate');
+		if ($sortbydate) {
+			if (!$albumonly && prefs::get_pref('notvabydate')) {
+				$qstring .= " CASE WHEN Artisttable.Artistname IN ('".
+					implode("', '", prefs::get_pref('artistsatstart'))."') THEN ";
+						if (count(prefs::get_pref('nosortprefixes')) > 0) {
+							$qstring .= "(CASE ";
+							foreach(prefs::get_pref('nosortprefixes') AS $p) {
+								$phpisshitsometimes = strlen($p)+2;
+								$qstring .= "WHEN Albumname LIKE '".$p.
+									" %' THEN SUBSTR(Albumname,".$phpisshitsometimes.") ";
+							}
+							$qstring .= "ELSE Albumname END)";
+						} else {
+							$qstring .= "Albumname";
+						}
+					$qstring .= " ELSE Year END,";
+			} else {
+				$qstring .= ' Year,';
+			}
+		}
+		return $qstring;
+	}
+
+	protected function album_sort() {
+		if (count(prefs::get_pref('nosortprefixes')) > 0) {
+			$qstring = " (CASE ";
+			foreach(prefs::get_pref('nosortprefixes') AS $p) {
+				$phpisshitsometimes = strlen($p)+2;
+				$qstring .= "WHEN Albumname LIKE '".$p.
+					" %' THEN SUBSTR(Albumname,".$phpisshitsometimes.") ";
+			}
+			$qstring .= "ELSE Albumname END)";
+		} else {
+			$qstring = " Albumname";
+		}
+		return $qstring;
+	}
+
+	protected function album_artist_sort($doit) {
+		$qstring = '';
+		if ($doit) {
+			if (count(prefs::get_pref('nosortprefixes')) > 0) {
+				$qstring .= "(CASE ";
+				foreach(prefs::get_pref('nosortprefixes') AS $p) {
+					$phpisshitsometimes = strlen($p)+2;
+					$qstring .= "WHEN Artistname LIKE '".$p.
+						" %' THEN SUBSTR(Artistname,".$phpisshitsometimes.") ";
+				}
+				$qstring .= "ELSE Artistname END), ";
+			} else {
+				$qstring .= "Artistname, ";
+			}
+		}
+		return $qstring;
+	}
+
 	public function track_sort_query() {
 		// This is the generic query for sortby_artist, sortby_album, and sortby_albumbyartist
 		$db = &prefs::$database;
@@ -302,7 +361,7 @@ class sortby_base {
 					return;
 				}
 				$trackarr = $this->track_sort_query();
-			} else {
+			} else if (prefs::get_pref('player_backend') == 'mopidy' && getDomain($trackarr[0]['uri']) != 'local') {
 				$can_browse = true;
 			}
 		}
@@ -353,7 +412,7 @@ class sortby_base {
 			} else {
 				$arr['discclass'] = '';
 			}
-			$tracktype = uibits::albumTrack($arr, prefs::$database->get_track_bookmarks($arr['ttid']));
+			$tracktype = uibits::albumTrack($this->why, $arr, prefs::$database->get_track_bookmarks($arr['ttid']));
 
 		}
 		if ($can_browse) {
@@ -383,6 +442,14 @@ class sortby_base {
 			$artistindex
 		);
 	}
+
+	protected function artistBanner($a, $i) {
+		$html = uibits::ui_config_header([
+			'label_text' => $a,
+			'id' => $this->why.'artist'.$i
+		]);
+		return $html;
+ 	}
 
 	public function album_trackcount($albumindex) {
 		return prefs::$database->sql_prepare_query(false, null, 'num', 0,

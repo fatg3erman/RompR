@@ -394,7 +394,7 @@ var info_spotify = function() {
 								parent.updateData({
 									spotify: {
 										id: data.artists[i].id,
-										populated: true
+										// populated: true
 									}
 								}, artistmeta);
 								break;

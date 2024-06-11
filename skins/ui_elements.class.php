@@ -50,6 +50,8 @@ class ui_elements {
 	// extralines	Any extra lines of info to go underneath Artistname
 	// year_always	true to always display Year regardless of sortbydate pref. Year will NOT
 	//					be wrapped in () if this is true. TuneIn uses it for eg <br />(Podcast Episode)
+	// why			same as the collection sort key (eg a,b,z etc). Default to null cos it's only relevant
+	//					for the collection or audiobooks
 
 	// NOTE - Radio channels are albumheader because they have an image, but they are always playbale
 	// and NEVER openable. Podcast user an albumheader
@@ -74,10 +76,11 @@ class ui_elements {
 		'class' => '',
 		'podcounts' => null,
 		'extralines' => [],
-		'year_always' => false
+		'year_always' => false,
+		'why' => null
 	];
 
-	public static function albumTrack($data, $bookmarks) {
+	public static function albumTrack($why, $data, $bookmarks) {
 
 		$data = array_merge(self::DEFAULT_TRACK_PARAMS, $data);
 
@@ -165,7 +168,7 @@ class ui_elements {
 			if ($data['lm'] === null && $data['isSearchResult'] < 2) {
 				$button_class .= ' clickremovedb';
 			}
-			if ($d == 'youtube' || $d == 'yt') {
+			if ($why != 'b' && ($d == 'youtube' || $d == 'yt')) {
 				$button_class .= ' clickyoutubedl';
 			}
 			$enc_tags = ($data['tags']) ? rawurlencode($data['tags']) : '';
@@ -204,7 +207,7 @@ class ui_elements {
 		$det = array_merge(['buttons' => true, 'iconclass' => 'expand noselect'], $det);
 
 		$db_album = ($when === null) ? $who : $who.'_'.$when;
-		$iab = -1;
+		$iab = prefs::$database->album_is_audiobook($who);
 		$html = '';
 		if ($det['buttons']) {
 			$html .= '<div class="containerbox wrap album-play-controls vertical-centre">';
@@ -685,6 +688,14 @@ class ui_elements {
 		self::ui_checkbox(['id' => 'sortbydate', 'label' => 'config_sortbydate']);
 		self::ui_checkbox(['id' => 'notvabydate', 'label' => 'config_notvabydate']);
 		self::ui_config_button(['label' => 'config_updatenow', 'name' => 'donkeykong']);
+
+		print'</div>';
+	}
+
+	public static function ab_collection_options_box() {
+		print '<div id="abcollectionbuttons" class="invisible toggledown is-coverable">';
+
+		self::ui_checkbox(['id' => 'sort_ab_bydate', 'label' => 'config_sortbydate']);
 
 		print'</div>';
 	}

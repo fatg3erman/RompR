@@ -13,6 +13,13 @@ prefs::$database->open_transaction();
 
 $params = json_decode(file_get_contents('php://input'), true);
 
+if (!is_array($params) || count($params) == 0) {
+	logger::error('METADATA', 'Request with no params!');
+	print "Metadata request with no parameters!";
+	http_response_code(400);
+	exit(0);
+}
+
 // If you add new actions remember to update actions_requring_cleanup in metahandlers.js
 
 foreach($params as $p) {

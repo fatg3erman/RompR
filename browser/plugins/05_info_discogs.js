@@ -533,7 +533,7 @@ var info_discogs = function() {
 					}
 				},
 				function(data) {
-					infobar.error(language.gettext('label_general_error'));
+					debug.error('DISCOGS', data);
 				}
 			);
 		}
@@ -595,7 +595,7 @@ var info_discogs = function() {
 
 			this.verify_data = async function() {
 
-				if (artistmeta.discogs.artistlink == '' || albummeta.discogs.releaselink == '' || trackmeta.discogs.releaselink == '')
+				if (artistmeta.discogs.artistlink === '' || albummeta.discogs.releaselink === '' || trackmeta.discogs.releaselink === '')
 					return;
 
 				if (artistmeta.discogs.populated && albummeta.discogs.populated && trackmeta.discogs.populated)

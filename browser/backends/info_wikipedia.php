@@ -72,6 +72,11 @@ if (array_key_exists("wiki", $req)) {
 	} else {
 		send_result($xml_response);
 	}
+} else if (array_key_exists("json", $req)) {
+	$j =  wikipedia_request($req['json']);
+	$j = preg_replace('/^\/\*\*\/\(/', '', $j);
+	$j = preg_replace('/\)$/', '', $j);
+	print $j;
 }
 
 // ==========================================================================

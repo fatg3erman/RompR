@@ -7,7 +7,7 @@ class sortby_albumbyartist extends sortby_base {
 	public function root_sort_query() {
 		$sflag = $this->filter_album_on_why();
 		$qstring =
-		"SELECT Albumtable.*, Artisttable.Artistname
+		"SELECT Albumtable.*, Artisttable.Artistname, '{$this->why}' AS why
 		FROM Albumtable
 		JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
 		WHERE
@@ -37,21 +37,14 @@ class sortby_albumbyartist extends sortby_base {
 			foreach(prefs::get_pref('nosortprefixes') AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
 				$qstring .= "WHEN Artistname LIKE '".$p.
-					" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
+					" %' THEN SUBSTR(Artistname,".$phpisshitsometimes.") ";
 			}
-			$qstring .= "ELSE LOWER(Artistname) END), ";
+			$qstring .= "ELSE Artistname END), ";
 		} else {
-			$qstring .= ", LOWER(Artistname), ";
+			$qstring .= ", Artistname, ";
 		}
-
-		if (prefs::get_pref('sortbydate')) {
-			if (prefs::get_pref('notvabydate')) {
-				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
-			} else {
-				$qstring .= ' Year,';
-			}
-		}
-		$qstring .= ' LOWER(Albumname)';
+		$qstring .= $this->year_sort();
+		$qstring .= $this->album_sort(true);
 		$result = prefs::$database->generic_sql_query($qstring);
 		foreach ($result as $album) {
 			$album['why'] = $this->why;
@@ -148,13 +141,6 @@ class sortby_albumbyartist extends sortby_base {
 		}
 	}
 
-	private function artistBanner($a, $i) {
-		$html = uibits::ui_config_header([
-			'label_text' => $a,
-			'id' => $this->why.'artist'.$i
-		]);
-		return $html;
- 	}
 }
 
 ?>

@@ -6,7 +6,7 @@ class sortby_album extends sortby_base {
 		$sflag = $this->filter_album_on_why();
 
 		$qstring =
-		"SELECT Albumtable.*, Artisttable.Artistname
+		"SELECT Albumtable.*, Artisttable.Artistname, '{$this->why}' AS why
 		FROM Albumtable
 		JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
 		WHERE
@@ -27,14 +27,8 @@ class sortby_album extends sortby_base {
 			$qstring .= " ".prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)."
 			".$sflag.")
 		ORDER BY ";
-		if (prefs::get_pref('sortbydate')) {
-			if (prefs::get_pref('notvabydate')) {
-				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
-			} else {
-				$qstring .= ' Year,';
-			}
-		}
-		$qstring .= ' LOWER(Albumname)';
+		$qstring .= $this->year_sort();
+		$qstring .= $this->album_sort(true);
 		$result = prefs::$database->generic_sql_query($qstring);
 		foreach ($result as $album) {
 			$album['why'] = $this->why;

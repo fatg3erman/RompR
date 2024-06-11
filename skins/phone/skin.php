@@ -161,10 +161,13 @@ create_body_tag('phone');
 <div id="audiobooklist" class="scroller mainpane invisible pright">
 	<?php
 	print uibits::ui_config_header([
+		'lefticon' => 'icon-menu clickicon fixed openmenu',
+		'lefticon_name' => 'abcollectionbuttons',
 		'label' => 'label_audiobooks',
 		'icon_size' => 'smallicon',
 		'title_class' => 'is-coverable'
 	]);
+	uibits::ab_collection_options_box();
 	?>
 	<div id="audiobooks" class="noborder selecotron"></div>
 </div>

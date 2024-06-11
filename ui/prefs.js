@@ -138,6 +138,7 @@ var prefs = function() {
 		'podcastbuttons',
 		'advsearchoptions',
 		'collectionbuttons',
+		'abcollectionbuttons',
 		'playlistbuttons'
 	];
 
@@ -279,7 +280,18 @@ var prefs = function() {
 		}
 		backgroundImages = false;
 		make_background_selector(prefs.theme);
-		$.getJSON('api/userbackgrounds/?get_next_background='+prefs.theme+'&random='+prefs.bgimgparms[prefs.theme].random, function(data) {
+		fetch(
+			'api/userbackgrounds/?get_next_background='+prefs.theme+'&random='+prefs.bgimgparms[prefs.theme].random,
+			{ cache: 'no-store', priority: 'low' }
+		)
+		.then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error(response.statusText);
+			}
+		})
+		.then(data => {
 			debug.debug("PREFS","Custom Background Image",data);
 			if (data.landscape) {
 				portraitImage.onload = bgImageLoaded;
@@ -293,7 +305,8 @@ var prefs = function() {
 			} else {
 				$('#cusbgoptions').hide();
 			}
-		});
+		})
+		.catch(err => {debug.error('BACKIMAGE', 'Load failed', err)});
 	}
 
 	function set_backimage_urls(images) {
@@ -727,6 +740,7 @@ var prefs = function() {
 					break
 
 				case "sortbydate":
+				case "sort_ab_bydate":
 				case "notvabydate":
 					callback = layoutProcessor.changeCollectionSortMode;
 					break;
@@ -768,7 +782,7 @@ var prefs = function() {
 
 			}
 			if (defer) {
-				deferredPrefs = cloneObject(prefobj);
+				deferredPrefs = structuredClone(prefobj);
 			} else {
 				prefs.save(prefobj, callback);
 			}

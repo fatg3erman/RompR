@@ -44,11 +44,11 @@ class sortby_artist extends sortby_base {
 			foreach(prefs::get_pref('nosortprefixes') AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
 				$qstring .= "WHEN a.Artistname LIKE '".$p.
-					" %' THEN LOWer(SUBSTR(a.Artistname,".$phpisshitsometimes.")) ";
+					" %' THEN SUBSTR(a.Artistname,".$phpisshitsometimes.") ";
 			}
-			$qstring .= "ELSE LOWER(a.Artistname) END)";
+			$qstring .= "ELSE a.Artistname END)";
 		} else {
-			$qstring .= "LOWER(a.Artistname)";
+			$qstring .= "a.Artistname";
 		}
 		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $artist) {
@@ -59,7 +59,7 @@ class sortby_artist extends sortby_base {
 	public function album_sort_query($force_artistname) {
 		$sflag = $this->filter_album_on_why();
 		$qstring =
-		"SELECT Albumtable.*, Artisttable.Artistname
+		"SELECT Albumtable.*, Artisttable.Artistname, '{$this->why}' AS why
 			FROM Albumtable
 			JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
 			WHERE ";
@@ -71,14 +71,8 @@ class sortby_artist extends sortby_base {
 		prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";
-		if (prefs::get_pref('sortbydate')) {
-			if (prefs::get_pref('notvabydate')) {
-				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
-			} else {
-				$qstring .= ' Year,';
-			}
-		}
-		$qstring .= ' LOWER(Albumname)';
+		$qstring .= $this->year_sort();
+		$qstring .= $this->album_sort(true);
 		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $album) {
 			if (!$force_artistname) {

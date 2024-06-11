@@ -694,6 +694,22 @@ var info_musicbrainz = function() {
 
 			this.mbFailResult =  function(data) {
 				debug.error('MUSICBRAINZ', 'Error Getting Verified Data', data);
+
+				// Everything hangs off musicbrainz. If we get an error the triggers that
+				// make the other modules move on never get fired. So here we make sure they
+				// get fired by setting them to null (the start at '')
+
+				mb_failure_data = {
+					musicbrainz: {musicbrainz_id: null},
+					discogs: {artistlink: null, releaselink: null, releaseid: null},
+					wikipedia: {link: null},
+					spotify: {id: null},
+					allmusic: {link: null}
+				}
+
+				parent.updateData(mb_failure_data, artistmeta);
+				parent.updateData(mb_failure_data, albummeta);
+				parent.updateData(mb_failure_data, trackmeta);
 			}
 
 			this.handleClick = function(source, element, event) {

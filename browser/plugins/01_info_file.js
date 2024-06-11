@@ -302,7 +302,7 @@ var info_file = function() {
 			}
 
 			this.updateFileInformation = function() {
-				trackmeta.fileinfo.player = cloneObject(player.status);
+				trackmeta.fileinfo.player = structuredClone(player.status);
 				debug.core("FILE PLUGIN","Doing update from",trackmeta);
 				parent.updateData({
 						lyrics: {

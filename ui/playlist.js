@@ -866,7 +866,7 @@ var playlist = function() {
 		},
 
 		getCurrentTrack: function() {
-			return cloneObject(currentTrack);
+			return structuredClone(currentTrack);
 		},
 
 		setCurrent: function(items) {

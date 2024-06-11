@@ -46,6 +46,12 @@ var info_wikipedia = function() {
 			$(this).attr('name', 'commons.wikimedia.org/'+ref.replace(/\/\/commons\.wikimedia\.org\/wiki\//,''));
 			$(this).addClass('infoclick clickwikimedia');
 		});
+		jq.find("a.mw-file-description[href^='/wiki/']").each( function() {
+			var ref = $(this).attr('href');
+			$(this).attr('href', '#');
+			$(this).attr('name', domain+'.wikipedia.org/'+ref.replace(/\/wiki\//,''));
+			$(this).addClass('infoclick clickwikimedia');
+		});
 
 		// Redirect intra-wikipedia links so they go to our function
 		jq.find("a[href^='/wiki/']").each( function() {
@@ -150,13 +156,16 @@ var info_wikipedia = function() {
 			this.handleClick = function(source, element, event) {
 				debug.debug("WIKI PLUGIN",parent.nowplayingindex,source,"is handling a click event");
 				if (element.hasClass('clickwikimedia')) {
+					debug.info('WIKIPEDIA', 'clickwikimedia');
 					wikipedia.wikiMediaPopup(element, event);
 				} else if (element.hasClass('clickwikilink')) {
+					debug.info('WIKIPEDIA', 'clickwikilink');
 					var link = decodeURIComponent(element.attr('name'));
 					var title = decodeURIComponent(element.attr('title'));
 					debug.debug("WIKI PLUGIN",parent.nowplayingindex,source,"clicked a wiki link",link);
 					self[source].followLink(link, title);
 				} else if (element.hasClass('clickwikicontents')) {
+					debug.info('WIKIPEDIA', 'clickwikicontents');
 					var section = element.attr('name');
 					debug.debug("WIKI PLUGIN",parent.nowplayingindex,source,"clicked a contents link",section);
 					uiHelper.goToBrowserSection(section);

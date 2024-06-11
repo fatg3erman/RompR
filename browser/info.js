@@ -156,10 +156,10 @@ var browser = function() {
 				if (historyindex === null) {
 					if (splice) {
 						displaypointer++;
-						history.splice(displaypointer, 0, cloneObject(hist));
+						history.splice(displaypointer, 0, structuredClone(hist));
 					} else {
 						displaypointer = history.length;
-						history[displaypointer] = cloneObject(hist);
+						history[displaypointer] = structuredClone(hist);
 					}
 				} else {
 					displaypointer = historyindex;
@@ -174,7 +174,7 @@ var browser = function() {
 					uiHelper.goToBrowserPanel(scrollto);
 
 			} else {
-				history.push(cloneObject(hist));
+				history.push(structuredClone(hist));
 			}
 			browser.rePoint();
 			check_history();

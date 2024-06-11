@@ -98,14 +98,8 @@ var info_ratings = function() {
 				}
 			}
 
-			function setFail(rdata, err) {
-				debug.warn("RATING PLUGIN","Failure", rdata);
-				try {
-					debug.mark('RATING PLUGIN', err.responseJSON);
-					infobar.error(err.responseJSON.error);
-				} catch(e) {
-
-				}
+			function setFail(err) {
+				metaHandlers.genericFailPopup(err);
 				doThingsWithData();
 			}
 

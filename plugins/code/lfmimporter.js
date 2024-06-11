@@ -61,7 +61,7 @@ var lfmImporter = function() {
 	}
 
 	function getNextRow() {
-		var data = cloneObject(alldata[alloffset]);
+		var data = structuredClone(alldata[alloffset]);
 		lastfm.track.getInfo( { artist: data.Albumartist, track: data.Title },
 								lfmResponseHandler,
 								lfmResponseHandler,
