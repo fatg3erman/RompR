@@ -102,8 +102,10 @@ class commradioplugin {
 		$bits = $cache->get_cache_data();
 		$bits = json_decode($bits, true);
 		$retval = [];
-		foreach ($bits as $bit) {
-			$retval[] = $bit['name'];
+		if (is_array($bitrs)) {
+			foreach ($bits as $bit) {
+				$retval[] = $bit['name'];
+			}
 		}
 		return $retval;
 	}
@@ -420,8 +422,12 @@ class commradioplugin {
 			foreach ($servers as $server) {
 				if (array_key_exists('ip', $server)) {
 					$name = gethostbyaddr($server['ip']);
-					logger::log('COMMRADIO', 'Using',$name);
-					return $name;
+					if (preg_match("/\d+\.\d+\.\d+\.\d+/", $name)) {
+						logger::warn('COMMRADIO', 'gethostbyaddr() returned an IP address. Cannot use this');
+					} else {
+						logger::log('COMMRADIO', 'Using',$name);
+						return $name;
+					}
 				}
 			}
 		}
