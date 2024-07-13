@@ -12,6 +12,7 @@ requests to be prioritised and so makes the UI slightly more responsive, except 
 * Fix bug where the Info Panel would mostly fail to update if Musicbrainz didn't respond.
 * Podcast downloads could not write ID3 tags to m4a files due to getid3 not supporting it. Added support for
 writing these tags usong AtomicParsley. You should install the AtomicParsley package to take advantage of this.
+* Fix for Community Radio when no DNS hostname coud be found because the local gethostbyaddr() wasn't working for some reason
 * Various small bugfixes
 
 
