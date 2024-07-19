@@ -237,7 +237,7 @@ language::add_translations([
 
 	// File Info panel
 	"button_fileinfo" =>					"信息面板（集合信息）",
-	"info_file" =>							"文件：",
+	"info_file" =>							"文件",
 	"info_from_beets" =>					"(源自 beets 服务器)",
 	"info_format" =>						"格式：",
 	"info_bitrate" =>						"比特率：",
@@ -759,6 +759,7 @@ language::add_translations([
 	"label_classicalfolder" =>				"使用目录路径检测古典音乐",
 	"label_showallresults" =>				"显示所有曲目",
 	"label_bythisartist" =>					"在集合中此歌手的作品"
+	"label_generic_error" =>				"未知错误"
 
 	// ----------------------------------------------------
 	// Proobaly Unused
