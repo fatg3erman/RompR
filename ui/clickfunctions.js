@@ -893,6 +893,10 @@ function popupMenu(event, element) {
 		} else {
 			left = mouseX + bw;
 		}
+		if (left < 0) {
+			left = 2;
+			mouseY += bw;
+		}
 		maindiv.css({
 			left: left,
 			top: mouseY+'px',
