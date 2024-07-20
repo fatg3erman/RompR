@@ -600,6 +600,7 @@ class collection_base extends database {
 			Tracktable
 			JOIN TagListtable USING (TTindex)
 			JOIN Tagtable USING (Tagindex)
+			ORDER BY Tagtable.Name ASC
 			WHERE Albumindex = ?",
 			$who
 		);
