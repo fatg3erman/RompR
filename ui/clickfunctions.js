@@ -1128,10 +1128,7 @@ function makeAlbumMenu(e, element) {
 	}
 	if ($(element).hasClass('clickratedtracks')) {
 		var opts = {
-			r: language.gettext('label_with_ratings'),
-			t: language.gettext('label_with_tags'),
-			y: language.gettext('label_with_tagandrat'),
-			u: language.gettext('label_with_tagorrat')
+			r: language.gettext('label_with_ratings')
 		}
 		$.each(opts, function(i, v) {
 			d.append($('<div>', {
@@ -1140,6 +1137,22 @@ function makeAlbumMenu(e, element) {
 			}).html(v))
 		});
 	}
+	var opts = {};
+	if ($(element).hasClass('clickalbumplaytags')) {
+		opts['t'] = language.gettext('label_with_tags');
+	}
+	if ($(element).hasClass('clickalbumplaytagandrat')) {
+		opts['y'] = language.gettext('label_with_tagandrat');
+	}
+	if ($(element).hasClass('clickalbumplaytagandrat')) {
+		opts['u'] = language.gettext('label_with_tagorrat');
+	}
+	$.each(opts, function(i, v) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem clickalbum fakedouble closepopup',
+			name: i+'album'+$(element).attr('db_album')
+		}).html(v))
+	});
 	if ($(element).hasClass('clickalbumplaytags')) {
 		let taglist = $(element).attr("album_tags").split(',');
 		for (var tag of taglist) {

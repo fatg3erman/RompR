@@ -606,6 +606,17 @@ class collection_base extends database {
 		);
 	}
 
+	public function get_album_ratings($who) {
+		return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0,
+			"SELECT COUNT(Ratingtable.TTindex) AS num FROM
+			Tracktable
+			JOIN Ratingtable USING (TTindex)
+			WHERE Albumindex = ?
+			AND Rating > 0",
+			$who
+		);
+	}
+
 	public function dumpAlbums($which) {
 		$sorter = choose_sorter_by_key($which);
 		$lister = new $sorter($which);

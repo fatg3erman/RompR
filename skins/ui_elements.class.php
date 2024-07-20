@@ -205,6 +205,7 @@ class ui_elements {
 			return '';
 
 		$albumtags = prefs::$database->get_album_tags($who);
+		$num_rated = prefs::$database->get_album_ratings($who);
 
 		$det = array_merge(['buttons' => true, 'iconclass' => 'expand noselect'], $det);
 
@@ -223,14 +224,18 @@ class ui_elements {
 			} else {
 				$html .= '<div class="icon-no-response-playbutton track-control-icon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.language::gettext('label_from_collection').'"></div>';
 			}
-			$html .= '<div class="icon-single-star track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" title="'.language::gettext('label_with_ratings').'"></div>';
-			$html .= '<div class="icon-tags track-control-icon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$db_album.'" title="'.language::gettext('label_with_tags').'"></div>';
+			if ($num_rated > 0) {
+				$html .= '<div class="icon-single-star track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" title="'.language::gettext('label_with_ratings').'"></div>';
+			}
+			// $html .= '<div class="icon-tags track-control-icon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$db_album.'" title="'.language::gettext('label_with_tags').'"></div>';
 			if (count($albumtags) > 0) {
-				$html .= '<div class="icon-tags poopybigsmell track-control-icon clickable clickicon clickalbummenu clickalbumplaytags expand" '
+				$html .= '<div class="icon-tags track-control-icon clickable clickicon clickalbummenu clickalbumplaytags expand" '
 					.' album_tags="'.implode(',', $albumtags).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']).'"></div>';
 			}
-			$html .= '<div class="icon-ratandtag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$db_album.'" title="'.language::gettext('label_with_tagandrat').'"></div>';
-			$html .= '<div class="icon-ratortag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$db_album.'" title="'.language::gettext('label_with_tagorrat').'"></div>';
+			if (count($albumtags) > 0 && $num_rated > 0) {
+				$html .= '<div class="icon-ratandtag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$db_album.'" title="'.language::gettext('label_with_tagandrat').'"></div>';
+				$html .= '<div class="icon-ratortag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$db_album.'" title="'.language::gettext('label_with_tagorrat').'"></div>';
+			}
 		}
 
 		$classes = array();
@@ -259,6 +264,10 @@ class ui_elements {
 			if (count($albumtags) > 0) {
 				$classes[] = 'clickalbumplaytags';
 			}
+			if (count($albumtags) > 0 && $num_rated > 0) {
+				$classes[] = 'clickalbumplaytagandrat';
+				$classes[] = 'clickalbumplaytagorrat';
+			}
 			if ($det['AlbumUri']) {
 				$classes[] = 'clickalbumoptions';
 			} else {
@@ -282,7 +291,7 @@ class ui_elements {
 			$classes[] = 'clickaddtollviabrowse';
 		}
 
-		if (!$det['buttons'])
+		if (!$det['buttons'] && $num_rated > 0)
 			$classes[] = 'clickratedtracks';
 
 		if (count($classes) > 0) {
