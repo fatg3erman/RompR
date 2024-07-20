@@ -155,7 +155,7 @@ function check_timezone() {
 	if (($dtz = ini_get('date.timezone'))) {
 	    // Yes we probably should rely on this first but most people just set it to UTC
 	    // if they set it at all.
-			// error_log('Timezeon set from ini file to '.$dtz);
+		// error_log('Timezone set from ini file to '.$dtz);
 	} else {
 		$timezone = '';
 	    exec('date +%Z', $timezone, $retval);

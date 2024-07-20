@@ -46,10 +46,6 @@ function hideTagRemover() {
 	$(this).children('i').hide();
 }
 
-function closeMenus() {
-	$('.albumbitsmenu').remove();
-}
-
 function connect_to_player() {
 	player.controller.initialise().then(startBackgroundInitTasks.doNextTask);
 }

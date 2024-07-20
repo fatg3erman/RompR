@@ -49,14 +49,38 @@ class music_loader extends musicCollection {
 		return $retval;
 	}
 
-	private function get_album_tracks_from_database($which, $cmd) {
+	public function playAlbumWithTag($albumindex, $tag, $why) {
+		$alltracks = $this->get_album_tracks_from_database($why.'album'.$albumindex, null, true);
+		$retval = [];
+		foreach ($alltracks as $ttid) {
+			$uri = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'Uri', null,
+				"SELECT Uri FROM Tracktable
+				JOIN TagListtable USING (TTindex)
+				JOIN Tagtable USING (Tagindex)
+				WHERE Tracktable.TTindex = ?
+				AND Tagtable.Name = ?",
+				$ttid,
+				$tag
+			);
+			if ($uri) {
+				$retval[] = 'add "'.format_for_mpd($uri).'"';
+			}
+		}
+		return $retval;
+	}
+
+	private function get_album_tracks_from_database($which, $cmd, $just_ttids = false) {
 		$retarr = array();
 		$sorter = choose_sorter_by_key($which);
 		$lister = new $sorter($which);
 		$result = $lister->track_sort_query();
 		$cmd = ($cmd === null) ? 'add' : $cmd;
 		foreach($result as $a) {
-			$retarr[] = $cmd.' "'.format_for_mpd($a['uri']).'"';
+			if ($just_ttids) {
+				$retarr[] = $a['ttid'];
+			} else {
+				$retarr[] = $cmd.' "'.format_for_mpd($a['uri']).'"';
+			}
 		}
 		return $retarr;
 	}

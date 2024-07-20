@@ -148,9 +148,11 @@ function alarm_sleep_time() {
 	$days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 	// Alarm Time must be in the format HH:MM
 	logger::log("ALARMCLOCK", "Alarm Time is",trim($alarm['Time']));
+	logger::log('ALARMCLOCK', "Timezone is", ini_get('date.timezone'));
 
 	// DateTime object for now
 	$now = new DateTime('now');
+	logger::log('ALARMCLOCK', 'Now is', $now->format(DateTimeInterface::COOKIE));
 
 	// DateTime object for the alarm, initialised to today at the time the alarm
 	// is set to go off.
@@ -160,6 +162,7 @@ function alarm_sleep_time() {
 		$d[0],
 		trim($d[1])
 	);
+	logger::log('ALARMCLOCK', 'Alarm Run is', $now->format(DateTimeInterface::COOKIE));
 
 	// If it's not set to repeat, it could either go off today or tomorow
 	// depending on whether the time is earlier or later than now

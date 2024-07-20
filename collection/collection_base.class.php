@@ -594,6 +594,17 @@ class collection_base extends database {
 		return $retval;
 	}
 
+	public function get_album_tags($who) {
+		return $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, [],
+			"SELECT DISTINCT Tagtable.Name FROM
+			Tracktable
+			JOIN TagListtable USING (TTindex)
+			JOIN Tagtable USING (Tagindex)
+			WHERE Albumindex = ?",
+			$who
+		);
+	}
+
 	public function dumpAlbums($which) {
 		$sorter = choose_sorter_by_key($which);
 		$lister = new $sorter($which);

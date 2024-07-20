@@ -204,6 +204,8 @@ class ui_elements {
 		if ($why == '' || $why == null)
 			return '';
 
+		$albumtags = prefs::$database->get_album_tags($who);
+
 		$det = array_merge(['buttons' => true, 'iconclass' => 'expand noselect'], $det);
 
 		$db_album = ($when === null) ? $who : $who.'_'.$when;
@@ -223,6 +225,10 @@ class ui_elements {
 			}
 			$html .= '<div class="icon-single-star track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" title="'.language::gettext('label_with_ratings').'"></div>';
 			$html .= '<div class="icon-tags track-control-icon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$db_album.'" title="'.language::gettext('label_with_tags').'"></div>';
+			if (count($albumtags) > 0) {
+				$html .= '<div class="icon-tags poopybigsmell track-control-icon clickable clickicon clickalbummenu clickalbumplaytags expand" '
+					.' album_tags="'.implode(',', $albumtags).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']).'"></div>';
+			}
 			$html .= '<div class="icon-ratandtag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$db_album.'" title="'.language::gettext('label_with_tagandrat').'"></div>';
 			$html .= '<div class="icon-ratortag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$db_album.'" title="'.language::gettext('label_with_tagorrat').'"></div>';
 		}
@@ -250,6 +256,9 @@ class ui_elements {
 		}
 
 		if (!$det['buttons']) {
+			if (count($albumtags) > 0) {
+				$classes[] = 'clickalbumplaytags';
+			}
 			if ($det['AlbumUri']) {
 				$classes[] = 'clickalbumoptions';
 			} else {
@@ -279,7 +288,7 @@ class ui_elements {
 		if (count($classes) > 0) {
 			$classes[] = $det['iconclass'];
 			$html .= '<div class="icon-menu inline-icon track-control-icon clickable clickicon clickalbummenu '
-					.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']);
+					.implode(' ',$classes).'" album_tags="'.implode(',', $albumtags).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']);
 
 			if (
 				in_array('clickalbumuri', $classes)

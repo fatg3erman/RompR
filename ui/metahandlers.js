@@ -173,6 +173,10 @@ var metaHandlers = function() {
 				metaHandlers.fromUiElement.doMeta('set', 'Tag', [{attribute: 'Tags', value: [element.children('span').html()]}], callback);
 			},
 
+			tagTrackWithNew: function(element, callback) {
+				metaHandlers.fromUiElement.doMeta('set', 'Tag', [{attribute: 'Tags', value: [element.prev().val()]}], callback);
+			},
+
 			untagTrack: function(element, callback) {
 				metaHandlers.fromUiElement.doMeta('remove', 'Tag', [{attribute: 'Tags', value: [element.children('span').html()]}], callback);
 			},

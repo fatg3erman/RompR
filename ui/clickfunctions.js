@@ -218,6 +218,7 @@ jQuery.fn.clearOut = function() {
 			if ($(this).find('.menu_opened').length > 0) {
 				// Although removeFromSelection does close the popup menu, it only does that
 				// for tracks, not albums in the phone/skypotato skin
+				debug.trace('CLEAROUT', 'Closing popups');
 				closePopupMenu();
 			}
 			if (typeof(IntersectionObserver) == 'function' && self.hasClass('is-albumlist')) {
@@ -311,7 +312,14 @@ function setPlayClickHandlers() {
 
 */
 
+function check_closePopupMenu(event) {
+	var el = $(event.target);
+	if (!el.hasClass('noclosemenu'))
+		closePopupMenu();
+}
+
 function closePopupMenu() {
+	debug.log('POPUPMENU', 'closePopupMenu was called');
 	$('.menu_opened').removeClass('menu_opened');
 	$('#popupmenu').remove();
 }
@@ -396,7 +404,7 @@ function bindClickHandlers() {
 	$(document).on('keyup', 'input.notspecial', filterSpecialChars);
 	$(document).on('mouseenter', "#dbtags>.tag", showTagRemover);
 	$(document).on('mouseleave', "#dbtags>.tag", hideTagRemover);
-	$(document).on(prefs.click_event, 'body', closeMenus);
+	$(document).on(prefs.click_event, 'body', check_closePopupMenu);
 	$(document).on(prefs.click_event, '.tagremover:not(.plugclickable)', nowplaying.removeTag);
 	$(document).on(prefs.click_event, '.clickaddtoplaylist', infobar.addToPlaylist);
 	$(document).on(prefs.click_event, '.search-category', searchManager.save_categories);
@@ -711,6 +719,7 @@ jQuery.fn.removeFromSelection = function() {
 		if (prefs.clickmode == 'double') {
 			$(this).find('div.clicktrackmenu').not('.invisibleicon').addClass('invisibleicon');
 			if ($(this).find('div.clicktrackmenu.menu_opened').length > 0 || $(this).find('div.clickalbummenu.menu_opened').length) {
+				debug.trace('removeFromSelection', 'Closing popups');
 				closePopupMenu();
 			}
 		}
@@ -895,7 +904,7 @@ function popupMenu(event, element) {
 
 	this.openSubMenu = function(e, element) {
 		debug.log('POPUPMENU', 'Opening Submenu',element);
-		self.markTrackTags();
+		markTrackTags();
 		$(element).next().slideToggle('fast', setTop);
 	}
 
@@ -921,7 +930,11 @@ function popupMenu(event, element) {
 		});
 		for (var i in actions) {
 			if (clickedElement.hasClass(i)) {
-				clickedElement.find('.inline-icon').makeSpinner();
+				if (clickedElement.is('div')) {
+					clickedElement.find('.inline-icon').makeSpinner();
+				} else {
+					clickedElement.parent().find('.inline-icon').makeSpinner();
+				}
 				debug.log('POPUPMENU', 'Calling',actions[i].name,'for action',i);
 				actions[i](clickedElement, self.restoreSelection);
 			}
@@ -937,34 +950,55 @@ function popupMenu(event, element) {
 				$('[name="'+n.name+'"]').find('.clicktrackmenu').addClass('menu_opened');
 			}
 		});
-		self.markTrackTags();
+		let tagsub = maindiv.find('.tagsubmenu');
+		if (tagsub.length > 0) {
+			tagsub.empty();
+			fill_tag_submenu(tagsub);
+		}
 		if ($('.selected').hasClass('playlistcurrentitem')) {
 			// Make sure nowplaying updates its data if one of the selected tracks is the current track
 			nowplaying.refreshUserMeta();
 		}
 	}
 
-	this.markTrackTags = function() {
-		var track_tags = [];
-		$('.selected').each(function() {
-			var tags = decodeURIComponent($(this).find('.clicktrackmenu').attr('rompr_tags')).split(', ');
-			// This is how to append one array to another in JS. Don't do this if the second array is very large
-			Array.prototype.push.apply(track_tags, tags);
-		});
-		$('.clicktagtrack').removeClass('clicktagtrack');
-		$('.clickuntagtrack').removeClass('clickuntagtrack');
-		$('.tracktagger').each(function() {
-			$(this).children('i').remove();
-			var mytag = $(this).find('span').html();
-			if (track_tags.indexOf(mytag) == -1) {
-				$(this).addClass('clicktagtrack').prepend('<i class="icon-blank inline-icon spinable"></i>')
-			} else {
-				$(this).addClass('clickuntagtrack').prepend('<i class="icon-tick inline-icon spinable"></i>')
-			}
-		});
-	}
-
 }
+
+async function fill_tag_submenu(tagsub) {
+	tagsub.append('<div class="menuitem containerbox"><i class="icon-blank inline-icon spinable"></i>'
+		+'<input type="text" class="expand tracknewtag noclosemenu"></input><button class="clickable fixed track-newtag noclosemenu" style="margin-left: 8px">'
+		+language.gettext('button_add')+'</button></div>');
+	metaHandlers.genericQuery(
+		'gettags',
+		function(data) {
+			data.forEach(function(tag){
+				tagsub.append('<div class="backhi clickable menuitem tracktagger"><span>'+tag+'</span></div>');
+			});
+			markTrackTags();
+		},
+		metaHandlers.genericFail
+	);
+}
+
+function markTrackTags() {
+	var track_tags = [];
+	$('.selected').each(function() {
+		var tags = decodeURIComponent($(this).find('.clicktrackmenu').attr('rompr_tags')).split(', ');
+		// This is how to append one array to another in JS. Don't do this if the second array is very large
+		Array.prototype.push.apply(track_tags, tags);
+	});
+	$('.clicktagtrack').removeClass('clicktagtrack');
+	$('.clickuntagtrack').removeClass('clickuntagtrack');
+	$('.tracktagger').each(function() {
+		$(this).children('i').remove();
+		var mytag = $(this).find('span').html();
+		if (track_tags.indexOf(mytag) == -1) {
+			$(this).addClass('clicktagtrack').prepend('<i class="icon-blank inline-icon spinable"></i>')
+		} else {
+			$(this).addClass('clickuntagtrack').prepend('<i class="icon-tick inline-icon spinable"></i>')
+		}
+	});
+}
+
 
 async function makeTrackMenu(e, element) {
 	if (prefs.clickmode == 'single') {
@@ -1020,17 +1054,8 @@ async function makeTrackMenu(e, element) {
 	var tag = $('<div>', {
 		class: 'backhi clickable menuitem clicksubmenu',
 	}).html(language.gettext("label_tag")).appendTo(d);
-	var tagsub = $('<div>', {class:'submenu invisible'}).appendTo(d);
-	metaHandlers.genericQuery(
-		'gettags',
-		function(data) {
-			data.forEach(function(tag){
-				tagsub.append('<div class="backhi clickable menuitem tracktagger"><span>'+tag+'</span></div>');
-			});
-			menu.markTrackTags();
-		},
-		metaHandlers.genericFail
-	);
+	var tagsub = $('<div>', {class:'submenu invisible tagsubmenu'}).appendTo(d);
+	fill_tag_submenu(tagsub);
 
 	var pls = $('<div>', {
 		class: 'backhi clickable menuitem clicksubmenu',
@@ -1059,6 +1084,7 @@ async function makeTrackMenu(e, element) {
 	menu.addAction('clicktagtrack', metaHandlers.fromUiElement.tagTrack);
 	menu.addAction('clickuntagtrack', metaHandlers.fromUiElement.untagTrack);
 	menu.addAction('resetresume', metaHandlers.fromUiElement.resetResumePosition);
+	menu.addAction('track-newtag', metaHandlers.fromUiElement.tagTrackWithNew);
 
 	menu.open();
 }
@@ -1113,6 +1139,17 @@ function makeAlbumMenu(e, element) {
 				name: i+'album'+$(element).attr('db_album')
 			}).html(v))
 		});
+	}
+	if ($(element).hasClass('clickalbumplaytags')) {
+		let taglist = $(element).attr("album_tags").split(',');
+		for (var tag of taglist) {
+			d.append($('<div>', {
+				class: 'backhi clickable menuitem album-play-tag closepopup fakedouble',
+				name: tag,
+				rompralbum: $(element).attr('db_album'),
+				why: $(element).attr('why')
+			}).html(language.gettext("label_playtaggedwith", tag)));
+		}
 	}
 
 	if ($(element).hasClass('clickamendalbum')) {
