@@ -246,6 +246,7 @@ class prefs {
 		"sortcollectionby" => 'artist',
 		"sortresultsby" => 'sameas',
 		"actuallysortresultsby" => 'artist',
+		"headerbar_position" => 'bottom',
 
 		// These are prefs that are set by daemon processes and are only of interest to those processes.
 		// We don't want to save them or set them as Cookies but we do want them restored after a load().

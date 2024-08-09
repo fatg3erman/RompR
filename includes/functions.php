@@ -1155,6 +1155,11 @@ function create_body_tag($base_class) {
 		logger::log('INIT', 'Mobile_Detect detected Desktop Browser');
 		print ' desktopbrowser';
 	}
+	if (prefs::get_pref('headerbar_position') == 'bottom') {
+		print ' headerbottom';
+	} else {
+		print ' headertop';
+	}
 	print '">'."\n";
 }
 

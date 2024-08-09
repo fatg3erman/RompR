@@ -33,11 +33,6 @@ body {
 	flex-basis: auto;
 }
 
-#headerbar {
-	flex-grow: 0;
-	flex-shrink:0;
-}
-
 #stupidroundedcorners {
 	flex-grow: 0;
 	flex-shrink:0;
@@ -102,6 +97,8 @@ button.spinable.icon-spin6 {
 */
 
 #headerbar {
+	flex-grow: 0;
+	flex-shrink:0;
 	height:40px;
 	padding:0px;
 	margin:0px;
@@ -118,6 +115,48 @@ button.spinable.icon-spin6 {
 
 #volumecontrol {
 	height:2em;
+}
+
+/*
+=====================================================================
+=
+= Headerbar Position
+=
+=====================================================================
+*/
+
+body.headerbottom #loadsawrappers {
+	order: 0;
+}
+
+body.headerbottom #headerbar {
+	order: 1;
+}
+
+body.headertop #headerbar {
+	order: 0;
+}
+
+body.headertop #loadsawrappers {
+	order: 1;
+}
+
+body.headerbottom div.rightmenu {
+	bottom:calc(38px + var(--stupid-rounded-corner-buffer-size));
+	right:0px;
+}
+
+body.headertop div.rightmenu {
+	top: 38px;
+	right:0px;
+}
+
+body.headerbottom #notifications {
+	top:0px;
+}
+
+body.headertop #notifications {
+	bottom:var(--stupid-rounded-corner-buffer-size);
 }
 
 /*
@@ -318,7 +357,6 @@ button.spinable.icon-spin6 {
 	position:absolute;
 	width:100%;
 	padding:4px;
-	top:0px;
 	left:0px;
 	display:none;
 	font-size:8pt;
@@ -552,11 +590,6 @@ body.customscroll .dropmenu {
 
 div.normalmenu {
 	/*width:52px;*/
-}
-
-div.rightmenu {
-	bottom:calc(38px + var(--stupid-rounded-corner-buffer-size));
-	right:0px;
 }
 
 .infobarlayout {

@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 2.17
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* You can now create new Tags from the popup menus in the Collection browser
+* You can now choose to play 'All Tracks Tagged With "xxxx"' for a particular Album
+* Updated Simplified Chinese translation provided by Roll8ack
+* The position of the icon bar on the Phone skin can now be selected as either Top or Bottom of the window. It was originally moved to the bottom because it interfered with a touch event at the top of screen on iOS, but Apple then moved that to the bottom, so the only solution is to permit users to put it where it works for them.
+
+
 ## Version 2.16
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.

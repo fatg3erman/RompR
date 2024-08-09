@@ -886,9 +886,21 @@ var prefs = function() {
 					callback = reloadWindow;
 					break;
 
+				case 'headerbar_position':
+					callback = prefs.change_headerbar;
+					break;
+
 
 			}
 			prefs.save(prefobj, callback);
+		},
+
+		change_headerbar: function() {
+			if (prefs.headerbar_position == 'top') {
+				$('body').removeClass('headertop').removeClass('headerbottom').addClass('headertop');
+			} else {
+				$('body').removeClass('headertop').removeClass('headerbottom').addClass('headerbottom');
+			}
 		},
 
 		saveTextBoxes: function() {
