@@ -159,6 +159,10 @@ body.headertop #notifications {
 	bottom:var(--stupid-rounded-corner-buffer-size);
 }
 
+#stupidroundedcorners {
+	order: 2;
+}
+
 /*
 =====================================================================
 =
