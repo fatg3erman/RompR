@@ -102,13 +102,6 @@ Otherwise beets will not allow RompЯ to talk to it. Your configuration for beet
 The [Mopidy-Qobuz-Hires](https://github.com/vitiko98/mopidy-qobuz) backend works reasonably well provided you set the search_album_count and search_track_count
 values to something rather bigger than the default.
 
-### Important note for Qobuz support
-At the time of writing, version 0.1.0 of mopidy-qobuz-hires does not support album browsing. This will mean the search in RompR dos not work properly and
-you might find the search results get corrupted and end up plyaing different tracks.
-I have raised this as a Pull Request with the maintainer but until that gets merged you should install mopidy-qobuz-hires using the command
-
-	pip3 install git+https://github.com/vitiko98/mopidy-qobuz@dev
-
 
 ## Mopidy-YTMusic and Mopidy-Youtube
 

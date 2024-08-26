@@ -765,7 +765,9 @@ language::add_translations([
 	"label_generic_error" =>				"Something has gone wrong",
 	"label_genrebyartist" =>				"Genre (by Artist)",
 	"label_ratingbyartist" =>				"Rating (by Artist)",
-	"label_tagbyartist" =>					"Tag (by Artist)"
+	"label_tagbyartist" =>					"Tag (by Artist)",
+	"label_playtaggedwith" =>				'Play Tracks Tagged "%s*',
+	"config_headerbar" =>					'Icon Bar Position'
 
 	// ----------------------------------------------------
 	// Proobaly Unused

@@ -510,6 +510,10 @@ function playerController() {
 					cmdlist.push(['additem',v.name]);
 					break;
 
+				case "playalbumtag":
+					cmdlist.push(['playalbumtag',v.name,v.album, v.why]);
+					break;
+
 				case "podcasttrack":
 					cmdlist.push(['add',v.name]);
 					break;

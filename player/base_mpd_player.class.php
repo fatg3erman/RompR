@@ -1151,6 +1151,12 @@ class base_mpd_player {
 					}
 					break;
 
+				case 'playalbumtag':
+					logger::log("POSTCOMMAND", "Playing album ".$cmd[2]." with tag ".$cmd[1].' because '.$cmd[3]);
+					$cmds = array_merge($cmds, prefs::$database->playAlbumWithTag($cmd[2], $cmd[1], $cmd[3]));
+					break;
+
+
 				case "additem":
 					logger::log("POSTCOMMAND", "Adding Item ".$cmd[1]);
 					$cmds = array_merge($cmds, prefs::$database->getItemsToAdd($cmd[1], null));

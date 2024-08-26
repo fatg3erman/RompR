@@ -288,6 +288,12 @@ class prefspanel extends uibits {
 		self::ui_checkbox(['id' => 'cdplayermode', 'label' => 'config_cdplayermode']);
 
 		if (prefs::skin() == 'phone') {
+			self::ui_select_box([
+				'id' => 'headerbar_position',
+				'options' => ['top' => 'Top', 'bottom' => 'Bottom'],
+				'label' => language::gettext('config_headerbar')
+			]);
+
 			self::ui_textentry([
 				'label' => 'config_stupid_round_corners',
 				'type' => 'number',

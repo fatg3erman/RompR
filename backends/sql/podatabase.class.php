@@ -1121,7 +1121,8 @@ class poDatabase extends database {
 		if (is_dir('prefs/podcasts/'.$channel.'/'.$key) || mkdir ('prefs/podcasts/'.$channel.'/'.$key, 0755, true)) {
 			$filename = basename(rawurldecode($url));
 			$filename = format_for_disc($filename);
-			// $filename = preg_replace('/\?.*$/','',$filename);
+			// The URL might have a query string on the end. We don't want these in our filenames
+			$filename = preg_replace('/\?.*$/','',$filename);
 
 			$xml = '<?xml version="1.0" encoding="utf-8"?><download><filename>';
 			$xml = $xml . 'prefs/podcasts/'.$channel.'/'.$key.'/'.$filename;

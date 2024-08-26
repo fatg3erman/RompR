@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 2.17
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* You can now create new Tags from the popup menus in the Collection browser
+* You can now choose to play 'All Tracks Tagged With "xxxx"' for a particular Album
+* Updated Simplified Chinese translation provided by Roll8ack
+* The position of the icon bar on the Phone skin can now be selected as either Top or Bottom of the window. It was originally moved to the bottom because it interfered with a touch event at the top of screen on iOS, but Apple then moved that to the bottom, so the only solution is to permit users to put it where it works for them.
+
+
 ## Version 2.16
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
@@ -12,13 +22,15 @@ requests to be prioritised and so makes the UI slightly more responsive, except 
 * Fix bug where the Info Panel would mostly fail to update if Musicbrainz didn't respond.
 * Podcast downloads could not write ID3 tags to m4a files due to getid3 not supporting it. Added support for
 writing these tags usong AtomicParsley. You should install the AtomicParsley package to take advantage of this.
+* Fix for Community Radio when no DNS hostname coud be found because the local gethostbyaddr() wasn't working for some reason
+* Various small bugfixes
 
 
 ## Version 2.15
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
 
-* Support for Mopidy-Subidy to build your collection from a Subsonic server. Note that this will be slow due to Subidy having to qury your subsonic server for every single album. Also Subsonic does not seem to return Album Artists, this might cause sorting issues in your Collection.
+* Support for Mopidy-Subidy to build your collection from a Subsonic server. Note that this will be slow due to Subidy having to query your subsonic server for every single album. Also Subsonic does not seem to return Album Artists, this might cause sorting issues in your Collection.
 * Simplified Chinese translation provided by Roll8ack
 
 
@@ -31,15 +43,8 @@ writing these tags usong AtomicParsley. You should install the AtomicParsley pac
 * New options to not scrobble Podcasts and/or Spoken Word tracks to Last.FM
 * MPD outputs with hyperlnks in the name will now cause a link to be displayed in the UI (contributed by ron-from-nl)
 * All Mopidy-linked functionality that depends on online music sources (eg 'Music From Everywhere') should now recognise all the main ones that work well (Spotify, YTMusic, YouTube, Qobuz)
-* You can now limit your Collection view to only show tracks from a specific Mopidy backend (eg only loca, only spotify, etc..)
+* You can now limit your Collection view to only show tracks from a specific Mopidy backend (eg only local, only spotify, etc..)
 * A few minor bugfixes
-
-NOTE. Due to a limtation in mopidy-qobuz-hires version 0.1.0, to use that backend with RompR 2.14 or later you will
-need to install or upgrade it by doing
-
-	pip3 install git+https://github.com/vitiko98/mopidy-qobuz@dev
-
-until an official updated version is released. Trying to use the official release with RompR will result in corrupted search results.
 
 
 ## Version 2.09

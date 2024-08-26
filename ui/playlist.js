@@ -580,6 +580,13 @@ var playlist = function() {
 							type: "item",
 							name: uri
 						});
+					} else if ($(element).hasClass('album-play-tag')) {
+						tracks.push({
+							type: "playalbumtag",
+							name: uri,
+							album: $(element).attr('rompralbum'),
+							why: $(element).attr('why')
+						});
 					} else if ($(element).hasClass('podcasttrack')) {
 						tracks.push({
 							type: "podcasttrack",

@@ -204,6 +204,9 @@ class ui_elements {
 		if ($why == '' || $why == null)
 			return '';
 
+		$albumtags = prefs::$database->get_album_tags($who);
+		$num_rated = prefs::$database->get_album_ratings($who);
+
 		$det = array_merge(['buttons' => true, 'iconclass' => 'expand noselect'], $det);
 
 		$db_album = ($when === null) ? $who : $who.'_'.$when;
@@ -221,10 +224,18 @@ class ui_elements {
 			} else {
 				$html .= '<div class="bold textcentre track-control-icon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'">Play This Album</div>';
 			}
-			// $html .= '<div class="icon-single-star track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" title="'.language::gettext('label_with_ratings').'"></div>';
+			if ($num_rated > 0) {
+				$html .= '<div class="icon-single-star track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" title="'.language::gettext('label_with_ratings').'"></div>';
+			}
 			// $html .= '<div class="icon-tags track-control-icon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$db_album.'" title="'.language::gettext('label_with_tags').'"></div>';
-			// $html .= '<div class="icon-ratandtag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$db_album.'" title="'.language::gettext('label_with_tagandrat').'"></div>';
-			// $html .= '<div class="icon-ratortag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$db_album.'" title="'.language::gettext('label_with_tagorrat').'"></div>';
+			if (count($albumtags) > 0) {
+				$html .= '<div class="icon-tags track-control-icon clickable clickicon clickalbummenu clickalbumplaytags expand" '
+					.' album_tags="'.implode(',', $albumtags).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']).'"></div>';
+			}
+			if (count($albumtags) > 0 && $num_rated > 0) {
+				$html .= '<div class="icon-ratandtag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$db_album.'" title="'.language::gettext('label_with_tagandrat').'"></div>';
+				$html .= '<div class="icon-ratortag track-control-icon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$db_album.'" title="'.language::gettext('label_with_tagorrat').'"></div>';
+			}
 		}
 
 		$classes = array();
@@ -250,6 +261,13 @@ class ui_elements {
 		}
 
 		if (!$det['buttons']) {
+			if (count($albumtags) > 0) {
+				$classes[] = 'clickalbumplaytags';
+			}
+			if (count($albumtags) > 0 && $num_rated > 0) {
+				$classes[] = 'clickalbumplaytagandrat';
+				$classes[] = 'clickalbumplaytagorrat';
+			}
 			if ($det['AlbumUri']) {
 				$classes[] = 'clickalbumoptions';
 			} else {
@@ -273,24 +291,24 @@ class ui_elements {
 			$classes[] = 'clickaddtollviabrowse';
 		}
 
-		if (!$det['buttons'])
+		if (!$det['buttons'] && $num_rated > 0)
 			$classes[] = 'clickratedtracks';
 
 		if (count($classes) > 0) {
-			// $classes[] = $det['iconclass'];
-			// $html .= '<div class="icon-menu inline-icon track-control-icon clickable clickicon clickalbummenu '
-			// 		.implode(' ',$classes).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']);
+			$classes[] = $det['iconclass'];
+			$html .= '<div class="icon-menu inline-icon track-control-icon clickable clickicon clickalbummenu '
+					.implode(' ',$classes).'" album_tags="'.implode(',', $albumtags).'" db_album="'.$db_album.'" why="'.$why.'" who="'.$who.'" aname="'.rawurlencode($det['Albumname']);
 
-			// if (
-			// 	in_array('clickalbumuri', $classes)
-			// 	|| in_array('clickalbumoptions', $classes)
-			// 	|| in_array('clickaddtocollectionviabrowse', $classes)
-			// 	|| in_array('clickaddtollviabrowse', $classes)
-			// ) {
-			// 	$html .= '" uri="'.rawurlencode($det['AlbumUri']);
-			// }
+			if (
+				in_array('clickalbumuri', $classes)
+				|| in_array('clickalbumoptions', $classes)
+				|| in_array('clickaddtocollectionviabrowse', $classes)
+				|| in_array('clickaddtollviabrowse', $classes)
+			) {
+				$html .= '" uri="'.rawurlencode($det['AlbumUri']);
+			}
 
-			// $html .= '"></div>';
+			$html .= '"></div>';
 		}
 
 		if ($det['buttons'])
