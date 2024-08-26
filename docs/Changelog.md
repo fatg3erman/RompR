@@ -46,13 +46,6 @@ writing these tags usong AtomicParsley. You should install the AtomicParsley pac
 * You can now limit your Collection view to only show tracks from a specific Mopidy backend (eg only loca, only spotify, etc..)
 * A few minor bugfixes
 
-NOTE. Due to a limtation in mopidy-qobuz-hires version 0.1.0, to use that backend with RompR 2.14 or later you will
-need to install or upgrade it by doing
-
-	pip3 install git+https://github.com/vitiko98/mopidy-qobuz@dev
-
-until an official updated version is released. Trying to use the official release with RompR will result in corrupted search results.
-
 
 ## Version 2.09
 
