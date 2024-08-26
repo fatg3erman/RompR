@@ -30,7 +30,7 @@ writing these tags usong AtomicParsley. You should install the AtomicParsley pac
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
 
-* Support for Mopidy-Subidy to build your collection from a Subsonic server. Note that this will be slow due to Subidy having to qury your subsonic server for every single album. Also Subsonic does not seem to return Album Artists, this might cause sorting issues in your Collection.
+* Support for Mopidy-Subidy to build your collection from a Subsonic server. Note that this will be slow due to Subidy having to query your subsonic server for every single album. Also Subsonic does not seem to return Album Artists, this might cause sorting issues in your Collection.
 * Simplified Chinese translation provided by Roll8ack
 
 
@@ -43,7 +43,7 @@ writing these tags usong AtomicParsley. You should install the AtomicParsley pac
 * New options to not scrobble Podcasts and/or Spoken Word tracks to Last.FM
 * MPD outputs with hyperlnks in the name will now cause a link to be displayed in the UI (contributed by ron-from-nl)
 * All Mopidy-linked functionality that depends on online music sources (eg 'Music From Everywhere') should now recognise all the main ones that work well (Spotify, YTMusic, YouTube, Qobuz)
-* You can now limit your Collection view to only show tracks from a specific Mopidy backend (eg only loca, only spotify, etc..)
+* You can now limit your Collection view to only show tracks from a specific Mopidy backend (eg only local, only spotify, etc..)
 * A few minor bugfixes
 
 
