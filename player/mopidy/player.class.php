@@ -36,14 +36,14 @@ class player extends base_mpd_player {
 		$this->monitor = fopen('prefs/monitor','w');
 		$dirs_temp = prefs::get_pref('mopidy_collection_folders');
 		$dirs = [];
-		logger::log('MOPIDY', 'Collection Folders Are', print_r($dirs_temp, true));
+		logger::mark('MOPIDY', 'Collection Folders Are', print_r($dirs_temp, true));
 		foreach ($dirs_temp as $dir) {
 			if ($dir == 'Local media') {
 				$dir = 'Local media/Albums';
 			}
 			$dirs[] = $dir;
 		}
-		logger::log('MOPIDY', 'Collection Folders Are Now', print_r($dirs, true));
+		logger::mark('MOPIDY', 'Collection Folders Are Now', print_r($dirs, true));
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
 			logger::log('MOPIDY', 'Scanning', $dir);
