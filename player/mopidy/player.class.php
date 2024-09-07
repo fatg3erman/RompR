@@ -33,7 +33,7 @@ class player extends base_mpd_player {
 			exec('sudo mopidyctl local scan >> '.$dir.'/prefs/monitor 2>&1');
 			logger::mark('MOPIDY', 'Mopidy local scan finished');
 		}
-		$this->monitor = fopen('prefs/monitor','w');
+		$this->monitor = fopen('prefs/monitor','w+');
 		$dirs_temp = prefs::get_pref('mopidy_collection_folders');
 		$dirs = [];
 		logger::mark('MOPIDY', 'Collection Folders Are', print_r($dirs_temp, true));
