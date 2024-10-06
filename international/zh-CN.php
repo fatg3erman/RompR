@@ -758,7 +758,7 @@ language::add_translations([
 	"label_classicalgenre" =>				"使用类型检测古典音乐",
 	"label_classicalfolder" =>				"使用目录路径检测古典音乐",
 	"label_showallresults" =>				"显示所有曲目",
-	"label_bythisartist" =>					"在集合中此歌手的作品"
+	"label_bythisartist" =>					"在集合中此歌手的作品",
 	"label_generic_error" =>				"未知错误",
 	"label_genrebyartist" =>				"年代 (按歌手)",
 	"label_ratingbyartist" =>				"评级 (按歌手)",
