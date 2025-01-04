@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 2.18
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* Fix bug where the 'open in new window' links were malformed in the Wikipedia info panel
+* Fix bug where the first Album in a list would disappear if any of its metadata was updated while using the Phone skin
+* Updated Simplified Chinese translation provided by Roll8ack
+
+
 ## Version 2.17
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
