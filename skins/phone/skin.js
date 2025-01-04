@@ -216,7 +216,7 @@ jQuery.fn.insertAlbumAtStart = function(albumindex, html, tracklist) {
 		var is_covered = $('.openmenu[name="'+albumindex+'"]').hasClass('menu-covered');
 		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
 		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
-		$(html).insertAfter(me.children('.vertical-centre.configtitle').next()).scootTheAlbums().makeTimerSpan();
+		$(html).insertAfter(me.children('.textcentre.clickalbum.playable')).scootTheAlbums().makeTimerSpan();
 		if (is_covered)
 			$('.openmenu[name="'+albumindex+'"]').not('.backmenu').addClass('menu-covered');
 	});
