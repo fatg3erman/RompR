@@ -1581,7 +1581,7 @@ class metaDatabase extends playlistCollection {
 			$info = $stuff['info'];
 
 			if (is_array($info) && count($info) > 0) {
-				logger::log('YOUTUBEDL', 'Writing ID3 tags to',$files[0]);
+				logger::log('YOUTUBEDL', 'Writiing ID3 tags to',$files[0]);
 
 				$getID3 = new getID3;
 				$getID3->setOption(array('encoding'=>'UTF-8'));

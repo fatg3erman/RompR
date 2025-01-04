@@ -121,7 +121,7 @@ function get_wikipedia_page($page, $site, $langsearch) {
 		logger::debug("WIKIPEDIA", "Request for page ".$page." from ".$site.". Domain is ".$request_domain." and user domain is ".$domain);
 
 		$user_link = ($request_domain == $domain) ? $page : null;
-		$english_link = ($site == "en.wikipedia.org") ? $page : null;
+		$english_link = ($site == "en.wikipedia.org" | $site == "en.wikiquote.org") ? $page : null;
 
 		logger::debug("WIKIPEDIA", "User Link is ".$user_link." and english link is ".$english_link);
 
@@ -202,6 +202,8 @@ function get_wikipedia_page($page, $site, $langsearch) {
 }
 
 function wrap_response($xml, $domain, $page) {
+	logger::debug("WRAP RESPONSE", "Domain is $domain");
+	logger::debug("WRAP RESPONSE", "Page is $page");
 	$meta = $xml->addChild('rompr');
 	$meta->addChild('domain', $domain);
 	$meta->addChild('page', htmlspecialchars(rawurldecode($page), ENT_QUOTES));
