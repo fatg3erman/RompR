@@ -30,6 +30,8 @@ var playlist = function() {
 	var smart_notify = null;
 	var add_proxy_command = null;
 
+	var interrupt = false;
+
 	// Minimal set of information - just what infobar requires to make sure
 	// it blanks everything out
 	// Pos is for radioManager
@@ -660,10 +662,26 @@ var playlist = function() {
 				}
 				return;
 			}
+			var tracks = playlist.ui_elements_to_rompr_commands(elements);
+			if (interrupt) {
+				playlist.interruptQueue(tracks);
+				playlist.toggleInterrupt();
+				return;
+			}
 			// Call into this to add UI elements to the Play Queue
 			// CD Player Mode will always be respected
-			var tracks = playlist.ui_elements_to_rompr_commands(elements);
 			playlist.add_by_rompr_commands(tracks,moveto);
+		},
+
+		toggleInterrupt: function() {
+			interrupt = !interrupt;
+			if (interrupt) {
+				debug.log('PLAYLIST', 'Interrupt is ON');
+				$('#interrupt').makeFlasher()
+			} else {
+				debug.log('PLAYLIST', 'Interrupt is OFF');
+				$('#interrupt').stopFlasher();
+			}
 		},
 
 		select_tracks_for_proxy: function(element) {
@@ -681,8 +699,26 @@ var playlist = function() {
 			var tracks = playlist.ui_elements_to_rompr_commands($('.selected').filter(removeOpenItems));
 			old_cdplayermode = prefs.cdplayermode;
 			prefs.cdplayermode = true;
-			player.controller.addTracks(tracks, null, null, false);
+			player.controller.addTracks(tracks, null, null, false, false);
 			prefs.cdplayermode = old_cdplayermode;
+		},
+
+		interruptQueue: function(tracks) {
+			if (playlist.getCurrent('type') == 'stream') {
+				infobar.error(language.gettext('label_notforradio'));
+				return;
+			}
+			if (player.status.state == 'stop') {
+				infobar.error(language.gettext('label_notwhilestopped'));
+				return;
+			}
+			if (tracks.length > 0) {
+				layoutProcessor.notifyAddTracks();
+				old_cdplayermode = prefs.cdplayermode;
+				prefs.cdplayermode = false
+				player.controller.addTracks(tracks, playlist.getfinaltrack()+1, playlist.getCurrent('Pos'), false, false, [['storeposition']]);
+				prefs.cdplayermode = old_cdplayermode;
+			}
 		},
 
 		add_by_rompr_commands: function(tracks, moveto) {
@@ -1478,3 +1514,4 @@ jQuery.fn.findPreviousPlaylistElement = function() {
 	}
 	return prev;
 }
+

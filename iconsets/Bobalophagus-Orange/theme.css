@@ -96,6 +96,7 @@
     --icon-repeat-flow-off: url('iconsets/Bobalophagus-Orange/refresh_off.svg');
     --icon-consume-flow-on: url('iconsets/Bobalophagus-Orange/consume.svg');
     --icon-consume-flow-off: url('iconsets/Bobalophagus-Orange/consume_off.svg');
+    --icon-interrupt: url('iconsets/Bobalophagus-Orange/interrupt.svg');
 
     --icon-allrandom: url('iconsets/Bobalophagus-Orange/shuffle.svg');
     --icon-neverplayed: url('iconsets/Bobalophagus-Orange/neverheard.svg');

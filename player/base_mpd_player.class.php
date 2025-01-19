@@ -1256,6 +1256,8 @@ class base_mpd_player {
 					break;
 
 				case "clear":
+					prefs::load();
+					prefs::set_player_param(['interrupt_resume', 'null,null,null']);
 					$cmds[] = join_command_string($cmd);
 					break;
 
@@ -1263,6 +1265,21 @@ class base_mpd_player {
 					if ($this->toggle_consume($cmd[1])) {
 						$cmds[] = join_command_string($cmd);
 					}
+					break;
+
+				case "storeposition":
+					$status = $this->get_status();
+					$consume = $this->get_consume($status['consume']);
+					logger::log("MPD", "Consume State is currently", $consume);
+					if (array_key_exists('songid', $status)) {
+						prefs::load();
+						$this->force_consume_state(0);
+						prefs::set_player_param([
+							'reset_consume' => $consume,
+							'interrupt_resume' => $status['songid'].','.$status['song'].','.$status['elapsed']
+						]);
+					}
+					sleep(1);
 					break;
 
 				case "play":
@@ -1461,6 +1478,18 @@ class base_mpd_player {
 		}
 
 		prefs::load();
+		$pd = prefs::get_player_def();
+
+		if (array_key_exists('interrupt_resume', $pd) && array_key_exists('songid', $status)) {
+			logger::log("MPD", "Interrupt Resume is", $pd['interrupt_resume']);
+			list($songid, $song, $seekto) = explode(',', $pd['interrupt_resume']);
+			if ($songid == $status['songid']) {
+				prefs::set_player_param(['interrupt_resume' => 'null,null,null']);
+				sleep(1);
+				logger::info("MPD", "Interrupt resume", $songid, $song, $seekto);
+				$this->do_command_list(array(join_command_string(array('seekid', $songid, $seekto))));
+			}
+		}
 		if ($this->get_consume(0) && array_key_exists('songid', $this->current_status)) {
 			if (
 				($status['state'] == 'stop' && $this->current_status['state'] !== 'stop') ||
@@ -1470,7 +1499,11 @@ class base_mpd_player {
 				$this->do_command_list(['deleteid "'.$this->current_status['songid'].'"']);
 			}
 		}
-
+		if (array_key_exists('reset_consume', $pd) && $pd['reset_consume'] != 'null') {
+			prefs::set_player_param(['reset_consume' => 'null']);
+			logger::log("MOD", 'Forcing consume state after interrupt to', $pd['reset_consume']);
+			$this->force_consume_state($pd['reset_consume']);
+		}
 		$this->get_current_song_status();
 	}
 

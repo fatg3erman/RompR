@@ -96,6 +96,7 @@
     --icon-repeat-flow-off: url('iconsets/New-Cyan-Circled/refresh_off.svg');
     --icon-consume-flow-on: url('iconsets/New-Cyan-Circled/consume.svg');
     --icon-consume-flow-off: url('iconsets/New-Cyan-Circled/consume_off.svg');
+    --icon-interrupt: url('iconsets/New-Cyan-Circled/interrupt.svg');
 
     --icon-allrandom: url('iconsets/New-Cyan-Circled/shuffle.svg');
     --icon-neverplayed: url('iconsets/New-Cyan-Circled/neverheard.svg');

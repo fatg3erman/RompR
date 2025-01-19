@@ -28,6 +28,7 @@ class playlistpanel extends uibits {
 		print '<div id="playlistbuttons" class="fixed toggledown invisible">';
 
 		print '<div id="flowcontrols" class="noborder containerbox">';
+		print '<i id="interrupt" class="icon-interrupt tooltip inline-icon clickicon expand" title="'.language::gettext('label_interrupt').'"></i>';
 		print '<i id="random" class="icon-random tooltip inline-icon clickicon expand flow-off" title="'.language::gettext('button_random').'"></i>';
 		if (prefs::get_pref('player_backend') == "mpd") {
 			print '<i id="crossfade" class="icon-crossfade tooltip inline-icon clickicon expand flow-off" title="'.language::gettext('button_crossfade').'"></i>';

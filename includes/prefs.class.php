@@ -570,7 +570,7 @@ class prefs {
 					break;
 
 				case 49:
-					self::$prefs['multihosts'][$key]['radioparams'] = [
+					selcf::$prefs['multihosts'][$key]['radioparams'] = [
 						"radiomode" => "",
 						"radioparam" => "",
 						"radiomaster" => "",
