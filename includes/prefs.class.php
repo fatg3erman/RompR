@@ -534,7 +534,11 @@ class prefs {
 	}
 
 	public static function get_player_param($param) {
-		return self::$prefs['multihosts'][self::$prefs['currenthost']][$param];
+		if (array_key_exists($param, self::$prefs['multihosts'][self::$prefs['currenthost']])) {
+			return self::$prefs['multihosts'][self::$prefs['currenthost']][$param];
+		} else {
+			return null;
+		}
 	}
 
 	public static function set_player_param($param) {

@@ -162,6 +162,7 @@ define('ROMPR_FILE_MODEL', array(
 		'hidden' => 0,
 		'usetrackimages' => 0,
 		"attributes" => null,
+		'interruptpercent' => null,
 		"metadata" => array(
 			"iscomposer" => 'false',
 			"artists" => array(),
