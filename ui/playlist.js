@@ -1163,7 +1163,7 @@ function Album(artist, album, index, rolledup) {
 			trackOuter.append('<i class="icon-cancel-circled inline-icon fixed clickplaylist clickicon clickremovetrack tooltip" title="'+language.gettext('label_removefromplaylist')+'" romprid="'+tracks[trackpointer].Id+'"></i>');
 
 			if (tracks[trackpointer].interruptpercent != null) {
-				let intbar = $('<div>', {class: 'resume-bar-holder containerbox vertical-centre'}).appendTo(trackdiv);
+				let intbar = $('<div>', {class: 'resume-bar-holder containerbox vertical-centre'}).appendTo(trackinfo);
 				let bar = $('<div>', {class: 'resumebar'}).appendTo(intbar);
 				debug.log('ALBUM', 'Post interrupt resume is', tracks[trackpointer].interruptpercent);
 				bar.rangechooser({startmax: tracks[trackpointer].interruptpercent, interactive: false});
