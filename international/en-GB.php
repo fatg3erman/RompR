@@ -766,7 +766,7 @@ language::add_translations([
 	"label_playtaggedwith" =>				'Play Tracks Tagged "%s"',
 	"config_headerbar" =>					'Icon Bar Position',
 	"label_interrupt" =>					'Interrupt Play Queue',
-	"label_nowhilestopped" =>				'Not supported while playback is stopped'
+	"label_notwhilestopped" =>				'Not supported while playback is stopped'
 
 	// ----------------------------------------------------
 	// Proobaly Unused
