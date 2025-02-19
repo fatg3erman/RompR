@@ -763,7 +763,7 @@ language::add_translations([
 	"label_genrebyartist" =>				"Genre (by Artist)",
 	"label_ratingbyartist" =>				"Rating (by Artist)",
 	"label_tagbyartist" =>					"Tag (by Artist)",
-	"label_playtaggedwith" =>				'Play Tracks Tagged "%s*',
+	"label_playtaggedwith" =>				'Play Tracks Tagged "%s"',
 	"config_headerbar" =>					'Icon Bar Position',
 	"label_interrupt" =>					'Interrupt Play Queue',
 	"label_nowhilestopped" =>				'Not supported while playback is stopped'
