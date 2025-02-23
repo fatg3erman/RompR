@@ -425,7 +425,7 @@ div.open-plugin.backhi.clickable {
 div.albumbitsmenu {
 	position: absolute;
 	width: 75vw;
-	max-width:300px;
+	max-width:360px;
 	z-index:10009;
 	overflow-y:auto;
 	overflow-x:hidden;
