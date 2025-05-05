@@ -31,7 +31,8 @@ Across the top of the play queue, in a dropdown that can be revealed and hidden 
 'Interrupt' will interrupt the current playback. Suppose you're listening to a long track (eg an audiobook or podcast) and you
 want to listen to something else without losing your place. You can stop playback and use the 'Resume' function, but this is often
 clunky especially if you use Consume mode. In these cases, engage "Interrupt" mode and then click (or double click) the thing you want to listen to.
-RompR will start playing the new item and when it finishes the current thing you interrupted will carry on from where it left off.
+The new item will be added to the top of the play queue and playback will start. You can add more tracks to the queue if you want. When
+playback reaches the interrupted track it will automatically skip to the point where it was interrupted.
 
 'Shuffle' will play the tracks from the Playlist in a random order (it does not re-order the Playlist).
 
@@ -42,7 +43,7 @@ RompR will start playing the new item and when it finishes the current thing you
 ### MPD users
 
 ...also have an option to enable Crossfade (this is not supported in Mopidy) and use Replay Gain - but Replay Gain will only work if your tracks are tagged with Reply Gain information.
-
+cha
 ![](images/playlistmpd1.png)
 
 ## Non-Queueing Mode

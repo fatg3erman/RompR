@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 2.19
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* New 'Interrupt Mode' feature
+* Polish translation provided by ski007
+
+
 ## Version 2.18
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
