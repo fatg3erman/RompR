@@ -429,7 +429,7 @@ language::add_translations([
 	"label_radio_mix" =>					"收藏的歌手和关联歌手",
 	"label_gotnotracks" =>					"未找到任何曲目",
 	"config_artistfirst" =>					"集合前列的歌手",
-	"config_nosortprefixes" =>				"排序歌手的时候忽略这些前缀",
+	"config_nosortprefixes" =>				"排序时忽略这些前缀",
 	"button_skipforward" =>					"快进",
 	"button_skipbackward" =>				"快退",
 	"config_snoozetime" =>					"睡眠时间（分钟）",
@@ -763,8 +763,10 @@ language::add_translations([
 	"label_genrebyartist" =>				"年代 (按歌手)",
 	"label_ratingbyartist" =>				"评级 (按歌手)",
 	"label_tagbyartist" =>					"Tag (按歌手)",
-	"label_playtaggedwith" =>				'播放带有"%s*"标记的曲目',
-	"config_headerbar" =>					'图标栏位置'
+	"label_playtaggedwith" =>				'播放带有"%s"标记的曲目',
+	"config_headerbar" =>					'图标栏位置',
+	"label_interrupt" =>					'中断播放队列',
+	"label_notwhilestopped" =>				'播放停止时不支持'
 
 	// ----------------------------------------------------
 	// Proobaly Unused
