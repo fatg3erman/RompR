@@ -119,11 +119,11 @@ print '<label for="cul">Clear Update Lock</label></div>';
 print '<p class="tiny">If your Collection Update keeps saying Already Updating Collection, enable this, once</p>';
 
 print '<hr class="setup_screen_options" />';
-print '<h3>'.language::gettext('config_google_credentials').'</h3>';
-print '<p class="tiny">To use Bing Image Search you need to create an API key</p>';
+print '<h3>'.language::gettext('config_brave_credentials').'</h3>';
+print '<p class="tiny">To use Brave Image Search you need to create an API key</p>';
 print '<p><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
-print '<p>Bing API Key<br/>';
-print '<input type="text" name="bing_api_key" value="'.prefs::get_pref('bing_api_key').'" /></p>'."\n";
+print '<p>Brave API Key<br/>';
+print '<input type="text" name="brave_api_key" value="'.prefs::get_pref('brave_api_key').'" /></p>'."\n";
 
 print '<hr class="setup_screen_options" />';
 print '<h3>Collection Settings</h3>';

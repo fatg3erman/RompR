@@ -121,7 +121,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 		}
 		imgparams = self.getImageSearchParams(image);
 		imgparams.ignorelocal = ignorelocal;
-		debug.info("COVERSCRAPER","Getting Cover for", imgparams.imgkey);
+		debug.info("COVERSCRAPER","Getting Cover for", imgparams.imgkey, imgparams.ignorelocal);
 
 		if (sendUpdates) {
 			var x = image.prev('input').val();
@@ -136,8 +136,11 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 		animateWaiting();
 
 		var formData = self.getImageFormParams(image);
+		let fetch_url = "utils/getalbumcover.php";
+		if (ignorelocal)
+			fetch_url += '?ignorelocal=true';
 		fetch(
-			"utils/getalbumcover.php",
+			fetch_url,
 			{
 				method: 'POST',
 				signal: AbortSignal.timeout(60000),

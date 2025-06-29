@@ -54,23 +54,14 @@ Once you've downloaded all the art for your Collection, you can archive the imag
 
 This will copy RompЯ's images into your Local Music folders.
 
-### Using Bing Image Search To Find Album Art
+### Using Brave Image Search To Find Album Art
 
-This version of RompR now uses Bing instead of Google to search for Album Art. To use this functionality you'll need to sign up for a Free Azure account, enable the
-Bing Search v7 functionality, then create an API key and enter it into the setup screen you access from /rompr?setup on your RompR installtion. I could try and describe
-how you do this but it changes a lot so my docs would quickly go out of date. Instead I would start here https://docs.microsoft.com/en-us/bing/search-apis/bing-image-search/overview
-and once you have a subscription key you're good to go.
+This version of RompR now uses Brave Search to search for Album Art. To use this functionality you'll need to sign up for a Free Brave API account,
+then create an API key and enter it into the setup screen you access from /rompr?setup on your RompR installtion. I could try and describe
+how you do this but it changes a lot so my docs would quickly go out of date. Instead I would start here https://brave.com/search/api/
+and once you have an API key you're good to go. Note you will need a credit card but the Free subscription works.
 
-The switch from Google to Microsoft is likely to raise a few eyebrows, so here is the reasoning.
+We've previously used Google (too complicated) and Bing (now replaced with a useless AI API) as search services. Hopefully Brave will now see us through for another few years.
 
-* The existing Google Search code broke when Google made a change to their terms of service, the details of which were buried deep in a 1000-word email of the type that nobody ever reads.
-* This pised me off enormously, and I went to try to find out how it works now and spent a fruitless couple of hours trying to get Google's docs to make sense.
-* Google's API is hugely complex and difficult to get to grips with, their documentation is a very good example of how to write extremely bad documentation, and the layout of Google's developer portal was designed by a maniac with ADHD. I hate every single thing about it.
-* Bing's API is straightforward, the documentation is good, and the data it returns is much more comprehensive than Google's. The layout of the developer portal is still awful, but it's not as bad as Google's.
-* I had Bing search working within 30 minutes of signing up, including writing code. That's really all that matters in the end.
-
-It's come to something when Microsoft are providing a better service than Google, but hey-ho, times change. Google are the new Microsoft. Microsoft are the new Google.
-
-Note that you will eventually have to "Upgrade" to a Pay-As-You go plan on Azure, but the only API RompR uses is currently free so should not cost you anything.
-By entering any information relating to your Azure account into RompR you are agreeing that the developers of RompR are not responsible if you end up paying anything for your Azure account.
+By entering any information relating to your Brave account into RompR you are agreeing that the developers of RompR are not responsible if you end up paying anything for your Brave account.
 Sorry to have to say that, but some people are dicks.

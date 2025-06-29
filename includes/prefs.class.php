@@ -121,6 +121,7 @@ class prefs {
 		"lfm_importer_start_offset" => 0,
 		"lfm_importer_last_import" => 0,
 		"bing_api_key" => '',
+		'brave_api_key' => '',
 		"hide_master_volume" => false,
 		"alarm_ramptime" => 30,
 		"alarm_snoozetime" => 8,
@@ -228,7 +229,8 @@ class prefs {
 		'lastfm_session_key',
 		'spotify_token',
 		'spotify_token_expires',
-		'bing_api_key'
+		'bing_api_key',
+		'brave_api_key'
 	];
 
 	private const COOKIEPREFS = [

@@ -501,33 +501,40 @@ var imageEditor = function() {
 		},
 
 		search: function() {
-			debug.log("BING", "Searching with offset", offset);
-			bing.image.search(
+			debug.log("BRAVE", "Searching with offset", offset);
+			brave.image.search(
 				$("#searchphrase").val(),
 				offset,
-				imageEditor.bingSearchComplete,
-				imageEditor.bingSearchComplete,
+				imageEditor.braveSearchComplete,
+				imageEditor.braveSearchComplete,
 			);
 		},
 
-		bingSearchComplete: function(data) {
-			debug.debug("IMAGEEDITOR","Bing Search Results", data);
+		braveSearchComplete: function(data) {
+			debug.debug("IMAGEEDITOR","Brave Search Results", data);
 			$("#morebutton").remove();
-			if (data.value) {
-				data.value.forEach(function(image) {
+			if (data.results) {
+				var i = 0;
+				data.results.forEach(function(image) {
+					if (!image.properties.width)
+						image.properties.width = '?';
+					if (!image.properties.height)
+						image.properties.height = '?';
 					$('#searchresults').append(imageEditor.imageResult(
 						{
-							thumbnail: image.thumbnailUrl,
-							dimensions: image.width.toString()+'x'+image.height.toString(),
-							hostpage: image.hostPageDomainFriendlyName,
+							thumbnail: image.thumbnail.src,
+							dimensions: image.properties.width.toString()+'x'+image.properties.height.toString(),
+							hostpage: image.source,
+							title: image.title,
 							name: image.name,
-							id: image.imageId,
-							fullurl: image.contentUrl
+							id: i,
+							fullurl: image.properties.url
 						}
 					));
+					i++;
 				});
-				if (data.nextOffset && data.nextOffset > offset) {
-					offset = data.nextOffset;
+				if (data.more_results_available && data.more_results_available == 'true') {
+					offset += 20;
 					$("#searchresultsholder").append('<div id="morebutton" class="fullwidth"><button onclick="imageEditor.search()">'+language.gettext("albumart_showmore")+'</button></div>');
 				}
 			} else if (data.error) {
@@ -545,6 +552,8 @@ var imageEditor = function() {
 				container.append($('<div>', {class: 'playlistrow2 breakall'}).html(options.name));
 			if (options.dimensions)
 				container.append($('<div>', {class: 'playlistitem'}).html(options.dimensions));
+			if (options.title)
+				container.append($('<div>', {class: 'playlistitem'}).html(options.title));
 			if (options.hostpage)
 				container.append($('<div>', {class: 'playlistrow2'}).html(options.hostpage));
 			return holder;

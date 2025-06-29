@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 2.20
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* Album Art image search now uses Brave Search instead of Bing, because Microsoft removed the Bing Search API
+and didn't replace it with anything except a useless "AI" API. To use this feature you'll need to sign up for
+a Brave Developer Account and get an API key, which is free for 200 requests a month, but does require a credit card anyway.
+[Read The Docs](https://fatg3erman.github.io/RompR/Album-Art-Manager)
+
+
 ## Version 2.19
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.

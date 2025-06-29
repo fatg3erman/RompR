@@ -193,14 +193,14 @@ language::add_translations([
 	"albumart_instructions" =>				"Click a cover to change it, or drag an image from your hard drive or another browser window",
 	"albumart_onlyempty" =>					"Show Only Albums Without Covers",
 	"albumart_allartists" =>				"All Artists",
-	"albumart_googlesearch" =>				"Bing Search",
+	"albumart_googlesearch" =>				"Brave Search",
 	"albumart_local" =>						"Local Images",
 	"albumart_upload" =>					"File Upload",
 	"albumart_uploadbutton" =>				"Upload",
 	"albumart_newtab" =>					"Google Search in New Tab",
 	"albumart_dragdrop" =>					"You can drag-and-drop images from your hard drive or another browser window directly onto the image (in most browsers)",
 	"albumart_showmore" =>					"Show More Results",
-	"albumart_googleproblem" =>				"There was a problem. Bing said",
+	"albumart_googleproblem" =>				"There was a problem. Brave said",
 	"albumart_getthese" =>					"Get These Covers",
 	"albumart_nocovercount" =>				"albums without a cover",
 	"albumart_getting" =>					"Getting",
@@ -527,7 +527,6 @@ language::add_translations([
 	"label_with_tags" =>					"Play Only Tracks With Tags",
 	"label_with_tagandrat" =>				"Play Only Tracks With Tags And Ratings",
 	"label_with_tagorrat" =>				"Play Only Tracks With Tags Or Ratings",
-	"config_google_credentials" =>			"Bing API Credentials",
 	"config_read_the_docs" =>				"Please Read The Documentation",
 	"label_dateadded" =>					"Date Added",
 	"label_radiostation" =>					"Radio Station",
@@ -713,7 +712,7 @@ language::add_translations([
 	"label_collinfo" =>						"Collection Information",
 	"label_incoll" =>						"This track is in the Music Collection",
 	"label_notincoll" =>					"This track is not in the Music Collection. Click to add it",
-	"label_image_search" =>					'You need a Bing Image Search API key to use Bing Search. Please read the documentation.',
+	"label_image_search" =>					'You need a Brave Search API key to use Brave Search. Please read the documentation.',
 	"config_hidemastervolume" =>			'Use Snapcast Volume as Main Volume Control',
 	"setup_mopidy_scan" =>					'Allow RompR to run mopidy local scan when creating the Music Collection',
 	"setup_mopidy_scan_title" =>			'Mopidy Special Options',
@@ -766,7 +765,8 @@ language::add_translations([
 	"label_playtaggedwith" =>				'Play Tracks Tagged "%s"',
 	"config_headerbar" =>					'Icon Bar Position',
 	"label_interrupt" =>					'Interrupt Play Queue',
-	"label_notwhilestopped" =>				'Not supported while playback is stopped'
+	"label_notwhilestopped" =>				'Not supported while playback is stopped',
+	"config_brave_credentials" =>			"Brave Search API Credentials",
 
 	// ----------------------------------------------------
 	// Proobaly Unused
