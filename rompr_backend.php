@@ -108,7 +108,7 @@ function check_lastfm_sync() {
 
     $next = prefs::get_pref('next_lastfm_synctime') - time();
     if ($next > 0) {
-        logger::debug('DAEMON', 'Next LastFM Sync Check is in',$next,'seconds');
+        logger::mark('DAEMON', 'Next LastFM Sync Check is in',$next,'seconds');
     } else {
         logger::mark('DAEMON', 'Syncing LastFM Playcounts');
         $page = 1;
@@ -139,11 +139,11 @@ function check_lastfm_sync() {
                             if (array_key_exists('mbid', $track['album']) && $track['album']['mbid'] != '') {
                                 $data['MUSICBRAINZ_ALBUMID'] = $track['album']['mbid'];
                             }
-                            logger::debug('LASTFM-SYNC', 'Syncing', $data['Title']);
+                            logger::mark('LASTFM-SYNC', 'Syncing', $data['Title']);
                             prefs::$database->syncinc($data);
                         }
                     } catch (Exception $e) {
-
+                        logger::mark('LASTFM-SYNC', 'Exception', $e);
                     }
                 }
                 // You'd think we could just loop until we get a page with no results
