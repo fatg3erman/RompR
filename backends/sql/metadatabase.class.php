@@ -409,37 +409,61 @@ class metaDatabase extends playlistCollection {
 		}
 
 		$this->checkLastPlayed($data);
+		$to_use = null;
+		// We might have > 1 match. We don't wanna update the playcount on all of them. Choose the best one
 		foreach ($ttids as $ttid) {
-			logger::log("SYNCINC", "Doing a SYNC action on TTID ".$ttid,'LastPlayed is',$data['lastplayed']);
-			$rowcount = $this->generic_sql_query("UPDATE Playcounttable SET SyncCount = SyncCount - 1 WHERE TTindex = ".$ttid." AND SyncCount > 0",
-				false, null, null, null, true);
-			if ($rowcount > 0) {
-				logger::trace("SYNCINC", "  Decremented sync counter for this track");
-			} else {
-				$clp = $this->simple_query('LastPlayed', 'Playcounttable', 'TTindex', $ttid, null);
-				if ($clp === null) {
-					logger::trace('SYNCINC', 'Track does not currently have a playcount');
-					$metadata = $this->get_all_data($ttid);
-					$this->increment_value($ttid, 'Playcount', 1, $data['lastplayed']);
-				} else {
-					logger::trace('SYNCINC', 'Incrementing Playcount for this track');
-					$this->sql_prepare_query(true, null, null, null,
-						"UPDATE Playcounttable SET Playcount = Playcount + 1 WHERE TTindex = ?",
-						$ttid
-					);
-					if (strtotime($clp) < strtotime($data['lastplayed'])) {
-						logger::trace('SYNCINC', 'Updating LastPlayed for this track');
-						$this->sql_prepare_query(true, null, null, null,
-							"UPDATE Playcounttable SET LastPlayed = ? WHERE TTindex = ?",
-							$data['lastplayed'],
-							$ttid
-						);
-					}
-				}
-				// At this point, SyncCount must have been zero but the update will have incremented it again,
-				// because of the trigger. resetSyncCounts takes care of this;
-				$this->resetSyncCounts(array($ttid));
+			$sc = $this->simple_query("SyncCount", "Playcounttable", "TTindex", $ttid, null);
+			if ($sc > 0) {
+				logger::log('SYNCINC', "Found TTindex", $ttid, "that has a sync count of",$sc,". Using that");
+				$to_use = $ttid;
+				break;
 			}
+		}
+		if ($to_use === null) {
+			foreach ($ttids as $ttid) {
+				$h = $this->simple_query("Hidden", "Tracktable", "TTindex", $ttid, null);
+				if ($h == 0) {
+					logger::log('SYNCINC', "Found TTindex", $ttid, "that is not hidden. Using that");
+					$to_use = $ttid;
+					break;
+				}
+			}
+		}
+		if ($to_use === null) {
+			logger::log('SYNCINC', "Couldn't find a synced or unhidden track. Using first returned");
+			$to_use = array_shift($ttids);
+		}
+
+
+		logger::log("SYNCINC", "Doing a SYNC action on TTID ".$to_use,'LastPlayed is',$data['lastplayed']);
+		$rowcount = $this->generic_sql_query("UPDATE Playcounttable SET SyncCount = SyncCount - 1 WHERE TTindex = ".$to_use." AND SyncCount > 0",
+			false, null, null, null, true);
+		if ($rowcount > 0) {
+			logger::trace("SYNCINC", "  Decremented sync counter for this track");
+		} else {
+			$clp = $this->simple_query('LastPlayed', 'Playcounttable', 'TTindex', $to_use, null);
+			if ($clp === null) {
+				logger::trace('SYNCINC', 'Track does not currently have a playcount');
+				$metadata = $this->get_all_data($to_use);
+				$this->increment_value($to_use, 'Playcount', 1, $data['lastplayed']);
+			} else {
+				logger::trace('SYNCINC', 'Incrementing Playcount for this track');
+				$this->sql_prepare_query(true, null, null, null,
+					"UPDATE Playcounttable SET Playcount = Playcount + 1 WHERE TTindex = ?",
+					$to_use
+				);
+				if (strtotime($clp) < strtotime($data['lastplayed'])) {
+					logger::trace('SYNCINC', 'Updating LastPlayed for this track');
+					$this->sql_prepare_query(true, null, null, null,
+						"UPDATE Playcounttable SET LastPlayed = ? WHERE TTindex = ?",
+						$data['lastplayed'],
+						$to_use
+					);
+				}
+			}
+			// At this point, SyncCount must have been zero but the update will have incremented it again,
+			// because of the trigger. resetSyncCounts takes care of this;
+			$this->resetSyncCounts(array($to_use));
 		}
 
 		// Let's just see if it's a podcast track and mark it as listened.
