@@ -471,9 +471,9 @@ class metaDatabase extends playlistCollection {
 
 		$boobly = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
 			"SELECT PODTrackindex FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
-			WHERE (Podcasttable.Artist LIKE ? OR PodcastTracktable.Artist LIKE ?)
-			AND Podcasttable.Title LIKE ?
-			AND PodcastTracktable.Title LIKE ?",
+			WHERE (Podcasttable.Artist = ? OR PodcastTracktable.Artist = ?)
+			AND Podcasttable.Title = ?
+			AND PodcastTracktable.Title = ?",
 			$data['trackartist'],
 			$data['trackartist'],
 			$data['Album'],
