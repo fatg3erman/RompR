@@ -11,12 +11,35 @@ class track {
 		// We do this simply for speed otherwise we end up loking it up twice for every track
 		// in the case where this remains as null we add it to the pile and
 		// sort it out later.
+		$this->tags['dec_folder'] = rawurldecode($this->tags['folder']);
+		$this->check_audiobook();
 		$this->format_sortartist();
 		// $this->tags['albumartist'] = format_sortartist($this->tags);
 		$this->tags['trackartist'] = format_artist($this->tags['Artist'], '');
 		if (is_numeric($this->tags['year']) && $this->tags['year'] > 2155)
 			$this->tags['year'] = null;
 
+	}
+
+	private function check_audiobook() {
+		if ($this->checkAudiobookGenre()) {
+			$this->tags['type'] = 'audiobook';
+		} else if (prefs::get_pref('audiobook_directory') != '') {
+			if (strpos($this->tags['dec_folder'], prefs::get_pref('audiobook_directory')) === 0) {
+				$this->tags['type'] = 'audiobook';
+			}
+		}
+	}
+
+	private function checkAudiobookGenre() {
+		if (!$this->tags['Genre'])
+			return false;
+		$cg = prefs::get_pref('audiobookgenres');
+
+		if (!is_array($cg) || count($cg) == 0 || $cg[0] == '')
+			return false;
+		$gl = strtolower($this->tags['Genre']);
+		return in_array($gl, $cg);
 	}
 
 	private function format_sortartist() {
@@ -79,8 +102,7 @@ class track {
 		$cd = prefs::get_pref('classicalfolder');
 		if ($cd == '')
 			return false;
-		$f = rawurldecode($this->tags['folder']);
-		if (strpos($f, $cd) === 0) {
+		if (strpos($this->tags['dec_folder'], $cd) === 0) {
 			$this->tags['is_classical'] = true;
 			return true;
 		}
@@ -91,16 +113,11 @@ class track {
 		if (!$this->tags['Genre'])
 			return false;
 		$cg = prefs::get_pref('classicalgenres');
+
 		if (!is_array($cg) || count($cg) == 0 || $cg[0] == '')
 			return false;
-
 		$gl = strtolower($this->tags['Genre']);
-		foreach ($cg as $g) {
-			if ($gl == strtolower($g)) {
-				return true;
-			}
-		}
-		return false;
+		return in_array($gl, $cg);
 	}
 
 	// MySQL YEAR must be < 2155. I have one where the year is 2810. Obvs a typo

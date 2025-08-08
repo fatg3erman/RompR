@@ -437,12 +437,6 @@ class player extends base_mpd_player {
 		$filedata['X-AlbumUri'] = null;
 		$this->check_undefined_tags($filedata);
 		$filedata['folder'] = dirname($filedata['unmopfile']);
-		if (prefs::get_pref('audiobook_directory') != '') {
-			$f = rawurldecode($filedata['folder']);
-			if (strpos($f, prefs::get_pref('audiobook_directory')) === 0) {
-				$filedata['type'] = 'audiobook';
-			}
-		}
 	}
 
 	private function preprocess_subsonic(&$filedata) {

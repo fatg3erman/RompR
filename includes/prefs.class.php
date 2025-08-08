@@ -85,6 +85,7 @@ class prefs {
 		"link_checker_frequency" => 604800,
 		"link_checker_is_running" => false,
 		"audiobook_directory" => '',
+		"audiobookgenres" => array('Spoken Word'),
 		"collection_player" => null,
 		"snapcast_server" => '',
 		"snapcast_port" => '1705',
@@ -309,6 +310,9 @@ class prefs {
 		}
 
 		self::$prefs = array_replace(self::BACKEND_PREFS, $cannot_init, $sp, $cp, self::$session_prefs);
+		# To speed thingsn up later
+		self::$prefs['classicalgenres'] = array_map('strtolower', self::$prefs['classicalgenres']);
+		self::$prefs['audiobookgenres'] = array_map('strtolower', self::$prefs['audiobookgenres']);
 
 	}
 

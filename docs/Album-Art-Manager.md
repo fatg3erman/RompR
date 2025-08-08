@@ -57,7 +57,7 @@ This will copy RompЯ's images into your Local Music folders.
 ### Using Brave Image Search To Find Album Art
 
 This version of RompR now uses Brave Search to search for Album Art. To use this functionality you'll need to sign up for a Free Brave API account,
-then create an API key and enter it into the setup screen you access from /rompr?setup on your RompR installtion. I could try and describe
+then create an API key and enter it into the setup screen you access from /rompr?setup on your RompR installation. I could try and describe
 how you do this but it changes a lot so my docs would quickly go out of date. Instead I would start here https://brave.com/search/api/
 and once you have an API key you're good to go. Note you will need a credit card but the Free subscription works.
 

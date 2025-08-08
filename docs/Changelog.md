@@ -9,6 +9,8 @@ and didn't replace it with anything except a useless "AI" API. To use this featu
 a Brave Developer Account and get an API key, which is free for 200 requests a month, but does require a credit card anyway.
 [Read The Docs](https://fatg3erman.github.io/RompR/Album-Art-Manager)
 
+* Spoken Word files can now be detected using Genre as well as by folder path
+
 
 ## Version 2.19
 
