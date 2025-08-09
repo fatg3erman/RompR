@@ -642,6 +642,17 @@ class prefs {
 						self::$prefs['multihosts'][$key]['radioparams']['stationname'] = '';
 					break;
 
+				case 105:
+					// Tidy up some mess made by a typo
+					foreach (self::$prefs['multihosts'] as &$mh) {
+						foreach ($mh as $k => $v) {
+							if (is_numeric($k)) {
+								unset($mh[$k]);
+							}
+						}
+					}
+					break;
+
 			}
 		}
 		self::save();
