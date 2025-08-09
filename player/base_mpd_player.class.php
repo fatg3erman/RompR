@@ -1257,7 +1257,7 @@ class base_mpd_player {
 
 				case "clear":
 					prefs::load();
-					prefs::set_player_param(['interrupt_resume', 'null,null,null']);
+					prefs::set_player_param(['interrupt_resume' => 'null,null,null']);
 					$cmds[] = join_command_string($cmd);
 					break;
 
