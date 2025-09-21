@@ -112,6 +112,7 @@ function check_lastfm_sync() {
     } else {
         logger::mark('DAEMON', 'Syncing LastFM Playcounts');
         $page = 1;
+        $last_sync = prefs::get_pref('last_lastfm_synctime');
         $options = [
             'limit' => LASTFM_TRACKS_PER_PAGE,
             'from' => prefs::get_pref('last_lastfm_synctime'),
@@ -128,6 +129,7 @@ function check_lastfm_sync() {
                 foreach ($tracks as $track) {
                     try {
                         if (array_key_exists('date', $track)) {
+                            $last_sync = max($last_sync, $track['date']['uts']);
                             $data = [
                                 'Title' => $track['name'],
                                 'Album' => $track['album']['#text'],
@@ -158,7 +160,7 @@ function check_lastfm_sync() {
             }
         }
         prefs::set_pref([
-            'last_lastfm_synctime' => time(),
+            'last_lastfm_synctime' => $last_sync,
             'next_lastfm_synctime' => time() + prefs::get_pref('lastfm_sync_frequency')
         ]);
         prefs::save();

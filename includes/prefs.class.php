@@ -118,7 +118,8 @@ class prefs {
 		"next_lastfm_synctime" => 0,
 		// Although we can't init this to a value, it must be defined here or we can never save it
 		"last_lastfm_synctime" => 0,
-		"lastfm_sync_frequency" => 86400,
+		"lastfm_sync_frequency" => 3600,
+		"sync_frequency_updated" => 0,
 		"lfm_importer_start_offset" => 0,
 		"lfm_importer_last_import" => 0,
 		"bing_api_key" => '',
@@ -704,6 +705,12 @@ class prefs {
 			self::set_cookie_pref('sort_ab_bydate', self::$prefs['sortbydate']);
 			self::$prefs['sort_ab_bydate'] = self::$prefs['sortbydate'];
 			self::$prefs['sortby_upgraded'] = true;
+		}
+
+		if (self::$prefs['sync_frequency_updated'] == 0) {
+			self::$prefs['lastfm_sync_frequency'] = 3600;
+			self::$prefs['next_lastfm_synctime'] = time() + 3600;
+			self::$prefs['sync_frequency_updated'] = 1;
 		}
 
 		self::save();
