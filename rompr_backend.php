@@ -160,7 +160,7 @@ function check_lastfm_sync() {
             }
         }
         prefs::set_pref([
-            'last_lastfm_synctime' => $last_sync,
+            'last_lastfm_synctime' => $last_sync + 1,
             'next_lastfm_synctime' => time() + prefs::get_pref('lastfm_sync_frequency')
         ]);
         prefs::save();
