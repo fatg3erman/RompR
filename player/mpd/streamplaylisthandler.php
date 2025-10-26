@@ -197,6 +197,10 @@ class m3uFile {
 		$this->tracks = array();
 		$this->prettystream = '';
 		$this->url_to_add = $url;
+		if (strpos($url, 'opml.radiotime.com') !== false) {
+			# MPD seems to have issues with m3u from TuneIn, so let's not use them
+			$this->url_to_add = null;
+		}
 
 		$parts = explode(PHP_EOL, $data);
 		foreach ($parts as $line) {
@@ -206,6 +210,9 @@ class m3uFile {
 
 			} else {
 				$this->tracks[] = array('TrackUri' => trim($line), 'PrettyStream' => $this->prettystream);
+				if ($this->url_to_add == null) {
+					$this->url_to_add = trim($line);
+				}
 			}
 		}
 	}
