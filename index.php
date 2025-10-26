@@ -214,6 +214,13 @@ logger::mark("CREATING PAGE", "******++++++======------******------======++++++*
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="mobile-web-app-capable" content="yes" />
+<link rel="apple-touch-icon" sizes="72x72" href="newimages/favicon-72.png" />
+<link rel="apple-touch-icon" sizes="76x76" href="newimages/favicon-76.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="newimages/favicon-114.png" />
+<link rel="apple-touch-icon" sizes="120x120" href="newimages/favicon-120.png" />
+<link rel="apple-touch-icon" sizes="144x144" href="newimages/favicon-144.png" />
+<link rel="apple-touch-icon" sizes="152x152" href="newimages/favicon-152.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="newimages/favicon-180.png" />
 <?php
 print '<script type="application/json" name="custom_radio_items">'."\n".json_encode(CUSTOM_RADIO_ITEMS)."\n</script>\n";
 print '<script type="application/json" name="radio_combine_options">'."\n".json_encode(RADIO_COMBINE_OPTIONS)."\n</script>\n";
