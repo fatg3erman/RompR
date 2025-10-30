@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 2.25
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* Fix bug where TuneIn radio stations didn't work for MPD users. (Was fixed in 2.24 but this is a better fix)
+
+
 ## Version 2.22
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
