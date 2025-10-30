@@ -11,7 +11,7 @@
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
 
-* Serbain Latin translation by acosonic
+* Serbian Latin translation by acosonic
 * Fix bug where Tag/Rating search didn't work for MPD users
 * Fix bug where countries list in radio browser wasn't retrieved.
 
