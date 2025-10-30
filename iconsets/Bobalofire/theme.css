@@ -97,6 +97,7 @@
     --icon-repeat-flow-off: url('iconsets/Bobalofire/refresh_off.svg');
     --icon-consume-flow-on: url('iconsets/Bobalofire/consume.svg');
     --icon-consume-flow-off: url('iconsets/Bobalofire/consume_off.svg');
+    --icon-interrupt: url('iconsets/Bobalofire/interrupt.svg');
 
     --icon-allrandom: url('iconsets/Bobalofire/shuffle.svg');
     --icon-neverplayed: url('iconsets/Bobalofire/neverheard.svg');

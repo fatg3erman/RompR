@@ -33,17 +33,17 @@ class player extends base_mpd_player {
 			exec('sudo mopidyctl local scan >> '.$dir.'/prefs/monitor 2>&1');
 			logger::mark('MOPIDY', 'Mopidy local scan finished');
 		}
-		$this->monitor = fopen('prefs/monitor','w');
+		$this->monitor = fopen('prefs/monitor','w+');
 		$dirs_temp = prefs::get_pref('mopidy_collection_folders');
 		$dirs = [];
-		logger::log('MOPIDY', 'Collection Folders Are', print_r($dirs_temp, true));
+		logger::mark('MOPIDY', 'Collection Folders Are', print_r($dirs_temp, true));
 		foreach ($dirs_temp as $dir) {
 			if ($dir == 'Local media') {
 				$dir = 'Local media/Albums';
 			}
 			$dirs[] = $dir;
 		}
-		logger::log('MOPIDY', 'Collection Folders Are Now', print_r($dirs, true));
+		logger::mark('MOPIDY', 'Collection Folders Are Now', print_r($dirs, true));
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
 			logger::log('MOPIDY', 'Scanning', $dir);
@@ -437,12 +437,6 @@ class player extends base_mpd_player {
 		$filedata['X-AlbumUri'] = null;
 		$this->check_undefined_tags($filedata);
 		$filedata['folder'] = dirname($filedata['unmopfile']);
-		if (prefs::get_pref('audiobook_directory') != '') {
-			$f = rawurldecode($filedata['folder']);
-			if (strpos($f, prefs::get_pref('audiobook_directory')) === 0) {
-				$filedata['type'] = 'audiobook';
-			}
-		}
 	}
 
 	private function preprocess_subsonic(&$filedata) {

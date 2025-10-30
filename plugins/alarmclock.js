@@ -283,7 +283,7 @@ var alarmclock = function() {
 				alarm_editor.close(null);
 
 			alarm_editor = new popup({
-				width: 500,
+				width: 600,
 				title: 'Alarm For Player '+prefs.currenthost,
 				atmousepos: true,
 				mousevent: event,

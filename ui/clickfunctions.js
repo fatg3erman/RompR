@@ -356,6 +356,7 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('removeafter', removePopupMenuItem);
 	clickRegistry.addClickHandlers('clickqueuetracks', playlist.draggedToEmpty);
 	clickRegistry.addClickHandlers('clickplayfromhere', playlist.mimicCDPlayerMode);
+	clickRegistry.addClickHandlers('clickinterrupt', playlist.interruptQueue);
 	clickRegistry.addClickHandlers('clickremdb', metaHandlers.fromUiElement.removeTrackFromDb);
 	clickRegistry.addClickHandlers('clickpltrack', metaHandlers.fromUiElement.tracksToPlaylist);
 	clickRegistry.addClickHandlers('removealbum', metaHandlers.fromUiElement.removeAlbumFromDb);
@@ -388,6 +389,7 @@ function bindClickHandlers() {
 	$('.close-bookmark').on(prefs.click_event, bookmarkAdder.close);
 	$('#ban').on(prefs.click_event, nowplaying.ban);
 	$('.clickreplaygain').on(prefs.click_event, player.controller.replayGain);
+	$('#interrupt').on(prefs.click_event, playlist.toggleInterrupt);
 
 	$(document).on(prefs.click_event, '.choosepanel', uiHelper.changePanel);
 

@@ -1,4 +1,4 @@
-var bing = function() {
+var brave = function() {
 
 	var queue = new Array();
 	var current_req;
@@ -7,7 +7,7 @@ var bing = function() {
 	async function handle_response(req, response) {
 		var c = response.headers.get('Pragma');
 		var data = await response.json();
-		debug.debug("BING","Request success",c, data);
+		debug.log("BRAVE","Request success",c, data);
 		var throttle = (c == "From Cache") ? 50 : THROTTLE_TIME;
 		if (data === null) {
 			data = {error: format_remote_api_error('albumart_googleproblem', 'No Data')};
@@ -24,7 +24,7 @@ var bing = function() {
 	}
 
 	function handle_error(req, err) {
-		debug.warn("BING","Request failed",err);
+		debug.warn("BRAVE","Request failed",err);
 		data = {error: format_remote_api_error('albumart_googleproblem', err)};
 		if (req.reqid != '')
 			data.id = req.reqid;
@@ -36,7 +36,7 @@ var bing = function() {
 	async function do_Request() {
 		var data, throttle, response;
 		while (current_req = queue.shift()) {
-			debug.debug("BING","New request",current_req);
+			debug.debug("BRAVE","New request",current_req);
 			try {
 				response = await fetch(
 					'browser/backends/api_handler.php',
@@ -70,14 +70,14 @@ var bing = function() {
 		image: {
 			search: function(query, offset, success, fail) {
 				var data = {
-					module: 'bing',
+					module: 'brave',
 					method: 'image_search',
 					params: {
 						offset: offset,
 						q: query
 					}
 				}
-				bing.request('', data, success, fail);
+				brave.request('', data, success, fail);
 			}
 		}
 

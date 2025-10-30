@@ -475,7 +475,7 @@ function playerController() {
 	// 	await self.do_command_list([["repeat",0],["random", 0],["consume", 1]]);
 	// }
 
-	this.addTracks = async function(tracks, playpos, at_pos, queue, return_cmds) {
+	this.addTracks = async function(tracks, playpos, at_pos, queue, return_cmds, pre_cmds) {
 		// Call into this to add items to the play queue.
 		// tracks  : list of things to add
 		// playpos : position to start playback from after adding items or null
@@ -486,6 +486,9 @@ function playerController() {
 		var queue_track = (queue == true) ? true : !prefs.cdplayermode;
 		debug.info("MPD","Adding",tracks.length,"Tracks at",at_pos,"playing from",playpos,"queue is",queue);
 		var cmdlist = [];
+		if (pre_cmds)
+			cmdlist = pre_cmds;
+
 		if (!queue_track) {
 			cmdlist.push(['stop']);
 			cmdlist.push(['clear']);

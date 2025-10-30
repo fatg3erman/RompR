@@ -92,6 +92,7 @@
 .icon-repeat.flow-off { background-image: var(--icon-repeat-flow-off); }
 .icon-consume.flow-on { background-image: var(--icon-consume-flow-on); }
 .icon-consume.flow-off { background-image: var(--icon-consume-flow-off); }
+.icon-interrupt { background-image: var(--icon-interrupt) }
 
 .icon-allrandom { background-image: var(--icon-allrandom); }
 .icon-neverplayed { background-image: var(--icon-neverplayed); }

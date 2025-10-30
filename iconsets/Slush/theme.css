@@ -96,6 +96,7 @@
     --icon-repeat-flow-off: url('iconsets/Slush/refresh_off.svg');
     --icon-consume-flow-on: url('iconsets/Slush/consume.svg');
     --icon-consume-flow-off: url('iconsets/Slush/consume_off.svg');
+    --icon-interrupt: url('iconsets/Slush/interrupt.svg');
 
     --icon-allrandom: url('iconsets/Slush/shuffle.svg');
     --icon-neverplayed: url('iconsets/Slush/neverheard.svg');

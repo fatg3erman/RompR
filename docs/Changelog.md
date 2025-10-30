@@ -1,5 +1,50 @@
 # Changelog
 
+## Version 2.25
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* Fix bug where TuneIn radio stations didn't work for MPD users. (Was fixed in 2.24 but this is a better fix)
+
+
+## Version 2.22
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* Serbian Latin translation by acosonic
+* Fix bug where Tag/Rating search didn't work for MPD users
+* Fix bug where countries list in radio browser wasn't retrieved.
+
+
+## Version 2.20
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* Album Art image search now uses Brave Search instead of Bing, because Microsoft removed the Bing Search API
+and didn't replace it with anything except a useless "AI" API. To use this feature you'll need to sign up for
+a Brave Developer Account and get an API key, which is free for 200 requests a month, but does require a credit card anyway.
+[Read The Docs](https://fatg3erman.github.io/RompR/Album-Art-Manager)
+
+* Spoken Word files can now be detected using Genre as well as by folder path
+
+
+## Version 2.19
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* New 'Interrupt Mode' feature
+* Polish translation provided by ski007
+
+
+## Version 2.18
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* Fix bug where the 'open in new window' links were malformed in the Wikipedia info panel
+* Fix bug where the first Album in a list would disappear if any of its metadata was updated while using the Phone skin
+* Updated Simplified Chinese translation provided by Roll8ack
+
+
 ## Version 2.17
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.

@@ -79,17 +79,20 @@ var info_wikipedia = function() {
 	}
 
 	function formatLink(xml) {
-		var xml_node = $('api',xml);
+
+
+		var xml_node = $(xml);
 		var domain = xml_node.find('rompr > domain').text();
 		var page = xml_node.find('rompr > page').text();
-		if (domain == 'null' || page == 'null')
+		if (domain == 'null' || page == 'null') {
 			return null;
+		}
 
 		return 'http://'+domain+'.wikipedia.org/wiki/'+page;
 	}
 
 	function formatPage(xml) {
-		var xml_node = $('api',xml);
+		var xml_node = $(xml);
 		var page = xml_node.find('rompr > page').text();
 		if (page == 'null')
 			return null;

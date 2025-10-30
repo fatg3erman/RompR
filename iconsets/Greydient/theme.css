@@ -96,6 +96,7 @@
     --icon-repeat-flow-off: url('iconsets/Greydient/refresh_off.svg');
     --icon-consume-flow-on: url('iconsets/Greydient/consume.svg');
     --icon-consume-flow-off: url('iconsets/Greydient/consume_off.svg');
+    --icon-interrupt: url('iconsets/Greydient/interrupt.svg');
 
     --icon-allrandom: url('iconsets/Greydient/shuffle.svg');
     --icon-neverplayed: url('iconsets/Greydient/neverheard.svg');

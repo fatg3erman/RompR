@@ -96,6 +96,7 @@
     --icon-repeat-flow-off: url('iconsets/Modern-Dark/refresh_off.svg');
     --icon-consume-flow-on: url('iconsets/Modern-Dark/consume.svg');
     --icon-consume-flow-off: url('iconsets/Modern-Dark/consume_off.svg');
+    --icon-interrupt: url('iconsets/Modern-Dark/interrupt.svg');
 
     --icon-allrandom: url('iconsets/Modern-Dark/shuffle.png');
     --icon-neverplayed: url('iconsets/Modern-Dark/neverheard.png');

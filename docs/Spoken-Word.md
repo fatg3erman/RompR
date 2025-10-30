@@ -1,6 +1,7 @@
 # Spoken Word Collection
 
-The Spoken Word panel is intened for keeping track of local files you don't to be considered part of the Music Collection. This might include things like Audiobooks, Comedy Shows, whatever you consider to be 'not music'.
+The Spoken Word panel is intended for keeping track of local files you don't to be considered part of the Music Collection.
+This might include things like Audiobooks, Comedy Shows, whatever you consider to be 'not music'.
 
 ![](images/spoken-word.png)
 
@@ -8,7 +9,9 @@ The Spoken Word panel obeys the same sort options as the [Music Collection](/Rom
 
 RompR does not include any way of purchasing or downloading Audiobooks, you must use the appropriate software for that.
 
-To make files appear in the Spoken Word Collection they must be stored under a specific directory within your Music Collection. For example, if your Music Collection is at
+There are two ways to make local files appear in Spoken Word when you create the Music Collection:
+
+They can be stored under a specific directory within your Music Collection. For example, if your Music Collection is at
 
     /home/you/Music
 
@@ -24,9 +27,14 @@ You would then configure this from the Settings panel:
 
 You can have whatever directory structure you like underneath 'Spoken Word', so just move all your Audiobooks and whatever else into that directory.
 
+And/Or you can detect Spoken Word using the Genre tag, by enetering a list of genres in the UI
+
+![](images/spokenword5.png)
+
 Once you've done this you will need to Update your Music Collection. Mopidy users will have to do a 'mopidy local scan' first.
 
-You can also set an album to be Spoken Word at any time. There are two ways to do this:
+You can also set an album to be Spoken Word at any time. This is useful for Mopidy users since tracks from internet sources
+don't have a folder path and often don't return Genres (though these options will also work for local files). There are two ways to do this:
 
 Firstly from the Album Menu in the UI:
 

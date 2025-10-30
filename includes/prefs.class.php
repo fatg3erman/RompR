@@ -85,6 +85,7 @@ class prefs {
 		"link_checker_frequency" => 604800,
 		"link_checker_is_running" => false,
 		"audiobook_directory" => '',
+		"audiobookgenres" => array('Spoken Word'),
 		"collection_player" => null,
 		"snapcast_server" => '',
 		"snapcast_port" => '1705',
@@ -118,9 +119,11 @@ class prefs {
 		// Although we can't init this to a value, it must be defined here or we can never save it
 		"last_lastfm_synctime" => 0,
 		"lastfm_sync_frequency" => 86400,
+		"sync_frequency_updated" => 0,
 		"lfm_importer_start_offset" => 0,
 		"lfm_importer_last_import" => 0,
 		"bing_api_key" => '',
+		'brave_api_key' => '',
 		"hide_master_volume" => false,
 		"alarm_ramptime" => 30,
 		"alarm_snoozetime" => 8,
@@ -228,7 +231,8 @@ class prefs {
 		'lastfm_session_key',
 		'spotify_token',
 		'spotify_token_expires',
-		'bing_api_key'
+		'bing_api_key',
+		'brave_api_key'
 	];
 
 	private const COOKIEPREFS = [
@@ -307,6 +311,9 @@ class prefs {
 		}
 
 		self::$prefs = array_replace(self::BACKEND_PREFS, $cannot_init, $sp, $cp, self::$session_prefs);
+		# To speed thingsn up later
+		self::$prefs['classicalgenres'] = array_map('strtolower', self::$prefs['classicalgenres']);
+		self::$prefs['audiobookgenres'] = array_map('strtolower', self::$prefs['audiobookgenres']);
 
 	}
 
@@ -534,7 +541,11 @@ class prefs {
 	}
 
 	public static function get_player_param($param) {
-		return self::$prefs['multihosts'][self::$prefs['currenthost']][$param];
+		if (array_key_exists($param, self::$prefs['multihosts'][self::$prefs['currenthost']])) {
+			return self::$prefs['multihosts'][self::$prefs['currenthost']][$param];
+		} else {
+			return null;
+		}
 	}
 
 	public static function set_player_param($param) {
@@ -570,7 +581,7 @@ class prefs {
 					break;
 
 				case 49:
-					self::$prefs['multihosts'][$key]['radioparams'] = [
+					selcf::$prefs['multihosts'][$key]['radioparams'] = [
 						"radiomode" => "",
 						"radioparam" => "",
 						"radiomaster" => "",
@@ -632,6 +643,17 @@ class prefs {
 						self::$prefs['multihosts'][$key]['radioparams']['stationname'] = '';
 					break;
 
+				case 105:
+					// Tidy up some mess made by a typo
+					foreach (self::$prefs['multihosts'] as &$mh) {
+						foreach ($mh as $k => $v) {
+							if (is_numeric($k)) {
+								unset($mh[$k]);
+							}
+						}
+					}
+					break;
+
 			}
 		}
 		self::save();
@@ -683,6 +705,12 @@ class prefs {
 			self::set_cookie_pref('sort_ab_bydate', self::$prefs['sortbydate']);
 			self::$prefs['sort_ab_bydate'] = self::$prefs['sortbydate'];
 			self::$prefs['sortby_upgraded'] = true;
+		}
+
+		if (self::$prefs['sync_frequency_updated'] < 2) {
+			self::$prefs['lastfm_sync_frequency'] = 86400;
+			self::$prefs['next_lastfm_synctime'] = time() + 86400;
+			self::$prefs['sync_frequency_updated'] = 2;
 		}
 
 		self::save();

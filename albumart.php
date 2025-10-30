@@ -43,7 +43,7 @@ $scripts = array(
 	"ui/widgets.js",
 	"ui/debug.js",
 	"ui/coverscraper.js",
-	"browser/helpers/bing.js",
+	"browser/helpers/brave.js",
 	"ui/albumart.js"
 );
 foreach ($scripts as $i) {

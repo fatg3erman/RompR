@@ -102,9 +102,11 @@ class commradioplugin {
 		$bits = $cache->get_cache_data();
 		$bits = json_decode($bits, true);
 		$retval = [];
-		if (is_array($bitrs)) {
+		if (is_array($bits)) {
 			foreach ($bits as $bit) {
-				$retval[] = $bit['name'];
+				if ($bit) {
+					$retval[] = $bit['name'];
+				}
 			}
 		}
 		return $retval;

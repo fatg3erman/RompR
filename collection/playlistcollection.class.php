@@ -21,6 +21,14 @@ class playlistCollection extends musicCollection {
 		// logger::log('PLAYLIST', print_r($track->tags, true));
 
 		$track->tags['Id'] = (int) $track->tags['Id'];
+		$pd = prefs::get_player_param('interrupt_resume');
+		if ($pd != null) {
+			list($id, $pos, $elapsed) = explode(',', $pd);
+			if ($id == $track->tags['Id']) {
+				// interrupt_resume = songid,song,elapsed
+				$track->tags['interruptpercent'] = $elapsed/$track->tags['Time'];
+			}
+		}
 
 		if ($track->tags['Title'] === null)
 			$track->tags['Title'] = '';

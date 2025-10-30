@@ -28,6 +28,10 @@ $ignore_local = (array_key_exists('ignorelocal', $_REQUEST) && $_REQUEST['ignore
 // We also do the MBID check early on because it will update the MBID in the database which is useful for the info panel
 // The requests are cached locally so it's only one request to Last.FM
 
+if ($ignore_local) {
+	logger::debug('ALBUMIMAGE', 'Ignore Local is True');
+}
+
 $searchfunctions = array(
 	'tryLocal',
 	'tryPlayer',
@@ -36,12 +40,14 @@ $searchfunctions = array(
 	'trySpotify',
 	'tryMusicBrainz',
 	'tryLastFM',
-	'tryBing'
+	'tryBrave'
 );
 
 $player = new player();
 
 if (array_key_exists('source', $opts) || array_key_exists('base64data', $opts) || array_key_exists('file', $opts)) {
+	$result = false;
+} else if ($ignore_local) {
 	$result = false;
 } else {
 	$result = $albumimage->check_archive_image_exists();
@@ -310,17 +316,17 @@ function tryMusicBrainz($albumimage) {
 
 }
 
-function tryBing($albumimage) {
+function tryBrave($albumimage) {
 	global $delaytime;
 	$delaytime = 1000;
 	$retval = '';
 	$searchterm = $albumimage->get_artist_for_search().' '.munge_album_name($albumimage->album);
-	logger::debug('GETALBUMCOVER', 'Trying Bing Image Search for',$searchterm);
-	$data = bing::image_search(['q' => $searchterm], false);
+	logger::debug('GETALBUMCOVER', 'Trying Brave Image Search for',$searchterm);
+	$data = brave::image_search(['q' => $searchterm, 'offset' => 0], false);
 	$d = json_decode($data, true);
-	if (array_key_exists('value', $d) && is_array($d['value']) && count($d['value']) > 0) {
-		$retval = $d['value'][0]['contentUrl'];
-		logger::debug('GETALBUMCOVER', 'Bing gaves us',$retval);
+	if (array_key_exists('results', $d) && is_array($d['results']) && count($d['results']) > 0) {
+		$retval = $d['results'][0]['properties']['url'];
+		logger::debug('GETALBUMCOVER', 'Brave gaves us',$retval);
 	} else {
 		logger::debug('GETALBUMCOVER', 'Bing came up with nowt');
 	}

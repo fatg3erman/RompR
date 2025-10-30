@@ -96,6 +96,7 @@
     --icon-repeat-flow-off: url('iconsets/Fiery/refresh_off.svg');
     --icon-consume-flow-on: url('iconsets/Fiery/consume.svg');
     --icon-consume-flow-off: url('iconsets/Fiery/consume_off.svg');
+    --icon-interrupt: url('iconsets/Fiery/interrupt.svg');
 
     --icon-allrandom: url('iconsets/Fiery/shuffle.svg');
     --icon-neverplayed: url('iconsets/Fiery/neverheard.svg');

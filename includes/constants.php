@@ -3,9 +3,9 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 250);
 define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 105);
+define('ROMPR_SCHEMA_VERSION', 106);
 define('ROMPR_MIN_SCHEMA_VERSION', 63);
-define('ROMPR_VERSION', '2.17');
+define('ROMPR_VERSION', '2.24');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -162,6 +162,7 @@ define('ROMPR_FILE_MODEL', array(
 		'hidden' => 0,
 		'usetrackimages' => 0,
 		"attributes" => null,
+		'interruptpercent' => null,
 		"metadata" => array(
 			"iscomposer" => 'false',
 			"artists" => array(),

@@ -1,15 +1,19 @@
 <?php
 
-class bing {
+class brave {
 
-	const BASE_URL = 'https://api.bing.microsoft.com/v7.0/';
+	const BASE_URL = 'https://api.search.brave.com/res/v1/';
 
 	private static function request($url, $print_data) {
-		if (prefs::get_pref('bing_api_key') != '') {
+		if (prefs::get_pref('brave_api_key') != '') {
 			$cache = new cache_handler([
 				'url' => $url,
-				'header' => array('Ocp-Apim-Subscription-Key: '.prefs::get_pref('bing_api_key')),
-				'cache' => 'bing',
+				'header' => [
+								'X-Subscription-Token: '.prefs::get_pref('brave_api_key'),
+								"Accept: application/json",
+  								"Accept-Encoding: gzip"
+  							],
+				'cache' => 'brave',
 				'return_value' => !$print_data
 			]);
 			$retval = $cache->get_cache_data();
@@ -30,11 +34,13 @@ class bing {
 		//		offset 	=> offset to start results from (pagination)
 		//
 
-		$url = bing::BASE_URL.'images/search';
-		$params['safeSearch'] = 'Off';
+		$url = brave::BASE_URL.'images/search';
+		$params['count'] = 20;
+		$params['safesearch'] = 'off';
+		$params['spellcheck'] = 'false';
 		$url .= '?'.http_build_query($params);
-		logger::log('BINGSEARCH', $url);
-		return bing::request($url, $print_data);
+		logger::log('BRAVESEARCH', $url);
+		return brave::request($url, $print_data);
 	}
 }
 

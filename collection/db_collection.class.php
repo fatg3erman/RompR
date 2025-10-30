@@ -16,6 +16,12 @@ class db_collection extends collection_base {
 		// It's still used for searches where we're only looking for tags and/or ratings in conjunction with
 		// any of the above terms, because mopidy often returns incomplete search results.
 
+		logger::trace('COLLECTION', prefs::get_pref('collection_player'));
+		if (prefs::get_pref('collection_player') == 'mpd' && count($domains) == 1 && $domains[0] == 'local') {
+			logger::trace('COLLECTION', "With MPD we don't want to use local as a search domain");
+			$domains = false;
+		}
+
 		$parameters = array();
 		$qstring = "SELECT t.*, al.*, a1.*, a2.Artistname AS AlbumArtistName, Genre ";
 		if (array_key_exists('rating', $terms)) {

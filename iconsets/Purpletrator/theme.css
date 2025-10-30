@@ -96,6 +96,7 @@
     --icon-repeat-flow-off: url('iconsets/Purpletrator/refresh_off.svg');
     --icon-consume-flow-on: url('iconsets/Purpletrator/consume.svg');
     --icon-consume-flow-off: url('iconsets/Purpletrator/consume_off.svg');
+    --icon-interrupt: url('iconsets/Purpletrator/interrupt.svg');
 
     --icon-allrandom: url('iconsets/Purpletrator/shuffle.svg');
     --icon-neverplayed: url('iconsets/Purpletrator/neverheard.svg');

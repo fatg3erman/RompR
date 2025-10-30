@@ -46,7 +46,7 @@ class cache_cleaner extends database {
 		// One Week
 		$this->clean_cache_dir('prefs/jsoncache/somafm/', 604800);
 		// One Month
-		$this->clean_cache_dir('prefs/jsoncache/bing/', 2592000);
+		$this->clean_cache_dir('prefs/jsoncache/brave/', 2592000);
 		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/wikidata/', 2592000);
 		// One week (or it can get REALLY big)

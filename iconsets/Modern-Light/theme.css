@@ -90,6 +90,7 @@
     --icon-repeat-flow-off: url('iconsets/Modern-Light/refresh_off.svg');
     --icon-consume-flow-on: url('iconsets/Modern-Light/consume.svg');
     --icon-consume-flow-off: url('iconsets/Modern-Light/consume_off.svg');
+    --icon-interrupt: url('iconsets/Modern-Light/interrupt.svg');
 
     --icon-allrandom: url('iconsets/Modern-Light/shuffle.png');
     --icon-neverplayed: url('iconsets/Modern-Light/neverheard.png');

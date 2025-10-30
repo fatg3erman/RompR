@@ -492,6 +492,12 @@ class prefspanel extends uibits {
 		]);
 
 		self::ui_textentry([
+			'id' => 'audiobookgenres',
+			'is_array' => true,
+			'label' => 'config_audiobook_genres'
+		]);
+
+		self::ui_textentry([
 			'label' => 'config_audiobook_tags',
 			'id' => 'auto_audiobook',
 			'is_array' => true
