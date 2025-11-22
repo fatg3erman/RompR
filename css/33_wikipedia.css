@@ -136,6 +136,7 @@ table.tracklist {
     font-size: 92%;
     line-height: 1.5em;
     clear: right;
+    background-color: transparent !important;
 }
 
 .infobox_v3 {
