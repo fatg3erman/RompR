@@ -874,7 +874,7 @@ class collection_base extends database {
 		$retval = null;
 		// Get album directory by using the Uri of one of its tracks, making sure we choose only local tracks
 		if (getDomain($uri) == 'local') {
-			$result = $this->sql_prepare_query(false, null, 'Uri', null, "SELECT Uri FROM Tracktable WHERE Albumindex = ? AND Uri IS NOT NULL", $albumindex);
+			$result = $this->sql_prepare_query(false, null, 'Uri', null, "SELECT Uri FROM Tracktable WHERE Albumindex = ? AND Uri IS NOT NULL AND Hidden = 0", $albumindex);
 			if ($result !== null) {
 				$retval = dirname($result);
 				$retval = preg_replace('#^local:track:#', '', $retval);
