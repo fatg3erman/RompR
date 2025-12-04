@@ -767,7 +767,8 @@ language::add_translations([
 	"label_interrupt" =>					'Interrupt Play Queue',
 	"label_notwhilestopped" =>				'Not supported while playback is stopped',
 	"config_brave_credentials" =>			"Brave Search API Credentials",
-	"config_audiobook_genres" =>			"Detect Spoken Word by Genre(s)"
+	"config_audiobook_genres" =>			"Detect Spoken Word by Genre(s)",
+	"label_get_album_art" =>				"Set Album Art"
 
 	// ----------------------------------------------------
 	// Proobaly Unused

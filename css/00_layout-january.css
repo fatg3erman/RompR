@@ -2554,3 +2554,64 @@ div.smartradio.lastfmlogin-required.notenabled {
 .single-player .divlabel {
 	width: 30%;
 }
+
+/*
+=====================================================================
+=
+= Image Editor. These are duplicated in albumart.css with a few minor changes
+=
+=====================================================================
+*/
+
+#imageeditor {
+	box-sizing:border-box;
+	position: absolute;
+	z-index:30000;
+    background-color: var(--top_drop_menu-bg-colour);
+    background-image: var(--top_drop_menu-bg-image);
+    width: calc(100% - 32px);
+    left: 16px;
+}
+
+#browns {
+	transition: opacity 0.5s ease;
+	opacity: 0;
+}
+
+#origimage {
+	flex-grow: 1;
+	flex-shrink: 0;
+	flex-basis: auto;
+	max-width:40%;
+	margin-bottom:8px;
+	padding-bottom: 8px;
+	margin-top:8px;
+	transition: width 0.5s ease;
+    border-left: 1px solid var(--border-colour);
+}
+
+@media screen and (max-width: 768px) {
+	#origimage {
+		display: none;
+	}
+}
+
+img#browns {
+	max-width:90%;
+	max-height:99%;
+	padding: 8px;
+}
+
+#searchcontent {
+	flex-grow: 2;
+	flex-shrink: 1;
+	flex-basis: auto;
+	padding:8px;
+	height:100%;
+	overflow-y: auto;
+}
+
+.gimage {
+	float:left;
+	padding:8px;
+}

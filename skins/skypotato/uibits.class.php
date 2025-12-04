@@ -83,7 +83,7 @@ class uibits extends ui_elements {
 	}
 
 	public static function trackControlHeader($why, $what, $who, $when, $dets) {
-		print self::make_track_control_buttons($why, $what, $who, $when, $dets);
+		print self::make_track_control_buttons($why, $what, $who, $when, $dets, $dets['ImgKey']);
 	}
 
 	public static function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printcontainer = false) {

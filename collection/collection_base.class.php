@@ -576,11 +576,12 @@ class collection_base extends database {
 			'Artistname' => 'Unknown Artist',
 			'Image' => 'newimages/vinyl_record.svg',
 			'AlbumUri' => null,
-			'useTrackIms' => false
+			'useTrackIms' => false,
+			'ImgKey' => null
 		];
 
 		$details = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
-			"SELECT Albumname, Artistname, Image, AlbumUri, useTrackIms
+			"SELECT Albumname, Artistname, Image, AlbumUri, useTrackIms, ImgKey
 			FROM Albumtable
 			JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
 			WHERE Albumindex = ?",

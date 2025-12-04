@@ -271,6 +271,10 @@ var layoutProcessor = function() {
 				$(parts+' > .menuitem').filter(':even').addClass('album2');
 				$(parts+' > .album2 + .dropmenu').addClass('album2');
 			}
+		},
+
+		find_album_image: function(menuitem) {
+
 		}
 	}
 }();

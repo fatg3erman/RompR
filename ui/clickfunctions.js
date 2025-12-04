@@ -367,6 +367,7 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('clickdeleteuserplaylist', playlistManager.deleteUserPlaylist);
 	clickRegistry.addClickHandlers('clickrenameplaylist', playlistManager.renamePlaylist);
 	clickRegistry.addClickHandlers('clickrenameuserplaylist', playlistManager.renameUserPlaylist);
+	clickRegistry.addClickHandlers('getalbumart', getAlbumArt);
 
 	clickRegistry.addMenuHandlers('artist', getAlbumUrl);
 	clickRegistry.addMenuHandlers('album', getAlbumUrl);
@@ -1233,6 +1234,13 @@ function makeAlbumMenu(e, element) {
 			aname: $(element).attr('aname')
 		}).html(language.gettext('label_youtubedl_all')));
 	}
+	if ($(element).hasClass('clicksetalbumart')) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem getalbumart closepopup',
+			name: $(element).attr('who'),
+			imgkey: $(element).attr('imgkey')
+		}).html(language.gettext('label_get_album_art')));
+	}
 
 	menu.open();
 }
@@ -1379,4 +1387,39 @@ function removeFromListenLater(event, clickedElement) {
 
 function browseAndAddToCollection(event, clickedElement) {
 	metaHandlers.addAlbumUriToCollection(decodeURIComponent(clickedElement.attr('name')));
+}
+
+function getAlbumArt(event, clickedElement) {
+	var imgkey = clickedElement.attr('imgkey');
+	var image = $('img[name="'+imgkey+'"]');
+	image.attr('who', clickedElement.attr('name'));
+	imageEditor.show(image);
+}
+
+function get_image_newpos(where) {
+	return where.parent();
+}
+
+function create_imageeditor(newpos) {
+	return $('<div>', {id: "imageeditor", class: "containerbox highlighted dropshadow"}).appendTo('body');
+}
+
+async function get_album_deets(imgobj) {
+	var who = imgobj.attr('who');
+	var response = await fetch(
+		'utils/getimagedeets.php?who='+who,
+		{
+			priority: 'low'
+		}
+	);
+	if (response.ok) {
+		return response.json();
+	} else {
+		return {phrase: '', path: '.'}
+	}
+}
+
+function wobbleMyBottom() {
+	$('#searchcontent').addCustomScrollBar();
+	imageEditor.setHeight();
 }

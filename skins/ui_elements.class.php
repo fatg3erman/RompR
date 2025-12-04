@@ -200,7 +200,7 @@ class ui_elements {
 	// $when is the subkey for sort modes such as tag eg aalbum123_15 (=15)
 	//
 
-	protected static function make_track_control_buttons($why, $what, $who, $when, $det) {
+	protected static function make_track_control_buttons($why, $what, $who, $when, $det, $imgkey) {
 		if ($why == '' || $why == null)
 			return '';
 
@@ -258,6 +258,9 @@ class ui_elements {
 			}
 			if (prefs::$database->num_youtube_tracks($who) > 0)
 				$classes[] = 'clickytdownloadall';
+
+			if ($imgkey !== null)
+				$classes[] = 'clicksetalbumart';
 		}
 
 		if (!$det['buttons']) {
@@ -306,6 +309,10 @@ class ui_elements {
 				|| in_array('clickaddtollviabrowse', $classes)
 			) {
 				$html .= '" uri="'.rawurlencode($det['AlbumUri']);
+			}
+
+			if (in_array('clicksetalbumart', $classes)) {
+				$html .= '" imgkey="'.$imgkey;
 			}
 
 			$html .= '"></div>';
