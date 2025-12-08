@@ -230,7 +230,7 @@ create_body_tag('phone');
 
 <div id="headerbar" class="noborder fullwidth containerbox">
 	<div id="sourcescontrols" class="expand center containerbox noborder">
-		<div id="volumedropper" class="top_drop_menu rightmenu widemenu topshadow">
+		<div id="volumedropper" class="top_drop_menu rightmenu widemenu dropshadow">
 <?php
 	include('player/utils/outputs.php');
 	if (prefs::get_pref('hide_master_volume')) {
@@ -292,10 +292,10 @@ create_body_tag('phone');
 ?>
 
 		</div>
-		<div id="specialplugins" class="top_drop_menu rightmenu autohide topshadow">
+		<div id="specialplugins" class="top_drop_menu rightmenu autohide dropshadow">
 			<div class="sptext"></div>
 		</div>
-		<div id="narrowscreenicons" class="top_drop_menu rightmenu autohide clearfix topshadow">
+		<div id="narrowscreenicons" class="top_drop_menu rightmenu autohide clearfix dropshadow">
 			<i class="choosepanel icon-wifi topimg tright" name="pluginplaylistholder"></i>
 			<i class="icon-folder-open-empty topimg choosepanel tright" name="filelist"></i>
 			<i class="choosepanel icon-doc-text topimg tright" name="playlistman"></i>
