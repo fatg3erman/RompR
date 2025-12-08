@@ -417,6 +417,14 @@ div.top_drop_menu {
 	max-height: calc(100vh - 40px);
 }
 
+body.headertop div.top_drop_menu.dropshadow {
+    box-shadow: var(--drop-shadow);
+}
+
+body.headerbottom div.top_drop_menu.dropshadow {
+    box-shadow: var(--top-shadow);
+}
+
 div.open-plugin.backhi.clickable {
 	text-align: right;
 	padding-right: 1em;
