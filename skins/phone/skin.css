@@ -786,9 +786,20 @@ div.playable.clicktrack {
 	z-index: 20000;
 }
 
-.album-menu-header {
-	width:100%;
-	text-align:center;
+@media screen and (max-width: 799px) {
+	.album-menu-header {
+		width:100%;
+		text-align:center;
+	}
+}
+
+@media screen and (min-width: 800px) {
+	.album-menu-header {
+		width:45%;
+		text-align:center;
+		float: left;
+		margin-right: 1em;
+	}
 }
 
 .album-play-controls {
