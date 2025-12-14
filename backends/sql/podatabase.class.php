@@ -945,7 +945,7 @@ class poDatabase extends database {
 			'extralines' => $extralines
 		));
 
-		print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu notfilled is-albumlist">';
+		print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu notfilled is-albumlist poddiddly">';
 		print uibits::ui_config_header(['label' => 'label_loading']);
 		print '</div>';
 	}

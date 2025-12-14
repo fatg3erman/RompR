@@ -786,15 +786,13 @@ div.playable.clicktrack {
 	z-index: 20000;
 }
 
-@media screen and (max-width: 799px) {
-	.album-menu-header {
-		width:100%;
-		text-align:center;
-	}
+.album-menu-header {
+	width:100%;
+	text-align:center;
 }
 
-@media screen and (min-width: 800px) {
-	.album-menu-header {
+@media screen and (min-width: 800px) and (orientation: portrait) {
+	.poddiddly .album-menu-header {
 		width:45%;
 		text-align:center;
 		float: left;
