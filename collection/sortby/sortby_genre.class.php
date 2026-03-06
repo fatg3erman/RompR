@@ -39,7 +39,6 @@ class sortby_genre extends sortby_base {
 			JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
 			WHERE Albumindex IN
 			(SELECT DISTINCT Albumindex FROM Tracktable WHERE
-				Tracktable.Albumindex = Albumtable.Albumindex AND
 			    Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0
 			    AND Tracktable.Genreindex = ".$this->who." ".
 			prefs::$database->track_domain_check(prefs::get_pref('collectiondomains'), $this->why)." ".
@@ -50,7 +49,7 @@ class sortby_genre extends sortby_base {
 		$qstring .= $this->album_sort(true);
 		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $album) {
-			$album['why'] = $this->why;
+			// $album['why'] = $this->why;
 			$album['id'] = $this->why.'album'.$album['Albumindex'];
 			$album['class'] = 'album';
 			yield $album;
