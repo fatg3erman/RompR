@@ -74,27 +74,6 @@ class spotify {
 		return self::request($url, $print_data, $params['cache']);
 	}
 
-	public static function track_checklinking($params, $print_data) {
-
-		//
-		// params:
-		// 		id 		: spotify track id or array[spotify track ids]
-		// 		cache 	: boolean
-		//
-		$market = prefs::get_pref('lastfm_country_code');
-		if (is_array($params['id'])) {
-			$url = self::BASE_URL.'/tracks?ids='.implode(',', $params['id']);
-			if ($market != '')
-				$url .= '&market='.$market;
-
-		} else {
-			$url = self::BASE_URL.'/tracks/'.$params['id'];
-			if ($market != '')
-				$url .= '?market='.$market;
-		}
-		return self::request($url, $print_data, $params['cache']);
-	}
-
 	public static function album_getinfo($params, $print_data) {
 
 		//
@@ -104,7 +83,7 @@ class spotify {
 		//
 
 		if (is_array($params['id'])) {
-			$url = self::BASE_URL.'/albums?ids='.implode(',', $params['id']);
+			logger:error('SPOTIFY', 'Cannot handle multiple albums any more');
 		} else {
 			$url = self::BASE_URL.'/albums/'.$params['id'];
 		}
@@ -132,22 +111,6 @@ class spotify {
 		//
 
 		$url = self::BASE_URL.'/artists/'.$params['id'].'/related-artists';
-		return self::request($url, $print_data, $params['cache']);
-	}
-
-	public static function artist_toptracks($params, $print_data) {
-
-		//
-		// params:
-		// 		id 		: spotify artist id
-		// 		cache 	: boolean
-		//
-
-		$url = self::BASE_URL.'/artists/'.$params['id'].'/top-tracks';
-		$market = prefs::get_pref('lastfm_country_code');
-		if ($market != '')
-			$url .= '?market='.$market;
-
 		return self::request($url, $print_data, $params['cache']);
 	}
 
@@ -231,18 +194,6 @@ class spotify {
 			'id'	=> $willies['id'],
 			'image'	=> $im
 		];
-	}
-
-	public static function get_genreseeds($params, $print_data) {
-
-		//
-		// params:
-		// 		cache 	: boolean
-		//
-
-		$url = self::BASE_URL.'/recommendations/available-genre-seeds';
-		return self::request($url, $print_data, $params['cache']);
-
 	}
 
 	public static function get_markets() {

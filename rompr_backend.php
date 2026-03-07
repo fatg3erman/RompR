@@ -63,8 +63,6 @@ while (true) {
 
     check_lastfm_sync();
 
-    check_unplayable_tracks();
-
     sleep(60);
 
 }
@@ -169,30 +167,6 @@ function check_lastfm_sync() {
 
     }
 
-}
-
-function check_unplayable_tracks() {
-    $next = prefs::get_pref('linkchecker_nextrun') - time();
-    if ($next > 0) {
-        logger::debug('DAEMON', 'Next Spotify Relinking Check is in',$next,'seconds');
-    } else {
-        prefs::$database = new metaquery();
-        if (!prefs::get_pref('link_checker_is_running')) {
-            prefs::$database->resetlinkcheck();
-            prefs::set_pref(['link_checker_is_running' => true]);
-            prefs::save();
-        }
-        if (prefs::$database->getlinktocheck()) {
-            prefs::set_pref([
-                'linkchecker_nextrun' => time() + prefs::get_pref('link_checker_frequency'),
-                'link_checker_is_running' => false
-            ]);
-            prefs::save();
-        }
-
-        prefs::$database->close_database();
-        prefs::$database = null;
-    }
 }
 
 ?>

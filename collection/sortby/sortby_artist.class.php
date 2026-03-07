@@ -64,8 +64,8 @@ class sortby_artist extends sortby_base {
 			JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
 			WHERE ";
 		$qstring .= "AlbumArtistindex = '".$this->who."' AND ";
-		$qstring .= "Albumindex IN (SELECT Albumindex FROM Tracktable WHERE
-				Tracktable.Albumindex = Albumtable.Albumindex AND ";
+		$qstring .= "Albumindex IN (SELECT Albumindex FROM Tracktable WHERE ";
+				// Tracktable.Albumindex = Albumtable.Albumindex AND ";
 		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
 		prefs::$database->track_domain_check(prefs::get_pref('collectiondomains'), $this->why)." ".
 		prefs::$database->track_date_check(prefs::get_pref('collectionrange'), $this->why)." ".
@@ -78,7 +78,7 @@ class sortby_artist extends sortby_base {
 			if (!$force_artistname) {
 				$album['Artistname'] = null;
 			}
-			$album['why'] = $this->why;
+			// $album['why'] = $this->why;
 			$album['id'] = $this->why.'album'.$album['Albumindex'];
 			$album['class'] = 'album';
 			yield $album;

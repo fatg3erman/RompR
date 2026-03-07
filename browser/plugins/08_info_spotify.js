@@ -14,16 +14,7 @@ var info_spotify = function() {
 	function do_genres(layout, u, genres) {
 		if (player.canPlay('spotify')) {
 			for (var g of genres) {
-				// We get a list of acceptable genre seeds from spotify and only make those playable
-				// And we loop through twice so the playable ones come first otherwise it looks messy
-				if (player.genreseeds.indexOf(g) > -1) {
-					add_coll_button(u, 'clickstartgenreradio', 'icon-spotify-circled', language.gettext('label_genre')+': '+g, g);
-				}
-			}
-			for (var g of genres) {
-				if (player.genreseeds.indexOf(g) < 0) {
-					layout.append_to_list(u, language.gettext('label_genre')+': ', g);
-				}
+				add_coll_button(u, 'clickstartgenreradio', 'icon-spotify-circled', language.gettext('label_genre')+': '+g, g);
 			}
 		} else {
 			for (var g of genres) {
@@ -42,7 +33,6 @@ var info_spotify = function() {
 			return;
 		}
 
-		layout.add_sidebar_list(language.gettext("label_pop"), data.popularity);
 		if (player.canPlay('spotify') && trackmeta.spotify.id) {
 			let u = layout.add_sidebar_list(language.gettext("label_pluginplaylists"));
 			add_coll_button(u, 'clickstarttrackradio', 'icon-spotify-circled', language.gettext('label_radio_recommend',[language.gettext('label_track')]));
@@ -85,7 +75,6 @@ var info_spotify = function() {
 			layout.finish(null, null);
 			return;
 		}
-		let u = layout.add_sidebar_list(language.gettext("label_pop"), data.popularity);
 		layout.append_to_list(u, language.gettext("lastfm_releasedate"), data.release_date);
 		if (data.genres && data.genres.length > 0) {
 			do_genres(layout, u, data,genres);
@@ -343,7 +332,6 @@ var info_spotify = function() {
 
 				layout.make_possibility_chooser(artistmeta.spotify.possibilities, artistmeta.spotify.currentposs, artistmeta.name);
 
-				let u = layout.add_sidebar_list(language.gettext("label_pop"), data.popularity);
 				add_coll_button(u, 'clickstartsingleradio', 'icon-wifi', language.gettext('label_singleartistradio'));
 				if (player.canPlay('spotify') && artistmeta.spotify.id) {
 					add_coll_button(u, 'clickstartartistradio', 'icon-spotify-circled', language.gettext('label_radio_recommend',['Artist']));

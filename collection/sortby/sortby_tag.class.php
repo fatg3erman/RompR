@@ -133,22 +133,22 @@ class sortby_tag extends sortby_base {
 
 			case 'r':
 				// Only Tracks with Ratings //
-				$retval = "AND isSearchResult < 2 AND (LinkChecked = 0 OR LinkChecked = 2) AND r.TTindex IS NOT NULL";
+				$retval = "AND isSearchResult < 2 AND r.TTindex IS NOT NULL";
 				break;
 
 			case 't':
 				// Only Tracks with Tags //
-				$retval = "AND isSearchResult < 2 AND (LinkChecked = 0 OR LinkChecked = 2) AND tl.TTindex IS NOT NULL";
+				$retval = "AND isSearchResult < 2 AND tl.TTindex IS NOT NULL";
 				break;
 
 			case 'y':
 				// Only Tracks with Tags and Ratings //
-				$retval = "AND isSearchResult < 2 AND (LinkChecked = 0 OR LinkChecked = 2) AND tl.TTindex IS NOT NULL AND r.TTindex IS NOT NULL";
+				$retval = "AND isSearchResult < 2 AND tl.TTindex IS NOT NULL AND r.TTindex IS NOT NULL";
 				break;
 
 			case 'u':
 				// Only Tracks with Tags or Ratings //
-				$retval = "AND isSearchResult < 2 AND (LinkChecked = 0 OR LinkChecked = 2) AND (tl.TTindex IS NOT NULL OR r.TTindex IS NOT NULL)";
+				$retval = "AND isSearchResult < 2 AND (tl.TTindex IS NOT NULL OR r.TTindex IS NOT NULL)";
 				break;
 
 			case 'z':

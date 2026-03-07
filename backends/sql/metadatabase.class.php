@@ -305,28 +305,6 @@ class metaDatabase extends playlistCollection {
 		}
 	}
 
-	// public function seturi($data) {
-	// 	// ONLY for updating the URI of a track via eg unplayabletracks
-	// 	$ttindex = $data['reqid'];
-	// 	$uri = $data['file'];
-	// 	logger::log('HACKETY', 'Updating URI of TTindex',$ttindex,'to',$uri);
-	// 	prefs::$database->sql_prepare_query(true, null, null, null,
-	// 		"UPDATE Tracktable SET Uri = ?, Hidden = 0, LinkChecked = 0 WHERE TTindex = ?",
-	// 		$uri,
-	// 		$ttindex
-	// 	);
-	// 	$albumindex = prefs::$database->simple_query('Albumindex', 'Tracktable', 'TTindex', $ttindex, null);
-	// 	$domain = prefs::$database->simple_query('Domain', 'Albumtable', 'Albumindex', $albumindex, null);
-	// 	if ($domain != getDomain($uri)) {
-	// 		prefs::$database->sql_prepare_query(true, null, null, null,
-	// 			"UPDATE Albumtable SET AlbumUri = ?, Domain = ? WHERE Albumindex = ?",
-	// 			null,
-	// 			'local',
-	// 			$albumindex
-	// 		);
-	// 	}
-	// }
-
 	public function inc($data) {
 
 		//
@@ -1122,11 +1100,6 @@ class metaDatabase extends playlistCollection {
 	// 	return ($h > 1) ? true : false;
 	// }
 
-	// private function track_is_unplayable($ttid) {
-	// 	$r = $this->simple_query('LinkChecked', 'Tracktable', 'TTindex', $ttid, 0);
-	// 	return ($r == 1 || $r == 3);
-	// }
-
 	private function check_for_wishlist_track($data) {
 		// Searches for a wishlist track based on Title and Artistname
 		// Returns false if nothing found or an array of attributes otherwise
@@ -1379,7 +1352,7 @@ class metaDatabase extends playlistCollection {
 				$cock = false;
 				logger::warn('BACKEND', 'Track being added already exists', $data['file'], $track['Uri']);
 				$this->sql_prepare_query(true, null, null, null,
-					"UPDATE Tracktable SET Uri = ?, Duration = ?, Hidden = ?, Sourceindex = ?, isAudiobook = ?, Genreindex = ?, TYear = ?, LinkChecked = ?, justAdded = ? WHERE TTindex = ?",
+					"UPDATE Tracktable SET Uri = ?, Duration = ?, Hidden = ?, Sourceindex = ?, isAudiobook = ?, Genreindex = ?, TYear = ?, justAdded = ? WHERE TTindex = ?",
 					$data['file'],
 					$this->best_value($track['Duration'], $data['Time'], $cock),
 					$data['hidden'],
@@ -1387,7 +1360,6 @@ class metaDatabase extends playlistCollection {
 					$data['isaudiobook'],
 					$this->check_genre($data['Genre']),
 					$this->best_value($track['TYear'], $data['year'], $cock),
-					0,
 					1,
 					$track['TTindex']
 				);

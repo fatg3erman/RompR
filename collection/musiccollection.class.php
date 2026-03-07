@@ -405,9 +405,6 @@ class musicCollection extends collection_base {
 		logger::log('BACKEND', "Removing tracks that have been deleted");
 		$this->generic_sql_query("DELETE FROM Tracktable WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0", true);
 
-		logger::log('BACKEND', "Making Sure Local Tracks Are Not Unplayable");
-		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked > 0 AND Uri LIKE 'local:%'", true);
-
 		$this->remove_cruft();
 		logger::log('COLLECTION', 'Updating collection version to', ROMPR_COLLECTION_VERSION);
 		$this->set_admin_value('ListVersion', ROMPR_COLLECTION_VERSION);

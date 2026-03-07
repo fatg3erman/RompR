@@ -21,7 +21,7 @@ class metaquery extends musiccollection {
 
 	public function getartists() {
 		$qstring = "SELECT DISTINCT Artistname FROM Tracktable JOIN Artisttable USING (Artistindex)
-			WHERE (LinkChecked = 0 OR LinkChecked = 2) AND isAudiobook = 0 AND isSearchResult < 2 AND Hidden = 0 AND Uri IS NOT NULL
+			WHERE isAudiobook = 0 AND isSearchResult < 2 AND Hidden = 0 AND Uri IS NOT NULL
 			ORDER BY ";
 		foreach (prefs::get_pref('artistsatstart') as $a) {
 			$qstring .= "CASE WHEN Artistname = '".$a."' THEN 1 ELSE 2 END, ";
@@ -65,69 +65,6 @@ class metaquery extends musiccollection {
 		return $retval;
 	}
 
-	public function getlinktocheck() {
-		// LinkChecked:
-		// 0 = Not Checked, Assumed Playable or Playable at last check
-		// 1 = Not Checked, Unplayable at last check
-		// 2 = Checked, Playable
-		// 3 = Checked, Unplayable
-		// 4 = marked unplayable by setup screen
-		// This function returns true when there are no more tracks to check.
-		// The backend daemon polls a chunk of 25 tracks every time it wakes up
-		// until it has done them all, then it waits for link_checker_frequency seconds
-		$retval = false;
-		$ids = [];
-		$tracks = $this->generic_sql_query("SELECT TTindex, Uri, LinkChecked FROM Tracktable WHERE Uri LIKE 'spotify:%' AND Hidden = 0 AND isSearchResult < 2 AND LinkChecked < 2 ORDER BY TTindex ASC LIMIT 25");
-		foreach ($tracks as $track) {
-			$ids[] = preg_replace('/spotify:track:/', '', $track['Uri']);
-		}
-		if (count($ids) > 0) {
-			logger::log('RELINKING', 'Got chunk of',count($ids),'spotify tracks to check');
-			$this->open_transaction();
-			$trackinfo = spotify::track_checklinking(['id' => $ids, 'cache' => false], false);
-			$spoti_data = json_decode($trackinfo, true);
-			foreach ($tracks as $i => $my_track) {
-				$uri = $my_track['Uri'];
-				$status = 3;
-				$spoti_track = $spoti_data['tracks'][$i];
-				if ($spoti_track) {
-					if ($spoti_track['is_playable']) {
-						logger::debug('RELINKING', 'Track',$spoti_track['name'],'is playable');
-						// If it's relinked I don't know if I'm supposed to use $spoti_track['uri']
-						// or $spoti_track['linked_from']['uri']. The latter is the same as the one
-						// we initially supplied, whereas the former is different BUT the docs say
-						// not to use the former.???
-						if (array_key_exists('linked_from', $spoti_track)) {
-							logger::log('RELINKING', 'Track',$spoti_track['name'],'is relinked from',$uri, 'to', $spoti_track['uri']);
-							logger::log('RELINKING', 'What does this even mean?');
-						}
-
-						$uri = $spoti_track['uri'];
-						$status = 2;
-					} else {
-						logger::log('RELINKING', 'Track',$spoti_track['name'],'is not playable');
-						if ($spoti_track['restrictions']) {
-							logger::debug('RELINKING','  Restrictions',$spoti_track['restrictions']['reason']);
-						}
-					}
-				} else {
-					logger::debug('RELINKING', 'No data from spotify for TTindex',$my_track['TTindex']);
-				}
-				$this->updateCheckedLink($my_track['TTindex'], $uri, $status);
-			}
-			$this->close_transaction();
-		} else {
-			logger::log('RELINKING', 'Got no more spotify tracks to check');
-			$retval = true;
-		}
-		return $retval;
-	}
-
-	public function resetlinkcheck() {
-		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2 OR LinkChecked = 4", true);
-		$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3", true);
-	}
-
 	public function getcharts($data) {
 		return [
 			'Artists' => $this->get_artist_charts(),
@@ -153,12 +90,6 @@ class metaquery extends musiccollection {
 
 	public function removeListenLater($id) {
 		$this->sql_prepare_query(true, null, null, null, "DELETE FROM AlbumsToListenTotable WHERE Listenindex = ?", $id);
-	}
-
-	public function updateCheckedLink($ttindex, $uri, $status) {
-		logger::debug("METADATA", "Updating Link Check For TTindex",$ttindex,$uri);
-		$this->sql_prepare_query(true, null, null, null,
-			"UPDATE Tracktable SET LinkChecked = ?, Uri = ? WHERE TTindex = ?", $status, $uri, $ttindex);
 	}
 
 	public function getalbumsasspoti($p) {

@@ -73,12 +73,10 @@ class init_generic extends database {
 		if (prefs::get_pref('spotify_mark_unplayable')) {
 			logger::info('SQLINIT', 'Marking all Spotify tracks as unplayable');
 			$this->generic_sql_query("UPDATE Albumtable SET AlbumUri = NULL WHERE AlbumUri LIKE 'spotify:%'", true);
-			$this->generic_sql_query("UPDATE Tracktable SET LinkChecked = 0, Uri = NULL WHERE Uri LIKE 'spotify:%' AND Hidden = 0", true);
+			$this->generic_sql_query("UPDATE Tracktable SET Uri = NULL WHERE Uri LIKE 'spotify:%' AND Hidden = 0", true);
 			prefs::set_pref([
-				'spotify_mark_unplayable' => false,
-				'linkchecker_nextrun' => strtotime('2030-01-01 00:00:00')
+				'spotify_mark_unplayable' => false
 			]);
-			logger::info('SQLINIT', 'Time is',time(),'Setting nextrun to',prefs::get_pref('linkchecker_nextrun'));
 			$this->set_admin_value('ListVersion', 1);
 			prefs::save();
 		}

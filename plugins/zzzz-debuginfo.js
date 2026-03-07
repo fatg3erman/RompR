@@ -9,7 +9,6 @@ var debugInfo = function() {
     ];
 
     const as_date = [
-        'linkchecker_nextrun',
         'next_lastfm_synctime',
         'lastversionchecktime'
     ];

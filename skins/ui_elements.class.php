@@ -15,7 +15,6 @@ class ui_elements {
 		'disc' => 0,
 		'uri' => null,
 		'isSearchResult' => 0,
-		'playable' => 0,
 		'artist' => '',
 		'trackartistindex' => null,
 		'albumartistindex' => null,
@@ -34,7 +33,7 @@ class ui_elements {
 	// Image		the album image
 	// Searched 	1 if the album image should not be searched for
 	// AlbumUri 	the album URI (for spotify)
-	// Year			the album year
+	// Year		F	the album year
 	// Albumname	the Album Name
 	// Artistname	the Artist Name
 	// why			the collection $why, or null if this is a non-collection object
@@ -102,10 +101,7 @@ class ui_elements {
 			$class .= ' mostrecent';
 
 		// Outer container
-		if ($data['playable'] == 1 || $data['playable'] == 3 || $data['playable'] == 4) {
-			// Note - needs clicktrack and name in case it is a removeable track
-			print '<div class="unplayable clicktrack ninesix indent containerbox vertical-centre" name="'.rawurlencode($data['uri']).'">';
-		} else if ($data['uri'] == null) {
+		if ($data['uri'] == null) {
 			print '<div class="playable '.$class.' ninesix draggable indent containerbox vertical-centre" name="'.$data['ttid'].'">';
 		} else {
 			print '<div class="playable '.$class.' ninesix draggable indent containerbox vertical-centre" name="'.rawurlencode($data['uri']).'">';

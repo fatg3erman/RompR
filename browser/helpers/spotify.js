@@ -217,7 +217,7 @@ var spotify = function() {
 
 			getInfo: function(id, success, fail, prio) {
 				var data = {
-					method: 'album_getinfo',
+F					method: 'album_getinfo',
 					params: {
 						id: id,
 						cache: true
@@ -245,17 +245,6 @@ var spotify = function() {
 			getRelatedArtists: function(id, success, fail, prio) {
 				var data = {
 					method: 'artist_getrelated',
-					params: {
-						id: id,
-						cache: true
-					}
-				};
-				spotify.request('', data, success, fail, prio);
-			},
-
-			getTopTracks: function(id, success, fail, prio) {
-				var data = {
-					method: 'artist_toptracks',
 					params: {
 						id: id,
 						cache: true
@@ -304,16 +293,6 @@ var spotify = function() {
 		},
 
 		recommendations: {
-
-			getGenreSeeds: function(success, fail) {
-				var data = {
-					method: 'get_genreseeds',
-					params: {
-						cache: true
-					}
-				};
-				spotify.request('', data, success, fail, true);
-			},
 
 			getRecommendations: function(param, success, fail) {
 				var data = {

@@ -60,7 +60,7 @@ class mix_radio extends everywhere_radio {
 				break;
 		}
 	}
-
+ro
 	private function get_similar_seeds() {
 		$spotify_id = null;
 		$seeds = ['bum'];

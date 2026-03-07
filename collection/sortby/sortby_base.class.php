@@ -106,22 +106,22 @@ class sortby_base {
 
 			case 'r':
 				// Only Tracks with Ratings //
-				return "AND isSearchResult < 2 AND (LinkChecked = 0 OR LinkChecked = 2) AND r.TTindex IS NOT NULL";
+				return "AND isSearchResult < 2 AND r.TTindex IS NOT NULL";
 				break;
 
 			case 't':
 				// Only Tracks with Tags //
-				return "AND isSearchResult < 2 AND (LinkChecked = 0 OR LinkChecked = 2) AND tl.TTindex IS NOT NULL";
+				return "AND isSearchResult < 2 AND tl.TTindex IS NOT NULL";
 				break;
 
 			case 'y':
 				// Only Tracks with Tags and Ratings //
-				return "AND isSearchResult < 2 AND (LinkChecked = 0 OR LinkChecked = 2) AND tl.TTindex IS NOT NULL AND r.TTindex IS NOT NULL";
+				return "AND isSearchResult < 2 AND tl.TTindex IS NOT NULL AND r.TTindex IS NOT NULL";
 				break;
 
 			case 'u':
 				// Only Tracks with Tags or Ratings //
-				return "AND isSearchResult < 2 AND (LinkChecked = 0 OR LinkChecked = 2) AND (tl.TTindex IS NOT NULL OR r.TTindex IS NOT NULL)";
+				return "AND isSearchResult < 2 AND (tl.TTindex IS NOT NULL OR r.TTindex IS NOT NULL)";
 				break;
 
 			case 'z':
@@ -294,7 +294,6 @@ class sortby_base {
 				tr.Disc AS disc,
 				tr.Uri AS uri,
 				tr.isSearchResult AS isSearchResult,
-				tr.LinkChecked AS playable,
 				ta.Artistname AS artist,
 				tr.Artistindex AS trackartistindex,
 				al.AlbumArtistindex AS albumartistindex,
