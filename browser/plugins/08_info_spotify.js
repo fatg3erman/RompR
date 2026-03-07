@@ -75,6 +75,7 @@ var info_spotify = function() {
 			layout.finish(null, null);
 			return;
 		}
+		let u = layout.add_sidebar_list(language.gettext("label_pluginplaylists"), '');
 		layout.append_to_list(u, language.gettext("lastfm_releasedate"), data.release_date);
 		if (data.genres && data.genres.length > 0) {
 			do_genres(layout, u, data,genres);
@@ -331,7 +332,7 @@ var info_spotify = function() {
 				}
 
 				layout.make_possibility_chooser(artistmeta.spotify.possibilities, artistmeta.spotify.currentposs, artistmeta.name);
-
+				let u = layout.add_sidebar_list(language.gettext("label_pluginplaylists"), '');
 				add_coll_button(u, 'clickstartsingleradio', 'icon-wifi', language.gettext('label_singleartistradio'));
 				if (player.canPlay('spotify') && artistmeta.spotify.id) {
 					add_coll_button(u, 'clickstartartistradio', 'icon-spotify-circled', language.gettext('label_radio_recommend',['Artist']));

@@ -217,7 +217,7 @@ var spotify = function() {
 
 			getInfo: function(id, success, fail, prio) {
 				var data = {
-F					method: 'album_getinfo',
+					method: 'album_getinfo',
 					params: {
 						id: id,
 						cache: true
