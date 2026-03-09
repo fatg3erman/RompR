@@ -868,7 +868,7 @@ class init_database extends init_generic {
 				case 106:
 					logger::log("SQL", "Updating FROM Schema version 106 TO Schema version 107");
 					$this->generic_sql_query("ALTER TABLE Tracktable DROP LinkChecked", true);
-					$this->set_admin_value('SchemaVer', 106);
+					$this->set_admin_value('SchemaVer', 107);
 					break;
 
 			}

@@ -106,7 +106,7 @@ function check_lastfm_sync() {
 
     $next = prefs::get_pref('next_lastfm_synctime') - time();
     if ($next > 0) {
-        logger::mark('DAEMON', 'Next LastFM Sync Check is in',$next,'seconds');
+        logger::mark('DAEMON', 'Next LastFM Sync Check is in',($next / 60),'minutes');
     } else {
         logger::mark('DAEMON', 'Syncing LastFM Playcounts');
         $page = 1;
