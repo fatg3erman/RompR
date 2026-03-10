@@ -1,5 +1,20 @@
 # Changelog
 
+## Version 2.26
+
+### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
+
+* Fix bug where genres in the collection could be very slow to open
+### Spotify Spoils It For Everybody
+* Spotify have moved their API behind a paywall.If I want to keep using it I have to have a spotify premium subscription,
+and I'm not prepared to pay them. All functionaility that used Spotify's API has been removed:
+* The Spotify Info panel
+* Genre radio under 'Music from Everywhere'
+* The Discoverator
+* The 3 Spotify Personalised Radio stations
+
+
+
 ## Version 2.25
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.

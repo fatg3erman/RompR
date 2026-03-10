@@ -259,7 +259,6 @@ class prefspanel extends uibits {
 		]);
 
 		self::ui_checkbox(['id' => 'scrolltocurrent', 'label' => 'config_autoscroll']);
-		self::ui_checkbox(['id' => 'auto_discovembobulate', 'label' => 'config_discovembobulate']);
 
 		self::ui_checkbox(['id' => 'displaycomposer', 'label' => 'config_displaycomposer']);
 		self::ui_checkbox(['id' => 'use_albumart_in_playlist', 'label' => 'config_albumartinplaylist']);
@@ -334,22 +333,6 @@ class prefspanel extends uibits {
 			'id' => 'lastfmlang',
 			'options' => $lfm,
 			'label' => language::gettext('config_lastfmlang')
-		]);
-
-		$countries = ['' => 'Please Select'];
-		$x = simplexml_load_file('resources/iso3166.xml');
-		$markets = spotify::get_markets();
-		foreach($x->CountryEntry as $i => $c) {
-			$code = (string) $c->CountryCode;
-			if (in_array($code, $markets)) {
-				$countries[$code] = mb_convert_case($c->CountryName, MB_CASE_TITLE, "UTF-8");
-			}
-		}
-		self::ui_select_box([
-			'id' => 'lastfm_country_code',
-			'options' => $countries,
-			'label' => language::gettext('config_country'),
-			'disabled' => ['']
 		]);
 
 		// =======================================================

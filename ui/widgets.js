@@ -1188,12 +1188,7 @@ $.widget('rompr.spotifyAlbumThing', {
 				} else {
 					// If it's not filled then this is a widget created by spotify API calls
 					// so we need to populate the track listing from spotify's API
-					if (layoutProcessor.openOnImage) {
-						element.parent().parent().makeSpinner();
-					} else {
-						element.makeSpinner();
-					}
-					spotify.album.getInfo(id, $.proxy(self.spotifyAlbumResponse, self), self.spotiError, true);
+					debug.error('SPOTIALBUM', 'This should not happen any more');
 				}
 			}
 		} else if (element.hasClass('clickimporttrack')) {
@@ -1426,12 +1421,13 @@ $.widget('rompr.spotifyArtistThing', {
 					dropper.show();
 					browser.rePoint();
 				} else {
-					if (layoutProcessor.openOnImage) {
-						element.parent().parent().makeSpinner();
-					} else {
-						element.makeSpinner();
-					}
-					spotify.artist.getAlbums(id, 'album', $.proxy(self._gotAlbumsForArtist, self), self.spotiError, true);
+					debug.error('SPOTIARTIST', 'What are we even doing here?');
+					// if (layoutProcessor.openOnImage) {
+					// 	element.parent().parent().makeSpinner();
+					// } else {
+					// 	element.makeSpinner();
+					// }
+					// spotify.artist.getAlbums(id, 'album', $.proxy(self._gotAlbumsForArtist, self), self.spotiError, true);
 				}
 			}
 		} else if (element.hasClass('clickopenalbum') || element.hasClass('clickaddtolistenlater') || element.hasClass('clickaddtocollection')) {

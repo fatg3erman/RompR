@@ -66,8 +66,6 @@ class prefs {
 
 		"preferlocalfiles" => false,
 		"mopidy_collection_folders" => array("Local media"),
-		"lastfm_country_code" => "",
-		"country_userset" => false,
 		"debug_enabled" => 0,
 		"custom_logfile" => "",
 		"cleanalbumimages" => true,
@@ -195,7 +193,6 @@ class prefs {
 		"wheelscrollspeed" => "150",
 		"displayremainingtime" => true,
 		"cdplayermode" => false,
-		"auto_discovembobulate" => false,
 
 		"sleeptime" => 30,
 		"sleepon" => false,

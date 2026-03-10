@@ -31,7 +31,7 @@ var info_musicbrainz = function() {
 		return (year_a > year_b) ? 1 : -1;
 	}
 
-	function getArtistHTML(layout, data) {
+	function getArtistHTML(layout, data, artistmeta, artistobj) {
 		if (data.error) {
 			layout.display_error(data.error);
 			layout.finish(null, null);
@@ -91,6 +91,10 @@ var info_musicbrainz = function() {
 			'discography_'+data.id,
 			language.gettext("discogs_discography", [data.name.toUpperCase()])
 		)
+
+		artistmeta.musicbrainz.bioholder = layout.add_non_flow_box();
+
+		artistobj.tryForAllMusicBio();
 
 		layout.finish('http://musicbrainz.org/artist/'+data.id, data.name);
 
@@ -536,6 +540,7 @@ var info_musicbrainz = function() {
 				// as well as the ones we want ourselves
 				parent.updateData({
 					disambiguation: '',
+					done_bio: false,
 					lastfm: {
 						musicbrainz_id: ''
 					},
@@ -553,6 +558,9 @@ var info_musicbrainz = function() {
 					triggers: {
 						musicbrainz: {
 							musicbrainz_id: self.artist.populate
+						},
+						allmusic: {
+							link: self.artist.tryForAllMusicBio
 						}
 					}
 				}, artistmeta);
@@ -791,7 +799,7 @@ var info_musicbrainz = function() {
 					source: me,
 					withbannerid: false
 				});
-				getArtistHTML(layout, artistmeta.musicbrainz[id]);
+				getArtistHTML(layout, artistmeta.musicbrainz[id], artistmeta, self.artist);
 				$('div[name="'+id+'"]').each(function() {
 					if (!$(this).hasClass('full')) {
 						$(this).empty().append(layout.get_contents());
@@ -891,8 +899,38 @@ var info_musicbrainz = function() {
 
 					},
 
+					tryForAllMusicBio: async function() {
+						if (artistmeta.musicbrainz.done_bio || artistmeta.allmusic.link == null || artistmeta.allmusic.link == '') {
+							return;
+						}
+						artistmeta.musicbrainz.done_bio = true;
+						debug.debug(medebug,"Getting allmusic bio from",artistmeta.allmusic.link);
+						try {
+							fetch(
+								'browser/backends/getambio.php',
+								{
+									signal: AbortSignal.timeout(60000),
+									cache: 'no-store',
+									method: 'POST',
+									priority: 'low',
+									body: JSON.stringify({url: artistmeta.allmusic.link})
+								}
+							).then(async function(response) {
+								if (response.ok) {
+									debug.debug(medebug,"Got Allmusic Bio", response);
+									var data = await response.text();
+									artistmeta.musicbrainz.layout.add_non_flow_box(data, artistmeta.musicbrainz.bioholder);
+								} else {
+									debug.trace(medebug, 'Unable to find AllMusic bio', response);
+								}
+							});
+						} catch (err) {
+							debug.log(medebug,"Didn't Get Allmusic Bio",data);
+						}
+					},
+
 					doBrowserUpdate: function(data) {
-						getArtistHTML(artistmeta.musicbrainz.layout, data);
+						getArtistHTML(artistmeta.musicbrainz.layout, data, artistmeta, self.artist);
 					}
 				}
 			}();

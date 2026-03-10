@@ -651,15 +651,6 @@ class ui_elements {
 		print '<div class="'.$opts['class'].'" id="pluginplaylists"></div>';
 
 		if (prefs::get_pref('player_backend') == "mopidy") {
-			print uibits::ui_config_header([
-				'label' => 'label_mfsp',
-				'id' => 'spotiplay_title'
-			]);
-		}
-		/* Music From Spotify */
-		print '<div class="'.$opts['class'].'" id="pluginplaylists_spotify"></div>';
-
-		if (prefs::get_pref('player_backend') == "mopidy") {
 			print self::ui_config_header([
 				'label' => 'label_mfe'
 			]);

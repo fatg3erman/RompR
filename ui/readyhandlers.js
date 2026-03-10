@@ -64,13 +64,6 @@ function start_userinterface() {
 	startBackgroundInitTasks.doNextTask();
 }
 
-function open_discoverator() {
-	if (prefs.auto_discovembobulate) {
-		pluginManager.autoOpen(language.gettext('button_infoyou'));
-	}
-	startBackgroundInitTasks.doNextTask();
-}
-
 var startBackgroundInitTasks = function() {
 
 	var stufftodo = [
@@ -78,7 +71,6 @@ var startBackgroundInitTasks = function() {
 		start_userinterface,
 		collectionHelper.checkCollection,
 		load_podcasts,
-		open_discoverator,
 		load_playlists,
 		uiLoginBind
 	];

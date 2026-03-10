@@ -11,8 +11,7 @@ class smart_radio {
 		'faveArtistRadio'		=> 'fave_artist_radio',
 		'mixRadio'				=> 'mix_radio',
 		'recommendationsRadio'	=> 'mix_radio',
-		'genreRadio'			=> 'mix_radio',
-		'spotiRecRadio'			=> 'spoti_rec_radio'
+		'yourMixRadio'			=> 'mix_radio'
 	];
 
 }

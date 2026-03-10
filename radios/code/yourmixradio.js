@@ -1,4 +1,4 @@
-var genreRadio = function() {
+var yourMixRadio = function() {
 
 	var mode;
 	var param;
@@ -34,9 +34,9 @@ var genreRadio = function() {
 		},
 
 		modeHtml: function(p) {
-			return '<i class="icon-wifi modeimg"/></i><span class="alignmid bold ucfirst">'+param+' '+language.gettext('label_radio')+'</span>';
+			return '<i class="icon-wifi modeimg"/></i><span class="alignmid bold">'+language.gettext("label_radio_yourmix")+'</span>';
 		}
 	}
 }();
 
-playlist.radioManager.register("genreRadio", genreRadio, null);
+playlist.radioManager.register("yourMixRadio", yourMixRadio, null);

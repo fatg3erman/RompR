@@ -640,7 +640,6 @@ language::add_translations([
 	//"button_selectall" =>					"Select All",
 	//"button_selectnone" =>				"Select None",
 	//"button_import" =>					"Import Selected",
-	//"label_onlyspotify" =>				"This panel is only applicable if your player can play Spotify",
 	//"label_daylabels" =>					array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
 	//"label_alarm_play_specific" =>		"Play This Item :",
 	//"label_alarm_to_play" =>				"Drop Item Here",

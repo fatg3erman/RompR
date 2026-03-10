@@ -498,7 +498,6 @@ language::add_translations([
 	"added_on" =>							"Dodana je u kolekciju %s",
 	"button_infoyou" =>						"Otkrivač",
 	"discover_now" =>						"Predlozi Pesama Zasnovani na %s",
-	"config_discovembobulate" =>			"Otvori Otkrivač na Početku",
 	"label_spotify_mix" =>					"Spotify Nedeljni Miks",
 	"label_spotify_dj" =>					"Spotify Plivanje",
 	"label_spottery_lottery" =>				"Spotify Iznenađenje!",
@@ -638,7 +637,6 @@ language::add_translations([
 	"button_selectall" =>					"Odaberi Sve",
 	"button_selectnone" =>					"Odaberi Nijedan",
 	"button_import" =>						"Uvezi Odabrane",
-	"label_onlyspotify" =>					"Ovaj panel je primenljiv samo ako vaš plejer može pustiti Spotify",
 	// NOTE: Sunday MUST be first
 	"label_daylabels" => array("Nedelja", "Ponedeljak", "Utorak", "Sreda", "Četvrtak", "Petak", "Subota"),
 	"label_alarm_play_specific" =>			"Pusti Ovu Stavku :",
@@ -732,7 +730,6 @@ language::add_translations([
 	"config_browserid" =>					'ID Pretraživača',
 	"button_clearwishlist" =>				'Obriši Listu Želja',
 	"label_mfyc" =>							'Muzika iz Vaše Kolekcije',
-	"label_mfsp" =>							'Muzika sa Spotify-a',
 	"label_mfe" =>							'Muzika Odsvuda',
 	"label_playqueue" =>					'Red za Puštanje',
 	"label_numplays" =>						'%s Puštanja',

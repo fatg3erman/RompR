@@ -79,5 +79,4 @@ The buttons above the info panel are (left to right)
 * Discogs
 * Lyrics
 * Soundcloud (for when Soundcloud tracks are playing)
-* Spotify
 * Videos

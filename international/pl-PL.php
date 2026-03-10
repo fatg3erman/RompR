@@ -499,7 +499,6 @@ language::add_translations([
 	"added_on" =>							"Został dodany do kolekcji %s",
 	"button_infoyou" =>						"Odkrywca",
 	"discover_now" =>						"Sugestie utworów na podstawie %s",
-	"config_discovembobulate" =>			"Otwórz Odkrywcę przy starcie",
 	"label_spotify_mix" =>					"Cotygodniowy miks Spotify",
 	"label_spotify_dj" =>					"Spotify Swim",
 	"label_spottery_lottery" =>				"Spotify Surprise!",
@@ -640,7 +639,6 @@ language::add_translations([
 	"button_selectall" =>					"Wybierz WSZYSTKO",
 	"button_selectnone" =>					"Wybierz Brak",
 	"button_import" =>						"Importuj wybrane",
-	"label_onlyspotify" =>					"Ten panel jest dostępny tylko wtedy, gdy Twój odtwarzacz obsługuje Spotify",
 	// NOTE: Sunday MUST be first
 	"label_daylabels" => array("Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"),
 	"label_alarm_play_specific" =>			"Graj ten utwór/pozycję :",
@@ -734,7 +732,6 @@ language::add_translations([
 	"config_browserid" =>					'ID przeglądarki',
 	"button_clearwishlist" =>				'Wyczyść listę życzeń',
 	"label_mfyc" =>							'Muzyka z Twojej kolekcji',
-	"label_mfsp" =>							'Muzyka od Spotify',
 	"label_mfe" =>							'Muzyka od Everywhere',
 	"label_playqueue" =>					'Kolejka odtwarzania',
 	"label_numplays" =>						'%s Odtwarza',
