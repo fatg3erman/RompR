@@ -182,8 +182,10 @@ class metabackup extends metaDatabase {
 				JOIN Artisttable AS ta USING (Artistindex)
 				JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
 				JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
-			WHERE Tracktable.LastModified IS NULL AND
-				((Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2) OR (Tracktable.Hidden = 1))
+			WHERE
+				Tracktable.LastModified IS NULL
+				AND Tracktable.Hidden = 0
+				AND Tracktable.isSearchResult < 2
 				AND Uri IS NOT NULL");
 
 		file_put_contents($file, json_encode($tracks));
@@ -323,8 +325,11 @@ class metabackup extends metaDatabase {
 				JOIN Artisttable AS ta USING (Artistindex)
 				JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
 				JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
-			WHERE ((Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2) OR (Tracktable.Hidden = 1))
-			AND Uri IS NOT NULL AND Tracktable.isAudiobook > 0");
+			WHERE
+				Tracktable.Hidden = 0
+				AND Tracktable.isSearchResult < 2
+				AND Uri IS NOT NULL
+				AND Tracktable.isAudiobook > 0");
 
 		file_put_contents($file, json_encode($tracks));
 
