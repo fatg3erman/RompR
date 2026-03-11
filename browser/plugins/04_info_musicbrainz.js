@@ -94,8 +94,6 @@ var info_musicbrainz = function() {
 
 		artistmeta.musicbrainz.bioholder = layout.add_non_flow_box();
 
-		artistobj.tryForAllMusicBio();
-
 		layout.finish('http://musicbrainz.org/artist/'+data.id, data.name);
 
 	}
@@ -558,9 +556,6 @@ var info_musicbrainz = function() {
 					triggers: {
 						musicbrainz: {
 							musicbrainz_id: self.artist.populate
-						},
-						allmusic: {
-							link: self.artist.tryForAllMusicBio
 						}
 					}
 				}, artistmeta);
@@ -897,36 +892,6 @@ var info_musicbrainz = function() {
 							putArtistReleases(artistmeta.musicbrainz[data.id], data.id);
 						}
 
-					},
-
-					tryForAllMusicBio: async function() {
-						if (artistmeta.musicbrainz.done_bio || artistmeta.allmusic.link == null || artistmeta.allmusic.link == '') {
-							return;
-						}
-						artistmeta.musicbrainz.done_bio = true;
-						debug.debug(medebug,"Getting allmusic bio from",artistmeta.allmusic.link);
-						try {
-							fetch(
-								'browser/backends/getambio.php',
-								{
-									signal: AbortSignal.timeout(60000),
-									cache: 'no-store',
-									method: 'POST',
-									priority: 'low',
-									body: JSON.stringify({url: artistmeta.allmusic.link})
-								}
-							).then(async function(response) {
-								if (response.ok) {
-									debug.debug(medebug,"Got Allmusic Bio", response);
-									var data = await response.text();
-									artistmeta.musicbrainz.layout.add_non_flow_box(data, artistmeta.musicbrainz.bioholder);
-								} else {
-									debug.trace(medebug, 'Unable to find AllMusic bio', response);
-								}
-							});
-						} catch (err) {
-							debug.log(medebug,"Didn't Get Allmusic Bio",data);
-						}
 					},
 
 					doBrowserUpdate: function(data) {

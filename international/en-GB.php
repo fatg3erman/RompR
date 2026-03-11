@@ -257,6 +257,7 @@ language::add_translations([
 
 	// Last.FM Info Panel
 	"button_infolastfm" =>					"Info Panel (Last.FM)",
+	"button_infoallmusic" =>				"Info Panel (Allmusic)",
 	"label_notrackinfo" =>					"Could not find information about this track",
 	"label_noalbuminfo" =>					"Could not find information about this album",
 	"label_noartistinfo" =>					"Could not find information about this artist",
