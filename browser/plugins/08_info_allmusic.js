@@ -28,7 +28,14 @@ var info_allmusic = function() {
 				}, artistmeta);
 
 				parent.updateData({
-					allmusic: {}
+					allmusic: {
+						done_bio: false,
+					},
+					triggers: {
+						allmusic: {
+							link: self.album.tryForAllMusicBio
+						}
+					}
 				}, albummeta);
 
 				parent.updateData({
@@ -38,11 +45,11 @@ var info_allmusic = function() {
 				if (typeof artistmeta.allmusic.layout == 'undefined')
 					self.artist.populate();
 
+				if (typeof albummeta.allmusic.layout == 'undefined')
+					self.album.populate();
+
 				if (typeof trackmeta.allmusic.layout == 'undefined')
 					trackmeta.allmusic.layout = new info_layout_empty();
-
-				if (typeof albummeta.allmusic.layout == 'undefined')
-					albummeta.allmusic.layout = new info_layout_empty();
 
 			}
 
@@ -102,6 +109,57 @@ var info_allmusic = function() {
 				}
 
 			}();
+
+			this.album = function() {
+				return {
+
+					populate: function() {
+						if (albummeta.name == '') {
+							albummeta.allmusic.layout = new info_layout_empty();
+						} else {
+							albummeta.allmusic.layout = new info_html_layout({title: albummeta.name, type: 'album', source: me});
+							self.album.tryForAllMusicBio();
+						}
+
+					},
+
+					tryForAllMusicBio: async function() {
+						if (albummeta.allmusic.done_bio || albummeta.allmusic.link === '') {
+							return;
+						}
+						albummeta.allmusic.done_bio = true;
+						debug.debug(medebug,"Getting allmusic review from",albummeta.allmusic.link);
+						try {
+							fetch(
+								'browser/backends/getambio.php',
+								{
+									signal: AbortSignal.timeout(60000),
+									cache: 'no-store',
+									method: 'POST',
+									priority: 'low',
+									body: JSON.stringify({albumurl: albummeta.allmusic.link})
+								}
+							).then(async function(response) {
+								if (response.ok) {
+									var data = await response.text();
+									debug.debug(medebug,"Got Allmusic review", data);
+									albummeta.allmusic.layout.finish(albummeta.allmusic.link, null, data);
+								} else {
+									debug.trace(medebug, 'Unable to find AllMusic review', response);
+									albummeta.allmusic.layout.finish(albummeta.allmusic.link, null, 'Could not find an Allmusic Review');
+								}
+							});
+						} catch (err) {
+							debug.log(medebug,"Didn't Get Allmusic Review",data);
+							albummeta.allmusic.layout.finish(null, null, 'Could not find an Allmusic Review');
+						}
+					}
+
+				}
+
+			}();
+
+
 		}
 
 	}

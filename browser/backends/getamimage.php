@@ -37,13 +37,13 @@ function get_image_link($url) {
 		if ($el !== null) {
 			logger::log('ALLMUSIC', 'Found artistPoster');
 			return get_image($el);
-		// $els = getElementsByClass($DOM, 'div', 'artistPoster');
-		// if (count($els) > 0) {
-		// 	logger::log('ALLMUSIC', 'Found artistPoster');
-		// 	return get_image_link($els[0]);
-		} else {
-			return false;
 		}
+		$els = getElementsByClass($DOM, 'div', 'artistPoster');
+		if (count($els) > 0) {
+			logger::log('ALLMUSIC', 'Found artistPoster');
+			return get_image($els[0]);
+		}
+		return false;
 	} else {
 		return false;
 	}
