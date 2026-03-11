@@ -64,10 +64,14 @@ var info_allmusic = function() {
 					},
 
 					tryForAllMusicBio: async function() {
-						if (artistmeta.allmusic.done_bio || artistmeta.allmusic.link == null || artistmeta.allmusic.link == '') {
+						if (artistmeta.allmusic.done_bio || artistmeta.allmusic.link === '') {
 							return;
 						}
 						artistmeta.allmusic.done_bio = true;
+						// if (artistmeta.allmusic.link === null) {
+						// 	artistmeta.allmusic.layout.finish(null, null, 'Could not find an Allmusic Biography');
+						// 	return;
+						// }
 						debug.debug(medebug,"Getting allmusic bio from",artistmeta.allmusic.link);
 						try {
 							fetch(
