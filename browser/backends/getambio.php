@@ -45,8 +45,9 @@ function scrape_allmusic($url) {
 		));
 		if ($nd->get_data_to_string()) {
 			$r = $nd->get_data();
-			$r = preg_replace('/data-src/', 'src', $r);
+			$r = str_replace('data-src', 'src', $r);
 			$r = preg_replace('/<a href.+?>(.+?)<\/a>/s', '$1', $r);
+			$r = str_replace('h2', 'h3', $r);
 		} else {
 			logger::log('AMBIO', 'biographyAjax failed', $nd->get_status());
 		}
