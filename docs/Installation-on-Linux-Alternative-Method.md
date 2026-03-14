@@ -27,9 +27,9 @@ We need to make sure Apache can find RompЯ. To do this we create a soft link fr
     sudo a2enmod expires
     sudo a2enmod headers
     sudo a2enmod deflate
-    sudo a2enmod php7.0
+    sudo a2enmod php8.0
 
-Note - the 7.0 may need to change depending on your PHP version
+Note - the 8.0 may need to change depending on your PHP version
 
 ### Create Apache configuration
 
@@ -47,9 +47,9 @@ So, create this file, note I've assumed the default apache root directory of /va
         Order Allow,Deny
         Allow from All
         Require all granted
-        ErrorDocument 404 /404.php
+        ErrorDocument 404 /rompr/404.php
 
-        <IfModule mod_php7.c>
+        <IfModule mod_php8.c>
             AddType application/x-httpd-php .php
             php_flag magic_quotes_gpc Off
             php_flag track_vars On

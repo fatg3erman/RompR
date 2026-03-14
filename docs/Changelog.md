@@ -5,9 +5,9 @@
 ### In order to upgrade to this version you must delete everything from your installation except your prefs and albumart directories, then copy the new version in.
 
 * Fix bug where genres in the collection could be very slow to open
+* Fix bug with MPD support where RompR would try to connect to the websocket server even if it isn't running, leading to very slow UI updates.
 ### Spotify Spoils It For Everybody
-* Spotify have moved their API behind a paywall. If I want to keep using it I have to have a Spotify premium subscription,
-and I don't want one of those. Everybody should switch to Qobuz anyway. All functionaility that used Spotify's API has been removed:
+* Spotify have moved their API behind a paywall. If I want to keep using it I have to have a Spotify premium subscription, and I don't want one of those. While it might have been possible to let users supply their own Spotify credentials, I would never have been able to test any Spotify-related code so it's not workable. All functionaility that used Spotify's API has been removed:
 * The Spotify Info panel
 * Genre radio under 'Music from Everywhere'
 * The Discoverator
