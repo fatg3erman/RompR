@@ -576,11 +576,12 @@ class collection_base extends database {
 			'Artistname' => 'Unknown Artist',
 			'Image' => 'newimages/vinyl_record.svg',
 			'AlbumUri' => null,
-			'useTrackIms' => false
+			'useTrackIms' => false,
+			'ImgKey' => null
 		];
 
 		$details = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
-			"SELECT Albumname, Artistname, Image, AlbumUri, useTrackIms
+			"SELECT Albumname, Artistname, Image, AlbumUri, useTrackIms, ImgKey
 			FROM Albumtable
 			JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
 			WHERE Albumindex = ?",
@@ -873,7 +874,7 @@ class collection_base extends database {
 		$retval = null;
 		// Get album directory by using the Uri of one of its tracks, making sure we choose only local tracks
 		if (getDomain($uri) == 'local') {
-			$result = $this->sql_prepare_query(false, null, 'Uri', null, "SELECT Uri FROM Tracktable WHERE Albumindex = ? AND Uri IS NOT NULL", $albumindex);
+			$result = $this->sql_prepare_query(false, null, 'Uri', null, "SELECT Uri FROM Tracktable WHERE Albumindex = ? AND Uri IS NOT NULL AND Hidden = 0", $albumindex);
 			if ($result !== null) {
 				$retval = dirname($result);
 				$retval = preg_replace('#^local:track:#', '', $retval);
@@ -1141,81 +1142,6 @@ class collection_base extends database {
 			}
 		}
 		return false;
-	}
-
-	public function get_recommendation_seeds($days, $limit, $top) {
-
-		logger::log('RECSEEDS', 'Looking for', $top, 'seed tracks over', $days, 'days');
-		$resultset = [];
-		// 1. Get the top tracks overall
-		$tracks = $this->get_track_charts(20, CHARTS_MUSIC_ONLY);
-		foreach ($tracks as $track) {
-			if ($track->Uri) {
-				$resultset[] = [
-					'Artistname' => $track->label_artist,
-					'Title' => $track->label_track,
-					'Uri' => $track->Uri
-				];
-			}
-		}
-		logger::log('RECSEEDS', 'Charts resultset has',(count($resultset)),'members');
-
-		// 2. Get a list of tracks played in the last $days days, sorted by their OVERALL popularity
-		$popular = $this->generic_sql_query(
-			"SELECT
-				 Artistname,
-				 Title,
-				 Uri
-			FROM
-				Playcounttable
-				JOIN Tracktable USING (TTindex)
-				JOIN Artisttable USING (Artistindex)
-			WHERE
-				{$this->sql_two_weeks_include($days)}
-				AND Uri IS NOT NULL
-				AND Uri NOT LIKE 'http%'
-				AND isAudiobook = 0
-			ORDER BY Playcount DESC LIMIT $limit");
-
-		logger::log('RECSEEDS', 'Popular resultset has',(count($popular)),'members');
-
-		// 3. Combine the two, filtering out duplicates
-		foreach ($popular as $track) {
-			if (!in_array($track, $resultset)) {
-				$resultset[] = $track;
-			}
-		}
-
-		logger::log('RECSEEDS', 'Final resultset has',(count($resultset)),'members');
-
-		// 4. Randomise that list and return the first $top.
-		shuffle($resultset);
-		logger::log('RECSEEDS', 'Returning', (min($top, count($resultset))), 'entries');
-
-		return array_slice($resultset,0,$top);
-	}
-
-	public function get_most_recently_played_music($limit, $min_plays) {
-		// Get a list of the $limit most recently played music tracks, regardless
-		// of how recently "recent" actually is
-		$resultset = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, [],
-			"SELECT
-				 Artistname,
-				 Title,
-				 Uri
-			FROM
-				Playcounttable
-				JOIN Tracktable USING (TTindex)
-				JOIN Artisttable USING (Artistindex)
-			WHERE
-				Uri IS NOT NULL
-				AND Uri NOT LIKE 'http%'
-				AND isAudiobook = 0
-				AND Playcount > ?
-			ORDER BY LastPlayed DESC LIMIT $limit",
-			$min_plays
-		);
-		return $resultset;
 	}
 
 	protected function charts_include_option($include = null) {

@@ -81,7 +81,7 @@ class collection_radio extends musicCollection {
 				}
 				break;
 		}
-		$sqlstring .= ' AND (LinkChecked = 0 OR LinkChecked = 2) AND isAudiobook = 0 AND usedInPlaylist = 0 AND isSearchResult < 2 AND Hidden = 0 AND Uri IS NOT NULL';
+		$sqlstring .= ' AND isAudiobook = 0 AND usedInPlaylist = 0 AND isSearchResult < 2 AND Hidden = 0 AND Uri IS NOT NULL';
 		if (prefs::get_pref('collection_player') == 'mopidy' && prefs::get_pref('player_backend') == 'mpd') {
 			$sqlstring .= ' AND Uri LIKE "local:%"';
 		}

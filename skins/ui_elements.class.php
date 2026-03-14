@@ -15,7 +15,6 @@ class ui_elements {
 		'disc' => 0,
 		'uri' => null,
 		'isSearchResult' => 0,
-		'playable' => 0,
 		'artist' => '',
 		'trackartistindex' => null,
 		'albumartistindex' => null,
@@ -34,7 +33,7 @@ class ui_elements {
 	// Image		the album image
 	// Searched 	1 if the album image should not be searched for
 	// AlbumUri 	the album URI (for spotify)
-	// Year			the album year
+	// Year		F	the album year
 	// Albumname	the Album Name
 	// Artistname	the Artist Name
 	// why			the collection $why, or null if this is a non-collection object
@@ -102,10 +101,7 @@ class ui_elements {
 			$class .= ' mostrecent';
 
 		// Outer container
-		if ($data['playable'] == 1 || $data['playable'] == 3 || $data['playable'] == 4) {
-			// Note - needs clicktrack and name in case it is a removeable track
-			print '<div class="unplayable clicktrack ninesix indent containerbox vertical-centre" name="'.rawurlencode($data['uri']).'">';
-		} else if ($data['uri'] == null) {
+		if ($data['uri'] == null) {
 			print '<div class="playable '.$class.' ninesix draggable indent containerbox vertical-centre" name="'.$data['ttid'].'">';
 		} else {
 			print '<div class="playable '.$class.' ninesix draggable indent containerbox vertical-centre" name="'.rawurlencode($data['uri']).'">';
@@ -200,7 +196,7 @@ class ui_elements {
 	// $when is the subkey for sort modes such as tag eg aalbum123_15 (=15)
 	//
 
-	protected static function make_track_control_buttons($why, $what, $who, $when, $det) {
+	protected static function make_track_control_buttons($why, $what, $who, $when, $det, $imgkey) {
 		if ($why == '' || $why == null)
 			return '';
 
@@ -258,6 +254,9 @@ class ui_elements {
 			}
 			if (prefs::$database->num_youtube_tracks($who) > 0)
 				$classes[] = 'clickytdownloadall';
+
+			if ($imgkey !== null)
+				$classes[] = 'clicksetalbumart';
 		}
 
 		if (!$det['buttons']) {
@@ -306,6 +305,10 @@ class ui_elements {
 				|| in_array('clickaddtollviabrowse', $classes)
 			) {
 				$html .= '" uri="'.rawurlencode($det['AlbumUri']);
+			}
+
+			if (in_array('clicksetalbumart', $classes)) {
+				$html .= '" imgkey="'.$imgkey;
 			}
 
 			$html .= '"></div>';
@@ -646,15 +649,6 @@ class ui_elements {
 		}
 		/* Main Holder */
 		print '<div class="'.$opts['class'].'" id="pluginplaylists"></div>';
-
-		if (prefs::get_pref('player_backend') == "mopidy") {
-			print uibits::ui_config_header([
-				'label' => 'label_mfsp',
-				'id' => 'spotiplay_title'
-			]);
-		}
-		/* Music From Spotify */
-		print '<div class="'.$opts['class'].'" id="pluginplaylists_spotify"></div>';
 
 		if (prefs::get_pref('player_backend') == "mopidy") {
 			print self::ui_config_header([

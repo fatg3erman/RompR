@@ -291,9 +291,10 @@ class player extends base_mpd_player {
 				logger::log('MPDSOCKET', 'Starting MPD Websocket Server for',prefs::currenthost());
 				$pwd = getcwd();
 				$pid = start_process($pwd.$this->websocket_command(), 'python3');
+				sleep(1);
 				if (get_pid($this->websocket_command()) === false) {
 					logger::warn('MPDSOCKET', 'Failed to start MPD Websocket Server for',prefs::currenthost());
-					prefs::set_player_param(['websocket' => false]);
+					prefs::set_player_param(['websocket' => false, 'websocket_port' => '']);
 					return false;
 				}
 			} else {
@@ -308,7 +309,7 @@ class player extends base_mpd_player {
 				logger::info('MPDSOCKET', 'Killing PID',$pid,'of Websocket Server with different config for',prefs::currenthost());
 				kill_process($pid);
 			}
-			prefs::set_player_param(['websocket' => false]);
+			prefs::set_player_param(['websocket' => false, 'websocket_port' => '']);
 		}
 
 	}

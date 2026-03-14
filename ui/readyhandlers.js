@@ -64,37 +64,13 @@ function start_userinterface() {
 	startBackgroundInitTasks.doNextTask();
 }
 
-function get_spotify_genreseeds() {
-	spotify.recommendations.getGenreSeeds(
-		function(data) {
-			debug.log('SEEDS', 'Got Spotify Genre Seeds', data);
-			if (data.genres) {
-				player.genreseeds = data.genres;
-			}
-		},
-		function() {
-			debug.warn('SEEDS', "Failed to get Spotify Genre Seeds");
-		}
-	);
-	startBackgroundInitTasks.doNextTask();
-}
-
-function open_discoverator() {
-	if (prefs.auto_discovembobulate) {
-		pluginManager.autoOpen(language.gettext('button_infoyou'));
-	}
-	startBackgroundInitTasks.doNextTask();
-}
-
 var startBackgroundInitTasks = function() {
 
 	var stufftodo = [
 		connect_to_player,
-		get_spotify_genreseeds,
 		start_userinterface,
 		collectionHelper.checkCollection,
 		load_podcasts,
-		open_discoverator,
 		load_playlists,
 		uiLoginBind
 	];

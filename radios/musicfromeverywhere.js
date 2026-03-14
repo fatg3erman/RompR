@@ -1,24 +1,3 @@
-var genreRadio = function() {
-
-	return {
-
-		setup: function() {
-			//
-			// Genre (Music from Everywhere)
-			//
-			if (player.hasOnlineSources()) {
-				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-music', language.gettext('label_genre'), 'genre_radio'));
-				$('button[name="genre_radio"]').on(prefs.click_event, function() {
-					var v = $('#genre_radio').val();
-					if (v != '') {
-						playlist.radioManager.load('genreRadio', v);
-					}
-				});
-			}
-		}
-	}
-}();
-
 var faveArtistRadio = function() {
 
 	return {
@@ -125,11 +104,27 @@ var recommendationsRadio = function() {
 	}
 }();
 
+var yourMixRadio = function() {
+
+	return {
+
+		setup: function() {
+
+			if (player.hasOnlineSources()) {
+				//
+				// Recommendations For You
+				//
+				$('#pluginplaylists_everywhere').append(playlist.radioManager.standardBox('yourMixRadio', null, 'icon-wifi', language.gettext('label_radio_yourmix')));
+			}
+		}
+	}
+}();
+
 
 playlist.radioManager.register("recommendationsRadio", recommendationsRadio, 'radios/code/recommendationsradio.js');
+playlist.radioManager.register("yourMixRadio", yourMixRadio, 'radios/code/yourmixradio.js');
 playlist.radioManager.register("faveArtistRadio", faveArtistRadio, 'radios/code/faveartistradio.js');
 playlist.radioManager.register("mixRadio", mixRadio, 'radios/code/mixradio.js');
 playlist.radioManager.register("singleArtistRadio", singleArtistRadio, 'radios/code/singleartistradio.js');
-playlist.radioManager.register("genreRadio", genreRadio,'radios/code/genreradio.js');
 playlist.radioManager.register("lastFMTrackRadio", lastFMTrackRadio, 'radios/code/lastfmtrackradio.js');
 playlist.radioManager.register("lastFMArtistRadio", lastFMArtistRadio, 'radios/code/lastfmartistradio.js');

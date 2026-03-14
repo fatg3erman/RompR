@@ -66,8 +66,6 @@ class prefs {
 
 		"preferlocalfiles" => false,
 		"mopidy_collection_folders" => array("Local media"),
-		"lastfm_country_code" => "",
-		"country_userset" => false,
 		"debug_enabled" => 0,
 		"custom_logfile" => "",
 		"cleanalbumimages" => true,
@@ -81,9 +79,6 @@ class prefs {
 		'use_mopidy_scan' => false,
 		'collection_load_timeout' => 3600000,
 		"smartradio_chunksize" => 5,
-		"linkchecker_nextrun" => 0,
-		"link_checker_frequency" => 604800,
-		"link_checker_is_running" => false,
 		"audiobook_directory" => '',
 		"audiobookgenres" => array('Spoken Word'),
 		"collection_player" => null,
@@ -198,7 +193,6 @@ class prefs {
 		"wheelscrollspeed" => "150",
 		"displayremainingtime" => true,
 		"cdplayermode" => false,
-		"auto_discovembobulate" => false,
 
 		"sleeptime" => 30,
 		"sleepon" => false,
@@ -687,10 +681,6 @@ class prefs {
 			self::$prefs['lastfm_sync_frequency'] = round(self::$prefs['lastfm_sync_frequency'] / 1000);
 			if (self::$prefs['next_lastfm_synctime'] > 1000)
 				self::$prefs['next_lastfm_synctime'] = round(self::$prefs['next_lastfm_synctime'] / 1000);
-		}
-
-		if (self::$prefs['linkchecker_nextrun'] > 999999999999) {
-			self::$prefs['linkchecker_nextrun'] = round(self::$prefs['linkchecker_nextrun'] / 1000);
 		}
 
 		if (self::$prefs['sortbycomposer']) {

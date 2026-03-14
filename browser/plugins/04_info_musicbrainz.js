@@ -31,7 +31,7 @@ var info_musicbrainz = function() {
 		return (year_a > year_b) ? 1 : -1;
 	}
 
-	function getArtistHTML(layout, data) {
+	function getArtistHTML(layout, data, artistmeta, artistobj) {
 		if (data.error) {
 			layout.display_error(data.error);
 			layout.finish(null, null);
@@ -91,6 +91,8 @@ var info_musicbrainz = function() {
 			'discography_'+data.id,
 			language.gettext("discogs_discography", [data.name.toUpperCase()])
 		)
+
+		artistmeta.musicbrainz.bioholder = layout.add_non_flow_box();
 
 		layout.finish('http://musicbrainz.org/artist/'+data.id, data.name);
 
@@ -536,6 +538,7 @@ var info_musicbrainz = function() {
 				// as well as the ones we want ourselves
 				parent.updateData({
 					disambiguation: '',
+					done_bio: false,
 					lastfm: {
 						musicbrainz_id: ''
 					},
@@ -791,7 +794,7 @@ var info_musicbrainz = function() {
 					source: me,
 					withbannerid: false
 				});
-				getArtistHTML(layout, artistmeta.musicbrainz[id]);
+				getArtistHTML(layout, artistmeta.musicbrainz[id], artistmeta, self.artist);
 				$('div[name="'+id+'"]').each(function() {
 					if (!$(this).hasClass('full')) {
 						$(this).empty().append(layout.get_contents());
@@ -892,7 +895,7 @@ var info_musicbrainz = function() {
 					},
 
 					doBrowserUpdate: function(data) {
-						getArtistHTML(artistmeta.musicbrainz.layout, data);
+						getArtistHTML(artistmeta.musicbrainz.layout, data, artistmeta, self.artist);
 					}
 				}
 			}();

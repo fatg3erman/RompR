@@ -161,9 +161,12 @@ class cache_cleaner extends database {
 		$ll = $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
 		foreach ($ll as $album) {
 			$ad = json_decode($album['JsonData'], true);
-			if (array_key_exists('albumimage', $ad)) {
-				if (strpos($ad['albumimage']['small'], 'albumart/') === 0)
-					$images[] = $ad['albumimage']['small'];
+			if (array_key_exists('images', $ad)) {
+				foreach ($ad['images'] as $image) {
+					if (strpos($image['url'], 'albumart/asdownloaded') === 0) {
+						$images[] = str_replace('asdownloaded', 'small', $image['url']);
+					}
+				}
 			}
 		}
 		return array_unique($images);

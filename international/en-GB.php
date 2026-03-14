@@ -257,6 +257,7 @@ language::add_translations([
 
 	// Last.FM Info Panel
 	"button_infolastfm" =>					"Info Panel (Last.FM)",
+	"button_infoallmusic" =>				"Info Panel (Allmusic)",
 	"label_notrackinfo" =>					"Could not find information about this track",
 	"label_noalbuminfo" =>					"Could not find information about this album",
 	"label_noartistinfo" =>					"Could not find information about this artist",
@@ -478,9 +479,9 @@ language::add_translations([
 	"label_radio_recommend" =>				"Recommendations based on this %s",
 	"label_amendalbum" =>					"Amend Album Details",
 	"label_radio_recommended" =>			"Recommendations For You",
+	"label_radio_yourmix" =>				"Your Monthly Mix",
 
 	//CHANGED in 0.60
-	"config_country" =>						"COUNTRY (for Spotify)",
 	"setup_labeladdresses" =>				"If you are having connection issues, try using an IP address instead of 'localhost'",
 	"setup_ipaddress" =>					"Mopidy or mpd server",
 
@@ -497,9 +498,7 @@ language::add_translations([
 	"played_n" =>							"This track has been played %s times",
 	"played_last" =>						"It was last played on %s",
 	"added_on" =>							"It was added to the collection on %s",
-	"button_infoyou" =>						"The Discoverator",
 	"discover_now" =>						"Track Suggestions Based On %s",
-	"config_discovembobulate" =>			"Open Discoverator On Start",
 	"label_spotify_mix" =>					"Spotify Weekly Mix",
 	"label_spotify_dj" =>					"Spotify Swim",
 	"label_spottery_lottery" =>				"Spotify Surprise!",
@@ -550,7 +549,7 @@ language::add_translations([
 	"label_choosefiles" =>					"Choose File(s)",
 	"label_changevery" =>					"Change Every",
 	"label_albumstolistento" =>				"Albums To Listen To",
-	"no_albumtolistento" =>					"You can add any Spotify album to this list from the Info Panel, you can then come back and check them out at your leisure.",
+	"no_albumtolistento" =>					"You can add albums from online sources to this list to come back and listen to later.",
 	"label_addedtolistenlater" =>			"Added To Albums To Listen To",
 	"label_all_time" =>						"Entire Collection",
 	"label_today" =>						"Added Today",
@@ -627,19 +626,11 @@ language::add_translations([
 	"importer_status" =>					"Done %s of %s. Elapsed %s, Remaining %s",
 	"label_playcount" =>					"Playcount",
 	"label_lfm_playcount" =>				"Last.FM Playcount",
-	"label_norecdata" =>					"Once RompЯ has gathered some data, it will show recommendations here. Play some music!",
-	"label_dailymixdesc" =>					"A playlist just for you, a mix of tracks you know and new music you might love. Powered by %s",
-	"label_luckydipdesc" =>					"A radio station just for you, playing a wider range of music by artists you know and artists you don't yet love. Powered by %s",
-	"label_goonlogin" =>					"Log in to Last.FM and start scrobbling. RompЯ can then delight you with new music you're going to love!",
-	"label_nospotify" =>					"Use Mopidy with a Spotify, Youtube Music, or Qobuz subscription so RompЯ can delight you with new music you're going to love!",
-	"label_spotimixdesc" =>					"A radio station of suggestions based on your recent listening. Powered by RompЯ and Spotify",
-	"label_spotiswimdesc" =>				"Scanning the vastness of Spotify. Powered by RompЯ and Spotify",
 	"label_opmlexp" =>						"OPML Export",
 	"button_opmlexp" =>						"Export Podcasts As OPML",
 	"button_selectall" =>					"Select All",
 	"button_selectnone" =>					"Select None",
 	"button_import" =>						"Import Selected",
-	"label_onlyspotify" =>					"This panel is only applicable if your player can play Spotify",
 	// NOTE: Sunday MUST be first
 	"label_daylabels" => array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
 	"label_alarm_play_specific" =>			"Play This Item :",
@@ -717,9 +708,6 @@ language::add_translations([
 	"setup_mopidy_scan" =>					'Allow RompR to run mopidy local scan when creating the Music Collection',
 	"setup_mopidy_scan_title" =>			'Mopidy Special Options',
 	"label_upnext" =>						'Up Next',
-	// "config_consumeworkaround" =>			'Work Around Mopidy Consume Bug (Read the Docs First)',
-	// "warn_consumearound" =>					'Please DISABLE consume before enabling this option',
-	// "msg_consumearound" =>					'Read the Docs about this option. You must be running romonitor for it to work',
 	"podcast_display_nud" =>				'New, Unlistened, & Downloaded',
 	"label_usetrackimages" =>				'Scan each track for an image',
 	"label_unusetrackimages" =>				'Do not scan each track for an image',
@@ -733,7 +721,6 @@ language::add_translations([
 	"config_browserid" =>					'Browser ID',
 	"button_clearwishlist" =>				'Clear Wishlist',
 	"label_mfyc" =>							'Music From Your Collection',
-	"label_mfsp" =>							'Music From Spotify',
 	"label_mfe" =>							'Music From Everywhere',
 	"label_playqueue" =>					'Play Queue',
 	"label_numplays" =>						'%s Plays',
@@ -770,7 +757,8 @@ language::add_translations([
 	"label_interrupt" =>					'Interrupt Play Queue',
 	"label_notwhilestopped" =>				'Not supported while playback is stopped',
 	"config_brave_credentials" =>			"Brave Search API Credentials",
-	"config_audiobook_genres" =>			"Detect Spoken Word by Genre(s)"
+	"config_audiobook_genres" =>			"Detect Spoken Word by Genre(s)",
+	"label_get_album_art" =>				"Set Album Art"
 
 	// ----------------------------------------------------
 	// Proobaly Unused

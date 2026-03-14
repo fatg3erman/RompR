@@ -55,7 +55,7 @@ class uibits extends ui_elements {
 					$who,
 					$when,
 					array_merge($obj, ['buttons' => false, 'iconclass' => 'fixed']),
-					false
+					$obj['ImgKey']
 				);
 			}
 		}

@@ -35,7 +35,7 @@ if (($f = @fopen('albumart/test.tmp', 'w')) == false) {
 	unlink('albumart/test.tmp');
 }
 
-if (file_exists('collection/collection.php') || is_dir('themes/fruit') || file_exists('radios/musicfromspotify.js')) {
+if (file_exists('collection/collection.php') || is_dir('themes/fruit') || file_exists('radios/musicfromspotify.js') || file_exists('browser/helpers/spotify.js')) {
 	big_bad_fail('Remains of an earlier installation still exist. To install this version of RompЯ you must
 		delete <b>everything except your albumart and prefs directories</b> and then copy the new version
 		into your rompr directory.');
@@ -113,29 +113,9 @@ if (array_key_exists('cacheclean', $_REQUEST)) {
 }
 
 //
-// Do some initialisation of the backend directories. Must do this now,
-// since we almost immediately start calling spotify:: methods which require
-// cache_handler, so these directories need to exist
+// Do some initialisation of the backend directories.
 //
 include ("includes/firstrun.php");
-
-//
-// Set the country code from the browser (though this may not be accurate)
-// - unless the user has already set it. Note, this is the Spotify 'market'
-// code, not the interface language.
-//
-
-if (!prefs::get_pref('country_userset')) {
-	logger::info('INIT', 'Country Code not sent by user');
-	$browser_country = language::get_browser_country();
-	$markets = spotify::get_markets();
-	if (in_array($browser_country, $markets)) {
-		logger::info('INIT', 'Browser gave us',$browser_country,'which is valid for Spotify');
-		prefs::set_pref(['lastfm_country_code' => $browser_country]);
-	} else {
-		logger::info('INIT', 'Browser gave us',$browser_country,'which is NOT valid for Spotify');
-	}
-}
 
 logger::debug("INIT", $_SERVER['SCRIPT_FILENAME']);
 logger::debug("INIT", $_SERVER['PHP_SELF']);

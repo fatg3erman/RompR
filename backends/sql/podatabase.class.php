@@ -641,7 +641,7 @@ class poDatabase extends database {
 			$aa = $aa . ' - ';
 		}
 		$pm = $y->PODindex;
-		uibits::trackControlHeader('','','podcast_'. $pm, null, ['Image' => $y->Image, 'Albumname' => $y->Title], false);
+		uibits::trackControlHeader('','','podcast_'. $pm, null, ['Image' => $y->Image, 'Albumname' => $y->Title, 'ImgKey' => null], false);
 		print '<div class="whatdoicallthis">'.format_podcast_text($y->Description).'</div>';
 		if ($y->Subscribed == 1) {
 			print '<div class="containerbox bumpad">';
@@ -945,7 +945,7 @@ class poDatabase extends database {
 			'extralines' => $extralines
 		));
 
-		print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu notfilled is-albumlist">';
+		print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu notfilled is-albumlist poddiddly">';
 		print uibits::ui_config_header(['label' => 'label_loading']);
 		print '</div>';
 	}

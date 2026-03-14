@@ -1,10 +1,25 @@
 # Changelog
 
+## Version 2.26
+
+### In order to upgrade to this version you must delete everything from your installation except your prefs and albumart directories, then copy the new version in.
+
+* Fix bug where genres in the collection could be very slow to open
+* Fix bug with MPD support where RompR would try to connect to the websocket server even if it isn't running, leading to very slow UI updates.
+### Spotify Spoils It For Everybody
+* Spotify have moved their API behind a paywall. If I want to keep using it I have to have a Spotify premium subscription, and I don't want one of those. While it might have been possible to let users supply their own Spotify credentials, I would never have been able to test any Spotify-related code so it's not workable. All functionaility that used Spotify's API has been removed:
+* The Spotify Info panel
+* Genre radio under 'Music from Everywhere'
+* The Discoverator
+* The 3 Spotify Personalised Radio stations
+
+
 ## Version 2.25
 
 ### If upgrading from a version before 2.00 please read the notes for version 2.00 before continuing.
 
 * Fix bug where TuneIn radio stations didn't work for MPD users. (Was fixed in 2.24 but this is a better fix)
+* You can now select, upload, and modify album art right from the collection browser
 
 
 ## Version 2.22

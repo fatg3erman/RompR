@@ -400,3 +400,428 @@ Array.prototype.equals = function (array) {
 }
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
+
+var imageEditor = function() {
+
+	var offset = 0;
+	var position = null;
+	var bigdiv = null;
+	var bigimg = new Image();
+	var imgobj = null;
+	var imagekey = '';
+	var currparent = null;
+	var currhighlight = null;
+	var currname = null;
+	var current = "g";
+	var clickindex = null;
+	var nosource = false;
+	var searchcontent;
+	var localimages;
+	bigimg.onload = function() {
+		imageEditor.displayBigImage();
+	}
+
+	function startAnimation() {
+		imgobj.removeClass('nospin').removeAttr('src').addClass('spinner');
+	}
+
+	function animationStop() {
+		imgobj.removeClass('spinner').addClass('nospin');
+	}
+
+	// Ceci n'est pas une commentaire
+
+	function updateImage(url, index) {
+		clickindex = index;
+		imgobj.removeClass('notfound notexist').addClass('notfound');
+		imageEditor.updateBigImg(true);
+		startAnimation();
+		var formData = coverscraper.getImageFormParams(imgobj);
+		formData.append('source', url);
+		fetch(
+			"utils/getalbumcover.php",
+			{
+				method: 'POST',
+				body: formData,
+				signal: AbortSignal.timeout(30000),
+				priority: 'low'
+			}
+		)
+		.then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error('Ah balls');
+			}
+		})
+		.then(data => { imageEditor.uploadComplete(data) })
+		.catch(imageEditor.searchFail);
+	}
+
+	return {
+
+		show: async function(where) {
+			var newpos = get_image_newpos(where);
+			if (where.attr('name') == currname) {
+				imageEditor.close();
+				return true;
+			}
+			if (currparent !== null) {
+				imageEditor.close();
+			}
+			currname = where.attr('name');
+			bigdiv = create_imageeditor(newpos);
+			bigdiv.on(prefs.click_event, imageEditor.onGoogleSearchClicked);
+			offset = 0;
+			currhighlight = where.parent();
+			currhighlight.addClass('highlighted');
+			currparent = newpos;
+			currparent.addClass('imageeditor-opened');
+
+			bigimg.src = "";
+			bigdiv.empty();
+			imgobj = where;
+			imagekey = imgobj.attr('name');
+			nosource = (imgobj.hasClass('notfound') || imgobj.hasClass('notexist'));
+			var deets = await get_album_deets(imgobj);
+			var phrase = deets.phrase;
+			var path = deets.path;
+			debug.trace('ALBUMART','Local Path Is',path);
+
+			bigdiv.append($('<div>', { id: "searchcontent" }));
+			bigdiv.append($('<div>', { id: "origimage"}).append($("<img>", { id: 'browns' })));
+
+			$("#searchcontent").append( $('<div>', {id: "editcontrols", class: "clearfix fullwidth"}),
+										$('<div>', {id: "gsearch", class: "noddy fullwidth invisible"}),
+										$('<div>', {id: "fsearch", class: "noddy fullwidth invisible"}),
+										$('<div>', {id: "usearch", class: "noddy fullwidth invisible"}));
+
+			$("#"+current+"search").removeClass("invisible");
+
+			$("#gsearch").append(       $('<div>', {id: "brian", class: "fullwidth"}),
+										$('<div>', {id: "searchresultsholder", class: "fullwidth"}));
+
+			$("#searchresultsholder").append($('<div>', {id: "searchresults", class: "containerbox fullwidth wrap"}));
+
+			$("#fsearch").append(		$('<div>', {id: "localresultsholder", class: "fullwidth"}));
+
+			$("#localresultsholder").append($('<div>', {id: "localresults", class: "containerbox fullwidth wrap"}));
+
+			var fdiv =                  $('<div>', {class: "fullwidth"}).appendTo('#usearch');
+			var uform =                 $('<form>', { id: 'uform', action: 'utils/getalbumcover.php', method: 'post', enctype: 'multipart/form-data' }).appendTo(fdiv);
+			uform.append(               $('<input>', { id: 'uploadkey', type: 'hidden', name: 'key', value: '' }),
+										$('<input>', { id: 'uploadartist', type: 'hidden', name: 'artist', value: '' }),
+										$('<input>', { id: 'uploadalbum', type: 'hidden', name: 'album', value: '' }),
+						);
+			var fb =                    $('<div>', {class: 'filebutton textcentre'}).appendTo(uform);
+			var inp =                   $('<input>', { name: 'ufile', type: 'file', id: 'ufile', class: 'inputfile'}).appendTo(fb);
+			inp.on('change', function() {
+				var filename = $(this).val().replace(/.*(\/|\\)/, '');
+				$(this).next().html(filename);
+				$(this).parent().next('input[type="button"]').fadeIn('fast');
+			});
+			var lab =                   $('<label>', { for: 'ufile' }).appendTo(fb);
+			lab.html(language.gettext('label_choosefile'));
+			var but =                   $('<input>', { type: 'button', class: 'invisible fixed', value: language.gettext("albumart_uploadbutton") }).appendTo(uform);
+			but.on(prefs.click_event, imageEditor.uploadFile);
+
+			$("#usearch").append(      '<div class="holdingcell"><p>'+language.gettext("albumart_dragdrop")+'</p></div>');
+
+			$("#editcontrols").append(  '<div id="g" class="tleft bleft clickable clickicon bmenu">'+language.gettext("albumart_googlesearch")+'</div>');
+			if (path && path != '.') {
+				$("#editcontrols").append( '<div id="f" class="tleft bleft bmid clickable clickicon bmenu">'+language.gettext("albumart_local")+'</div>');
+			}
+			$("#editcontrols").append(  '<div id="u" class="tleft bleft bmid clickable clickicon bmenu">'+language.gettext("albumart_upload")+'</div>'+
+										'<div class="tleft bleft bmid clickable clickicon"><a href="http://www.google.com/search?q='+phrase+'&hl=en&site=imghp&tbm=isch" target="_blank">'+language.gettext("albumart_newtab")+'</a></div>');
+
+			$("#editcontrols").append(  $('<i>', { class: "icon-cancel-circled smallicon tright clickicon", onclick: "imageEditor.close()"}));
+
+			$("#"+current).addClass("bsel");
+
+			$("#brian").append('<div class="containerbox"><div class="expand"><input class="enter clearbox" type="text" id="searchphrase" /></div><button class="fixed" onclick="imageEditor.research()">Search</button></div>');
+
+			$("#searchphrase").val(phrase);
+
+			if (imgobj.attr("src")) {
+				var aa = new albumart_translator(imgobj.attr("src"));
+				bigimg.src = aa.getSize('asdownloaded');
+			}
+
+			imageEditor.search();
+			if (path && path != '.') {
+				fetch(
+					"utils/findLocalImages.php?path="+encodeURIComponent(path),
+					{
+						priority: 'low',
+						cache: 'no-store',
+						signal: AbortSignal.timeout(10000)
+					}
+				)
+				.then(response => {
+					if (response.ok) {
+						return response.json();
+					} else {
+						throw new Error(response.statusText);
+					}
+				})
+				.then(data => { imageEditor.gotLocalImages(data) })
+				.catch(err => { debug.error('LOCALIMAGES', err) });
+			}
+
+			var searchparams = coverscraper.getImageSearchParams(imgobj);
+			$('input#uploadkey').val(searchparams.key);
+			$('input#uploadartist').val(searchparams.artist);
+			$('input#uploadalbum').val(searchparams.album);
+			$('#searchphrase').on('keyup', imageEditor.bumblefuck);
+			wobbleMyBottom();
+			if (prefs.has_custom_scrollbars && $('#coverslist').length > 0)
+				$('#coverslist').mCustomScrollbar('scrollTo', $('#imageeditor').parent());
+		},
+
+		setWidth: function() {
+			if (bigdiv) {
+				var l = Math.max(currparent.position().left - 4, 0);
+				var w = Math.max((currparent.width() + currparent.position().left - l), (currparent.parent().width() - 8));
+				bigdiv.css({
+					width: w+"px",
+					left: "-"+l+"px"
+				});
+
+			}
+		},
+
+		setHeight: function() {
+			var t = imgobj.offset().top;
+			var ws = getWindowSize();
+			var h = ws.y - t - 16;
+			if (h < 400) {
+				t = Math.max(0, t-(400-h));
+				h = ws.y - t - 16;
+			}
+			bigdiv.css({top: t+'px', height: h+'px'});
+		},
+
+		close: function() {
+			bigdiv.remove();
+			bigdiv = null;
+			currhighlight.removeClass('highlighted');
+			currparent.removeClass('imageeditor-opened');
+			currhighlight = null;
+			currparent = null;
+			currname = null;
+			curval = null;
+		},
+
+		displayBigImage: function() {
+			if (bigdiv) {
+				$('#browns').attr('src', bigimg.src).css('opacity', 1);
+			}
+		},
+
+		research: function() {
+			$("#searchresults").empty();
+			offset = 0;
+			imageEditor.search();
+		},
+
+		search: function() {
+			debug.log("BRAVE", "Searching with offset", offset);
+			brave.image.search(
+				$("#searchphrase").val(),
+				offset,
+				imageEditor.braveSearchComplete,
+				imageEditor.braveSearchComplete,
+			);
+		},
+
+		braveSearchComplete: function(data) {
+			debug.debug("IMAGEEDITOR","Brave Search Results", data);
+			$("#morebutton").remove();
+			if (data.results) {
+				var i = 0;
+				data.results.forEach(function(image) {
+					if (!image.properties.width)
+						image.properties.width = '?';
+					if (!image.properties.height)
+						image.properties.height = '?';
+					$('#searchresults').append(imageEditor.imageResult(
+						{
+							thumbnail: image.thumbnail.src,
+							dimensions: image.properties.width.toString()+'x'+image.properties.height.toString(),
+							hostpage: image.source,
+							title: image.title,
+							name: image.name,
+							id: i,
+							fullurl: image.properties.url
+						}
+					));
+					i++;
+				});
+				if (data.more_results_available && data.more_results_available == 'true') {
+					offset += 20;
+					$("#searchresultsholder").append('<div id="morebutton" class="fullwidth"><button onclick="imageEditor.search()">'+language.gettext("albumart_showmore")+'</button></div>');
+				}
+			} else if (data.error) {
+				$('#searchresults').append('<h3>'+data.error+'</h3>');
+			}
+
+		},
+
+		imageResult: function(options) {
+			var holder = $('<div>', {class: 'fixed albumimg closet'});
+			var container = $('<div>', {class: 'covercontainer'}).appendTo(holder);
+			container.append($('<img>', {class: 'clickable clickicon clickgimage', src: options.thumbnail, id: options.id}));
+			container.append($('<input>', {type: 'hidden', value: options.fullurl}));
+			if (options.name)
+				container.append($('<div>', {class: 'playlistrow2 breakall'}).html(options.name));
+			if (options.dimensions)
+				container.append($('<div>', {class: 'playlistitem'}).html(options.dimensions));
+			if (options.title)
+				container.append($('<div>', {class: 'playlistitem'}).html(options.title));
+			if (options.hostpage)
+				container.append($('<div>', {class: 'playlistrow2'}).html(options.hostpage));
+			return holder;
+		},
+
+		onGoogleSearchClicked: function(event) {
+			var clickedElement = findClickableElement(event);
+			if (clickedElement.hasClass("clickgimage")) {
+				debug.trace("ALBUMART","Search Result clicked :",clickedElement.next().val(), clickedElement.prop('id'));
+				event.stopImmediatePropagation();
+				updateImage(clickedElement.next().val(), clickedElement.prop('id'));
+			} else if (clickedElement.hasClass("bmenu")) {
+				var menu = clickedElement.attr("id");
+				$(".noddy").filter(':visible').fadeOut('fast', function() {
+					$("#"+menu+"search").fadeIn('fast');
+				});
+				$(".bleft").removeClass('bsel');
+				clickedElement.addClass('bsel');
+				current = menu;
+			}
+		},
+
+		updateBigImg: function(url) {
+			$("#browns").css('opacity', 0);
+			if (typeof url == "string") {
+				bigimg.src = url;
+			}
+		},
+
+		showError: function(message) {
+			debug.warn("IMAGEEDITOR","Error - ",message);
+			$("#morebutton").remove();
+			$("#searchresults").append('<h3>'+language.gettext("albumart_googleproblem")+' "'+message+'"</h3>');
+		},
+
+		gotLocalImages: function(data) {
+			debug.debug("ALBUMART","Retreived Local Images: ",data);
+			if (data && data.error) {
+				$("#localresults").html('<h3>'+data.error+'</h3>');
+			} else if (data && data.length > 0) {
+				if (data.hasOwnProperty('error')) {
+				} else {
+					data.forEach(function(image) {
+						$("#localresults").append(imageEditor.imageResult({
+							thumbnail: image,
+							dimensions: false,
+							hostpage: false,
+							name: image.split(/[\\/]/).pop(),
+							id: hex_md5(image),
+							fullurl: image
+						}));
+					});
+				}
+			}
+		},
+
+		bumblefuck: function(e) {
+			if (e.keyCode == 13) {
+				imageEditor.research();
+			}
+		},
+
+		uploadFile: function() {
+			imgobj.removeClass('notfound notexist').addClass('notfound');
+			imageEditor.updateBigImg(true);
+			startAnimation();
+			var formElement = document.getElementById("uform");
+			var formData = new FormData(formElement);
+			fetch(
+				"utils/getalbumcover.php",
+				{
+					method: 'POST',
+					signal: AbortSignal.timeout(20000),
+					priority: 'low',
+					body: formData
+				}
+			)
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error('Balls '+response.status+' '+response.statusText);
+				}
+			})
+			.then(data => { imageEditor.uploadComplete(data) })
+			.catch(err => {
+				debug.error('ALBUMART', 'Upload Failed '+err);
+				imageEditor.searchFail();
+			});
+		},
+
+		uploadComplete: function(data) {
+			debug.log("ALBUMART","Upload Complete");
+			if (data.small) {
+				animationStop();
+				debug.trace("ALBUMART","Success for",imagekey);
+				if (nosource) {
+					coverscraper.updateInfo(1);
+					nosource = false;
+				}
+				imgobj.removeClass("notexist notfound");
+				var firefoxcrapnesshack = Math.floor(Date.now());
+				imgobj.attr('src', data.medium+'?version='+firefoxcrapnesshack.toString());
+				imageEditor.updateBigImg(data.asdownloaded+'?version='+firefoxcrapnesshack.toString());
+				sendLocalStorageEvent(imagekey, data);
+			} else {
+				searchFail();
+			}
+		},
+
+		searchFail: function() {
+			debug.info("ALBUMART","No Source Found");
+			$('#'+clickindex).attr('src', 'newimages/imgnotfound.svg');
+			imgobj.removeClass('notfound notexist').addClass('notexist');
+			imageEditor.updateBigImg(false);
+			animationStop();
+		},
+
+		handleDrop: function(ev) {
+			debug.log("ALBUMART","Dropped",ev);
+			evt = ev.originalEvent;
+			$(ev.target).removeClass("highlighted");
+			imgobj = $(ev.target);
+			imagekey = imgobj.attr("name");
+			nosource = (imgobj.hasClass('notfound') || imgobj.hasClass('notexist'));
+			clickindex = null;
+			dropProcessor(ev.originalEvent, imgobj, coverscraper, imageEditor.uploadComplete, imageEditor.searchFail);
+		}
+
+
+	}
+
+}();
+
+function findClickableElement(event) {
+
+	var clickedElement = $(event.target);
+	// Search upwards through the parent elements to find the clickable object
+	while (!clickedElement.hasClass("clickable") &&
+			clickedElement.prop("id") != "wobblebottom" &&
+			clickedElement.prop("id") != "imageeditor" &&
+			clickedElement.prop("id") != "searchcontent") {
+		clickedElement = clickedElement.parent();
+	}
+	return clickedElement;
+
+}

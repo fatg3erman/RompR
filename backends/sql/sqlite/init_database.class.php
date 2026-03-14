@@ -49,7 +49,6 @@ class init_database extends init_generic {
 			DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			isSearchResult TINYINT(1) DEFAULT 0,
 			Sourceindex INTEGER DEFAULT NULL,
-			LinkChecked TINYINT(1) DEFAULT 0,
 			isAudiobook TINYINT(1) DEFAULT 0,
 			justAdded TINYINT(1) DEFAULT 1,
 			usedInPlaylist TINYINT(1) DEFAULT 0,
@@ -923,6 +922,12 @@ class init_database extends init_generic {
 					logger::log("SQL", "Updating FROM Schema version 105 TO Schema version 106");
 					prefs::upgrade_host_defs(105);
 					$this->set_admin_value('SchemaVer', 106);
+					break;
+
+				case 106:
+					logger::log("SQL", "Updating FROM Schema version 106 TO Schema version 107");
+					$this->generic_sql_query("ALTER TABLE Tracktable DROP COLUMN  LinkChecked", true);
+					$this->set_admin_value('SchemaVer', 107);
 					break;
 
 			}

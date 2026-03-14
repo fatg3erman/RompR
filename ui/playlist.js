@@ -1116,7 +1116,7 @@ function Album(artist, album, index, rolledup) {
 		var controls = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner)
 		controls.append('<i class="icon-cancel-circled inline-icon tooltip expand clickplaylist clickicon clickremovealbum" title="'+language.gettext('label_removefromplaylist')+'" name="'+self.index+'"></i>');
 
-		if (tracks[0]['X-AlbumUri'] && ['youtube', 'ytmusic', 'spotify'].indexOf(tracks[0]['domain']) >= 0) {
+		if (tracks[0]['X-AlbumUri'] && ['youtube', 'ytmusic', 'spotify', 'qobuz'].indexOf(tracks[0]['domain']) >= 0) {
 			let menu = $('<i>', {class: "expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse", uri: tracks[0]['X-AlbumUri']}).appendTo(controls);
 			// controls.append('<i class="expand icon-menu clickable clickicon inline-icon clickalbummenu clickaddtollviabrowse clickaddtocollectionviabrowse" uri="'+tracks[0]['X-AlbumUri']+'"></i>');
 		}

@@ -26,7 +26,6 @@ If you were previously using romonitor to scrobble to last.FM, then you now need
 * Updates Playcounts
 * Syncs Playcounts from Last.FM
 * Tidies the Backend Cache
-* Checks for unplayable/relinked Spotify tracks
 * When you're using Mopidy it takes care of consuming the tracklist, because Mopidy's consume is broken.
 * Runs Personalised Radio Stations
 

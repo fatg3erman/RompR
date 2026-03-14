@@ -97,7 +97,7 @@ def connect_to_mpd():
 
 
 
-async def register_handler(websocket, path):
+async def register_handler(websocket, path=None):
 	CONNECTIONS.add(websocket)
 	try:
 		await websocket.wait_closed()

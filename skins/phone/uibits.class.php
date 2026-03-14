@@ -93,8 +93,8 @@ class uibits extends ui_elements {
 
 		$albumimage = new baseAlbumImage(array('baseimage' => $dets['Image']));
 		$images = $albumimage->get_images();
-		$html .= '<div class="album-menu-header"><img class="album_menu_image" src="'.$images['asdownloaded'].'" /></div>';
-		$html .= self::make_track_control_buttons($why, $what, $who, $when, $dets);
+		$html .= '<div class="album-menu-header"><img class="album_menu_image" name="'.$dets['ImgKey'].'" src="'.$images['asdownloaded'].'" /></div>';
+		$html .= self::make_track_control_buttons($why, $what, $who, $when, $dets, $dets['ImgKey']);
 		print $html;
 	}
 
