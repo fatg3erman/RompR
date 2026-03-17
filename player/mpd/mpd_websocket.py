@@ -12,6 +12,7 @@ CONNECTIONS = set()
 connected = False
 args = None
 
+
 # You MUST pass currenthost and it MUST be the first argument,
 # Otherwise the PHP code will keep trying to create new instances of this.
 # If you're starting this as a daemon you MUST pass the parameters in the
