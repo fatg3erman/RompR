@@ -646,21 +646,21 @@ div.rightmenu
 }
 
 @media screen and (max-height: 1099px) {
-	.infobarlayout {
+	body.desktopbrowser .infobarlayout {
 		height:160px;
 	}
-	#albumcover {
+	body.desktopbrowser #albumcover {
 		height: 182px;
 	}
-	#albumpicture {
+	body.desktopbrowser #albumpicture {
 		height: 178px;
 		padding: 2px;
 	}
-	#nowplaying {
+	body.desktopbrowser #nowplaying {
 		height: 130px;
 	}
 
-	.controlbutton-small
+	body.desktopbrowser .controlbutton-small
 	{
 		width:26px !important;
 		height:26px !important;
@@ -668,16 +668,51 @@ div.rightmenu
 		margin-left:4px !important;
 	}
 
-	.controlbutton
+	body.desktopbrowser .controlbutton
 	{
 		width:36px !important;
 		height:36px !important;
 		margin-top:6px !important;
 	}
 
-	.smallpluginicon
+	body.desktopbrowser .smallpluginicon
 	{
 		height: 20px !important;
+		width: 18px !important;
+	}
+
+	body.mobilebrowser .infobarlayout {
+		height:180px;
+	}
+	body.mobilebrowser #albumcover {
+		height: 202px;
+	}
+	body.mobilebrowser #albumpicture {
+		height: 198px;
+		padding: 2px;
+	}
+	body.mobilebrowser #nowplaying {
+		height: 150px;
+	}
+
+	body.mobilebrowser .controlbutton-small
+	{
+		width:30px !important;
+		height:30px !important;
+		margin-top:6px !important;
+		margin-left:4px !important;
+	}
+
+	body.mobilebrowser .controlbutton
+	{
+		width:38px !important;
+		height:38px !important;
+		margin-top:6px !important;
+	}
+
+	body.mobilebrowser .smallpluginicon
+	{
+		height: 24px !important;
 		width: 18px !important;
 	}
 }
