@@ -596,6 +596,10 @@ var prefs = function() {
 			if (prefs.clickmode == 'double') {
 				$('<style id="click_double">body.phone .timerspacer { display: none }</style>').appendTo('head');
 			}
+
+			if (prefs.touch_help) {
+				$('body').removeClass('desktopbrowser').removeClass('mobilebrowser').addClass('mobilebrowser');
+			}
 		},
 
 		save: async function(options, callback) {
@@ -749,8 +753,20 @@ var prefs = function() {
 					callback = playlist.repopulate;
 					break;
 
+				case "touch_help":
+					callback = prefs.set_touch_help;
+					break;
+
 			}
 			prefs.save(prefobj, callback);
+		},
+
+		set_touch_help: function() {
+			if (prefs.touch_help) {
+				$('body').removeClass('desktopbrowser').addClass('mobilebrowser');
+			} else {
+				$('body').removeClass('mobilebrowser').addClass('desktopbrowser');
+			}
 		},
 
 		toggleRadio: function(event) {

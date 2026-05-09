@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 2.27
+
+* Option to increase the spacing around some of the icons to help on PCs with touchscreens. RompR will detect these
+as primarily mouse interfaces and that makes some of the controls a little too closely spaced, at least for my
+chubby fingers.
+
+
 ## Version 2.26
 
 ### In order to upgrade to this version you must delete everything from your installation except your prefs and albumart directories, then copy the new version in.

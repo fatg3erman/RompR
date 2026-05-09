@@ -299,6 +299,8 @@ class prefspanel extends uibits {
 				'size' => 4,
 				'id' => 'stupid_rounded_corner_buffer_size'
 			]);
+		} else {
+			self::ui_checkbox(['id' => 'touch_help', 'label' => 'config_touch_help']);
 		}
 
 		self::prefs_mouse_options();

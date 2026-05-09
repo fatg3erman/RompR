@@ -209,7 +209,8 @@ class prefs {
 		"somafm_quality" => 'highest_available_quality',
 		"stupid_rounded_corner_buffer_size" => 0,
 		"skip_amount" => 10,
-		"fadetime" => 1
+		"fadetime" => 1,
+		"touch_help" => false
 	];
 
 	// Prefs that should not be exposed to the browser for security reasons
