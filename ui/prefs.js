@@ -598,7 +598,7 @@ var prefs = function() {
 			}
 
 			if (prefs.touch_help) {
-				$('body').removeClass('desktopbrowser').removeClass('mobilebrowser').addClass('mobilebrowser');
+				$('body').removeClass('desktopbrowser').addClass('touchhelp').addClass('mobilebrowser');
 			}
 		},
 
@@ -763,9 +763,9 @@ var prefs = function() {
 
 		set_touch_help: function() {
 			if (prefs.touch_help) {
-				$('body').removeClass('desktopbrowser').addClass('mobilebrowser');
+				$('body').removeClass('desktopbrowser').addClass('mobilebrowser').addClass('touchhelp');
 			} else {
-				$('body').removeClass('mobilebrowser').addClass('desktopbrowser');
+				$('body').removeClass('mobilebrowser').removeClass('touchhelp').addClass('desktopbrowser');
 			}
 		},
 

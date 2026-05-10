@@ -562,24 +562,29 @@ class ui_elements {
 			$html .= '"><b>'.$opts['label_text'].'</b></div>';
 		}
 
-		if (array_key_exists($opts['label'], self::HELP_LINKS) && !$opts['righticon']) {
+		if ($opts['label'] !== null && array_key_exists($opts['label'], self::HELP_LINKS) && !$opts['righticon']) {
 			$html .= '<a href="'.self::HELP_LINKS[$opts['label']].'" target="_blank">';
 		}
-		if (array_key_exists($opts['main_icon'], self::HELP_LINKS) && !$opts['righticon']) {
+		if ($opts['main_icon'] !== null && array_key_exists($opts['main_icon'], self::HELP_LINKS) && !$opts['righticon']) {
 			$html .= '<a href="'.self::HELP_LINKS[$opts['main_icon']].'" target="_blank">';
 		}
 		$html .= '<i class="right-icon '.$opts['icon_size'];
 		if ($opts['righticon']) {
 			$html .= ' '.$opts['righticon'];
-		} else if (array_key_exists($opts['label'], self::HELP_LINKS) ||
-				   array_key_exists($opts['main_icon'], self::HELP_LINKS))
+		} else if (
+			($opts['label'] !== null && array_key_exists($opts['label'], self::HELP_LINKS)) ||
+	    	($opts['main_icon'] !== null && array_key_exists($opts['main_icon'], self::HELP_LINKS))
+		)
 		{
 			$html .= ' icon-info-circled';
 		}
 
 		$html .= '"></i>';
-		if ((array_key_exists($opts['label'], self::HELP_LINKS) ||
- 		    array_key_exists($opts['main_icon'], self::HELP_LINKS)) && !$opts['righticon'])
+		if ((
+				($opts['label'] !== null && array_key_exists($opts['label'], self::HELP_LINKS)) ||
+ 		    	($opts['main_icon'] !== null && array_key_exists($opts['main_icon'], self::HELP_LINKS))
+ 			)
+ 		    && !$opts['righticon'])
 		{
 			$html .= '</a>';
 		}

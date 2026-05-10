@@ -45,6 +45,13 @@ body.mobilebrowser, body.phone {
 	--playlist-track-min-height: 3em;
 }
 
+body.touchhelp {
+	--inline-track-icon-size: 24px;
+	--inline-clickable-icon-size: 24px;
+	--playlist-item-positioning: unset;
+	--playlist-track-display: block;
+}
+
 body.phone #headerbar
 {
     background-color: var(--headerbar-bg-colour-mob);
