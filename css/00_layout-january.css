@@ -46,10 +46,11 @@ body.mobilebrowser, body.phone {
 }
 
 body.touchhelp {
-	--inline-track-icon-size: 24px;
-	--inline-clickable-icon-size: 24px;
+	--inline-track-icon-size: 32px;
+	--inline-clickable-icon-size: 32px;
 	--playlist-item-positioning: unset;
 	--playlist-track-display: block;
+	--menuitem-padding: 6px;
 }
 
 body.phone #headerbar
