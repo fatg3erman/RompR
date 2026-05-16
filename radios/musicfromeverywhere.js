@@ -8,6 +8,9 @@ var faveArtistRadio = function() {
 			//
 			if (player.hasOnlineSources()) {
 				$('#pluginplaylists_everywhere').append(playlist.radioManager.standardBox('faveArtistRadio', null, 'icon-artist', language.gettext('label_radio_fartist')));
+			} else {
+				$('#pluginplaylists_everywhere').prev().remove();
+				$('#pluginplaylists_everywhere').prev().remove();
 			}
 		}
 	}

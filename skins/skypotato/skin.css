@@ -523,6 +523,10 @@ body.mobilebrowser .snap_vert_holder:last-child {
 	justify-content: center;
 }
 
+#fruitbat {
+	justify-content: center;
+}
+
 .album-extra-controls {
 	display: flex;
 	flex-direction: row;

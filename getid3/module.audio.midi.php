@@ -46,6 +46,15 @@ class getid3_midi extends getid3_handler
 
 		$this->fseek($info['avdataoffset']);
 		$MIDIdata = $this->fread($this->getid3->fread_buffer_size());
+
+		$minHeaderSize = 14; // MIDI header (4+4+2+2+2)
+		$minTrackHeaderSize = 8; // Track header (4+4)
+		$minTotalSize = $minHeaderSize + $minTrackHeaderSize;
+		if ($info['filesize'] < $minTotalSize || strlen($MIDIdata) < $minTotalSize) {
+			$this->error('File too small to be a valid MIDI file.');
+			return false;
+		}
+
 		$offset = 0;
 		$MIDIheaderID = substr($MIDIdata, $offset, 4); // 'MThd'
 		if ($MIDIheaderID != GETID3_MIDI_MAGIC_MTHD) {
@@ -88,7 +97,7 @@ class getid3_midi extends getid3_handler
 			}
 		}
 
-		if (!is_array($trackdataarray) || count($trackdataarray) === 0) {
+		if (count($trackdataarray) === 0) {
 			$this->error('Cannot find MIDI track information');
 			unset($thisfile_midi);
 			unset($info['fileformat']);
@@ -99,7 +108,6 @@ class getid3_midi extends getid3_handler
 			$thisfile_midi['totalticks']      = 0;
 			$info['playtime_seconds'] = 0;
 			$CurrentMicroSecondsPerBeat       = 500000; // 120 beats per minute;  60,000,000 microseconds per minute -> 500,000 microseconds per beat
-			$CurrentBeatsPerMinute            = 120;    // 120 beats per minute;  60,000,000 microseconds per minute -> 500,000 microseconds per beat
 			$MicroSecondsPerQuarterNoteAfter  = array ();
 			$MIDIevents                       = array();
 
@@ -112,7 +120,7 @@ class getid3_midi extends getid3_handler
 				$TicksAtCurrentBPM = 0;
 				while ($eventsoffset < strlen($trackdata)) {
 					$eventid = 0;
-					if (isset($MIDIevents[$tracknumber]) && is_array($MIDIevents[$tracknumber])) {
+					if (isset($MIDIevents[$tracknumber])) {
 						$eventid = count($MIDIevents[$tracknumber]);
 					}
 					$deltatime = 0;
@@ -244,7 +252,6 @@ class getid3_midi extends getid3_handler
 									return false;
 								}
 								$thisfile_midi_raw['events'][$tracknumber][$CumulativeDeltaTime]['us_qnote'] = $CurrentMicroSecondsPerBeat;
-								$CurrentBeatsPerMinute = (1000000 / $CurrentMicroSecondsPerBeat) * 60;
 								$MicroSecondsPerQuarterNoteAfter[$CumulativeDeltaTime] = $CurrentMicroSecondsPerBeat;
 								$TicksAtCurrentBPM = 0;
 								break;
@@ -332,6 +339,15 @@ class getid3_midi extends getid3_handler
 			}
 		}
 
+		// Fallback: If playtime_seconds is still empty/zero, estimate using default tempo
+		// 120 BPM = 0.5 per quarter note = 480 quarternote ticks
+		if (empty($info['playtime_seconds']) && !empty($thisfile_midi['totalticks'])) {
+			$ticksPerQuarterNote = isset($thisfile_midi_raw['ticksperqnote']) ? $thisfile_midi_raw['ticksperqnote'] : 480;
+			if ($ticksPerQuarterNote > 0) {
+				$totalQuarterNotes = $thisfile_midi['totalticks'] / $ticksPerQuarterNote;
+				$info['playtime_seconds'] = $totalQuarterNotes * 0.5;
+			}
+		}
 
 		if (!empty($info['playtime_seconds'])) {
 			$info['bitrate'] = (($info['avdataend'] - $info['avdataoffset']) * 8) / $info['playtime_seconds'];

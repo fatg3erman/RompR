@@ -139,7 +139,7 @@ class getid3_shorten extends getid3_handler
 
 			static $shorten_present;
 			if (!isset($shorten_present)) {
-				$shorten_present = file_exists('/usr/local/bin/shorten') || `which shorten`;
+				$shorten_present = file_exists('/usr/local/bin/shorten') || shell_exec('which shorten');
 			}
 			if (!$shorten_present) {
 				$this->error('shorten binary was not found in path or /usr/local/bin');
@@ -149,7 +149,7 @@ class getid3_shorten extends getid3_handler
 
 		}
 
-		$output = `$commandline`;
+		$output = shell_exec($commandline);
 
 		if (!empty($output) && (substr($output, 12, 4) == 'fmt ')) {
 
@@ -166,7 +166,7 @@ class getid3_shorten extends getid3_handler
 
 			if (substr($output, 20 + $fmt_size, 4) == 'data') {
 
-				$info['playtime_seconds'] = getid3_lib::LittleEndian2Int(substr($output, 20 + 4 + $fmt_size, 4)) / $DecodedWAVFORMATEX['raw']['nAvgBytesPerSec'];
+				$info['playtime_seconds'] = getid3_lib::SafeDiv(getid3_lib::LittleEndian2Int(substr($output, 20 + 4 + $fmt_size, 4)), $DecodedWAVFORMATEX['raw']['nAvgBytesPerSec']);
 
 			} else {
 
@@ -175,7 +175,7 @@ class getid3_shorten extends getid3_handler
 
 			}
 
-			$info['audio']['bitrate'] = (($info['avdataend'] - $info['avdataoffset']) / $info['playtime_seconds']) * 8;
+			$info['audio']['bitrate'] = getid3_lib::SafeDiv($info['avdataend'] - $info['avdataoffset'], $info['playtime_seconds']) * 8;
 
 		} else {
 

@@ -144,8 +144,8 @@ class getid3_writetags
 			return false;
 		}
 
-		if (!is_array($this->tagformats)) {
-			$this->errors[] = 'tagformats must be an array in getid3_writetags';
+		if (count($this->tagformats) === 0) {
+			$this->errors[] = 'tagformats is empty in getid3_writetags';
 			return false;
 		}
 		// prevent duplicate tag formats
@@ -285,8 +285,8 @@ class getid3_writetags
 		}
 
 		// Validation of supplied data
-		if (!is_array($this->tag_data)) {
-			$this->errors[] = '$this->tag_data is not an array in WriteTags()';
+		if (count($this->tag_data) === 0) {
+			$this->errors[] = '$this->tag_data is empty in WriteTags()';
 			return false;
 		}
 		// convert supplied data array keys to upper case, if they're not already
@@ -679,7 +679,7 @@ class getid3_writetags
 										$tag_data_id3v2[$ID3v2_framename][$key]['encodingid'] = 0;
 										$tag_data_id3v2[$ID3v2_framename][$key]['data']       = $value;
 										$ID3v2_tag_data_converted = true;
-									} while (false);
+									} while (false); // @phpstan-ignore-line
 								}
 								if (!$ID3v2_tag_data_converted) {
 									$tag_data_id3v2[$ID3v2_framename][$key]['encodingid'] = 1;
