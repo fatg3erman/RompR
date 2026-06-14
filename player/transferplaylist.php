@@ -3,7 +3,7 @@ chdir('..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 
-class transferCollection {
+class transferCollection extends collection_base {
 
 	private $tracks;
 
