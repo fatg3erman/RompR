@@ -233,7 +233,7 @@ create_body_tag('phone');
 		<div id="volumedropper" class="top_drop_menu rightmenu widemenu dropshadow">
 <?php
 	include('player/utils/outputs.php');
-	if (prefs::get_pref('hide_master_volume')) {
+	if (prefs::get_player_param('hide_master_volume')) {
 
 		print uibits::ui_config_header([
 			'label' => 'button_volume',
@@ -281,7 +281,7 @@ create_body_tag('phone');
 		'title_class' => 'nohelp player-title'
 	]);
 	print '<div class="pref styledinputs" name="playerdefs"></div>';
-	if (!prefs::get_pref('hide_master_volume')) {
+	if (!prefs::get_player_param('hide_master_volume')) {
 			print uibits::ui_config_header([
 				'main_icon' => 'icon-snapcast',
 				'title_class' => 'nohelp invisible',

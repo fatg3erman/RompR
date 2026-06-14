@@ -69,7 +69,7 @@ create_body_tag('desktop');
 	include('player/utils/outputs.php');
 
 	if (count($outputdata) > 1) {
-		if (prefs::get_pref('hide_master_volume')) {
+		if (prefs::get_player_param('hide_master_volume')) {
 			print '<div id="outputbox" class="fixed">';
 		} else {
 			print '<div id="outputbox" class="fixed" style="display:none">';
@@ -82,7 +82,7 @@ create_body_tag('desktop');
 		print '</div>';
 	}
 
-	if (prefs::get_pref('hide_master_volume')) {
+	if (prefs::get_player_param('hide_master_volume')) {
 		print '<div id="snapcast-secondary" class="fixed containerbox infobarlayout"></div>';
 	} else {
 		print '<div id="volumebox" class="fixed">';

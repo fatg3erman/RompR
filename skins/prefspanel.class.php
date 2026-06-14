@@ -52,7 +52,7 @@ class prefspanel extends uibits {
 			print '<div class="pref" id="snapcastgroups">';
 			print '</div>';
 		}
-		self::ui_checkbox(['id' => 'hide_master_volume', 'label' => 'config_hidemastervolume']);
+		self::ui_checkbox(['id' => 'hide_master_volume', 'label' => 'config_hidemastervolume', 'typeclass' => 'autoset_player toggle']);
 
 		print '<div class="pref styledinputs containerbox vertical-centre">';
 		print '<input class="saveotron expand" id="snapcast_server" type="text" placeholder="'.language::gettext('config_snapcast_server').'" />';

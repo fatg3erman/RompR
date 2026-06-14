@@ -803,6 +803,11 @@ var prefs = function() {
 				$(this).prop("checked", prefs[$(this).attr("id")]);
 			});
 
+			$.each($('.autoset_player'), function() {
+				debug.debug('SETPREFS','Checkbox',$(this).attr("id"), prefs.get_player_param($(this).attr("id")));
+				$(this).prop("checked", prefs.get_player_param($(this).attr("id")));
+			});
+
 			$.each($('.saveotron'), function() {
 				if ($(this).hasClass('arraypref')) {
 					var a = prefs[$(this).attr("id")];

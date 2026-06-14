@@ -15,6 +15,7 @@ class prefs {
 		'do_consume' => false,
 		'websocket' => false,
 		'websocket_port' => '6680',
+		'hide_master_volume' => false,
 		'radioparams' => [
 			"radiomode" => "",
 			"radioparam" => "",
@@ -119,7 +120,6 @@ class prefs {
 		"lfm_importer_last_import" => 0,
 		"bing_api_key" => '',
 		'brave_api_key' => '',
-		"hide_master_volume" => false,
 		"alarm_ramptime" => 30,
 		"alarm_snoozetime" => 8,
 		"communityradioorderby" => 'name',
