@@ -9,6 +9,7 @@ class transferCollection extends collection_base {
 
 	public function __construct() {
 		$this->tracks = array();
+		parent::__construct();
 	}
 
 	public function doNewPlaylistFile(&$filedata) {
