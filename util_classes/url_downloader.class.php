@@ -154,7 +154,7 @@ class url_downloader {
 		$this->status = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
 		$this->content_type = curl_getinfo($this->ch, CURLINFO_CONTENT_TYPE);
 		$this->info = curl_getinfo($this->ch);
-		curl_close($this->ch);
+		// curl_close($this->ch);
 		if ($this->get_status() == '200') {
 			logger::core("URL_DOWNLOADER", "  ..  Download Success");
 			return true;

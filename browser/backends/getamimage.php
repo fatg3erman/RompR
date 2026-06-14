@@ -21,8 +21,10 @@ function get_image_link($url) {
 	logger::log('ALLMUSIC', 'Looking for image from', $url);
 	$html = '';
 	$d = new url_downloader(array(
+		'useragent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36',
 		'url' => $url,
-		'cache' => 'allmusic'
+		'cache' => 'allmusic',
+		'header' => ALLMUSIC_HEADERS
 	));
 	if ($d->get_data_to_file()) {
 		logger::log('ALLMUSIC', 'Downloaded OK');

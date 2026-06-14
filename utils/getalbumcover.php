@@ -37,6 +37,7 @@ $searchfunctions = array(
 	'tryPlayer',
 	'trySoundcloud',
 	'tryLastFMForMBID',
+	'trySpotify',
 	'tryMusicBrainz',
 	'tryLastFM',
 	'tryBrave'
@@ -140,6 +141,50 @@ function tryLocal($albumimage) {
 		return $files[0];
 	}
 	return "";
+}
+
+function trySpotify($albumimage) {
+	global $delaytime;
+	if ($albumimage->albumuri === null || substr($albumimage->albumuri, 0, 8) != 'spotify:') {
+		logger::core('GETALBUMCOVER', 'Not a Spotify album');
+		return "";
+	}
+	$image = "";
+	logger::debug("GETALBUMCOVER", "  Trying Spotify for ".$albumimage->albumuri);
+
+	// php strict prevents me from doing end(explode()) because
+	// only variables can be passed by reference. Stupid php.
+	$spaffy = explode(":", $albumimage->albumuri);
+	$spiffy = end($spaffy);
+	$boop = $spaffy[1];
+	$fn = $boop.'_getinfo';
+	$content = spotify::$fn(['id' => $spiffy, 'cache' => true], false);
+	$data = json_decode($content, true);
+	if (array_key_exists('images', $data)) {
+		$width = 0;
+		foreach ($data['images'] as $img) {
+			if ($img['width'] > $width) {
+				$width = $img['width'];
+				$image = $img['url'];
+				logger::debug("GETALBUMCOVER", "  Found image with width ".$width);
+				logger::debug("GETALBUMCOVER", "  URL is ".$image);
+			}
+		}
+	} else {
+		logger::debug("GETALBUMCOVER", "    No Spotify Data Found");
+	}
+	$delaytime = 1000;
+	if ($image == "" && $boop == 'artist') {
+		// Hackety Hack
+		$image = "newimages/artist-icon.png";
+		$o = array( 'small' => $image, 'medium' => $image, 'asdownloaded' => $image, 'delaytime' => $delaytime);
+		header('Content-Type: application/json; charset=utf-8');
+		print json_encode($o);
+		logger::debug("GETALBUMCOVER", "--------------------------------------------");
+		ob_flush();
+		exit(0);
+	}
+	return $image;
 }
 
 function trySoundcloud($albumimage) {

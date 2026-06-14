@@ -67,6 +67,8 @@ class prefs {
 
 		"preferlocalfiles" => false,
 		"mopidy_collection_folders" => array("Local media"),
+		"lastfm_country_code" => "",
+		"country_userset" => false,
 		"debug_enabled" => 0,
 		"custom_logfile" => "",
 		"cleanalbumimages" => true,
