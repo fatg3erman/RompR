@@ -704,7 +704,9 @@ class ui_elements {
 
 		self::ui_checkbox(['id' => 'sortbydate', 'label' => 'config_sortbydate']);
 		self::ui_checkbox(['id' => 'notvabydate', 'label' => 'config_notvabydate']);
-		self::ui_config_button(['label' => 'config_updatenow', 'name' => 'donkeykong']);
+		if (!prefs::get_player_param('remote')) {
+			self::ui_config_button(['label' => 'config_updatenow', 'name' => 'donkeykong']);
+		}
 
 		print'</div>';
 	}
