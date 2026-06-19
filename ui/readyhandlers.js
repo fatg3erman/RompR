@@ -204,7 +204,7 @@ function carry_on_starting() {
 	coverscraper = new coverScraper(0, false, false, prefs.downloadart);
 	lastfm = new LastFM();
 	uiHelper.sourceControl(prefs.chooser);
-	if (prefs.mopidy_remote || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
+	if (prefs.get_player_param('mopidy_remote') || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
 		$('[name="donkeykong"]').remove();
 		$('[name="dinkeyking"]').remove();
 	}

@@ -341,11 +341,11 @@ var collectionHelper = function() {
 				infobar.error(language.gettext('error_nocol'));
 				return;
 			}
-			if (prefs.updateeverytime && prefs.player_backend == prefs.collection_player) {
+			if (prefs.updateeverytime && prefs.player_backend == prefs.collection_player && !prefs.get_player_param('mopidy_remote')) {
 				debug.info("COLLECTION","Updating Collection due to preference");
 				update = true;
 			} else {
-				if (!prefs.hide_albumlist && collection_status == 1 && prefs.player_backend == prefs.collection_player) {
+				if (!prefs.hide_albumlist && collection_status == 1 && prefs.player_backend == prefs.collection_player && !prefs.get_player_param('mopidy_remote')) {
 					debug.info("COLLECTION","Updating Collection because it is out of date");
 					collection_status = 0;
 					update = true;

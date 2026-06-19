@@ -391,9 +391,7 @@ class prefspanel extends uibits {
 				'name' => 'dinkeyking'
 			];
 		}
-		// if (!prefs::get_player_param('remote')) {
-			self::ui_config_button($update_buttons);
-		// }
+		self::ui_config_button($update_buttons);
 
 		//
 		// Album Sorting
