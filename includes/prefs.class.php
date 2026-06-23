@@ -264,6 +264,7 @@ class prefs {
 	// the does not support cookies.
 	private static $session_prefs = [ ];
 
+	private static $oldcurrenthost = null;
 
 	// Load the prefs. This function ONLY loads the prefs that are required by the backend.
 	// It starts with BACKEND_PREFS,
@@ -406,6 +407,29 @@ class prefs {
 				self::$session_prefs[$k] = $value;
 				self::set_cookie_pref($k, $value);
 			}
+		}
+	}
+
+	public static function check_player_for_search($domains) {
+		if (self::get_player_param('mopidy_remote') && in_array('local', $domains)) {
+			self::$oldcurrenthost = self::get_pref('currenthost');
+			$all_players = self::get_pref('multihosts');
+			foreach ($all_players as $player => $params) {
+				if (!$params['mopidy_remote']) {
+					logger::log('SEARCH', 'Switching to player',$player,'to do mopidy search');
+					self::$session_prefs['currenthost'] = $player;
+					self::$prefs['currenthost'] = $player;
+					break;
+				}
+			}
+		}
+	}
+
+	public static function switch_player_back() {
+		if (self::$oldcurrenthost !== null) {
+			self::$session_prefs['currenthost'] = $oldcurrenthost;
+			self::$prefs['currenthost'] = $oldcurrenthost;
+			self::$oldcurrenthost = null;
 		}
 	}
 
