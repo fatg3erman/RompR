@@ -427,8 +427,8 @@ class prefs {
 
 	public static function switch_player_back() {
 		if (self::$oldcurrenthost !== null) {
-			self::$session_prefs['currenthost'] = $oldcurrenthost;
-			self::$prefs['currenthost'] = $oldcurrenthost;
+			self::$session_prefs['currenthost'] = self::$oldcurrenthost;
+			self::$prefs['currenthost'] = self::$oldcurrenthost;
 			self::$oldcurrenthost = null;
 		}
 	}
