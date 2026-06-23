@@ -48,9 +48,12 @@ body.mobilebrowser, body.phone {
 body.touchhelp {
 	--inline-track-icon-size: 32px;
 	--inline-clickable-icon-size: 32px;
+	--inline-clickable-icon-border-width: 6px;
+	--inline-clickable-icon-border-style: solid;
 	--playlist-item-positioning: unset;
 	--playlist-track-display: block;
 	--menuitem-padding: 6px;
+	--playlist-track-min-height: 3em;
 }
 
 body.phone #headerbar

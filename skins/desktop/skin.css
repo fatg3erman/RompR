@@ -361,17 +361,20 @@ i.topdrop
 	margin-top:2px;
 }
 
-body.mobilebrowser .outhack {
+body.mobilebrowser .outhack,
+body.touchhelp .outhack {
 	width:18px;
 	height:18px;
 	margin-top:2px;
 }
 
-body.mobilebrowser #volumecontrol {
+body.mobilebrowser #volumecontrol,
+body.touchhelp #volumentcontrol {
 	width: 18px;
 }
 
-body.mobilebrowser .progressbar_v {
+body.mobilebrowser .progressbar_v,
+body.touchhelp .progressbar_v {
 	width: 16px;
 }
 
@@ -380,11 +383,13 @@ body.mobilebrowser .progressbar_v {
 	margin-right: 0px;
 }
 
-body.mobilebrowser .snap_vert_holder {
+body.mobilebrowser .snap_vert_holder,
+body.touchhelp  .snap_vert_holder {
 	margin-right: 4px;
 }
 
-body.mobilebrowser .snap_vert_holder:last-child {
+body.mobilebrowser .snap_vert_holder:last-child,
+body.touchhelp .snap_vert_holder:last-child {
 	margin-right: 0px;
 }
 

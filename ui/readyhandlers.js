@@ -140,8 +140,7 @@ function set_mouse_touch_flags() {
 	// So by now, if we're on a mobile device body should have class 'mobilebrowser'.
 	// If we're on a desktop device it'll have 'desktopbrowser'*, in that case we also
 	// check to see if touch is supported so we can enable touch events and mouse events.
-	// * Unless we've enabled touch_help in which case it'll have mobilebrowser and touchhelp
-	if ($('body').hasClass('mobilebrowser') && !$('body').hasClass('touchhelp')) {
+	if ($('body').hasClass('mobilebrowser')) {
 		prefs.use_touch_interface = true;
 		prefs.use_mouse_interface = false;
 		prefs.has_custom_scrollbars = false;

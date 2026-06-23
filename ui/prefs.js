@@ -598,7 +598,7 @@ var prefs = function() {
 			}
 
 			if (prefs.touch_help) {
-				$('body').removeClass('desktopbrowser').addClass('touchhelp').addClass('mobilebrowser');
+				$('body').removeClass('touchhelp').addClass('touchhelp');
 			}
 		},
 
@@ -763,9 +763,9 @@ var prefs = function() {
 
 		set_touch_help: function() {
 			if (prefs.touch_help) {
-				$('body').removeClass('desktopbrowser').addClass('mobilebrowser').addClass('touchhelp');
+				$('body').addClass('touchhelp');
 			} else {
-				$('body').removeClass('mobilebrowser').removeClass('touchhelp').addClass('desktopbrowser');
+				$('body').removeClass('touchhelp');
 			}
 		},
 
