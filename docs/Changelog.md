@@ -5,7 +5,7 @@
 * Option to increase the spacing around some of the icons to help on PCs with touchscreens. RompR will detect these as primarily mouse interfaces and that makes some of the controls a little too closely spaced, at least for my chubby fingers.
 * Fix bug where transferring the playlist to a new player didn't work if there were audiobooks in the playlist.
 * The option to use Snapcast as the main volume control is now tied to the Player instead of being global. If you've set this to on you'll need to re-enable it.
-* Prevent the collection for being rebuilt if you're using a Mopidy Remote player as this would wipe out all local tracks.
+* Prevent the collection from being rebuilt if you're using a Mopidy Remote player as this would wipe out all local tracks.
 * Permit local files to be searched when using a Mopidy Remote, by using the main player to do the search instead of the remote. This also allows 'Music From Everywhere' to include local files when using a Remote player.
 * Streaming services continue to hate open source. Qobuz no longer works so I've been forced back to Spotify. This means I've put the Spotify info panel back in, but with reduced functionality - I can't get any track information and I can't do the Similar Artists panel because Spotify have removed that from the API unless you're rich. They've also removed access to relinking information, so Spotify tracks added to your collection might stop working. As always I reccommend using Spotify to find new music but then go to Bandcamp and buy it to support the artist.
 
