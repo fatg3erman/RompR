@@ -798,7 +798,7 @@ class base_mpd_player {
 			// images in the event of that happening.
 			$this->playlist_error = true;
 		}
-		return $retval;
+		return array_filter($retval, 'player::remove_unwanted_playlist');
 	}
 
 	public function get_stored_playlist_tracks($playlistname, $startpos) {

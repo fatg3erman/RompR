@@ -262,6 +262,10 @@ class player extends base_mpd_player {
 		return true;
 	}
 
+	public static function remove_unwanted_playlist($pl) {
+		return true;
+	}
+
 	private function websocket_command() {
 		$retval = 	'/player/mpd/mpd_websocket.py'
 					.' --currenthost='.prefs::currenthost()

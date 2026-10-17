@@ -729,6 +729,13 @@ class player extends base_mpd_player {
 		return true;
 	}
 
+	public static function remove_unwanted_playlist($pl) {
+		if (strpos($pl, 'DJ (by ') !== false) {
+			return false;
+		}
+		return true;
+	}
+
 	public function probe_websocket() {
 		if ($this->websocket_port != '') {
 			logger::info('MOPIDYHTTP', 'Probing HTTP API for',prefs::currenthost());
