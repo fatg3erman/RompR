@@ -2,6 +2,11 @@
 
 ## Version 2.28
 
+* Fix bug where HLS streams weren't queued properly with MPD
+
+
+## Version 2.28
+
 * Option to increase the spacing around some of the icons to help on PCs with touchscreens. RompR will detect these as primarily mouse interfaces and that makes some of the controls a little too closely spaced, at least for my chubby fingers.
 * Fix bug where transferring the playlist to a new player didn't work if there were audiobooks in the playlist.
 * The option to use Snapcast as the main volume control is now tied to the Player instead of being global. If you've set this to on you'll need to re-enable it.

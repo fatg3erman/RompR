@@ -197,6 +197,7 @@ class m3uFile {
 		$this->tracks = array();
 		$this->prettystream = '';
 		$this->url_to_add = $url;
+		$this->is_hls = false;
 		// if (strpos($url, 'opml.radiotime.com') !== false) {
 		// 	# MPD seems to have issues with m3u from TuneIn, so let's not use them
 		// 	$this->url_to_add = null;
@@ -206,6 +207,8 @@ class m3uFile {
 		foreach ($parts as $line) {
 			if (preg_match('/#EXTINF:(.*?),(.*?)$/', $line, $matches)) {
 				$this->prettystream = $matches[2];
+			} else if (preg_match('/#EXT-X-INDEPENDENT-SEGMENTS/', $line, $matches)) {
+				$this->is_hls = true;
 			} else if (preg_match('/^\#/', $line) || preg_match('/^\s*$/', $line)) {
 
 			} else {
@@ -220,15 +223,19 @@ class m3uFile {
 	public function updateDatabase() {
 		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			prefs::$database->check_radio_tracks($stationid, $this->tracks);
-			// prefs::$database->check_radio_tracks($stationid, array(array('TrackUri' => $this->url_to_add, 'PrettyStream' => $this->prettystream)));
+			if ($this->is_hls) {
+				prefs::$database->check_radio_tracks($stationid, array(array('TrackUri' => $this->url_to_add, 'PrettyStream' => $this->prettystream)));
+			} else {
+				prefs::$database->check_radio_tracks($stationid, $this->tracks);
+			}
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 		}
 	}
 
 	public function getTracksToAdd() {
-		return array('load "'.format_for_mpd(htmlspecialchars_decode($this->url_to_add)).'"');
+		$cmd = $this->is_hls ? 'add' : 'load';
+		return array($cmd.' "'.format_for_mpd(htmlspecialchars_decode($this->url_to_add)).'"');
 	}
 
 }
