@@ -757,12 +757,9 @@ language::add_translations([
 	"config_audiobook_genres" =>			"Detect Spoken Word by Genre(s)",
 	"label_get_album_art" =>				"Set Album Art",
 	"config_touch_help" =>					"Additional icon spacing for touch interfaces",
-	"config_country" =>						"Country"
+	"config_country" =>						"Country",
 
-	// ----------------------------------------------------
-	// Proobaly Unused
-	// ----------------------------------------------------
-	//"label_smartsetup" =>					"Preparing. Please Wait A Moment....",
+	"label_play_playlist" =>				"Play This Playlist"
 
 ]);
 
