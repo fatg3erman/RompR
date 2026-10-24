@@ -5,9 +5,12 @@ include ("includes/functions.php");
 include ("getid3/getid3.php");
 $s = json_decode(file_get_contents('php://input'), true);
 $fname = rawurldecode($s['file']);
-$fname = preg_replace('/local:track:/','',$fname);
-$fname = preg_replace('#file://#','',$fname);
-$fname = 'prefs/MusicFolders/'.$fname;
+if (strpos($fname, 'file:') === 0) {
+	$fname = preg_replace('#file://#','',$fname);
+} else {
+	$fname = preg_replace('/local:track:/','',$fname);
+	$fname = 'prefs/MusicFolders/'.$fname;
+}
 
 $getID3 = new getID3;
 $output = null;

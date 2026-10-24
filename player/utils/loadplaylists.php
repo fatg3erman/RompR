@@ -36,26 +36,26 @@ if (array_key_exists('playlist', $_REQUEST)) {
 		add_playlist(rawurlencode(file_get_contents($file)), htmlentities(basename($file)), 'icon-doc-text', 'clickloaduserplaylist', true, $c, true, null);
 		$c++;
 	}
-	$pd = prefs::get_player_def();
-	if (!$player->playlist_error &&
-		(prefs::get_pref('player_backend') == prefs::get_pref('collection_player')) &&
-		($pd['mopidy_remote'] == false)
-	) {
-		sort($used_images);
-		$imgs = glob('prefs/plimages/*');
-		sort($imgs);
-		$unneeded = array_diff($imgs, $used_images);
-		foreach ($unneeded as $img) {
-			logger::log("MPD PLAYLISTS", "Removing uneeded playlist image",$img);
-			if (is_dir($img)) {
-				rrmdir($img);
-			} else {
-				@unlink($img);
-			}
-		}
-	} else {
-		logger::warn("MPD PLAYLISTS", "Error when loading saved playlists");
-	}
+	// $pd = prefs::get_player_def();
+	// if (!$player->playlist_error &&
+	// 	(prefs::get_pref('player_backend') == prefs::get_pref('collection_player')) &&
+	// 	($pd['mopidy_remote'] == false)
+	// ) {
+	// 	sort($used_images);
+	// 	$imgs = glob('prefs/plimages/*');
+	// 	sort($imgs);
+	// 	$unneeded = array_diff($imgs, $used_images);
+	// 	foreach ($unneeded as $img) {
+	// 		logger::log("MPD PLAYLISTS", "Removing uneeded playlist image",$img);
+	// 		if (is_dir($img)) {
+	// 			rrmdir($img);
+	// 		} else {
+	// 			@unlink($img);
+	// 		}
+	// 	}
+	// } else {
+	// 	logger::warn("MPD PLAYLISTS", "Error when loading saved playlists");
+	// }
 }
 
 function do_playlist_tracks($pl, $icon, $target) {
@@ -155,16 +155,19 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 			}
 			$extra_class = ($delete && !$is_user) ? ' canreorder' : '';
 
-			$buttons = '';
+			$buttons = '<div class="album-extra-controls">';
+			$buttons .= '<i class="icon-no-response-playbutton clickable clickicon inline-icon playable '.$class.'" name="'.rawurlencode($name).'">';
+			$buttons .= '<input type="hidden" name="dirpath" value="'.rawurlencode($name).'" />';
+			$buttons .= '</i>';
+
 			if ($delete) {
 				$add = ($is_user) ? "user" : "";
-				$buttons = '<div class="album-extra-controls">';
 				$buttons .= '<i class="icon-floppy inline-icon clickable clickicon clickrename'.$add.'playlist"></i>';
 				$buttons .= '<input type="hidden" value="'.rawurlencode($name).'" />';
 				$buttons .= '<i class="icon-cancel-circled inline-icon clickable clickicon clickdelete'.$add.'playlist"></i>';
 				$buttons .= '<input type="hidden" value="'.rawurlencode($name).'" />';
-				$buttons .= '</div>';
 			}
+			$buttons .= '</div>';
 
 			print uibits::albumHeader(array(
 				'id' => 'pholder_'.md5($name),

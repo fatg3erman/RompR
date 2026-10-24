@@ -32,7 +32,7 @@ $root_level_dirs = array(
 	'albumart/medium'
 );
 foreach ($root_level_dirs as $dir) {
-	if (!is_dir($dir)) {
+	if (!is_dir($dir) && !is_link($dir)) {
 		logger::mark("INIT", "Making Directory ".$dir);
 		mkdir($dir, 0755, true);
 	}

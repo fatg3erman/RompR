@@ -241,7 +241,7 @@ class gd_Image {
 	}
 
 	public function destroy() {
-		imagedestroy($this->image);
+		// Nothing
 	}
 
 }

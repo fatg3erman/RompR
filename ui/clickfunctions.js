@@ -1337,13 +1337,33 @@ function actuallyAmendAlbumDetails(albumindex) {
 
 function browseAndAddToListenLater(event, clickedElement) {
 	var albumuri = decodeURIComponent(clickedElement.attr('name'));
-	debug.log('ADLL', 'Adding',albumuri,'via backend browse');
-	metaHandlers.addToListenLater(
-		{
-			action: 'browsetoll',
-			uri: albumuri
-		}
-	);
+	var isspot = albumuri.match(/spotify:album:(.+)/);
+	if (isspot == null) {
+		debug.log('ADLL', 'Adding',albumuri,'via backend browse');
+		metaHandlers.addToListenLater(
+			{
+				action: 'browsetoll',
+				uri: albumuri
+			}
+		);
+	} else {
+		spotify.album.getInfo(
+			isspot[1],
+			function(data) {
+				debug.debug('ADDLL', 'Success', data);
+				metaHandlers.addToListenLater(
+					{
+						action: 'addtolistenlater',
+						json: data
+					}
+				);
+			},
+			function(data) {
+				debug.error('ADDLL', 'Failed', data);
+			},
+			false
+		);
+	}
 }
 
 function browseSearchResults(event, clickedElement) {

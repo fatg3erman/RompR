@@ -173,5 +173,4 @@ function check_timezone() {
 	}
 }
 
-
 ?>

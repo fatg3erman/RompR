@@ -138,7 +138,7 @@ function set_mouse_touch_flags() {
 	}
 
 	// So by now, if we're on a mobile device body should have class 'mobilebrowser'.
-	// If we're on a desktop device it'll have 'desktopbrowser', in that case we also
+	// If we're on a desktop device it'll have 'desktopbrowser'*, in that case we also
 	// check to see if touch is supported so we can enable touch events and mouse events.
 	if ($('body').hasClass('mobilebrowser')) {
 		prefs.use_touch_interface = true;
@@ -203,7 +203,7 @@ function carry_on_starting() {
 	coverscraper = new coverScraper(0, false, false, prefs.downloadart);
 	lastfm = new LastFM();
 	uiHelper.sourceControl(prefs.chooser);
-	if (prefs.mopidy_remote || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
+	if (prefs.get_player_param('mopidy_remote') || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
 		$('[name="donkeykong"]').remove();
 		$('[name="dinkeyking"]').remove();
 	}

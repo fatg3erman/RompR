@@ -196,7 +196,9 @@ class m3uFile {
 		$parts = explode(PHP_EOL, $data);
 		foreach ($parts as $line) {
 			if (preg_match('/#EXTINF:(.*?),(.*?)$/', $line, $matches)) {
-				$this->prettystream = $matches[2];
+				if ($matches[2] != ' no desc') {
+					$this->prettystream = $matches[2];
+				}
 			} else if (preg_match('/^\#/', $line) || preg_match('/^\s*$/', $line)) {
 
 			} else {
@@ -217,6 +219,10 @@ class m3uFile {
 	public function getTracksToAdd() {
 		return array('add "'.format_for_mpd(htmlspecialchars_decode($this->url_to_add)).'"');
 	}
+
+}
+
+class hlsFile extends m3uFile {
 
 }
 

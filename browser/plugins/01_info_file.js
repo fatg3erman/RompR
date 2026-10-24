@@ -86,7 +86,7 @@ var info_file = function() {
 
 	function make_player_info(layout, info, parent) {
 
-		var file = decodeURI(info.file);
+		var file = decodeURIComponent(htmlspecialchars_decode(decodeURI(info.file)));
 		file = file.replace(/^file:\/\//, '');
 
 		layout.add_flow_box_header({title: language.gettext("info_file")});

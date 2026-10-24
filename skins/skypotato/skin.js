@@ -360,7 +360,7 @@ var layoutProcessor = function() {
 
 	function fanooglePodcasts() {
 		if (!$('#fruitbat').hasClass('containerbox')) {
-			// $('#podholder').detach().insertBefore($('#infoholder'));
+			$('#podholder').addClass('containerbox');
 			$('#fruitbat').removeClass('fullwidth').addClass('containerbox wrap');
 		}
 		$('#fruitbat').appendDummySpacers();

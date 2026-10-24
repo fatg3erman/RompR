@@ -1013,6 +1013,7 @@ class collection_base extends database {
 		foreach ($rawterms as $key => $term) {
 			$command .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
 		}
+		prefs::check_player_for_search($domains);
 		$player = new player();
 		$dirs = array();
 		if ($player->has_specific_search_function($rawterms, $domains)) {
@@ -1026,6 +1027,7 @@ class collection_base extends database {
 				$this->newTrack($filedata);
 			}
 		}
+		prefs::switch_player_back();
 	}
 
 	// rawterms, while you could pass anything, the only things that actually get

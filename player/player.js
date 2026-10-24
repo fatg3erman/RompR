@@ -277,6 +277,9 @@ var player = function() {
 					schemes.push(i);
 				}
 			}
+			if (prefs.get_player_param('mopidy_remote') && schemes.indexOf('local') == -1) {
+				schemes.unshift('local');
+			}
 			return schemes;
 		}
 

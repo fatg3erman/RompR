@@ -596,6 +596,10 @@ var prefs = function() {
 			if (prefs.clickmode == 'double') {
 				$('<style id="click_double">body.phone .timerspacer { display: none }</style>').appendTo('head');
 			}
+
+			if (prefs.touch_help) {
+				$('body').removeClass('touchhelp').addClass('touchhelp');
+			}
 		},
 
 		save: async function(options, callback) {
@@ -757,8 +761,20 @@ var prefs = function() {
 					callback = playlist.repopulate;
 					break;
 
+				case "touch_help":
+					callback = prefs.set_touch_help;
+					break;
+
 			}
 			prefs.save(prefobj, callback);
+		},
+
+		set_touch_help: function() {
+			if (prefs.touch_help) {
+				$('body').addClass('touchhelp');
+			} else {
+				$('body').removeClass('touchhelp');
+			}
 		},
 
 		toggleRadio: function(event) {
@@ -795,6 +811,11 @@ var prefs = function() {
 				$(this).prop("checked", prefs[$(this).attr("id")]);
 			});
 
+			$.each($('.autoset_player'), function() {
+				debug.debug('SETPREFS','Checkbox',$(this).attr("id"), prefs.get_player_param($(this).attr("id")));
+				$(this).prop("checked", prefs.get_player_param($(this).attr("id")));
+			});
+
 			$.each($('.saveotron'), function() {
 				if ($(this).hasClass('arraypref')) {
 					var a = prefs[$(this).attr("id")];
@@ -813,9 +834,9 @@ var prefs = function() {
 				var prefname = $(this).attr("name");
 				var prefsave = prefname.replace(/_duplicate\d+/, '');
 				if (prefs[prefsave]) {
-					if (!$("[name="+prefname+"][value="+prefs[prefsave]+"]").is(':checked')) {
+					if (!$("[name="+prefname+"][value='"+prefs[prefsave]+"']").is(':checked')) {
 						debug.log('SETPREFS','Radio',prefname,prefs[prefsave]);
-						$("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
+						$("[name="+prefname+"][value='"+prefs[prefsave]+"']").prop("checked", true);
 					}
 				} else {
 					debug.warn('SETPREFS', 'No Value for',prefsave);
@@ -859,6 +880,10 @@ var prefs = function() {
 				case 'coversize':prefs/
 					set_cover_size(prefobj.coversize);
 					callback = prefs.postUIChange;
+					break;
+
+				case "lastfm_country_code":
+					prefobj.country_userset = true;
 					break;
 
 				case 'podcast_sort_0':

@@ -69,7 +69,6 @@ class getid3_voc extends getid3_handler
 			$BlockSize      = getid3_lib::LittleEndian2Int(substr($BlockData, 1, 3));
 			$ThisBlock      = array();
 
-			/** @phpstan-ignore-next-line */
 			getid3_lib::safe_inc($thisfile_voc['blocktypes'][$BlockType], 1);
 			switch ($BlockType) {
 				case 0:  // Terminator
@@ -140,7 +139,7 @@ class getid3_voc extends getid3_handler
 
 					$thisfile_audio['sample_rate']     = $ThisBlock['sample_rate'];
 					$thisfile_audio['bits_per_sample'] = $ThisBlock['bits_per_sample'];
-					$thisfile_audio['channels']        = $ThisBlock['channels'];
+					$thisfile_audio['channels']        = $ThisBlock['channels'] ?: 1;
 					break;
 
 				default:
@@ -164,8 +163,8 @@ class getid3_voc extends getid3_handler
 		ksort($thisfile_voc['blocktypes']);
 
 		if (!empty($thisfile_voc['compressed_bits_per_sample'])) {
-			$info['playtime_seconds'] = (($info['avdataend'] - $info['avdataoffset']) * 8) / ($thisfile_voc['compressed_bits_per_sample'] * $thisfile_audio['channels'] * $thisfile_audio['sample_rate']);
-			$thisfile_audio['bitrate'] = (($info['avdataend'] - $info['avdataoffset']) * 8) / $info['playtime_seconds'];
+			$info['playtime_seconds'] = getid3_lib::SafeDiv(($info['avdataend'] - $info['avdataoffset']) * 8, $thisfile_voc['compressed_bits_per_sample'] * $thisfile_audio['channels'] * $thisfile_audio['sample_rate']);
+			$thisfile_audio['bitrate'] = getid3_lib::SafeDiv(($info['avdataend'] - $info['avdataoffset']) * 8, $info['playtime_seconds']);
 		}
 
 		return true;

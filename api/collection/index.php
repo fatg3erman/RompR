@@ -103,9 +103,11 @@ function check_dbterms($cmd) {
 }
 
 function mpd_file_search($cmd, $domains, $dbterms) {
+	prefs::check_player_for_search($domains);
 	prefs::$database = new collection_base();
 	$player = new fileCollector($dbterms);
 	$player->doFileSearch($cmd, $domains);
+	prefs::switch_player_back();
 }
 
 function mpd_search($cmd, $domains, $dbterms, $mpdsearch) {
@@ -122,14 +124,16 @@ function mpd_search($cmd, $domains, $dbterms, $mpdsearch) {
 	}
 	global $performance;
 	$timer = microtime(true);
+
+	prefs::check_player_for_search($domains);
 	prefs::$database = new musicCollection($options);
 	prefs::$database->cleanSearchTables();
 	prefs::$database->do_update_with_command($cmd, array(), $domains, [], $mpdsearch);
 	prefs::$database->dumpAlbums($_REQUEST['dump']);
 	prefs::$database->dumpArtistSearchResults($_REQUEST['dump']);
+	prefs::switch_player_back();
     $performance['total'] = microtime(true) - $timer;
 	print_performance_measurements();
-
 }
 
 function database_search() {

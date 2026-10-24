@@ -477,17 +477,20 @@ button.spinable.icon-spin6 {
 	margin-top:2px;
 }
 
-body.mobilebrowser .outhack {
+body.mobilebrowser .outhack,
+body.touchhelp .outhack {
 	width:18px;
 	height:18px;
 	margin-top:2px;
 }
 
-body.mobilebrowser #volumecontrol {
+body.mobilebrowser #volumecontrol,
+body.touchhelp #volumentcontrol {
 	width: 18px;
 }
 
-body.mobilebrowser .progressbar_v {
+body.mobilebrowser .progressbar_v,
+body.touchhelp .progressbar_v {
 	width: 16px;
 }
 
@@ -496,7 +499,8 @@ body.mobilebrowser .progressbar_v {
 	margin-right: 0px;
 }
 
-body.mobilebrowser .snap_vert_holder {
+body.mobilebrowser .snap_vert_holder:last-child,
+body.touchhelp .snap_vert_holder:last-child {
 	margin-right: 4px;
 }
 
@@ -520,6 +524,10 @@ body.mobilebrowser .snap_vert_holder:last-child {
 .collectionpanel {
 	box-sizing: border-box;
 	/*border-left: 4px solid transparent;*/
+	justify-content: center;
+}
+
+#fruitbat {
 	justify-content: center;
 }
 
@@ -646,21 +654,21 @@ div.rightmenu
 }
 
 @media screen and (max-height: 1099px) {
-	.infobarlayout {
+	body.desktopbrowser .infobarlayout {
 		height:160px;
 	}
-	#albumcover {
+	body.desktopbrowser #albumcover {
 		height: 182px;
 	}
-	#albumpicture {
+	body.desktopbrowser #albumpicture {
 		height: 178px;
 		padding: 2px;
 	}
-	#nowplaying {
+	body.desktopbrowser #nowplaying {
 		height: 130px;
 	}
 
-	.controlbutton-small
+	body.desktopbrowser .controlbutton-small
 	{
 		width:26px !important;
 		height:26px !important;
@@ -668,16 +676,58 @@ div.rightmenu
 		margin-left:4px !important;
 	}
 
-	.controlbutton
+	body.desktopbrowser .controlbutton
 	{
 		width:36px !important;
 		height:36px !important;
 		margin-top:6px !important;
 	}
 
-	.smallpluginicon
+	body.desktopbrowser .smallpluginicon
 	{
 		height: 20px !important;
+		width: 18px !important;
+	}
+
+	body.mobilebrowser .infobarlayout,
+	body.touchhelp .infobarlayout {
+		height:180px;
+	}
+	body.mobilebrowser #albumcover,
+	body.touchhelp #albumcover {
+		height: 202px;
+	}
+	body.mobilebrowser #albumpicture,
+	body.touchhelp #albumpicture {
+		height: 198px;
+		padding: 2px;
+	}
+	body.mobilebrowser #nowplaying,
+	body.touchhelp #nowplaying {
+		height: 150px;
+	}
+
+	body.mobilebrowser .controlbutton-small,
+	body.touchhelp .controlbutton-small
+	{
+		width:30px !important;
+		height:30px !important;
+		margin-top:6px !important;
+		margin-left:4px !important;
+	}
+
+	body.mobilebrowser .controlbutton,
+	body.touchhelp .controlbutton
+	{
+		width:38px !important;
+		height:38px !important;
+		margin-top:6px !important;
+	}
+
+	body.mobilebrowser .smallpluginicon,
+	body.touchhelp .smallpluginicon
+	{
+		height: 24px !important;
 		width: 18px !important;
 	}
 }

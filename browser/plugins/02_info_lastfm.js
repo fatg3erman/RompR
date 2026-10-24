@@ -370,13 +370,13 @@ var info_lastfm = function() {
 							);
 							debug.log(medebug,"Getting allmusic image from",artistmeta.allmusic.link);
 							fetch(
-								'browser/backends/getamimage.php',
+								'browser/backends/getambio.php',
 								{
 									signal: AbortSignal.timeout(60000),
 									cache: 'no-store',
 									method: 'POST',
 									priority: 'low',
-									body: JSON.stringify({url: artistmeta.allmusic.link})
+									body: JSON.stringify({artistimage: artistmeta.allmusic.link})
 								}
 							).then(async function(response) {
 								if (response.ok) {

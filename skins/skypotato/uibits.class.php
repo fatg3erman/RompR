@@ -121,7 +121,7 @@ class uibits extends ui_elements {
 	}
 
 	public static function playlistPlayHeader($name, $text) {
-		print '<div class="textcentre clickloadplaylist playable ninesix" name="'.$name.'">'.language::gettext('label_play_all');
+		print '<div class="textcentre clickloadplaylist playable ninesix" name="'.$name.'">'.language::gettext('label_play_playlist');
 		print '<input type="hidden" name="dirpath" value="'.$name.'" />';
 		print '</div>';
 	}

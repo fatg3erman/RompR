@@ -14,6 +14,11 @@ foreach($p as $key => $value) {
 			unset($p[$key]);
 			break;
 
+		case 'hide_master_volume':
+			prefs::set_player_param(['hide_master_volume' => $value]);
+			unset($p[$key]);
+			break;
+
 		case 'music_directory_albumart':
 			prefs::set_music_directory($value);
 			break;

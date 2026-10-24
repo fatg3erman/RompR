@@ -50,12 +50,14 @@ class wikidata {
 			if (array_key_exists('sitelinks', $data['entities'][$entity])) {
 
 				foreach ($data['entities'][$entity]['sitelinks'] as $link) {
-					if (preg_match('/https*:\/\/'.$language.'/', $link['url'])) {
-						$wikilinks['user'] = $link['url'];
-					} else if (preg_match('/en\.wikipedia\.org/', $link['url'])) {
-						$wikilinks['english'] = $link['url'];
-					} else {
-						$wikilinks['anything'] = $link['url'];
+					if (array_key_exists('url', $link)) {
+						if (preg_match('/https*:\/\/'.$language.'/', $link['url'])) {
+							$wikilinks['user'] = $link['url'];
+						} else if (preg_match('/en\.wikipedia\.org/', $link['url'])) {
+							$wikilinks['english'] = $link['url'];
+						} else {
+							$wikilinks['anything'] = $link['url'];
+						}
 					}
 				}
 				$retval['wikipedia'] = self::find_first_non_null($wikilinks);

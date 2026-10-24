@@ -3,12 +3,13 @@ chdir('..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 
-class transferCollection {
+class transferCollection extends collection_base {
 
 	private $tracks;
 
 	public function __construct() {
 		$this->tracks = array();
+		parent::__construct();
 	}
 
 	public function doNewPlaylistFile(&$filedata) {

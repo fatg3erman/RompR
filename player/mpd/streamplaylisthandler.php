@@ -184,9 +184,6 @@ class xspfFile {
 // #EXTM3U
 // #EXTINF:duration,Artist - Album
 
-// This is copied from Mopidy's streamhandler. MPD seems to support these now
-// and the new BBC streams don't work with my unwrapper because they provide an infinite
-// number of track URLs for some bizarre reason
 class m3uFile {
 
 	public function __construct($data, $url, $station, $image) {
@@ -197,15 +194,16 @@ class m3uFile {
 		$this->tracks = array();
 		$this->prettystream = '';
 		$this->url_to_add = $url;
-		// if (strpos($url, 'opml.radiotime.com') !== false) {
-		// 	# MPD seems to have issues with m3u from TuneIn, so let's not use them
-		// 	$this->url_to_add = null;
-		// }
+		$this->is_hls = false;
 
 		$parts = explode(PHP_EOL, $data);
 		foreach ($parts as $line) {
 			if (preg_match('/#EXTINF:(.*?),(.*?)$/', $line, $matches)) {
-				$this->prettystream = $matches[2];
+				if ($matches[2] != ' no desc') {
+					$this->prettystream = $matches[2];
+				}
+			} else if (preg_match('/#EXT-X-INDEPENDENT-SEGMENTS/', $line, $matches)) {
+				$this->is_hls = true;
 			} else if (preg_match('/^\#/', $line) || preg_match('/^\s*$/', $line)) {
 
 			} else {
@@ -220,15 +218,55 @@ class m3uFile {
 	public function updateDatabase() {
 		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			prefs::$database->check_radio_tracks($stationid, $this->tracks);
-			// prefs::$database->check_radio_tracks($stationid, array(array('TrackUri' => $this->url_to_add, 'PrettyStream' => $this->prettystream)));
+			if ($this->is_hls) {
+				prefs::$database->check_radio_tracks($stationid, array(array('TrackUri' => $this->url_to_add, 'PrettyStream' => $this->prettystream)));
+			} else {
+				prefs::$database->check_radio_tracks($stationid, $this->tracks);
+			}
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 		}
 	}
 
 	public function getTracksToAdd() {
-		return array('load "'.format_for_mpd(htmlspecialchars_decode($this->url_to_add)).'"');
+		$cmd = $this->is_hls ? 'add' : 'load';
+		return array($cmd.' "'.format_for_mpd(htmlspecialchars_decode($this->url_to_add)).'"');
+	}
+
+}
+
+class hlsFile {
+
+	public function __construct($data, $url, $station, $image) {
+		logger::mark("RADIO_PLAYLIST", "HLS File ".$url.", ".$station);
+		$this->url = $url;
+		$this->station = $station;
+		$this->image = $image;
+		$this->tracks = array();
+		$this->prettystream = '';
+		$this->url_to_add = $url;
+
+		$parts = explode(PHP_EOL, $data);
+		foreach ($parts as $line) {
+			if (preg_match('/#EXTINF:(.*?),(.*?)$/', $line, $matches)) {
+				if ($matches[2] != ' no desc') {
+					$this->prettystream = $matches[2];
+				}
+			}
+		}
+	}
+
+	public function updateDatabase() {
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
+		if ($stationid) {
+			prefs::$database->check_radio_tracks($stationid, array(array('TrackUri' => $this->url_to_add, 'PrettyStream' => $this->prettystream)));
+		} else {
+			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
+		}
+	}
+
+	public function getTracksToAdd() {
+		return array('add "'.format_for_mpd(htmlspecialchars_decode($this->url_to_add)).'"');
 	}
 
 }

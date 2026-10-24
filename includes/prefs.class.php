@@ -15,6 +15,7 @@ class prefs {
 		'do_consume' => false,
 		'websocket' => false,
 		'websocket_port' => '6680',
+		'hide_master_volume' => false,
 		'radioparams' => [
 			"radiomode" => "",
 			"radioparam" => "",
@@ -66,6 +67,8 @@ class prefs {
 
 		"preferlocalfiles" => false,
 		"mopidy_collection_folders" => array("Local media"),
+		"lastfm_country_code" => "",
+		"country_userset" => false,
 		"debug_enabled" => 0,
 		"custom_logfile" => "",
 		"cleanalbumimages" => true,
@@ -119,7 +122,6 @@ class prefs {
 		"lfm_importer_last_import" => 0,
 		"bing_api_key" => '',
 		'brave_api_key' => '',
-		"hide_master_volume" => false,
 		"alarm_ramptime" => 30,
 		"alarm_snoozetime" => 8,
 		"communityradioorderby" => 'name',
@@ -209,7 +211,8 @@ class prefs {
 		"somafm_quality" => 'highest_available_quality',
 		"stupid_rounded_corner_buffer_size" => 0,
 		"skip_amount" => 10,
-		"fadetime" => 1
+		"fadetime" => 1,
+		"touch_help" => false
 	];
 
 	// Prefs that should not be exposed to the browser for security reasons
@@ -261,6 +264,7 @@ class prefs {
 	// the does not support cookies.
 	private static $session_prefs = [ ];
 
+	private static $oldcurrenthost = null;
 
 	// Load the prefs. This function ONLY loads the prefs that are required by the backend.
 	// It starts with BACKEND_PREFS,
@@ -403,6 +407,29 @@ class prefs {
 				self::$session_prefs[$k] = $value;
 				self::set_cookie_pref($k, $value);
 			}
+		}
+	}
+
+	public static function check_player_for_search($domains) {
+		if (self::get_player_param('mopidy_remote') && in_array('local', $domains)) {
+			self::$oldcurrenthost = self::get_pref('currenthost');
+			$all_players = self::get_pref('multihosts');
+			foreach ($all_players as $player => $params) {
+				if (!$params['mopidy_remote']) {
+					logger::log('SEARCH', 'Switching to player',$player,'to do mopidy search');
+					self::$session_prefs['currenthost'] = $player;
+					self::$prefs['currenthost'] = $player;
+					break;
+				}
+			}
+		}
+	}
+
+	public static function switch_player_back() {
+		if (self::$oldcurrenthost !== null) {
+			self::$session_prefs['currenthost'] = self::$oldcurrenthost;
+			self::$prefs['currenthost'] = self::$oldcurrenthost;
+			self::$oldcurrenthost = null;
 		}
 	}
 
