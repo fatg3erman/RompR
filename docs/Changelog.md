@@ -1,8 +1,10 @@
 # Changelog
 
-## Version 2.28
+## Version 2.29
 
 * Fix bug where HLS streams weren't queued properly with MPD
+* Add a 'play' button for all saved playlists so they don't have to be opened. This makes life a lot easier with playlists that use Mopidy's file backend
+* Don't display the Spotify DJ playlist since Mopidy can't play it
 
 
 ## Version 2.28
