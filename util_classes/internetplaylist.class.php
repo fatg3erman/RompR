@@ -72,6 +72,11 @@ class internetPlaylist {
 					$type = "m3u";
 					break;
 
+				case "application/vnd.apple.mpegurl":
+					logger::debug("RADIO_PLAYLIST", "Playlist Is ".PHP_EOL.$d->get_data());
+					$type = "hls";
+					break;
+
 				case "application/xspf+xml":
 					logger::debug("RADIO_PLAYLIST", "Playlist Is ".PHP_EOL.$d->get_data());
 					$type = "xspf";
@@ -135,6 +140,10 @@ class internetPlaylist {
 						case "M3U":
 						case "M3U8":
 							$playlist = new m3uFile($d->get_data(), $url, $station, $image);
+							break;
+
+						case "hls":
+							$playlist = new hlsFile($d->get_data(), $url, $station, $image);
 							break;
 
 						case "stream":
