@@ -76,6 +76,9 @@ You will only see options for backends that are enabled in Mopidy. The complete 
 * **YouTube Music Liked Songs** ('ytmusic' backend must be enabled)
 * **YouTube Music Albums** ('ytmusic' backend must be enabled)
 * **YouTube Music Subscriptions** ('ytmusic' backend must be enabled)
+* **Qobuz Favourite Albums** ('qobuz-hires' backend must be enabled)
+* **Subidy** ('subidy' backend must be enabled)
+* **Bandcamp Your Collection** ('bandcamp' backend must be enabled)
 
 ### On-The-Fly Collection Building
 

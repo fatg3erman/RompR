@@ -437,6 +437,12 @@ const MOPIDY_COLLECTION_FOLDERS = [
 			'dir' => 'Subsonic/Albums',
 			'label' => 'Subsonic'
 		]
+	],
+	'bandcamp' => [
+		[
+			'dir' => 'bandcamp/Collection',
+			'label' => 'Your Bandcamp Collection'
+		]
 	]
 ];
 
