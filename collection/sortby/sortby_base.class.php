@@ -348,6 +348,7 @@ class sortby_base {
 				   strpos($trackarr[0]['AlbumUri'], 'yt:playlist:') !== false
 				|| strpos($trackarr[0]['AlbumUri'], 'youtube:playlist:') !== false
 				|| strpos($trackarr[0]['AlbumUri'], 'ytmusic:album:') !== false
+				// || strpos($trackarr[0]['AlbumUri'], 'bandcamp:album:') !== false
 				// || strpos($trackarr[0]['AlbumUri'], 'qobuz:album:') !== false
 			) {
 				// Basically we ALWAYS want to browse youtube music albums because
@@ -360,7 +361,7 @@ class sortby_base {
 					return;
 				}
 				$trackarr = $this->track_sort_query();
-			} else if (prefs::get_pref('player_backend') == 'mopidy' && getDomain($trackarr[0]['uri']) != 'local') {
+			} else if (prefs::get_pref('player_backend') == 'mopidy' && getDomain($trackarr[0]['uri']) != 'local' && getDomain($trackarr[0]['uri']) != 'bandcamp') {
 				$can_browse = true;
 			}
 		}

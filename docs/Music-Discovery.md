@@ -5,7 +5,7 @@ RompЯ contains many features to help you discover new music based on your liste
 ## More Personalised Radio
 
 The Personalised Radio panel includes more radio stations designed to help you discover music. These are only available if you're using Mopidy
-with Spotify, Qobuz, Youtube, or YTMusic.
+with Spotify, Bandcamp, Qobuz, Youtube, or YTMusic.
 
 ### Use of Your Data
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 2.30
+
+* Allow Mopidy-Bandcamp to be used as a source for personalised radio
+
+
 ## Version 2.29
 
 * Fix bug where HLS streams weren't queued properly with MPD

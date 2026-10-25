@@ -99,7 +99,7 @@ class player extends base_mpd_player {
 		$domains = array_map(function($a) {return $a.':'; }, $domains);
 		logger::debug('MOPIDY', 'Search Backends are',$domains);
 		foreach ($terms as $term => $value) {
-			$search[self::SPECIFIC_SEARCH_TERMS[$term]] = $value;
+			$search[self::SPECIFIC_SEARCH_TERMS[$term]] = array_map('trim', $value);
 		}
 		logger::log('MOPIDY', 'Search Params are',$search);
 		$result = $this->mopidy_http_request(

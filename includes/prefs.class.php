@@ -20,7 +20,7 @@ class prefs {
 			"radiomode" => "",
 			"radioparam" => "",
 			"radioconsume" => [],
-			"radiodomains" => ['local', 'spotify', 'youtube', 'ytmusic', 'qobuz'],
+			"radiodomains" => ['local', 'spotify', 'youtube', 'ytmusic', 'qobuz', 'bandcamp'],
 			"toptracks_current" => 1,
 			"toptracks_total" => 1,
 			"stationname" => ''

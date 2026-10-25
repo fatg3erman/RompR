@@ -207,7 +207,8 @@ var player = function() {
 		'spotify',
 		'youtube',
 		'ytmusic',
-		'qobuz'
+		'qobuz',
+		'bandcamp'
 	];
 
 	return {

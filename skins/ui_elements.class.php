@@ -282,6 +282,7 @@ class ui_elements {
 				strpos($det['AlbumUri'], 'ytmusic:album:') !== false ||
 				strpos($det['AlbumUri'], 'spotify:album:') !== false ||
 				strpos($det['AlbumUri'], 'qobuz:album:') !== false ||
+				strpos($det['AlbumUri'], 'bandcamp:album:') !== false ||
 				strpos($det['AlbumUri'], 'youtube:playlist:') !== false ||
 				strpos($det['AlbumUri'], 'yt:playlist:') !== false
 			)
