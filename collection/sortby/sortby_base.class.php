@@ -361,7 +361,8 @@ class sortby_base {
 					return;
 				}
 				$trackarr = $this->track_sort_query();
-			} else if (prefs::get_pref('player_backend') == 'mopidy' && getDomain($trackarr[0]['uri']) != 'local' && getDomain($trackarr[0]['uri']) != 'bandcamp') {
+			} else if (prefs::get_pref('player_backend') == 'mopidy' && getDomain($trackarr[0]['uri']) != 'local') {
+			// } else if (prefs::get_pref('player_backend') == 'mopidy' && getDomain($trackarr[0]['uri']) != 'local' && getDomain($trackarr[0]['uri']) != 'bandcamp') {
 				$can_browse = true;
 			}
 		}
