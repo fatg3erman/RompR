@@ -491,6 +491,9 @@ class musicbrainz {
 		if (self::$retval['metadata']['track']['recording'] == null)
 			return null;
 
+		if (!array_key_exists('relations', self::$retval['metadata']['track']['recording']))
+			return null;
+
 		foreach (self::$retval['metadata']['track']['recording']['relations'] as $relation) {
 			if ($relation['target-type'] == 'work') {
 				logger::debug('MUSICBRAINZ', 'Found Work ID for track',$relation['work']['id']);

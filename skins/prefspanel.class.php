@@ -339,12 +339,9 @@ class prefspanel extends uibits {
 
 		$countries = ['' => 'Please Select'];
 		$x = simplexml_load_file('resources/iso3166.xml');
-		$markets = spotify::get_markets();
 		foreach($x->CountryEntry as $i => $c) {
 			$code = (string) $c->CountryCode;
-			if (in_array($code, $markets)) {
-				$countries[$code] = mb_convert_case($c->CountryName, MB_CASE_TITLE, "UTF-8");
-			}
+			$countries[$code] = mb_convert_case($c->CountryName, MB_CASE_TITLE, "UTF-8");
 		}
 		self::ui_select_box([
 			'id' => 'lastfm_country_code',

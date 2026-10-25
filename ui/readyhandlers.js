@@ -207,6 +207,12 @@ function carry_on_starting() {
 		$('[name="donkeykong"]').remove();
 		$('[name="dinkeyking"]').remove();
 	}
+	if (!player.canPlay('soundcloud')) {
+		$('#button_sourcesoundcloud').remove();
+		if (prefs.infosource == "soundcloud") {
+			prefs.save({infosource: "file"});
+		}
+	}
 	snapcast.initialise();
 	startBackgroundInitTasks.doNextTask();
 

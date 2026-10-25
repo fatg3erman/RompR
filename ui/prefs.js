@@ -475,6 +475,14 @@ var prefs = function() {
 	    	prefs.coversize = 48;
 	    }
 
+	    try {
+	    	if (prefs.infosource == "spotify") {
+	    		prefs.infosource = "file";
+	    	}
+	    } catch (err) {
+	    	prefs.infosource = "file";
+	    }
+
 	    // Swap browser_id from local storage to cookie
 		if (localStorage.getItem('prefs.browser_id') != null && localStorage.getItem('prefs.browser_id') != '') {
 			let bid = JSON.parse(localStorage.getItem('prefs.browser_id'));

@@ -126,13 +126,8 @@ include ("includes/firstrun.php");
 if (!prefs::get_pref('country_userset')) {
 	logger::info('INIT', 'Country Code not sent by user');
 	$browser_country = language::get_browser_country();
-	$markets = spotify::get_markets();
-	if (in_array($browser_country, $markets)) {
-		logger::info('INIT', 'Browser gave us',$browser_country,'which is valid for Spotify');
-		prefs::set_pref(['lastfm_country_code' => $browser_country]);
-	} else {
-		logger::info('INIT', 'Browser gave us',$browser_country,'which is NOT valid for Spotify');
-	}
+	prefs::set_pref(['lastfm_country_code' => $browser_country]);
+	logger::info('INIT', 'Browser gave us',$browser_country);
 }
 
 logger::debug("INIT", $_SERVER['SCRIPT_FILENAME']);

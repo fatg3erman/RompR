@@ -2,6 +2,7 @@
 
 ## Version 2.30
 
+* Have removed the Spotify Info panel again, because I've cancelled my Spotify subscription and it won't work without it.
 * Allow Mopidy-Bandcamp to be used as a source for personalised radio
 * Allow Bandcamp "Your Collection" to be used to build the Music Collection. Note, this is quite slow.
 * Mopidy-Bandcamp support works best with my fork of Mopidy-Bandcamp. This adds the ability to lookup Albums returned by search, and also fixes a bug where Your Collection tracks could not be streamed
