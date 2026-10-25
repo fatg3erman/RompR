@@ -3,7 +3,11 @@
 ## Version 2.30
 
 * Allow Mopidy-Bandcamp to be used as a source for personalised radio
-
+* Allow Bandcamp "Your Collection" to be used to build the Music Collection. Note, this is quite slow.
+* Mopidy-Bandcamp support works best with my fork of Mopidy-Bandcamp. This adds the ability to lookup Albums returned by search, and also fixes a bug where Your Collection tracks could not be streamed
+	```
+	pip3 install --upgrade git+https://github.com/fatg3erman/mopidy-bandcamp.git@master
+	```
 
 ## Version 2.29
 
