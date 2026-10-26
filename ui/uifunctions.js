@@ -830,6 +830,11 @@ function combine_spotify_artists(artists) {
 function spotifyTrackListing(data, show_add_button) {
 	debug.log('TRACKLIST', data);
 	var h = '';
+	if (data.external_url) {
+		h += '<div class="albumthinglink">';
+		h += '<a href="' + data.external_url + '" target="_blank">' + data.link_title + '</a>';
+		h += '</div>';
+	}
 	for(var i in data.tracks.items) {
 		var domain = playlist.getDomain(data.tracks.items[i].uri);
 		if (player.canPlay(domain)) {

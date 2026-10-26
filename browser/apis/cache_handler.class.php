@@ -29,25 +29,35 @@ class cache_handler extends url_downloader {
 	public function get_cache_data() {
 		$retval = '';
 		$status = null;
-		if ($this->get_data_to_file()) {
-			// If the download was successful, return the data that was downloaded
-			$retval = $this->get_data();
-		} else {
-			logger::warn("CACHE HANDLER", "There was an HTTP error");
-			// Else set the HTTP header to the status code returned, or to 500 if none
-			if ($this->get_status() > 0) {
-				$status = $this->get_status();
-			} else {
-				$status = 500;
-			}
-			logger::warn("CACHE HANDLER", "Status is $status");
-			// Sometimes we do get data returned by APIs even if there was an error
-			// If that data exists, return it else return our standard array('error' => value)
-			if ($this->get_data() != '') {
+		$retries = 3;
+		while ($retries > 0) {
+			if ($this->get_data_to_file()) {
+				// If the download was successful, return the data that was downloaded
 				$retval = $this->get_data();
-				logger::core('CACHE HANDLER', $retval);
+				$retries = 0;
 			} else {
-				$retval =  json_encode(array('error' => $status." ".http_status_code_string($status)));
+				logger::warn("CACHE HANDLER", "There was an HTTP error");
+				// Else set the HTTP header to the status code returned, or to 500 if none
+				$retries--;
+				if ($retries == 0 || $this->get_status() == 404) {
+					$retries = 0;
+					if ($this->get_status() > 0) {
+						$status = $this->get_status();
+					} else {
+						$status = 500;
+					}
+					logger::warn("CACHE HANDLER", "Status is $status");
+					// Sometimes we do get data returned by APIs even if there was an error
+					// If that data exists, return it else return our standard array('error' => value)
+					if ($this->get_data() != '') {
+						$retval = $this->get_data();
+						logger::core('CACHE HANDLER', $retval);
+					} else {
+						$retval =  json_encode(array('error' => $status." ".http_status_code_string($status)));
+					}
+				} else {
+					sleep(5);
+				}
 			}
 		}
 		if ($this->options['return_value']) {
@@ -64,10 +74,6 @@ class cache_handler extends url_downloader {
 			}
 			print $retval;
 		}
-	}
-
-	public function check_cache_file($cache, $url) {
-		return file_exists($this->get_cache_file($cache, $url));
 	}
 
 }

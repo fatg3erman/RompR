@@ -759,7 +759,11 @@ language::add_translations([
 	"config_touch_help" =>					"Additional icon spacing for touch interfaces",
 	"config_country" =>						"Country",
 
-	"label_play_playlist" =>				"Play This Playlist"
+	"label_play_playlist" =>				"Play This Playlist",
+	"bandcamp_error" =>						"Could not find info from Bandcamp",
+	"button_infobandcamp" =>				"Info Panel (Bandcamp)",
+	"label_location" =>						"Location",
+	"label_viewbc" =>						"View on Bandcamp"
 
 ]);
 

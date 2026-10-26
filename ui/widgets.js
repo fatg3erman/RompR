@@ -1035,6 +1035,9 @@ $.widget('rompr.spotifyAlbumThing', {
 			if (!album.domain)
 				album.domain = 'spotify';
 
+			if (!album.date)
+				album.date = null;
+
 			var artistname = combine_spotify_artists(album.artists);
 
 			// Create the HTML for the album
@@ -1143,6 +1146,9 @@ $.widget('rompr.spotifyAlbumThing', {
 
 	_albumTitle: function(text_holder, album, artistname) {
 		let text_span = $('<div>', {class: 'expand title-menu textcentre'}).html(album.name).appendTo(text_holder);
+		if (album.date) {
+			($('<span>', {class: 'notbold'})).html(' ('+album.date+')').appendTo(text_span);
+		}
 		if (this.options.showbiogs || this.options.showanames)
 			text_span.prepend('<span class="artistnamething">'+artistname+'</span><br />');
 
@@ -1193,7 +1199,11 @@ $.widget('rompr.spotifyAlbumThing', {
 					} else {
 						element.makeSpinner();
 					}
-					spotify.album.getInfo(id, $.proxy(self.spotifyAlbumResponse, self), self.spotiError, true);
+					if (id.includes('-')) {
+						bandcamp.get_album(id, $.proxy(self.spotifyAlbumResponse, self), self.spotiError);
+					} else {
+						spotify.album.getInfo(id, $.proxy(self.spotifyAlbumResponse, self), self.spotiError, true);
+					}
 				}
 			}
 		} else if (element.hasClass('clickimporttrack')) {
@@ -1250,18 +1260,22 @@ $.widget('rompr.spotifyAlbumThing', {
 		}
 		var e = $("#"+this.options.id+'dropper_'+data.id);
 
-		var album_holder = e;
-		while (!album_holder.hasClass('albumwidget')) {
-			album_holder = album_holder.parent();
-		}
-		let data_index = album_holder.attr('data_index');
-		this.options.data[data_index].tracks = data.tracks;
+		debug.log("SPOTIALBUMRESPONSE", "#"+this.options.id+'dropper_'+data.id);
 
-		e.show();
-		this._openAlbum(e);
-		e.addClass("filled").html(spotifyTrackListing(data, true));
-		infobar.markCurrentTrack();
-		browser.rePoint();
+		if (e.length > 0) {
+			var album_holder = e;
+			while (!album_holder.hasClass('albumwidget')) {
+				album_holder = album_holder.parent();
+			}
+			let data_index = album_holder.attr('data_index');
+			this.options.data[data_index].tracks = data.tracks;
+
+			e.show();
+			this._openAlbum(e);
+			e.addClass("filled").html(spotifyTrackListing(data, true));
+			infobar.markCurrentTrack();
+			browser.rePoint();
+		}
 	},
 
 	spotiError: function(data) {

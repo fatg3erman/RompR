@@ -2,7 +2,7 @@ var musicbrainz = function() {
 
 	var queue = new Array();
 	var current_req;
-	const THROTTLE_TIME = 1500;
+	const THROTTLE_TIME = 2000;
 
 	async function handle_response(req, response) {
 		var c = response.headers.get('Pragma');

@@ -24,6 +24,7 @@ class url_downloader {
 		'url' => '',
 		'header' => null,
 		'postfields' => null,
+		'jsondata' => null,
 		'cache' => null,
 	);
 
@@ -64,6 +65,9 @@ class url_downloader {
 			$fields_string = http_build_query($this->options['postfields']);
 			curl_setopt($this->ch, CURLOPT_POST, count($this->options['postfields']));
 			curl_setopt($this->ch, CURLOPT_POSTFIELDS, $fields_string);
+		} else if ($this->options['jsondata'] !== null) {
+			curl_setopt($this->ch, CURLOPT_POST, true);
+			curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode($this->options['jsondata']));
 		}
 		// WARNING. Don't put the _HEADER stuff in here, for some reason I can't be arsed
 		// to figure out, it breaks get_data_to_file.
@@ -99,8 +103,13 @@ class url_downloader {
 		return $this->get_final_info();
 	}
 
-	protected function get_cache_file($cache, $url){
-		return 'prefs/jsoncache/'.$cache.'/'.md5($url);
+	protected function get_cache_file() {
+		$cache = $this->options['cache'];
+		$fname = $this->options['url'];
+		if ($this->options['jsondata'] !== null) {
+			$fname .= json_encode($this->options['jsondata']);
+		}
+		return 'prefs/jsoncache/'.$cache.'/'.md5($fname);
 	}
 
 	public function get_data_to_file($file = null, $binary = false) {
@@ -120,8 +129,8 @@ class url_downloader {
 		if ($this->file === null && $this->options['cache'] === null) {
 			return $this->get_data_to_string();
 		} else if ($this->options['cache'] !== null) {
+			$this->file = $this->get_cache_file();
 			logger::debug("URL_DOWNLOADER", "Downloading",$this->options['url'],'to file', $this->file);
-			$this->file = $this->get_cache_file($this->options['cache'], $this->options['url']);
 			if ($this->check_cache($this->file))
 				return true;
 		}

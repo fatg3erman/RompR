@@ -16,6 +16,7 @@ $root_level_dirs = array(
 	'prefs/jsoncache/bing',
 	'prefs/jsoncache/brave',
 	'prefs/jsoncache/wikidata',
+	'prefs/jsoncache/bandcamp',
 	'prefs/userplaylists',
 	'prefs/plimages',
 	'prefs/userbackgrounds',
