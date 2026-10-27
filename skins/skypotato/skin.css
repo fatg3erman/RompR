@@ -240,10 +240,11 @@ input[type=text],input[type="number"] {
 	margin-top:4px;
 }
 
-#plmode {
+#plmoder {
 	font-size:8pt;
 	height:22px;
 	line-height:22px;
+   text-align: right;
 }
 
 .album-play-controls {

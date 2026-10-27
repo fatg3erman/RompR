@@ -710,8 +710,8 @@ var layoutProcessor = function() {
 
 		notifyAddTracks: function() {
 			clearTimeout(headertimer);
-			$('#plmode').fadeOut(500, function() {
-				$('#plmode').html(language.gettext('label_addingtracks')).fadeIn(500);
+			$('#plmoder').fadeOut(500, function() {
+				$('#plmoder').html(language.gettext('label_addingtracks')).fadeIn(500);
 			});
 		},
 
@@ -724,23 +724,23 @@ var layoutProcessor = function() {
 				}
 			}
 			debug.core('DOFANCYHEADERS', 'Lines is',lines);
-			if (lines.length == 0 && $('#plmode').html() != '') {
+			if (lines.length == 0 && $('#plmoder').html() != '') {
 				currheader = 0;
-				$('#plmode').fadeOut(500, function() {
-					$('#plmode').html('').fadeIn(500);
+				$('#plmoder').fadeOut(500, function() {
+					$('#plmoder').html('').fadeIn(500);
 				});
 			} else if (lines.length == 1 && $('#plmode').html() != lines[0]) {
-				$('#plmode').fadeOut(500, function() {
-					$('#plmode').html(lines[0]).fadeIn(500);
+				$('#plmoder').fadeOut(500, function() {
+					$('#plmoder').html(lines[0]).fadeIn(500);
 				});
 			} else {
 				currheader++;
 				if (currheader >= lines.length) {
 					currheader = 0;
 				}
-				if ($('#plmode').html() != lines[currheader]) {
-					$('#plmode').fadeOut(500, function() {
-						$('#plmode').html(lines[currheader]).fadeIn(500, function() {
+				if ($('#plmoder').html() != lines[currheader]) {
+					$('#plmoder').fadeOut(500, function() {
+						$('#plmoder').html(lines[currheader]).fadeIn(500, function() {
 							headertimer = setTimeout(layoutProcessor.doFancyHeaderStuff, 5000);
 						});
 					});
@@ -769,6 +769,7 @@ var layoutProcessor = function() {
 		},
 
 		setRadioModeHeader: function(html) {
+			$("#plmode").html(html);
 			if (html != headers['radiomode']) {
 				headers['radiomode'] = html;
 				layoutProcessor.doFancyHeaderStuff();
@@ -832,7 +833,7 @@ var layoutProcessor = function() {
 				handleClass: 'configtitle',
 				handleshow: false
 			});
-			$('#plmode').detach().appendTo('#nowplaying_icons').addClass('tright');
+			// $('#plmode').detach().appendTo('#nowplaying_icons').addClass('tright');
 			$('#volume').volumeControl({
 				orientation: 'vertical',
 				command: player.controller.volume

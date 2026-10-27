@@ -30,6 +30,7 @@ create_body_tag('desktop');
 				uibits::ui_nowplaying_icons();
 				uibits::ui_post_nowplaying_icons();
 				?>
+				<div id="plmoder" class="tright"></div>
 			</div>
 		</div>
 
