@@ -6,8 +6,8 @@
 		private static $debug_colours = array(
 			# light red
 			0 => 91,
-			# red
-			1 => 31,
+			# bright green
+			1 => 92,
 			# yellow
 			2 => 33,
 			# magenta

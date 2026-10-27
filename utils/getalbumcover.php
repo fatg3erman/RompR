@@ -35,6 +35,7 @@ if ($ignore_local) {
 $searchfunctions = array(
 	'tryLocal',
 	'tryPlayer',
+	'tryBandcamp',
 	'trySoundcloud',
 	'tryLastFMForMBID',
 	'tryMusicBrainz',
@@ -162,6 +163,23 @@ function trySoundcloud($albumimage) {
 	}
 	logger::debug("GETALBUMCOVER", "SoundCloud returning",$image);
 	return $image;
+}
+
+function tryBandcamp($albumimage) {
+	global $delaytime;
+	$retval = "";
+	if ($albumimage->albumuri === null || substr($albumimage->albumuri, 0, 9) != 'bandcamp:') {
+		return $retval;
+	}
+	$id = str_replace('bandcamp:album:', '', $albumimage->albumuri);
+	logger::debug('GETALBUMCOVER', "  Trying bandcamp for", $id);
+	list($r, $c) = bandcamp::get_album_details(['id' => $id], false, true);
+	if (array_key_exists('images', $r)) {
+		logger::log('GETALBUMCOVER', "  Bandcamp returning", $r['images'][0]['url']);
+		$retval = $r['images'][0]['url'];
+	}
+	$delaytime = 1000;
+	return $retval;
 }
 
 function tryLastFMForMBID($albumimage) {

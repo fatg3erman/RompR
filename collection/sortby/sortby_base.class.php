@@ -348,13 +348,13 @@ class sortby_base {
 				   strpos($trackarr[0]['AlbumUri'], 'yt:playlist:') !== false
 				|| strpos($trackarr[0]['AlbumUri'], 'youtube:playlist:') !== false
 				|| strpos($trackarr[0]['AlbumUri'], 'ytmusic:album:') !== false
-				// || strpos($trackarr[0]['AlbumUri'], 'bandcamp:album:') !== false
+				|| strpos($trackarr[0]['AlbumUri'], 'bandcamp:album:') !== false
 				// || strpos($trackarr[0]['AlbumUri'], 'qobuz:album:') !== false
 			) {
-				// Basically we ALWAYS want to browse youtube music albums because
+				// Basically we ALWAYS want to browse youtube music and bandcamp albums because
 				// they're often incomplete and never have Track Numbers
 				// and search results don't alwyas give us an Album: result
-				// for every album
+				// for every album, or we get albumartists that aren't correct for the album
 				logger::log('SORTER', 'Forcing browse of Youtube Album');
 				$this->who = prefs::$database->check_album_browse($this->who);
 				if ($this->who === true) {

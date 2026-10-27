@@ -94,8 +94,7 @@ class bandcamp {
 
 	}
 
-	public static function get_album($params, $pd) {
-		# /mobile/24/tralbum_details?band_id=2498325343&tralbum_type=a&tralbum_id=2898036781"
+	public static function get_album_details($params) {
 		list($band_id, $album_id) = explode('-', $params['id']);
 		$p = ['band_id' => $band_id, 'tralbum_type' => 'a', 'tralbum_id' => $album_id];
 		$url = self::BASE_URL . '/mobile/24/tralbum_details?' . http_build_query($p);
@@ -106,6 +105,10 @@ class bandcamp {
 			'external_url' => $deets['bandcamp_url'],
 			'link_title' => language::gettext('label_viewbc') ,
 			'id' => $band_id.'-'.$album_id,
+			'images' => [[
+				'url' => self::IMAGE_BASE . 'a' . $deets['art_id'] . '_10.jpg',
+				'width' => 1200
+			]],
 			'tracks' => ['items' => []]
 		];
 		foreach ($deets['tracks'] as $d) {
@@ -117,6 +120,14 @@ class bandcamp {
 				'artists' => [['name' => $d['band_name']]]
 			];
 		}
+
+		return array($retval, $c);
+
+	}
+
+	public static function get_album($params, $pd) {
+
+		list($retval, $c) = self::get_album_details($params);
 
 		if ($c) {
 			header("Pragma: From Cache");

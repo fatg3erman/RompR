@@ -129,12 +129,14 @@ class player extends base_mpd_player {
 			return;
 		}
 
+		// logger::log('MOPIDY', print_r($json, true));
+
 		foreach ($json['result'] as $uri_search) {
 			$domain = getDomain($uri_search['uri']);
 			if (array_key_exists('tracks', $uri_search)) {
 				foreach ($uri_search['tracks'] as $track) {
 					$filedata = $this->parse_mopidy_track($track, $domain);
-					if ($this->sanitize_data($filedata)) {
+					if ($filedata !== null && $this->sanitize_data($filedata)) {
 						yield $filedata;
 					}
 				}
@@ -225,10 +227,14 @@ class player extends base_mpd_player {
 			if (count($amb) > 0)
 				$filedata['MUSICBRAINZ_ARTISTID'] = $amb;
 		}
-		// Album, X-AlbumUri, AlbumArtist, MUSICBRAINZ_ALBUMID, and MUSICBrAINZ_ALBUMARTISTID
 		if (array_key_exists('album', $track)) {
-			if (array_key_exists('name', $track['album']) && $track['album']['name'])
-				$filedata['Album'] = $track['album']['name'];
+			if (array_key_exists('name', $track['album']))
+				if ($track['album']['name']) {
+					$filedata['Album'] = $track['album']['name'];
+				} else {
+					logger::log("MOPIDY", "Ignoring album with no name");
+					return null;
+				}
 			if (array_key_exists('uri', $track['album']) && $track['album']['uri'])
 				$filedata['X-AlbumUri'] = $track['album']['uri'];
 			if (array_key_exists('date', $track['album']) && $track['album']['date'] && $track['album']['date'] != '0000')
@@ -331,13 +337,13 @@ class player extends base_mpd_player {
 		$filedata['domain'] = $domain;
 		// Title
 		$filedata['Title'] = 'Album: '.$track['name'];
-		// Artist and MUSICBRAINZ_ARTISTID
-		// We don't set AlbumArtist for albums, that's consistent with what Mopidy-MPD does
 		if (array_key_exists('artists', $track)) {
 			list($artists, $amb) = $this->parse_mopidy_artists($track['artists']);
 			if (count($artists) > 0)
 				$filedata['Artist'] = $artists;
+				$filedata['AlbumArtist'] = $artists;
 			if (count($amb) > 0)
+				$filedata['MUSICBRAINZ_ARTISTID'] = $amb[0];
 				$filedata['MUSICBRAINZ_ALBUMARTISTID'] = $amb[0];
 		}
 		// Album
