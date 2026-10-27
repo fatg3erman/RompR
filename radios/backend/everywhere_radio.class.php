@@ -170,8 +170,12 @@ class everywhere_radio extends musicCollection {
 				return false;
 			} else {
 				$cmds = [join_command_string(array('add', $uri))];
-				$player->do_command_list($cmds);
-				$numtracks--;
+				$r = $player->do_command_list($cmds);
+				if ((is_array($r) && array_key_exists('error', $r)) || $r === false) {
+					logger::log("EVRADIO", "Failed to add that track");
+				} else {
+					$numtracks--;
+				}
 				// Trying this here because Mopidy on Pi4 seems to get
 				// annoyed at us at this point.
 				sleep(1);
