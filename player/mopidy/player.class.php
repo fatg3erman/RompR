@@ -395,7 +395,11 @@ class player extends base_mpd_player {
 				break;
 
 			case "spotify":
+			case "bandcamp":
 				$filedata['folder'] = $filedata['X-AlbumUri'];
+				if ($filedata['Disc'] == null) {
+					$filedata['Disc'] = 0;
+				}
 				break;
 
 			case "internetarchive":

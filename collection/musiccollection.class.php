@@ -18,21 +18,23 @@ class musicCollection extends collection_base {
 	public function newTrack(&$filedata) {
 		static $current_folder = null;
 		if ($this->options['dbterms'] === true
-			|| $this->check_url_against_database($filedata['file'], $this->options['dbterms']['tag'], $this->options['dbterms']['rating'])) {
+			|| $this->check_url_against_database($filedata['file'], $this->options['dbterms']['tag'], $this->options['dbterms']['rating']))
+		{
 			if ($this->options['doing_search']) {
 				// If we're doing a search, we check to see if that track is in the database
 				// because the user might have set the AlbumArtist to something different
 				$filedata = array_replace($filedata, $this->get_extra_track_info($filedata));
 			}
 
+			// Anything we want to force to a specific value - see do_update_with_command()
+			foreach ($this->force_keys as $k => $v) {
+				logger::log("COLLECTION", "Setting", $k, "to", $v);
+				$filedata[$k] = $v;
+			}
+
 			$track = new track($filedata);
 			if ($this->options['searchterms'] !== false && !$this->check_track_against_terms($track)) {
 				return;
-			}
-
-			// Anything we want to force to a specific value - see do_update_with_command()
-			foreach ($this->force_keys as $k => $v) {
-				$filedata[$k] = $v;
 			}
 
 			if ($this->options['trackbytrack']) {
