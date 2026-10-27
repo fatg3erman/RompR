@@ -33,6 +33,8 @@ class bandcamp {
 
 		$search_result = json_decode($result, true);
 
+		// logger::log('GET_ARTIST', print_r($search_result, true));
+
 		$retval = [
 			'band_id' => null,
 			'albums' => []
@@ -63,24 +65,31 @@ class bandcamp {
 		list($result, $c) = self::request($url, $data);
 
 		$artist_result = json_decode($result, true);
-		$retval['bio'] = $artist_result['bio'];
+
+		// logger::log('GET_ARTIST', print_r($artist_result, true));
+
+		$retval['shows'] = array_key_exists('shows', $artist_result) ? $artist_result['shows'] : [];
+		$retval['sites'] = array_key_exists('sites', $artist_result) ? $artist_result['sites'] : [];
+		$retval['bio'] = array_key_exists('bio', $artist_result) ? $artist_result['bio'] : "";
 
 		if (array_key_exists('discography', $artist_result)) {
 			foreach ($artist_result['discography'] as $d) {
-				$m = preg_match('/ (\d\d\d\d) /', $d['release_date'], $matches);
-				$date = ($m) ? $matches[1] : null;
-				$retval['albums'][] = [
-					'name' => $d['title'],
-					'id' => $d['band_id'] . '-' . $d['item_id'],
-					'uri' => 'bandcamp:album:'.$d['band_id'] . '-' . $d['item_id'],
-					'artists' => [['name' => $d['band_name']]],
-					'images' => [[
-						'url' => self::IMAGE_BASE . 'a' . $d['art_id'] . '_5.jpg',
-						'width' => 700
-					]],
-					'domain' => 'bandcamp',
-					'date' => $date
-				];
+				if ($d['item_type'] == 'album') {
+					$m = preg_match('/ (\d\d\d\d) /', $d['release_date'], $matches);
+					$date = ($m) ? $matches[1] : null;
+					$retval['albums'][] = [
+						'name' => $d['title'],
+						'id' => $d['band_id'] . '-' . $d['item_id'],
+						'uri' => 'bandcamp:album:'.$d['band_id'] . '-' . $d['item_id'],
+						'artists' => [['name' => $d['band_name']]],
+						'images' => [[
+							'url' => self::IMAGE_BASE . 'a' . $d['art_id'] . '_5.jpg',
+							'width' => 700
+						]],
+						'domain' => 'bandcamp',
+						'date' => $date
+					];
+				}
 			}
 		}
 
@@ -102,25 +111,28 @@ class bandcamp {
 
 		$deets = json_decode($result, true);
 		$retval = [
-			'external_url' => $deets['bandcamp_url'],
+			'external_url' => array_key_exists('bandcamp_url', $deets) ? $deets['bandcamp_url'] : null,
 			'link_title' => language::gettext('label_viewbc') ,
 			'id' => $band_id.'-'.$album_id,
-			'images' => [[
-				'url' => self::IMAGE_BASE . 'a' . $deets['art_id'] . '_10.jpg',
-				'width' => 1200
-			]],
 			'tracks' => ['items' => []]
 		];
-		foreach ($deets['tracks'] as $d) {
-			$retval['tracks']['items'][] = [
-				'uri' => 'bandcamp:track:'.$d['band_id'] . '-' . $d['album_id']. '-' . $d['track_id'],
-				'name' => $d['title'],
-				'track_number' => $d['track_num'],
-				'duration_ms' => $d['duration'] * 1000,
-				'artists' => [['name' => $d['band_name']]]
-			];
+		if (array_key_exists('art_id', $deets)) {
+			$retval['images'] = [[
+				'url' => self::IMAGE_BASE . 'a' . $deets['art_id'] . '_10.jpg',
+				'width' => 1200
+			]];
 		}
-
+		if (array_key_exists('tracks', $deets)) {
+			foreach ($deets['tracks'] as $d) {
+				$retval['tracks']['items'][] = [
+					'uri' => 'bandcamp:track:'.$d['band_id'] . '-' . $d['album_id']. '-' . $d['track_id'],
+					'name' => $d['title'],
+					'track_number' => $d['track_num'],
+					'duration_ms' => $d['duration'] * 1000,
+					'artists' => [['name' => $d['band_name']]]
+				];
+			}
+		}
 		return array($retval, $c);
 
 	}

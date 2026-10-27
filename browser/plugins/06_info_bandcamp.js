@@ -4,6 +4,45 @@ var info_bandcamp = function() {
 	var me = "bandcamp";
 	var maxwidth = 300;
 
+	function getURLs(layout, sites) {
+		if (sites.length == 0 || !sites.some(r => (r.url)))
+			return;
+
+		var list = layout.add_sidebar_list(language.gettext("discogs_external"));
+		list.addClass('info-links-column');
+		var links = [];
+		sites.reverse();
+		sites.forEach(function(rel) {
+			if (rel.url) {
+				let item = $('<li>');
+				let icon = $('<i>', {class: 'icon-noicon smallicon'}).appendTo(item);
+				let link = $('<a>', {target: '_blank', href: rel.url}).appendTo(item);
+				link.html(rel.title);
+				switch (rel.title) {
+					case 'Twitter':
+						icon.addClass('icon-twitter-logo').removeClass('icon-noicon');
+						break;
+
+					case 'Facebook':
+						icon.addClass('icon-facebook-logo').removeClass('icon-noicon');
+						break;
+
+					case 'SoundCloud':
+						icon.addClass('icon-soundcloud-circled').removeClass('icon-noicon');
+						break;
+
+					case 'YouTube':
+						icon.addClass('icon-youtube-circled').removeClass('icon-noicon');
+						break;
+				}
+				links.unshift(item);
+			}
+		});
+		for (var l of links) {
+			list.append(l);
+		}
+	}
+
 	return {
 
 		getRequirements: function(parent) {
@@ -44,6 +83,18 @@ var info_bandcamp = function() {
 					var list = layout.add_sidebar_list(language.gettext("musicbrainz_tags"));
 					for (var t of data.tags) {
 						list.append($('<li>').html(t));
+					}
+				}
+
+				getURLs(layout, data.sites);
+
+				if (data.shows && data.shows.length > 0) {
+					var list = layout.add_sidebar_list(language.gettext("label_upcoming"));
+					for (var t of data.shows) {
+						let date = new Date(t.utc_date * 1000);
+						let dt = date.toDateString();
+						let text = '<b>' + dt + '</b> <a href="' + t.uri +'" target="_blank"><i>' + t.venue + ', ' + t.loc + '</i></a>';
+						list.append($('<li>').html(text));
 					}
 				}
 

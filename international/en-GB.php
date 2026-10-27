@@ -763,7 +763,8 @@ language::add_translations([
 	"bandcamp_error" =>						"Could not find info from Bandcamp",
 	"button_infobandcamp" =>				"Info Panel (Bandcamp)",
 	"label_location" =>						"Location",
-	"label_viewbc" =>						"View on Bandcamp"
+	"label_viewbc" =>						"View on Bandcamp",
+	"label_upcoming" =>						"Upcoming Shows"
 
 ]);
 
