@@ -46,6 +46,7 @@ class lyrics {
 			if ($status == 429 || $status == 503) {
 				logger::warn("LYRICS", "Rate Limit Exceeded or server too busy");
 				sleep(3);
+				$retries--;
 			} else {
 				$retries = 0;
 			}
