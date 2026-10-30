@@ -235,6 +235,10 @@ class musicbrainz {
 
 		logger::log('MUSICBRAINZ', 'Scanning For Links For', $type);
 
+		if ($data === null) {
+			logger::warn("MUSICBRAINZ", 'Link scan data is null');
+		}
+
 		if ($data['disambiguation'])
 			$destination['disambiguation'] = $data['disambiguation'];
 

@@ -16,8 +16,10 @@ var info_lyrics = function() {
 			var syncing = false;
 
 			function formatLyrics(data) {
-				debug.trace("LYRICS PLUGIN","Formatting Lyrics");
-				if (data.instrumental) {
+				debug.trace("LYRICS PLUGIN","Formatting Lyrics", data);
+				if (data.error) {
+					return '<div class="lyrics"><h3 align=center>'+language.gettext("lyrics_nonefound")+'</h3><p>'+data.error+'</p></div>';
+				} else if (data.instrumental) {
 					return '<h3 align=center>'+language.gettext("lyrics_instrumental")+'</h3>';
 				} else if (
 					(prefs.prefer_synced_lyrics && data.syncedLyrics && data.syncedLyrics.length > 0)
@@ -36,8 +38,6 @@ var info_lyrics = function() {
 					l = data.plainLyrics.replace(/^(\w)/, '<font size="120%">$1</font>');
 					l = l.replace(/\n/g, '<br>');
 					return '<div class="lyrics"><h2 align="center">'+language.gettext("lyrics_lyrics")+'</h2><p>'+l+'</p></div>';
-				} else {
-					return data;
 				}
 			}
 
@@ -53,10 +53,11 @@ var info_lyrics = function() {
 
 				var t = infobar.getProgress();
 				self.synced.forEach(function(l, i) {
-					if (t >= l.time-0.5 && t <= l.time+1) {
+					if (t >= l.time-1 && t <= l.time+1) {
 						$(".currentlyric.playlistcurrentitem").removeClass("currentlyric playlistcurrentitem");
 						$('[name="lyric_'+i+'"]').addClass("currentlyric playlistcurrentitem");
 						uiHelper.scrollLyrics($('[name="lyric_'+i+'"]'));
+						return false;
 					}
 				});
 			}
@@ -67,13 +68,8 @@ var info_lyrics = function() {
 
 			this.gotLyrics = function(data) {
 				debug.log("LYRICS", data);
-				if (data.error) {
-					trackmeta.lyrics.lyrics = '<h3 align=center>'+language.gettext("lyrics_nonefound")+'</h3><p>'+data.error+'</p>';
-					self.doBrowserUpdate();
-				} else {
-					trackmeta.lyrics.lyrics = data;
-					self.doBrowserUpdate();
-				}
+				trackmeta.lyrics.lyrics = data;
+				self.doBrowserUpdate();
 			}
 
 			this.populate = async function() {

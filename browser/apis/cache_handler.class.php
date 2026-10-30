@@ -26,10 +26,9 @@ class cache_handler extends url_downloader {
 		parent::__construct($options);
 	}
 
-	public function get_cache_data() {
+	public function get_cache_data($retries = 3) {
 		$retval = '';
 		$status = null;
-		$retries = 3;
 		while ($retries > 0) {
 			if ($this->get_data_to_file()) {
 				// If the download was successful, return the data that was downloaded

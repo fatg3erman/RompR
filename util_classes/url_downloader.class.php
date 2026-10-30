@@ -126,25 +126,28 @@ class url_downloader {
 
 		$this->file = $file;
 		$this->from_cache = false;
+		logger::debug("URL_DOWNLOADER", "Downloading",$this->options['url']);
 		if ($this->file === null && $this->options['cache'] === null) {
 			return $this->get_data_to_string();
 		} else if ($this->options['cache'] !== null) {
 			$this->file = $this->get_cache_file();
-			logger::debug("URL_DOWNLOADER", "Downloading",$this->options['url'],'to file', $this->file);
-			if ($this->check_cache($this->file))
+			if ($this->check_cache($this->file)) {
+				logger::debug("URL_DOWNLOADER", 'File', $this->file, 'exists in cache');
 				return true;
+			}
 		}
 		logger::core("URL_DOWNLOADER", "Downloading to",$this->file);
 		if (file_exists($this->file))
 			unlink ($this->file);
 
-		$open_mode = $binary ? 'wb' : 'w';
-		$fp = fopen($this->file, $open_mode);
-		curl_setopt($this->ch, CURLOPT_FILE, $fp);
-		curl_exec($this->ch);
-		fclose($fp);
-		if (curl_getinfo($this->ch,CURLINFO_RESPONSE_CODE) != '200')
-			unlink($this->file);
+		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+		$c = curl_exec($this->ch);
+		if (curl_getinfo($this->ch,CURLINFO_RESPONSE_CODE) == '200') {
+			$open_mode = $binary ? 'wb' : 'w';
+			$fp = fopen($this->file, $open_mode);
+			fwrite($fp, $c);
+			fclose($fp);
+		}
 
 		return $this->get_final_info();
 	}

@@ -14,7 +14,7 @@ class lyrics {
 		];
 		$cache = new cache_handler($opts);
 
-		return [$cache->get_cache_data(), $cache->from_cache, $cache->get_status(), $cache->get_headers()];
+		return [$cache->get_cache_data(1), $cache->from_cache, $cache->get_status(), $cache->get_content_type()];
 	}
 
 	public static function get_lyrics($params, $pd) {
@@ -40,24 +40,39 @@ class lyrics {
 		}
 
 		$url = self::BASE_URL . http_build_query($params);
-		list($result, $c, $status, $headers) = self::request($url);
+		$retries = 5;
+		while ($retries > 0) {
+			list($result, $c, $status, $content_type) = self::request($url);
+			if ($status == 429 || $status == 503) {
+				logger::warn("LYRICS", "Rate Limit Exceeded or server too busy");
+				sleep(2);
+			} else {
+				$retries = 0;
+			}
+		}
 
-		if ($status == 429 || $status == 503) {
-			logger::warn("LYRICS", "Rate Limit Exceeded");
-			sleep($headers['Retry-After']);
-		} else if ($status == 200 || $c) {
+		if ($status == 200 || $c) {
 			$lyrics = json_decode($result, true);
-			if (array_key_exists('syncedLyrics', $lyrics) && !array_key_exists('syncedLyrics', $retval)) {
+		if (array_key_exists('syncedLyrics', $lyrics) && $lyrics['syncedLyrics'] != null && !array_key_exists('syncedLyrics', $retval)) {
 				logger::log("LYRICS", "Returning synced lyrics from LRCLib");
 				$retval['syncedLyrics'] = self::parse_synced($lyrics['syncedLyrics']);
 			}
-			if (array_key_exists('plainLyrics', $lyrics) && !array_key_exists('plainLyrics', $retval)) {
+			if (array_key_exists('plainLyrics', $lyrics) && $lyrics['plainLyrics'] != null && !array_key_exists('plainLyrics', $retval)) {
 				logger::log("LYRICS", "Returning plain lyrics from LRCLib");
 				$retval['plainLyrics'] = $lyrics['plainLyrics'];
 			}
+		} else {
+			if ($content_type == 'application/json') {
+				$lyrics = json_decode($result, true);
+				if (array_key_exists('error', $lyrics)) {
+					$retval = ['error' => $lyrics['error']];
+				}
+			} else {
+				$retval = ['error' => $result];
+			}
 		}
 		if (count($retval) == 0) {
-			$retval = ['error' => language::gettext("lyrics_nonefound")];
+			$retval = ['error' => ""];
 		}
 		self::finish($retval, $c);
 	}
