@@ -45,7 +45,7 @@ class lyrics {
 			list($result, $c, $status, $content_type) = self::request($url);
 			if ($status == 429 || $status == 503) {
 				logger::warn("LYRICS", "Rate Limit Exceeded or server too busy");
-				sleep(2);
+				sleep(3);
 			} else {
 				$retries = 0;
 			}
@@ -53,13 +53,16 @@ class lyrics {
 
 		if ($status == 200 || $c) {
 			$lyrics = json_decode($result, true);
-		if (array_key_exists('syncedLyrics', $lyrics) && $lyrics['syncedLyrics'] != null && !array_key_exists('syncedLyrics', $retval)) {
+			if (array_key_exists('syncedLyrics', $lyrics) && $lyrics['syncedLyrics'] != null && !array_key_exists('syncedLyrics', $retval)) {
 				logger::log("LYRICS", "Returning synced lyrics from LRCLib");
 				$retval['syncedLyrics'] = self::parse_synced($lyrics['syncedLyrics']);
 			}
 			if (array_key_exists('plainLyrics', $lyrics) && $lyrics['plainLyrics'] != null && !array_key_exists('plainLyrics', $retval)) {
 				logger::log("LYRICS", "Returning plain lyrics from LRCLib");
 				$retval['plainLyrics'] = $lyrics['plainLyrics'];
+			}
+			if (array_key_exists('instrumental', $lyrics) && $lyrics['instrumental']) {
+				$retval['instrumental'] = true;
 			}
 		} else {
 			if ($content_type == 'application/json') {
@@ -72,7 +75,7 @@ class lyrics {
 			}
 		}
 		if (count($retval) == 0) {
-			$retval = ['error' => ""];
+			$retval = ['error' => "No Results"];
 		}
 		self::finish($retval, $c);
 	}
