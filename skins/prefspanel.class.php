@@ -368,6 +368,17 @@ class prefspanel extends uibits {
 
 		// =======================================================
 		//
+		// Lyrics
+		//
+		// =======================================================
+		print self::ui_config_header([
+			'label' => 'button_lyrics',
+			'lefticon' => 'icon-doc-text-1'
+		]);
+		self::ui_checkbox(['id' => 'prefer_synced_lyrics', 'label' => 'config_prefersynced']);
+
+		// =======================================================
+		//
 		// Collection Options
 		//
 		// =======================================================

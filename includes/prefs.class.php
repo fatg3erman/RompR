@@ -249,6 +249,8 @@ class prefs {
 		"actuallysortresultsby" => 'artist',
 		"headerbar_position" => 'bottom',
 
+		"prefer_synced_lyrics" => false,
+
 		// These are prefs that are set by daemon processes and are only of interest to those processes.
 		// We don't want to save them or set them as Cookies but we do want them restored after a load().
 		// set_pref will add them to session_prefs because they're in ths array but it won't set a Cookie

@@ -9,14 +9,15 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 	this.populated = false;
 	this.hasbeenstarted = new Array();
 	this.special_layouts = new Array();
+	this.source = null;
 
 	this.isCurrentTrack = function() {
 		return nowplaying.isThisCurrent(self.currenttrack);
 	}
 
 	this.updateProgress = function(percent) {
-		if (collections['soundcloud'] !== undefined) {
-			collections['soundcloud'].progressUpdate(percent);
+		if (self.source !== null && typeof collections[self.source].progressUpdate != 'undefined') {
+			collections[self.source].progressUpdate(percent);
 		}
 	}
 
@@ -312,6 +313,7 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 	// Create the data collections we need
 
 	this.populate = function(source, browser_showing_current, force) {
+		self.source = source;
 		self.populated = true;
 		if (collections['ratings'] === undefined)
 			startSource('ratings');

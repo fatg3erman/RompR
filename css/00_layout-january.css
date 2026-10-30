@@ -2000,6 +2000,9 @@ div.lyrics {
 div.lyrics p {
 	text-align:center;
 	font-size:110%;
+	margin-block-start: 0.1em;
+	margin-block-end: 0.1em;
+	padding: 0.5em;
 }
 
 /*

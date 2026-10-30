@@ -764,7 +764,9 @@ language::add_translations([
 	"button_infobandcamp" =>				"Info Panel (Bandcamp)",
 	"label_location" =>						"Location",
 	"label_viewbc" =>						"View on Bandcamp",
-	"label_upcoming" =>						"Upcoming Shows"
+	"label_upcoming" =>						"Upcoming Shows",
+	"lyrics_instrumental" =>				"(Instrumental)",
+	"config_prefersynced" =>				"Prefer Synced Lyrics"
 
 ]);
 

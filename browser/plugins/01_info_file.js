@@ -323,7 +323,7 @@ var info_file = function() {
 					trackmeta.fileinfo.beets = data;
 					parent.updateData({
 							lyrics: {
-								lyrics: (data.lyrics) ? data.lyrics : null
+								lyrics: (data.lyrics) ? {plainLyrics: data.lyrics} : null
 							}
 						},
 						trackmeta

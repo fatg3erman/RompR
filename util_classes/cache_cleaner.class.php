@@ -34,6 +34,8 @@ class cache_cleaner extends database {
 		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/wikipedia/', 2592000);
 		// One Month
+		$this->clean_cache_dir('prefs/jsoncache/bandcamp/', 2592000);
+		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/lastfm/', 2592000);
 		// One Month
 		$this->clean_cache_dir('prefs/jsoncache/spotify/', 2592000);

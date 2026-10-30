@@ -10,6 +10,8 @@
 	```
 	pip3 install --upgrade git+https://github.com/fatg3erman/mopidy-bandcamp.git@master
 	```
+* Lyrics panel can now display synced lyrics if the new 'Prefer Synced Lyrics' option is enabled.
+* Lyrics panel can now use LRCLib (an online lyrics source) to get lyrics for any song. Local lyrics will always be preferred, unless 'Prefer Synced Lyrics' is set in the preferences - in which case LRCLib will be used to get synced lyrics if the local files don't contain them.
 
 ## Version 2.29
 

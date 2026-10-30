@@ -169,7 +169,7 @@ var info_bandcamp = function() {
 				return {
 
 					populate: function() {
-						bandcamp.get_artist(artistmeta.name, bandcampResponse, self.artist.bandcampError)
+						bandcamp.get_artist(artistmeta.name, albummeta.uri, bandcampResponse, self.artist.bandcampError)
 					},
 
 					bandcampError: function(data) {

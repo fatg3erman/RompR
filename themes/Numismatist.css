@@ -42,7 +42,7 @@
     --playlist-title-bg-colour: unset;
     --playlist-title-border: none;
     --playlist-item-top-border: 1px solid var(--border-colour);
-    --playlist-current-bg-colour: unset;
+    --playlist-current-bg-colour: rgba(0,0,0,0.1);
     --playlist-current-shadow: unset;
     --playlist-current-transition: font-size 0.5s ease;
     --playlist-current-track-font-size: 120%;

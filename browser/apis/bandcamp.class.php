@@ -26,32 +26,41 @@ class bandcamp {
 
 	public static function get_artist($params, $pd) {
 
-		$an = $params['artistname'];
-		$params = ['q' => $an];
-		$url = self::BASE_URL . "/fuzzysearch/1/app_autocomplete?" .http_build_query($params);
-		list($result, $c) = self::request($url);
-
-		$search_result = json_decode($result, true);
-
-		// logger::log('GET_ARTIST', print_r($search_result, true));
-
 		$retval = [
 			'band_id' => null,
 			'albums' => []
 		];
 
+		if (strpos($params['albumuri'], 'bandcamp:album:') === 0) {
+			$album = str_replace('bandcamp:album:', '', $params['albumuri']);
+			list($band_id, $album_id) = explode('-', $album);
+			logger::log('BANDCAMP', 'Got artist id', $band_id, 'from album URI');
+			$retval['band_id'] = $band_id;
+		}
+
+		$an = $params['artistname'];
+		$params = ['q' => $an];
+		$url = self::BASE_URL . "/fuzzysearch/1/app_autocomplete?" .http_build_query($params);
+		list($result, $c) = self::request($url);
+		$search_result = json_decode($result, true);
 		if (array_key_exists('results', $search_result)) {
 			foreach ($search_result['results'] as $r) {
-				// if ($r['type'] == 'b' && $r['name'] == $an) {
-				if ($r['type'] == 'b' && metaphone_compare($an, $r['name'], 0)) {
-					$retval['band_id'] = $r['id'];
-					$retval['image'] = preg_replace('/_\d+\.jpg/', '_10.jpg', $r['img']);
-					$retval['external_urls'] = ['bandcamp' => $r['url']];
-					$retval['name'] = $r['name'];
-					$retval['location'] = $r['location'];
-					$retval['genre'] = $r['genre_name'];
-					$retval['tags'] = $r['tag_names'];
-					break;
+				if ($r['type'] == 'b') {
+					if ($retval['band_id'] !== null) {
+						$match = ($r['id'] == $retval['band_id']);
+					} else {
+						$match = metaphone_compare($an, $r['name'], 0);
+					}
+					if ($match) {
+						$retval['band_id'] = $r['id'];
+						$retval['image'] = preg_replace('/_\d+\.jpg/', '_10.jpg', $r['img']);
+						$retval['external_urls'] = ['bandcamp' => $r['url']];
+						$retval['name'] = $r['name'];
+						$retval['location'] = $r['location'];
+						$retval['genre'] = $r['genre_name'];
+						$retval['tags'] = $r['tag_names'];
+						break;
+					}
 				}
 			}
 		}

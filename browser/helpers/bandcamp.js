@@ -64,12 +64,13 @@ var bandcamp = function() {
 				do_Request();
 		},
 
-		get_artist: function(artist, success, fail) {
+		get_artist: function(artist, albumuri, success, fail) {
 			debug.trace("BANDCAMP", "Trying to find artst", artist);
 			var data = {
 				method: 'get_artist',
 				params: {
-					artistname: artist
+					artistname: artist,
+					albumuri: albumuri
 				}
 			}
 			bandcamp.request(data, success, fail);

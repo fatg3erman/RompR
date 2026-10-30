@@ -657,6 +657,22 @@ var uiHelper = function() {
 			}
 		},
 
+		scrollLyrics: function(scrollto) {
+			// debug.log("LAYOUT","Scrolling Lyrics To Song:",scrollto);
+			// $('#infopane').romprScrollTo(scrollto);
+			var offset = $('#trackinformation').height() - $('.lyrics').first().height();
+			if (prefs.has_custom_scrollbars) {
+				$('#infopane').mCustomScrollbar("stop");
+				$('#infopane').mCustomScrollbar("update");
+				var pospixels = Math.round(scrollto.position().top + offset - ($('#infopane').height()/2));
+				pospixels = Math.min($('#trackfoldup').height(), Math.max(pospixels, 0));
+				$('#infopane').romprScrollTo(pospixels);
+			} else {
+				var pospixels = offset - ($('#infopane').outerHeight(true) / 2);
+				$('#infopane').scrollTo(scrollto, 250, {offset: {top: pospixels}, easing: 'swing'});
+			}
+		},
+
 		initialise: function() {
 			if (prefs.outputsvisible) {
 				try {
