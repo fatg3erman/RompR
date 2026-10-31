@@ -55,6 +55,8 @@ Once you've downloaded all the art for your Collection, you can archive the imag
 
 This will copy RompЯ's images into your Local Music folders.
 
+WARNING - DON'T use this unless your music is organised so each album is in its own directory.
+
 NOTE. This script will delete all images with names 'cover.jpg' (or png or other image extensions) and also any images that were archived by previous versions of this script (they had a long, random characters name).
 This script will copy the images as 'cover.jpg' (or png or whatever).
 

@@ -100,8 +100,8 @@ function update_m4a_tags($download_file, $tags, $track_image_file) {
 		foreach ($tags as &$tag) {
 			$tag[0] = str_replace('"', '\"', $tag[0]);
 		}
-		$cmdline = $ap.'AtomicParsley "'.$download_file
-			.'" --overWrite --artist "'.$tags['artist'][0]
+		$cmdline = $ap.'AtomicParsley '.escapeshellarg($download_file)
+			.' --overWrite --artist "'.$tags['artist'][0]
 			.'" --title "'.$tags['title'][0]
 			.'" --album "'.$tags['album'][0]
 			.'" --albumArtist "'.$tags['albumartist'][0]
@@ -110,7 +110,7 @@ function update_m4a_tags($download_file, $tags, $track_image_file) {
 			$cmdline .= ' --tracknum '.$tags['track_number'][0];
 		}
 		if ($track_image_file && is_file($track_image_file)) {
-			$cmdline .= ' --artwork "'.$track_image_file.'"';
+			$cmdline .= ' --artwork '.escapeshellarg($track_image_file);
 		}
 		logger::trace('TAGGER', "cmdline is", $cmdline);
 		$o = [];

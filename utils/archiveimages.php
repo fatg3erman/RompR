@@ -21,6 +21,8 @@
 // metaflac (for FLAC files) (often the package name is just flac)
 // atomicparsley (for M4A/MP4) files
 
+// WARNING - DON'T use this unless your music is organised so each album is in its own directory
+
 chdir('..');
 include ("includes/vars.php");
 include ("includes/functions.php");
@@ -91,10 +93,12 @@ foreach ($r as $obj) {
 								} else {
 									$newfile = $out;
 								}
+								# eyeD3 can complain about pathnames with unusual characters in it
+								copy($newfile, 'prefs/temp/'.basename($newfile));
 								print " Image is $newfile\n";
 								print " MP3   is $mp3\n";
 								exec("eyeD3 --remove-all-images $escmp3");
-								exec("eyeD3 --add-image ".escapeshellarg("$newfile:FRONT_COVER")." $escmp3", $output, $exitcode);
+								exec("eyeD3 --add-image ".escapeshellarg('prefs/temp/'.basename($newfile).":FRONT_COVER")." $escmp3", $output, $exitcode);
 								if ($ext != 'jpg') {
 									unlink($newfile);
 								}
