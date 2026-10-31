@@ -49,12 +49,13 @@ If you select this option RompR will try to use the separate image for each trac
 Once you've downloaded all the art for your Collection, you can archive the images for your local files if you have set the path correctly as above. This is a manual step and requires a terminal open on the PC where your webserver runs.
 
     cd /PATH/TO/ROMPR
+    chmod ugo+rw ./prefs/prefs.var
     cd utils
     php ./archiveimages.php
 
 This will copy RompЯ's images into your Local Music folders.
 
-NOTE. This script will delete all images with names 'cover.jpg' (or png or other image files) and also any images that were archived by previous versions of this script (they had a long, random characters name).
+NOTE. This script will delete all images with names 'cover.jpg' (or png or other image extensions) and also any images that were archived by previous versions of this script (they had a long, random characters name).
 This script will copy the images as 'cover.jpg' (or png or whatever).
 
 Add --embed to the command line to embed the artwork into your music files. RompR will not embed artwork into files if the album has been selected to use different images for each track.
@@ -63,6 +64,9 @@ eyed3 (for MP3 files)
 metaflac (for FLAC files) (often the package name is just flac)
 atomicparsley (for M4A/MP4) files
 imagemagick (to convert unsupported image types)
+
+This script creates a file called "donelist.txt" in the rompr directory. If the script exits before it completes, this file will allow it to carry on from where it left off.
+donelist.txt will be deleted when the script completes. Note that this means you must have write access to your rompr directory.
 
 ### Using Brave Image Search To Find Album Art
 

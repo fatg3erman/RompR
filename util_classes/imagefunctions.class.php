@@ -65,7 +65,10 @@ class imageFunctions {
 					if (array_key_exists('picturetype', $picture)) {
 						if ($picture['picturetype'] == 'Cover (front)') {
 							logger::log("GET_IMAGES", "    .. found embedded front cover image");
-							$filename = 'prefs/temp/'.md5($globpath);
+							$filename = 'prefs/temp/'.md5($globpath).'/Embedded-Image';
+							if (!is_dir(dirname($filename))) {
+								mkdir(dirname($filename));
+							}
 							file_put_contents($filename, $picture['data']);
 							return $filename;
 						}
@@ -76,7 +79,10 @@ class imageFunctions {
 					if (array_key_exists('picturetype', $picture)) {
 						if ($picture['picturetype'] == 'Cover' || $picture['picturetype'] == 'Other') {
 							logger::log("GET_IMAGES", "    .. found embedded something or other image");
-							$filename = 'prefs/temp/'.md5($globpath);
+							$filename = 'prefs/temp/'.md5($globpath).'/Embedded-Image';
+							if (!is_dir(dirname($filename))) {
+								mkdir(dirname($filename));
+							}
 							file_put_contents($filename, $picture['data']);
 							return $filename;
 						}
