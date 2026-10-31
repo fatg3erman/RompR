@@ -30,17 +30,22 @@ prefs::$database = new image_archiver();
 $r = prefs::$database->get_all_images();
 
 const TEMP_DIR="/tmp/rompr";
-
-$red = "\033[91m";
-$green = "\033[92m";
-$yellow = "\033[92m";
-$cyan = "\033[92m";
-$grey = "\033[37m";
-$off = "\033[0m";
-
 if (!is_dir(TEMP_DIR)) {
 	mkdir(TEMP_DIR, 0755);
 }
+
+const BLACK="0;30";
+const RED="0;31";
+const GREEN="1;32";
+const BROWN="0;33";
+const YELLOW="1;33";
+const BLUE="1;34";
+const MAGENTA="1;35";
+const CYAN="0;36";
+const GREY="0;37";
+const WHITE="1;37";
+const HIGHLIGHT="1;33;45";
+
 $embed = (count($argv) > 1 && $argv[1] == '--embed');
 
 if (file_exists('donelist.txt')) {
@@ -52,10 +57,10 @@ if (file_exists('donelist.txt')) {
 foreach ($r as $obj) {
 	if ($obj->Domain == 'local') {
 		print "\n\n\n";
-		$nom = "$green Album : ".$obj->Artistname." ".$obj->Albumname." ".$obj->useTrackIms."$off\n";
-		print $nom;
+		$nom = "Album : ".$obj->Artistname." ".$obj->Albumname." ".$obj->useTrackIms."\n";
+		log_out(HIGHLIGHT, $nom);
 		if (in_array($nom, $donelist)) {
-			print "$red .. already done this one$off\n";
+			log_out(RED, " .. already done this one");
 			continue;
 		}
 
@@ -66,8 +71,8 @@ foreach ($r as $obj) {
 
 		if (is_dir('prefs/MusicFolders') && $retval != '.') {
 			$albumpath = imageFunctions::munge_filepath($retval);
-			print "$grey  Directory $albumpath $off\n";
-			print "$grey  Image ".basename($obj->Image)."$off\n";
+			log_out(GREY, "  Directory $albumpath");
+			log_out(GREY, "  Image ".basename($obj->Image));
 			if (is_dir($albumpath) && basename($obj->Image)) {
 				$img = 'albumart/asdownloaded/'.basename($obj->Image);
 				$ext = pathinfo($img, PATHINFO_EXTENSION);
@@ -76,17 +81,17 @@ foreach ($r as $obj) {
 				$current = glob($albumpath.'/*.{jpg,png,bmp,gif,jpeg,webp,JPEG,JPG,BMP,GIF,PNG,WEBP}', GLOB_BRACE);
 				foreach ($current as $f) {
 					if (strlen(basename($f)) == 36) {
-						print "$cyan    Removing $f $off\n";
+						log_out(CYAN, "    Removing $f");
 						unlink($f);
 					} else if (pathinfo($f, PATHINFO_FILENAME) == 'cover') {
-						print "$cyan    Removing $f $off\n";
+						log_out(CYAN, "    Removing $f");
 						unlink($f);
 					}
 				}
-				print "$yellow   Archiving Image $img to $out $off\n";
+				log_out(YELLOW,  "  Archiving Image $img to $out");
 				copy($img, $out);
 				if ($embed && $obj->useTrackIms == 1) {
-					print "$red  Album is configured to use Track Images, not embedding artwork$off\n";
+					log_out(RED, "  Album is configured to use Track Images, not embedding artwork");
 				}
 				if ($embed && $obj->useTrackIms == 0) {
 					$mp3s = glob($albumpath.'/*.{mp3,m4a,mp4,flac}', GLOB_BRACE);
@@ -99,41 +104,38 @@ foreach ($r as $obj) {
 
 						switch ($mext) {
 							case 'mp3':
-								print "$yellow  Adding image to MP3 file $mp3 $off\n";
+								log_out(YELLOW, "  Adding image to MP3 file $mp3");
 								if ($ext != 'jpg') {
 									$newfile = convert_file($out);
 								} else {
-									$newfile = $out;
+									# eyeD3 can complain about pathnames with unusual characters in it
+									$newfile = TEMP_DIR.'/'.md5($out).'.'.pathinfo($out, PATHINFO_EXTENSION);
+									if (copy($out, $newfile)) {
+										log_out(MAGENTA, "    Copied image to $copyto");
+									} else {
+										log_out(RED, "File Copy Failed!");
+										log_out(RED, " Copying from $newfile");
+										log_out(RED, " To           $copyto");
+										exit(0);
+									}
 								}
-								# eyeD3 can complain about pathnames with unusual characters in it
-								$copyto = TEMP_DIR.'/'.basename($newfile);
-								if (copy($newfile, $copyto)) {
-									print "$grey    Source Image is $newfile $off\n";
-									print "$grey     (Copied to $copyto) $off\n";
-									print "$grey    MP3          is $mp3 $off\n";
-									exec("eyeD3 --remove-all-images $escmp3");
-									exec("eyeD3 --add-image ".escapeshellarg("$copyto:FRONT_COVER")." $escmp3", $output, $exitcode);
-								} else {
-									print "$red File Copy Failed!$off\n";
-									print "$red Copying from $newfile $off\n";
-									print "$red To $copyto $off\n";
-									exit(0);
-								}
-								if ($ext != 'jpg') {
-									unlink($newfile);
-								}
+								log_out(GREY, "    Source Image is $newfile");
+								log_out(GREY, "    MP3          is $mp3");
+								exec("eyeD3 --remove-all-images $escmp3");
+								exec("eyeD3 --add-image ".escapeshellarg("$newfile:FRONT_COVER")." $escmp3", $output, $exitcode);
+								unlink($newfile);
 								break;
 
 							case "m4a":
 							case "mp4":
-								print "$yellow  Adding image to MP4 file $mp3 $off\n";
+								log_out(YELLOW, "  Adding image to MP4 file $mp3");
 								if ($ext != 'jpg' && $ext != 'png') {
 									$newfile = convert_file($out);
 								} else {
 									$newfile = $out;
 								}
-								print "$grey    Image is $newfile $off\n";
-								print "$grey    MP4   is $mp3 $off\n";
+								log_out(GREY, "    Source Image is $newfile");
+								log_out(GREY, "    MP4          is $mp3");
 								exec("AtomicParsley $escmp3 --overWrite --artwork REMOVE_ALL");
 								exec("AtomicParsley $escmp3 --overWrite --artwork ".escapeshellarg($newfile), $output, $exitcode);
 								if ($ext != 'jpg' && $ext != 'png') {
@@ -142,14 +144,14 @@ foreach ($r as $obj) {
 								break;
 
 							case "flac":
-								print "$yellow  Adding image to FLAC file $mp3 $off\n";
+								log_out(YELLOW, "  Adding image to FLAC file $mp3");
 								if ($ext != 'jpg' && $ext != 'png') {
 									$newfile = convert_file($out);
 								} else {
 									$newfile = $out;
 								}
-								print "$grey    Image is $newfile $off\n";
-								print "$grey    MP4   is $mp3 $off\n";
+								log_out(GREY, "    Source Image is $newfile");
+								log_out(GREY, "    FLAC         is $mp3");
 								exec("metaflac --remove --block-type=PICTURE,PADDING --dont-use-padding $escmp3");
 								exec("metaflac --remove-tag=COVERART  --dont-use-padding $escmp3");
 								exec("metaflac --import-picture-from=".escapeshellarg("3||||$newfile")." $escmp3", $output, $exitcode);
@@ -157,9 +159,9 @@ foreach ($r as $obj) {
 
 						}
 						if ($exitcode != 0) {
-							print "$red Exti Code Was $exitcode $off\n";
+							log_out(RED, "Exti Code Was $exitcode");
 							foreach ($output as $line) {
-								print "$red $line $off\n";
+								log_out(RED, $line);
 							}
 							exit(0);
 						}
@@ -175,9 +177,16 @@ if (file_exists('donelist.txt')) {
 	unlink('donelist.txt');
 }
 
+function log_out($col, $text) {
+	print "\e[".$col."m".trim($text, "\n")."\e[0m\n";
+}
+
 function convert_file($out) {
-	$newfile = pathinfo($out, PATHINFO_FILENAME).".jpg";
-	print "$cyan    Converting file to ".$newfile."$off\n";
+	$newfile = TEMP_DIR . '/' . pathinfo($out, PATHINFO_FILENAME).".jpg";
+	log_out(MAGENTA, "    Converting $out to ".$newfile);
+	if (is_file($newfile)) {
+		unlink($newfile);
+	}
 	exec("convert -quality 95 ".escapeshellarg($out)." ".escapeshellarg($newfile));
 	return $newfile;
 }
