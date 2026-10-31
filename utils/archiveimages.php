@@ -29,6 +29,7 @@ include ("includes/functions.php");
 prefs::$database = new image_archiver();
 $r = prefs::$database->get_all_images();
 
+const TEMP_DIR="~";
 $embed = (count($argv) > 1 && $argv[1] == '--embed');
 
 if (file_exists('donelist.txt')) {
@@ -94,7 +95,7 @@ foreach ($r as $obj) {
 									$newfile = $out;
 								}
 								# eyeD3 can complain about pathnames with unusual characters in it
-								$copyto = 'prefs/temp/'.basename($newfile);
+								$copyto = TEMP_DIR.'/'.basename($newfile);
 								if (copy($newfile, $copyto)) {
 									print " Image is $copyto\n";
 									print " MP3   is $mp3\n";
