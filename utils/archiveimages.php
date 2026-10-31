@@ -159,7 +159,7 @@ foreach ($r as $obj) {
 				}
 			}
 		}
-		file_put_contents('donelist.txt', $nom, FILE_APPEND);
+		file_put_contents('donelist.txt', $nom."\n", FILE_APPEND);
 	}
 }
 
