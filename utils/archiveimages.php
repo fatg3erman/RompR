@@ -84,22 +84,38 @@ foreach ($r as $obj) {
 						switch ($mext) {
 							case 'mp3':
 								print "Adding image to MP3 file $mp3\n";
-								print " Image is $out\n";
+								if ($ext != 'jpg') {
+									$newfile = pathinfo($out, PATHINFO_FILENAME).".jpg";
+									print("Converting file to ".$newfile."\n");
+									exec("convert -quality 95 \"$out\" \"$newfile\"");
+								} else {
+									$newfile = $out;
+								}
+								print " Image is $newfile\n";
 								print " MP3   is $mp3\n";
 								exec("eyeD3 --remove-all-images \"$mp3\"");
-								exec("eyeD3 --add-image \"$out:FRONT_COVER\" \"$mp3\"", $output, $exitcode);
+								exec("eyeD3 --add-image \"$newfile:FRONT_COVER\" \"$mp3\"", $output, $exitcode);
+								if ($ext != 'jpg') {
+									unlink($newfile);
+								}
 								break;
 
 							case "m4a":
 							case "mp4":
-								if ($ext == 'jpg' || $ext == 'png') {
-									print "Adding image to MP4 file $mp3\n";
-									print " Image is $out\n";
-									print " MP4   is $mp3\n";
-									exec("AtomicParsley \"$mp3\" --overWrite --artwork REMOVE_ALL");
-									exec("AtomicParsley \"$mp3\" --overWrite --artwork \"$out\"", $output, $exitcode);
+								print "Adding image to MP4 file $mp3\n";
+								if ($ext != 'jpg' && $ext != 'png') {
+									$newfile = pathinfo($out, PATHINFO_FILENAME).".png";
+									print("Converting file to ".$newfile."\n");
+									exec("convert \"$out\" \"$newfile\"");
 								} else {
-									print "Can't add $out to MP4 file $mp3\n";
+									$newfile = $out;
+								}
+								print " Image is $newfile\n";
+								print " MP4   is $mp3\n";
+								exec("AtomicParsley \"$mp3\" --overWrite --artwork REMOVE_ALL");
+								exec("AtomicParsley \"$mp3\" --overWrite --artwork \"$newfile\"", $output, $exitcode);
+								if ($ext != 'jpg' && $ext != 'png') {
+									unlink($newfile);
 								}
 								break;
 
