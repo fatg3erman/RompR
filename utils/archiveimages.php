@@ -99,7 +99,6 @@ foreach ($r as $obj) {
 						$mext = pathinfo($mp3, PATHINFO_EXTENSION);
 						$output = [];
 						$exitcode = 0;
-
 						$escmp3 = escapeshellarg($mp3);
 
 						switch ($mext) {
@@ -108,16 +107,7 @@ foreach ($r as $obj) {
 								if ($ext != 'jpg') {
 									$newfile = convert_file($out);
 								} else {
-									# eyeD3 can complain about pathnames with unusual characters in it
-									$newfile = TEMP_DIR.'/'.md5($out).'.'.pathinfo($out, PATHINFO_EXTENSION);
-									if (copy($out, $newfile)) {
-										log_out(MAGENTA, "    Copied image to $newfile");
-									} else {
-										log_out(RED, "File Copy Failed!");
-										log_out(RED, " Copying from $newfile");
-										log_out(RED, " To           $copyto");
-										exit(0);
-									}
+									$newfile = copy_to_temp($out);
 								}
 								log_out(GREY, "    Source Image is $newfile");
 								log_out(GREY, "    MP3          is $mp3");
@@ -132,15 +122,13 @@ foreach ($r as $obj) {
 								if ($ext != 'jpg' && $ext != 'png') {
 									$newfile = convert_file($out);
 								} else {
-									$newfile = $out;
+									$newfile = copy_to_temp($out);
 								}
 								log_out(GREY, "    Source Image is $newfile");
 								log_out(GREY, "    MP4          is $mp3");
 								exec("AtomicParsley $escmp3 --overWrite --artwork REMOVE_ALL");
 								exec("AtomicParsley $escmp3 --overWrite --artwork ".escapeshellarg($newfile), $output, $exitcode);
-								if ($ext != 'jpg' && $ext != 'png') {
-									unlink($newfile);
-								}
+								unlink($newfile);
 								break;
 
 							case "flac":
@@ -148,13 +136,14 @@ foreach ($r as $obj) {
 								if ($ext != 'jpg' && $ext != 'png') {
 									$newfile = convert_file($out);
 								} else {
-									$newfile = $out;
+									$newfile = copy_to_temp($out);
 								}
 								log_out(GREY, "    Source Image is $newfile");
 								log_out(GREY, "    FLAC         is $mp3");
 								exec("metaflac --remove --block-type=PICTURE,PADDING --dont-use-padding $escmp3");
 								exec("metaflac --remove-tag=COVERART  --dont-use-padding $escmp3");
 								exec("metaflac --import-picture-from=".escapeshellarg("3||||$newfile")." $escmp3", $output, $exitcode);
+								unlink($newfile);
 								break;
 
 						}
@@ -190,4 +179,19 @@ function convert_file($out) {
 	exec("convert -quality 95 ".escapeshellarg($out)." ".escapeshellarg($newfile));
 	return $newfile;
 }
+
+function copy_to_temp($out) {
+	# eyeD3 can complain about pathnames with unusual characters in it
+	$newfile = TEMP_DIR.'/'.md5($out).'.'.pathinfo($out, PATHINFO_EXTENSION);
+	if (copy($out, $newfile)) {
+		log_out(MAGENTA, "    Copied image to $newfile");
+	} else {
+		log_out(RED, "File Copy Failed!");
+		log_out(RED, " Copying from $out");
+		log_out(RED, " To           $newfile");
+		exit(0);
+	}
+	return $newfile;
+}
+
 ?>
