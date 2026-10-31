@@ -44,7 +44,7 @@ const MAGENTA="0;35";
 const CYAN="0;36";
 const GREY="0;37";
 const WHITE="1;37";
-const HIGHLIGHT="0;30;46";
+const HIGHLIGHT="1;33;45";
 
 define('ALLOWED_IMAGES', [
 	'mp3'  => ['jpg'],
@@ -65,7 +65,9 @@ foreach ($r as $obj) {
 	if ($obj->Domain == 'local') {
 		print "\n\n\n";
 		$nom = "Album : ".$obj->Artistname." ".$obj->Albumname." ".$obj->useTrackIms."\n";
+		log_out(HIGHLIGHT, str_repeat('-', strlen($nom)-1));
 		log_out(HIGHLIGHT, $nom);
+		log_out(HIGHLIGHT, str_repeat('-', strlen($nom)-1));
 		if (in_array($nom, $donelist)) {
 			log_out(RED, " .. already done this one");
 			continue;
@@ -160,12 +162,13 @@ function log_out($col, $text) {
 }
 
 function convert_file($out) {
+	$copiedfile = copy_to_temp($out);
 	$newfile = TEMP_DIR . '/' . pathinfo($out, PATHINFO_FILENAME).".jpg";
 	log_out(MAGENTA, "    Converting image to ".$newfile);
 	if (is_file($newfile)) {
 		unlink($newfile);
 	}
-	exec("convert -quality 95 ".escapeshellarg($out)." ".escapeshellarg($newfile));
+	exec("convert -quality 95 ".escapeshellarg($copiedfile)." ".escapeshellarg($newfile));
 	return $newfile;
 }
 
