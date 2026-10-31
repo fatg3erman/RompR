@@ -62,7 +62,7 @@ You must have the following installed to embed images:
 eyed3 (for MP3 files)
 metaflac (for FLAC files) (often the package name is just flac)
 atomicparsley (for M4A/MP4) files
-Note that atomicparsley only supports jpg and png files
+imagemagick (to convert unsupported image types)
 
 ### Using Brave Image Search To Find Album Art
 

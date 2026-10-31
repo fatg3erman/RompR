@@ -12,7 +12,9 @@ class image_archiver extends database {
 			FROM Tracktable
 			JOIN Albumtable USING (Albumindex)
 			JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
-			WHERE Domain = "local" AND Uri IS NOT NULL
+			WHERE Domain = "local"
+			AND Uri IS NOT NULL
+			AND Hidden = 0
 			GROUP BY Albumindex
 			ORDER BY Artistname, Albumname', false, PDO::FETCH_OBJ);
 

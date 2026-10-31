@@ -20,7 +20,6 @@
 // eyed3 (for MP3 files)
 // metaflac (for FLAC files) (often the package name is just flac)
 // atomicparsley (for M4A/MP4) files
-// Note that atomicparsley only supports jpg and png files
 
 chdir('..');
 include ("includes/vars.php");
