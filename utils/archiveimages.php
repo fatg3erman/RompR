@@ -30,10 +30,21 @@ $r = prefs::$database->get_all_images();
 
 $embed = (count($argv) > 1 && $argv[1] == '--embed');
 
+if (file_exists('donelist.txt')) {
+	$donelist = file('donelist.txt');
+} else {
+	$donelist = [];
+}
+
 foreach ($r as $obj) {
 	if ($obj->Domain == 'local') {
 		print "\n\n\n";
-		print "Album : ".$obj->Artistname." ".$obj->Albumname." ".$obj->useTrackIms."\n";
+		$nom = "Album : ".$obj->Artistname." ".$obj->Albumname." ".$obj->useTrackIms."\n";
+		print $nom;
+		if (in_array($nom, $donelist)) {
+			print " .. already done this one\n";
+			continue;
+		}
 
 		$retval = dirname($obj->Uri);
 		$retval = preg_replace('#^local:track:#', '', $retval);
@@ -113,7 +124,11 @@ foreach ($r as $obj) {
 				}
 			}
 		}
+		file_put_contents('donelist.txt', $nom, FILE_APPEND);
 	}
 }
 
+if (file_exists('donelist.txt')) {
+	unlink('donelist.txt');
+}
 ?>
