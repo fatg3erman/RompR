@@ -101,7 +101,7 @@ foreach ($r as $obj) {
 									exec("eyeD3 --remove-all-images $escmp3");
 									exec("eyeD3 --add-image ".escapeshellarg("$copyto:FRONT_COVER")." $escmp3", $output, $exitcode);
 								} else {
-									print "File Copy Failed!\n"
+									print "File Copy Failed!\n";
 									print "Copying from $newfile\n";
 									print "To $copyto\n";
 									exit(0);
