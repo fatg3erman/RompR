@@ -111,7 +111,7 @@ foreach ($r as $obj) {
 									# eyeD3 can complain about pathnames with unusual characters in it
 									$newfile = TEMP_DIR.'/'.md5($out).'.'.pathinfo($out, PATHINFO_EXTENSION);
 									if (copy($out, $newfile)) {
-										log_out(MAGENTA, "    Copied image to $copyto");
+										log_out(MAGENTA, "    Copied image to $newfile");
 									} else {
 										log_out(RED, "File Copy Failed!");
 										log_out(RED, " Copying from $newfile");
