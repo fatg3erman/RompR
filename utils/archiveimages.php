@@ -29,7 +29,10 @@ include ("includes/functions.php");
 prefs::$database = new image_archiver();
 $r = prefs::$database->get_all_images();
 
-const TEMP_DIR="~";
+const TEMP_DIR="/tmp/rompr";
+if (!is_dir(TEMP_DIR)) {
+	mkdir(TEMP_DIR, 0755);
+}
 $embed = (count($argv) > 1 && $argv[1] == '--embed');
 
 if (file_exists('donelist.txt')) {
