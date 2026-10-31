@@ -95,7 +95,7 @@ foreach ($r as $obj) {
 						unlink($f);
 					}
 				}
-				log_out(YELLOW,  "  Archiving Image $img to $out");
+				log_out(GREEN,  "  Archiving Image $img to $out");
 				copy($img, $out);
 				if ($embed && $obj->useTrackIms == 1) {
 					log_out(RED, "  Album is configured to use Track Images, not embedding artwork");
