@@ -9,19 +9,25 @@
 // Make sure the correct path to your Music folders is set in Rompr's preferences menu.
 
 // This will copy all the albumart rompr has downloaded for your Local Music (only) into the
-// same folders as the music itself. It can then be automatically restored by rompr if you ever
-// reinstall or move to another machine.
+// same folders as the music itself, using the filename 'cover.jpg' (or png or whatever's appropriate).
+// It can then be automatically restored by rompr if you ever reinstall or move to another machine.
 
 // WARNING! This will REMOVE images in the albums folders if those images are called 'cover.jpg' (or png or whatever)
-// of if they've been archived there by an earlier version of this script. This script will copy the images
-// as 'cover.jpg' (or png or whatever)
-// Add --embed to the command line to embed the artwork into your files
+// of if they've been archived there by an earlier version of this script.
+
+// Add --embed to the command line to embed the artwork into your files (and clear existing artwork)
+// Albums which have been configured to 'Scan each track for an Image' will not have their embedded images updated.
 // You must have the following installed to embed images:
 // eyed3 (for MP3 files)
 // metaflac (for FLAC files) (often the package name is just flac)
 // atomicparsley (for M4A/MP4) files
+// imagemagick (to convert unsupported images)
 
-// WARNING - DON'T use this unless your music is organised so each album is in its own directory
+// WARNING if you use the --embed option this script will remove ALL embedded images from your files
+// before adding the new one.
+
+// WARNING - DON'T use this unless your music is organised so each album is in its own directory.
+// If albums are split across multiple subdirectories only one of those directores will be used.
 
 chdir('..');
 include ("includes/vars.php");
@@ -84,6 +90,10 @@ foreach ($r as $obj) {
 			log_out(GREY, "  Image ".basename($obj->Image));
 			if (is_dir($albumpath) && basename($obj->Image)) {
 				$img = 'albumart/asdownloaded/'.basename($obj->Image);
+				if (!is_file($img)) {
+					log_out(RED, "  Image $img does not exist");
+					continue;
+				}
 				$ext = pathinfo($img, PATHINFO_EXTENSION);
 				$out = $albumpath.'/cover.'.$ext;
 				$filename = pathinfo($img, PATHINFO_FILENAME);

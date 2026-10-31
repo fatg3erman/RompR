@@ -48,24 +48,26 @@ If you select this option RompR will try to use the separate image for each trac
 
 Once you've downloaded all the art for your Collection, you can archive the images for your local files if you have set the path correctly as above. This is a manual step and requires a terminal open on the PC where your webserver runs.
 
-    cd /PATH/TO/ROMPR
-    chmod ugo+rw ./prefs/prefs.var
-    cd utils
+    cd /PATH/TO/ROMPR/utils
+    chmod ugo+rw ../prefs/prefs.var
     php ./archiveimages.php
 
-This will copy RompЯ's images into your Local Music folders.
+This will copy all the albumart rompr has downloaded for your Local Music (only) into the same folders as the music itself, using the filename 'cover.jpg' (or png or whatever's appropriate).
+It can then be automatically restored by rompr if you ever reinstall or move to another machine.
 
-WARNING - DON'T use this unless your music is organised so each album is in its own directory.
+ WARNING! This will REMOVE images in the albums folders if those images are called 'cover.jpg' (or png or whatever) or if they've been archived there by an earlier version of this script.
 
-NOTE. This script will delete all images with names 'cover.jpg' (or png or other image extensions) and also any images that were archived by previous versions of this script (they had a long, random characters name).
-This script will copy the images as 'cover.jpg' (or png or whatever).
-
-Add --embed to the command line to embed the artwork into your music files. RompR will not embed artwork into files if the album has been selected to use different images for each track.
+ Add --embed to the command line to embed the artwork into your files (and clear existing artwork)
 You must have the following installed to embed images:
 eyed3 (for MP3 files)
 metaflac (for FLAC files) (often the package name is just flac)
 atomicparsley (for M4A/MP4) files
-imagemagick (to convert unsupported image types)
+imagemagick (to convert unsupported images)
+
+WARNING if you use the --embed option this script will remove ALL embedded images from your files before adding the new one.
+
+WARNING - DON'T use this unless your music is organised so each album is in its own directory.
+ If albums are split across multiple subdirectories only one of those directores will be used.
 
 This script creates a file called "donelist.txt" in the rompr directory. If the script exits before it completes, this file will allow it to carry on from where it left off.
 donelist.txt will be deleted when the script completes. Note that this means you must have write access to your rompr directory.
