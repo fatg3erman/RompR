@@ -81,20 +81,21 @@ foreach ($r as $obj) {
 						$mext = pathinfo($mp3, PATHINFO_EXTENSION);
 						$output = [];
 						$exitcode = 0;
+
+						$escmp3 = escapeshellarg($mp3);
+
 						switch ($mext) {
 							case 'mp3':
 								print "Adding image to MP3 file $mp3\n";
 								if ($ext != 'jpg') {
-									$newfile = pathinfo($out, PATHINFO_FILENAME).".jpg";
-									print("Converting file to ".$newfile."\n");
-									exec("convert -quality 95 \"$out\" \"$newfile\"");
+									$newfile = convert_file($out);
 								} else {
 									$newfile = $out;
 								}
 								print " Image is $newfile\n";
 								print " MP3   is $mp3\n";
-								exec("eyeD3 --remove-all-images \"$mp3\"");
-								exec("eyeD3 --add-image \"$newfile:FRONT_COVER\" \"$mp3\"", $output, $exitcode);
+								exec("eyeD3 --remove-all-images $escmp3");
+								exec("eyeD3 --add-image ".escapeshellarg("$newfile:FRONT_COVER")." $escmp3", $output, $exitcode);
 								if ($ext != 'jpg') {
 									unlink($newfile);
 								}
@@ -104,16 +105,14 @@ foreach ($r as $obj) {
 							case "mp4":
 								print "Adding image to MP4 file $mp3\n";
 								if ($ext != 'jpg' && $ext != 'png') {
-									$newfile = pathinfo($out, PATHINFO_FILENAME).".png";
-									print("Converting file to ".$newfile."\n");
-									exec("convert \"$out\" \"$newfile\"");
+									$newfile = convert_file($out);
 								} else {
 									$newfile = $out;
 								}
 								print " Image is $newfile\n";
 								print " MP4   is $mp3\n";
-								exec("AtomicParsley \"$mp3\" --overWrite --artwork REMOVE_ALL");
-								exec("AtomicParsley \"$mp3\" --overWrite --artwork \"$newfile\"", $output, $exitcode);
+								exec("AtomicParsley $escmp3 --overWrite --artwork REMOVE_ALL");
+								exec("AtomicParsley $escmp3 --overWrite --artwork ".escapeshellarg($newfile), $output, $exitcode);
 								if ($ext != 'jpg' && $ext != 'png') {
 									unlink($newfile);
 								}
@@ -121,11 +120,16 @@ foreach ($r as $obj) {
 
 							case "flac":
 								print "Adding image to FLAC file\n";
+								if ($ext != 'jpg' && $ext != 'png') {
+									$newfile = convert_file($out);
+								} else {
+									$newfile = $out;
+								}
 								print " Image is $out\n";
 								print " FLAC  is $mp3\n";
-								exec("metaflac --remove --block-type=PICTURE,PADDING --dont-use-padding \"$mp3\"");
-								exec("metaflac --remove-tag=COVERART  --dont-use-padding \"$mp3\"");
-								exec("metaflac --import-picture-from=\"3||||$out\"  \"$mp3\"", $output, $exitcode);
+								exec("metaflac --remove --block-type=PICTURE,PADDING --dont-use-padding $escmp3");
+								exec("metaflac --remove-tag=COVERART  --dont-use-padding $escmp3");
+								exec("metaflac --import-picture-from=".escapeshellarg("3||||$newfile")." $escmp3", $output, $exitcode);
 								break;
 
 						}
@@ -146,5 +150,12 @@ foreach ($r as $obj) {
 
 if (file_exists('donelist.txt')) {
 	unlink('donelist.txt');
+}
+
+function convert_file($out) {
+	$newfile = pathinfo($out, PATHINFO_FILENAME).".jpg";
+	print("Converting file to ".$newfile."\n");
+	exec("convert -quality 95 ".escapeshellarg($out)." ".escapeshellarg($newfile);
+	return $newfile;
 }
 ?>
