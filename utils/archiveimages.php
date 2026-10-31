@@ -94,11 +94,18 @@ foreach ($r as $obj) {
 									$newfile = $out;
 								}
 								# eyeD3 can complain about pathnames with unusual characters in it
-								copy($newfile, 'prefs/temp/'.basename($newfile));
-								print " Image is $newfile\n";
-								print " MP3   is $mp3\n";
-								exec("eyeD3 --remove-all-images $escmp3");
-								exec("eyeD3 --add-image ".escapeshellarg('prefs/temp/'.basename($newfile).":FRONT_COVER")." $escmp3", $output, $exitcode);
+								$copyto = 'prefs/temp/'.basename($newfile);
+								if (copy($newfile, $copyto)) {
+									print " Image is $copyto\n";
+									print " MP3   is $mp3\n";
+									exec("eyeD3 --remove-all-images $escmp3");
+									exec("eyeD3 --add-image ".escapeshellarg("$copyto:FRONT_COVER")." $escmp3", $output, $exitcode);
+								} else {
+									print "File Copy Failed!\n"
+									print "Copying from $newfile\n";
+									print "To $copyto\n";
+									exit(0);
+								}
 								if ($ext != 'jpg') {
 									unlink($newfile);
 								}
