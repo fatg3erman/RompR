@@ -73,9 +73,9 @@
     --button-hover-colour: var(--highlight-colour);
     --button-border: none;
     --button-hover-border: none;
-    --button-bg-colour: transparent;
+    --button-bg-colour: rgba(0, 0, 0, 0.2);
     --button-bg-image:  none;
-    --button-bg-hover-colour: rgba(255, 72, 0, 0.1);
+    --button-bg-hover-colour: rgba(255, 72, 0, 0.2);
     --button-bg-hover-image:  none;
     --button-font-weight: bold;
     --button-hover-shadow: unset;
