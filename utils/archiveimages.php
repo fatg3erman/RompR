@@ -40,11 +40,18 @@ const GREEN="1;32";
 const BROWN="0;33";
 const YELLOW="1;33";
 const BLUE="1;34";
-const MAGENTA="1;35";
+const MAGENTA="0;35";
 const CYAN="0;36";
 const GREY="0;37";
 const WHITE="1;37";
-const HIGHLIGHT="1;33;45";
+const HIGHLIGHT="0;30;46";
+
+define('ALLOWED_IMAGES', [
+	'mp3'  => ['jpg'],
+	'flac' => ['jpg', 'png'],
+	'mp4'  => ['jpg', 'png'],
+	'm4a'  => ['jpg', 'png']
+]);
 
 $embed = (count($argv) > 1 && $argv[1] == '--embed');
 
@@ -101,52 +108,34 @@ foreach ($r as $obj) {
 						$exitcode = 0;
 						$escmp3 = escapeshellarg($mp3);
 
+						log_out(YELLOW, "  Adding image to ".strtoupper($mext)." file $mp3");
+						log_out(CYAN,   "    Image type is ".strtoupper($ext));
+						if (!in_array($ext, ALLOWED_IMAGES[$mext])) {
+							$newfile = convert_file($out);
+						} else {
+							$newfile = copy_to_temp($out);
+						}
+
 						switch ($mext) {
 							case 'mp3':
-								log_out(YELLOW, "  Adding image to MP3 file $mp3");
-								if ($ext != 'jpg') {
-									$newfile = convert_file($out);
-								} else {
-									$newfile = copy_to_temp($out);
-								}
-								log_out(GREY, "    Source Image is $newfile");
-								log_out(GREY, "    MP3          is $mp3");
 								exec("eyeD3 --remove-all-images $escmp3");
 								exec("eyeD3 --add-image ".escapeshellarg("$newfile:FRONT_COVER")." $escmp3", $output, $exitcode);
-								unlink($newfile);
 								break;
 
 							case "m4a":
 							case "mp4":
-								log_out(YELLOW, "  Adding image to MP4 file $mp3");
-								if ($ext != 'jpg' && $ext != 'png') {
-									$newfile = convert_file($out);
-								} else {
-									$newfile = copy_to_temp($out);
-								}
-								log_out(GREY, "    Source Image is $newfile");
-								log_out(GREY, "    MP4          is $mp3");
 								exec("AtomicParsley $escmp3 --overWrite --artwork REMOVE_ALL");
 								exec("AtomicParsley $escmp3 --overWrite --artwork ".escapeshellarg($newfile), $output, $exitcode);
-								unlink($newfile);
 								break;
 
 							case "flac":
-								log_out(YELLOW, "  Adding image to FLAC file $mp3");
-								if ($ext != 'jpg' && $ext != 'png') {
-									$newfile = convert_file($out);
-								} else {
-									$newfile = copy_to_temp($out);
-								}
-								log_out(GREY, "    Source Image is $newfile");
-								log_out(GREY, "    FLAC         is $mp3");
 								exec("metaflac --remove --block-type=PICTURE,PADDING --dont-use-padding $escmp3");
 								exec("metaflac --remove-tag=COVERART  --dont-use-padding $escmp3");
 								exec("metaflac --import-picture-from=".escapeshellarg("3||||$newfile")." $escmp3", $output, $exitcode);
-								unlink($newfile);
 								break;
 
 						}
+						unlink($newfile);
 						if ($exitcode != 0) {
 							log_out(RED, "Exti Code Was $exitcode");
 							foreach ($output as $line) {
@@ -172,7 +161,7 @@ function log_out($col, $text) {
 
 function convert_file($out) {
 	$newfile = TEMP_DIR . '/' . pathinfo($out, PATHINFO_FILENAME).".jpg";
-	log_out(MAGENTA, "    Converting $out to ".$newfile);
+	log_out(MAGENTA, "    Converting image to ".$newfile);
 	if (is_file($newfile)) {
 		unlink($newfile);
 	}
@@ -181,7 +170,7 @@ function convert_file($out) {
 }
 
 function copy_to_temp($out) {
-	# eyeD3 can complain about pathnames with unusual characters in it
+	# command-line tools can complain about pathnames with unusual characters
 	$newfile = TEMP_DIR.'/'.md5($out).'.'.pathinfo($out, PATHINFO_EXTENSION);
 	if (copy($out, $newfile)) {
 		log_out(MAGENTA, "    Copied image to $newfile");
