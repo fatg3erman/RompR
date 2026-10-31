@@ -12,15 +12,29 @@
 // same folders as the music itself. It can then be automatically restored by rompr if you ever
 // reinstall or move to another machine.
 
+// WARNING! This will REMOVE images in the albums folders if those images are called 'cover.jpg' (or png or whatever)
+// of if they've been archived there by an earlier version of this script. This script will copy the images
+// as 'cover.jpg' (or png or whatever)
+// Add --embed to the command line to embed the artwork into your files
+// You must have the following installed to embed images:
+// eyed3 (for MP3 files)
+// metaflac (for FLAC files) (often the package name is just flac)
+// atomicparsley (for M4A/MP4) files
+// Note that atomicparsley only supports jpg and png files
+
 chdir('..');
 include ("includes/vars.php");
 include ("includes/functions.php");
 prefs::$database = new image_archiver();
 $r = prefs::$database->get_all_images();
 
+$embed = (count($argv) > 1 && $argv[1] == '--embed');
+
 foreach ($r as $obj) {
 	if ($obj->Domain == 'local') {
-		print "Album : ".$obj->Albumname."\n";
+		print "\n\n\n";
+		print "Album : ".$obj->Artistname." ".$obj->Albumname." ".$obj->useTrackIms."\n";
+
 		$retval = dirname($obj->Uri);
 		$retval = preg_replace('#^local:track:#', '', $retval);
 		$retval = preg_replace('#^file://#', '', $retval);
@@ -28,19 +42,75 @@ foreach ($r as $obj) {
 
 		if (is_dir('prefs/MusicFolders') && $retval != '.') {
 			$albumpath = imageFunctions::munge_filepath($retval);
+			print " Directory $albumpath\n";
+			print " ".basename($obj->Image)."\n";
 			if (is_dir($albumpath) && basename($obj->Image)) {
 				$img = 'albumart/asdownloaded/'.basename($obj->Image);
-				$out = $albumpath.'/'.basename($obj->Image);
-				print "Archiving Image ".$img.' to '.$out."\n";
+				$ext = pathinfo($img, PATHINFO_EXTENSION);
+				$out = $albumpath.'/cover.'.$ext;
 				$filename = pathinfo($img, PATHINFO_FILENAME);
-				$current = glob($albumpath.'/*.jpg');
+				$current = glob($albumpath.'/*.{jpg,png,bmp,gif,jpeg,webp,JPEG,JPG,BMP,GIF,PNG,WEBP}', GLOB_BRACE);
 				foreach ($current as $f) {
 					if (strlen(basename($f)) == 36) {
 						print '  Removing '.$f."\n";
 						unlink($f);
+					} else if (pathinfo($f, PATHINFO_FILENAME) == 'cover') {
+						print '  Removing '.$f."\n";
+						unlink($f);
 					}
 				}
+				print "Archiving Image ".$img.' to '.$out."\n";
 				copy($img, $out);
+				if ($embed && $obj->useTrackIms == 1) {
+					print "Album is configured to use Track Images, not embedding artwork\n";
+				}
+				if ($embed && $obj->useTrackIms == 0) {
+					$mp3s = glob($albumpath.'/*.{mp3,m4a,mp4,flac}', GLOB_BRACE);
+					foreach ($mp3s as $mp3) {
+						$mext = pathinfo($mp3, PATHINFO_EXTENSION);
+						$output = [];
+						$exitcode = 0;
+						switch ($mext) {
+							case 'mp3':
+								print "Adding image to MP3 file $mp3\n";
+								print " Image is $out\n";
+								print " MP3   is $mp3\n";
+								exec("eyeD3 --remove-all-images \"$mp3\"");
+								exec("eyeD3 --add-image \"$out:FRONT_COVER\" \"$mp3\"", $output, $exitcode);
+								break;
+
+							case "m4a":
+							case "mp4":
+								if ($ext == 'jpg' || $ext == 'png') {
+									print "Adding image to MP4 file $mp3\n";
+									print " Image is $out\n";
+									print " MP4   is $mp3\n";
+									exec("AtomicParsley \"$mp3\" --overWrite --artwork REMOVE_ALL");
+									exec("AtomicParsley \"$mp3\" --overWrite --artwork \"$out\"", $output, $exitcode);
+								} else {
+									print "Can't add $out to MP4 file $mp3\n";
+								}
+								break;
+
+							case "flac":
+								print "Adding image to FLAC file\n";
+								print " Image is $out\n";
+								print " FLAC  is $mp3\n";
+								exec("metaflac --remove --block-type=PICTURE,PADDING --dont-use-padding \"$mp3\"");
+								exec("metaflac --remove-tag=COVERART  --dont-use-padding \"$mp3\"");
+								exec("metaflac --import-picture-from=\"3||||$out\"  \"$mp3\"", $output, $exitcode);
+								break;
+
+						}
+						if ($exitcode != 0) {
+							print "Exti Code Was $exitcode\n";
+							foreach ($output as $line) {
+								print "$line\n";
+							}
+							exit(0);
+						}
+					}
+				}
 			}
 		}
 	}

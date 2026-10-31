@@ -54,6 +54,16 @@ Once you've downloaded all the art for your Collection, you can archive the imag
 
 This will copy RompЯ's images into your Local Music folders.
 
+NOTE. This script will delete all images with names 'cover.jpg' (or png or other image files) and also any images that were archived by previous versions of this script (they had a long, random characters name).
+This script will copy the images as 'cover.jpg' (or png or whatever).
+
+Add --embed to the command line to embed the artwork into your music files. RompR will not embed artwork into files if the album has been selected to use different images for each track.
+You must have the following installed to embed images:
+eyed3 (for MP3 files)
+metaflac (for FLAC files) (often the package name is just flac)
+atomicparsley (for M4A/MP4) files
+Note that atomicparsley only supports jpg and png files
+
 ### Using Brave Image Search To Find Album Art
 
 This version of RompR now uses Brave Search to search for Album Art. To use this functionality you'll need to sign up for a Free Brave API account,

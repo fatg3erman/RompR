@@ -101,7 +101,7 @@ function update_m4a_tags($download_file, $tags, $track_image_file) {
 			$tag[0] = str_replace('"', '\"', $tag[0]);
 		}
 		$cmdline = $ap.'AtomicParsley "'.$download_file
-			.'" --artist "'.$tags['artist'][0]
+			.'" --overWrite --artist "'.$tags['artist'][0]
 			.'" --title "'.$tags['title'][0]
 			.'" --album "'.$tags['album'][0]
 			.'" --albumArtist "'.$tags['albumartist'][0]

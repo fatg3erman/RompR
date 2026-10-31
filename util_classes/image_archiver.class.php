@@ -6,12 +6,17 @@ class image_archiver extends database {
 				Uri,
 				Image,
 				Albumname,
-				Domain
+				Domain,
+				useTrackIms,
+				Artistname
 			FROM Tracktable
 			JOIN Albumtable USING (Albumindex)
+			JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
 			WHERE Domain = "local" AND Uri IS NOT NULL
-			GROUP BY Albumindex', false, PDO::FETCH_OBJ);
+			GROUP BY Albumindex
+			ORDER BY Artistname, Albumname', false, PDO::FETCH_OBJ);
 
 	}
 }
 ?>
+
