@@ -56,7 +56,7 @@ define('ALLOWED_IMAGES', [
 $embed = (count($argv) > 1 && $argv[1] == '--embed');
 
 if (file_exists('donelist.txt')) {
-	$donelist = file('donelist.txt');
+	$donelist = array_map('trim', file('donelist.txt'));
 } else {
 	$donelist = [];
 }
@@ -64,10 +64,10 @@ if (file_exists('donelist.txt')) {
 foreach ($r as $obj) {
 	if ($obj->Domain == 'local') {
 		print "\n\n\n";
-		$nom = "Album : ".$obj->Artistname." ".$obj->Albumname." ".$obj->useTrackIms."\n";
-		log_out(HIGHLIGHT, str_repeat('-', strlen($nom)-1));
-		log_out(HIGHLIGHT, $nom);
-		log_out(HIGHLIGHT, str_repeat('-', strlen($nom)-1));
+		$nom = "Album : ".$obj->Artistname." ".$obj->Albumname." ".$obj->useTrackIms;
+		log_out(HIGHLIGHT, str_repeat('-', strlen($nom)+2));
+		log_out(HIGHLIGHT, " $nom ");
+		log_out(HIGHLIGHT, str_repeat('-', strlen($nom)+2));
 		if (in_array($nom, $donelist)) {
 			log_out(RED, " .. already done this one");
 			continue;
@@ -158,7 +158,7 @@ if (file_exists('donelist.txt')) {
 }
 
 function log_out($col, $text) {
-	print "\e[".$col."m".trim($text, "\n")."\e[0m\n";
+	print "\e[".$col."m".$text."\e[0m\n";
 }
 
 function convert_file($out) {
