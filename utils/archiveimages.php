@@ -154,8 +154,8 @@ if (file_exists('donelist.txt')) {
 
 function convert_file($out) {
 	$newfile = pathinfo($out, PATHINFO_FILENAME).".jpg";
-	print("Converting file to ".$newfile."\n");
-	exec("convert -quality 95 ".escapeshellarg($out)." ".escapeshellarg($newfile);
+	print "Converting file to ".$newfile."\n";
+	exec("convert -quality 95 ".escapeshellarg($out)." ".escapeshellarg($newfile));
 	return $newfile;
 }
 ?>
