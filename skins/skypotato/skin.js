@@ -13,7 +13,6 @@ jQuery.fn.menuReveal = async function() {
 	var holder = $('.openmenu[name="'+id+'"]');
 	var parent = holder.parent();
 	var adjustboxes = true;
-	layoutProcessor.mscrollp = null;
 
 	switch (true) {
 		case holder.hasClass('album'):
@@ -46,9 +45,8 @@ jQuery.fn.menuReveal = async function() {
 				$('<i>', {class: 'icon-blank timerspacer'}).appendTo(d);
 			}
 			adjustboxes = false;
-			layoutProcessor.mscrollp = parent.parent().parent().css('top');
-			// debug.mark('BANG', parent.parent().parent());
-			// debug.mark('BANG', layoutProcessor.mscrollp);
+			// This is so we can scroll the main panel back to the same position when we close this menu.
+			layoutProcessor.mscrollp[id] = parent.parent().parent().css('top');
 			break;
 
 		case holder.hasClass('podcast'):
@@ -74,7 +72,9 @@ jQuery.fn.menuReveal = async function() {
 			break;
 
 		case self.hasClass('collectionpanel'):
-			// Albums panel, when an artist name is clicked on. Catch it because we DO need to appendDummySpacers
+			// Albums panel, when an artist name is clicked on. Catch it because we
+			// DO need to appendDummySpacers and put the artist info in.
+			layoutProcessor.mscrollp = {};
 			break;
 
 		default:
@@ -183,9 +183,9 @@ jQuery.fn.menuHide = async function() {
 			}
 			break;
 	}
-	if (layoutProcessor.mscrollp) {
-		scroller.css('top', layoutProcessor.mscrollp);
-		layoutProcessor.mscrollp = null;
+	if (layoutProcessor.mscrollp.hasOwnProperty(id) ) {
+		scroller.css('top', layoutProcessor.mscrollp[id]);
+		delete layoutProcessor.mscrollp[id];
 	}
 	return this;
 }
@@ -329,7 +329,7 @@ var layoutProcessor = function() {
 	var headertimer;
 	var loading_ui = true;
 	var artistinfotimer;
-	var mscrollp = null;
+	var mscrollp = {};
 
 	function showPanel(source) {
 		debug.log("UI","Showing Panel",source);
