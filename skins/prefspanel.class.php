@@ -337,18 +337,18 @@ class prefspanel extends uibits {
 			'label' => language::gettext('config_lastfmlang')
 		]);
 
-		$countries = ['' => 'Please Select'];
-		$x = simplexml_load_file('resources/iso3166.xml');
-		foreach($x->CountryEntry as $i => $c) {
-			$code = (string) $c->CountryCode;
-			$countries[$code] = mb_convert_case($c->CountryName, MB_CASE_TITLE, "UTF-8");
-		}
-		self::ui_select_box([
-			'id' => 'lastfm_country_code',
-			'options' => $countries,
-			'label' => language::gettext('config_country'),
-			'disabled' => ['']
-		]);
+		// $countries = ['' => 'Please Select'];
+		// $x = simplexml_load_file('resources/iso3166.xml');
+		// foreach($x->CountryEntry as $i => $c) {
+		// 	$code = (string) $c->CountryCode;
+		// 	$countries[$code] = mb_convert_case($c->CountryName, MB_CASE_TITLE, "UTF-8");
+		// }
+		// self::ui_select_box([
+		// 	'id' => 'lastfm_country_code',
+		// 	'options' => $countries,
+		// 	'label' => language::gettext('config_country'),
+		// 	'disabled' => ['']
+		// ]);
 
 		// =======================================================
 		//

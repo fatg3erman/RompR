@@ -123,12 +123,12 @@ include ("includes/firstrun.php");
 // code, not the interface language.
 //
 
-if (!prefs::get_pref('country_userset')) {
-	logger::info('INIT', 'Country Code not sent by user');
-	$browser_country = language::get_browser_country();
-	prefs::set_pref(['lastfm_country_code' => $browser_country]);
-	logger::info('INIT', 'Browser gave us',$browser_country);
-}
+// if (!prefs::get_pref('country_userset')) {
+// 	logger::info('INIT', 'Country Code not sent by user');
+// 	$browser_country = language::get_browser_country();
+// 	prefs::set_pref(['lastfm_country_code' => $browser_country]);
+// 	logger::info('INIT', 'Browser gave us',$browser_country);
+// }
 
 logger::debug("INIT", $_SERVER['SCRIPT_FILENAME']);
 logger::debug("INIT", $_SERVER['PHP_SELF']);

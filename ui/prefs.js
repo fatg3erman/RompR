@@ -882,9 +882,9 @@ var prefs = function() {
 					callback = prefs.postUIChange;
 					break;
 
-				case "lastfm_country_code":
-					prefobj.country_userset = true;
-					break;
+				// case "lastfm_country_code":
+				// 	prefobj.country_userset = true;
+				// 	break;
 
 				case 'podcast_sort_0':
 				case 'podcast_sort_1':
