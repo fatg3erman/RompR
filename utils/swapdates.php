@@ -34,9 +34,9 @@ while (count($dirs) > 0) {
 			$ext = pathinfo($file, PATHINFO_EXTENSION);
 			if ($ext == 'mp3') {
 			// if ($ext == 'mp3' || $ext == 'flac') {
-				format_out(HIGHLIGHT, str_repeat('-', strlen($file)+2));
+				format_out(HIGHLIGHT, str_repeat('-', mb_strlen($file)+2));
 				format_out(HIGHLIGHT, " $file");
-				format_out(HIGHLIGHT, str_repeat('-', strlen($file)+2));
+				format_out(HIGHLIGHT, str_repeat('-', mb_strlen($file)+2));
 				switch ($ext) {
 					case 'mp3':
 						list($date, $releasedate) = parse_mp3_tags($file);

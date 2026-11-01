@@ -71,9 +71,9 @@ foreach ($r as $obj) {
 	if ($obj->Domain == 'local') {
 		print "\n\n\n";
 		$nom = "Album : ".$obj->Artistname." ".$obj->Albumname." ".$obj->useTrackIms;
-		format_out(HIGHLIGHT, str_repeat('-', strlen($nom)+2));
+		format_out(HIGHLIGHT, str_repeat('-', mb_strlen($nom)+2));
 		format_out(HIGHLIGHT, " $nom ");
-		format_out(HIGHLIGHT, str_repeat('-', strlen($nom)+2));
+		format_out(HIGHLIGHT, str_repeat('-', mb_strlen($nom)+2));
 		if (in_array($nom, $donelist)) {
 			format_out(RED, " .. already done this one");
 			continue;
