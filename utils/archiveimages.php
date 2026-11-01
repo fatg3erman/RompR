@@ -180,6 +180,7 @@ function convert_file($out) {
 	}
 	exec("convert -quality 95 ".escapeshellarg($copiedfile)." ".escapeshellarg($newfile));
 	return $newfile;
+	unlink($copiedfile);
 }
 
 function copy_to_temp($out) {
