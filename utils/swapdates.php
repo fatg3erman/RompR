@@ -11,7 +11,7 @@ const START_DIR = '/mnt/Music/Music';
 $dirs = [START_DIR];
 
 const BLACK="0;30";
-const RED="0;31";
+const RED="1;91";
 const GREEN="1;32";
 const BROWN="0;33";
 const YELLOW="1;33";
