@@ -5,6 +5,7 @@ class database extends data_base {
 	public const SQL_RANDOM_SORT = 'RAND()';
 	public const SQL_TAG_CONCAT = "GROUP_CONCAT(t.Name SEPARATOR ', ') ";
 	public const STUPID_CONCAT_THING = "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR ? LIKE CONCAT('%', Localfilename)";
+	public const CASE_INSENSITIYE = "";
 
 	public function get_constant($c) {
 		return constant($c);

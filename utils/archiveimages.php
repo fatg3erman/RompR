@@ -71,11 +71,11 @@ foreach ($r as $obj) {
 	if ($obj->Domain == 'local') {
 		print "\n\n\n";
 		$nom = "Album : ".$obj->Artistname." ".$obj->Albumname." ".$obj->useTrackIms;
-		log_out(HIGHLIGHT, str_repeat('-', strlen($nom)+2));
-		log_out(HIGHLIGHT, " $nom ");
-		log_out(HIGHLIGHT, str_repeat('-', strlen($nom)+2));
+		format_out(HIGHLIGHT, str_repeat('-', strlen($nom)+2));
+		format_out(HIGHLIGHT, " $nom ");
+		format_out(HIGHLIGHT, str_repeat('-', strlen($nom)+2));
 		if (in_array($nom, $donelist)) {
-			log_out(RED, " .. already done this one");
+			format_out(RED, " .. already done this one");
 			continue;
 		}
 
@@ -86,12 +86,12 @@ foreach ($r as $obj) {
 
 		if (is_dir('prefs/MusicFolders') && $retval != '.') {
 			$albumpath = imageFunctions::munge_filepath($retval);
-			log_out(GREY, "  Directory $albumpath");
-			log_out(GREY, "  Image ".basename($obj->Image));
+			format_out(GREY, "  Directory $albumpath");
+			format_out(GREY, "  Image ".basename($obj->Image));
 			if (is_dir($albumpath) && basename($obj->Image)) {
 				$img = 'albumart/asdownloaded/'.basename($obj->Image);
 				if (!is_file($img)) {
-					log_out(RED, "  Image $img does not exist");
+					format_out(RED, "  Image $img does not exist");
 					continue;
 				}
 				$ext = pathinfo($img, PATHINFO_EXTENSION);
@@ -100,17 +100,17 @@ foreach ($r as $obj) {
 				$current = glob($albumpath.'/*.{jpg,png,bmp,gif,jpeg,webp,JPEG,JPG,BMP,GIF,PNG,WEBP}', GLOB_BRACE);
 				foreach ($current as $f) {
 					if (strlen(basename($f)) == 36) {
-						log_out(CYAN, "    Removing $f");
+						format_out(CYAN, "    Removing $f");
 						unlink($f);
 					} else if (pathinfo($f, PATHINFO_FILENAME) == 'cover') {
-						log_out(CYAN, "    Removing $f");
+						format_out(CYAN, "    Removing $f");
 						unlink($f);
 					}
 				}
-				log_out(GREEN,  "  Archiving Image $img to $out");
+				format_out(GREEN,  "  Archiving Image $img to $out");
 				copy($img, $out);
 				if ($embed && $obj->useTrackIms == 1) {
-					log_out(RED, "  Album is configured to use Track Images, not embedding artwork");
+					format_out(RED, "  Album is configured to use Track Images, not embedding artwork");
 				}
 				if ($embed && $obj->useTrackIms == 0) {
 					$mp3s = glob($albumpath.'/*.{mp3,m4a,mp4,flac}', GLOB_BRACE);
@@ -120,8 +120,8 @@ foreach ($r as $obj) {
 						$exitcode = 0;
 						$escmp3 = escapeshellarg($mp3);
 
-						log_out(YELLOW, "  Adding image to ".strtoupper($mext)." file $mp3");
-						log_out(CYAN,   "    Image type is ".strtoupper($ext));
+						format_out(YELLOW, "  Adding image to ".strtoupper($mext)." file $mp3");
+						format_out(CYAN,   "    Image type is ".strtoupper($ext));
 						if (!in_array($ext, ALLOWED_IMAGES[$mext])) {
 							$newfile = convert_file($out);
 						} else {
@@ -149,9 +149,9 @@ foreach ($r as $obj) {
 						}
 						unlink($newfile);
 						if ($exitcode != 0) {
-							log_out(RED, "Exti Code Was $exitcode");
+							format_out(RED, "Exti Code Was $exitcode");
 							foreach ($output as $line) {
-								log_out(RED, $line);
+								format_out(RED, $line);
 							}
 							exit(0);
 						}
@@ -167,14 +167,14 @@ if (file_exists('donelist.txt')) {
 	unlink('donelist.txt');
 }
 
-function log_out($col, $text) {
+function format_out($col, $text) {
 	print "\e[".$col."m".$text."\e[0m\n";
 }
 
 function convert_file($out) {
 	$copiedfile = copy_to_temp($out);
 	$newfile = TEMP_DIR . '/' . pathinfo($out, PATHINFO_FILENAME).".jpg";
-	log_out(MAGENTA, "    Converting image to ".$newfile);
+	format_out(MAGENTA, "    Converting image to ".$newfile);
 	if (is_file($newfile)) {
 		unlink($newfile);
 	}
@@ -186,11 +186,11 @@ function copy_to_temp($out) {
 	# command-line tools can complain about pathnames with unusual characters
 	$newfile = TEMP_DIR.'/'.md5($out).'.'.pathinfo($out, PATHINFO_EXTENSION);
 	if (copy($out, $newfile)) {
-		log_out(MAGENTA, "    Copied image to $newfile");
+		format_out(MAGENTA, "    Copied image to $newfile");
 	} else {
-		log_out(RED, "File Copy Failed!");
-		log_out(RED, " Copying from $out");
-		log_out(RED, " To           $newfile");
+		format_out(RED, "File Copy Failed!");
+		format_out(RED, " Copying from $out");
+		format_out(RED, " To           $newfile");
 		exit(0);
 	}
 	return $newfile;

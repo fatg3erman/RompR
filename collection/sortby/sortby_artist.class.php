@@ -44,11 +44,11 @@ class sortby_artist extends sortby_base {
 			foreach(prefs::get_pref('nosortprefixes') AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
 				$qstring .= "WHEN a.Artistname LIKE '".$p.
-					" %' THEN SUBSTR(a.Artistname,".$phpisshitsometimes.") ";
+					" %' THEN LOWER(SUBSTR(a.Artistname,".$phpisshitsometimes.")) ";
 			}
-			$qstring .= "ELSE a.Artistname END)";
+			$qstring .= "ELSE LOWER(a.Artistname) END)";
 		} else {
-			$qstring .= "a.Artistname";
+			$qstring .= "LOWER(a.Artistname)";
 		}
 		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $artist) {

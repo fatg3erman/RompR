@@ -57,7 +57,8 @@ It can then be automatically restored by rompr if you ever reinstall or move to 
 
  WARNING! This will REMOVE images in the albums folders if those images are called 'cover.jpg' (or png or whatever) or if they've been archived there by an earlier version of this script.
 
- Add --embed to the command line to embed the artwork into your files (and clear existing artwork)
+Add --embed to the command line to embed the artwork into your files (and clear existing artwork)
+Albums which have been configured to 'Scan each track for an Image' will not have their embedded images updated.
 You must have the following installed to embed images:
 eyed3 (for MP3 files)
 metaflac (for FLAC files) (often the package name is just flac)

@@ -270,11 +270,11 @@ class sortby_base {
 				foreach(prefs::get_pref('nosortprefixes') AS $p) {
 					$phpisshitsometimes = strlen($p)+2;
 					$qstring .= "WHEN Artistname LIKE '".$p.
-						" %' THEN SUBSTR(Artistname,".$phpisshitsometimes.") ";
+						" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
 				}
-				$qstring .= "ELSE Artistname END), ";
+				$qstring .= "ELSE LOWER(Artistname) END), ";
 			} else {
-				$qstring .= "Artistname, ";
+				$qstring .= "LOWER(Artistname), ";
 			}
 		}
 		return $qstring;
