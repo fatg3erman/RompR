@@ -73,6 +73,10 @@ jQuery.fn.menuReveal = async function() {
 			self.removeClass('closed');
 			break;
 
+		case self.hasClass('collectionpanel'):
+			// Albums panel, when an artist name is clicked on. Catch it because we DO need to appendDummySpacers
+			break;
+
 		default:
 			// Other dropdowns (eg podcast controls)
 			adjustboxes = false;
