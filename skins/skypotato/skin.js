@@ -13,7 +13,7 @@ jQuery.fn.menuReveal = async function() {
 	var holder = $('.openmenu[name="'+id+'"]');
 	var parent = holder.parent();
 	var adjustboxes = true;
-	var scrollto = false;
+	layoutProcessor.mscrollp = null;
 
 	switch (true) {
 		case holder.hasClass('album'):
@@ -46,6 +46,9 @@ jQuery.fn.menuReveal = async function() {
 				$('<i>', {class: 'icon-blank timerspacer'}).appendTo(d);
 			}
 			adjustboxes = false;
+			layoutProcessor.mscrollp = parent.parent().parent().css('top');
+			// debug.mark('BANG', parent.parent().parent());
+			// debug.mark('BANG', layoutProcessor.mscrollp);
 			break;
 
 		case holder.hasClass('podcast'):
@@ -70,15 +73,9 @@ jQuery.fn.menuReveal = async function() {
 			self.removeClass('closed');
 			break;
 
-		case self.hasClass('collectionpanel'):
-			// Albums panel, when an artist name is clicked on. Catch it because we DO need to appendDummySpacers
-			scrollto = false;
-			break;
-
 		default:
 			// Other dropdowns (eg podcast controls)
 			adjustboxes = false;
-			scrollto = false;
 			break;
 	}
 	if (self.hasClass('toggledown')) {
@@ -87,9 +84,6 @@ jQuery.fn.menuReveal = async function() {
 	} else {
 		var displaymode = self.hasClass('containerbox') ? 'flex' : 'block';
 		self.css({display: displaymode});
-	}
-	if (scrollto) {
-		layoutProcessor.scrollSourcesTo(parent);
 	}
 	if (adjustboxes) {
 		self.appendDummySpacers();
@@ -143,7 +137,7 @@ jQuery.fn.menuHide = async function() {
 	var id = self.attr('id');
 	var holder = $('.openmenu[name="'+id+'"]');
 	var parent = holder.parent();
-	var adjustboxes = true;
+	var scroller = parent.parent().parent();
 
 	switch (true) {
 		case holder.hasClass('album'):
@@ -183,11 +177,11 @@ jQuery.fn.menuHide = async function() {
 			} else {
 				self.css({display: 'none'});
 			}
-			adjustboxes = false;
 			break;
 	}
-	if (adjustboxes) {
-		layoutProcessor.scrollSourcesTo(parent);
+	if (layoutProcessor.mscrollp) {
+		scroller.css('top', layoutProcessor.mscrollp);
+		layoutProcessor.mscrollp = null;
 	}
 	return this;
 }
@@ -331,6 +325,7 @@ var layoutProcessor = function() {
 	var headertimer;
 	var loading_ui = true;
 	var artistinfotimer;
+	var mscrollp = null;
 
 	function showPanel(source) {
 		debug.log("UI","Showing Panel",source);

@@ -149,7 +149,7 @@ foreach ($r as $obj) {
 						}
 						unlink($newfile);
 						if ($exitcode != 0) {
-							format_out(RED, "Exti Code Was $exitcode");
+							format_out(RED, "Exit Code Was $exitcode");
 							foreach ($output as $line) {
 								format_out(RED, $line);
 							}
