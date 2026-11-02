@@ -6,7 +6,7 @@
 
 chdir('..');
 
-const START_DIR = '/mnt/Music/Music';
+const START_DIR = '/mnt/Music/Music/Spoken Word/Douglas Adams';
 
 $dirs = [START_DIR];
 
@@ -115,25 +115,31 @@ function parse_flac_tags($file) {
 	$fn = escapeshellarg($file);
 	$output = [];
 	exec("metaflac --show-tag=DATE $fn", $output);
-	$s = explode('=', $output[0]);
-	if (count($s) == 2 && $s[0] == 'DATE') {
-		$releasedate = $s[1];
-		format_out(GREY, "    Current DATE tag = $releasedate");
+	if (count($output) > 0) {
+		$s = explode('=', $output[0]);
+		if (count($s) == 2 && $s[0] == 'DATE') {
+			$releasedate = $s[1];
+			format_out(GREY, "    Current DATE tag = $releasedate");
+		}
 	}
 	$output = [];
 	exec("metaflac --show-tag=ORIGINALDATE $fn", $output);
-	$s = explode('=', $output[0]);
-	if (count($s) == 2 && $s[0] == 'ORIGINALDATE') {
-		$date = $s[1];
-		format_out(GREY, "    Current ORIGINALDATE tag = $date");
+	if (count($output) > 0) {
+		$s = explode('=', $output[0]);
+		if (count($s) == 2 && $s[0] == 'ORIGINALDATE') {
+			$date = $s[1];
+			format_out(GREY, "    Current ORIGINALDATE tag = $date");
+		}
 	}
 	if ($date == null) {
 		$output = [];
 		exec("metaflac --show-tag=ORIGINALYEAR $fn", $output);
-		$s = explode('=', $output[0]);
-		if (count($s) == 2 && $s[0] == 'ORIGINALYEAR') {
-			$date = $s[1];
-			format_out(GREY, "    Current ORIGINALYEAR tag = $date");
+		if (count($output) > 0) {
+			$s = explode('=', $output[0]);
+			if (count($s) == 2 && $s[0] == 'ORIGINALYEAR') {
+				$date = $s[1];
+				format_out(GREY, "    Current ORIGINALYEAR tag = $date");
+			}
 		}
 	}
 	return [$date, $releasedate];

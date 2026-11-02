@@ -1110,6 +1110,7 @@ class poDatabase extends database {
 		logger::log("PODCASTS", "   Title is",$obj->title);
 		logger::log("PODCASTS", "   Image is",$obj->image);
 		logger::log("PODCASTS", "PodImage is",$obj->podimage);
+		logger::log("PODCASTS", " Comment is",$obj->comment);
 		if ($url === null) {
 			logger::warn("PODCASTS", "  Failed to find URL for podcast",$channel);
 			header('HTTP/1.0 404 Not Found');
@@ -1235,7 +1236,7 @@ class poDatabase extends database {
 				// Prefix the file with the track number
 				if ($track_number > 0 && is_numeric($track_number)) {
 					$tn = str_pad((string) $track_number, 3, '0', STR_PAD_LEFT);
-					$newfile = dirname($download_file).'/'.$tn.' - '.basename($download_file);
+					$newfile = dirname($download_file).'/'.$tn.' - '.format_for_disc($obj->title).'.'.pathinfo($download_file, PATHINFO_EXTENSION);
 					logger::log('PODCASTS', 'Renaming downloaded file to', $newfile);
 					rename($download_file, $newfile);
 				} else {

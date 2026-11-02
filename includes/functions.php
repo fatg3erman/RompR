@@ -56,6 +56,11 @@ function update_audio_tags($download_file, $tags, $track_image_file) {
 
 function update_id3_tags($download_file, $tags, $track_image_file) {
 	logger::log('TAGGER', 'Writing ID3 tags to',$download_file);
+	if (array_key_exists('text', $tags)) {
+		logger::log("TAGGER", "Removing text tag");
+		unset($tags['text']);
+	}
+	logger::log('TAGGER', print_r($tags, true));
 	getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
 	$tagwriter = new getid3_writetags();
 
