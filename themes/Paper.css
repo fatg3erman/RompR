@@ -67,7 +67,7 @@
     --infopane-header-bg-colour: unset;
     --infopane-header-bg-image: url('themes/tanpaper.jpg');
 
-    --selected-bg-colour: #CC5500;
+    --selected-bg-colour: rgba(255, 72, 0, 0.2);
 
     --button-colour: var(--text-colour);
     --button-hover-colour: var(--highlight-colour);
