@@ -1,16 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    width="214.04736mm"
    height="214.04736mm"
    viewBox="0 0 214.04736 214.04736"
    version="1.1"
-   id="svg9492">
+   id="svg9492"
+   sodipodi:docname="alarmclock_true.svg"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.437581"
+     inkscape:cx="404.15115"
+     inkscape:cy="404.49895"
+     inkscape:window-width="2560"
+     inkscape:window-height="1372"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg9492" />
   <defs
      id="defs9486">
     <linearGradient
@@ -89,36 +112,37 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      id="layer1"
-     transform="translate(2.0236816,2.0236816)">
+     transform="translate(2.0236816,2.0236816)"
+     style="stroke:#ea0000;stroke-opacity:1">
     <circle
-       style="fill:none;stroke:url(#linearGradient3541);stroke-width:16;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:#ea0000;stroke-width:16;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path10055"
        cx="105"
        cy="105"
        r="99.023682" />
     <rect
-       style="fill:none;stroke:#ff2a2b;stroke-width:7.99999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:#ea0000;stroke-width:7.99999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect10057"
        width="16"
        height="16"
        x="97"
        y="97" />
     <path
-       style="fill:none;stroke:#ff2a2b;stroke-width:12;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:#ea0000;stroke-width:12;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 105.49702,105.9375 -0.99405,-84.014881 v 0"
        id="path10059" />
     <path
-       style="fill:none;stroke:#ff2a2b;stroke-width:16;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:#ea0000;stroke-width:16;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 105.49702,105.9375 c -59.383926,-1.875 -59.383926,-1.875 -59.383926,-1.875"
        id="path10063" />
     <path
-       style="fill:none;stroke:#ff2a2b;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:#ea0000;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 154.97024,152.70238 105.49702,105.9375"
        id="path10065" />
   </g>

@@ -2,7 +2,10 @@
 
 # Scan your music folders recursively and exchange the date tag for the original release date tag.
 # Preserve the date tag in release date tag.
+# Requires eyeD3 and metaflac
+# sudo apt install eyed3 flac
 # Works with MP3 and FLAC files only.
+# Adjust START_DIR to the directory where you want recursing to start.
 
 chdir('..');
 

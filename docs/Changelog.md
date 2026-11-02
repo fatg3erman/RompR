@@ -12,6 +12,10 @@
 	```
 * Lyrics panel can now display synced lyrics if the new 'Prefer Synced Lyrics' option is enabled.
 * Lyrics panel can now use LRCLib (an online lyrics source) to get lyrics for any song. Local lyrics will always be preferred, unless 'Prefer Synced Lyrics' is set in the preferences - in which case LRCLib will be used to get synced lyrics if the local files don't contain them.
+* Some small improvements to a couple of themes
+* Adding tags to downloaded podcast files would sometimes fail if those files already had ID3V1 tags. This is now fixed.
+* I wrote a script to exchange the 'date' tag with the 'original release date' tag in my music files so that they sort properly by original date because Musicbrainzz Picard does odd things with dates and Mopidy doesn't expose the 'original date' tag. I've included it as utils/swapdates.php. Use at your own risk and read the comments.
+
 
 ## Version 2.29
 

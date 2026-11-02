@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="alarmclock_true.svg"
-   inkscape:version="1.0beta2 (2b71d25, 2019-12-03)"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
    id="svg9492"
    version="1.1"
    viewBox="0 0 214.04736 214.04736"
    height="214.04736mm"
-   width="214.04736mm">
+   width="214.04736mm"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs9486">
     <marker
@@ -83,7 +83,7 @@
      fit-margin-left="0"
      fit-margin-top="0"
      inkscape:window-maximized="0"
-     inkscape:window-y="22"
+     inkscape:window-y="0"
      inkscape:window-x="0"
      inkscape:window-height="856"
      inkscape:window-width="1440"
@@ -91,15 +91,18 @@
      inkscape:document-rotation="0"
      inkscape:current-layer="layer1"
      inkscape:document-units="mm"
-     inkscape:cy="567.64856"
-     inkscape:cx="407.64856"
+     inkscape:cy="567.14286"
+     inkscape:cx="408.57143"
      inkscape:zoom="0.35"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
      bordercolor="#666666"
      pagecolor="#ffffff"
-     id="base" />
+     id="base"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <metadata
      id="metadata9489">
     <rdf:RDF>
@@ -108,7 +111,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -122,7 +125,7 @@
        cy="105"
        cx="105"
        id="path10055"
-       style="fill:none;stroke:#FF4500;stroke-width:16;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill:none;stroke:#1ce300;stroke-width:16;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <rect
        y="97"
        x="97"
