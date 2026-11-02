@@ -2,20 +2,20 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg32219"
    height="171.8"
    width="326.08"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
-   sodipodi:docname="togglebutton-new2-on.svg">
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   sodipodi:docname="togglebutton-new2-on.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -30,14 +30,32 @@
      id="namedview19106"
      showgrid="false"
      inkscape:zoom="1.2924303"
-     inkscape:cx="42.113298"
-     inkscape:cy="35.101113"
-     inkscape:window-x="972"
-     inkscape:window-y="175"
+     inkscape:cx="41.78175"
+     inkscape:cy="35.204993"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
-     inkscape:current-layer="layer1" />
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <defs
      id="defs32221">
+    <linearGradient
+       id="linearGradient2"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-5.4e-6,-122.71001,-122.71001,5.4e-6,432.25488,261.33789)">
+      <stop
+         id="stop1"
+         stop-color="#a9ff00"
+         offset="0"
+         style="stop-color:#5ece00;stop-opacity:1;" />
+      <stop
+         id="stop2"
+         stop-color="#005600"
+         offset="0.52898461"
+         style="stop-color:#006e00;stop-opacity:1;" />
+    </linearGradient>
     <linearGradient
        id="linearGradient3823">
       <stop
@@ -199,7 +217,7 @@
        gradientTransform="matrix(-5.4e-6,-122.71001,-122.71001,5.4e-6,432.25488,261.33789)" />
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient11820"
+       xlink:href="#linearGradient2"
        id="linearGradient3866"
        x1="323.995"
        y1="195.655"
@@ -215,7 +233,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
