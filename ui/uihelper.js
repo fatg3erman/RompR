@@ -285,11 +285,18 @@ jQuery.fn.insertArtistAfter = function(html) {
 }
 
 jQuery.fn.addCustomScrollBar = function() {
+	let dark = [
+		'Flatworld.css',
+		'Negative.css',
+		'Numismatist.css',
+		'Paper.css',
+		'Skytrails.css'
+	];
 	return this.each(function() {
 		if (prefs.has_custom_scrollbars) {
 			$(this).css({overflow: 'auto'});
 			$(this).mCustomScrollbar({
-				theme: "light-thick",
+				theme: dark.indexOf(prefs.theme) === -1 ? "light-thick" : "dark-thick",
 				scrollInertia: 300,
 				// contentTouchScroll: 25,
 				mouseWheel: {
