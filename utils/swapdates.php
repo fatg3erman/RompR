@@ -6,7 +6,7 @@
 
 chdir('..');
 
-const START_DIR = '/mnt/Music/Music/Spoken Word/Douglas Adams';
+const START_DIR = '/mnt/Music/Music';
 
 $dirs = [START_DIR];
 
