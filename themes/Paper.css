@@ -171,3 +171,9 @@ input.inbrowser, div.inbrowser {
 {
     border: 1px solid var(--border-colour);
 }
+
+#alarmdropper .helpfulalbum {
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
