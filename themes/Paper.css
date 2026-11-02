@@ -18,7 +18,7 @@
     --highlight-bg-colour: unset;
     --highlight-bg-image: url('themes/Paper1.jpg');
 
-    --text-colour: black;
+    --text-colour: rgba(0, 0, 0, 0.85);
     --placeholder-colour: #707070;
     --border-colour: #dddddd;
     --border-colour-dark: #555555;
