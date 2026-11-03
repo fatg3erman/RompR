@@ -4,6 +4,7 @@ class musicCollection extends collection_base {
 	protected $albums = [];
 	protected $find_track;
 	protected $force_keys = [];
+	public $lastmodified = [];
 
 	public function __construct($opts = []) {
 		$this->options = array_merge($this->options, $opts);
@@ -44,7 +45,13 @@ class musicCollection extends collection_base {
 					// With trackbytrack true, and the track having album artist and disc tags, we stick it
 					// directly into the database
 					//
-					$this->do_track_by_track( $track );
+					if (
+						$this->options['doing_search']
+						|| !isset($this->lastmodified[$track->tags['folder']])
+						|| strtotime($track->tags['Last-Modified']) > $this->lastmodified[$track->tags['folder']]
+					) {
+						$this->do_track_by_track( $track );
+					}
 				} else {
 					//
 					// With trackbytrack true, but the track lacking essential tags, we do folder by folder
@@ -56,7 +63,7 @@ class musicCollection extends collection_base {
 					}
 					$albumkey = strtolower($track->tags['folder'].$track->tags['Album'].$track->tags['albumartist']);
 					$current_folder = $track->tags['folder'];
-					if (array_key_exists($albumkey, $this->albums)) {
+					if (isset($this->albums[$albumkey])) {
 						$this->albums[$albumkey]->newTrack($track);
 					} else {
 						$this->albums[$albumkey] = new album($track);
@@ -67,7 +74,7 @@ class musicCollection extends collection_base {
 				// Otherwise we store it all up to the end and sort it all then.
 				//
 				$albumkey = strtolower($track->tags['folder'].$track->tags['Album'].$track->tags['albumartist']);
-				if (array_key_exists($albumkey, $this->albums)) {
+				if (isset($this->albums[$albumkey])) {
 					$this->albums[$albumkey]->newTrack($track);
 				} else {
 					$this->albums[$albumkey] = new album($track);
@@ -106,6 +113,33 @@ class musicCollection extends collection_base {
 	public function prepareCollectionUpdate() {
 		$this->create_foundtracks();
 		$this->prepare_findtracks();
+		$this->create_lastmodified_table();
+	}
+
+	public function create_lastmodified_table() {
+		global $performance;
+		$timer = microtime(true);
+		$tracks = $this->generic_sql_query("SELECT Uri, UNIXEPOCH(LastModified) AS lm FROM Tracktable WHERE LastModified IS NOT NULL and Uri IS NOT NULL");
+		foreach ($tracks as $track) {
+			if (prefs::get_pref('collection_player') == 'mopidy') {
+				$cock = explode(':', $track['Uri']);
+				if (count($cock) > 1) {
+					$dir = dirname(array_pop($cock));
+				} else {
+					$dir = dirname($track['Uri']);
+				}
+			} else {
+				$dir = dirname($track['Uri']);
+			}
+			$lm = $track['lm'];
+			if (isset($this->lastmodified[$dir])) {
+				$this->lastmodified[$dir] = max($this->lastmodified[$dir], $lm);
+			} else {
+				$this->lastmodified[$dir] = $lm;
+			}
+		}
+		$performance['lastmodified'] = microtime(true) - $timer;
+		logger::log('WLLIES', print_r($this->lastmodified, true));
 	}
 
 	public function find_justadded_albums() {

@@ -545,8 +545,11 @@ class base_mpd_player {
 		}
 
 		// Disc Number
-		if ($filedata['Disc'] != null)
+		if ($filedata['Disc'] != null) {
 			$filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
+		} else {
+			$filedata['Disc'] = 1;
+		}
 
 		if (prefs::get_pref('use_original_releasedate') && $filedata['OriginalDate'])
 			$filedata['Date'] = $filedata['OriginalDate'];

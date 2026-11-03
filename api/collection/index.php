@@ -202,6 +202,7 @@ function update_collection() {
     foreach ($player->musicCollectionUpdate() as $filedata) {
     	prefs::$database->newTrack($filedata);
     }
+    logger::log("UPDATER", "Track by track scan finished");
     $performance['trackbytrack_scan'] = microtime(true) - $t;
 	$t = microtime(true);
 	prefs::$database->tracks_to_database();

@@ -2,6 +2,7 @@
 class album {
 
 	public $tracks;
+	public $folder;
 
 	public function __construct(&$track) {
 		$this->tracks = [$track];
@@ -31,6 +32,9 @@ class album {
 			} else {
 				$this->tracks[0]->tags['X-AlbumUri'] = $track->tags['X-AlbumUri'];
 			}
+		}
+		if ($this->folder === null) {
+			$this->folder = $track->tags['folder'];
 		}
 	}
 
@@ -165,7 +169,7 @@ class album {
 				$artists = array();
 				foreach ($this->tracks as $track) {
 					$a = $track->get_sort_artist();
-					if (!array_key_exists($a, $artists)) {
+					if (!isset($artists[$a])) {
 						$artists[$a] = 0;
 					}
 					$artists[$a]++;
@@ -207,7 +211,7 @@ class album {
 			if ($track->tags['Track'] == 0 && $track->tags['Disc'] === null)
 				$track->tags['Disc'] = 1;
 
-			if (array_key_exists($track->tags['Track'], $tracks)) {
+			if (isset($tracks[$track->tags['Track']])) {
 				$tracks[$track->tags['Track']]++;
 			} else {
 				$tracks[$track->tags['Track']] = 1;

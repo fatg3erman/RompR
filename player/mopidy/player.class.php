@@ -262,8 +262,11 @@ class player extends base_mpd_player {
 		if (array_key_exists('last_modified', $track) && $track['last_modified'])
 			$filedata['Last-Modified'] = $track['last_modified'];
 		// Disc
-		if (array_key_exists('disc_no', $track) && $track['disc_no'])
+		if (array_key_exists('disc_no', $track) && $track['disc_no']) {
 			$filedata['Disc'] = $track['disc_no'];
+		} else {
+			$filedata['Disc'] = 1;
+		}
 		// Comment
 		if (array_key_exists('comment', $track) && $track['comment'])
 			$filedata['Comment'] = $track['comment'];
