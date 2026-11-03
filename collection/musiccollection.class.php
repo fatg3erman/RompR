@@ -5,7 +5,6 @@ class musicCollection extends collection_base {
 	protected $find_track;
 	protected $force_keys = [];
 	public $lastmodified = [];
-	public $found_dirs = [];
 
 	public function __construct($opts = []) {
 		$this->options = array_merge($this->options, $opts);
@@ -53,7 +52,10 @@ class musicCollection extends collection_base {
 					) {
 						$this->do_track_by_track( $track );
 					} else {
-						$this->found_dirs[] = $track->tags['folder'];
+						$this->sql_prepare_query(true, null, null, null,
+							"UPDATE Tracktable SET justAdded = 1 WHERE Uri = ?",
+							$track->tags['file']
+						);
 					}
 				} else {
 					//
@@ -143,22 +145,6 @@ class musicCollection extends collection_base {
 		}
 		$performance['lastmodified'] = microtime(true) - $timer;
 		// logger::log('WLLIES', print_r($this->lastmodified, true));
-	}
-
-	public function mark_found_dirs() {
-		global $performance;
-		$timer = microtime(true);
-		$dirs = array_unique($this->found_dirs);
-		foreach ($dirs as $dir) {
-			$this->sql_prepare_query(true, null, null, null,
-				"UPDATE Tracktable SET justAdded = 1 WHERE justAdded = 0 AND
-				Uri LIKE ?
-				AND INSTR(SUBSTR(Uri, ?), '/') = 0",
-				'local:track:'.$dir.'/%',
-				strlen('local:track:'.$dir)+1
-			);
-		}
-		$performance['markfound'] = microtime(true) - $timer;
 	}
 
 	public function find_justadded_albums() {

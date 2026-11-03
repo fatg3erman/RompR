@@ -203,7 +203,6 @@ function update_collection() {
     	prefs::$database->newTrack($filedata);
     }
     logger::log("UPDATER", "Track by track scan finished");
-    prefs::$database->mark_found_dirs();
     $performance['trackbytrack_scan'] = microtime(true) - $t;
 	$t = microtime(true);
 	prefs::$database->tracks_to_database();
