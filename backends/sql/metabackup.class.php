@@ -347,10 +347,6 @@ class metabackup extends metaDatabase {
 		file_put_contents($file, json_encode($tracks));
 		$retval .= count($tracks).' Episodes';
 
-		$file = dirname($file).'/podcast_bookmarks.json';
-		$tracks = $this->generic_sql_query("SELECT * FROM PodBookmarktable");
-		file_put_contents($file, json_encode($tracks));
-
 		return $retval;
 
 	}
@@ -544,16 +540,6 @@ class metabackup extends metaDatabase {
 			$this->generic_restore($trackdata, 'PodcastTracktable');
 			$progress = round(($i/count($tracks))*100);
 			fwrite($monitor, "\n<b>Restoring Podcast Tracks : </b>".$progress."%\n");
-		}
-
-		$file = dirname($file).'/podcast_bookmarks.json';
-		if (file_exists($file)) {
-			$tracks = json_decode(file_get_contents($file), true);
-			foreach ($tracks as $i => $trackdata) {
-				$this->generic_restore($trackdata, 'PodBookmarktable');
-				$progress = round(($i/count($tracks))*100);
-				fwrite($monitor, "\n<b>Restoring Podcast Bookmarks : </b>".$progress."%\n");
-			}
 		}
 	}
 

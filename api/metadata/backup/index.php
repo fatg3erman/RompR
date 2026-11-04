@@ -2,6 +2,7 @@
 chdir('../../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
+set_time_limit(1800);
 $p = json_decode(file_get_contents('php://input'), true);
 prefs::$database = new metabackup();
 switch ($p['action']) {
