@@ -4,7 +4,7 @@ class musicCollection extends collection_base {
 	protected $albums = [];
 	protected $find_track;
 	protected $force_keys = [];
-	public $lastmodified = [];
+	public $lastmodified = 0;
 
 	public function __construct($opts = []) {
 		$this->options = array_merge($this->options, $opts);
@@ -45,18 +45,7 @@ class musicCollection extends collection_base {
 					// With trackbytrack true, and the track having album artist and disc tags, we stick it
 					// directly into the database
 					//
-					if (
-						$this->options['doing_search']
-						|| !isset($this->lastmodified[$track->tags['folder']])
-						|| strtotime($track->tags['Last-Modified']) > $this->lastmodified[$track->tags['folder']]
-					) {
-						$this->do_track_by_track( $track );
-					} else {
-						$this->sql_prepare_query(true, null, null, null,
-							"UPDATE Tracktable SET justAdded = 1 WHERE Uri = ?",
-							$track->tags['file']
-						);
-					}
+					$this->do_track_by_track( $track );
 				} else {
 					//
 					// With trackbytrack true, but the track lacking essential tags, we do folder by folder
@@ -97,7 +86,7 @@ class musicCollection extends collection_base {
 	}
 
 	public function tracks_to_database() {
-		// Fluch the previous albumobj from track_by_track
+		// Flush the previous albumobj from track_by_track
 		global $performance;
 		$timer = microtime(true);
 		$nope = true;
@@ -118,33 +107,6 @@ class musicCollection extends collection_base {
 	public function prepareCollectionUpdate() {
 		$this->create_foundtracks();
 		$this->prepare_findtracks();
-		$this->create_lastmodified_table();
-	}
-
-	public function create_lastmodified_table() {
-		global $performance;
-		$timer = microtime(true);
-		$tracks = $this->generic_sql_query("SELECT Uri, UNIXEPOCH(LastModified) AS lm FROM Tracktable WHERE LastModified IS NOT NULL and Uri IS NOT NULL");
-		foreach ($tracks as $track) {
-			if (prefs::get_pref('collection_player') == 'mopidy') {
-				$cock = explode(':', $track['Uri']);
-				if (count($cock) > 1) {
-					$dir = dirname(array_pop($cock));
-				} else {
-					$dir = dirname($track['Uri']);
-				}
-			} else {
-				$dir = dirname($track['Uri']);
-			}
-			$lm = $track['lm'];
-			if (isset($this->lastmodified[$dir])) {
-				$this->lastmodified[$dir] = max($this->lastmodified[$dir], $lm);
-			} else {
-				$this->lastmodified[$dir] = $lm;
-			}
-		}
-		$performance['lastmodified'] = microtime(true) - $timer;
-		// logger::log('WLLIES', print_r($this->lastmodified, true));
 	}
 
 	public function find_justadded_albums() {
@@ -154,6 +116,20 @@ class musicCollection extends collection_base {
 	public function set_image_for_album($albumindex, $image) {
 		logger::log('MYSQL', 'Setting image for album',$albumindex,'to',$image);
 		$this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Image = ?, Searched = 1 WHERE Albumindex = ?", $image, $albumindex);
+	}
+
+	public function clean_skipped_tracks($dirs) {
+		global $performance;
+		$timer = microtime(true);
+		foreach ($dirs as $dir) {
+			$this->sql_prepare_query(true, null, null, null,
+				"UPDATE Tracktable SET justAdded = 1 WHERE
+				justAdded = 0
+				AND Folder LIKE ?",
+				$dir."%"
+			);
+		}
+		$performance['cleanskipped'] = microtime(true) - $timer;
 	}
 
 	public function replace_album_in_database($who, $new) {
@@ -191,8 +167,8 @@ class musicCollection extends collection_base {
 			} else if (count($ttids) == 0) {
 				logger::log("BACKEND", 'Could not find track',$track["Title"],'in newly created album. Ceating it.');
 				$this->sql_prepare_query(true, null, null, null,
-					"INSERT INTO Tracktable (Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, Hidden, DateAdded, isSearchResult, isAudiobook, Genreindex, TYear)
-					  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+					"INSERT INTO Tracktable (Title, Albumindex, TrackNo, Duration, Artistindex, Disc, Uri, LastModified, Hidden, DateAdded, isSearchResult, isAudiobook, Genreindex, TYear, Folder)
+					  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 					$track['Title'],
 					$who,
 					$track['TrackNo'],
@@ -206,7 +182,8 @@ class musicCollection extends collection_base {
 					$track['isSearchResult'],
 					$track['isAudiobook'],
 					$track['Genreindex'],
-					$track['TYear']
+					$track['TYear'],
+					$track['Folder']
 				);
 			} else {
 				logger::log("BACKEND", 'Setting trackartist to',$track['Artistname'],'on TTindex',$ttids[0]['TTindex']);
@@ -436,17 +413,7 @@ class musicCollection extends collection_base {
 			}
 		}
 
-		// Let's try to not lose playcounts from tracks that have been deleted, in case they
-		// ever come back or we start playing them from other sources.
-		logger::log('BACKEND', "Hiding tracks that have been deleted");
-		$this->generic_sql_query("UPDATE Tracktable SET Hidden = 1
-			WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0
-			AND TTindex IN (SELECT TTindex FROM Playcounttable)
-		", true);
-
-		logger::log('BACKEND', "Removing tracks that have been deleted");
-		$this->generic_sql_query("DELETE FROM Tracktable WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0", true);
-
+		$this->remove_deleted_tracks();
 		$this->remove_cruft();
 		logger::log('COLLECTION', 'Updating collection version to', ROMPR_COLLECTION_VERSION);
 		$this->set_admin_value('ListVersion', ROMPR_COLLECTION_VERSION);
@@ -461,6 +428,26 @@ class musicCollection extends collection_base {
 		} else {
 			$this->prepare_findtrack_for_update();
 		}
+	}
+
+	private function remove_deleted_tracks() {
+		// Let's try to not lose playcounts from tracks that have been deleted, in case they
+		// ever come back or we start playing them from other sources.
+		logger::log('BACKEND', "Hiding tracks that have been deleted");
+		$this->generic_sql_query(
+			"UPDATE Tracktable
+				SET Hidden = 1
+				WHERE LastModified IS NOT NULL
+				AND Hidden = 0
+				AND justAdded = 0
+			AND TTindex IN (SELECT TTindex FROM Playcounttable)", true);
+
+		logger::log('BACKEND', "Removing tracks that have been deleted");
+		$this->generic_sql_query(
+			"DELETE FROM Tracktable WHERE
+				LastModified IS NOT NULL
+				AND Hidden = 0
+				AND justAdded = 0", true);
 	}
 
 	public function do_track_by_track(&$trackobject) {
@@ -571,7 +558,8 @@ class musicCollection extends collection_base {
 				$trackobj->tags['Last-Modified'],
 				$trackobj->tags['type'] == 'audiobook' ? 1 : 0,
 				$genreindex,
-				$trackobj->tags['year']
+				$trackobj->tags['year'],
+				$trackobj->tags['folder']
 			]);
 		} catch (PDOException $e) {
 			logger::error('SQL', 'find_track execution failed');
@@ -585,6 +573,18 @@ class musicCollection extends collection_base {
 
 	public function update_album_mbid($mbid, $imgkey) {
 		$this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", $mbid, $imgkey);
+	}
+
+	public function get_lastmodified() {
+		$lm = $this->create_lastmodified();
+		$l = [];
+		foreach ($lm as $g) {
+			$l[$g['Folder']] = $g['lm'];
+		}
+
+		logger::log('BOOBS', print_r($l, true));
+
+		return $l;
 	}
 
 }

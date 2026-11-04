@@ -31,6 +31,8 @@ class base_mpd_player {
 	// private $radioparam = false;
 	private $current_status = [];
 	public $current_song = [];
+	protected $skipped_dirs = [];
+	protected $lastmod_dirs = [];
 
 	private const SCROBBLE_FRACTION = 0.95;
 
@@ -431,82 +433,6 @@ class base_mpd_player {
 		return $cmd_status;
 	}
 
-	public function parse_list_output($command, &$dirs, $domains) {
-		// Generator Function for parsing MPD output for 'list...info', 'search ...' etc type commands
-		// Returns MPD_FILE_MODEL
-
-		logger::log("MPD", "MPD Parse",$command);
-
-		$success = $this->send_command($command);
-		$filedata = MPD_FILE_MODEL;
-		$parts = true;
-		if (is_array($domains) && count($domains) == 0) {
-			$domains = false;
-		}
-
-		while($this->is_connected() && !feof($this->connection) && $parts) {
-			$parts = $this->getline();
-			if (is_array($parts)) {
-				switch ($parts[0]) {
-					case "directory":
-						$dirs[] = trim($parts[1]);
-						break;
-
-					case "Last-Modified":
-						if ($filedata['file'] != null) {
-							// We don't want the Last-Modified stamps of the directories
-							// to be used for the files.
-							$filedata[$parts[0]] = $parts[1];
-						}
-						break;
-
-					case 'file':
-					case 'playlist':
-						if ($filedata['file'] !== null) {
-							$filedata['domain'] = getDomain($filedata['file']);
-							if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
-								if ($this->sanitize_data($filedata)) {
-									yield $filedata;
-								}
-							}
-						}
-						$filedata = MPD_FILE_MODEL;
-						if ($parts[0] == 'file')
-							$filedata[$parts[0]] = $parts[1];
-						break;
-
-					case 'X-AlbumUri':
-					case 'Title':
-					case 'Album':
-					case 'Comment':
-						$filedata[$parts[0]] = $parts[1];
-						break;
-
-					default:
-						if (in_array($parts[0], MPD_ARRAY_PARAMS)) {
-							// MPD now sends the same key multiple times instead of using a ';'
-							if (!is_array($filedata[$parts[0]]))
-								$filedata[$parts[0]] = [];
-
-							$filedata[$parts[0]] = array_merge($filedata[$parts[0]], explode(';',$parts[1]));
-						} else {
-							$filedata[$parts[0]] = explode(';',$parts[1])[0];
-						}
-						break;
-				}
-			}
-		}
-
-		if ($filedata['file'] !== null) {
-			$filedata['domain'] = getDomain($filedata['file']);
-			if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
-				if ($this->sanitize_data($filedata)) {
-					yield $filedata;
-				}
-			}
-		}
-	}
-
 	protected function sanitize_data(&$filedata) {
 	 //   if (strpos($filedata['Title'], "[unplayable]") === 0) {
 		// 	logger::debug("COLLECTION", "Ignoring unplayable track ".$filedata['file']);
@@ -539,17 +465,14 @@ class base_mpd_player {
 		}
 
 		// cue sheet link (mpd only). We're only doing CUE sheets, not M3U
-		if ($filedata['X-AlbumUri'] === null && strtolower(pathinfo($filedata['playlist'], PATHINFO_EXTENSION)) == "cue") {
+		if (isset($filedata['X-AlbumUri']) && strtolower(pathinfo($filedata['playlist'], PATHINFO_EXTENSION)) == "cue") {
 			$filedata['X-AlbumUri'] = $filedata['playlist'];
 			logger::log("COLLECTION", "Found CUE sheet for album ".$filedata['Album']);
 		}
 
 		// Disc Number
-		if ($filedata['Disc'] != null) {
+		if ($filedata['Disc'] != null)
 			$filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
-		} else {
-			$filedata['Disc'] = 1;
-		}
 
 		if (prefs::get_pref('use_original_releasedate') && $filedata['OriginalDate'])
 			$filedata['Date'] = $filedata['OriginalDate'];
@@ -778,6 +701,14 @@ class base_mpd_player {
 
 	public function get_outputs() {
 		return $this->do_mpd_command('outputs', true);
+	}
+
+	public function get_skipped_dirs() {
+		return array_unique($this->skipped_dirs);
+	}
+
+	public function set_lastmodified_times($lm) {
+		$this->lastmod_dirs = $lm;
 	}
 
 	public function get_stored_playlists($only_personal = false) {

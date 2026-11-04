@@ -53,7 +53,8 @@ class init_database extends init_generic {
 			justAdded TINYINT(1) DEFAULT 1,
 			usedInPlaylist TINYINT(1) DEFAULT 0,
 			Genreindex INT UNSIGNED DEFAULT 0,
-			TYear YEAR)", true))
+			TYear YEAR,
+			Folder TEXT DEFAULT NULL)", true))
 		{
 			logger::log("SQLITE", "  Tracktable OK");
 			list($success, $msg) = $this->create_tracktable_indexes();
@@ -930,6 +931,26 @@ class init_database extends init_generic {
 					$this->set_admin_value('SchemaVer', 107);
 					break;
 
+				case 107:
+					logger::log("SQL", "Updating FROM Schema version 107 TO Schema version 108");
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD Folder TEXT DEFAULT NULL", true);
+					if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS folder_idx ON Tracktable (Folder)", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating Tracktable Folder Index : ".$err);
+					}
+					if (prefs::get_pref('collection_player') == 'mpd') {
+						$p = $this->generic_sql_query("SELECT TTindex, Uri FROM Tracktable WHERE Uri IS NOT NULL", false);
+						foreach ($p as $t) {
+							$this->sql_prepare_query(true, null, null, null,
+								"UPDATE Tracktable SET Folder = ? WHERE TTindex = ?",
+								dirname($t['Uri']),
+								$t['TTindex']
+							);
+						}
+					}
+					$this->set_admin_value('SchemaVer', 108);
+					break;
+
 			}
 			$sv++;
 		}
@@ -1027,6 +1048,13 @@ class init_database extends init_generic {
 		if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS genre_idx ON Tracktable (Genreindex)", true)) {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error Creating Tracktable Genreindex Index : ".$err);
+		}
+
+		if ($this->get_admin_value('SchemaVer', 0) > 107) {
+			if (!$this->generic_sql_query("CREATE INDEX IF NOT EXISTS folder_idx ON Tracktable (Folder)", true)) {
+				$err = $this->mysqlc->errorInfo()[2];
+				return array(false, "Error Creating Tracktable Folder Index : ".$err);
+			}
 		}
 
 		return array(true, '');

@@ -3,6 +3,90 @@ class player extends base_mpd_player {
 
 	private $monitor;
 
+	public function parse_list_output($command, &$dirs, $domains) {
+		// Generator Function for parsing MPD output for 'list...info', 'search ...' etc type commands
+		// Returns MPD_FILE_MODEL
+
+		logger::log("MPD", "MPD Parse",$command);
+
+		$success = $this->send_command($command);
+		$filedata = MPD_FILE_MODEL;
+		$parts = true;
+		if (is_array($domains) && count($domains) == 0) {
+			$domains = false;
+		}
+
+		$dir = null;
+		while($this->is_connected() && !feof($this->connection) && $parts) {
+			$parts = $this->getline();
+
+			// logger::log('BOOBS', print_r($parts, true));
+
+			if (is_array($parts)) {
+				switch ($parts[0]) {
+					case "directory":
+						$dir = trim($parts[1]);
+						break;
+
+					case "Last-Modified":
+						if ($dir != null) {
+							$lm = strtotime($parts[1]);
+							if (!isset($this->lastmod_dirs[$dir]) || $lm > $this->lastmod_dirs[$dir]) {
+								logger::log("MPD", "Processing", $dir);
+								$this->lastmod_dirs[$dir] = $lm;
+								$dirs[] = $dir;
+							} else {
+								logger::log("MPD", "Skipping", $dir);
+								$this->skipped_dirs[] = $dir;
+							}
+							$dir = null;
+						} else {
+							$filedata[$parts[0]] = $parts[1];
+						}
+						break;
+
+					case 'file':
+					case 'playlist':
+						if ($filedata['file'] !== null) {
+							$filedata['domain'] = getDomain($filedata['file']);
+							if ($this->sanitize_data($filedata)) {
+								yield $filedata;
+							}
+						}
+						$filedata = MPD_FILE_MODEL;
+						if ($parts[0] == 'file')
+							$filedata[$parts[0]] = $parts[1];
+						break;
+
+					case 'Title':
+					case 'Album':
+					case 'Comment':
+						$filedata[$parts[0]] = $parts[1];
+						break;
+
+					default:
+						if (in_array($parts[0], MPD_ARRAY_PARAMS)) {
+							// MPD now sends the same key multiple times instead of using a ';'
+							if (!is_array($filedata[$parts[0]]))
+								$filedata[$parts[0]] = [];
+
+							$filedata[$parts[0]] = array_merge($filedata[$parts[0]], explode(';',$parts[1]));
+						} else {
+							$filedata[$parts[0]] = explode(';',$parts[1])[0];
+						}
+						break;
+				}
+			}
+		}
+
+		if ($filedata['file'] !== null) {
+			$filedata['domain'] = getDomain($filedata['file']);
+			if ($this->sanitize_data($filedata)) {
+				yield $filedata;
+			}
+		}
+	}
+
 	public function check_track_load_command($uri) {
 		$ext = strtolower(pathinfo($uri, PATHINFO_EXTENSION));
 		switch ($ext) {
@@ -52,6 +136,10 @@ class player extends base_mpd_player {
 			case 'local':
 				$this->check_undefined_tags($filedata);
 				$filedata['folder'] = dirname($filedata['unmopfile']);
+				if (isset($this->lastmod_dirs[$filedata['folder']])) {
+					// lastmodified of the folder can exceed the date of the audio files, so use the folder lastmodified so we don't scan it every time
+					$filedata['Last-Modified'] = date('c', $this->lastmod_dirs[$filedata['folder']]);
+				}
 				break;
 
 			case "soundcloud":

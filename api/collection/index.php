@@ -172,7 +172,7 @@ function update_collection() {
 		exit(0);
 	}
 
-	close_browser_connection();
+	// close_browser_connection();
 
 	global $performance;
 	$timer = microtime(true);
@@ -197,6 +197,7 @@ function update_collection() {
 	prefs::$database->open_transaction();
 
     $player = new player();
+    $player->set_lastmodified_times(prefs::$database->get_lastmodified());
     logger::log('COLLECTION', 'Doing Update');
 	$t = microtime(true);
     foreach ($player->musicCollectionUpdate() as $filedata) {
@@ -207,6 +208,8 @@ function update_collection() {
 	$t = microtime(true);
 	prefs::$database->tracks_to_database();
     $performance['tracks_to_database_outer'] = microtime(true) - $t;
+
+    prefs::$database->clean_skipped_tracks($player->get_skipped_dirs());
 
 	prefs::$database->close_transaction();
 

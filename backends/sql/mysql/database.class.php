@@ -32,6 +32,11 @@ class database extends data_base {
 		}
 	}
 
+	public function create_lastmodified() {
+		$lm = $this->generic_sql_query("SELECT Folder, MAX(UNIX_TIMESTAMP(LastModified)) AS lm FROM Tracktable WHERE LastModified IS NOT NULL AND Folder IS NOT NULL GROUP BY Folder", false);
+		return $lm;
+	}
+
 	protected function hide_played_tracks() {
 		// If isSearchResult is 2, then it had to be added, therefore if itis subsequently rated it needs to become a manually added track,
 		// so we need to set LastModified to NULL now.
@@ -199,9 +204,9 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isAudiobook, Genreindex, TYear)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isAudiobook, Genreindex, TYear, Folder)
 				VALUES
-					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
 					Duration = VALUES(Duration),
 					Uri = VALUES(Uri),
@@ -210,7 +215,8 @@ class database extends data_base {
 					justAdded = 1,
 					isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE VALUES(isAudiobook) END,
 					Genreindex = VALUES(Genreindex),
-					TYear = VALUES(TYear)"
+					TYear = VALUES(TYear),
+					Folder = VALUES(Folder)"
 			);
 			logger::log('MYSQL', 'Prepared old-style update query successfully');
 		} catch (PDOException $e) {
@@ -225,9 +231,9 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isAudiobook, Genreindex, TYear)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isAudiobook, Genreindex, TYear, Folder)
 				VALUES
-					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS new
+					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS new
 				ON DUPLICATE KEY UPDATE
 					Duration = new.Duration,
 					Uri = new.Uri,
@@ -236,7 +242,8 @@ class database extends data_base {
 					justAdded = 1,
 					isAudiobook = CASE WHEN Tracktable.isAudiobook = 2 THEN 2 ELSE new.isAudiobook END,
 					Genreindex = new.Genreindex,
-					TYear = new.TYear"
+					TYear = new.TYear,
+					Folder = new.Folder"
 			);
 			logger::log('MYSQL', 'Prepared new-style update query successfully');
 		} catch (PDOException $e) {
@@ -266,9 +273,9 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear, Folder)
 				VALUES
-					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?)
+					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
 					Duration = VALUES(Duration),
 					Uri = VALUES(Uri),
@@ -277,7 +284,8 @@ class database extends data_base {
 					justAdded = 1,
 					isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE VALUES(isAudiobook) END,
 					Genreindex = VALUES(Genreindex),
-					TYear = VALUES(TYear)"
+					TYear = VALUES(TYear),
+					Folder = VALUES(Folder)"
 			);
 			logger::log('MYSQL', 'Prepared old-style update query successfully');
 		} catch (PDOException $e) {
@@ -292,9 +300,9 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear, Folder)
 				VALUES
-					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?) AS new
+					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?, ?) AS new
 				ON DUPLICATE KEY UPDATE
 					Duration = new.Duration,
 					Uri = new.Uri,
@@ -303,7 +311,8 @@ class database extends data_base {
 					justAdded = 1,
 					isAudiobook = CASE WHEN Tracktable.isAudiobook = 2 THEN 2 ELSE new.isAudiobook END,
 					Genreindex = new.Genreindex,
-					TYear = new.TYear"
+					TYear = new.TYear,
+					Folder = new.Folder"
 			);
 			logger::log('MYSQL', 'Prepared new-style update query successfully');
 		} catch (PDOException $e) {
