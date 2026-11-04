@@ -188,7 +188,7 @@ class collection_base extends database {
 		// }
 
 		foreach (MPD_ARRAY_PARAMS as $p) {
-			if (array_key_exists($p, $data) && $data[$p] !== null) {
+			if (isset($data[$p])) {
 				$data[$p] = getArray($data[$p]);
 			}
 		}
