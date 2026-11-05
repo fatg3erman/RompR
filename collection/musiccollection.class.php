@@ -125,8 +125,8 @@ class musicCollection extends collection_base {
 			$this->sql_prepare_query(true, null, null, null,
 				"UPDATE Tracktable SET justAdded = 1 WHERE
 				justAdded = 0
-				AND Folder LIKE ?",
-				$dir."%"
+				AND Folder = ?",
+				$dir
 			);
 		}
 		$performance['cleanskipped'] = microtime(true) - $timer;
@@ -582,7 +582,7 @@ class musicCollection extends collection_base {
 			$l[$g['Folder']] = $g['lm'];
 		}
 
-		logger::log('BOOBS', print_r($l, true));
+		// logger::log('BOOBS', print_r($l, true));
 
 		return $l;
 	}

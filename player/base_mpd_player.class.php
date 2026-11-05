@@ -31,8 +31,6 @@ class base_mpd_player {
 	// private $radioparam = false;
 	private $current_status = [];
 	public $current_song = [];
-	protected $skipped_dirs = [];
-	protected $lastmod_dirs = [];
 
 	private const SCROBBLE_FRACTION = 0.95;
 
@@ -705,10 +703,6 @@ class base_mpd_player {
 
 	public function get_skipped_dirs() {
 		return array_unique($this->skipped_dirs);
-	}
-
-	public function set_lastmodified_times($lm) {
-		$this->lastmod_dirs = $lm;
 	}
 
 	public function get_stored_playlists($only_personal = false) {
