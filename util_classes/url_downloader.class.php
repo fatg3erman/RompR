@@ -140,14 +140,16 @@ class url_downloader {
 		if (file_exists($this->file))
 			unlink ($this->file);
 
-		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
-		$c = curl_exec($this->ch);
-		if (curl_getinfo($this->ch,CURLINFO_RESPONSE_CODE) == '200') {
-			$open_mode = $binary ? 'wb' : 'w';
-			$fp = fopen($this->file, $open_mode);
-			fwrite($fp, $c);
-			fclose($fp);
-		}
+		curl_setopt($this->ch, CURLOPT_TRANSFER_ENCODING, 1);
+		$open_mode = $binary ? 'wb' : 'w';
+		$fp = fopen($this->file, $open_mode);
+		curl_setopt($this->ch, CURLOPT_WRITEFUNCTION, function($ch, $data) use ($fp) {
+			return fwrite($fp, $data);
+		});
+		curl_exec($this->ch);
+		fclose($fp);
+		if (curl_getinfo($this->ch,CURLINFO_RESPONSE_CODE) != '200')
+			unlink($this->file);
 
 		return $this->get_final_info();
 	}

@@ -38,28 +38,24 @@ class player extends base_mpd_player {
 
 				case "Last-Modified":
 					if ($filedata['file'] != null) {
-						// We don't want the Last-Modified stamps of the directories
-						// to be used for the files. Also we don't use Last-Modified for filtering
-						// during a collection update at this point because there might be one
-						// modified file in a badly tagged album and if we filter out all the
-						// unmodified ones we might sort it incorrectly.
 						$filedata[$parts[0]] = $parts[1];
 					}
 					break;
 
 				case 'file':
-				case 'playlist':
 					if ($filedata['file'] !== null) {
 						$filedata['domain'] = getDomain($filedata['file']);
-						if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
+						if ($domains === false || in_array($filedata['domain'] ,$domains)) {
 							if ($this->sanitize_data($filedata)) {
 								yield $filedata;
 							}
 						}
 					}
 					$filedata = MPD_FILE_MODEL;
-					if ($parts[0] == 'file')
-						$filedata[$parts[0]] = $parts[1];
+					$filedata[$parts[0]] = $parts[1];
+					break;
+
+				case 'playlist':
 					break;
 
 				case 'X-AlbumUri':
@@ -87,7 +83,7 @@ class player extends base_mpd_player {
 
 		if ($filedata['file'] !== null) {
 			$filedata['domain'] = getDomain($filedata['file']);
-			if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
+			if ($domains === false || in_array($filedata['domain'], $domains)) {
 				if ($this->sanitize_data($filedata)) {
 					yield $filedata;
 				}

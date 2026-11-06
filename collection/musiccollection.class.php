@@ -571,17 +571,17 @@ class musicCollection extends collection_base {
 		$this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", $mbid, $imgkey);
 	}
 
-	public function get_lastmodified() {
-		$lm = $this->create_lastmodified();
-		$l = [];
-		foreach ($lm as $g) {
-			$l[$g['Folder']] = $g['lm'];
-		}
+	// public function get_lastmodified() {
+	// 	return $this->generic_sql_query("SELECT MAX(LastModified) as lm FROM Tracktable", false, PDO::FETCH_ASSOC, 'lm', 0);
+	// }
 
-		// logger::log('BOOBS', print_r($l, true));
+	// public function mark_all_justadded() {
+	// 	$this->generic_sql_query("UPDATE Tracktable SET justAdded = 1 WHERE TTindex > 0", true);
+	// }
 
-		return $l;
-	}
+	// public function mark_folder_notadded($folder) {
+	// 	$this->sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET jusAdded = 0 WHERE Folder = ?", $folder);
+	// }
 
 }
 ?>

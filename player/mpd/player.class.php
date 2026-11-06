@@ -2,15 +2,8 @@
 class player extends base_mpd_player {
 
 	private $monitor;
-	private $to_scan;
-	private $skipped_dirs;
-	private $lastmod_dirs;
 
-	const SCAN_MODE_DIRS_ONLY = 1;
-	const SCAN_MODE_COLLECTION = 2;
-	const SCAN_MODE_NORMAL = 3;
-
-	public function parse_list_output($command, &$dirs, $domains, $mode = self::SCAN_MODE_NORMAL) {
+	public function parse_list_output($command, &$dirs, $domains) {
 		// Generator Function for parsing MPD output for 'list...info', 'search ...' etc type commands
 		// Returns MPD_FILE_MODEL
 
@@ -33,52 +26,35 @@ class player extends base_mpd_player {
 
 				case "Last-Modified":
 					if ($dir) {
-						if ($mode == self::SCAN_MODE_NORMAL) {
-							$dirs[] = $dir;
-						} else {
-							$dirs[] = ['dir' => $dir, 'lm' => strtotime($parts[1])];
-						}
+						$dirs[] = $dir;
 						$dir = false;
-					} else if ($mode != self::SCAN_MODE_DIRS_ONLY) {
+					} else {
 						$filedata[$parts[0]] = $parts[1];
 					}
 					break;
 
 				case 'file':
-					if ($mode != self::SCAN_MODE_DIRS_ONLY) {
-						if ($filedata['file'] !== null) {
-							$filedata['domain'] = getDomain($filedata['file']);
-							if ($this->sanitize_data($filedata)) {
-								yield $filedata;
-							}
+					if ($filedata['file'] !== null) {
+						$filedata['domain'] = getDomain($filedata['file']);
+						if ($this->sanitize_data($filedata)) {
+							yield $filedata;
 						}
-						$filedata = MPD_FILE_MODEL;
-						$filedata[$parts[0]] = $parts[1];
 					}
+					$filedata = MPD_FILE_MODEL;
+					$filedata[$parts[0]] = $parts[1];
 					break;
 
 				case 'playlist':
-					if ($mode != self::SCAN_MODE_DIRS_ONLY) {
-						if ($filedata['file'] !== null) {
-							$filedata['domain'] = getDomain($filedata['file']);
-							if ($this->sanitize_data($filedata)) {
-								yield $filedata;
-							}
-						}
-						$filedata = MPD_FILE_MODEL;
-					}
 					break;
 
 				case 'Title':
 				case 'Album':
 				case 'Comment':
-					if ($mode != self::SCAN_MODE_DIRS_ONLY) {
-						$filedata[$parts[0]] = $parts[1];
-					}
+					$filedata[$parts[0]] = $parts[1];
 					break;
 
 				default:
-					if (!is_bool($parts[0]) && $mode != self::SCAN_MODE_DIRS_ONLY) {
+					if (!is_bool($parts[0])) {
 						if (in_array($parts[0], MPD_ARRAY_PARAMS)) {
 							// MPD now sends the same key multiple times instead of using a ';'
 							if (!is_array($filedata[$parts[0]]))
@@ -93,7 +69,7 @@ class player extends base_mpd_player {
 			}
 		}
 
-		if ($mode != self::SCAN_MODE_DIRS_ONLY && $filedata['file'] !== null) {
+		if ($filedata['file'] !== null) {
 			$filedata['domain'] = getDomain($filedata['file']);
 			if ($this->sanitize_data($filedata)) {
 				yield $filedata;
@@ -124,30 +100,12 @@ class player extends base_mpd_player {
 	public function musicCollectionUpdate() {
 		logger::mark("MPD", "Starting Music Collection Update");
 		$timer = microtime(true);
-		$lastmod_dirs = prefs::$database->get_lastmodified();
-		$dirs = [['dir' => "/", 'lm' => 0]];
 		$this->monitor = fopen('prefs/monitor','w');;
+		$dirs = ["/"];
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
-			$lm = false;
-			fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir['dir']))."</b><br />".language::gettext('label_fremaining', array(count($dirs)))."\n");
-			if (isset($lastmod_dirs[$dir['dir']])) {
-				if ($dir['lm'] > $lastmod_dirs[$dir['dir']]) {
-					$lm = $dir['lm'];
-					$mode = self::SCAN_MODE_COLLECTION;
-				} else {
-					$mode = self::SCAN_MODE_DIRS_ONLY;
-				    prefs::$database->clean_skipped_tracks($dir['dir']);
-				}
-			} else {
-				$lm = $dir['lm'];
-				$mode = self::SCAN_MODE_COLLECTION;
-			}
-			foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($dir['dir']).'"', $dirs, false, $mode) as $filedata) {
-				if ($lm) {
-					// Last-Modified of directories can exceed that of the audio files, so store the lastmod of the directory
-					$filedata['Last-Modified'] = $lm;
-				}
+			fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs)))."\n");
+			foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($dir).'"', $dirs, false) as $filedata) {
 				yield $filedata;
 			}
 		}

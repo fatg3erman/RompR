@@ -2,7 +2,6 @@
 
 ## Version 2.30
 
-* Use Last-Modified timestamps on directories to speed up collection updates. This enables a  speedup for collection updates after the first one, but only with MPD. Sadly Mopidy dos not provide Last-Modified timestamps on directories. MPD was already significantly faster than Mopidy so this gives it an even greater advantage.
 * Have removed the Spotify Info panel again, because I've cancelled my Spotify subscription and it won't work without it.
 * Spotify panel has been replaced by a Bandcamp panel that provides most of the functionality if you're using Mopidy-Bandcamp, as well as providing links to albums on Bandcamp so you can buy them.
 * Allow Mopidy-Bandcamp to be used as a source for personalised radio

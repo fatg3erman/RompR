@@ -187,7 +187,7 @@ class base_mpd_player {
 		}
 		$key = trim(strtok($got, ":"));
 		$val = trim(strtok("\0"));
-		return array(0 => $key, 1 => $val);
+		return [$key, $val];
 	}
 
 	protected function getline() {

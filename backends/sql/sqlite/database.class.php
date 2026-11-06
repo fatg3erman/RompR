@@ -31,11 +31,6 @@ class database extends data_base {
 		}
 	}
 
-	public function create_lastmodified() {
-		$lm = $this->generic_sql_query("SELECT Folder, MAX(UNIXEPOCH(LastModified)) AS lm FROM Tracktable WHERE LastModified IS NOT NULL AND Folder IS NOT NULL GROUP BY Folder", false);
-		return $lm;
-	}
-
 	protected function hide_played_tracks() {
 		// If isSearchResult is 2, then it had to be added, therefore if itis subsequently rated it needs to become a manually added track,
 		// so we need to set LastModified to NULL now.
