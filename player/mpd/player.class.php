@@ -7,7 +7,7 @@ class player extends base_mpd_player {
 	private $lastmod_dirs;
 
 	const SCAN_MODE_DIRS_ONLY = 1;
-	const SCAN_MODE_FILES_ONLY = 2;
+	const SCAN_MODE_COLLECTION = 2;
 	const SCAN_MODE_NORMAL = 3;
 
 	public function parse_list_output($command, &$dirs, $domains, $mode = self::SCAN_MODE_NORMAL) {
@@ -18,91 +18,78 @@ class player extends base_mpd_player {
 
 		$success = $this->send_command($command);
 		$filedata = MPD_FILE_MODEL;
-		$parts = true;
+		$parts = [true, true];
 		if (is_array($domains) && count($domains) == 0) {
 			$domains = false;
 		}
 
 		$dir = false;
-		while($this->is_connected() && !feof($this->connection) && $parts) {
+		while($this->is_connected() && !feof($this->connection) && $parts[0] !== false) {
 			$parts = $this->getline();
+			switch ($parts[0]) {
+				case "directory":
+					$dir = $parts[1];
+					break;
 
-			if (is_array($parts)) {
-				switch ($parts[0]) {
-					case "directory":
-						$dir = trim($parts[1]);
-						break;
-
-					case "Last-Modified":
-						if ($dir) {
-							switch ($mode) {
-								case self::SCAN_MODE_DIRS_ONLY:
-									$dirs[] = $dir;
-									$lm = strtotime($parts[1]);
-									if (isset($this->lastmod_dirs[$dir])) {
-										if ($lm > $this->lastmod_dirs[$dir]) {
-											$this->lastmod_dirs[$dir] = $lm;
-											$this->to_scan[] = $dir;
-										} else {
-											$this->skipped_dirs[] = $dir;
-										}
-									} else {
-										$this->lastmod_dirs[$dir] = $lm;
-										$this->to_scan[] = $dir;
-									}
-									break;
-
-								case self::SCAN_MODE_NORMAL:
-									$dirs[] = $dir;
-									break;
-
-							}
-							$dir = false;
+				case "Last-Modified":
+					if ($dir) {
+						if ($mode == self::SCAN_MODE_NORMAL) {
+							$dirs[] = $dir;
 						} else {
-							if ($mode != self::SCAN_MODE_DIRS_ONLY) {
-								$filedata[$parts[0]] = $parts[1];
+							$dirs[] = ['dir' => $dir, 'lm' => strtotime($parts[1])];
+						}
+						$dir = false;
+					} else if ($mode != self::SCAN_MODE_DIRS_ONLY) {
+						$filedata[$parts[0]] = $parts[1];
+					}
+					break;
+
+				case 'file':
+					if ($mode != self::SCAN_MODE_DIRS_ONLY) {
+						if ($filedata['file'] !== null) {
+							$filedata['domain'] = getDomain($filedata['file']);
+							if ($this->sanitize_data($filedata)) {
+								yield $filedata;
 							}
 						}
+						$filedata = MPD_FILE_MODEL;
+						$filedata[$parts[0]] = $parts[1];
+					}
+					break;
 
-						break;
-
-					case 'file':
-					case 'playlist':
-						if ($mode != self::SCAN_MODE_DIRS_ONLY) {
-							if ($filedata['file'] !== null) {
-								$filedata['domain'] = getDomain($filedata['file']);
-								if ($this->sanitize_data($filedata)) {
-									yield $filedata;
-								}
-							}
-							$filedata = MPD_FILE_MODEL;
-							if ($parts[0] == 'file')
-								$filedata[$parts[0]] = $parts[1];
-						}
-						break;
-
-					case 'Title':
-					case 'Album':
-					case 'Comment':
-						if ($mode != self::SCAN_MODE_DIRS_ONLY) {
-							$filedata[$parts[0]] = $parts[1];
-						}
-						break;
-
-					default:
-						if ($mode != self::SCAN_MODE_DIRS_ONLY) {
-							if (in_array($parts[0], MPD_ARRAY_PARAMS)) {
-								// MPD now sends the same key multiple times instead of using a ';'
-								if (!is_array($filedata[$parts[0]]))
-									$filedata[$parts[0]] = [];
-
-								$filedata[$parts[0]] = array_merge($filedata[$parts[0]], explode(';',$parts[1]));
-							} else {
-								$filedata[$parts[0]] = explode(';',$parts[1])[0];
+				case 'playlist':
+					if ($mode != self::SCAN_MODE_DIRS_ONLY) {
+						if ($filedata['file'] !== null) {
+							$filedata['domain'] = getDomain($filedata['file']);
+							if ($this->sanitize_data($filedata)) {
+								yield $filedata;
 							}
 						}
-						break;
-				}
+						$filedata = MPD_FILE_MODEL;
+					}
+					break;
+
+				case 'Title':
+				case 'Album':
+				case 'Comment':
+					if ($mode != self::SCAN_MODE_DIRS_ONLY) {
+						$filedata[$parts[0]] = $parts[1];
+					}
+					break;
+
+				default:
+					if (!is_bool($parts[0]) && $mode != self::SCAN_MODE_DIRS_ONLY) {
+						if (in_array($parts[0], MPD_ARRAY_PARAMS)) {
+							// MPD now sends the same key multiple times instead of using a ';'
+							if (!is_array($filedata[$parts[0]]))
+								$filedata[$parts[0]] = [];
+
+							$filedata[$parts[0]] = array_merge($filedata[$parts[0]], explode(';',$parts[1]));
+						} else {
+							$filedata[$parts[0]] = explode(';',$parts[1])[0];
+						}
+					}
+					break;
 			}
 		}
 
@@ -135,41 +122,36 @@ class player extends base_mpd_player {
 	}
 
 	public function musicCollectionUpdate() {
-		global $performance;
 		logger::mark("MPD", "Starting Music Collection Update");
 		$timer = microtime(true);
-		$this->to_scan = [];
-		$this->skipped_dirs = [];
-		$this->lastmod_dirs = prefs::$database->get_lastmodified();
-		$dirs = array("/");
-		// The slowest part of the scan is parsing all the track data and checking against the database. If we can ignore
-		// direfctories that haven't changed we can roughly double the speed of updates.
-		// Do a 2-stage scan. First scan the entire directory tree, directories only.
-		// Any directory we've seen before where Last-Modified > the value we saw last time gets rescanned files-only in stage 2.
-		// Any directory we haven't seen before gets scanned files-only in stage 2.
-		// Any directory we've seen before where Last-Modified <= the value we saw last time gets skipped on the files-only scan.
-		// If we didn't do it this way we would encounter a top-level directory whose Last-Modified had not changed and completely ignore
-		// all its contents, even though one of those contents could be a directory that has changed. (Last-Modified doesn't
-		// propagate upwards through directories).
+		$lastmod_dirs = prefs::$database->get_lastmodified();
+		$dirs = [['dir' => "/", 'lm' => 0]];
+		$this->monitor = fopen('prefs/monitor','w');;
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
-			foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($dir).'"', $dirs, false, self::SCAN_MODE_DIRS_ONLY) as $f) {
-				logger::log("UH", $f);
+			$lm = false;
+			fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir['dir']))."</b><br />".language::gettext('label_fremaining', array(count($dirs)))."\n");
+			if (isset($lastmod_dirs[$dir['dir']])) {
+				if ($dir['lm'] > $lastmod_dirs[$dir['dir']]) {
+					$lm = $dir['lm'];
+					$mode = self::SCAN_MODE_COLLECTION;
+				} else {
+					$mode = self::SCAN_MODE_DIRS_ONLY;
+				    prefs::$database->clean_skipped_tracks($dir['dir']);
+				}
+			} else {
+				$lm = $dir['lm'];
+				$mode = self::SCAN_MODE_COLLECTION;
 			}
-		}
-		$performance['directoryscan'] = microtime(true) - $timer;
-		$timer = microtime(true);
-		$this->monitor = fopen('prefs/monitor','w');;
-		while (count($this->to_scan) > 0) {
-			$dir = array_shift($this->to_scan);
-			fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs)))."\n");
-			foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($dir).'"', $this->to_scan, false, self::SCAN_MODE_FILES_ONLY) as $filedata) {
+			foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($dir['dir']).'"', $dirs, false, $mode) as $filedata) {
+				if ($lm) {
+					// Last-Modified of directories can exceed that of the audio files, so store the lastmod of the directory
+					$filedata['Last-Modified'] = $lm;
+				}
 				yield $filedata;
 			}
 		}
 		fwrite($this->monitor, "\nUpdating Database\n");
-		$performance['filescan'] = microtime(true) - $timer;
-	    prefs::$database->clean_skipped_tracks($this->skipped_dirs);
 	}
 
 	public function collectionUpdateDone() {
@@ -187,10 +169,6 @@ class player extends base_mpd_player {
 			case 'local':
 				$this->check_undefined_tags($filedata);
 				$filedata['folder'] = dirname($filedata['unmopfile']);
-				if (isset($this->lastmod_dirs[$filedata['folder']])) {
-					// lastmodified of the folder can exceed the date of the audio files, so use the folder lastmodified so we don't scan it every time
-					$filedata['Last-Modified'] = date('c', $this->lastmod_dirs[$filedata['folder']]);
-				}
 				break;
 
 			case "soundcloud":

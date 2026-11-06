@@ -91,14 +91,6 @@ if (prefs::get_pref('collection_type') === null) {
 }
 prefs::$database = new init_database();
 
-// if (prefs::$database->test_error_handling() === false) {
-// 	logger::info('INIT', 'Got database error');
-// 	exit(0);
-// } else {
-// 	logger::info('INIT', 'Did NOT Got database error');
-// 	exit(0);
-// }
-
 list($result, $message) = prefs::$database->check_sql_tables();
 if ($result == false) {
 	sql_init_fail($message);

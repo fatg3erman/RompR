@@ -192,14 +192,15 @@ class base_mpd_player {
 
 	protected function getline() {
 		$got = fgets($this->connection);
-		$key = trim(strtok($got, ":"));
+		// $key = trim(strtok($got, ":"));
+		$key = strtok($got, ":");
 		$val = trim(strtok("\0"));
 		if ($val != '') {
-			return array($key, $val);
-		} else if (strpos($got, "OK") === 0 || strpos($got, "ACK") === 0) {
-			return false;
+			return [$key, $val];
+		} else if (str_starts_with($got, "OK") || str_starts_with($got, "ACK")) {
+			return [false, false];
 		} else {
-			return true;
+			return [true, true];
 		}
 	}
 
@@ -655,33 +656,30 @@ class base_mpd_player {
 	public function get_uris_for_directory($path) {
 		logger::log("PLAYER", "Getting Directory Items For",$path);
 		$items = array();
-		$parts = true;
+		$parts = [true, true];
 		$lines = array();
 		$this->send_command('lsinfo "'.format_for_mpd($path).'"');
 		// We have to read in the entire response then go through it
 		// because we only have the one connection to mpd so this function
 		// is not strictly re-entrant and recursing doesn't work unless we do this.
-		while(!feof($connection) && $parts) {
+		while(!feof($connection) && $parts[0] !== false) {
 			$parts = $this->getline($connection);
-			if ($parts === false) {
+			if ($parts[0] === false) {
 				logger::core("PLAYER", "Got OK or ACK from MPD");
-			} else {
+			} else if ($parts[0] !== true) {
 				$lines[] = $parts;
 			}
 		}
 		foreach ($lines as $parts) {
-			if (is_array($parts)) {
-				$s = trim($parts[1]);
-				if (substr($s,0,1) != ".") {
-					switch ($parts[0]) {
-						case "file":
-							$items[] = $s;
-							break;
+			if (substr($parts[1],0,1) != ".") {
+				switch ($parts[0]) {
+					case "file":
+						$items[] = $parts[1];
+						break;
 
-					  case "directory":
-							$items = array_merge($items, $this->get_uris_for_directory($s));
-							break;
-					}
+				  case "directory":
+						$items = array_merge($items, $this->get_uris_for_directory($parts[1]));
+						break;
 				}
 			}
 		}

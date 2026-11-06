@@ -175,6 +175,7 @@ function update_collection() {
 	close_browser_connection();
 
 	global $performance;
+	$performance['cleanskipped'] = 0;
 	$timer = microtime(true);
 
 	// The triggers aren't needed during this operation and slow things down

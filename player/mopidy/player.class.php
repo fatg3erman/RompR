@@ -24,53 +24,53 @@ class player extends base_mpd_player {
 
 		$success = $this->send_command($command);
 		$filedata = MPD_FILE_MODEL;
-		$parts = true;
+		$parts = [true, true];
 		if (is_array($domains) && count($domains) == 0) {
 			$domains = false;
 		}
 
-		while($this->is_connected() && !feof($this->connection) && $parts) {
+		while($this->is_connected() && !feof($this->connection) && $parts[0] !== false) {
 			$parts = $this->getline();
-			if (is_array($parts)) {
-				switch ($parts[0]) {
-					case "directory":
-						$dirs[] = trim($parts[1]);
-						break;
+			switch ($parts[0]) {
+				case "directory":
+					$dirs[] = trim($parts[1]);
+					break;
 
-					case "Last-Modified":
-						if ($filedata['file'] != null) {
-							// We don't want the Last-Modified stamps of the directories
-							// to be used for the files. Also we don't use Last-Modified for filtering
-							// during a collection update at this point because there might be one
-							// modified file in a badly tagged album and if we filter out all the
-							// unmodified ones we might sort it incorrectly.
-							$filedata[$parts[0]] = $parts[1];
-						}
-						break;
+				case "Last-Modified":
+					if ($filedata['file'] != null) {
+						// We don't want the Last-Modified stamps of the directories
+						// to be used for the files. Also we don't use Last-Modified for filtering
+						// during a collection update at this point because there might be one
+						// modified file in a badly tagged album and if we filter out all the
+						// unmodified ones we might sort it incorrectly.
+						$filedata[$parts[0]] = $parts[1];
+					}
+					break;
 
-					case 'file':
-					case 'playlist':
-						if ($filedata['file'] !== null) {
-							$filedata['domain'] = getDomain($filedata['file']);
-							if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
-								if ($this->sanitize_data($filedata)) {
-									yield $filedata;
-								}
+				case 'file':
+				case 'playlist':
+					if ($filedata['file'] !== null) {
+						$filedata['domain'] = getDomain($filedata['file']);
+						if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
+							if ($this->sanitize_data($filedata)) {
+								yield $filedata;
 							}
 						}
-						$filedata = MPD_FILE_MODEL;
-						if ($parts[0] == 'file')
-							$filedata[$parts[0]] = $parts[1];
-						break;
-
-					case 'X-AlbumUri':
-					case 'Title':
-					case 'Album':
-					case 'Comment':
+					}
+					$filedata = MPD_FILE_MODEL;
+					if ($parts[0] == 'file')
 						$filedata[$parts[0]] = $parts[1];
-						break;
+					break;
 
-					default:
+				case 'X-AlbumUri':
+				case 'Title':
+				case 'Album':
+				case 'Comment':
+					$filedata[$parts[0]] = $parts[1];
+					break;
+
+				default:
+					if (!is_bool($parts[0])) {
 						if (in_array($parts[0], MPD_ARRAY_PARAMS)) {
 							// MPD now sends the same key multiple times instead of using a ';'
 							if (!is_array($filedata[$parts[0]]))
@@ -80,8 +80,8 @@ class player extends base_mpd_player {
 						} else {
 							$filedata[$parts[0]] = explode(';',$parts[1])[0];
 						}
-						break;
-				}
+					}
+					break;
 			}
 		}
 

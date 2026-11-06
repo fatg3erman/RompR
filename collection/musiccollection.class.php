@@ -118,18 +118,14 @@ class musicCollection extends collection_base {
 		$this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Image = ?, Searched = 1 WHERE Albumindex = ?", $image, $albumindex);
 	}
 
-	public function clean_skipped_tracks($dirs) {
+	public function clean_skipped_tracks($dir) {
 		global $performance;
 		$timer = microtime(true);
-		foreach ($dirs as $dir) {
-			$this->sql_prepare_query(true, null, null, null,
-				"UPDATE Tracktable SET justAdded = 1 WHERE
-				justAdded = 0
-				AND Folder = ?",
-				$dir
-			);
-		}
-		$performance['cleanskipped'] = microtime(true) - $timer;
+		$this->sql_prepare_query(true, null, null, null,
+			"UPDATE Tracktable SET justAdded = 1 WHERE Folder = ?",
+			$dir
+		);
+		$performance['cleanskipped'] += microtime(true) - $timer;
 	}
 
 	public function replace_album_in_database($who, $new) {
