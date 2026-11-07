@@ -34,13 +34,14 @@ function format_tracknum($tracknum) {
 }
 
 function format_podcast_text($d) {
+	$d = preg_replace('/ (https*:\/\/.+?)([\s\n\r\0])/', ' <a target="_blank" href="$1">$1</a>$2', $d);
+	$d = preg_replace('/ (https*:\/\/.+?)$/', ' <a target="_blank" href="$1">$1</a>', $d);
 	$d = preg_replace('/style\s*=\s*\".*?\"/', '', $d);
 	$d = preg_replace('/<p>\s*<\/p>/', '', $d);
 	$d = preg_replace('/<p>&nbsp;<\/p>/', '', $d);
 	$d = preg_replace('/\n|(\r\n)/', '<br/>', $d);
 	$d = preg_replace('/(<br\s*\/*>)+/', '<br/>', $d);
 	$d = preg_replace('/<\/p><br>/', '</p>', $d);
-	// $d = preg_replace('/& /', '&amp; ', $d);
 	$d = preg_replace('/<hr *\/*>/', '<br />', $d);
 	$d = preg_replace('/<a/', '<a terget="_blank"', $d);
 	return $d;
