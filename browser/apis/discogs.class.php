@@ -56,7 +56,7 @@ class discogs {
 			self::$timer = time();
 
 		return $retval;
-}
+	}
 
 	private static function create_url($uri, $params) {
 		if (array_key_exists('id', $params)) {

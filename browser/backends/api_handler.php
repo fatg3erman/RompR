@@ -8,9 +8,9 @@ $params = json_decode(file_get_contents("php://input"), true);
 
 if (
 	is_array($params)
-	 && array_key_exists('module', $params)
-	 && array_key_exists('method', $params)
-	 && array_key_exists('params', $params)
+	&& array_key_exists('module', $params)
+	&& array_key_exists('method', $params)
+	&& array_key_exists('params', $params)
 ) {
 	$module = $params['module'];
 	$method = $params['method'];
