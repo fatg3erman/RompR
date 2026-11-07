@@ -554,8 +554,7 @@ class musicCollection extends collection_base {
 				$trackobj->tags['Last-Modified'],
 				$trackobj->tags['type'] == 'audiobook' ? 1 : 0,
 				$genreindex,
-				$trackobj->tags['year'],
-				$trackobj->tags['folder']
+				$trackobj->tags['year']
 			]);
 		} catch (PDOException $e) {
 			logger::error('SQL', 'find_track execution failed');

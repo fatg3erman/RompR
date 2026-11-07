@@ -163,9 +163,9 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isAudiobook, Genreindex, TYear, Folder)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isAudiobook, Genreindex, TYear)
 				VALUES
-					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+					(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 				ON CONFLICT(Title, Albumindex, TrackNo, Artistindex, Disc) DO UPDATE SET
 					Duration = excluded.Duration,
 					Uri = excluded.Uri,
@@ -174,8 +174,7 @@ class database extends data_base {
 					justAdded = 1,
 					isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE excluded.isAudiobook END,
 					Genreindex = excluded.Genreindex,
-					TYear = excluded.TYear,
-					Folder = excluded.Folder"
+					TYear = excluded.TYear"
 			);
 			logger::log('SQLITE', 'Prepared find_track query successfully');
 		} catch (PDOException $e) {
@@ -198,9 +197,9 @@ class database extends data_base {
 		try {
 			$this->find_track = $this->mysqlc->prepare(
 				"INSERT INTO Tracktable
-					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear, Folder)
+					(Title, Albumindex, TrackNo, Artistindex, Disc, Duration, Uri, LastModified, isSearchResult, isAudiobook, Genreindex, TYear)
 				VALUES
-					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?, ?)
+					(?, ?, ?, ?, ?, ?, ?, ?, 2, ?, ?, ?)
 				ON CONFLICT(Title, Albumindex, TrackNo, Artistindex, Disc) DO UPDATE SET
 					Duration = excluded.Duration,
 					Uri = excluded.Uri,
@@ -209,8 +208,7 @@ class database extends data_base {
 					justAdded = 1,
 					isAudiobook = CASE WHEN isAudiobook = 2 THEN 2 ELSE excluded.isAudiobook END,
 					Genreindex = excluded.Genreindex,
-					TYear = excluded.TYear,
-					Folder = excluded.Folder"
+					TYear = excluded.TYear"
 			);
 			logger::log('SQLITE', 'Prepared find_track query successfully');
 		} catch (PDOException $e) {

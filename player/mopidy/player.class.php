@@ -121,7 +121,6 @@ class player extends base_mpd_player {
 		logger::mark('MOPIDY', 'Collection Folders Are Now', print_r($dirs, true));
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
-			logger::log('MOPIDY', 'Scanning', $dir);
 			fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs)))."\n");
 			foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($dir).'"', $dirs, false) as $filedata) {
 				yield $filedata;
