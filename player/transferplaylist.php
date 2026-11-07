@@ -33,7 +33,7 @@ class transferCollection extends collection_base {
 $json = json_decode(file_get_contents("php://input"), true);
 logger::mark("TRANSFER", "Transferring Playlist From",prefs::currenthost(),"to",$json['currenthost']);
 // Read the playlist from the current player
-$player = new base_mpd_player();
+$player = new player();
 $mpd_status = $player->get_status();
 prefs::$database = new transferCollection();
 foreach ($player->get_playlist() as $r) {
@@ -50,6 +50,7 @@ $target_player = new base_mpd_player(
 	$target['host'], $target['port'], $target['socket'], $target['password'], null, $target['mopidy_remote']
 );
 // probe_player_type has now set player_backend
+$target_player = new player($target['host'], $target['port'], $target['socket'], $target['password'], null, $target['mopidy_remote']);
 if ($target_player->is_connected()) {
 	prefs::set_pref(['currenthost' => $json['currenthost']]);
 
