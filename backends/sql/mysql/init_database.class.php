@@ -70,6 +70,7 @@ class init_database extends init_generic {
 			usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0,
 			Genreindex INT UNSIGNED DEFAULT 0,
 			TYear YEAR,
+			Folder VARCHAR(2000) DEFAULT NULL,
 			UNIQUE INDEX(Title, Albumindex, TrackNo, Artistindex, Disc),
 			INDEX (Title),
 			INDEX (TrackNo),
@@ -77,6 +78,7 @@ class init_database extends init_generic {
 			INDEX (isSearchResult),
 			INDEX (Albumindex),
 			INDEX (Genreindex),
+			INDEX (Folder (768)),
 			INDEX(Uri (768))) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  Tracktable OK");
@@ -869,6 +871,26 @@ class init_database extends init_generic {
 					logger::log("SQL", "Updating FROM Schema version 106 TO Schema version 107");
 					$this->generic_sql_query("ALTER TABLE Tracktable DROP LinkChecked", true);
 					$this->set_admin_value('SchemaVer', 107);
+					break;
+
+				case 107:
+					logger::log("SQL", "Updating FROM Schema version 107 TO Schema version 108");
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD Folder VARCHAR(2000) DEFAULT NULL", true);
+					if (!$this->generic_sql_query("CREATE INDEX folder_idx ON Tracktable (Folder(768))", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating Tracktable Index : ".$err);
+					}
+					if (prefs::get_pref('collection_player') == 'mpd') {
+						$p = $this->generic_sql_query("SELECT TTindex, Uri FROM Tracktable WHERE Uri IS NOT NULL", false);
+						foreach ($p as $t) {
+							$this->sql_prepare_query(true, null, null, null,
+								"UPDATE Tracktable SET Folder = ? WHERE TTindex = ?",
+								"lsinfo ".dirname($t['Uri']),
+								$t['TTindex']
+							);
+						}
+					}
+					$this->set_admin_value('SchemaVer', 108);
 					break;
 
 			}

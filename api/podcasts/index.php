@@ -4,6 +4,7 @@ include("includes/vars.php");
 include("includes/functions.php");
 require_once ('getid3/getid3.php');
 // Something must be resetting this. Is it getid3?
+set_time_limit(1800);
 check_timezone();
 set_error_handler('handle_error', E_ALL);
 prefs::$database = new poDatabase();

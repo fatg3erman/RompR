@@ -2,6 +2,7 @@
 class album {
 
 	public $tracks;
+	public $folder;
 
 	public function __construct(&$track) {
 		$this->tracks = [$track];
@@ -31,6 +32,9 @@ class album {
 			} else {
 				$this->tracks[0]->tags['X-AlbumUri'] = $track->tags['X-AlbumUri'];
 			}
+		}
+		if ($this->folder === null) {
+			$this->folder = $track->tags['folder'];
 		}
 	}
 

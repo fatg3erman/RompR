@@ -187,19 +187,20 @@ class base_mpd_player {
 		}
 		$key = trim(strtok($got, ":"));
 		$val = trim(strtok("\0"));
-		return array(0 => $key, 1 => $val);
+		return [$key, $val];
 	}
 
 	protected function getline() {
 		$got = fgets($this->connection);
-		$key = trim(strtok($got, ":"));
+		// $key = trim(strtok($got, ":"));
+		$key = strtok($got, ":");
 		$val = trim(strtok("\0"));
 		if ($val != '') {
-			return array($key, $val);
-		} else if (strpos($got, "OK") === 0 || strpos($got, "ACK") === 0) {
-			return false;
+			return [$key, $val];
+		} else if (str_starts_with($got, "OK") || str_starts_with($got, "ACK")) {
+			return [false, false];
 		} else {
-			return true;
+			return [true, true];
 		}
 	}
 
@@ -431,82 +432,6 @@ class base_mpd_player {
 		return $cmd_status;
 	}
 
-	public function parse_list_output($command, &$dirs, $domains) {
-		// Generator Function for parsing MPD output for 'list...info', 'search ...' etc type commands
-		// Returns MPD_FILE_MODEL
-
-		logger::log("MPD", "MPD Parse",$command);
-
-		$success = $this->send_command($command);
-		$filedata = MPD_FILE_MODEL;
-		$parts = true;
-		if (is_array($domains) && count($domains) == 0) {
-			$domains = false;
-		}
-
-		while($this->is_connected() && !feof($this->connection) && $parts) {
-			$parts = $this->getline();
-			if (is_array($parts)) {
-				switch ($parts[0]) {
-					case "directory":
-						$dirs[] = trim($parts[1]);
-						break;
-
-					case "Last-Modified":
-						if ($filedata['file'] != null) {
-							// We don't want the Last-Modified stamps of the directories
-							// to be used for the files.
-							$filedata[$parts[0]] = $parts[1];
-						}
-						break;
-
-					case 'file':
-					case 'playlist':
-						if ($filedata['file'] !== null) {
-							$filedata['domain'] = getDomain($filedata['file']);
-							if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
-								if ($this->sanitize_data($filedata)) {
-									yield $filedata;
-								}
-							}
-						}
-						$filedata = MPD_FILE_MODEL;
-						if ($parts[0] == 'file')
-							$filedata[$parts[0]] = $parts[1];
-						break;
-
-					case 'X-AlbumUri':
-					case 'Title':
-					case 'Album':
-					case 'Comment':
-						$filedata[$parts[0]] = $parts[1];
-						break;
-
-					default:
-						if (in_array($parts[0], MPD_ARRAY_PARAMS)) {
-							// MPD now sends the same key multiple times instead of using a ';'
-							if (!is_array($filedata[$parts[0]]))
-								$filedata[$parts[0]] = [];
-
-							$filedata[$parts[0]] = array_merge($filedata[$parts[0]], explode(';',$parts[1]));
-						} else {
-							$filedata[$parts[0]] = explode(';',$parts[1])[0];
-						}
-						break;
-				}
-			}
-		}
-
-		if ($filedata['file'] !== null) {
-			$filedata['domain'] = getDomain($filedata['file']);
-			if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
-				if ($this->sanitize_data($filedata)) {
-					yield $filedata;
-				}
-			}
-		}
-	}
-
 	protected function sanitize_data(&$filedata) {
 	 //   if (strpos($filedata['Title'], "[unplayable]") === 0) {
 		// 	logger::debug("COLLECTION", "Ignoring unplayable track ".$filedata['file']);
@@ -539,7 +464,7 @@ class base_mpd_player {
 		}
 
 		// cue sheet link (mpd only). We're only doing CUE sheets, not M3U
-		if ($filedata['X-AlbumUri'] === null && strtolower(pathinfo($filedata['playlist'], PATHINFO_EXTENSION)) == "cue") {
+		if (isset($filedata['X-AlbumUri']) && strtolower(pathinfo($filedata['playlist'], PATHINFO_EXTENSION)) == "cue") {
 			$filedata['X-AlbumUri'] = $filedata['playlist'];
 			logger::log("COLLECTION", "Found CUE sheet for album ".$filedata['Album']);
 		}
@@ -731,33 +656,30 @@ class base_mpd_player {
 	public function get_uris_for_directory($path) {
 		logger::log("PLAYER", "Getting Directory Items For",$path);
 		$items = array();
-		$parts = true;
+		$parts = [true, true];
 		$lines = array();
 		$this->send_command('lsinfo "'.format_for_mpd($path).'"');
 		// We have to read in the entire response then go through it
 		// because we only have the one connection to mpd so this function
 		// is not strictly re-entrant and recursing doesn't work unless we do this.
-		while(!feof($connection) && $parts) {
+		while(!feof($connection) && $parts[0] !== false) {
 			$parts = $this->getline($connection);
-			if ($parts === false) {
+			if ($parts[0] === false) {
 				logger::core("PLAYER", "Got OK or ACK from MPD");
-			} else {
+			} else if ($parts[0] !== true) {
 				$lines[] = $parts;
 			}
 		}
 		foreach ($lines as $parts) {
-			if (is_array($parts)) {
-				$s = trim($parts[1]);
-				if (substr($s,0,1) != ".") {
-					switch ($parts[0]) {
-						case "file":
-							$items[] = $s;
-							break;
+			if (substr($parts[1],0,1) != ".") {
+				switch ($parts[0]) {
+					case "file":
+						$items[] = $parts[1];
+						break;
 
-					  case "directory":
-							$items = array_merge($items, $this->get_uris_for_directory($s));
-							break;
-					}
+				  case "directory":
+						$items = array_merge($items, $this->get_uris_for_directory($parts[1]));
+						break;
 				}
 			}
 		}
@@ -775,6 +697,10 @@ class base_mpd_player {
 
 	public function get_outputs() {
 		return $this->do_mpd_command('outputs', true);
+	}
+
+	public function get_skipped_dirs() {
+		return array_unique($this->skipped_dirs);
 	}
 
 	public function get_stored_playlists($only_personal = false) {

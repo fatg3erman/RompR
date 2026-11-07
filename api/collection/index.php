@@ -175,9 +175,8 @@ function update_collection() {
 	close_browser_connection();
 
 	global $performance;
+	$performance['cleanskipped'] = 0;
 	$timer = microtime(true);
-
-	// prefs::$database->read_collection_lastmodified();
 
 	// The triggers aren't needed during this operation and slow things down
 	prefs::$database->drop_triggers();
@@ -202,10 +201,12 @@ function update_collection() {
     foreach ($player->musicCollectionUpdate() as $filedata) {
     	prefs::$database->newTrack($filedata);
     }
+    logger::log("UPDATER", "Track by track scan finished");
     $performance['trackbytrack_scan'] = microtime(true) - $t;
 	$t = microtime(true);
 	prefs::$database->tracks_to_database();
     $performance['tracks_to_database_outer'] = microtime(true) - $t;
+
 
 	prefs::$database->close_transaction();
 

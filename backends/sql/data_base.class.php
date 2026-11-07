@@ -94,7 +94,7 @@ class data_base {
 				// Return a value from the named column $return_value, or return $value_default if no results
 				//
 				$arr = $result->fetch(PDO::FETCH_ASSOC);
-				$retval = (is_array($arr) && array_key_exists($return_value, $arr)) ? $arr[$return_value] : $value_default;
+				$retval = (is_array($arr) && isset($arr[$return_value])) ? $arr[$return_value] : $value_default;
 			} else if ($return_boolean) {
 				//
 				// Return success / fail
@@ -217,7 +217,7 @@ class data_base {
 				$arr = $stmt->fetch(PDO::FETCH_ASSOC);
 				// Note we use fetch() which fetches one row at a time so makes $arr[$return_value] correct.
 				// If we used returnAll() we'd need $arr[0][$return_value]
-				$retval = (is_array($arr) && array_key_exists($return_value, $arr)) ? $arr[$return_value] : $value_default;
+				$retval = (is_array($arr) && isset($arr[$return_value])) ? $arr[$return_value] : $value_default;
 			} else if ($return_boolean) {
 				//
 				// For returning boolean success/fail

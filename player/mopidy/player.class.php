@@ -16,6 +16,81 @@ class player extends base_mpd_player {
 		'genre' => 'genre'
 	];
 
+	public function parse_list_output($command, &$dirs, $domains) {
+		// Generator Function for parsing MPD output for 'list...info', 'search ...' etc type commands
+		// Returns MPD_FILE_MODEL
+
+		logger::log("MOPIDY", "MPD Parse",$command);
+
+		$success = $this->send_command($command);
+		$filedata = MPD_FILE_MODEL;
+		$parts = [true, true];
+		if (is_array($domains) && count($domains) == 0) {
+			$domains = false;
+		}
+
+		while($this->is_connected() && !feof($this->connection) && $parts[0] !== false) {
+			$parts = $this->getline();
+			switch ($parts[0]) {
+				case "directory":
+					$dirs[] = trim($parts[1]);
+					break;
+
+				case "Last-Modified":
+					if ($filedata['file'] != null) {
+						$filedata[$parts[0]] = $parts[1];
+					}
+					break;
+
+				case 'file':
+					if ($filedata['file'] !== null) {
+						$filedata['domain'] = getDomain($filedata['file']);
+						if ($domains === false || in_array($filedata['domain'] ,$domains)) {
+							if ($this->sanitize_data($filedata)) {
+								yield $filedata;
+							}
+						}
+					}
+					$filedata = MPD_FILE_MODEL;
+					$filedata[$parts[0]] = $parts[1];
+					break;
+
+				case 'playlist':
+					break;
+
+				case 'X-AlbumUri':
+				case 'Title':
+				case 'Album':
+				case 'Comment':
+					$filedata[$parts[0]] = $parts[1];
+					break;
+
+				default:
+					if (!is_bool($parts[0])) {
+						if (in_array($parts[0], MPD_ARRAY_PARAMS)) {
+							// MPD now sends the same key multiple times instead of using a ';'
+							if (!is_array($filedata[$parts[0]]))
+								$filedata[$parts[0]] = [];
+
+							$filedata[$parts[0]] = array_merge($filedata[$parts[0]], explode(';',$parts[1]));
+						} else {
+							$filedata[$parts[0]] = explode(';',$parts[1])[0];
+						}
+					}
+					break;
+			}
+		}
+
+		if ($filedata['file'] !== null) {
+			$filedata['domain'] = getDomain($filedata['file']);
+			if ($domains === false || in_array($filedata['domain'], $domains)) {
+				if ($this->sanitize_data($filedata)) {
+					yield $filedata;
+				}
+			}
+		}
+	}
+
 	public function check_track_load_command($uri) {
 		return 'add';
 	}
